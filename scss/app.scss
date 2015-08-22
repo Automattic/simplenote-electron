@@ -1,0 +1,39 @@
+@import "utils";
+
+body {
+  margin: 0;
+  font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
+}
+
+.simplenote-app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include flexbox(flex-start, flex-start);
+}
+
+.source-list {
+  max-height: 100%;
+  min-height: 100%;
+  min-width: 120px;
+  overflow: auto;
+  @include flex(1, 1);
+}
+
+.source-list-item {
+  padding: 8px;
+
+  &.selected {
+    background: hsla(140, 75%, 95%, 1.0);
+  }
+
+}
+
+.detail {
+  max-height: 100%;
+  min-height: 100%;
+  overflow: auto;
+  @include flex(1, 1, 75%)
+}
