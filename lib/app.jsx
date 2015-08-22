@@ -31,17 +31,23 @@ module.exports = React.createClass({
   },
 
   onTagsIndex: function() {
-    console.log("Tags!");
   },
 
   render: function() {
     return (
       <div className="simplenote-app">
         <div className="source-list">
-          <NoteList ref="list" notes={this.state.notes || []} onSelectNote={this.onSelectNote} />
+          <div className="toolbar"></div>
+          <div className="panel">
+            <NoteList ref="list" notes={this.state.notes || []} onSelectNote={this.onSelectNote} />
+          </div>
         </div>
         <div className="detail">
-          <NoteDetail ref="detail" note={this.state.note} />
+          <div className="toolbar">
+          </div>
+          <div className="panel">
+            <NoteDetail ref="detail" note={this.state.note} />
+          </div>
         </div>
       </div>
     )

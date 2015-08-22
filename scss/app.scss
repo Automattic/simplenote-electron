@@ -3,6 +3,7 @@
 body {
   margin: 0;
   font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
+  overflow: hidden;
 }
 
 .simplenote-app {
@@ -11,29 +12,96 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  @include flexbox(flex-start, flex-start);
+  @include flexbox(flex-start, stretch);
+}
+
+.source-list, .detail {
+  @include flexbox(flex-start, stretch, column);
 }
 
 .source-list {
-  max-height: 100%;
-  min-height: 100%;
   min-width: 120px;
-  overflow: auto;
-  @include flex(1, 1);
+  @include flex(1, 1, 200px);
+  border-right: 1px solid #DDD;
+  cursor: default;
+}
+
+.note-list {
+  &:focus {
+    outline: none;
+  }
+
 }
 
 .source-list-item {
   padding: 8px;
 
   &.selected {
-    background: hsla(140, 75%, 95%, 1.0);
+    background: hsla(140, 20%, 95%, 1.0);
+    
+    :focus & {
+      background: hsla(140, 75%, 85%, 1.0);
+    }
+  }
+}
+
+.detail {
+  @include flex(1, 1, 75%)
+}
+
+.title, .preview {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.preview {
+  color: #999;
+}
+
+.toolbar {
+  @include flex(0, 0, 44px);
+  border-bottom: 1px solid #CCC;
+}
+
+.editor-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.editor {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 24px 48px;
+  border: none;
+  font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
+  color: #666;
+  background: #F2F2F2;
+
+  &:focus {
+    color: #000;
+    outline: none;
+    background: #FFF;
   }
 
 }
 
-.detail {
-  max-height: 100%;
-  min-height: 100%;
+.panel {
+  @include flex(1, 0);
+  position: relative;
+}
+
+.note-list {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: auto;
-  @include flex(1, 1, 75%)
 }

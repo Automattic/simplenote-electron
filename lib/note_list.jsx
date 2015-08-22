@@ -25,7 +25,7 @@ module.exports = React.createClass({
     var selected = this.state.selected;
     var onSelect = this.onSelectNote;
     return (
-      <div>
+      <div className="note-list" tabIndex="1">
       {this.props.notes.map(function(note) {
         var isSelected = note == selected;
         return (
