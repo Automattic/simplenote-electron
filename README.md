@@ -7,7 +7,7 @@ A Simplenote client packaged in [Electron][].
 1. Clone the repo
 2. First time install dependencies `npm install`
 3. Install electron (e.g. `npm install -g electron`)
-4. Set a user token in [app.js](./blog/master/lib/app.js#L7)
+4. Set a user token in [app.js](https://github.com/Simperium/simplenote-electron/blob/master/lib/app.js#L7)
 5. `gulp && electron .`
 
 ## Development
