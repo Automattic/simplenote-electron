@@ -11,7 +11,7 @@ var gulp       = require('gulp'),
 
 
 var out = 'build/';
-var config ;
+var config;
 var settings = {};
 
 try {
