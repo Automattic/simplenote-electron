@@ -22,7 +22,7 @@ body {
 .source-list {
   min-width: 120px;
   @include flex(1, 1, 200px);
-  border-right: 1px solid #DDD;
+  border-right: 1px solid #E0E0E0;
   cursor: default;
 }
 
@@ -59,9 +59,14 @@ body {
   color: #999;
 }
 
-.toolbar {
+.toolbar, .toolbar-compact {
   @include flex(0, 0, 44px);
-  border-bottom: 1px solid #CCC;
+  border-bottom: 1px solid #E0E0E0;
+  position: relative;
+}
+
+.toolbar-compact {
+  @include flex(0, 0, 36px);
 }
 
 .editor-wrapper {
@@ -82,6 +87,9 @@ body {
   font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
   color: #666;
   background: #F2F2F2;
+  transition: 200ms;
+  -webkit-transition: 200ms;
+  resize: none;
 
   &:focus {
     color: #000;
@@ -104,4 +112,51 @@ body {
   right: 0;
   bottom: 0;
   overflow: auto;
+}
+
+.tag-editor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  padding: 0 8px 0 4px;
+  @include flexbox(flex-start, center);
+  overflow: auto;
+
+  &:focus {
+    outline: none;
+  }
+
+}
+
+.tag-chip {
+  margin: 2px;
+  padding: 1px 4px;
+  cursor: default;
+  color: hsla(150, 50%, 50%, 1);
+  border-radius: 2px;
+  white-space: nowrap;
+  @include flex(0, 0);
+
+  &.selected {
+    border: 1px solid hsla(150, 0%, 90%, 1);
+    padding: 0 3px;
+    background: hsla(150, 0%, 95%, 1);
+  }
+
+}
+
+.tag-field {
+  margin: 4px 6px;
+  @include flex(1, 0);
+
+  input {
+    width: 100%;
+    min-width: 140px;
+    border: none;
+    outline: none;
+    font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
+  }
+
 }

@@ -1,7 +1,7 @@
 var React = require('react');
 var NoteList = require('./note_list.jsx');
 var NoteDetail = require('./note_detail.jsx');
-
+var TagField = require('./tag_field.jsx');
 
 module.exports = React.createClass({
 
@@ -38,12 +38,15 @@ module.exports = React.createClass({
       <div className="simplenote-app">
         <div className="source-list">
           <div className="toolbar"></div>
+          <div className="toolbar-compact"></div>
           <div className="panel">
             <NoteList ref="list" notes={this.state.notes || []} onSelectNote={this.onSelectNote} />
           </div>
         </div>
         <div className="detail">
-          <div className="toolbar">
+          <div className="toolbar"></div>
+          <div className="toolbar-compact">
+            <TagField ref="tags" note={this.state.note} />
           </div>
           <div className="panel">
             <NoteDetail ref="detail" note={this.state.note} />
