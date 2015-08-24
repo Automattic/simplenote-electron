@@ -1,13 +1,15 @@
-var React = require('react');
-var NoteList = require('./note_list.jsx');
+var React      = require('react');
+var NoteList   = require('./note_list.jsx');
 var NoteDetail = require('./note_detail.jsx');
-var TagField = require('./tag_field.jsx');
+var TagField   = require('./tag_field.jsx');
+var TagMenu    = require('./tag_menu.jsx');
 
 module.exports = React.createClass({
 
   getInitialState: function() {
     return {
-      notes: []
+      notes: [],
+      tags: ['Stuff', 'Things', 'Recipes', 'Journal']
     };
   },
 
@@ -33,12 +35,33 @@ module.exports = React.createClass({
   onTagsIndex: function() {
   },
 
+  onClickTagFilter: function(tag) {
+    console.log("Filter", tag);
+  },
+
   render: function() {
     return (
       <div className="simplenote-app">
         <div className="source-list">
-          <div className="toolbar"></div>
-          <div className="toolbar-compact"></div>
+          <div className="toolbar">
+          </div>
+          <div className="toolbar-compact">
+              <TagMenu>
+                <div key="trash" className="tag-trash-option">
+                  <span>Trash</span>
+                  <span className="trash-count">5</span>
+                </div>
+                {this.state.tags.map((function(tag) {
+                  var onClickTagFilter = this.onClickTagFilter;
+                  var onClick = function() {
+                    onClickTagFilter(tag);
+                  };
+                  return (
+                    <div key={tag} className="tag-filter-option" onClick={onClick}>{tag}</div>
+                  )
+                }).bind(this))}
+              </TagMenu>
+          </div>
           <div className="panel">
             <NoteList ref="list" notes={this.state.notes || []} onSelectNote={this.onSelectNote} />
           </div>

@@ -93,7 +93,7 @@ module.exports = React.createClass({
             onSelectTag(tag, index)
           };
           return (
-            <TagChip tag={tag} index={index} selected={selected} onSelect={onSelect} />
+            <TagChip key={tag} tag={tag} index={index} selected={selected} onSelect={onSelect} />
           )
         }).bind(this))}
         <div className="tag-field">

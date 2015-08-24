@@ -21,7 +21,7 @@ body {
 
 .source-list {
   min-width: 120px;
-  @include flex(1, 1, 200px);
+  @include flex(0, 1, 250px);
   border-right: 1px solid #E0E0E0;
   cursor: default;
 }
@@ -34,7 +34,7 @@ body {
 }
 
 .source-list-item {
-  padding: 8px;
+  padding: 8px 24px;
 
   &.selected {
     background: hsla(140, 20%, 95%, 1.0);
@@ -46,7 +46,7 @@ body {
 }
 
 .detail {
-  @include flex(1, 1, 75%)
+  @include flex(1, 0)
 }
 
 .title, .preview {
@@ -63,10 +63,12 @@ body {
   @include flex(0, 0, 44px);
   border-bottom: 1px solid #E0E0E0;
   position: relative;
+  height: 44px;
 }
 
 .toolbar-compact {
   @include flex(0, 0, 36px);
+  height: 36px;
 }
 
 .editor-wrapper {
@@ -115,11 +117,7 @@ body {
 }
 
 .tag-editor {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
+  height: 100%;
   padding: 0 8px 0 4px;
   @include flexbox(flex-start, center);
   overflow: auto;
@@ -158,5 +156,28 @@ body {
     outline: none;
     font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
   }
+}
 
+.tag-menu {
+  padding: 0 8px;
+  height: 100%;
+  @include flexbox(flex-start, center);
+}
+
+.tag-menu-label {
+
+  &::before {
+    content: "▼";
+    margin-right: 2px;
+    display: inline-block;
+    font-size: 10px;
+    vertical-align: middle;
+    width: 18px;
+    text-align: center;
+  }
+
+}
+
+.tag-menu-options {
+  
 }
