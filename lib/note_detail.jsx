@@ -4,20 +4,10 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      note: {}
+      note: {},
+      bucket: null,
+      onChangeContent: function() {}
     };
-  },
-
-  noteContent: function(note) {
-    var data = note.data;
-    return data ? data.content : null;
-  },
-
-  componentWillReceiveProps: function (nextProps, context){
-    this.setState({content: this.noteContent(nextProps.note)});
-  },
-
-  componentDidMount: function() {
   },
 
   getInitialState: function() {
@@ -26,8 +16,18 @@ module.exports = React.createClass({
     };
   },
 
+  componentWillReceiveProps: function (nextProps, context){
+    this.setState({content: this.noteContent(nextProps.note)});
+  },
+
+  noteContent: function(note) {
+    var data = note.data;
+    return data ? data.content : null;
+  },
+
   onChangeContent: function(e) {
-    this.setState({content: this.refs.content.getDOMNode().value});
+    var v = this.refs.content.getDOMNode().value;
+    this.props.onChangeContent(v);
   },
 
   render: function() {

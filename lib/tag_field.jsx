@@ -5,15 +5,20 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      note: { id: null, tags: []}
+      note: { id: null, data: {tags: []}},
+      onUpdateTags: function(){}
     };
   },
 
   getInitialState: function() {
     return {
-      tags: ['One', 'Two', 'Three'],
+      tags: this.props.note.data.tags,
       selectedTag: -1
     };
+  },
+
+  componentWillReceiveProps: function(nextProps, context) {
+    this.setState({selectedTag: -1, tags: nextProps.note.data.tags});
   },
 
   clearTextField: function() {
@@ -22,6 +27,7 @@ module.exports = React.createClass({
 
   addTag: function(tag) {
     var tags = this.state.tags.concat([tag]);
+    this.props.onUpdateTags(tags);
     this.setState({tags: tags});
   },
 
@@ -42,6 +48,8 @@ module.exports = React.createClass({
     if (this.state.selectedTag == index) {
       state.selectedTag = -1;
     }
+
+    this.props.onUpdateTags(tags);
 
     this.setState(state);
   },

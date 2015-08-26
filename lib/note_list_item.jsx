@@ -15,7 +15,7 @@ module.exports = React.createClass({
   },
 
   render: function() {
-    var content = this.props.note.data.content || "";
+    var content = (this.props.note.data.content || "").trim();
     var firstLineBreak = content.indexOf("\n");
 
     if (firstLineBreak == -1) firstLineBreak = content.length;

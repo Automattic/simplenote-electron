@@ -23,6 +23,16 @@ try {
   };
 }
 
+var js = function(name) {
+  return function() {
+    return browserify('./lib/' + name, {transform: ['reactify'], debug: true})
+      .transform({global: true}, "uglifyify")
+      .bundle()
+      .pipe(source(name))
+      .pipe(gulp.dest(out));
+  }
+};
+
 gulp
 
 .task("default", ["build"])
@@ -38,13 +48,9 @@ gulp
 
 .task("build", ["js", "css", "html"])
 
-.task("js", function() {
-  return browserify('./lib/app.js', {transform: ['reactify'], debug: true})
-    // .transform({global: true}, "uglifyify")
-    .bundle()
-    .pipe(source('app.js'))
-    .pipe(gulp.dest(out));
-})
+.task("js", ['app'])
+
+.task('app', js('app.js'))
 
 .task("css", function() {
   return gulp.src('./scss/app.scss')
@@ -56,6 +62,6 @@ gulp
 .task("html", ["config"], function() {
   return gulp.src('./views/app.jade')
     .pipe(jade({locals:{config: settings}, pretty:"  "}))
-    .pipe(rename('app.html'))
+    .pipe(rename('index.html'))
     .pipe(gulp.dest(out));
 });

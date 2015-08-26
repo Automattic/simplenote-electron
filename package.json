@@ -22,5 +22,9 @@
     "simperium": "git://github.com/automattic/node-simperium.git#browserify",
     "uglifyify": "^3.0.1",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "express": "^4.13.3",
+    "promise": "^7.0.4"
   }
 }

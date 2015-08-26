@@ -27,7 +27,7 @@ module.exports = React.createClass({
     return (
       <div className="note-list" tabIndex="1">
       {this.props.notes.map(function(note) {
-        var isSelected = note == selected;
+        var isSelected = selected && note.id == selected.id;
         return (
           <NoteListItem selected={isSelected} key={note.id} note={note} onSelectNote={onSelect} />
         )
