@@ -38,7 +38,7 @@ module.exports = React.createClass({
     var done = this.onFindNotes;
     this.props.notes.query(function(db) {
       var notes = [];
-      db.transaction('note').objectStore('note').index('modificationDate').openCursor(null, 'prev').onsuccess = function(e) {
+      db.transaction('note').objectStore('note').index('pinned-sort').openCursor(null, 'prev').onsuccess = function(e) {
         var cursor = e.target.result;
         if (cursor) {
           notes.push(cursor.value);

@@ -26,10 +26,14 @@ module.exports = React.createClass({
     }
     var cls = "source-list-item";
     if (this.props.selected) cls += " selected";
+    if (this.props.note.pinned) cls += " pinned";
     return (
       <div className={cls} onClick={this.onClickNote}>
-        <div className="title">{title}</div>
-        <div className="preview">{preview}</div>
+        <div></div>
+        <div>
+          <div className="title">{title}</div>
+          <div className="preview">{preview}</div>
+        </div>
       </div>
     )
   }

@@ -34,7 +34,22 @@ body {
 }
 
 .source-list-item {
-  padding: 8px 24px;
+  padding: 8px 24px 8px 12px;
+  @include flexbox(flex-start, center, row);
+
+  > div:first-child {
+    @include flex(0,0,18px);
+    height: 18px;
+    width: 18px;
+    margin-right: 12px;
+  }
+
+  &.pinned {
+    > div:first-child {
+      border-radius: 18px;
+      background: #0F0;
+    }
+  }
 
   &.selected {
     background: hsla(140, 20%, 95%, 1.0);

@@ -43,7 +43,7 @@ app.get('/', function(req, res) {
   settings.build = 'dev';
   settings.resource_version = 'dev-' + (new Date()).getTime();
   settings.version = package.version;
-  res.render('index', {config: settings});
+  res.render('app', {config: settings});
 });
 
 // serve static assets
