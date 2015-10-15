@@ -5,7 +5,6 @@ module.exports = React.createClass({
   getDefaultProps: function() {
     return {
       note: {},
-      bucket: null,
       onChangeContent: function() {}
     };
   },
@@ -21,6 +20,7 @@ module.exports = React.createClass({
   },
 
   noteContent: function(note) {
+    if (!note) return null;
     var data = note.data;
     return data ? data.content : null;
   },

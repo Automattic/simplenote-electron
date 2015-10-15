@@ -15,7 +15,7 @@ module.exports = React.createClass({
 
   render: function() {
     return (
-      <div>
+      <div className="search-field">
         <input ref="search" type="text" placeholder="Search" onChange={this.onSearch} />
       </div>
     );

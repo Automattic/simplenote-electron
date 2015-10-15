@@ -5,20 +5,19 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      note: { id: null, data: {tags: []}},
+      tags: [],
       onUpdateTags: function(){}
     };
   },
 
   getInitialState: function() {
     return {
-      tags: this.props.note.data.tags,
       selectedTag: -1
     };
   },
 
   componentWillReceiveProps: function(nextProps, context) {
-    this.setState({selectedTag: -1, tags: nextProps.note.data.tags});
+    this.setState({selectedTag: -1});
   },
 
   clearTextField: function() {
@@ -26,9 +25,8 @@ module.exports = React.createClass({
   },
 
   addTag: function(tag) {
-    var tags = this.state.tags.concat([tag]);
+    var tags = this.props.tags.concat([tag]);
     this.props.onUpdateTags(tags);
-    this.setState({tags: tags});
   },
 
   onSelectTag: function(tag, index) {
@@ -40,10 +38,11 @@ module.exports = React.createClass({
   },
 
   deleteTag: function(index) {
-    var tags = this.state.tags.concat([]);
+    var tags = this.props.tags.concat([]);
     tags.splice(this.state.selectedTag, 1);
 
-    var state = {tags: tags};
+    // var state = {tags: tags};
+    var state = {};
 
     if (this.state.selectedTag == index) {
       state.selectedTag = -1;
@@ -61,7 +60,7 @@ module.exports = React.createClass({
   },
 
   selectLastTag: function() {
-    this.setState({selectedTag: this.state.tags.length -1});
+    this.setState({selectedTag: this.props.tags.length -1});
   },
 
   onKeyDown: function(e) {
@@ -83,7 +82,7 @@ module.exports = React.createClass({
       this.selectLastTag();
       break;
     default:
-      console.log(e.which);
+      break;
     }
   },
 
@@ -91,10 +90,14 @@ module.exports = React.createClass({
     this.setState({selectedTag: -1});
   },
 
+  eachTag: function(cb) {
+    return (this.props.tags || []).map(cb.bind(this));
+  },
+
   render: function() {
     return (
       <div tabIndex="-1" onKeyDown={this.onKeyDown} onBlur={this.onBlur} className="tag-editor">
-        {(this.state.tags || []).map((function(tag, index) {
+        {this.eachTag(function(tag, index) {
           var selected = index == this.state.selectedTag;
           var onSelectTag = this.onSelectTag;
           var onSelect = function(e) {
@@ -103,7 +106,7 @@ module.exports = React.createClass({
           return (
             <TagChip key={tag} tag={tag} index={index} selected={selected} onSelect={onSelect} />
           )
-        }).bind(this))}
+        })}
         <div className="tag-field">
           <input ref="tag" type="text" placeholder="Add tags …" />
         </div>

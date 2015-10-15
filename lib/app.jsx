@@ -1,9 +1,9 @@
-var React       = require('react');
-var NoteList    = require('./note_list.jsx');
-var NoteDetail  = require('./note_detail.jsx');
-var TagField    = require('./tag_field.jsx');
-var TagMenu     = require('./tag_menu.jsx');
-var SearchField = require('./search_field.jsx');
+var React         = require('react');
+var NoteList      = require('./note_list.jsx');
+var NoteEditor    = require('./note_editor.jsx');
+var TagMenu       = require('./tag_menu.jsx');
+var SearchField   = require('./search_field.jsx');
+var NavigationBar = require('./navigation_bar.jsx');
 
 module.exports = React.createClass({
 
@@ -11,7 +11,8 @@ module.exports = React.createClass({
     return {
       notes: [],
       tags: [],
-      showTrash: false
+      showTrash: false,
+      listTitle: "All Notes"
     };
   },
 
@@ -54,12 +55,18 @@ module.exports = React.createClass({
     this.onNotesIndex();
   },
 
-  onNoteUpdate: function(id, data) {
+  onNoteUpdate: function(id, data, original, patch) {
+
     this.onNotesIndex();
     if (this.state.note && id == this.state.note.id) {
       var note = this.state.note;
+
+      console.log("Update cursor location and do conflict resolution?");
+
+      // TODO: conflict resolution of the note and update the correct
+      // cursor location.
       note.data = data;
-      this.setState({note: note});
+      this.setState({note: note, patch: patch});
     }
   },
 
@@ -72,29 +79,6 @@ module.exports = React.createClass({
 
   onClickTagFilter: function(tag) {
     console.log("Filter", tag);
-  },
-
-  onChangeContent: function(value) {
-    var note = this.state.note;
-    if (note) {
-      note.data.content = value;
-      this.setState({note: note});
-      // TODO, delay updates so not sent per keystroke
-      var commit = (function() {
-        this.props.notes.update(note.id, note.data);
-      }).bind(this);
-
-      throttle(note.id, commit);
-    }
-  },
-
-  onChangeTags: function(tags) {
-    var note = this.state.note;
-    if (note) {
-      note.data.tags = tags;
-      this.props.notes.update(note.id, note.data);
-      this.setState({note: note});
-    }
   },
 
   onSearch: function(v) {
@@ -120,33 +104,64 @@ module.exports = React.createClass({
     return notes.filter(filter);
   },
 
+  onUpdateContent: function(note, content) {
+    if (note) {
+      note.data.content = content;
+      this.setState({note: note});
+
+      var commit = (function() {
+        this.props.notes.update(note.id, note.data);
+      }).bind(this);
+
+      throttle(note.id, commit);
+    }
+  },
+
+  onUpdateTags: function(note, tags) {
+    console.log("Updating tags");
+    if (note) {
+      note.data.tags = tags;
+      this.props.notes.update(note.id, note.data);
+      this.setState({note: note});
+    }
+  },
+
+  onTrashNote: function(note) {
+    if (note) {
+      note.data.deleted = true;
+      this.props.notes.update(note.id, note.data);
+      this.setState({note: null});
+    }
+  },
+
+  onRestoreNote: function(note) {
+    if (note) {
+      note.data.deleted = false;
+      this.props.notes.update(note.id, note.data);
+      this.setState({note: null});
+    }
+  },
+
   render: function() {
 
     var notes = this.filterNotes();
-    
+    var note = this.state.note;
+    var self = this;
+
     return (
       <div className="simplenote-app">
         <div className="source-list">
           <div className="toolbar">
-            <SearchField onSearch={this.onSearch} />
+            <NavigationBar title={this.state.listTitle} />
           </div>
           <div className="toolbar-compact">
-              <TagMenu>
-              </TagMenu>
+            <SearchField onSearch={this.onSearch} />
           </div>
           <div className="panel">
             <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
           </div>
         </div>
-        <div className="detail">
-          <div className="toolbar"></div>
-          <div className="toolbar-compact">
-            <TagField ref="tags" note={this.state.note} onUpdateTags={this.onChangeTags} />
-          </div>
-          <div className="panel">
-            <NoteDetail ref="detail" note={this.state.note} bucket={this.props.notes} onChangeContent={this.onChangeContent} />
-          </div>
-        </div>
+        <NoteEditor note={note} onUpdateContent={this.onUpdateContent} onUpdateTags={this.onUpdateTags} onTrashNote={this.onTrashNote} onRestoreNote={this.onRestoreNote} />
       </div>
     )
   }
@@ -165,6 +180,7 @@ function clearTimer(id) {
 }
 
 var maxTime = 3000;
+
 function throttle(id, cb) {
   var t = timer(id),
       now = (new Date()).getTime(),

@@ -30,7 +30,7 @@ module.exports = React.createClass({
     return (
       <div className={cls} onClick={this.onClickNote}>
         <div></div>
-        <div>
+        <div className="note-preview">
           <div className="title">{title}</div>
           <div className="preview">{preview}</div>
         </div>
