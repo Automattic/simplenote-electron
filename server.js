@@ -1,6 +1,6 @@
 var express = require('express'),
     browserify = require('browserify-middleware'),
-    sass = require('node-sass'),
+    sass = require('node-sass-middleware'),
     app = express(),
     port = process.env.PORT || 4000,
     package = require('./package.json'),
@@ -30,7 +30,7 @@ app.set('views', process.cwd() + '/views');
 app.get('/app.js', browserify('./lib/app.js', {transform: ['reactify']}));
 
 // compile sass files
-app.use(sass.middleware({
+app.use(sass({
   src:process.cwd() + '/scss',
   debug:true,
   response:true
