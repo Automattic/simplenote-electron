@@ -6,11 +6,22 @@
  */
 
 $font-stack: "Source Sans Pro", sans-serif;
+
 $color-gray-lightest: #f9f9f9;
 $color-gray: #eee;
+$color-gray-medium: #666;
+$color-gray-dark: #333;
+
 $color-black: #000;
 $color-white: #fff;
-$color-blue-light: #eef3f8;
+
+$color-blue-lightest: #eef3f8;
+$color-blue-light: #e5ebf0;
+$color-blue: #6da3d3;
+
+$anim-fast: all .1s linear;
+
+$border-radius: 2px;
 
 
 /**
@@ -32,7 +43,8 @@ body {
 	@include flexbox(flex-start, stretch);
 }
 
-.source-list, .detail {
+.source-list,
+.detail {
 	@include flexbox(flex-start, stretch, column);
 }
 
@@ -66,12 +78,16 @@ body {
 			background: #0F0;
 		}
 	}
+
+	&:hover {
+		background: $color-gray-lightest;
+	}
 	
 	&.selected {
-		background: hsla(140, 20%, 95%, 1.0);
+		background: $color-blue-lightest;
 		
 		:focus & {
-			background: hsla(140, 75%, 85%, 1.0);
+			background: $color-blue-light;
 		}
 	}
 }
@@ -84,7 +100,8 @@ body {
 	@include flex(1, 0)
 }
 
-.title, .preview {
+.title,
+.preview {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -94,7 +111,8 @@ body {
 	color: #999;
 }
 
-.toolbar, .toolbar-compact {
+.toolbar,
+.toolbar-compact {
 	@include flex(0, 0, 44px);
 	border-bottom: 1px solid $color-gray;
 	position: relative;
@@ -102,7 +120,7 @@ body {
 
 .source-list {
 	.toolbar {
-		@include flexbox();
+		@include flexbox(0, stretch);
 	}
 }
 
@@ -127,14 +145,18 @@ body {
 	padding: 24px 48px;
 	border: none;
 	font: 14px/1.5 $font-stack;
-	color: #666;
+	color: $color-gray-medium;
 	background: $color-gray-lightest;
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
+
+	&:hover {
+		background: $color-white;
+	}
 	
 	&:focus {
-		color: $color-black;
+		color: $color-gray-dark;
 		outline: none;
 		background: $color-white;
 	}	
@@ -205,7 +227,6 @@ body {
 }
 
 .tag-menu-label {
-	
 	&::before {
 		content: "▼";
 		margin-right: 2px;
@@ -230,8 +251,6 @@ body {
 		margin: 0 4px;
 		padding: 2px 8px;
 		border: 1px solid $color-gray;
-		border-radius: 2px;
-		cursor: default;
 		
 		&:focus {
 			outline: none;
@@ -265,14 +284,14 @@ body {
 }
 
 .navigation-bar {
-	@include flexbox(space-between, center, row);
+	@include flexbox(space-between, stretch, row);
 	@include flex(1, 1, 100%);
-	padding: 0 8px;
+	padding: 8px;
 	
 	> div {
 	
+		@include flexbox(center, center);
 		@include flex(1, 1, 100%);
-		text-align: center;
 		
 		&:first-child, &:last-child {
 			@include flex(1, 0, 20%)
@@ -281,3 +300,23 @@ body {
 	}
 	
 }
+
+
+/**
+ * Buttons & Forms
+ */
+
+.button {
+	color: $color-blue;
+	fill: $color-blue;
+	background: $color-white;	
+	transition: $anim-fast;
+	border-radius: $border-radius;
+	cursor: pointer;
+
+	&:hover {
+		background: $color-blue-lightest;
+	}
+
+}
+

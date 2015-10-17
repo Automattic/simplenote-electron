@@ -19,9 +19,9 @@ module.exports = React.createClass({
   render: function() {
     return (
       <div className="navigation-bar">
-        <div tabIndex="-1" onClick={this.onNavigateBack}>Back</div>
+        <div className="button" tabIndex="-1" onClick={this.onNavigateBack}>Back</div>
         <div>{this.props.title}</div>
-        <div tabIndex="-1" onClick={this.onAccessory}>Acc.</div>
+        <div className="button" tabIndex="-1" onClick={this.onAccessory}>Acc.</div>
       </div>
     );
   }

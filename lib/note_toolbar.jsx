@@ -41,16 +41,16 @@ module.exports = React.createClass({
   render: function() {
     return (
       <div className="toolbar detail-toolbar">
-        <div ref="info" tabIndex="-1" className="infoButton">Info</div>
-        <div ref="revisions" tabIndex="-1" className="revisionsButton" onClick={this.withNote(this.props.onRevisions)}>Revisions</div>
+        <div ref="info" tabIndex="-1" className="button infoButton">Info</div>
+        <div ref="revisions" tabIndex="-1" className="button revisionsButton" onClick={this.withNote(this.props.onRevisions)}>Revisions</div>
         { this.isNotTrashed(function() {
           return (
-            <div ref="trash" tabIndex="-1" className="trashButton" onClick={this.withNote(this.props.onTrashNote)}>Delete</div>
+            <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onTrashNote)}>Delete</div>
           )
         })}
         { this.isTrashed(function() {
           return (
-            <div ref="trash" tabIndex="-1" className="trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
+            <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
           )
         })}
       </div>
