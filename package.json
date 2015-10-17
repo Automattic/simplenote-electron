@@ -4,7 +4,8 @@
   "description": "The Simplenote app running as an electron app.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "`npm bin`/gulp"
   },
   "author": "",
   "license": "ISC",
