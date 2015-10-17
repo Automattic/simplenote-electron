@@ -43,7 +43,6 @@ module.exports = React.createClass({
   },
 
   onViewRevision: function(revision) {
-    console.log("Preview", revision);
     this.setState({revision: revision});
   },
 
