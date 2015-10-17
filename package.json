@@ -24,6 +24,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "babelify": "^6.3.0",
     "browserify-middleware": "^7.0.0",
     "express": "^4.13.3",
     "node-sass-middleware": "^0.9.6",

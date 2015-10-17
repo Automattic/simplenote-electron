@@ -25,7 +25,7 @@ try {
 
 var js = function(name) {
   return function() {
-    return browserify('./lib/' + name, {transform: ['reactify'], debug: true})
+    return browserify('./lib/' + name, {transform: ['reactify', 'babelify'], debug: true})
       .transform({global: true}, "uglifyify")
       .bundle()
       .pipe(source(name))

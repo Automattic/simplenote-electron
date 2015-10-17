@@ -27,7 +27,7 @@ app.set('view engine', 'jade');
 app.set('views', process.cwd() + '/views');
 
 // build app.js using browserify
-app.get('/app.js', browserify('./lib/app.js', {transform: ['reactify']}));
+app.get('/app.js', browserify('./lib/app.js', {transform: ['reactify', 'babelify']}));
 
 // compile sass files
 app.use(sass({

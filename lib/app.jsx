@@ -88,10 +88,8 @@ module.exports = React.createClass({
   filterNotes: function() {
     var query = this.state.filter,
         trash = this.state.showTrash,
-        notes = this.state.notes || [];
-        filter = function(note) {
-          return trash || !note.data.deleted;
-        };
+        notes = this.state.notes || [],
+        filter = (note) => { return trash || !note.data.deleted };
 
     if (query) {
       var reg = new RegExp(query, 'gi');
