@@ -39,7 +39,6 @@ app.use(sass({
 // serve app html
 app.get('/', function(req, res) {
   var settings = config();
-  console.log("Settings", settings);
   settings.build = 'dev';
   settings.resource_version = 'dev-' + (new Date()).getTime();
   settings.version = package.version;
