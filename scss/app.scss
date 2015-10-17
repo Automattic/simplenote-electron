@@ -1,6 +1,17 @@
 @import "utils";
 
+
+/**
+ * Variables
+ */
+
 $font-stack: "Source Sans Pro", sans-serif;
+$color-gray-lightest: #f9f9f9;
+$color-gray: #eee;
+$color-black: #000;
+$color-white: #fff;
+$color-blue-light: #eef3f8;
+
 
 /**
  * General
@@ -28,7 +39,7 @@ body {
 .source-list {
 	min-width: 120px;
 	@include flex(0, 1, 300px);
-	border-right: 1px solid #E0E0E0;
+	border-right: 1px solid $color-gray;
 	cursor: default;
 }
 
@@ -85,7 +96,7 @@ body {
 
 .toolbar, .toolbar-compact {
 	@include flex(0, 0, 44px);
-	border-bottom: 1px solid #E0E0E0;
+	border-bottom: 1px solid $color-gray;
 	position: relative;
 }
 
@@ -117,15 +128,15 @@ body {
 	border: none;
 	font: 14px/1.5 $font-stack;
 	color: #666;
-	background: #F2F2F2;
+	background: $color-gray-lightest;
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
 	
 	&:focus {
-		color: #000;
+		color: $color-black;
 		outline: none;
-		background: #FFF;
+		background: $color-white;
 	}	
 
 }
@@ -218,7 +229,7 @@ body {
 	> div {
 		margin: 0 4px;
 		padding: 2px 8px;
-		border: 1px solid #CCC;
+		border: 1px solid $color-gray;
 		border-radius: 2px;
 		cursor: default;
 		
@@ -242,7 +253,7 @@ body {
 	input {
 		@include flex(1, 1);
 		border-radius: 50px;
-		border: 1px solid #CCC;
+		border: 1px solid $color-gray;
 		padding: 4px 8px;
 		
 		&:focus {
