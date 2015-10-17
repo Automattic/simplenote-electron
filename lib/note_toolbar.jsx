@@ -1,5 +1,9 @@
 var React = require('react');
 
+const InfoIcon = require( './icons/info.jsx' );
+const RevisionsIcon = require( './icons/revisions.jsx' );
+const TrashIcon = require( './icons/trash.jsx' );
+
 module.exports = React.createClass({
 
   getDefaultProps: function() {
@@ -41,21 +45,23 @@ module.exports = React.createClass({
 
   render: function() {
     return (
-      <div className="toolbar detail-toolbar">
-        <div ref="info" tabIndex="-1" className="button infoButton">Info</div>
-        <div ref="revisions" tabIndex="-1" className="button revisionsButton" onClick={this.withNote(this.props.onRevisions)}>Revisions</div>
-        { this.isNotTrashed(function() {
-          return (
-            <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onTrashNote)}>Delete</div>
-          )
-        })}
-        { this.isTrashed(function() {
-          return (
-            <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
-          )
-        })}
-        <div className="space" style={{"flex": "1 1 auto", "visibility": "hidden"}}></div>
-        <div ref="logout" className="button signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
+      <div className="toolbar">
+        <div className="detail-toolbar">
+          <div ref="info" tabIndex="-1" className="button infoButton"><InfoIcon /></div>
+          <div ref="revisions" tabIndex="-1" className="button revisionsButton" onClick={this.withNote(this.props.onRevisions)}><RevisionsIcon /></div>
+          { this.isNotTrashed(function() {
+            return (
+              <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onTrashNote)}><TrashIcon /></div>
+            )
+          })}
+          { this.isTrashed(function() {
+            return (
+              <div ref="trash" tabIndex="-1" className="button trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
+            )
+          })}
+          <div className="space" style={{"flex": "1 1 auto", "visibility": "hidden"}}></div>
+          <div ref="logout" className="button signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
+        </div>
       </div>
     )
   }
