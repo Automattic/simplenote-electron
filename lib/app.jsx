@@ -116,7 +116,6 @@ module.exports = React.createClass({
   },
 
   onUpdateTags: function(note, tags) {
-    console.log("Updating tags");
     if (note) {
       note.data.tags = tags;
       this.props.notes.update(note.id, note.data);
