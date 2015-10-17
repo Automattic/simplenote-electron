@@ -55,7 +55,7 @@ module.exports = React.createClass({
           )
         })}
         <div className="space" style={{"flex": "1 1 auto", "visibility": "hidden"}}></div>
-        <div ref="logout" className="signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
+        <div ref="logout" className="button signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
       </div>
     )
   }

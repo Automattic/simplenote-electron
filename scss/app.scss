@@ -217,6 +217,7 @@ body {
 		border: none;
 		outline: none;
 		font: 14px/1.5 $font-stack;
+		color: $color-gray-dark;
 	}
 }
 
@@ -293,8 +294,9 @@ body {
 		@include flexbox(center, center);
 		@include flex(1, 1, 100%);
 		
-		&:first-child, &:last-child {
-			@include flex(1, 0, 20%)
+		&:first-child,
+		&:last-child {
+			@include flex(1, 0, 28px)
 		}
 	
 	}
