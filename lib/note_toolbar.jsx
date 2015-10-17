@@ -12,7 +12,8 @@ module.exports = React.createClass({
       revisions: null,
       onTrashNote: function() {},
       onRestoreNote: function() {},
-      onRevisions: function() {}
+      onRevisions: function() {},
+      onSignOut: function() {}
     };
   },
 
@@ -53,6 +54,8 @@ module.exports = React.createClass({
             <div ref="trash" tabIndex="-1" className="trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
           )
         })}
+        <div className="space" style={{"flex": "1 1 auto", "visibility": "hidden"}}></div>
+        <div ref="logout" className="signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
       </div>
     )
   }

@@ -4,15 +4,24 @@ var NoteEditor    = require('./note_editor.jsx');
 var TagMenu       = require('./tag_menu.jsx');
 var SearchField   = require('./search_field.jsx');
 var NavigationBar = require('./navigation_bar.jsx');
+var Auth          = require('./auth.jsx');
 
 module.exports = React.createClass({
+
+  getDefaultProps: function() {
+    return {
+      onAuthenticate: () => {},
+      onSignOut: () => {}
+    };
+  },
 
   getInitialState: function() {
     return {
       notes: [],
       tags: [],
       showTrash: false,
-      listTitle: "All Notes"
+      listTitle: "All Notes",
+      authorized: this.props.client.isAuthorized()
     };
   },
 
@@ -27,8 +36,20 @@ module.exports = React.createClass({
       .on('index', this.onTagsIndex)
       .on('update', this.onTagsIndex);
 
+    this.props.client
+      .on('authorized', this.onAuthChanged)
+      .on('unauthorized', this.onAuthChanged);
+
     this.onNotesIndex();
     
+  },
+
+  onAuthChanged: function() {
+    var authorized = this.props.client.isAuthorized();
+    this.setState({authorized: authorized})
+    if (!authorized) {
+      this.setState({notes: [], tags: []});
+    }
   },
 
   onSelectNote: function(note) {
@@ -145,37 +166,55 @@ module.exports = React.createClass({
 
   _loadRevisions: function(e, revisions) {
     if (e) return console.warn("Failed to load revisions", e);
-    console.log("Found revisions", revisions);
     this.setState({revisions: revisions});
+  },
+
+  authorized: function(fn) {
+    if (this.state.authorized) return fn();
+  },
+
+  unauthorized: function(fn) {
+    if (!this.state.authorized) return fn();
   },
 
   render: function() {
 
     var notes = this.filterNotes();
+    var tags = this.tag
     var note = this.state.note;
     var revisions = this.state.revisions;
 
     return (
-      <div className="simplenote-app">
-        <div className="source-list">
-          <div className="toolbar">
-            <NavigationBar title={this.state.listTitle} />
-          </div>
-          <div className="toolbar-compact">
-            <SearchField onSearch={this.onSearch} />
-          </div>
-          <div className="panel">
-            <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
-          </div>
-        </div>
-        <NoteEditor
-          note={note}
-          revisions={this.state.revisions}
-          onUpdateContent={this.onUpdateContent}
-          onUpdateTags={this.onUpdateTags}
-          onTrashNote={this.onTrashNote}
-          onRestoreNote={this.onRestoreNote}
-          onRevisions={this.onRevisions} />
+      <div className="app">
+        { this.authorized( () => {
+          return (
+            <div className="simplenote-app">
+              <div className="source-list">
+                <div className="toolbar">
+                  <NavigationBar title={this.state.listTitle} />
+                </div>
+                <div className="toolbar-compact">
+                  <SearchField onSearch={this.onSearch} />
+                </div>
+                <div className="panel">
+                  <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
+                </div>
+              </div>
+              <NoteEditor
+                note={note}
+                revisions={this.state.revisions}
+                onSignOut={this.props.onSignOut}
+                onUpdateContent={this.onUpdateContent}
+                onUpdateTags={this.onUpdateTags}
+                onTrashNote={this.onTrashNote}
+                onRestoreNote={this.onRestoreNote}
+                onRevisions={this.onRevisions} />
+            </div>
+          )
+        }) }
+        { this.unauthorized( () => {
+          return <Auth onAuthenticate={this.props.onAuthenticate} />
+        })}
       </div>
     )
   }
