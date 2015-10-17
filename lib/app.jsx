@@ -32,7 +32,7 @@ module.exports = React.createClass({
   },
 
   onSelectNote: function(note) {
-    this.setState({note: note});
+    this.setState({note: note, revisions: null});
   },
 
   onNotesIndex: function() {
@@ -142,11 +142,21 @@ module.exports = React.createClass({
     }
   },
 
+  onRevisions: function(note) {
+    this.props.notes.getRevisions(note.id, this._loadRevisions);
+  },
+
+  _loadRevisions: function(e, revisions) {
+    if (e) return console.warn("Failed to load revisions", e);
+    console.log("Found revisions", revisions);
+    this.setState({revisions: revisions});
+  },
+
   render: function() {
 
     var notes = this.filterNotes();
     var note = this.state.note;
-    var self = this;
+    var revisions = this.state.revisions;
 
     return (
       <div className="simplenote-app">
@@ -161,7 +171,14 @@ module.exports = React.createClass({
             <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
           </div>
         </div>
-        <NoteEditor note={note} onUpdateContent={this.onUpdateContent} onUpdateTags={this.onUpdateTags} onTrashNote={this.onTrashNote} onRestoreNote={this.onRestoreNote} />
+        <NoteEditor
+          note={note}
+          revisions={this.state.revisions}
+          onUpdateContent={this.onUpdateContent}
+          onUpdateTags={this.onUpdateTags}
+          onTrashNote={this.onTrashNote}
+          onRestoreNote={this.onRestoreNote}
+          onRevisions={this.onRevisions} />
       </div>
     )
   }

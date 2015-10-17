@@ -2,6 +2,7 @@ var React            = require('react');
 var NoteDetail       = require('./note_detail.jsx');
 var TagField         = require('./tag_field.jsx');
 var NoteToolbar      = require('./note_toolbar.jsx');
+var RevisionSelector = require('./revision_selector.jsx');
 
 
 module.exports = React.createClass({
@@ -13,36 +14,22 @@ module.exports = React.createClass({
           tags: []
         }
       },
+      revisions: null,
       onUpdateContent: function() {},
       onUpdateTags: function() {},
       onTrashNote: function() {},
-      onRestoreNote: function() {}
+      onRestoreNote: function() {},
+      onRevisions: function() {}
     };
   },
 
-  onTrash: function() {
-    
+  componentWillReceiveProps: function() {
+    this.setState({revision: null});
   },
 
-  onRestore: function() {
-    
-  },
-
-  onChangeContent: function() {
-    
-  },
-
-  isTrashed: function(fn) {
-    var note = this.props.note;
-    if (note && note.deleted) {
-      return fn.call(this, note);
-    }
-  },
-
-  isNotTrashed: function(fn) {
-    var note = this.props.note;
-    if (note && !note.deleted) {
-      return fn.call(this, note);
+  getInitialState: function() {
+    return {
+      revision: null
     }
   },
 
@@ -54,7 +41,19 @@ module.exports = React.createClass({
     };
   },
 
+  onViewRevision: function(revision) {
+    console.log("Preview", revision);
+    this.setState({revision: revision});
+  },
+
+  onSelectRevision: function(revision) {
+    console.log("Accept revision: ", revision);
+  },
+
   render: function() {
+    var revisions = this.props.revisions;
+    var revision = this.state.revision;
+    var note = this.state.revision ? this.state.revision : this.props.note;
     return (
       <div className="detail">
         <NoteToolbar
@@ -63,12 +62,33 @@ module.exports = React.createClass({
           onRestoreNote={this.props.onRestoreNote}
           onRevisions={this.props.onRevisions} />
         <div className="toolbar-compact">
-          <TagField ref="tags" tags={this.props.note.data.tags} onUpdateTags={this.withNote(this.props.onUpdateTags)} />
+          <TagField ref="tags"
+            tags={this.props.note.data.tags}
+            onUpdateTags={this.withNote(this.props.onUpdateTags)} />
         </div>
         <div className="panel">
-          <NoteDetail ref="detail" note={this.props.note} onChangeContent={this.withNote(this.props.onUpdateContent)} />
+          <NoteDetail ref="detail"
+            note={note}
+            onChangeContent={this.withNote(this.props.onUpdateContent)} />
         </div>
+        {when(revisions, function() {
+          return (
+            <RevisionSelector
+              revisions={revisions}
+              onViewRevision={this.onViewRevision}
+              onSelectRevision={this.onSelectRevision} />
+          )
+        }, this)}
       </div>
     )
   }
 });
+
+function when(test, func, ctx) {
+  if (typeof test == 'function') {
+    test = test();
+  }
+  if (test) {
+    return func.apply(ctx);
+  }
+}
