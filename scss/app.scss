@@ -1,267 +1,283 @@
 @import "utils";
 
+
+/**
+ * Variables
+ */
+
+$font-stack: "Source Sans Pro", sans-serif;
+$color-gray-lightest: #f9f9f9;
+$color-gray: #eee;
+$color-black: #000;
+$color-white: #fff;
+$color-blue-light: #eef3f8;
+
+
+/**
+ * General
+ */
+
 body {
-  margin: 0;
-  font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
-  overflow: hidden;
+	margin: 0;
+	font: 14px/1.5 $font-stack;
+	overflow: hidden;
 }
 
 .simplenote-app {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  @include flexbox(flex-start, stretch);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	@include flexbox(flex-start, stretch);
 }
 
 .source-list, .detail {
-  @include flexbox(flex-start, stretch, column);
+	@include flexbox(flex-start, stretch, column);
 }
 
 .source-list {
-  min-width: 120px;
-  @include flex(0, 1, 300px);
-  border-right: 1px solid #E0E0E0;
-  cursor: default;
+	min-width: 120px;
+	@include flex(0, 1, 300px);
+	border-right: 1px solid $color-gray;
+	cursor: default;
 }
 
 .note-list {
-  &:focus {
-    outline: none;
-  }
-
+	&:focus {
+		outline: none;
+	}
 }
 
 .source-list-item {
-  padding: 8px 24px 8px 12px;
-  @include flexbox(flex-start, center, row);
-
-  > div:first-child {
-    @include flex(0,0,18px);
-    height: 18px;
-    width: 18px;
-    margin-right: 12px;
-  }
-
-  &.pinned {
-    > div:first-child {
-      border-radius: 18px;
-      background: #0F0;
-    }
-  }
-
-  &.selected {
-    background: hsla(140, 20%, 95%, 1.0);
-    
-    :focus & {
-      background: hsla(140, 75%, 85%, 1.0);
-    }
-  }
+	padding: 8px 24px 8px 12px;
+	@include flexbox(flex-start, center, row);
+	
+	> div:first-child {
+		@include flex(0,0,18px);
+		height: 18px;
+		width: 18px;
+		margin-right: 12px;
+	}
+	
+	&.pinned {
+		> div:first-child {
+			border-radius: 18px;
+			background: #0F0;
+		}
+	}
+	
+	&.selected {
+		background: hsla(140, 20%, 95%, 1.0);
+		
+		:focus & {
+			background: hsla(140, 75%, 85%, 1.0);
+		}
+	}
 }
 
 .note-preview {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .detail {
-  @include flex(1, 0)
+	@include flex(1, 0)
 }
 
 .title, .preview {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .preview {
-  color: #999;
+	color: #999;
 }
 
 .toolbar, .toolbar-compact {
-  @include flex(0, 0, 44px);
-  border-bottom: 1px solid #E0E0E0;
-  position: relative;
+	@include flex(0, 0, 44px);
+	border-bottom: 1px solid $color-gray;
+	position: relative;
 }
 
 .source-list {
-  .toolbar {
-    @include flexbox();
-  }
+	.toolbar {
+		@include flexbox();
+	}
 }
 
 .toolbar-compact {
-  @include flex(0, 0, 36px);
-  height: 36px;
+	@include flex(0, 0, 36px);
+	height: 36px;
 }
 
 .editor-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 }
 
 .editor {
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  padding: 24px 48px;
-  border: none;
-  font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
-  color: #666;
-  background: #F2F2F2;
-  transition: 200ms;
-  -webkit-transition: 200ms;
-  resize: none;
-
-  &:focus {
-    color: #000;
-    outline: none;
-    background: #FFF;
-  }
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 24px 48px;
+	border: none;
+	font: 14px/1.5 $font-stack;
+	color: #666;
+	background: $color-gray-lightest;
+	transition: 200ms;
+	-webkit-transition: 200ms;
+	resize: none;
+	
+	&:focus {
+		color: $color-black;
+		outline: none;
+		background: $color-white;
+	}	
 
 }
 
 .panel {
-  @include flex(1, 0);
-  position: relative;
+	@include flex(1, 0);
+	position: relative;
 }
 
 .note-list {
-  position: absolute;
-  display: block;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: auto;
 }
 
 .tag-editor {
-  height: 100%;
-  padding: 0 8px 0 4px;
-  @include flexbox(flex-start, center);
-  overflow: auto;
-
-  &:focus {
-    outline: none;
-  }
+	height: 100%;
+	padding: 0 8px 0 4px;
+	@include flexbox(flex-start, center);
+	overflow: auto;
+	
+	&:focus {
+		outline: none;
+	}
 
 }
 
 .tag-chip {
-  margin: 2px;
-  padding: 1px 4px;
-  cursor: default;
-  color: hsla(150, 50%, 50%, 1);
-  border-radius: 2px;
-  white-space: nowrap;
-  @include flex(0, 0);
-
-  &.selected {
-    border: 1px solid hsla(150, 0%, 90%, 1);
-    padding: 0 3px;
-    background: hsla(150, 0%, 95%, 1);
-  }
-
+	margin: 2px;
+	padding: 1px 4px;
+	cursor: default;
+	color: hsla(150, 50%, 50%, 1);
+	border-radius: 2px;
+	white-space: nowrap;
+	@include flex(0, 0);
+	
+	&.selected {
+		border: 1px solid hsla(150, 0%, 90%, 1);
+		padding: 0 3px;
+		background: hsla(150, 0%, 95%, 1);
+	}
+	
 }
 
 .tag-field {
-  margin: 4px 6px;
-  @include flex(1, 0);
-
-  input {
-    width: 100%;
-    min-width: 140px;
-    border: none;
-    outline: none;
-    font: 14px/1.5 helvetica-neue, helvetica, arial, sans-serif;
-  }
+	margin: 4px 6px;
+	@include flex(1, 0);
+	
+	input {
+		width: 100%;
+		min-width: 140px;
+		border: none;
+		outline: none;
+		font: 14px/1.5 $font-stack;
+	}
 }
 
 .tag-menu {
-  padding: 0 8px;
-  height: 100%;
-  @include flexbox(flex-start, center);
+	padding: 0 8px;
+	height: 100%;
+	@include flexbox(flex-start, center);
 }
 
 .tag-menu-label {
-
-  &::before {
-    content: "▼";
-    margin-right: 2px;
-    display: inline-block;
-    font-size: 10px;
-    vertical-align: middle;
-    width: 18px;
-    text-align: center;
-  }
-
+	
+	&::before {
+		content: "▼";
+		margin-right: 2px;
+		display: inline-block;
+		font-size: 10px;
+		vertical-align: middle;
+		width: 18px;
+		text-align: center;
+	}
+	
 }
 
 .tag-menu-options {
   
 }
 
-
 .detail-toolbar {
-  padding: 0 8px;
-  @include flexbox(flex-start, center, row);
-
-  > div {
-    margin: 0 4px;
-    padding: 2px 8px;
-    border: 1px solid #CCC;
-    border-radius: 2px;
-    cursor: default;
-
-    &:focus {
-      outline: none;
-    }
-
-    &:active {
-      background: #DDD;
-    }
-
-  }
+	padding: 0 8px;
+	@include flexbox(flex-start, center, row);
+	
+	> div {
+		margin: 0 4px;
+		padding: 2px 8px;
+		border: 1px solid $color-gray;
+		border-radius: 2px;
+		cursor: default;
+		
+		&:focus {
+			outline: none;
+		}
+		
+		&:active {
+			background: #DDD;
+		}
+	
+	}
 
 }
 
 .search-field {
-  height: 100%;
-  @include flexbox(space-between, center);
-  padding: 0 8px;
-  
-  input {
-    @include flex(1, 1);
-    border-radius: 50px;
-    border: 1px solid #CCC;
-    padding: 4px 8px;
+	height: 100%;
+	@include flexbox(space-between, center);
+	padding: 0 8px;
+	
+	input {
+		@include flex(1, 1);
+		border-radius: 50px;
+		border: 1px solid $color-gray;
+		padding: 4px 8px;
+		
+		&:focus {
+			outline: none; 
+		}
+		
+	}
 
-    &:focus {
-     outline: none; 
-    }
-
-  }
 }
 
 .navigation-bar {
-  @include flexbox(space-between, center, row);
-  @include flex(1, 1, 100%);
-  padding: 0 8px;
-
-  > div {
-
-    @include flex(1, 1, 100%);
-    text-align: center;
-
-    &:first-child, &:last-child {
-      @include flex(1, 0, 20%)
-    }
-
-  }
-
+	@include flexbox(space-between, center, row);
+	@include flex(1, 1, 100%);
+	padding: 0 8px;
+	
+	> div {
+	
+		@include flex(1, 1, 100%);
+		text-align: center;
+		
+		&:first-child, &:last-child {
+			@include flex(1, 0, 20%)
+		}
+	
+	}
+	
 }
