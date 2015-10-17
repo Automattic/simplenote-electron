@@ -1,6 +1,8 @@
-var React      = require('react');
-var NoteDetail = require('./note_detail.jsx');
-var TagField   = require('./tag_field.jsx');
+var React            = require('react');
+var NoteDetail       = require('./note_detail.jsx');
+var TagField         = require('./tag_field.jsx');
+var NoteToolbar      = require('./note_toolbar.jsx');
+
 
 module.exports = React.createClass({
 
@@ -55,20 +57,11 @@ module.exports = React.createClass({
   render: function() {
     return (
       <div className="detail">
-        <div className="toolbar detail-toolbar">
-          <div ref="info" tabIndex="-1" className="infoButton">Info</div>
-          <div ref="revisions" tabIndex="-1" className="revisionsButton">Revisions</div>
-          { this.isNotTrashed(function() {
-            return (
-              <div ref="trash" tabIndex="-1" className="trashButton" onClick={this.withNote(this.props.onTrashNote)}>Delete</div>
-            )
-          })}
-          { this.isTrashed(function() {
-            return (
-              <div ref="trash" tabIndex="-1" className="trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
-            )
-          })}
-        </div>
+        <NoteToolbar
+          note={this.props.note}
+          onTrashNote={this.props.onTrashNote}
+          onRestoreNote={this.props.onRestoreNote}
+          onRevisions={this.props.onRevisions} />
         <div className="toolbar-compact">
           <TagField ref="tags" tags={this.props.note.data.tags} onUpdateTags={this.withNote(this.props.onUpdateTags)} />
         </div>
