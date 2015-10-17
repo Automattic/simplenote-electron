@@ -17,10 +17,16 @@ module.exports = React.createClass({
 
   render: function() {
     return (
-      <div>
-        <input ref="username" type="text" />
-        <input ref="password" type="password" />
-        <div onClick={this.onSignIn}>Sign In</div>
+      <div className="login-form">
+        <div>
+          <input ref="username" type="text" />
+        </div>
+        <div>
+          <input ref="password" type="password" />
+        </div>
+        <div>
+          <div className="button" onClick={this.onSignIn}>Sign In</div>
+        </div>
       </div>
     )
   }

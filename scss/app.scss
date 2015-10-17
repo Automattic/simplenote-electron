@@ -334,3 +334,35 @@ body {
 
 }
 
+/**
+ * Sign In/Sign Up
+ */
+
+.app {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	@include flexbox();
+}
+
+.login-form {
+
+	> div {
+		@include flex(1 0 auto);
+	}
+
+	input {
+		max-width: 100%;
+	}
+
+	> div:last-child {
+		@include flexbox(flex-end);
+		margin-top: 8px;
+	}
+
+	.button {
+		padding: 4px 8px;
+	}
+}
