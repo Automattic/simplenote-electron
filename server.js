@@ -1,4 +1,6 @@
 var express = require('express'),
+	favicon = require( 'serve-favicon' ),
+	path = require( 'path' ),
     browserify = require('browserify-middleware'),
     sass = require('node-sass-middleware'),
     app = express(),
@@ -35,6 +37,9 @@ app.use(sass({
   debug:true,
   response:true
 }));
+
+// favicon
+app.use( favicon( path.join( __dirname, '.', 'public_html', 'favicon.ico' ) ) );
 
 // serve app html
 app.get('/', function(req, res) {
