@@ -464,6 +464,7 @@ input[type="password"] {
 	.detail,
 	.source-list {
 		transition: $anim-fast;
+		transform: translateZ(0);
 	}
 
 	.detail {
