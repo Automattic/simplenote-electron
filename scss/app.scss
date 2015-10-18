@@ -124,6 +124,11 @@ body {
 .source-list {
 	.toolbar {
 		@include flexbox(0, stretch);
+		overflow: hidden;
+	}
+	
+	.toolbar-compact {
+		overflow: hidden;
 	}
 }
 
@@ -458,7 +463,7 @@ input[type="password"] {
 
 	.detail,
 	.source-list {
-		transition: $anim;
+		transition: $anim-fast;
 	}
 
 	.detail {
@@ -466,7 +471,7 @@ input[type="password"] {
 	}
 
 	.source-list {
-		@include flex(0, 1, 100%);
+		@include flex(0, 0, 100%);
 	}
 
 	.note-open {
@@ -476,7 +481,8 @@ input[type="password"] {
 		}
 	
 		.source-list {
-			display: none;
+			min-width: 0;
+			@include flex(0, 0, 0%);
 		}
 		
 	}
