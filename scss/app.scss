@@ -320,13 +320,21 @@ body {
  * Buttons & Forms
  */
 
-.button {
+.button,
+.textbutton {
 	color: $color-blue;
 	fill: $color-blue;
-	background: $color-white;	
 	transition: $anim-fast;
-	border-radius: $border-radius;
 	cursor: pointer;
+}
+
+.textbutton:hover {
+	text-decoration: underline;
+}
+
+.button {
+	background: $color-white;	
+	border-radius: $border-radius;
 
 	&:hover {
 		background: $color-blue-lightest;
