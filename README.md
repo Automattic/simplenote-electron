@@ -24,6 +24,8 @@ module.exports = function() {
 
 ## Electron
 
+Install electron globally `npm install -g electron-prebuilt`, then:
+
 1. `gulp`
 2. `electron .`
 
