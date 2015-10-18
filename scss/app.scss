@@ -198,17 +198,17 @@ body {
 
 .tag-chip {
 	margin: 2px;
-	padding: 1px 4px;
+	padding: 1px 10px;
 	cursor: default;
-	color: hsla(150, 50%, 50%, 1);
-	border-radius: 2px;
+	border-radius: 14px;
 	white-space: nowrap;
+	background: $color-gray;
+	color: $color-gray-medium;
 	@include flex(0, 0);
 	
 	&.selected {
-		border: 1px solid hsla(150, 0%, 90%, 1);
-		padding: 0 3px;
-		background: hsla(150, 0%, 95%, 1);
+		background: $color-gray-medium;
+		color: $color-white;
 	}
 	
 }
