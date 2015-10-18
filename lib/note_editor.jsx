@@ -55,6 +55,7 @@ module.exports = React.createClass({
     var revisions = this.props.revisions;
     var revision = this.state.revision;
     var note = this.state.revision ? this.state.revision : this.props.note;
+    var tags = note && note.data.tags ? note.data.tags : [];
     return (
       <div className="detail">
         <NoteToolbar
@@ -66,7 +67,7 @@ module.exports = React.createClass({
           onCloseNote={this.props.onCloseNote} />
         <div className="toolbar-compact">
           <TagField ref="tags"
-            tags={this.props.note.data.tags}
+            tags={tags}
             onUpdateTags={this.withNote(this.props.onUpdateTags)} />
         </div>
         <div className="panel">
