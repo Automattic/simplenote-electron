@@ -124,6 +124,12 @@ body {
 	}
 }
 
+.detail {
+	.toolbar {
+		@include flexbox(0, stretch);
+	}
+}
+
 .toolbar-compact {
 	@include flex(0, 0, 36px);
 	height: 36px;
@@ -217,6 +223,7 @@ body {
 		border: none;
 		outline: none;
 		font: 14px/1.5 $font-stack;
+		color: $color-gray-dark;
 	}
 }
 
@@ -244,13 +251,15 @@ body {
 }
 
 .detail-toolbar {
-	padding: 0 8px;
-	@include flexbox(flex-start, center, row);
+	@include flexbox(flex-start, stretch, row);
+	@include flex(1, 1, 100%);
+	padding: 8px;
 	
 	> div {
-		margin: 0 4px;
-		padding: 2px 8px;
-		border: 1px solid $color-gray;
+		margin: 0 8px;
+		width: 28px;
+
+		@include flexbox(center, center);
 		
 		&:focus {
 			outline: none;
@@ -258,6 +267,10 @@ body {
 		
 		&:active {
 			background: #DDD;
+		}
+
+		&:last-child {
+			width: auto;
 		}
 	
 	}
@@ -293,8 +306,9 @@ body {
 		@include flexbox(center, center);
 		@include flex(1, 1, 100%);
 		
-		&:first-child, &:last-child {
-			@include flex(1, 0, 20%)
+		&:first-child,
+		&:last-child {
+			@include flex(1, 0, 28px)
 		}
 	
 	}
