@@ -9,15 +9,16 @@ $font-stack: "Source Sans Pro", sans-serif;
 
 $color-gray-lightest: #f9f9f9;
 $color-gray: #eee;
-$color-gray-medium: #666;
-$color-gray-dark: #333;
+$color-gray-medium: #999;
+$color-gray-dark: #666;
+$color-gray-darkest: #333;
 
 $color-black: #000;
 $color-white: #fff;
 
 $color-blue-lightest: #eef3f8;
 $color-blue-light: #e5ebf0;
-$color-blue: #6da3d3;
+$color-blue: #6da3d3;	/* New blue: #4895d9 */
 
 $anim-fast: all .1s linear;
 
@@ -46,6 +47,11 @@ body {
 .source-list,
 .detail {
 	@include flexbox(flex-start, stretch, column);
+}
+
+.detail {
+	overflow: hidden;
+	@include flex(1, 1)
 }
 
 .source-list {
@@ -94,10 +100,6 @@ body {
 
 .note-preview {
 	overflow: hidden;
-}
-
-.detail {
-	@include flex(1, 0)
 }
 
 .title,
@@ -151,7 +153,7 @@ body {
 	padding: 24px 48px;
 	border: none;
 	font: 14px/1.5 $font-stack;
-	color: $color-gray-medium;
+	color: $color-gray-dark;
 	background: $color-gray-lightest;
 	transition: 200ms;
 	-webkit-transition: 200ms;
@@ -162,7 +164,7 @@ body {
 	}
 	
 	&:focus {
-		color: $color-gray-dark;
+		color: $color-gray-darkest;
 		outline: none;
 		background: $color-white;
 	}	
@@ -188,10 +190,24 @@ body {
 	height: 100%;
 	padding: 0 8px 0 4px;
 	@include flexbox(flex-start, center);
-	overflow: auto;
+	overflow-x: scroll;
+	overflow-y: hidden;
 	
 	&:focus {
 		outline: none;
+	}
+
+	&::-webkit-scrollbar {
+		width: 2px;
+		height: 2px;
+	}
+	
+	&::-webkit-scrollbar-track {
+		border-radius: 10px;
+	}
+	
+	&::-webkit-scrollbar-thumb {
+		background: $color-gray-medium;
 	}
 
 }
@@ -203,11 +219,11 @@ body {
 	border-radius: 14px;
 	white-space: nowrap;
 	background: $color-gray;
-	color: $color-gray-medium;
+	color: $color-gray-dark;
 	@include flex(0, 0);
 	
 	&.selected {
-		background: $color-gray-medium;
+		background: $color-gray-dark;
 		color: $color-white;
 	}
 	
@@ -223,7 +239,7 @@ body {
 		border: none;
 		outline: none;
 		font: 14px/1.5 $font-stack;
-		color: $color-gray-dark;
+		color: $color-gray-darkest;
 	}
 }
 
@@ -322,7 +338,6 @@ body {
 
 input[type="text"],
 input[type="password"] {
-	padding: 4px;
 	font-size: 14px;
 	font-family: $font-stack;
 }
