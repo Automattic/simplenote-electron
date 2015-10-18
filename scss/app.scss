@@ -69,6 +69,7 @@ body {
 }
 
 .source-list-item {
+	cursor: pointer;
 	padding: 8px 24px 8px 12px;
 	@include flexbox(flex-start, center, row);
 	
