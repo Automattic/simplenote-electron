@@ -9,7 +9,6 @@ module.exports = React.createClass({
   },
 
   onSignIn: function() {
-    // TODO: perform login request, needs auth client
     var username = this.refs.username.getDOMNode().value;
     var password = this.refs.password.getDOMNode().value;
     this.props.onAuthenticate(username, password)
