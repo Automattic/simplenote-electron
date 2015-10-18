@@ -21,6 +21,7 @@ $color-blue-light: #e5ebf0;
 $color-blue: #6da3d3;	/* New blue: #4895d9 */
 
 $anim-fast: all .1s linear;
+$anim: all .2s linear;
 
 $border-radius: 2px;
 
@@ -207,7 +208,13 @@ body {
 	}
 	
 	&::-webkit-scrollbar-thumb {
-		background: $color-gray-medium;
+		background: $color-gray;
+	}
+
+	&:hover {
+		&::-webkit-scrollbar-thumb {
+			background: $color-gray-medium;
+		}
 	}
 
 }
@@ -276,7 +283,11 @@ body {
 		width: 28px;
 
 		@include flexbox(center, center);
-		
+
+		&:first-child {
+			margin: 0 8px 0 0;
+		}
+
 		&:focus {
 			outline: none;
 		}
@@ -442,7 +453,12 @@ input[type="password"] {
 @media only screen and ( max-width: 520px ) {
 
 	.detail-toolbar > div.backButton {
-		display: block;
+		display: flex;
+	}
+
+	.detail,
+	.source-list {
+		transition: $anim;
 	}
 
 	.detail {
