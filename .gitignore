@@ -1,4 +1,5 @@
 node_modules/**/*
 build/
+dist/
 config.js
 *.tgz
