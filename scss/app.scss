@@ -34,6 +34,8 @@ body {
 	margin: 0;
 	font: 14px/1.5 $font-stack;
 	overflow: hidden;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
 }
 
 .simplenote-app {
@@ -72,6 +74,7 @@ body {
 	cursor: pointer;
 	padding: 8px 24px 8px 12px;
 	@include flexbox(flex-start, center, row);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	
 	> div:first-child {
 		@include flex(0,0,18px);
@@ -368,6 +371,7 @@ input[type="password"] {
 	fill: $color-blue;
 	transition: $anim-fast;
 	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .textbutton:hover {
@@ -375,7 +379,7 @@ input[type="password"] {
 }
 
 .button {
-	background: $color-white;	
+	background: $color-white;
 	border-radius: $border-radius;
 
 	&:hover {
