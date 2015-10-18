@@ -320,6 +320,13 @@ body {
  * Buttons & Forms
  */
 
+input[type="text"],
+input[type="password"] {
+	padding: 4px;
+	font-size: 14px;
+	font-family: $font-stack;
+}
+
 .button,
 .textbutton {
 	color: $color-blue;
@@ -368,17 +375,31 @@ body {
 
 .login-form {
 
-	> div {
-		@include flex(1 0 auto);
+	@include flexbox(center, center, column);
+
+	svg {
+		fill: $color-blue;
+		margin-bottom: 20px;
 	}
 
+	> div {
+		@include flex(1 0 auto);
+		margin-bottom: -1px;
+	}
+	
 	input {
 		max-width: 100%;
+		min-width: 200px;
+	}
+	
+	input:focus {
+		position: relative;
+		z-index: 1;
 	}
 
 	> div:last-child {
 		@include flexbox(flex-end);
-		margin-top: 8px;
+		margin-top: 20px;
 	}
 
 	.button {
@@ -430,6 +451,3 @@ body {
 	}
 
 }
-
-
-
