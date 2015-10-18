@@ -199,6 +199,7 @@ body {
 	@include flexbox(flex-start, center);
 	overflow-x: scroll;
 	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
 	
 	&:focus {
 		outline: none;
@@ -320,6 +321,7 @@ body {
 		border-radius: 50px;
 		border: 1px solid $color-gray;
 		padding: 4px 8px;
+		-webkit-appearance: none;
 		
 		&:focus {
 			outline: none; 
