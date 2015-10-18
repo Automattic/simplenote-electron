@@ -1,5 +1,6 @@
 var React = require('react');
 
+const BackIcon = require( './icons/back.jsx' );
 const InfoIcon = require( './icons/info.jsx' );
 const RevisionsIcon = require( './icons/revisions.jsx' );
 const TrashIcon = require( './icons/trash.jsx' );
@@ -47,6 +48,7 @@ module.exports = React.createClass({
     return (
       <div className="toolbar">
         <div className="detail-toolbar">
+          <div ref="responsive-back" className="button backButton" tabIndex="-1"><BackIcon /></div>
           <div ref="info" tabIndex="-1" className="button infoButton"><InfoIcon /></div>
           <div ref="revisions" tabIndex="-1" className="button revisionsButton" onClick={this.withNote(this.props.onRevisions)}><RevisionsIcon /></div>
           { this.isNotTrashed(function() {

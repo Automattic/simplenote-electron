@@ -391,6 +391,10 @@ body {
  * Responsive
  */
 
+.detail-toolbar > div.backButton {
+	display: none;
+}
+
 @media only screen and ( max-width: 700px ) {
 
 	.source-list {
@@ -399,6 +403,33 @@ body {
 
 }
 
+@media only screen and ( max-width: 520px ) {
+
+	.detail-toolbar > div.backButton {
+		display: block;
+	}
+
+	.detail {
+		display: none;
+	}
+
+	.source-list {
+		@include flex(0, 1, 100%);
+	}
+
+	.note-open {
+
+		.detail {
+			display: flex;
+		}
+	
+		.source-list {
+			display: none;
+		}
+		
+	}
+
+}
 
 
 

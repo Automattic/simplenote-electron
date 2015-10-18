@@ -5,6 +5,7 @@ var TagMenu       = require('./tag_menu.jsx');
 var SearchField   = require('./search_field.jsx');
 var NavigationBar = require('./navigation_bar.jsx');
 var Auth          = require('./auth.jsx');
+const classNames  = require( 'classnames' );
 
 module.exports = React.createClass({
 
@@ -184,11 +185,16 @@ module.exports = React.createClass({
     var note = this.state.note;
     var revisions = this.state.revisions;
 
+	var classes = classNames( {
+		'simplenote-app': true,
+		'note-open': this.state.note
+	} );
+
     return (
       <div className="app">
         { this.authorized( () => {
           return (
-            <div className="simplenote-app">
+            <div className={classes}>
               <div className="source-list">
                 <div className="toolbar">
                   <NavigationBar title={this.state.listTitle} />
