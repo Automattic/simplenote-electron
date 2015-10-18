@@ -45,6 +45,10 @@ module.exports = React.createClass({
     
   },
 
+  _closeNote: function() {
+    this.setState({note: null});
+  },
+
   onAuthChanged: function() {
     var authorized = this.props.client.isAuthorized();
     this.setState({authorized: authorized})
@@ -214,7 +218,8 @@ module.exports = React.createClass({
                 onUpdateTags={this.onUpdateTags}
                 onTrashNote={this.onTrashNote}
                 onRestoreNote={this.onRestoreNote}
-                onRevisions={this.onRevisions} />
+                onRevisions={this.onRevisions}
+                onCloseNote={this._closeNote} />
             </div>
           )
         }) }
