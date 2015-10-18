@@ -28,7 +28,9 @@ module.exports = React.createClass({
     if (this.props.selected) cls += " selected";
     if (this.props.note.pinned) cls += " pinned";
     return (
-      <div className={cls} onClick={this.onClickNote}>
+      <div className={cls}
+        onClick={this.onClickNote}
+        onTouchStart={this.onClickNote}>
         <div></div>
         <div className="note-preview">
           <div className="title">{title}</div>
