@@ -34,9 +34,9 @@ module.exports = React.createClass({
     var max = this.props.revisions.length-1;
     var selection = this.state.selection && this.state.selection > -1 ? this.state.selection : max;
     return (
-      <div>
+      <div className="revision-selector">
         <input ref="range" type="range" min={min} max={max} value={selection} onChange={this.onSelectRevision} />
-        <div onClick={this.onAcceptRevision}>Restore</div>
+        <div className="textbutton" onClick={this.onAcceptRevision}>Restore</div>
       </div>
     )
   }
