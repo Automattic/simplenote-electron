@@ -52,13 +52,27 @@ module.exports = React.createClass({
     
   },
 
+	_onPopState: function(event) {
+		var state = event.state;
+		// todo: retrieve the note and display it
+		if (state) {
+			this.props.notes.get(state.id, this._onGetNote);
+		} else {
+			this.setState({note: null});
+		}
+	},
 
 	_onAddNote: function(e, note) {
 		this.onNotesIndex();
 		this.setState({note: note});
 	},
 
+	_onGetNote: function(e, note) {
+		this.setState({note: note});
+	},
+
   _closeNote: function() {
+		this.replaceState(null, "Simplenote", "/");
     this.setState({note: null});
   },
 
@@ -71,6 +85,8 @@ module.exports = React.createClass({
   },
 
   onSelectNote: function(note) {
+		var details = this.noteTitleAndPreview(note);
+		window.history.pushState({id: note.id}, details.title != "" ? details.title : 'Untitled', '/' + note.id);
     this.setState({note: note, revisions: null});
   },
 
@@ -230,16 +246,16 @@ module.exports = React.createClass({
               <div className="source-list">
                 <div className="toolbar">
 									<NavigationBar title={this.state.listTitle}>
-										<div className="button" tabIndex="-1" onClick={this.onNewNote}>
-											<PlusIcon />
-										</div>
+						        <div className="button" tabIndex="-1" onClick={this.onNewNote}>
+						        	<PlusIcon />
+						        </div>
 									</NavigationBar>
                 </div>
                 <div className="toolbar-compact">
                   <SearchField onSearch={this.onSearch} />
                 </div>
                 <div className="panel">
-                  <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
+                  <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} note={note} />
                 </div>
               </div>
               <NoteEditor
