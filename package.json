@@ -15,7 +15,7 @@
     "babel-loader": "^5.3.2",
     "browserify": "^11.0.1",
     "classnames": "^2.2.0",
-	"cookie": ^0.2.2",
+    "cookie": "^0.2.2",
     "css-loader": "^0.19.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
