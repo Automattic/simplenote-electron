@@ -108,7 +108,7 @@ module.exports = React.createClass({
           )
         })}
         <div className="tag-field">
-          <input ref="tag" type="text" placeholder="Add tags …" />
+          <input ref="tag" type="text" placeholder="Add tags \u2026" />
         </div>
       </div>
     );
