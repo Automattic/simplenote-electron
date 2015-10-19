@@ -10,15 +10,12 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.jsx?$/, loader: 'babel-loader'},
-      // Transform JSX in .jsx files
-      { test: /\.jsx$/, loader: 'jsx-loader?harmony' },
       { test: /\.json$/, loader: 'json-loader'},
-      { test: /\.scss$/, loader: 'style!css!sass'},
-      { test: /\.jade$/, loader: 'jade-loader' }
+      { test: /\.scss$/, loader: 'style!css!sass'}
     ]
   },
   plugins: [new HtmlWebpackPlugin({
     title: "Simplenote",
-    template: './views/app.jade'
+    templateContent: require( './index-builder.js' )
   })]
 };
