@@ -1,13 +1,18 @@
-var React         = require('react');
-var NoteList      = require('./note_list.jsx');
-var NoteEditor    = require('./note_editor.jsx');
-var TagMenu       = require('./tag_menu.jsx');
-var SearchField   = require('./search_field.jsx');
-var NavigationBar = require('./navigation_bar.jsx');
-var Auth          = require('./auth.jsx');
-const classNames  = require( 'classnames' );
+var React            = require('react');
+var NoteList         = require('./note_list.jsx');
+var NoteEditor       = require('./note_editor.jsx');
+var TagMenu          = require('./tag_menu.jsx');
+var SearchField      = require('./search_field.jsx');
+var NavigationBar    = require('./navigation_bar.jsx');
+var Auth             = require('./auth.jsx');
+var PlusIcon         = require('./icons/plus.jsx');
+var NoteDisplayMixin = require('./note_display_mixin.js');
+const classNames     = require( 'classnames' );
+
 
 module.exports = React.createClass({
+
+	mixins: [NoteDisplayMixin],
 
   getDefaultProps: function() {
     return {
@@ -28,6 +33,8 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
 
+		window.addEventListener('popstate', this._onPopState);
+
     this.props.notes
       .on('index', this.onNotesIndex)
       .on('update', this.onNoteUpdate)
@@ -44,6 +51,12 @@ module.exports = React.createClass({
     this.onNotesIndex();
     
   },
+
+
+	_onAddNote: function(e, note) {
+		this.onNotesIndex();
+		this.setState({note: note});
+	},
 
   _closeNote: function() {
     this.setState({note: null});
@@ -80,6 +93,21 @@ module.exports = React.createClass({
   onNoteRemoved: function() {
     this.onNotesIndex();
   },
+
+	onNewNote: function() {
+		// insert a new note into the store and select it
+		var ts = (new Date()).getTime()/1000;
+		this.props.notes.add({
+			content: "",
+			deleted: false,
+			systemTags: [],
+			creationDate: ts,
+			modificationDate: ts,
+			shareURL: "",
+			publishURL: "",
+			tags: []
+		}, this._onAddNote);
+	},
 
   onNoteUpdate: function(id, data, original, patch) {
 
@@ -201,7 +229,11 @@ module.exports = React.createClass({
             <div className={classes}>
               <div className="source-list">
                 <div className="toolbar">
-                  <NavigationBar title={this.state.listTitle} />
+									<NavigationBar title={this.state.listTitle}>
+										<div className="button" tabIndex="-1" onClick={this.onNewNote}>
+											<PlusIcon />
+										</div>
+									</NavigationBar>
                 </div>
                 <div className="toolbar-compact">
                   <SearchField onSearch={this.onSearch} />
