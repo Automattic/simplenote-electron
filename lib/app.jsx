@@ -233,8 +233,7 @@ module.exports = React.createClass({
     var note = this.state.note;
     var revisions = this.state.revisions;
 
-	var classes = classNames( {
-		'simplenote-app': true,
+	var classes = classNames( 'simplenote-app', {
 		'note-open': this.state.note
 	} );
 
