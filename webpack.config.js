@@ -12,7 +12,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader'},
+      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel-loader' ] },
       { test: /\.json$/, loader: 'json-loader'},
       { test: /\.scss$/, loader: 'style!css!sass'}
     ]
@@ -21,8 +21,11 @@ module.exports = {
     extensions: ['', '.js', '.jsx', '.json', '.scss', '.css' ],
     moduleDirectories: [ 'lib', 'node_modules' ]
   },
-  plugins: [new HtmlWebpackPlugin({
-    title: "Simplenote",
-    templateContent: require( './index-builder.js' )
-  })]
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: "Simplenote",
+      templateContent: require( './index-builder.js' ),
+      inject: false
+    })
+  ]
 };
