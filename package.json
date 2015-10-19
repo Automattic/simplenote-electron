@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "`npm bin`/gulp"
+    "build": "`npm bin`/webpack --config ./webpack.config.js",
+    "start": "`npm bin`/webpack-dev-server --config ./webpack.config.hot.js --content-base ./dist/ --port 4000 --inline --hot --progress"
   },
   "author": "",
   "license": "ISC",
