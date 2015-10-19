@@ -55,12 +55,12 @@ body {
 
 .detail {
 	overflow: hidden;
-	@include flex(1, 1)
+	@include flex(1, 1);
 }
 
 .source-list {
 	min-width: 200px;
-	@include flex(0, 1, 300px);
+	@include flex(0, 0, 300px);
 	border-right: 1px solid $color-gray;
 	cursor: default;
 }
