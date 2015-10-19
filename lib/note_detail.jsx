@@ -20,7 +20,7 @@ module.exports = React.createClass({
   },
 
   noteContent: function(note) {
-    if (!note) return null;
+    if (!note) return "";
     var data = note.data;
     return data ? data.content : null;
   },

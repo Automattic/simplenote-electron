@@ -1,13 +1,18 @@
-var React         = require('react');
-var NoteList      = require('./note_list.jsx');
-var NoteEditor    = require('./note_editor.jsx');
-var TagMenu       = require('./tag_menu.jsx');
-var SearchField   = require('./search_field.jsx');
-var NavigationBar = require('./navigation_bar.jsx');
-var Auth          = require('./auth.jsx');
-const classNames  = require( 'classnames' );
+var React            = require('react');
+var NoteList         = require('./note_list.jsx');
+var NoteEditor       = require('./note_editor.jsx');
+var TagMenu          = require('./tag_menu.jsx');
+var SearchField      = require('./search_field.jsx');
+var NavigationBar    = require('./navigation_bar.jsx');
+var Auth             = require('./auth.jsx');
+var PlusIcon         = require('./icons/plus.jsx');
+var NoteDisplayMixin = require('./note_display_mixin.js');
+const classNames     = require( 'classnames' );
+
 
 module.exports = React.createClass({
+
+	mixins: [NoteDisplayMixin],
 
   getDefaultProps: function() {
     return {
@@ -28,6 +33,8 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
 
+		window.addEventListener('popstate', this._onPopState);
+
     this.props.notes
       .on('index', this.onNotesIndex)
       .on('update', this.onNoteUpdate)
@@ -45,7 +52,27 @@ module.exports = React.createClass({
     
   },
 
+	_onPopState: function(event) {
+		var state = event.state;
+		// todo: retrieve the note and display it
+		if (state) {
+			this.props.notes.get(state.id, this._onGetNote);
+		} else {
+			this.setState({note: null});
+		}
+	},
+
+	_onAddNote: function(e, note) {
+		this.onNotesIndex();
+		this.setState({note: note});
+	},
+
+	_onGetNote: function(e, note) {
+		this.setState({note: note});
+	},
+
   _closeNote: function() {
+		this.replaceState(null, "Simplenote", "/");
     this.setState({note: null});
   },
 
@@ -58,6 +85,8 @@ module.exports = React.createClass({
   },
 
   onSelectNote: function(note) {
+		var details = this.noteTitleAndPreview(note);
+		window.history.pushState({id: note.id}, details.title != "" ? details.title : 'Untitled', '/' + note.id);
     this.setState({note: note, revisions: null});
   },
 
@@ -80,6 +109,21 @@ module.exports = React.createClass({
   onNoteRemoved: function() {
     this.onNotesIndex();
   },
+
+	onNewNote: function() {
+		// insert a new note into the store and select it
+		var ts = (new Date()).getTime()/1000;
+		this.props.notes.add({
+			content: "",
+			deleted: false,
+			systemTags: [],
+			creationDate: ts,
+			modificationDate: ts,
+			shareURL: "",
+			publishURL: "",
+			tags: []
+		}, this._onAddNote);
+	},
 
   onNoteUpdate: function(id, data, original, patch) {
 
@@ -189,8 +233,7 @@ module.exports = React.createClass({
     var note = this.state.note;
     var revisions = this.state.revisions;
 
-	var classes = classNames( {
-		'simplenote-app': true,
+	var classes = classNames( 'simplenote-app', {
 		'note-open': this.state.note
 	} );
 
@@ -201,13 +244,17 @@ module.exports = React.createClass({
             <div className={classes}>
               <div className="source-list">
                 <div className="toolbar">
-                  <NavigationBar title={this.state.listTitle} />
+									<NavigationBar title={this.state.listTitle}>
+						        <div className="button" tabIndex="-1" onClick={this.onNewNote}>
+						        	<PlusIcon />
+						        </div>
+									</NavigationBar>
                 </div>
                 <div className="toolbar-compact">
                   <SearchField onSearch={this.onSearch} />
                 </div>
                 <div className="panel">
-                  <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} />
+                  <NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} note={note} />
                 </div>
               </div>
               <NoteEditor

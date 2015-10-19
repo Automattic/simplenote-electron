@@ -6,23 +6,17 @@ module.exports = React.createClass({
   getDefaultProps: function() {
     return {
       notes: [],
+			note: null,
       onSelectNote: function() {}
     };
   },
 
-  getInitialState: function() {
-    return {
-      selected: null
-    };
-  },
-
   onSelectNote: function(note) {
-    this.setState({selected: note});
     this.props.onSelectNote(note);
   },
 
   render: function() {
-    var selected = this.state.selected;
+    var selected = this.props.note;
     var onSelect = this.onSelectNote;
     return (
       <div className="note-list" tabIndex="1">
