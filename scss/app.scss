@@ -168,6 +168,8 @@ body {
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
+	-webkit-overflow-scrolling: touch;
+	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
 		background: $color-white;
