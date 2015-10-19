@@ -55,7 +55,7 @@ module.exports = React.createClass({
     var revisions = this.props.revisions;
     var revision = this.state.revision;
     var note = this.state.revision ? this.state.revision : this.props.note;
-    var tags = note && note.data.tags ? note.data.tags : [];
+    var tags = note && note.data && note.data.tags ? note.data.tags : [];
     return (
       <div className="detail">
         <NoteToolbar
