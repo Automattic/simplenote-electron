@@ -74,7 +74,7 @@ module.exports = React.createClass({
 
   _closeNote: function() {
 		this.replaceState(null, "Simplenote", "/");
-    this.setState({note: null});
+    this.setState({note: null, note_id: null});
   },
 
   onAuthChanged: function() {
