@@ -12,7 +12,9 @@ A Simplenote client packaged in [Electron][].
 module.exports = function() {
   return {
     app_id:     "chalk-bump-f49",
+    // For creating/authenticating useres
     app_key:    "",
+    // Setting a valid user_token will skip authentication
     user_token: "USER_TOKEN_HERE"
   };
 };
@@ -26,8 +28,8 @@ module.exports = function() {
 
 Install electron globally `npm install -g electron-prebuilt`, then:
 
-1. `gulp`
-2. `electron .`
+1. Run `webpack`
+2. Run `electron .`
 
 ## Dependenies
 
