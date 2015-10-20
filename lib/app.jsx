@@ -55,7 +55,6 @@ module.exports = React.createClass({
 
 	_onPopState: function(event) {
 		var state = event.state;
-		// todo: retrieve the note and display it
 		if (state) {
 			this.props.notes.get(state.id, this._onGetNote);
 		} else {
@@ -69,7 +68,7 @@ module.exports = React.createClass({
 	},
 
 	_onGetNote: function(e, note) {
-		this.setState({note: note, note_id: note.id});
+		this.setState({note: note, note_id: note.id, revisions: null});
 	},
 
   _closeNote: function() {
@@ -86,11 +85,7 @@ module.exports = React.createClass({
   },
 
   onSelectNote: function(note_id) {
-		// TODO: fetch note from store
 		this.props.notes.get(note_id, this._onGetNote);
-		// var details = this.noteTitleAndPreview(note);
-		// // window.history.pushState({id: note.id}, details.title != "" ? details.title : 'Untitled', '/' + note.id);
-		//     this.setState({note_id: note.id, revisions: null});
   },
 
   onNotesIndex: function() {
