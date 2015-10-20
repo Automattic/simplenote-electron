@@ -8,6 +8,7 @@ var Auth             = require('./auth.jsx');
 var PlusIcon         = require('./icons/plus.jsx');
 var NoteDisplayMixin = require('./note_display_mixin.js');
 const classNames     = require( 'classnames' );
+var simperium        = require('simperium');
 
 
 module.exports = React.createClass({
@@ -125,16 +126,31 @@ module.exports = React.createClass({
 
   onNoteUpdate: function(id, data, original, patch) {
 
+		// refresh the notes list
     this.onNotesIndex();
-  
-		console.log("Note updated", id, data, original, patch);
-	
-	  if (this.state.note_id == id) {
-      console.log("Update cursor location and do conflict resolution?");
 
-      // TODO: conflict resolution of the note and update the correct
-      // cursor location.
-      // this.setState({note: note, patch: patch});
+	  if (this.state.note_id == id && !!patch) {
+
+			// working is the state of the note in the editor
+			var working = this.state.note.data;
+
+			// diff of working and original will produce the modifications the client has currently made
+			var working_diff = simperium.util.change.diff(original, working);
+			// generate a patch that composes both the working changes and upstream changes
+			var patch = simperium.util.change.transform(working_diff, patch, original);
+			// apply the new patch to the upstream data
+			var rebased = simperium.util.change.apply(patch, data);
+
+			// TODO: determine where the cursor is and put it in the correct place
+			// when applying the rebased content
+
+			this.state.note.data = rebased;
+
+			// immediately save the content
+			this.setState({note: this.state.note});
+
+			var notes = this.props.notes, note = this.state.note;
+			this.onUpdateContent(note, note.data.content);
     }
   },
 
@@ -176,10 +192,8 @@ module.exports = React.createClass({
       this.setState({note_id: note.id});
 
 			// update the bucket but don't fire a sync immediately
-			console.log("Update without sync", note.data.content);
       this.props.notes.update(note.id, note.data, {sync: false});
       var commit = (function() {
-				console.log("Syncing");
 				this.props.notes.touch(note.id);
       }).bind(this);
 
@@ -305,7 +319,6 @@ function throttle(id, cb) {
 
         cb();
         clearTimer(id);
-        console.log(id, "Fired after", ellapsed);
       };
 
   clearTimeout(timer.id);
