@@ -122,8 +122,11 @@ body {
 .toolbar,
 .toolbar-compact {
 	@include flex(0, 0, 44px);
-	border-bottom: 1px solid $color-gray;
 	position: relative;
+}
+
+.toolbar-compact {
+	border-bottom: 1px solid $color-gray;
 }
 
 .source-list {
