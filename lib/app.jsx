@@ -23,6 +23,7 @@ module.exports = React.createClass({
 
   getInitialState: function() {
     return {
+			note_id: null,
       notes: [],
       tags: [],
       showTrash: false,
@@ -64,11 +65,11 @@ module.exports = React.createClass({
 
 	_onAddNote: function(e, note) {
 		this.onNotesIndex();
-		this.setState({note: note});
+		this.onSelectNote(note.id);
 	},
 
 	_onGetNote: function(e, note) {
-		this.setState({note: note});
+		this.setState({note: note, note_id: note.id});
 	},
 
   _closeNote: function() {
@@ -84,10 +85,12 @@ module.exports = React.createClass({
     }
   },
 
-  onSelectNote: function(note) {
-		var details = this.noteTitleAndPreview(note);
-		window.history.pushState({id: note.id}, details.title != "" ? details.title : 'Untitled', '/' + note.id);
-    this.setState({note: note, revisions: null});
+  onSelectNote: function(note_id) {
+		// TODO: fetch note from store
+		this.props.notes.get(note_id, this._onGetNote);
+		// var details = this.noteTitleAndPreview(note);
+		// // window.history.pushState({id: note.id}, details.title != "" ? details.title : 'Untitled', '/' + note.id);
+		//     this.setState({note_id: note.id, revisions: null});
   },
 
   onNotesIndex: function() {
@@ -128,15 +131,15 @@ module.exports = React.createClass({
   onNoteUpdate: function(id, data, original, patch) {
 
     this.onNotesIndex();
-    if (this.state.note && id == this.state.note.id) {
-      var note = this.state.note;
-
+  
+		console.log("Note updated", id, data, original, patch);
+	
+	  if (this.state.note_id == id) {
       console.log("Update cursor location and do conflict resolution?");
 
       // TODO: conflict resolution of the note and update the correct
       // cursor location.
-      note.data = data;
-      this.setState({note: note, patch: patch});
+      // this.setState({note: note, patch: patch});
     }
   },
 
@@ -175,10 +178,14 @@ module.exports = React.createClass({
   onUpdateContent: function(note, content) {
     if (note) {
       note.data.content = content;
-      this.setState({note: note});
+      this.setState({note_id: note.id});
 
+			// update the bucket but don't fire a sync immediately
+			console.log("Update without sync", note.data.content);
+      this.props.notes.update(note.id, note.data, {sync: false});
       var commit = (function() {
-        this.props.notes.update(note.id, note.data);
+				console.log("Syncing");
+				this.props.notes.touch(note.id);
       }).bind(this);
 
       throttle(note.id, commit);
@@ -189,7 +196,7 @@ module.exports = React.createClass({
     if (note) {
       note.data.tags = tags;
       this.props.notes.update(note.id, note.data);
-      this.setState({note: note});
+      this.setState({note_id: note.id});
     }
   },
 
@@ -197,7 +204,7 @@ module.exports = React.createClass({
     if (note) {
       note.data.deleted = true;
       this.props.notes.update(note.id, note.data);
-      this.setState({note: null});
+      this.setState({note_id: null});
     }
   },
 
@@ -205,7 +212,7 @@ module.exports = React.createClass({
     if (note) {
       note.data.deleted = false;
       this.props.notes.update(note.id, note.data);
-      this.setState({note: null});
+      this.setState({note_id: null});
     }
   },
 

@@ -15,7 +15,7 @@ module.exports = React.createClass({
   },
 
   onClickNote: function(e) {
-    this.props.onSelectNote(this.props.note);
+    this.props.onSelectNote(this.props.note.id);
   },
 
   render: function() {
