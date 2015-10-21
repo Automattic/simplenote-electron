@@ -45,6 +45,8 @@
     "react-addons-pure-render-mixin": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-popover": "git://github.com/beaucollins/react-popover.git",
+    "react-redux": "^4.0.0",
+    "redux": "^3.0.3",
     "serve-favicon": "^2.3.0"
   }
 }

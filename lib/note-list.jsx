@@ -1,29 +1,29 @@
 import React from 'react'
 import NoteListItem from './note-list-item'
+import store from './flux/store';
+import { getSelectedNote } from './flux/app_state';
+import { actions } from './flux/app_state';
 
 export default React.createClass({
 
 	getDefaultProps: function() {
 		return {
 			notes: [],
-			note: null,
-			onSelectNote: function() {}
 		};
 	},
 
-	onSelectNote: function(note) {
-		this.props.onSelectNote(note);
+	onSelectNote: function(noteId) {
+		store.dispatch( actions.selectNote( noteId ) );
 	},
 
 	render: function() {
-		var selected = this.props.note;
+		var selectedNoteId = getSelectedNote();
 		var onSelect = this.onSelectNote;
 		return (
 			<div className="note-list" tabIndex="1">
 			{this.props.notes.map(function(note) {
-				var isSelected = selected && note.id == selected.id;
 				return (
-					<NoteListItem selected={isSelected} key={note.id} note={note} onSelectNote={onSelect} />
+					<NoteListItem selected={note.id == selectedNoteId} key={note.id} note={note} onSelectNote={onSelect} />
 				)
 			})}
 			</div>

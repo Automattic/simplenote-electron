@@ -10,6 +10,7 @@ import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 import simperium from 'simperium'
 import PopOver from "react-popover"
+import store from './flux/store';
 
 export default React.createClass({
 
@@ -56,6 +57,15 @@ export default React.createClass({
 		this.onNotesIndex();
 		this.onTagsIndex();
 
+		this.unsubscribe = store.subscribe( () => {
+			this.setState( {
+				data: store.getState()
+			} );
+		} );
+	},
+
+	componentWillUnmount: function() {
+		this.unsubscribe();
 	},
 
 	_onPopState: function(event) {
