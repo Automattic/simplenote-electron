@@ -5,23 +5,21 @@ const BackIcon = require( './icons/back.jsx' );
 
 module.exports = React.createClass({
 
-  getDefaultProps: function() {
-    return {
-      title: ""
-    };
-  },
+	getDefaultProps: function() {
+		return {
+			title: ""
+		};
+	},
 
-  onNavigateBack: function() {
-    
-  },
+	onNavigateBack: function() {
+	},
 
-  render: function() {
-    return (
-      <div className="navigation-bar">
-        <div className="button" tabIndex="-1" onClick={this.onNavigateBack}><BackIcon /></div>
-        <div>{this.props.title}</div>
+	render: function() {
+		return (
+			<div className="navigation-bar">
+				<div>{this.props.title}</div>
 				{this.props.children}
-      </div>
-    );
-  }
+			</div>
+		);
+	}
 });
