@@ -173,6 +173,7 @@ body {
 	-webkit-transition: 200ms;
 	resize: none;
 	-webkit-overflow-scrolling: touch;
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
@@ -201,6 +202,7 @@ body {
 	bottom: 0;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
+	-webkit-transform: translate3d(0, 0, 0);
 }
 
 .tag-editor {
