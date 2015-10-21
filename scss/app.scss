@@ -486,13 +486,28 @@ input[type="password"] {
 	.detail,
 	.source-list {
 		transition: $anim-fast;
-		@include flex(0, 0, 100%)
+		transform: translateZ(0);
+	}
+
+	.detail {
+		display: none;
+	}
+
+	.source-list {
+		@include flex(0, 0, 100%);
 	}
 
 	.note-open {
-		.source-list, .detail {
-			transform: translate3d(-100%, 0, 0);
+
+		.detail {
+			display: flex;
 		}
+	
+		.source-list {
+			min-width: 0;
+			@include flex(0, 0, 0%);
+		}
+		
 	}
 
 }
