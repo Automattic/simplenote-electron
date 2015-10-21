@@ -21,11 +21,11 @@ $color-blue-light: #e5ebf0;
 $color-blue-active-highlight: #bdd6ed;
 $color-blue: #6da3d3;	/* New blue: #4895d9 */
 
-$anim-fast: all .1s linear;
+$anim-transition: all 200ms ease-in-out;
+$anim-fast: all 0.1s linear;
 $anim: all .2s linear;
 
 $border-radius: 2px;
-
 
 /**
  * General
@@ -172,8 +172,8 @@ body {
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
+	overflow: auto;
 	-webkit-overflow-scrolling: touch;
-	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
@@ -212,6 +212,7 @@ body {
 	overflow-x: scroll;
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
+	-webkit-transform: translate3d(0, 0, 0);
 	
 	&:focus {
 		outline: none;
@@ -487,29 +488,25 @@ input[type="password"] {
 
 	.detail,
 	.source-list {
-		transition: $anim-fast;
-		transform: translateZ(0);
-	}
-
-	.detail {
-		display: none;
-	}
-
-	.source-list {
+		transition: $anim-transition;
+		transform: translate3d(0, 0, 0);
 		@include flex(0, 0, 100%);
+	}
+
+	.detail, .source-list {
+		background: #FFF;
 	}
 
 	.note-open {
 
-		.detail {
-			display: flex;
-		}
-	
 		.source-list {
-			min-width: 0;
-			@include flex(0, 0, 0%);
+			transform: scale3d(0.95, 0.95, 1);
 		}
-		
+
+		.detail {
+			transform: translate3d(-100%, 0, 0);
+		}
+
 	}
 
 }
