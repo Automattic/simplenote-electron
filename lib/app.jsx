@@ -319,6 +319,32 @@ module.exports = React.createClass({
 		if (!this.state.authorized) return fn();
 	},
 
+	tagMenuDataSource: function() {
+		return new TagMenuDataSource(this.state.tags);
+	},
+
+	renderTagListItem: function(item, index) {
+		var label = "";
+
+		switch (index) {
+		case 0:
+			label = "All Notes";
+			break;
+		case 1:
+			label = "Trash";
+			break;
+		default:
+			label = item.data.name;
+		}
+
+		return (
+			<div className="tag-list-item">
+				<span>{label}</span>
+				<span>0</span>
+			</div>
+		);
+	},
+
 	render: function() {
 
 		var notes = this.filterNotes();
@@ -411,4 +437,25 @@ function and(fn, fn2) {
 		if (!fn(o)) return false;
 		return fn2(o);
 	};
+}
+
+
+function TagMenuDataSource(tags) {
+	this.tags = tags || [];
+}
+
+TagMenuDataSource.prototype.totalItems = function() {
+	return this.tags.length + 2;
+}
+
+TagMenuDataSource.prototype.getItem = function(index) {
+
+	var i = index - 2;
+
+	if (i < 0) {
+		return {};
+	}
+
+	return this.tags[i];
+
 }
