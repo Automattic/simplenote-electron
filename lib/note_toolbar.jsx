@@ -19,7 +19,8 @@ module.exports = React.createClass({
       onRestoreNote: function() {},
       onRevisions: function() {},
       onSignOut: function() {},
-      onCloseNote: function() {}
+      onCloseNote: function() {},
+			onNoteInfo: function() {}
     };
   },
 
@@ -50,7 +51,7 @@ module.exports = React.createClass({
       <div className="toolbar">
         <div className="detail-toolbar">
           <div ref="responsive-back" onClick={this.props.onCloseNote} className="button backButton" tabIndex="-1"><BackIcon /></div>
-          <div ref="info" tabIndex="-1" className="button infoButton"><InfoIcon /></div>
+          <div ref="info" tabIndex="-1" className="button infoButton" onClick={this.props.onNoteInfo}><InfoIcon /></div>
           <div ref="revisions" tabIndex="-1" className="button revisionsButton" onClick={this.withNote(this.props.onRevisions)}><RevisionsIcon /></div>
           { this.isNotTrashed(function() {
             return (

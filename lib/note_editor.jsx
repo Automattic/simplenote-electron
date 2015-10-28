@@ -21,7 +21,8 @@ module.exports = React.createClass({
       onRestoreNote: function() {},
       onRevisions: function() {},
       onSignOut: function() {},
-      onCloseNote: function() {}
+      onCloseNote: function() {},
+			onNoteInfo: function() {}
     };
   },
 
@@ -64,7 +65,8 @@ module.exports = React.createClass({
           onRestoreNote={this.props.onRestoreNote}
           onRevisions={this.props.onRevisions}
           onSignOut={this.props.onSignOut}
-          onCloseNote={this.props.onCloseNote} />
+          onCloseNote={this.props.onCloseNote}
+					onNoteInfo={this.props.onNoteInfo} />
         <div className="toolbar-compact">
           <TagField ref="tags"
             tags={tags}
