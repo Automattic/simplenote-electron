@@ -386,7 +386,10 @@ module.exports = React.createClass({
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
 								onRevisions={this.onRevisions}
-								onCloseNote={this._closeNote} />
+								onCloseNote={this._closeNote}
+								onNoteInfo={this.onNoteInfo} />
+							{ this.renderTagPopover() }
+							{ this.renderNoteInfoPopover() }
 						</div>
 					)
 				}) }
@@ -395,6 +398,52 @@ module.exports = React.createClass({
 				})}
 			</div>
 		)
+	},
+
+	renderNoteInfoPopover: function() {
+		if (!this.state.showNoteInfo) {
+			return;
+		}
+
+		var popoverOptions = this.state.showNoteInfo,
+				style = {
+					overflow: 'auto',
+					maxWidth: '320px',
+					maxHeight: '100%',
+					margin: '0'
+				};
+
+		return (
+			<PopOver
+				onClosePopover={this.onHideNoteInfo}
+				context={popoverOptions.context}>
+				<pre style={style}>{JSON.stringify(this.state.note, null, "  ")}</pre>
+			</PopOver>
+		);
+
+	},
+
+	renderTagPopover: function() {
+
+		if (!this.state.showTagMenu) {
+			return;
+		}
+
+		return (
+			<PopOver
+				onClosePopover={this.onHideTagsMenu}
+				context={this.state.tagMenuContext}>
+				<div className="tag-list-filter">
+					<div className="tag-list-title">View by Tag</div>
+					<div className="tag-option-list">
+						<List
+							dataSource={this.tagMenuDataSource()}
+							renderItem={this.renderTagListItem}
+							onClickItem={this.onSelectTag} />
+					</div>
+				</div>
+			</PopOver>
+		);
 	}
 });
 
