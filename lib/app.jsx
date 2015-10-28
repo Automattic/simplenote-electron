@@ -127,7 +127,7 @@ module.exports = React.createClass({
 			modificationDate: ts,
 			shareURL: "",
 			publishURL: "",
-			tags: []
+			tags: [].concat(this.state.tag ? this.state.tag.data.name : [])
 		}, this._onAddNote);
 	},
 
