@@ -113,6 +113,10 @@ module.exports = React.createClass({
 	},
 
 	onNewNote: function() {
+		if (this.state.showTrash) {
+			return;
+		}
+
 		// insert a new note into the store and select it
 		var ts = (new Date()).getTime()/1000;
 		this.props.notes.add({
