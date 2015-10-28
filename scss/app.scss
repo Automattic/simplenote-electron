@@ -203,6 +203,12 @@ body {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	-webkit-transform: translate3d(0, 0, 0);
+
+	.tags-open & {
+		-webkit-overflow-scrolling: auto;
+		overflow: hidden;
+	}
+
 }
 
 .tag-editor {
@@ -237,6 +243,18 @@ body {
 		}
 	}
 
+	.hidden-tag {
+		width: 0;
+		height: 0;
+		border: 0;
+		padding: 1px;
+		box-sizing: border-box;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
 }
 
 .tag-chip {
@@ -248,6 +266,9 @@ body {
 	background: $color-gray;
 	color: $color-gray-dark;
 	@include flex(0, 0);
+	text-decoration: none;
+	font-size: 14px;
+	-webkit-tap-highlight-color: transparent;
 	
 	&.selected {
 		background: $color-gray-dark;
@@ -287,10 +308,6 @@ body {
 		text-align: center;
 	}
 	
-}
-
-.tag-menu-options {
-  
 }
 
 .detail-toolbar {
@@ -358,15 +375,125 @@ body {
 		&:last-child {
 			@include flex(1, 0, 28px)
 		}
-	
+
+	}
+
+	.tag-switcher {
+		cursor: pointer;
+		align-items: center;
+		-webkit-tap-highlight-color: transparent;
+
+		color: $color-blue;
+		fill: $color-blue;
+
+		&:focus {
+			outline: none;
+			background: $color-gray-lightest;
+		}
 	}
 	
 }
 
+/**
+ * Popover
+ */
 
+.popover {
+	position: absolute;
+	background: #222;
+	color: #F0F0F0;
+	border-radius: 4px;
+	top: 0;
+	left: 0;
+	opacity: 0.95;
+	box-shadow: 0 0px 3px #000;
+
+	.arrow {
+		content: '';
+		z-index: 0;
+		position: absolute;
+		left: 8px;
+		top: -18px;
+		width: 18px;
+		height: 18px;
+		background: #222;
+		transform: translate(-9px, 16px) rotate(45deg);
+		box-shadow: 0 0px 5px #000;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+}
+
+.popover-scroll {
+	background: #222;
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 2px;
+
+	&:focus {
+		outline: none;
+	}
+
+}
+
+.tag-list-title {
+	padding: 4px;
+	text-align: center;
+	border-bottom: 1px solid #161616;
+	@include flex(1, 0, auto);
+}
+
+.tag-list-filter {
+	@include flexbox(center, stretch, column);
+	max-height: 100%;
+}
+
+.tag-option-list {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	min-width: 220px;
+
+	> div {
+		max-width: 100%;
+		overflow: hidden;
+	}
+
+}
+
+.tag-list-item {
+	cursor: pointer;
+	padding: 2px 8px;
+	-webkit-tap-highlight-color: transparent;
+	@include flexbox(space-between, center);
+
+	> span:first-child {
+		@include flex(0, 1);
+		margin-right: 8px;
+		overflow: hidden;
+		display: block;
+		max-width: 100%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	span:last-child {
+		@include flex(0, 0, auto);
+	}
+
+}
 /**
  * Buttons & Forms
  */
+
+input {
+	-webkit-tap-highlight-color: transparent;
+}
 
 input[type="text"],
 input[type="password"] {
@@ -381,6 +508,14 @@ input[type="password"] {
 	transition: $anim-fast;
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
+
+
+	&.disabled {
+		cursor: default;
+		color: $color-gray;
+		fill: $color-gray;
+	}
+
 }
 
 .textbutton:hover {
@@ -393,6 +528,12 @@ input[type="password"] {
 
 	&:hover {
 		background: $color-blue-lightest;
+
+		&.disabled {
+			background: $color-white;
+			color: $color-gray;
+			fill: $color-gray;
+		}
 	}
 
 	&:focus {
@@ -482,6 +623,10 @@ input[type="password"] {
 
 @media only screen and ( max-width: 520px ) {
 
+	body {
+		font-size: 16px;
+	}
+
 	.detail-toolbar > div.backButton {
 		display: flex;
 	}
@@ -505,6 +650,7 @@ input[type="password"] {
 
 		.detail {
 			transform: translate3d(-100%, 0, 0);
+			transition-property: transform;
 		}
 
 	}
