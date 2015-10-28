@@ -34,14 +34,14 @@ module.exports = React.createClass({
 
   isTrashed: function(fn) {
     var note = this.props.note;
-    if (note && note.deleted) {
+    if (note && note.data.deleted) {
       return fn.call(this, note);
     }
   },
 
   isNotTrashed: function(fn) {
     var note = this.props.note;
-    if (note && !note.deleted) {
+    if (note && !note.data.deleted) {
       return fn.call(this, note);
     }
   },
