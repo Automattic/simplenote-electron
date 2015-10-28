@@ -1,19 +1,29 @@
 var React = require('react');
+import classNames from 'classnames'
 
 module.exports = React.createClass({
 
-  getDefaultProps: function() {
-    return {
-      tag: '',
-      selected: false,
-      onSelectTag: function() {}
-    };
-  },
+	getDefaultProps: function() {
+		return {
+			tag: '',
+			selected: false,
+			onSelect: function() {}
+		};
+	},
 
-  render: function() {
-    var className = 'tag-chip' + (this.props.selected ? ' selected' : '');
-    return (
-      <div className={className} onClick={this.props.onSelect}>{this.props.tag}</div>
-    )
-  }
+	onClick: function(e) {
+		e.preventDefault();
+		this.props.onSelect(e);
+	},
+
+	render: function() {
+		return (
+			<a
+				className={classNames('tag-chip', {selected: this.props.selected})}
+				href="#"
+				onClick={this.onClick}>
+				{this.props.tag}
+			</a>
+		)
+	}
 });
