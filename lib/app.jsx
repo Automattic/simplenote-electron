@@ -231,9 +231,26 @@ module.exports = React.createClass({
 
 	filterNotes: function() {
 		var query = this.state.filter,
-				trash = this.state.showTrash,
-				notes = this.state.notes || [],
-				filter = (note) => { return trash || !note.data.deleted };
+				trash   = this.state.showTrash,
+				notes   = this.state.notes || [],
+				tag     = this.state.tag,
+				filter  = (note) => {
+					// if trash is being viewed, return trashed notes
+					if (trash) {
+						return note.data.deleted;
+					}
+					// if not in trash and note is deleted, don't show it
+					if (note.data.deleted) {
+						return false;
+					}
+					// if tag is selected only return those tags
+					if (tag) {
+						var tags = note.data.tags.map((t)=>{return t.toLowerCase()});
+						var includes = tags.indexOf(tag.id) >= 0;
+						return includes;
+					}
+					return !note.data.deleted;
+				};
 
 		if (query) {
 			var reg = new RegExp(query, 'gi');
