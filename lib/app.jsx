@@ -364,8 +364,8 @@ module.exports = React.createClass({
 						<div className={classes}>
 							<div className="source-list">
 								<div className="toolbar">
-									<NavigationBar title={this.state.listTitle}>
-										<div className="button" tabIndex="-1" onClick={this.onNewNote}>
+									<NavigationBar ref="navigation" title={this.state.listTitle} onDisplayTags={this.onDisplayTagsMenu}>
+										<div className={classNames('button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
 											<PlusIcon />
 										</div>
 									</NavigationBar>
