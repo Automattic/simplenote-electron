@@ -233,10 +233,10 @@ module.exports = React.createClass({
 
 	filterNotes: function() {
 		var query = this.state.filter,
-				trash   = this.state.showTrash,
-				notes   = this.state.notes || [],
-				tag     = this.state.tag,
-				filter  = (note) => {
+				trash		= this.state.showTrash,
+				notes		= this.state.notes || [],
+				tag			= this.state.tag,
+				filter	= (note) => {
 					// if trash is being viewed, return trashed notes
 					if (trash) {
 						return note.data.deleted;
@@ -419,7 +419,7 @@ module.exports = React.createClass({
 			<PopOver
 				onClosePopover={this.onHideNoteInfo}
 				context={popoverOptions.context}>
-				<pre style={style}>{JSON.stringify(this.state.note, null, "  ")}</pre>
+				<pre style={style}>{JSON.stringify(this.state.note, null, "	 ")}</pre>
 			</PopOver>
 		);
 

@@ -9,11 +9,11 @@ module.exports = Object.assign( baseConfig, {
 		'./app.js'
 	],
 	module: {
-      loaders: [
-	      { test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'react-hot', 'babel-loader' ] },
-		  { test: /\.json$/, loader: 'json-loader'},
-		  { test: /\.scss$/, loader: 'style!css!sass'}
-      ]
+			loaders: [
+				{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'react-hot', 'babel-loader' ] },
+			{ test: /\.json$/, loader: 'json-loader'},
+			{ test: /\.scss$/, loader: 'style!css!sass'}
+			]
 	},
 	output: Object.assign( baseConfig.output, {
 		publicPath: 'http://localhost:4000/'
