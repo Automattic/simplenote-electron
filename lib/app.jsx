@@ -53,6 +53,7 @@ module.exports = React.createClass({
 			.on('unauthorized', this.onAuthChanged);
 
 		this.onNotesIndex();
+		this.onTagsIndex();
 
 	},
 
