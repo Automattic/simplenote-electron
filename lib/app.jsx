@@ -9,6 +9,8 @@ var PlusIcon				 = require('./icons/plus.jsx');
 var NoteDisplayMixin = require('./note_display_mixin.js');
 const classNames		 = require( 'classnames' );
 var simperium				 = require('simperium');
+import PopOver from "react-popover";
+import List from './list';
 
 
 module.exports = React.createClass({
