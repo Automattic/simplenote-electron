@@ -29,7 +29,9 @@ module.exports = React.createClass({
 			tags: [],
 			showTrash: false,
 			listTitle: "All Notes",
-			authorized: this.props.client.isAuthorized()
+			authorized: this.props.client.isAuthorized(),
+			showTagMenu: false,
+			showNoteInfo: false
 		};
 	},
 
@@ -158,11 +160,64 @@ module.exports = React.createClass({
 		this.setState({notes: notes});
 	},
 
-	onTagsIndex: function() {
+	onFindTags: function(e, tags) {
+		this.setState({tags: tags});
 	},
 
-	onClickTagFilter: function(tag) {
-		console.log("Filter", tag);
+	onNoteInfo: function(evt) {
+		if (!this.state.note) {
+			return;
+		}
+		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showTagMenu: false});
+	},
+
+	onHideNoteInfo: function() {
+		this.setState({showNoteInfo: false});
+	},
+
+	onTagsIndex: function() {
+		var done = this.onFindTags;
+		this.props.tags.query(function(db) {
+			var tags = [];
+			db.transaction('tag').objectStore('tag').openCursor(null, 'prev').onsuccess = function(e) {
+				var cursor = e.target.result;
+				if (cursor) {
+					tags.push(cursor.value);
+					cursor.continue();
+				} else {
+					done(null, tags);
+				}
+			}
+		})
+	},
+
+	onDisplayTagsMenu: function(evt) {
+
+		if (this.state.showTagMenu) {
+			return this.setState({showTagMenu: false, tagMenuContext: null});
+		}
+
+		var target = evt.currentTarget,
+				rect = target.getBoundingClientRect();
+		this.setState({showTagMenu: true, showNoteInfo: false, tagMenuContext: rect});
+	},
+
+	onHideTagsMenu: function() {
+		this.setState({showTagMenu: false, tagMenuContext: null});
+	},
+
+	onSelectTag: function(tag, index) {
+		switch (index) {
+		case 0:
+			this.setState({tag: null, showTrash: false, listTitle: "All Notes"});
+			break;
+		case 1:
+			this.setState({tag: null, showTrash: true, listTitle: "Trash"});
+			break;
+		default:
+			this.setState({tag: tag, showTrash: false, listTitle: tag.data.name});
+		}
+		this.onHideTagsMenu();
 	},
 
 	onSearch: function(v) {
@@ -250,7 +305,8 @@ module.exports = React.createClass({
 		var revisions = this.state.revisions;
 
 		var classes = classNames( 'simplenote-app', {
-			'note-open': this.state.note
+			'note-open': this.state.note,
+			'tags-open': this.state.showTagMenu
 		} );
 
 		return (
