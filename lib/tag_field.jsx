@@ -1,5 +1,6 @@
 var React = require('react');
 var TagChip = require('./tag_chip.jsx');
+import classNames from 'classnames';
 
 module.exports = React.createClass({
 
@@ -19,6 +20,12 @@ module.exports = React.createClass({
   componentWillReceiveProps: function(nextProps, context) {
     this.setState({selectedTag: -1});
   },
+
+	componentDidUpdate: function() {
+		if (this.hasSelection()) {
+			this.refs.hiddenTag.getDOMNode().focus();
+		}
+	},
 
   clearTextField: function() {
     this.refs.tag.getDOMNode().value = "";
@@ -63,6 +70,10 @@ module.exports = React.createClass({
     this.setState({selectedTag: this.props.tags.length -1});
   },
 
+	preventTyping: function(e) {
+		e.preventDefault();
+	},
+
   onKeyDown: function(e) {
     var tag = this.refs.tag.getDOMNode().value.trim();
     switch(e.which) {
@@ -78,8 +89,9 @@ module.exports = React.createClass({
         this.deleteSelection();
       }
       if (tag !== '') return;
-      this.getDOMNode().focus();
+      // this.getDOMNode().focus();
       this.selectLastTag();
+			e.preventDefault();
       break;
     default:
       break;
@@ -87,7 +99,15 @@ module.exports = React.createClass({
   },
 
   onBlur: function() {
-    this.setState({selectedTag: -1});
+		// only deselect if we're not inside the hidden tag
+    // this.setState({selectedTag: -1});
+		setTimeout((function() {
+			var h = this.refs.hiddenTag.getDOMNode();
+			console.log("Clear state if", document.activeElement, h);
+			if (h != document.activeElement) {
+				this.setState({selectedTag: -1});
+			}
+		}).bind(this), 1);
   },
 
   eachTag: function(cb) {
@@ -96,7 +116,11 @@ module.exports = React.createClass({
 
   render: function() {
     return (
-      <div tabIndex="-1" onKeyDown={this.onKeyDown} onBlur={this.onBlur} className="tag-editor">
+      <div className={classNames('tag-editor', {'has-selection': this.hasSelection()})}
+				tabIndex="-1"
+				onKeyDown={this.onKeyDown}
+				onBlur={this.onBlur}>
+				<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
         {this.eachTag(function(tag, index) {
           var selected = index == this.state.selectedTag;
           var onSelectTag = this.onSelectTag;
@@ -108,7 +132,7 @@ module.exports = React.createClass({
           )
         })}
         <div className="tag-field">
-          <input ref="tag" type="text" placeholder="Add tags &hellip;" />
+          <input ref="tag" type="text" tabIndex="0" placeholder="Add tags &hellip;" />
         </div>
       </div>
     );
