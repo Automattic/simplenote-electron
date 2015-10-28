@@ -23,12 +23,12 @@ export default React.createClass({
 
 	componentDidUpdate: function() {
 		if (this.hasSelection()) {
-			this.refs.hiddenTag.getDOMNode().focus();
+			this.refs.hiddenTag.focus();
 		}
 	},
 
 	clearTextField: function() {
-		this.refs.tag.getDOMNode().value = "";
+		this.refs.tag.value = "";
 	},
 
 	addTag: function(tag) {
@@ -75,7 +75,7 @@ export default React.createClass({
 	},
 
 	onKeyDown: function(e) {
-		var tag = this.refs.tag.getDOMNode().value.trim();
+		var tag = this.refs.tag.value.trim();
 		switch(e.which) {
 		case 13: // return key
 			// commit the value of the tag
@@ -102,8 +102,7 @@ export default React.createClass({
 		// only deselect if we're not inside the hidden tag
 		// this.setState({selectedTag: -1});
 		setTimeout((function() {
-			var h = this.refs.hiddenTag.getDOMNode();
-			console.log("Clear state if", document.activeElement, h);
+			var h = this.refs.hiddenTag;
 			if (h != document.activeElement) {
 				this.setState({selectedTag: -1});
 			}

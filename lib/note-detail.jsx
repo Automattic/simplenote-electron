@@ -26,7 +26,7 @@ export default React.createClass({
 	},
 
 	onChangeContent: function(e) {
-		var v = this.refs.content.getDOMNode().value;
+		var v = this.refs.content.value;
 		this.props.onChangeContent(v);
 	},
 

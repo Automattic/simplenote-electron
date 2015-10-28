@@ -9,7 +9,7 @@ export default React.createClass({
 	},
 
 	onSearch: function(e) {
-		var query = this.refs.search.getDOMNode().value;
+		var query = this.refs.search.value;
 		this.props.onSearch(query);
 	},
 

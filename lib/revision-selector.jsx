@@ -23,7 +23,7 @@ export default React.createClass({
 	},
 
 	onSelectRevision: function() {
-		var idx = this.refs.range.getDOMNode().value;
+		var idx = this.refs.range.value;
 		this.setState({selection: idx});
 		var revision = this.props.revisions[this.props.revisions.length - 1 - idx];
 		this.props.onViewRevision(revision);
