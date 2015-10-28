@@ -290,7 +290,7 @@ module.exports = React.createClass({
 		if (note) {
 			note.data.deleted = true;
 			this.props.notes.update(note.id, note.data);
-			this.setState({note_id: null});
+			this.setState({note_id: null, note: null});
 		}
 	},
 
