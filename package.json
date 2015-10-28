@@ -42,6 +42,8 @@
   },
   "dependencies": {
     "promise": "^7.0.4",
+    "react-addons-pure-render-mixin": "^0.14.0",
+    "react-dom": "^0.14.0",
     "react-popover": "git://github.com/beaucollins/react-popover.git",
     "serve-favicon": "^2.3.0"
   }

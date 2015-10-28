@@ -1,10 +1,9 @@
-var React = require('react');
+import React from 'react'
+import PlusIcon from './icons/plus'
+import BackIcon from './icons/back'
+import DownArrowIcon from './icons/down-arrow'
 
-const PlusIcon = require( './icons/plus.jsx' );
-const BackIcon = require( './icons/back.jsx' );
-import DownArrowIcon from './icons/down_arrow'
-
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

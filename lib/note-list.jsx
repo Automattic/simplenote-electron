@@ -1,7 +1,7 @@
-var React = require('react');
-var NoteListItem = require('./note_list_item.jsx');
+import React from 'react'
+import NoteListItem from './note-list-item'
 
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

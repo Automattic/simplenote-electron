@@ -1,11 +1,10 @@
-var React						 = require('react');
-var NoteDetail			 = require('./note_detail.jsx');
-var TagField				 = require('./tag_field.jsx');
-var NoteToolbar			 = require('./note_toolbar.jsx');
-var RevisionSelector = require('./revision_selector.jsx');
+import React from 'react'
+import NoteDetail from './note-detail'
+import TagField from './tag-field'
+import NoteToolbar from './note-toolbar'
+import RevisionSelector from './revision-selector'
 
-
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

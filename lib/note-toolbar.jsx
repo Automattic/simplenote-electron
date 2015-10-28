@@ -1,11 +1,10 @@
-var React = require('react');
+import React from 'react'
+import BackIcon from './icons/back'
+import InfoIcon from './icons/info'
+import RevisionsIcon from './icons/revisions'
+import TrashIcon from './icons/trash'
 
-const BackIcon = require( './icons/back.jsx' );
-const InfoIcon = require( './icons/info.jsx' );
-const RevisionsIcon = require( './icons/revisions.jsx' );
-const TrashIcon = require( './icons/trash.jsx' );
-
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

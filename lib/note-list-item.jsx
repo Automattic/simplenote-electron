@@ -1,8 +1,8 @@
-var React = require('react');
-var NoteDisplayMixin = require('./note_display_mixin.js');
-var classnames = require('classnames');
+import React from 'react'
+import NoteDisplayMixin from './note-display-mixin'
+import classnames from 'classnames'
 
-module.exports = React.createClass({
+export default React.createClass({
 
 	mixins: [NoteDisplayMixin],
 

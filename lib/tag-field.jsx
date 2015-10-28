@@ -1,8 +1,8 @@
-var React = require('react');
-var TagChip = require('./tag_chip.jsx');
+import React from 'react'
+import TagChip from './tag-chip'
 import classNames from 'classnames';
 
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

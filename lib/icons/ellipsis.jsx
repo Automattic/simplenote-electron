@@ -1,8 +1,7 @@
-'use strict';
-const React = require( 'react/addons' );
-var PureRenderMixin = React.addons.PureRenderMixin;
+import React from 'react'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 
-var EllipsisIcon = React.createClass( {
+export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
@@ -13,5 +12,3 @@ var EllipsisIcon = React.createClass( {
 		);
 	}
 } );
-
-module.exports = EllipsisIcon;

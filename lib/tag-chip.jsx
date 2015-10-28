@@ -1,7 +1,7 @@
-var React = require('react');
+import React from 'react'
 import classNames from 'classnames'
 
-module.exports = React.createClass({
+export default React.createClass({
 
 	getDefaultProps: function() {
 		return {

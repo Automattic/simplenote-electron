@@ -1,19 +1,18 @@
-var React						 = require('react');
-var NoteList				 = require('./note_list.jsx');
-var NoteEditor			 = require('./note_editor.jsx');
-var TagMenu					 = require('./tag_menu.jsx');
-var SearchField			 = require('./search_field.jsx');
-var NavigationBar		 = require('./navigation_bar.jsx');
-var Auth						 = require('./auth.jsx');
-var PlusIcon				 = require('./icons/plus.jsx');
-var NoteDisplayMixin = require('./note_display_mixin.js');
-const classNames		 = require( 'classnames' );
-var simperium				 = require('simperium');
-import PopOver from "react-popover";
-import List from './list';
+import React from 'react';
+import NoteList from './note-list'
+import NoteEditor	from './note-editor'
+import TagMenu from './tag-menu'
+import SearchField from './search-field'
+import NavigationBar from './navigation-bar'
+import Auth from './auth'
+import PlusIcon	from './icons/plus'
+import NoteDisplayMixin from './note-display-mixin'
+import classNames	from 'classnames'
+import simperium from 'simperium'
+import PopOver from "react-popover"
+import List from './list'
 
-
-module.exports = React.createClass({
+export default React.createClass({
 
 	mixins: [NoteDisplayMixin],
 
