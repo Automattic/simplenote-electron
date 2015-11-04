@@ -1,18 +1,18 @@
 # Simplenote for Electron
 
-A Simplenote client packaged in [Electron][].
+A Simplenote client packaged in [Electron](http://electron.atom.io).
 
 ## Running
 
 1. Clone the repo
 2. Add the Simplenote application id and token to `config.js`
-3. Add add user auth token to `./config.js`
+3. Add the user auth token to `./config.js`
 
-```
+```js
 module.exports = function() {
   return {
     app_id:     "chalk-bump-f49",
-    // For creating/authenticating useres
+    // For creating/authenticating users
     app_key:    "",
     // Setting a valid user_token will skip authentication
     user_token: "USER_TOKEN_HERE"
@@ -24,9 +24,9 @@ module.exports = function() {
 5. npm start
 6. Open http://localhost:4000/
 
-## Electron
+## Electron and webpack
 
-Install electron globally `npm install -g electron-prebuilt`, then:
+Install electron and webpack globally `npm install -g electron-prebuilt webpack`, then:
 
 1. Run `webpack`
 2. Run `electron .`
@@ -50,6 +50,5 @@ You can deploy a build to [http://electron-dot-simple-note-hrd.appspot.com]() by
 ## Dependenies
 
 - [node-simperium](https://github.com/automattic/node-simperium) for Simperium syncing.
-- ReactJS for UI
-
-[Electron]: http://electron.atom.io
+- [ReactJS](https://facebook.github.io/react/) for UI.
+- [Electron](http://electron.atom.io) for wrapping the JavaScript application.
