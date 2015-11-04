@@ -1,0 +1,18 @@
+{
+	"parser": "babel-eslint",
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"ecmaFeatures": {
+		"modules": true,
+		"jsx": true
+	},
+	"plugins": [
+		"react"
+	],
+	"rules": {
+		"indent": [2, "tab", {"VariableDeclarator": 2}],
+		"react/jsx-uses-react": 2
+	}
+}
