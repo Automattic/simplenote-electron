@@ -6,7 +6,7 @@ module.exports = Object.assign( baseConfig, {
 	entry: [
 		'webpack-dev-server/client?http://localhost:4000/',
 		'webpack/hot/only-dev-server',
-		'./app.js'
+		'./app.jsx'
 	],
 	module: {
 			loaders: [
