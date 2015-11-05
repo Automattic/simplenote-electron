@@ -1,31 +1,5 @@
+@import "variables";
 @import "utils";
-
-
-/**
- * Variables
- */
-
-$font-stack: "Source Sans Pro", sans-serif;
-
-$color-gray-lightest: #f9f9f9;
-$color-gray: #eee;
-$color-gray-medium: #999;
-$color-gray-dark: #666;
-$color-gray-darkest: #333;
-
-$color-black: #000;
-$color-white: #fff;
-
-$color-blue-lightest: #eef3f8;
-$color-blue-light: #e5ebf0;
-$color-blue-active-highlight: #bdd6ed;
-$color-blue: #6da3d3;	/* New blue: #4895d9 */
-
-$anim-transition: all 200ms ease-in-out;
-$anim-fast: all 0.1s linear;
-$anim: all .2s linear;
-
-$border-radius: 2px;
 
 /**
  * General
