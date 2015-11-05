@@ -1,7 +1,6 @@
 import React from 'react';
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
-import TagMenu from './tag-menu'
 import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
 import Auth from './auth'

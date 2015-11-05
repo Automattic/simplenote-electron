@@ -265,25 +265,6 @@ body {
 	}
 }
 
-.tag-menu {
-	padding: 0 8px;
-	height: 100%;
-	@include flexbox(flex-start, center);
-}
-
-.tag-menu-label {
-	&::before {
-		content: "▼";
-		margin-right: 2px;
-		display: inline-block;
-		font-size: 10px;
-		vertical-align: middle;
-		width: 18px;
-		text-align: center;
-	}
-	
-}
-
 .detail-toolbar {
 	@include flexbox(flex-start, stretch, row);
 	@include flex(1, 1, 100%);
