@@ -24,11 +24,11 @@ module.exports = function() {
 5. npm start
 6. Open http://localhost:4000/
 
-## Electron and webpack
+## Electron
 
-Install electron and webpack globally `npm install -g electron-prebuilt webpack`, then:
+Install electron globally `npm install -g electron-prebuilt`, then:
 
-1. Run `webpack`
+1. Run `npm run build`
 2. Run `electron .`
 
 ## Deploying to simplenote.com
@@ -37,7 +37,7 @@ You can deploy a build to [http://electron-dot-simple-note-hrd.appspot.com]() by
 
 1. Delete the `./dist` directory if it exists `rm -r dist`
 2. Clone the `gh-pages` branch to the `dist` directory: `git clone git@github.com:automattic/simplenote-electron.git -b gh-pages dist`
-3. Do a webpack production build `webpack -p`
+3. Do a production build with `npm run build:prod`
 4. Commit and push the `./dist` changes:
     - `cd dist`
     - `git add --all`
