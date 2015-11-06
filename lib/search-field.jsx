@@ -4,6 +4,7 @@ export default React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			placeholder: "Search",
 			onSearch: function() {}
 		}
 	},
@@ -16,7 +17,7 @@ export default React.createClass({
 	render: function() {
 		return (
 			<div className="search-field">
-				<input ref="search" type="text" placeholder="Search" onChange={this.onSearch} />
+				<input ref="search" type="text" placeholder={this.props.placeholder} onChange={this.onSearch} />
 			</div>
 		);
 	}

@@ -1,31 +1,47 @@
 import React from 'react'
-import PlusIcon from './icons/plus'
-import BackIcon from './icons/back'
-import DownArrowIcon from './icons/down-arrow'
+import TagList from './tag-list'
+import InfoIcon from './icons/info'
+import TrashIcon from './icons/trash'
+
+require('../scss/navigation-bar.scss');
 
 export default React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			title: "",
-			onDisplayTags: function(){}
+			onSelectAllNotes: function(){},
+			onSelectTrash: function(){},
+			onSelectTag: function(){},
+			tags: []
 		};
-	},
-
-	onNavigateBack: function() {
 	},
 
 	render: function() {
 		return (
-			<div className="navigation-bar">
-				<div></div>
-				<div className="tag-switcher"
-						tabIndex="-1"
-						onClick={this.props.onDisplayTags}>
-					<div>{this.props.title}</div>
-					<div style={{width: "24px", height: "24px", top: '1px', position: 'relative'}}><DownArrowIcon /></div>
+			<div className="navigation">
+				<div className="navigation-folders">
+					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectAllNotes}>
+						<span className="navigation-icon"><InfoIcon /></span>
+						All Notes
+					</div>
+					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectTrash}>
+						<span className="navigation-icon"><TrashIcon /></span>
+						Trash
+					</div>
 				</div>
-				{this.props.children}
+				<div className="navigation-tags">
+					<TagList tags={this.props.tags} onSelectTag={this.props.onSelectTag} />
+				</div>
+				<div className="navigation-tools">
+					<div className="navigation-tools-item" tabIndex="0">
+						<span className="navigation-icon"><InfoIcon /></span>
+						Settings
+					</div>
+				</div>
+				<div className="navigation-footer">
+					<div className="navigation-footer-item" tabIndex="0">Help &amp; Support</div>
+					<div className="navigation-footer-item" tabIndex="0">About</div>
+				</div>
 			</div>
 		);
 	}

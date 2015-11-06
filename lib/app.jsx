@@ -5,11 +5,11 @@ import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
 import Auth from './auth'
 import PlusIcon	from './icons/plus'
+import BackIcon from './icons/back'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 import simperium from 'simperium'
 import PopOver from "react-popover"
-import List from './list'
 
 export default React.createClass({
 
@@ -30,7 +30,7 @@ export default React.createClass({
 			showTrash: false,
 			listTitle: "All Notes",
 			authorized: this.props.client.isAuthorized(),
-			showTagMenu: false,
+			showNavigation: false,
 			showNoteInfo: false
 		};
 	},
@@ -90,6 +90,7 @@ export default React.createClass({
 
 	onSelectNote: function(note_id) {
 		this.props.notes.get(note_id, this._onGetNote);
+		this.onHideNavigation();
 	},
 
 	onNotesIndex: function() {
@@ -173,7 +174,7 @@ export default React.createClass({
 		if (!this.state.note) {
 			return;
 		}
-		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showTagMenu: false});
+		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showNavigation: false});
 	},
 
 	onHideNoteInfo: function() {
@@ -196,33 +197,32 @@ export default React.createClass({
 		})
 	},
 
-	onDisplayTagsMenu: function(evt) {
-
-		if (this.state.showTagMenu) {
-			return this.setState({showTagMenu: false, tagMenuContext: null});
+	onToggleNavigation: function() {
+		if (this.state.showNavigation) {
+			this.setState({showNavigation: false});
 		}
-
-		var target = evt.currentTarget,
-				rect = target.getBoundingClientRect();
-		this.setState({showTagMenu: true, showNoteInfo: false, tagMenuContext: rect});
+		else {
+			this.setState({showNavigation: true, showNoteInfo: false});
+		}
 	},
 
-	onHideTagsMenu: function() {
-		this.setState({showTagMenu: false, tagMenuContext: null});
+	onHideNavigation: function() {
+		this.setState({showNavigation: false});
 	},
 
-	onSelectTag: function(tag, index) {
-		switch (index) {
-		case 0:
-			this.setState({tag: null, showTrash: false, listTitle: "All Notes"});
-			break;
-		case 1:
-			this.setState({tag: null, showTrash: true, listTitle: "Trash"});
-			break;
-		default:
-			this.setState({tag: tag, showTrash: false, listTitle: tag.data.name});
-		}
-		this.onHideTagsMenu();
+	onSelectAllNotes: function() {
+		this.setState({tag: null, showTrash: false, listTitle: "All Notes"});
+		this.onHideNavigation();
+	},
+
+	onSelectTrash: function() {
+		this.setState({tag: null, showTrash: true, listTitle: "Trash"});
+		this.onHideNavigation();
+	},
+
+	onSelectTag: function(tag) {
+		this.setState({tag: tag, showTrash: false, listTitle: tag.data.name});
+		this.onHideNavigation();
 	},
 
 	onSearch: function(v) {
@@ -319,32 +319,6 @@ export default React.createClass({
 		if (!this.state.authorized) return fn();
 	},
 
-	tagMenuDataSource: function() {
-		return new TagMenuDataSource(this.state.tags);
-	},
-
-	renderTagListItem: function(item, index) {
-		var label = "";
-
-		switch (index) {
-		case 0:
-			label = "All Notes";
-			break;
-		case 1:
-			label = "Trash";
-			break;
-		default:
-			label = item.data.name;
-		}
-
-		return (
-			<div className="tag-list-item">
-				<span>{label}</span>
-				<span>0</span>
-			</div>
-		);
-	},
-
 	render: function() {
 
 		var notes = this.filterNotes();
@@ -354,7 +328,7 @@ export default React.createClass({
 
 		var classes = classNames( 'simplenote-app', {
 			'note-open': this.state.note,
-			'tags-open': this.state.showTagMenu
+			'navigation-open': this.state.showNavigation
 		} );
 
 		return (
@@ -362,16 +336,20 @@ export default React.createClass({
 				{ this.authorized( () => {
 					return (
 						<div className={classes}>
+							<NavigationBar
+								onSelectAllNotes={this.onSelectAllNotes}
+								onSelectTrash={this.onSelectTrash}
+								onSelectTag={this.onSelectTag}
+								tags={this.state.tags} />
 							<div className="source-list">
-								<div className="toolbar">
-									<NavigationBar ref="navigation" title={this.state.listTitle} onDisplayTags={this.onDisplayTagsMenu}>
-										<div className={classNames('button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
-											<PlusIcon />
-										</div>
-									</NavigationBar>
-								</div>
-								<div className="toolbar-compact">
-									<SearchField onSearch={this.onSearch} />
+								<div className="search-bar">
+									<div className="button navigation-toggle" tabIndex="-1" onClick={this.onToggleNavigation}>
+										<BackIcon />
+									</div>
+									<SearchField onSearch={this.onSearch} placeholder={this.state.listTitle} />
+									<div className={classNames('button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
+										<PlusIcon />
+									</div>
 								</div>
 								<div className="panel">
 									<NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} note={note} />
@@ -388,7 +366,6 @@ export default React.createClass({
 								onRevisions={this.onRevisions}
 								onCloseNote={this._closeNote}
 								onNoteInfo={this.onNoteInfo} />
-							{ this.renderTagPopover() }
 							{ this.renderNoteInfoPopover() }
 						</div>
 					)
@@ -421,29 +398,6 @@ export default React.createClass({
 			</PopOver>
 		);
 
-	},
-
-	renderTagPopover: function() {
-
-		if (!this.state.showTagMenu) {
-			return;
-		}
-
-		return (
-			<PopOver
-				onClosePopover={this.onHideTagsMenu}
-				context={this.state.tagMenuContext}>
-				<div className="tag-list-filter">
-					<div className="tag-list-title">View by Tag</div>
-					<div className="tag-option-list">
-						<List
-							dataSource={this.tagMenuDataSource()}
-							renderItem={this.renderTagListItem}
-							onClickItem={this.onSelectTag} />
-					</div>
-				</div>
-			</PopOver>
-		);
 	}
 });
 
@@ -486,25 +440,4 @@ function and(fn, fn2) {
 		if (!fn(o)) return false;
 		return fn2(o);
 	};
-}
-
-
-function TagMenuDataSource(tags) {
-	this.tags = tags || [];
-}
-
-TagMenuDataSource.prototype.totalItems = function() {
-	return this.tags.length + 2;
-}
-
-TagMenuDataSource.prototype.getItem = function(index) {
-
-	var i = index - 2;
-
-	if (i < 0) {
-		return {};
-	}
-
-	return this.tags[i];
-
 }
