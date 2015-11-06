@@ -5,9 +5,8 @@ var baseConfig = require( './webpack.config.js' );
 module.exports = Object.assign( baseConfig, {
 	entry: [
 		'webpack-dev-server/client?http://localhost:4000/',
-		'webpack/hot/only-dev-server',
-		'./app.jsx'
-	],
+		'webpack/hot/only-dev-server'
+	].concat(baseConfig.entry),
 	module: {
 			loaders: [
 				{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'react-hot', 'babel-loader' ] },

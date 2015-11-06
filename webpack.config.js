@@ -4,7 +4,7 @@ module.exports = {
 	context: __dirname + "/lib",
 	devtool: 'sourcemap',
 	entry: [
-		'./boot.js'
+		'./boot'
 	],
 	output: {
 		path: __dirname + "/dist",
