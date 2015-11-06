@@ -31,7 +31,8 @@ export default React.createClass({
 			listTitle: "All Notes",
 			authorized: this.props.client.isAuthorized(),
 			showNavigation: false,
-			showNoteInfo: false
+			showNoteInfo: false,
+			editingTags: false
 		};
 	},
 
@@ -174,7 +175,7 @@ export default React.createClass({
 		if (!this.state.note) {
 			return;
 		}
-		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showNavigation: false});
+		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showNavigation: false, editingTags: false});
 	},
 
 	onHideNoteInfo: function() {
@@ -199,7 +200,7 @@ export default React.createClass({
 
 	onToggleNavigation: function() {
 		if (this.state.showNavigation) {
-			this.setState({showNavigation: false});
+			this.onHideNavigation();
 		}
 		else {
 			this.setState({showNavigation: true, showNoteInfo: false});
@@ -207,22 +208,40 @@ export default React.createClass({
 	},
 
 	onHideNavigation: function() {
-		this.setState({showNavigation: false});
+		this.setState({showNavigation: false, editingTags: false});
 	},
 
 	onSelectAllNotes: function() {
-		this.setState({tag: null, showTrash: false, listTitle: "All Notes"});
-		this.onHideNavigation();
+		this.setState({
+			showNavigation: false, editingTags: false,
+			tag: null, showTrash: false, listTitle: "All Notes"
+		});
 	},
 
 	onSelectTrash: function() {
-		this.setState({tag: null, showTrash: true, listTitle: "Trash"});
-		this.onHideNavigation();
+		this.setState({
+			showNavigation: false, editingTags: false,
+			tag: null, showTrash: true, listTitle: "Trash"
+		});
 	},
 
 	onSelectTag: function(tag) {
-		this.setState({tag: tag, showTrash: false, listTitle: tag.data.name});
-		this.onHideNavigation();
+		this.setState({
+			showNavigation: false, editingTags: false,
+			tag: tag, showTrash: false, listTitle: tag.data.name
+		});
+	},
+
+	onEditTags: function() {
+		if (this.state.editingTags) {
+			this.setState({editingTags: false});
+		}
+		else {
+			this.setState({editingTags: true});
+		}
+	},
+
+	onUpdateTags: function(tags) {
 	},
 
 	onSearch: function(v) {
@@ -327,6 +346,7 @@ export default React.createClass({
 		var revisions = this.state.revisions;
 
 		var classes = classNames( 'simplenote-app', {
+			'touch-enabled': ('ontouchstart' in document.body),
 			'note-open': this.state.note,
 			'navigation-open': this.state.showNavigation
 		} );
@@ -340,6 +360,9 @@ export default React.createClass({
 								onSelectAllNotes={this.onSelectAllNotes}
 								onSelectTrash={this.onSelectTrash}
 								onSelectTag={this.onSelectTag}
+								onEditTags={this.onEditTags}
+								onUpdateTags={this.onUpdateTags}
+								editingTags={this.state.editingTags}
 								tags={this.state.tags} />
 							<div className="source-list">
 								<div className="search-bar">

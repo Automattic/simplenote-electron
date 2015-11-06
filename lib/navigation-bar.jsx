@@ -10,9 +10,7 @@ export default React.createClass({
 	getDefaultProps: function() {
 		return {
 			onSelectAllNotes: function(){},
-			onSelectTrash: function(){},
-			onSelectTag: function(){},
-			tags: []
+			onSelectTrash: function(){}
 		};
 	},
 
@@ -30,7 +28,7 @@ export default React.createClass({
 					</div>
 				</div>
 				<div className="navigation-tags">
-					<TagList tags={this.props.tags} onSelectTag={this.props.onSelectTag} />
+					<TagList {...this.props} />
 				</div>
 				<div className="navigation-tools">
 					<div className="navigation-tools-item" tabIndex="0">
