@@ -278,7 +278,7 @@ export default React.createClass({
 		}
 	},
 
-	onUpdateTags: function(note, tags) {
+	onUpdateNoteTags: function(note, tags) {
 		if (note) {
 			note.data.tags = tags;
 			this.props.notes.update(note.id, note.data);
@@ -360,7 +360,7 @@ export default React.createClass({
 								revisions={this.state.revisions}
 								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
-								onUpdateTags={this.onUpdateTags}
+								onUpdateNoteTags={this.onUpdateNoteTags}
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
 								onRevisions={this.onRevisions}

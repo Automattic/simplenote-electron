@@ -15,7 +15,7 @@ export default React.createClass({
 			},
 			revisions: null,
 			onUpdateContent: function() {},
-			onUpdateTags: function() {},
+			onUpdateNoteTags: function() {},
 			onTrashNote: function() {},
 			onRestoreNote: function() {},
 			onRevisions: function() {},
@@ -69,7 +69,7 @@ export default React.createClass({
 				<div className="toolbar-compact">
 					<TagField ref="tags"
 						tags={tags}
-						onUpdateTags={this.withNote(this.props.onUpdateTags)} />
+						onUpdateNoteTags={this.withNote(this.props.onUpdateNoteTags)} />
 				</div>
 				<div className="panel">
 					<NoteDetail ref="detail"

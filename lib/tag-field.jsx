@@ -7,7 +7,7 @@ export default React.createClass({
 	getDefaultProps: function() {
 		return {
 			tags: [],
-			onUpdateTags: function(){}
+			onUpdateNoteTags: function(){}
 		};
 	},
 
@@ -33,7 +33,7 @@ export default React.createClass({
 
 	addTag: function(tag) {
 		var tags = this.props.tags.concat([tag]);
-		this.props.onUpdateTags(tags);
+		this.props.onUpdateNoteTags(tags);
 	},
 
 	onSelectTag: function(tag, index) {
@@ -55,7 +55,7 @@ export default React.createClass({
 			state.selectedTag = -1;
 		}
 
-		this.props.onUpdateTags(tags);
+		this.props.onUpdateNoteTags(tags);
 
 		this.setState(state);
 	},
