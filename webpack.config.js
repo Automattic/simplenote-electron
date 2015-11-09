@@ -4,7 +4,7 @@ module.exports = {
 	context: __dirname + "/lib",
 	devtool: 'sourcemap',
 	entry: [
-		'./boot.js'
+		'./boot'
 	],
 	output: {
 		path: __dirname + "/dist",
@@ -12,7 +12,7 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel-loader' ] },
+			{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel' ] },
 			{ test: /\.json$/, loader: 'json-loader'},
 			{ test: /\.scss$/, loader: 'style!css!sass'}
 		]
