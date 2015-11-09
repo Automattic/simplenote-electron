@@ -1,3 +1,4 @@
+var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
 		loaders: [
 			{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel' ] },
 			{ test: /\.json$/, loader: 'json-loader'},
-			{ test: /\.scss$/, loader: 'style!css!sass'}
+			{ test: /\.scss$/, loader: 'style-loader!css-loader!postcss-loader!sass-loader'}
 		]
 	},
 	resolve: {
@@ -27,5 +28,6 @@ module.exports = {
 			templateContent: require( './index-builder.js' ),
 			inject: false
 		})
-	]
+	],
+	postcss: [ autoprefixer() ]
 };
