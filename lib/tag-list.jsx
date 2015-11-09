@@ -16,6 +16,12 @@ export default React.createClass({
 		};
 	},
 
+	getInitialState: function() {
+		return {
+			reordering: false
+		};
+	},
+
 	render: function() {
 		return (
 			<div className={classNames("tag-list", {"tag-list-editing": this.props.editingTags})}>
@@ -25,7 +31,7 @@ export default React.createClass({
 						{this.props.editingTags ? 'Done' : 'Edit' }
 					</strong>
 				</div>
-				<ul className="tag-list-items">
+				<ul className="tag-list-items" onMouseMove={this.onReorderMove} onTouchMove={this.onReorderMove}>
 					{this.props.tags.map((tag, i) => 
 						<li key={tag.id} className="tag-list-item">
 							<span className="tag-list-item-left">
@@ -43,7 +49,13 @@ export default React.createClass({
 								</span>
 							</span>
 							<span className="tag-list-reorder"
-									tabIndex={this.props.editingTags ? "0" : "-1"}>
+									tabIndex={this.props.editingTags ? "0" : "-1"}
+									onDragStart={e => e.preventDefault()}
+									onMouseDown={this.onReorderStart}
+									onTouchStart={this.onReorderStart}
+									onMouseUp={this.onReorderEnd}
+									onTouchEnd={this.onReorderEnd}
+									onTouchCancel={this.onReorderCancel}>
 								<DownArrow />
 							</span>
 						</li>
@@ -72,5 +84,28 @@ export default React.createClass({
 
 	onRenameTag: function(tag, newName) {
 		console.log(tag, newName);
+	},
+
+	onReorderStart: function() {
+		console.log('onReorderStart', this.props.tags);
+		this.setState({ reordering: true });
+	},
+
+	onReorderMove: function() {
+		if (!this.state.reordering) {
+			return;
+		}
+
+		console.log('onReorderMove');
+	},
+
+	onReorderEnd: function() {
+		console.log('onReorderEnd');
+		this.setState({ reordering: false });
+	},
+
+	onReorderCancel: function() {
+		console.log('onReorderCancel');
+		this.setState({ reordering: false });
 	}
 });
