@@ -1,0 +1,138 @@
+@import "variables";
+
+.tag-list {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	overflow: hidden;
+
+	.tag-list-title {
+		display: flex;
+		flex: none;
+		justify-content: space-between;
+		align-items: center;
+		line-height: 1.25em;
+		margin-bottom: 0.5em;
+
+		h2 {
+			margin: 0;
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+			font-size: 86%;
+			font-weight: normal;
+			color: $color-gray-dark;
+		}
+
+		.tag-list-edit-toggle {
+			opacity: 0;
+
+			.touch-enabled & {
+				opacity: 1;
+			}
+		}
+	}
+
+	&:hover, &.tag-list-editing {
+		.tag-list-title .tag-list-edit-toggle {
+			opacity: 1;
+		}
+	}
+
+	.tag-list-items {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		overflow: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.tag-list-item {
+		display: flex;
+		flex: none;
+		padding: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		-webkit-tap-highlight-color: transparent;
+
+		svg {
+			vertical-align: middle;
+			position: relative;
+			top: -0.15em;
+		}
+	}
+
+	.tag-list-item-left {
+		display: flex;
+		align-items: center;
+		flex: 1 0 auto;
+		transform: translateX(-24px);
+		transition: $anim;
+	}
+
+	.tag-list-input-holder {
+		display: flex;
+		flex: 1 1 auto;
+	}
+
+	.tag-list-input {
+		flex: 1 1 auto;
+		display: block;
+		box-sizing: border-box;
+		width: 50px;
+		height: 3em;
+		line-height: 3em;
+		margin: 0;
+		padding: 0;
+		border: none;
+		text-overflow: ellipsis;
+		font-size: 100%;
+		background: none;
+		cursor: pointer;
+		appearance: none;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.tag-list-trash, .tag-list-reorder {
+		flex: none;
+		opacity: 0;
+		pointer-events: none;
+		width: 24px;
+		transition: $anim;
+	}
+
+	.tag-list-trash {
+		fill: #DE6969;
+	}
+
+	.tag-list-reorder {
+		display: flex;
+		align-items: center;
+		flex: none;
+		transform: translateX(24px);
+		fill: #B4B4B4;
+	}
+
+	&.tag-list-editing {
+		.tag-list-item-left {
+			transform: translateX(0);
+		}
+
+		.tag-list-trash {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.tag-list-reorder {
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateX(0);
+		}
+	}
+}

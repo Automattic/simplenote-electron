@@ -1,35 +1,13 @@
+@import "variables";
 @import "utils";
-
-
-/**
- * Variables
- */
-
-$font-stack: "Source Sans Pro", sans-serif;
-
-$color-gray-lightest: #f9f9f9;
-$color-gray: #eee;
-$color-gray-medium: #999;
-$color-gray-dark: #666;
-$color-gray-darkest: #333;
-
-$color-black: #000;
-$color-white: #fff;
-
-$color-blue-lightest: #eef3f8;
-$color-blue-light: #e5ebf0;
-$color-blue-active-highlight: #bdd6ed;
-$color-blue: #6da3d3;	/* New blue: #4895d9 */
-
-$anim-transition: all 200ms ease-in-out;
-$anim-fast: all 0.1s linear;
-$anim: all .2s linear;
-
-$border-radius: 2px;
 
 /**
  * General
  */
+
+html, body {
+	height: 100%;
+}
 
 body {
 	margin: 0;
@@ -39,16 +17,31 @@ body {
 	-webkit-user-select: none;
 }
 
-.simplenote-app {
-	position: fixed;
+.app {
+	position: absolute;
 	top: 0;
 	left: 0;
-	right: 0;
-	bottom: 0;
-	@include flexbox(flex-start, stretch);
+	width: 100%;
+	height: 100%;
+	@include flexbox();
 }
 
-.source-list,
+.simplenote-app {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	-webkit-transform: translateX(0px);
+	transform: translateX(0px);
+	-webkit-transition: -webkit-transform 200ms ease-in-out;
+	transition: transform 200ms ease-in-out;
+	@include flexbox(flex-start, stretch);
+
+	&.navigation-open {
+		-webkit-transform: translateX($navigation-bar-width);
+		transform: translateX($navigation-bar-width);
+	}
+}
+
 .detail {
 	@include flexbox(flex-start, stretch, column);
 }
@@ -59,10 +52,26 @@ body {
 }
 
 .source-list {
-	min-width: 200px;
-	@include flex(0, 0, 300px);
+	min-width: 328px;
 	border-right: 1px solid $color-gray;
 	cursor: default;
+	@include flexbox(flex-start, stretch, column);
+	@include flex(0, 0, 300px);
+
+	.search-bar {
+		padding: 17px 20px;
+		border-bottom: 1px solid $color-gray;
+		@include flexbox(space-between, center, row);
+
+		.navigation-toggle {
+			fill: $color-gray-dark;
+		}
+	}
+
+	.search-field {
+		margin: 0 12px;
+		@include flex(1);
+	}
 }
 
 .note-list {
@@ -129,17 +138,6 @@ body {
 	border-bottom: 1px solid $color-gray;
 }
 
-.source-list {
-	.toolbar {
-		@include flexbox(0, stretch);
-		overflow: hidden;
-	}
-	
-	.toolbar-compact {
-		overflow: hidden;
-	}
-}
-
 .detail {
 	.toolbar {
 		@include flexbox(0, stretch);
@@ -204,7 +202,7 @@ body {
 	-webkit-overflow-scrolling: touch;
 	-webkit-transform: translate3d(0, 0, 0);
 
-	.tags-open & {
+	.navigation-open & {
 		-webkit-overflow-scrolling: auto;
 		overflow: hidden;
 	}
@@ -291,25 +289,6 @@ body {
 	}
 }
 
-.tag-menu {
-	padding: 0 8px;
-	height: 100%;
-	@include flexbox(flex-start, center);
-}
-
-.tag-menu-label {
-	&::before {
-		content: "▼";
-		margin-right: 2px;
-		display: inline-block;
-		font-size: 10px;
-		vertical-align: middle;
-		width: 18px;
-		text-align: center;
-	}
-	
-}
-
 .detail-toolbar {
 	@include flexbox(flex-start, stretch, row);
 	@include flex(1, 1, 100%);
@@ -341,57 +320,21 @@ body {
 
 }
 
-.search-field {
-	height: 100%;
-	@include flexbox(space-between, center);
-	padding: 0 8px;
-	
+.search-field {	
 	input {
-		@include flex(1, 1);
+		box-sizing: border-box;
+		width: 100%;
 		border-radius: 50px;
 		border: 1px solid $color-gray;
 		padding: 4px 8px;
 		-webkit-appearance: none;
+		appearance: none;
+		@include flex(1, 1);
 		
 		&:focus {
 			outline: none; 
-		}
-		
+		}	
 	}
-
-}
-
-.navigation-bar {
-	@include flexbox(space-between, stretch, row);
-	@include flex(1, 1, 100%);
-	padding: 8px;
-	
-	> div {
-	
-		@include flexbox(center, center);
-		@include flex(1, 1, 100%);
-		
-		&:first-child,
-		&:last-child {
-			@include flex(1, 0, 28px)
-		}
-
-	}
-
-	.tag-switcher {
-		cursor: pointer;
-		align-items: center;
-		-webkit-tap-highlight-color: transparent;
-
-		color: $color-blue;
-		fill: $color-blue;
-
-		&:focus {
-			outline: none;
-			background: $color-gray-lightest;
-		}
-	}
-	
 }
 
 /**
@@ -441,52 +384,6 @@ body {
 
 }
 
-.tag-list-title {
-	padding: 4px;
-	text-align: center;
-	border-bottom: 1px solid #161616;
-	@include flex(1, 0, auto);
-}
-
-.tag-list-filter {
-	@include flexbox(center, stretch, column);
-	max-height: 100%;
-}
-
-.tag-option-list {
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-	min-width: 220px;
-
-	> div {
-		max-width: 100%;
-		overflow: hidden;
-	}
-
-}
-
-.tag-list-item {
-	cursor: pointer;
-	padding: 2px 8px;
-	-webkit-tap-highlight-color: transparent;
-	@include flexbox(space-between, center);
-
-	> span:first-child {
-		@include flex(0, 1);
-		margin-right: 8px;
-		overflow: hidden;
-		display: block;
-		max-width: 100%;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	span:last-child {
-		@include flex(0, 0, auto);
-	}
-
-}
 /**
  * Buttons & Forms
  */
@@ -561,14 +458,6 @@ input[type="password"] {
  * Sign In/Sign Up
  */
 
-.app {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	@include flexbox();
-}
 
 .login-form {
 
