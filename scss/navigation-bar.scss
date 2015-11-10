@@ -10,7 +10,7 @@
 	width: $navigation-bar-width;
 	height: 100%;
 	overflow: hidden;
-	border-right: 1px solid $color-gray;
+	border-right: 1px solid $gray;
 
 	.navigation-folders {
 		flex: none;
@@ -40,13 +40,13 @@
 		flex: 0 1 auto;
 		overflow: hidden;
 		padding: 20px 30px;
-		border-top: 1px solid $color-gray;
+		border-top: 1px solid $gray;
 	}
 
 	.navigation-tools {
 		flex: 1 0 auto;
 		padding: 20px 0;
-		border-top: 1px solid $color-gray;
+		border-top: 1px solid $gray;
 	}
 
 	.navigation-footer {
@@ -55,7 +55,7 @@
 		justify-content: space-around;
 		align-items: center;
 		padding: 20px 30px;
-		color: $color-gray-dark;
+		color: darken($gray, 20%);
 	}
 
 	.navigation-footer-item {
@@ -64,7 +64,7 @@
 
 	.navigation-icon {
 		display: inline-block;
-		fill: $color-gray-dark;
+		fill: darken($gray, 20%);
 		margin-right: 0.5em;
 
 		svg {

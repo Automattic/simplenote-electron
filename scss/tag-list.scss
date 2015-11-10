@@ -20,7 +20,7 @@
 			letter-spacing: 0.1em;
 			font-size: 86%;
 			font-weight: normal;
-			color: $color-gray-dark;
+			color: darken($gray, 20%);
 		}
 
 		.tag-list-edit-toggle {

@@ -11,7 +11,7 @@ html, body {
 
 body {
 	margin: 0;
-	font: 14px/1.5 $font-stack;
+	font: 14px/1.5 $sans;
 	overflow: hidden;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -53,18 +53,18 @@ body {
 
 .source-list {
 	min-width: 328px;
-	border-right: 1px solid $color-gray;
+	border-right: 1px solid $gray;
 	cursor: default;
 	@include flexbox(flex-start, stretch, column);
 	@include flex(0, 0, 300px);
 
 	.search-bar {
 		padding: 17px 20px;
-		border-bottom: 1px solid $color-gray;
+		border-bottom: 1px solid $gray;
 		@include flexbox(space-between, center, row);
 
 		.navigation-toggle {
-			fill: $color-gray-dark;
+			fill: darken($gray, 20%);
 		}
 	}
 
@@ -96,19 +96,19 @@ body {
 	&.pinned {
 		> div:first-child {
 			border-radius: 18px;
-			background: $color-blue-active-highlight;
+			background: $blue-active-highlight;
 		}
 	}
 
 	&:hover {
-		background: $color-gray-lightest;
+		background: $gray-lightest;
 	}
 	
 	&.selected {
-		background: $color-blue-lightest;
+		background: $blue-lightest;
 		
 		:focus & {
-			background: $color-blue-light;
+			background: $blue-light;
 		}
 	}
 }
@@ -135,7 +135,7 @@ body {
 }
 
 .toolbar-compact {
-	border-bottom: 1px solid $color-gray;
+	border-bottom: 1px solid $gray;
 }
 
 .detail {
@@ -164,9 +164,9 @@ body {
 	height: 100%;
 	padding: 24px 48px;
 	border: none;
-	font: 14px/1.5 $font-stack;
-	color: $color-gray-dark;
-	background: $color-gray-lightest;
+	font: 14px/1.5 $sans;
+	color: darken($gray, 20%);
+	background: $gray-lightest;
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
@@ -175,13 +175,13 @@ body {
 	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
-		background: $color-white;
+		background: $white;
 	}
 	
 	&:focus {
-		color: $color-gray-darkest;
+		color: $gray-darkest;
 		outline: none;
-		background: $color-white;
+		background: $white;
 	}	
 
 }
@@ -232,12 +232,12 @@ body {
 	}
 	
 	&::-webkit-scrollbar-thumb {
-		background: $color-gray;
+		background: $gray;
 	}
 
 	&:hover {
 		&::-webkit-scrollbar-thumb {
-			background: $color-gray-medium;
+			background: lighten($gray, 10%);
 		}
 	}
 
@@ -261,16 +261,16 @@ body {
 	cursor: default;
 	border-radius: 14px;
 	white-space: nowrap;
-	background: $color-gray;
-	color: $color-gray-dark;
+	background: $gray;
+	color: lighten($gray, 20%);
 	@include flex(0, 0);
 	text-decoration: none;
 	font-size: 14px;
 	-webkit-tap-highlight-color: transparent;
 	
 	&.selected {
-		background: $color-gray-dark;
-		color: $color-white;
+		background: lighten($gray, 20%);
+		color: $white;
 	}
 	
 }
@@ -284,8 +284,8 @@ body {
 		min-width: 140px;
 		border: none;
 		outline: none;
-		font: 14px/1.5 $font-stack;
-		color: $color-gray-darkest;
+		font: 14px/1.5 $sans;
+		color: darken($gray, 20%);
 	}
 }
 
@@ -309,7 +309,7 @@ body {
 		}
 		
 		&:active {
-			background: $color-blue-active-highlight;
+			background: $blue-active-highlight;
 		}
 
 		&:last-child {
@@ -325,7 +325,7 @@ body {
 		box-sizing: border-box;
 		width: 100%;
 		border-radius: 50px;
-		border: 1px solid $color-gray;
+		border: 1px solid $gray;
 		padding: 4px 8px;
 		-webkit-appearance: none;
 		appearance: none;
@@ -395,13 +395,13 @@ input {
 input[type="text"],
 input[type="password"] {
 	font-size: 14px;
-	font-family: $font-stack;
+	font-family: $sans;
 }
 
 .button,
 .textbutton {
-	color: $color-blue;
-	fill: $color-blue;
+	color: $blue;
+	fill: $blue;
 	transition: $anim-fast;
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
@@ -409,8 +409,8 @@ input[type="password"] {
 
 	&.disabled {
 		cursor: default;
-		color: $color-gray;
-		fill: $color-gray;
+		color: $gray;
+		fill: $gray;
 	}
 
 }
@@ -420,16 +420,16 @@ input[type="password"] {
 }
 
 .button {
-	background: $color-white;
+	background: $white;
 	border-radius: $border-radius;
 
 	&:hover {
-		background: $color-blue-lightest;
+		background: $blue-lightest;
 
 		&.disabled {
-			background: $color-white;
-			color: $color-gray;
-			fill: $color-gray;
+			background: $white;
+			color: $gray;
+			fill: $gray;
 		}
 	}
 
@@ -438,7 +438,7 @@ input[type="password"] {
 	}
 
 	&:active {
-		background: $color-blue-active-highlight;
+		background: $blue-active-highlight;
 	}
 
 }
@@ -449,7 +449,7 @@ input[type="password"] {
  */
 
 .revision-selector {
-	border-top: 1px solid $color-gray;
+	border-top: 1px solid $gray;
 	padding: 8px;
 }
 
@@ -464,7 +464,7 @@ input[type="password"] {
 	@include flexbox(center, center, column);
 
 	svg {
-		fill: $color-blue;
+		fill: $blue;
 		margin-bottom: 20px;
 	}
 
