@@ -108,7 +108,7 @@
 	}
 
 	.tag-list-trash {
-		fill: #DE6969;
+		fill: $red;
 	}
 
 	.tag-list-reorder {
@@ -116,7 +116,7 @@
 		align-items: center;
 		flex: none;
 		transform: translateX(24px);
-		fill: #B4B4B4;
+		fill: $gray;
 	}
 
 	&.tag-list-editing {

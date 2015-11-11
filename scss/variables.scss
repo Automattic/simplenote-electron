@@ -2,9 +2,7 @@
  * Variables
  */
 
-$sans-fallback: Helvetica, Arial, sans-serif;
-$sans: 'Source Sans Pro', $sans-fallback; // 100,200,300,400,400italic
-
+// Blues
 $blue: #4895d9;	// old blue: #6da3d3
 $blue-lightest: lighten($blue, 33%);
 $blue-light: lighten($blue, 20%);
@@ -14,7 +12,7 @@ $blue-active-highlight: lighten($blue, 10%);
 // Grays
 $gray: #899199;
 
-$gray-lightest: lighten($gray, 33%);
+$gray-lightest: lighten($gray, 38%);
 $gray-darkest: darken($gray, 38%);
 
 // $gray color functions from light to dark:
@@ -26,8 +24,15 @@ $gray-darkest: darken($gray, 38%);
 // darken($gray, 20%)
 // darken($gray, 30%)
 
+// Secondary
+$yellow: #f0b849;
+$red: #d94f4f;
+$green: #4ab866;
 $black: #000; // use $gray-darkest instead
 $white: #fff;
+
+$sans-fallback: Helvetica, Arial, sans-serif;
+$sans: 'Source Sans Pro', $sans-fallback; // 100,200,300,400,400italic
 
 $anim-transition: all 200ms ease-in-out;
 $anim-fast: all 0.1s linear;

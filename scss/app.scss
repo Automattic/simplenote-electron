@@ -53,14 +53,14 @@ body {
 
 .source-list {
 	min-width: 328px;
-	border-right: 1px solid $gray;
+	border-right: 1px solid lighten($gray, 30%);
 	cursor: default;
 	@include flexbox(flex-start, stretch, column);
 	@include flex(0, 0, 300px);
 
 	.search-bar {
 		padding: 17px 20px;
-		border-bottom: 1px solid $gray;
+		border-bottom: 1px solid lighten($gray, 30%);
 		@include flexbox(space-between, center, row);
 
 		.navigation-toggle {
@@ -105,10 +105,10 @@ body {
 	}
 	
 	&.selected {
-		background: $blue-lightest;
+		background: $gray-lightest;
 		
 		:focus & {
-			background: $blue-light;
+			background: $blue-lightest;
 		}
 	}
 }
@@ -125,7 +125,7 @@ body {
 }
 
 .preview {
-	color: #999;
+	color: $gray;
 }
 
 .toolbar,
@@ -135,7 +135,7 @@ body {
 }
 
 .toolbar-compact {
-	border-bottom: 1px solid $gray;
+	border-bottom: 1px solid lighten($gray, 30%);
 }
 
 .detail {
@@ -166,7 +166,7 @@ body {
 	border: none;
 	font: 14px/1.5 $sans;
 	color: darken($gray, 20%);
-	background: $gray-lightest;
+	background: $white;
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
@@ -261,15 +261,15 @@ body {
 	cursor: default;
 	border-radius: 14px;
 	white-space: nowrap;
-	background: $gray;
-	color: lighten($gray, 20%);
+	background: lighten($gray, 30%);
+	color: darken($gray, 20%);
 	@include flex(0, 0);
 	text-decoration: none;
 	font-size: 14px;
 	-webkit-tap-highlight-color: transparent;
 	
 	&.selected {
-		background: lighten($gray, 20%);
+		background: $gray;
 		color: $white;
 	}
 	
@@ -325,7 +325,7 @@ body {
 		box-sizing: border-box;
 		width: 100%;
 		border-radius: 50px;
-		border: 1px solid $gray;
+		border: 1px solid lighten($gray, 30%);
 		padding: 4px 8px;
 		-webkit-appearance: none;
 		appearance: none;
@@ -343,13 +343,13 @@ body {
 
 .popover {
 	position: absolute;
-	background: #222;
-	color: #F0F0F0;
+	background: $gray-darkest;
+	color: $white;
 	border-radius: 4px;
 	top: 0;
 	left: 0;
 	opacity: 0.95;
-	box-shadow: 0 0px 3px #000;
+	box-shadow: 0 0px 3px $gray-darkest;
 
 	.arrow {
 		content: '';
@@ -359,9 +359,9 @@ body {
 		top: -18px;
 		width: 18px;
 		height: 18px;
-		background: #222;
+		background: $gray-darkest;
 		transform: translate(-9px, 16px) rotate(45deg);
-		box-shadow: 0 0px 5px #000;
+		box-shadow: 0 0px 5px $gray-darkest;
 	}
 
 	&:focus {
@@ -371,7 +371,7 @@ body {
 }
 
 .popover-scroll {
-	background: #222;
+	background: $gray-darkest;
 	position: relative;
 	z-index: 1;
 	height: 100%;
@@ -449,7 +449,7 @@ input[type="password"] {
  */
 
 .revision-selector {
-	border-top: 1px solid $gray;
+	border-top: 1px solid lighten($gray, 30%);
 	padding: 8px;
 }
 
@@ -528,7 +528,7 @@ input[type="password"] {
 	}
 
 	.detail, .source-list {
-		background: #FFF;
+		background: $white;
 	}
 
 	.note-open {

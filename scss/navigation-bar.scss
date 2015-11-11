@@ -10,7 +10,7 @@
 	width: $navigation-bar-width;
 	height: 100%;
 	overflow: hidden;
-	border-right: 1px solid $gray;
+	border-right: 1px solid lighten($gray, 30%);
 
 	.navigation-folders {
 		flex: none;
@@ -40,13 +40,13 @@
 		flex: 0 1 auto;
 		overflow: hidden;
 		padding: 20px 30px;
-		border-top: 1px solid $gray;
+		border-top: 1px solid lighten($gray, 30%);
 	}
 
 	.navigation-tools {
 		flex: 1 0 auto;
 		padding: 20px 0;
-		border-top: 1px solid $gray;
+		border-top: 1px solid lighten($gray, 30%);
 	}
 
 	.navigation-footer {
