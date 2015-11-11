@@ -6,8 +6,8 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24">
-				<path d="M14,10h-1v7h1V10z M11,10h-1v7h1V10z M16,6V5c0-1.1-0.9-2-2-2h-4C8.9,3,8,3.9,8,5v1H5v2h1v11c0,1.1,0.9,2,2,2h8 c1.1,0,2-0.9,2-2V8h1V6H16z M10,5h4v1h-4V5z M16,19H8V8h8V19z"/>
+			<svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 22 22">
+				<path d="M18 8.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8.5h2V18h10V8.5h2zM15 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H3v2h16V5h-4zM9 4h4v1H9V4zm1 12V8.5H8V16h2zm4 0V8.5h-2V16h2z"/>
 			</svg>
 		);
 	}

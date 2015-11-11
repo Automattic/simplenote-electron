@@ -6,8 +6,8 @@ export default ArrowIcon = React.createClass( {
 
 	render: function() {
 		return (
-			<svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24">
-				<polygon points="9.4,10 11.7,7.7 10.3,6.3 5.6,11 10.3,15.7 11.7,14.3 9.4,12 17,12 17,18 19,18 19,10 "/>
+			<svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 22 22">
+				<path d="M19 10H6.414l5.293-5.293-1.414-1.414L2.586 11l7.707 7.707 1.414-1.414L6.414 12H19z"/>
 			</svg>
 		);
 	}
