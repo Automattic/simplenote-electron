@@ -2,10 +2,11 @@ doctype html
 html
   head
     meta(charset="utf-8")
-    title Simplenote
+    title= o.htmlWebpackPlugin.options.title || 'Simplenote'
     meta(name="viewport" content="width=device-width, maximum-scale=1")
     link(rel="icon" href="/favicon.ico")
     link(rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,400,400italic")
     script(type="text/javascript")!="var config=" + JSON.stringify(config) + ";"
   body
-    script(type="text/javascript" charset="utf-8" src="app.js")
+    each chunk in o.htmlWebpackPlugin.files.chunks
+      script(type="text/javascript" charset="utf-8" src=chunk.entry)

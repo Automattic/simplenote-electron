@@ -12,8 +12,11 @@ function getConfig() {
 	return config;
 };
 
-function getTemplateContent() {
-	return jade.renderFile( './views/app.jade', { config: getConfig() } );
+function getTemplateContent(templateParams) {
+	return jade.renderFile( './views/app.jade', {
+		o: templateParams,
+		config: getConfig()
+	} );
 }
 
-module.exports = getTemplateContent();
+module.exports = getTemplateContent;
