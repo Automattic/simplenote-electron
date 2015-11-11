@@ -1,5 +1,5 @@
 doctype html
-html
+html(manifest=o.htmlWebpackPlugin.files.manifest)
   head
     meta(charset="utf-8")
     title= o.htmlWebpackPlugin.options.title || 'Simplenote'
