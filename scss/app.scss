@@ -4,6 +4,28 @@
 /**
  * General
  */
+ 
+ *, 
+ *:before, 
+ *:after {
+   box-sizing: border-box;
+	 cursor: default; // Make everytihng use default cursor
+ }
+ 
+ *,
+ input[readonly] { // Make sure inputs that are readonly (tag list) are not selectable
+  user-select: inherit;
+}
+
+body {
+  user-select: none;
+}
+
+input, 
+textarea, 
+div[contenteditable], {
+  user-select: auto;
+}
 
 html, body {
 	height: 100%;
@@ -14,7 +36,27 @@ body {
 	font: 14px/1.5 $font-stack;
 	overflow: hidden;
 	-webkit-touch-callout: none;
-	-webkit-user-select: none;
+}
+
+// Turn on custom 8px wide scrollbar
+::-webkit-scrollbar {
+  width: 14px;
+  background-color: rgba(0,0,0,0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DBDEE0;
+  border-radius: 100px;
+  border: 4px solid rgba(255,255,255,1);
+}
+::-webkit-scrollbar-thumb:active {
+  background: #C0C4C8;
+  border-radius: 100px;
+}
+
+// hover effect for scrollbar 'thumb'
+::-webkit-scrollbar-thumb:hover {
+  background-color: gray;
 }
 
 .app {
@@ -54,7 +96,6 @@ body {
 .source-list {
 	min-width: 328px;
 	border-right: 1px solid $color-gray;
-	cursor: default;
 	@include flexbox(flex-start, stretch, column);
 	@include flex(0, 0, 300px);
 
@@ -81,7 +122,6 @@ body {
 }
 
 .source-list-item {
-	cursor: pointer;
 	padding: 8px 24px 8px 12px;
 	@include flexbox(flex-start, center, row);
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -258,7 +298,6 @@ body {
 .tag-chip {
 	margin: 2px;
 	padding: 1px 10px;
-	cursor: default;
 	border-radius: 14px;
 	white-space: nowrap;
 	background: $color-gray;
@@ -403,12 +442,10 @@ input[type="password"] {
 	color: $color-blue;
 	fill: $color-blue;
 	transition: $anim-fast;
-	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
 
 
 	&.disabled {
-		cursor: default;
 		color: $color-gray;
 		fill: $color-gray;
 	}
