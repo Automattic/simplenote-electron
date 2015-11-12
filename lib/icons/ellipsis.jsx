@@ -6,9 +6,10 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24">
-				<path d="M4,10c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S5.1,10,4,10z M20,10c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S21.1,10,20,10z M12,10c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S13.1,10,12,10z"/>
-			</svg>
+		<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
+		    <path fill="none" d="M0 0h22v22H0z"/>
+		    <path d="M9 11a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM4 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+		</svg>
 		);
 	}
 } );
