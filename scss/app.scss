@@ -33,7 +33,7 @@ html, body {
 
 body {
 	margin: 0;
-	font: 14px/1.5 $font-stack;
+	font: 14px/1.5 $sans;
 	overflow: hidden;
 	-webkit-touch-callout: none;
 }
@@ -95,17 +95,17 @@ body {
 
 .source-list {
 	min-width: 328px;
-	border-right: 1px solid $color-gray;
+	border-right: 1px solid lighten($gray, 30%);
 	@include flexbox(flex-start, stretch, column);
 	@include flex(0, 0, 300px);
 
 	.search-bar {
 		padding: 17px 20px;
-		border-bottom: 1px solid $color-gray;
+		border-bottom: 1px solid lighten($gray, 30%);
 		@include flexbox(space-between, center, row);
 
 		.navigation-toggle {
-			fill: $color-gray-dark;
+			fill: darken($gray, 20%);
 		}
 	}
 
@@ -136,19 +136,19 @@ body {
 	&.pinned {
 		> div:first-child {
 			border-radius: 18px;
-			background: $color-blue-active-highlight;
+			background: $blue-active-highlight;
 		}
 	}
 
 	&:hover {
-		background: $color-gray-lightest;
+		background: $gray-lightest;
 	}
 	
 	&.selected {
-		background: $color-blue-lightest;
+		background: $gray-lightest;
 		
 		:focus & {
-			background: $color-blue-light;
+			background: $blue-lightest;
 		}
 	}
 }
@@ -165,7 +165,7 @@ body {
 }
 
 .preview {
-	color: #999;
+	color: $gray;
 }
 
 .toolbar,
@@ -175,7 +175,7 @@ body {
 }
 
 .toolbar-compact {
-	border-bottom: 1px solid $color-gray;
+	border-bottom: 1px solid lighten($gray, 30%);
 }
 
 .detail {
@@ -204,9 +204,9 @@ body {
 	height: 100%;
 	padding: 24px 48px;
 	border: none;
-	font: 14px/1.5 $font-stack;
-	color: $color-gray-dark;
-	background: $color-gray-lightest;
+	font: 14px/1.5 $sans;
+	color: darken($gray, 20%);
+	background: $white;
 	transition: 200ms;
 	-webkit-transition: 200ms;
 	resize: none;
@@ -215,13 +215,13 @@ body {
 	-webkit-tap-highlight-color: transparent;
 
 	&:hover {
-		background: $color-white;
+		background: $white;
 	}
 	
 	&:focus {
-		color: $color-gray-darkest;
+		color: $gray-darkest;
 		outline: none;
-		background: $color-white;
+		background: $white;
 	}	
 
 }
@@ -272,12 +272,12 @@ body {
 	}
 	
 	&::-webkit-scrollbar-thumb {
-		background: $color-gray;
+		background: $gray;
 	}
 
 	&:hover {
 		&::-webkit-scrollbar-thumb {
-			background: $color-gray-medium;
+			background: lighten($gray, 10%);
 		}
 	}
 
@@ -300,16 +300,16 @@ body {
 	padding: 1px 10px;
 	border-radius: 14px;
 	white-space: nowrap;
-	background: $color-gray;
-	color: $color-gray-dark;
+	background: lighten($gray, 30%);
+	color: darken($gray, 20%);
 	@include flex(0, 0);
 	text-decoration: none;
 	font-size: 14px;
 	-webkit-tap-highlight-color: transparent;
 	
 	&.selected {
-		background: $color-gray-dark;
-		color: $color-white;
+		background: $gray;
+		color: $white;
 	}
 	
 }
@@ -323,8 +323,8 @@ body {
 		min-width: 140px;
 		border: none;
 		outline: none;
-		font: 14px/1.5 $font-stack;
-		color: $color-gray-darkest;
+		font: 14px/1.5 $sans;
+		color: darken($gray, 20%);
 	}
 }
 
@@ -348,7 +348,7 @@ body {
 		}
 		
 		&:active {
-			background: $color-blue-active-highlight;
+			background: $blue-active-highlight;
 		}
 
 		&:last-child {
@@ -364,7 +364,7 @@ body {
 		box-sizing: border-box;
 		width: 100%;
 		border-radius: 50px;
-		border: 1px solid $color-gray;
+		border: 1px solid lighten($gray, 30%);
 		padding: 4px 8px;
 		-webkit-appearance: none;
 		appearance: none;
@@ -382,13 +382,13 @@ body {
 
 .popover {
 	position: absolute;
-	background: #222;
-	color: #F0F0F0;
+	background: $gray-darkest;
+	color: $white;
 	border-radius: 4px;
 	top: 0;
 	left: 0;
 	opacity: 0.95;
-	box-shadow: 0 0px 3px #000;
+	box-shadow: 0 0px 3px $gray-darkest;
 
 	.arrow {
 		content: '';
@@ -398,9 +398,9 @@ body {
 		top: -18px;
 		width: 18px;
 		height: 18px;
-		background: #222;
+		background: $gray-darkest;
 		transform: translate(-9px, 16px) rotate(45deg);
-		box-shadow: 0 0px 5px #000;
+		box-shadow: 0 0px 5px $gray-darkest;
 	}
 
 	&:focus {
@@ -410,7 +410,7 @@ body {
 }
 
 .popover-scroll {
-	background: #222;
+	background: $gray-darkest;
 	position: relative;
 	z-index: 1;
 	height: 100%;
@@ -434,20 +434,20 @@ input {
 input[type="text"],
 input[type="password"] {
 	font-size: 14px;
-	font-family: $font-stack;
+	font-family: $sans;
 }
 
 .button,
 .textbutton {
-	color: $color-blue;
-	fill: $color-blue;
+	color: $blue;
+	fill: $blue;
 	transition: $anim-fast;
 	-webkit-tap-highlight-color: transparent;
 
 
 	&.disabled {
-		color: $color-gray;
-		fill: $color-gray;
+		color: $gray;
+		fill: $gray;
 	}
 
 }
@@ -457,16 +457,16 @@ input[type="password"] {
 }
 
 .button {
-	background: $color-white;
+	background: $white;
 	border-radius: $border-radius;
 
 	&:hover {
-		background: $color-blue-lightest;
+		background: $blue-lightest;
 
 		&.disabled {
-			background: $color-white;
-			color: $color-gray;
-			fill: $color-gray;
+			background: $white;
+			color: $gray;
+			fill: $gray;
 		}
 	}
 
@@ -475,7 +475,7 @@ input[type="password"] {
 	}
 
 	&:active {
-		background: $color-blue-active-highlight;
+		background: $blue-active-highlight;
 	}
 
 }
@@ -486,7 +486,7 @@ input[type="password"] {
  */
 
 .revision-selector {
-	border-top: 1px solid $color-gray;
+	border-top: 1px solid lighten($gray, 30%);
 	padding: 8px;
 }
 
@@ -501,7 +501,7 @@ input[type="password"] {
 	@include flexbox(center, center, column);
 
 	svg {
-		fill: $color-blue;
+		fill: $blue;
 		margin-bottom: 20px;
 	}
 
@@ -565,7 +565,7 @@ input[type="password"] {
 	}
 
 	.detail, .source-list {
-		background: #FFF;
+		background: $white;
 	}
 
 	.note-open {

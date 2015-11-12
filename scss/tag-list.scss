@@ -20,7 +20,7 @@
 			letter-spacing: 0.1em;
 			font-size: 86%;
 			font-weight: normal;
-			color: $color-gray-dark;
+			color: darken($gray, 20%);
 		}
 
 		.tag-list-edit-toggle {
@@ -107,7 +107,7 @@
 	}
 
 	.tag-list-trash {
-		fill: #DE6969;
+		fill: $red;
 	}
 
 	.tag-list-reorder {
@@ -115,7 +115,7 @@
 		align-items: center;
 		flex: none;
 		transform: translateX(24px);
-		fill: #B4B4B4;
+		fill: $gray;
 	}
 
 	&.tag-list-editing {
