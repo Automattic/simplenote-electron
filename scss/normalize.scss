@@ -22,24 +22,6 @@ textarea {
   line-height: inherit;
 }
 
-
-// Figures
-//
-// We reset this here because previously Normalize had no `figure` margins. This
-// ensures we don't break anyone's use of the element.
-
-figure {
-  margin: 0;
-}
-
-
-// Images
-
-img {
-  vertical-align: middle;
-  border: 0;
-}
-
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 
 //  * 1. Set default font family to sans-serif.
