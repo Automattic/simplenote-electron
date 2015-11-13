@@ -39,12 +39,12 @@ export default React.createClass({
 
 	componentDidMount: function() {
 
-		this.props.notes
+		this.props.noteBucket
 			.on('index', this.onNotesIndex)
 			.on('update', this.onNoteUpdate)
 			.on('remove', this.onNoteRemoved);
 
-		this.props.tags
+		this.props.tagBucket
 			.on('index', this.onTagsIndex)
 			.on('update', this.onTagsIndex);
 
@@ -88,13 +88,13 @@ export default React.createClass({
 	},
 
 	onSelectNote: function(note_id) {
-		this.props.notes.get(note_id, this._onGetNote);
+		this.props.noteBucket.get(note_id, this._onGetNote);
 		this.onHideNavigation();
 	},
 
 	onNotesIndex: function() {
 		var done = this.onFindNotes;
-		this.props.notes.query(function(db) {
+		this.props.noteBucket.query(function(db) {
 			var notes = [];
 			db.transaction('note').objectStore('note').index('pinned-sort').openCursor(null, 'prev').onsuccess = function(e) {
 				var cursor = e.target.result;
@@ -119,7 +119,7 @@ export default React.createClass({
 
 		// insert a new note into the store and select it
 		var ts = (new Date()).getTime()/1000;
-		this.props.notes.add({
+		this.props.noteBucket.add({
 			content: "",
 			deleted: false,
 			systemTags: [],
@@ -156,7 +156,7 @@ export default React.createClass({
 			// immediately save the content
 			this.setState({note: this.state.note});
 
-			var notes = this.props.notes, note = this.state.note;
+			var note = this.state.note;
 			this.onUpdateContent(note, note.data.content);
 		}
 	},
@@ -182,7 +182,7 @@ export default React.createClass({
 
 	onTagsIndex: function() {
 		var done = this.onFindTags;
-		this.props.tags.query(function(db) {
+		this.props.tagBucket.query(function(db) {
 			var tags = [];
 			db.transaction('tag').objectStore('tag').openCursor(null, 'prev').onsuccess = function(e) {
 				var cursor = e.target.result;
@@ -286,9 +286,9 @@ export default React.createClass({
 			this.setState({note_id: note.id});
 
 			// update the bucket but don't fire a sync immediately
-			this.props.notes.update(note.id, note.data, {sync: false});
+			this.props.noteBucket.update(note.id, note.data, {sync: false});
 			var commit = (function() {
-				this.props.notes.touch(note.id);
+				this.props.noteBucket.touch(note.id);
 			}).bind(this);
 
 			throttle(note.id, commit);
@@ -298,7 +298,7 @@ export default React.createClass({
 	onUpdateNoteTags: function(note, tags) {
 		if (note) {
 			note.data.tags = tags;
-			this.props.notes.update(note.id, note.data);
+			this.props.noteBucket.update(note.id, note.data);
 			this.setState({note_id: note.id});
 		}
 	},
@@ -306,7 +306,7 @@ export default React.createClass({
 	onTrashNote: function(note) {
 		if (note) {
 			note.data.deleted = true;
-			this.props.notes.update(note.id, note.data);
+			this.props.noteBucket.update(note.id, note.data);
 			this.setState({note_id: null, note: null});
 		}
 	},
@@ -314,13 +314,13 @@ export default React.createClass({
 	onRestoreNote: function(note) {
 		if (note) {
 			note.data.deleted = false;
-			this.props.notes.update(note.id, note.data);
+			this.props.noteBucket.update(note.id, note.data);
 			this.setState({note_id: null});
 		}
 	},
 
 	onRevisions: function(note) {
-		this.props.notes.getRevisions(note.id, this._loadRevisions);
+		this.props.noteBucket.getRevisions(note.id, this._loadRevisions);
 	},
 
 	_loadRevisions: function(e, revisions) {
