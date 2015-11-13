@@ -1,0 +1,33 @@
+.login-form {
+
+	@include flexbox(center, center, column);
+
+	svg {
+		fill: $blue;
+		margin-bottom: 20px;
+	}
+
+	> div {
+		@include flex(1 0 auto);
+		margin-bottom: -1px;
+	}
+	
+	input {
+		max-width: 100%;
+		min-width: 200px;
+	}
+	
+	input:focus {
+		position: relative;
+		z-index: 1;
+	}
+
+	> div:last-child {
+		@include flexbox(flex-end);
+		margin-top: 20px;
+	}
+
+	.button {
+		padding: 4px 8px;
+	}
+}

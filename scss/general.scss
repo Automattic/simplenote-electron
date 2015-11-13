@@ -1,0 +1,41 @@
+*, 
+*:before, 
+*:after {
+	 cursor: default; // Make everything use default cursor
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	font: 14px/1.5 $sans;
+	overflow: hidden;
+	-webkit-touch-callout: none;
+}
+
+.app {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	@include flexbox();
+}
+
+.simplenote-app {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	-webkit-transform: translateX(0px);
+	transform: translateX(0px);
+	-webkit-transition: -webkit-transform 200ms ease-in-out;
+	transition: transform 200ms ease-in-out;
+	@include flexbox(flex-start, stretch);
+}
+
+.panel {
+	@include flex(1, 0);
+	position: relative;
+}

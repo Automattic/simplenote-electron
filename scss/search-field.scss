@@ -1,0 +1,16 @@
+.search-field {	
+	input {
+		box-sizing: border-box;
+		width: 100%;
+		border-radius: 50px;
+		border: 1px solid lighten($gray, 30%);
+		padding: 4px 8px;
+		-webkit-appearance: none;
+		appearance: none;
+		@include flex(1, 1);
+		
+		&:focus {
+			outline: none; 
+		}	
+	}
+}
