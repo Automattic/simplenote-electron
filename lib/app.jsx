@@ -10,6 +10,7 @@ import Auth from './auth'
 import NewNoteIcon	from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
+import throttle from './utils/throttle'
 import classNames	from 'classnames'
 import simperium from 'simperium'
 import PopOver from "react-popover"
@@ -291,7 +292,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 				this.props.noteBucket.touch(note.id);
 			}).bind(this);
 
-			throttle(note.id, commit);
+			throttle(note.id, 3000, commit);
 		}
 	},
 
@@ -421,40 +422,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	}
 } ) );
-
-var timers = {};
-
-function timer(id) {
-	var t = timers[id];
-	if (!t) timers[id] = { start: (new Date()).getTime(), id: -1 }; 
-	return timers[id];
-};
-
-function clearTimer(id) {
-	delete timers[id];
-}
-
-var maxTime = 3000;
-
-function throttle(id, cb) {
-	var t = timer(id),
-			now = (new Date()).getTime(),
-			ellapsed = now - t.start,
-			perform = function() {
-				var t = timer(id),
-						now = (new Date()).getTime(),
-						ellapsed = now - t.start;
-
-				cb();
-				clearTimer(id);
-			};
-
-	clearTimeout(timer.id);
-
-	if (ellapsed > maxTime) return perform();
-
-	timer.id = setTimeout(perform, maxTime);
-}
 
 function and(fn, fn2) {
 	return function(o) {
