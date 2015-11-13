@@ -10,7 +10,8 @@ input, textarea, div[contenteditable], {
   -webkit-user-select: auto;
   user-select: auto;
 }
-.selectable {
-  -webkit-user-select: auto;
-  user-select: auto;
+
+// Make sure inputs that are readonly (i.e. tag list) are not selectable
+input[readonly] {
+ user-select: inherit;
 }

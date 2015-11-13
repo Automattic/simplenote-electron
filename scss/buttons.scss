@@ -1,0 +1,42 @@
+.button,
+.textbutton {
+	color: $blue;
+	fill: $blue;
+	transition: $anim-fast;
+	-webkit-tap-highlight-color: transparent;
+
+
+	&.disabled {
+		color: $gray;
+		fill: $gray;
+	}
+
+}
+
+.textbutton:hover {
+	text-decoration: underline;
+}
+
+.button {
+	background: $white;
+	border-radius: $border-radius;
+
+	&:hover {
+		background: $blue-lightest;
+
+		&.disabled {
+			background: $white;
+			color: $gray;
+			fill: $gray;
+		}
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:active {
+		background: $blue-active-highlight;
+	}
+
+}

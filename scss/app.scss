@@ -2,6 +2,9 @@
 @import "utils";
 
 @import "normalize";
+
+@import "inputs";
+@import "buttons";
 @import "selection";
 @import "scrollbar";
 
@@ -14,11 +17,6 @@
  *:after {
 	 cursor: default; // Make everything use default cursor
  }
- 
- *,
- input[readonly] { // Make sure inputs that are readonly (tag list) are not selectable
-  user-select: inherit;
-}
 
 html, body {
 	height: 100%;
@@ -394,64 +392,6 @@ body {
 	}
 
 }
-
-/**
- * Buttons & Forms
- */
-
-input {
-	-webkit-tap-highlight-color: transparent;
-}
-
-input[type="text"],
-input[type="password"] {
-	font-size: 14px;
-	font-family: $sans;
-}
-
-.button,
-.textbutton {
-	color: $blue;
-	fill: $blue;
-	transition: $anim-fast;
-	-webkit-tap-highlight-color: transparent;
-
-
-	&.disabled {
-		color: $gray;
-		fill: $gray;
-	}
-
-}
-
-.textbutton:hover {
-	text-decoration: underline;
-}
-
-.button {
-	background: $white;
-	border-radius: $border-radius;
-
-	&:hover {
-		background: $blue-lightest;
-
-		&.disabled {
-			background: $white;
-			color: $gray;
-			fill: $gray;
-		}
-	}
-
-	&:focus {
-		outline: none;
-	}
-
-	&:active {
-		background: $blue-active-highlight;
-	}
-
-}
-
 
 /**
  * Revision selector
