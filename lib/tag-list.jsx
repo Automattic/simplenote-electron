@@ -3,6 +3,8 @@ import classNames from 'classnames'
 import TrashIcon from './icons/trash'
 import DownArrow from './icons/down-arrow'
 
+require('../scss/tag-list.scss');
+
 export default React.createClass({
 
 	getDefaultProps: function() {
