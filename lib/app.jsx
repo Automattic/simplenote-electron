@@ -39,8 +39,6 @@ export default React.createClass({
 
 	componentDidMount: function() {
 
-		window.addEventListener('popstate', this._onPopState);
-
 		this.props.notes
 			.on('index', this.onNotesIndex)
 			.on('update', this.onNoteUpdate)
@@ -68,15 +66,6 @@ export default React.createClass({
 		this.unsubscribe();
 	},
 
-	_onPopState: function(event) {
-		var state = event.state;
-		if (state) {
-			this.props.notes.get(state.id, this._onGetNote);
-		} else {
-			this.setState({note: null});
-		}
-	},
-
 	_onAddNote: function(e, note) {
 		this.onNotesIndex();
 		this.onSelectNote(note.id);
@@ -87,7 +76,6 @@ export default React.createClass({
 	},
 
 	_closeNote: function() {
-		// this.replaceState(null, "Simplenote", "/");
 		this.setState({note: null, note_id: null});
 	},
 
