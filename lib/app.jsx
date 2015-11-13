@@ -1,4 +1,7 @@
 import React from 'react';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { actions } from './flux/app_state'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
 import SearchField from './search-field'
@@ -10,9 +13,16 @@ import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 import simperium from 'simperium'
 import PopOver from "react-popover"
-import store from './flux/store';
 
-export default React.createClass({
+function mapStateToProps(state) {
+	return state;
+}
+
+function mapDispatchToProps(dispatch) {
+	return { actions: bindActionCreators( actions, dispatch ) };
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( React.createClass({
 
 	mixins: [NoteDisplayMixin],
 
@@ -54,16 +64,6 @@ export default React.createClass({
 
 		this.onNotesIndex();
 		this.onTagsIndex();
-
-		this.unsubscribe = store.subscribe( () => {
-			this.setState( {
-				data: store.getState()
-			} );
-		} );
-	},
-
-	componentWillUnmount: function() {
-		this.unsubscribe();
 	},
 
 	_onAddNote: function(e, note) {
@@ -420,7 +420,7 @@ export default React.createClass({
 		);
 
 	}
-});
+} ) );
 
 var timers = {};
 
