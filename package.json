@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "appcache-webpack-plugin": "^1.2.0",
     "autoprefixer": "^6.1.0",
     "babel": "^5.8.23",
     "babel-core": "^5.8.25",
