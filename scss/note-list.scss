@@ -5,7 +5,8 @@
 	@include flex(0, 0, 300px);
 
 	.search-bar {
-		padding: 17px 20px;
+		height: $app-bar-height;
+		// padding: 17px 20px;
 		border-bottom: 1px solid lighten($gray, 30%);
 		@include flexbox(space-between, center, row);
 
@@ -26,40 +27,60 @@
 	}
 }
 
-.source-list-item {
-	padding: 8px 24px 8px 12px;
-	@include flexbox(flex-start, center, row);
+.note-inner {
+	margin-left: 10px;
+	padding-top: 12px;
+	@include flexbox(flex-start, start, row);
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-	
-	> div:first-child {
-		@include flex(0,0,18px);
-		height: 18px;
-		width: 18px;
-		margin-right: 12px;
-	}
-	
-	&.pinned {
-		> div:first-child {
-			border-radius: 18px;
-			background: $blue-active-highlight;
-		}
-	}
+}
 
-	&:hover {
-		background: $gray-lightest;
+.pin-icon {
+	@include flex(0,0,14px);
+	height: 14px;
+	width: 14px;
+	margin-right: 10px;
+	margin-top: 5px;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 3px $white;
+}
+	
+.note-list-item:hover {
+	.pin-icon {
+		box-shadow: inset 0 0 0 2px lighten($gray, 30%), 
+								inset 0 0 0 3px $white;
+								
+		&:hover {
+			background: lighten($gray, 10%);
+		}
+	}
+}
+
+.note-list-item.selected {
+	.title, 
+	.preview {
+		color: $blue;
 	}
 	
-	&.selected {
-		background: $gray-lightest;
-		
-		:focus & {
-			background: $blue-lightest;
-		}
+	&.pinned .pin-icon {
+		background: $blue;
+		box-shadow: inset 0 0 0 2px lighten($blue, 25%), 
+								inset 0 0 0 3px $white;
+	}	
+}
+
+.note-list-item.pinned {
+	.pin-icon {
+		background: $gray-darkest;
+		box-shadow: inset 0 0 0 2px lighten($gray, 20%), 
+								inset 0 0 0 3px $white;
 	}
 }
 
 .note-preview {
 	overflow: hidden;
+	padding-bottom: 12px;
+	border-bottom: 1px solid lighten($gray, 30%);
+	width: 100%;
 }
 
 .title,
@@ -67,6 +88,11 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+}
+
+.title {
+	font-size: 16px;
+	font-weight: bold;
 }
 
 .preview {
@@ -88,5 +114,4 @@
 		-webkit-overflow-scrolling: auto;
 		overflow: hidden;
 	}
-
 }
