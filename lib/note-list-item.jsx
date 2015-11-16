@@ -20,9 +20,9 @@ export default React.createClass({
 
 	render: function() {
 		var content = this.noteTitleAndPreview(this.props.note);
-		var cls = "source-list-item";
+		var cls = "note-list-item";
 
-		var classes = classnames('source-list-item', {
+		var classes = classnames('note-list-item', {
 			'selected': this.props.selected,
 			'pinned': this.props.note.pinned
 		} );
