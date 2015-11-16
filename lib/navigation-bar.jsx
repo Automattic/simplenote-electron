@@ -3,8 +3,6 @@ import TagList from './tag-list'
 import InfoIcon from './icons/info'
 import TrashIcon from './icons/trash'
 
-require('../scss/navigation-bar.scss');
-
 export default React.createClass({
 
 	getDefaultProps: function() {

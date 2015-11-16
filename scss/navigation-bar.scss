@@ -1,4 +1,9 @@
-@import "variables";
+$navigation-bar-width: 216px;
+
+.simplenote-app.navigation-open  {
+	-webkit-transform: translateX($navigation-bar-width);
+	transform: translateX($navigation-bar-width);
+}
 
 .navigation {
 	display: flex;

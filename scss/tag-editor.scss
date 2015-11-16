@@ -1,0 +1,59 @@
+.tag-editor {
+	height: 100%;
+	padding: 0 8px 0 4px;
+	@include flexbox(flex-start, center);
+	overflow-x: scroll;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	-webkit-transform: translate3d(0, 0, 0);
+	
+	&:focus {
+		outline: none;
+	}
+
+	.hidden-tag {
+		width: 0;
+		height: 0;
+		border: 0;
+		padding: 1px;
+		box-sizing: border-box;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+}
+
+.tag-chip {
+	margin: 2px;
+	padding: 1px 10px;
+	border-radius: 14px;
+	white-space: nowrap;
+	background: lighten($gray, 30%);
+	color: darken($gray, 20%);
+	@include flex(0, 0);
+	text-decoration: none;
+	font-size: 14px;
+	-webkit-tap-highlight-color: transparent;
+	
+	&.selected {
+		background: $gray;
+		color: $white;
+	}
+	
+}
+
+.tag-field {
+	margin: 4px 6px;
+	@include flex(1, 0);
+	
+	input {
+		width: 100%;
+		min-width: 140px;
+		border: none;
+		outline: none;
+		font: 14px/1.5 $sans;
+		color: darken($gray, 20%);
+	}
+}
