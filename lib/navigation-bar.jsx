@@ -1,6 +1,6 @@
 import React from 'react'
 import TagList from './tag-list'
-import InfoIcon from './icons/info'
+import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
 
 export default React.createClass({
@@ -17,7 +17,7 @@ export default React.createClass({
 			<div className="navigation">
 				<div className="navigation-folders">
 					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectAllNotes}>
-						<span className="navigation-icon"><InfoIcon /></span>
+						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</div>
 					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectTrash}>
@@ -30,7 +30,7 @@ export default React.createClass({
 				</div>
 				<div className="navigation-tools">
 					<div className="navigation-tools-item" tabIndex="0">
-						<span className="navigation-icon"><InfoIcon /></span>
+						<span className="navigation-icon"><NotesIcon /></span>
 						Settings
 					</div>
 				</div>

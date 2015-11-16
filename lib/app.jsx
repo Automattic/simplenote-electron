@@ -4,8 +4,8 @@ import NoteEditor	from './note-editor'
 import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
 import Auth from './auth'
-import PlusIcon	from './icons/plus'
-import BackIcon from './icons/back'
+import NewNoteIcon	from './icons/new-note'
+import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 import simperium from 'simperium'
@@ -367,11 +367,11 @@ export default React.createClass({
 							<div className="source-list">
 								<div className="search-bar">
 									<div className="button navigation-toggle" tabIndex="-1" onClick={this.onToggleNavigation}>
-										<BackIcon />
+										<TagsIcon />
 									</div>
 									<SearchField onSearch={this.onSearch} placeholder={this.state.listTitle} />
 									<div className={classNames('button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
-										<PlusIcon />
+										<NewNoteIcon />
 									</div>
 								</div>
 								<div className="panel">
