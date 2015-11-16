@@ -30,10 +30,12 @@ export default React.createClass({
 		return (
 			<div className={classes}
 				onClick={this.onClickNote}>
-				<div></div>
-				<div className="note-preview">
-					<div className="title">{content.title}</div>
-					<div className="preview">{content.preview}</div>
+				<div className="note-inner">
+					<div className="pin-icon"></div>
+					<div className="note-preview">
+						<div className="title">{content.title}</div>
+						<div className="preview">{content.preview}</div>
+					</div>
 				</div>
 			</div>
 		)
