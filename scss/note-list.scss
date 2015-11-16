@@ -27,7 +27,7 @@
 	}
 }
 
-.note-inner {
+.note-list-item-meta {
 	margin-left: 10px;
 	padding-top: 12px;
 	@include flexbox(flex-start, start, row);
@@ -57,7 +57,7 @@
 
 .note-list-item.selected {
 	.title, 
-	.preview {
+	.excerpt {
 		color: $blue;
 	}
 	
@@ -76,7 +76,7 @@
 	}
 }
 
-.note-preview {
+.note-excerpt {
 	overflow: hidden;
 	padding-bottom: 12px;
 	border-bottom: 1px solid lighten($gray, 30%);
@@ -84,7 +84,7 @@
 }
 
 .title,
-.preview {
+.excerpt {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -95,7 +95,7 @@
 	font-weight: bold;
 }
 
-.preview {
+.excerpt {
 	color: $gray;
 }
 
