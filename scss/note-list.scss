@@ -36,12 +36,12 @@
 .note-list-item-meta {
 	margin-left: 10px;
 	padding-top: 12px;
-	@include flexbox(flex-start, start, row);
+	display: flex;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .pin-icon {
-	@include flex(0,0,14px);
+	flex-shrink: 0;
 	height: 14px;
 	width: 14px;
 	margin-right: 10px;
