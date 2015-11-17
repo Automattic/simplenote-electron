@@ -6,8 +6,8 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<svg version="1.1" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24">
-				<polygon points="16.4,1.3 17.8,2.7 9.4,12 17.8,21.3 16.4,22.7 6.8,12 "/>
+			<svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px" viewBox="0 0 22 22">
+				<path d="M19 10H6.414l5.293-5.293-1.414-1.414L2.586 11l7.707 7.707 1.414-1.414L6.414 12H19z"/>
 			</svg>
 		);
 	}

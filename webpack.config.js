@@ -1,4 +1,5 @@
 var autoprefixer = require('autoprefixer');
+var AppCachePlugin = require('appcache-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -23,6 +24,7 @@ module.exports = {
 		moduleDirectories: [ 'lib', 'node_modules' ]
 	},
 	plugins: [
+		new AppCachePlugin(),
 		new HtmlWebpackPlugin({
 			title: "Simplenote",
 			templateContent: require( './index-builder.js' ),
