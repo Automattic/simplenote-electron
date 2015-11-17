@@ -3,7 +3,8 @@ html(manifest=o.htmlWebpackPlugin.files.manifest)
   head
     meta(charset="utf-8")
     title= o.htmlWebpackPlugin.options.title || 'Simplenote'
-    meta(name="apple-mobile-web-app-capable" content="yes")
+    //- iOS webviews do not support indexedDB!
+    //- meta(name="apple-mobile-web-app-capable" content="yes")
     meta(name="viewport" content="width=device-width, maximum-scale=1")
     link(rel="icon" href="/favicon.ico")
     link(rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,400,400italic")
