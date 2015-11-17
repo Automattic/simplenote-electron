@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import settings from './flux/settings'
 import appState from './flux/app-state'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
@@ -18,7 +19,12 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return { actions: bindActionCreators( appState.actionCreators, dispatch ) };
+	var actionCreators = Object.assign( {},
+		settings.actionCreators,
+		appState.actionCreators
+	);
+
+	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
@@ -28,6 +34,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	propTypes: {
 		actions: PropTypes.object.isRequired,
 		appState: PropTypes.object.isRequired,
+		settings: PropTypes.object.isRequired,
 
 		client: PropTypes.object.isRequired,
 		noteBucket: PropTypes.object.isRequired,
