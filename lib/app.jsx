@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import appState from './flux/app-state'
@@ -24,6 +24,17 @@ function mapDispatchToProps(dispatch) {
 export default connect( mapStateToProps, mapDispatchToProps )( React.createClass({
 
 	mixins: [NoteDisplayMixin],
+
+	propTypes: {
+		actions: PropTypes.object.isRequired,
+		appState: PropTypes.object.isRequired,
+
+		client: PropTypes.object.isRequired,
+		noteBucket: PropTypes.object.isRequired,
+		tagBucket: PropTypes.object.isRequired,
+		onAuthenticate: PropTypes.func.isRequired,
+		onSignOut: PropTypes.func.isRequired,
+	},
 
 	getDefaultProps: function() {
 		return {
