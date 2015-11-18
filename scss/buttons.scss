@@ -87,28 +87,3 @@ button {
 		 color: lighten($gray, 20%);
 	 }
 }
-
-// old
-.button {
-	background: red;
-	border-radius: $border-radius;
-
-	&:hover {
-		background: $blue-lightest;
-
-		&.disabled {
-			background: $white;
-			color: $gray;
-			fill: $gray;
-		}
-	}
-
-	&:focus {
-		outline: none;
-	}
-
-	&:active {
-		background: $blue-active-highlight;
-	}
-
-}
