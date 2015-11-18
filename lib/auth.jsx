@@ -27,7 +27,7 @@ export default React.createClass({
 					<input tabIndex="2" ref="password" type="password" placeholder="Password" />
 				</div>
 				<div>
-					<div tabIndex="3" className="button" onClick={this.onSignIn}>Sign In</div>
+					<div tabIndex="3" className="basic-button" onClick={this.onSignIn}>Sign In</div>
 				</div>
 			</div>
 		)

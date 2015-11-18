@@ -16,11 +16,11 @@ export default React.createClass({
 		return (
 			<div className="navigation">
 				<div className="navigation-folders">
-					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectAllNotes}>
+					<div className="navigation-folders-item text-button" tabIndex="0" onClick={this.props.onSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</div>
-					<div className="navigation-folders-item" tabIndex="0" onClick={this.props.onSelectTrash}>
+					<div className="navigation-folders-item text-button" tabIndex="0" onClick={this.props.onSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
 					</div>
