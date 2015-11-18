@@ -4,33 +4,93 @@ button {
 	border: none;
 	outline: 0;
 	padding: 0;
+	cursor: default;
 	font-size: 14px;
 	-webkit-appearance: none;
 	appearance: none;
 	vertical-align: baseline;
 }
 
-.button,
-.textbutton {
-	color: $blue;
-	fill: $blue;
+.basic-button,
+.icon-button,
+.text-button {
+	text-overflow: ellipsis;
+	display: inline-block;
+	margin: 0;
+	outline: 0;
+	overflow: hidden;
+	text-decoration: none;
+	vertical-align: top;
 	transition: $anim-fast;
 	-webkit-tap-highlight-color: transparent;
-
-
-	&.disabled {
-		color: $gray;
-		fill: $gray;
-	}
-
 }
 
-.textbutton:hover {
-	text-decoration: underline;
-}
-
-.button {
+// Rectangle buttons
+.basic-button {
 	background: $white;
+	border-color: lighten( $gray, 20% );
+	border-style: solid;
+	border-width: 2px;
+	color: $blue;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 21px;
+	border-radius: $border-radius;
+	padding: 7px 14px 9px;
+	
+	&:hover {
+	}
+	&:active {
+	}
+	&:visited {
+	}
+	&[disabled],
+	&:disabled {
+		color: $gray;
+	}
+}
+
+// Icon only buttons
+.icon-button {
+		fill: $gray;
+		
+		&:hover {
+		}
+		&:active {
+			fill: $blue;
+		}
+		&:visited {
+		}
+		&[disabled],
+		&:disabled,
+		&.disabled {
+			fill: lighten($gray, 30%);
+		}
+}
+
+// Text buttons
+.text-button {
+	 color: $blue;
+	 
+	 &:hover {
+		 font-weight: bold;
+	 }
+	 &:active {
+		 color: $blue;
+		 fill: currentColor;
+	 }
+	 &:visited {
+	 }
+	 
+	 &[disabled],
+	 &:disabled {
+		 color: lighten($gray, 20%);
+	 }
+}
+
+// old
+.button {
+	background: red;
 	border-radius: $border-radius;
 
 	&:hover {
