@@ -28,60 +28,54 @@ button {
 // Rectangle buttons
 .basic-button {
 	background: $white;
-	border-color: lighten( $gray, 20% );
+	border-color: $blue;
 	border-style: solid;
 	border-width: 2px;
 	color: $blue;
-	font-weight: 600;
 	font-size: 14px;
 	line-height: 21px;
 	border-radius: $border-radius;
-	padding: 7px 14px 9px;
-	
-	&:hover {
-	}
+	padding: 3px 14px 5px;
+
 	&:active {
-	}
-	&:visited {
+		background: $blue;
+		color: $white;
 	}
 	&[disabled],
 	&:disabled {
 		color: $gray;
+		border-color: $blue;
 	}
 }
 
 // Icon only buttons
 .icon-button {
-		fill: $gray;
+		svg[class^="icon-"] {
+			fill: $gray;
+		}
 		
-		&:hover {
-		}
 		&:active {
-			fill: $blue;
-		}
-		&:visited {
+			svg[class^="icon-"] {
+				fill: $blue;
+			}
 		}
 		&[disabled],
-		&:disabled,
-		&.disabled {
+		&:disabled {
 			fill: lighten($gray, 30%);
 		}
 }
 
-// Text buttons
+// Text buttons (may contain icon)
 .text-button {
 	 color: $blue;
-	 
-	 &:hover {
-		 font-weight: bold;
-	 }
+
 	 &:active {
-		 color: $blue;
-		 fill: currentColor;
+		 color: darken($blue, 15%);
+		 
+		 svg[class^="icon-"] {
+			 fill: $blue; // Make sure the icon stays $blue if active
+		 }
 	 }
-	 &:visited {
-	 }
-	 
 	 &[disabled],
 	 &:disabled {
 		 color: lighten($gray, 20%);
