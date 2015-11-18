@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import TrashIcon from './icons/trash'
-import DownArrow from './icons/down-arrow'
+import DownArrow from './icons/arrow-down'
 
 export default React.createClass({
 
