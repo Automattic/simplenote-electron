@@ -71,14 +71,6 @@
 			margin: 0 8px 0 0;
 		}
 
-		&:focus {
-			outline: none;
-		}
-		
-		&:active {
-			background: $blue-active-highlight;
-		}
-
 		&:last-child {
 			width: auto;
 		}
