@@ -20,9 +20,9 @@ export default React.createClass({
 
 	render: function() {
 		var content = this.noteTitleAndPreview(this.props.note);
-		var cls = "source-list-item";
+		var cls = "note-list-item";
 
-		var classes = classnames('source-list-item', {
+		var classes = classnames('note-list-item', {
 			'selected': this.props.selected,
 			'pinned': this.props.note.pinned
 		} );
@@ -30,10 +30,12 @@ export default React.createClass({
 		return (
 			<div className={classes}
 				onClick={this.onClickNote}>
-				<div></div>
-				<div className="note-preview">
-					<div className="title">{content.title}</div>
-					<div className="preview">{content.preview}</div>
+				<div className="note-list-item-meta">
+					<div className="pin-icon"></div>
+					<div className="note-excerpt">
+						<div className="title">{content.title}</div>
+						<div className="excerpt">{content.preview}</div>
+					</div>
 				</div>
 			</div>
 		)
