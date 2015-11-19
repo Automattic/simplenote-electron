@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
-import TrashIcon from './icons/trash'
-import DownArrow from './icons/arrow-down'
+import SmallCrossOutlineIcon from './icons/cross-outline-small'
+import ReorderIcon from './icons/reorder'
 
 export default React.createClass({
 
@@ -36,7 +36,7 @@ export default React.createClass({
 								<span className="tag-list-trash"
 										tabIndex={this.props.editingTags ? "0" : "-1"}
 										onClick={this.onTrashTag.bind(this, tag)}>
-									<TrashIcon />
+									<SmallCrossOutlineIcon />
 								</span>
 								<span className="tag-list-input-holder">
 									<input
@@ -54,7 +54,7 @@ export default React.createClass({
 									onMouseUp={this.onReorderEnd}
 									onTouchEnd={this.onReorderEnd}
 									onTouchCancel={this.onReorderCancel}>
-								<DownArrow />
+								<ReorderIcon />
 							</span>
 						</li>
 					)}

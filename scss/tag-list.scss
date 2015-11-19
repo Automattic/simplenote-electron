@@ -10,7 +10,7 @@
 		justify-content: space-between;
 		align-items: center;
 		line-height: 1.25em;
-		margin-bottom: 0.5em;
+		margin-bottom: 0.25em;
 
 		h2 {
 			margin: 0;
@@ -58,8 +58,6 @@
 
 		svg {
 			vertical-align: middle;
-			position: relative;
-			top: -0.15em;
 		}
 	}
 
@@ -67,13 +65,14 @@
 		display: flex;
 		align-items: center;
 		flex: 1 0 auto;
-		transform: translateX(-24px);
+		transform: translateX(-20px);
 		transition: $anim;
 	}
 
 	.tag-list-input-holder {
 		display: flex;
 		flex: 1 1 auto;
+		align-items: center;
 	}
 
 	.tag-list-input {
@@ -81,8 +80,8 @@
 		display: block;
 		box-sizing: border-box;
 		width: 50px;
-		height: 3em;
-		line-height: 3em;
+		height: 3.25em;
+		line-height: 3.25em;
 		margin: 0;
 		padding: 0;
 		border: none;
@@ -106,6 +105,7 @@
 
 	.tag-list-trash svg {
 		fill: $red;
+		margin-right: 2px;
 	}
 
 	.tag-list-reorder {
