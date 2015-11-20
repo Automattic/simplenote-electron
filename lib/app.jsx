@@ -79,6 +79,9 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+	onPinNote: function(note) {
+	},
+
 	onNotesIndex: function() {
 		this.props.actions.loadNotes( {
 			noteBucket: this.props.noteBucket
@@ -239,9 +242,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 										<NewNoteIcon />
 									</div>
 								</div>
-								<div className="panel">
-									<NoteList ref="list" notes={notes} selectedNoteId={appState.selectedNoteId} onSelectNote={this.onSelectNote} />
-								</div>
+								<NoteList notes={notes} selectedNoteId={appState.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
 							</div>
 							<NoteEditor
 								note={note}
