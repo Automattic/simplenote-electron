@@ -2,14 +2,6 @@
 	display: none;
 }
 
-@media only screen and ( max-width: 700px ) {
-
-	.source-list {
-		@include flex(0, 1, 35%);
-	}
-
-}
-
 @media only screen and ( max-width: 520px ) {
 
 	body {
@@ -20,22 +12,14 @@
 		display: flex;
 	}
 
-	.detail,
-	.source-list {
+	.detail {
+		background: $white;
 		transition: $anim-transition;
 		transform: translate3d(0, 0, 0);
 		@include flex(0, 0, 100%);
 	}
 
-	.detail, .source-list {
-		background: $white;
-	}
-
 	.note-open {
-
-		.source-list {
-			transform: scale3d(0.95, 0.95, 1);
-		}
 
 		.detail {
 			transform: translate3d(-100%, 0, 0);

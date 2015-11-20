@@ -1,26 +1,41 @@
-import React from 'react'
-import NoteListItem from './note-list-item'
+import React, { PropTypes } from 'react'
+import NoteDisplayMixin from './note-display-mixin'
+import classNames from 'classnames'
 
 export default React.createClass({
 
-	getDefaultProps: function() {
-		return {
-			notes: [],
-			selectedNoteId: null
-		};
+	mixins: [ NoteDisplayMixin ],
+
+	propTypes: {
+		notes: PropTypes.array.isRequired,
+		selectedNoteId: PropTypes.any,
+		onSelectNote: PropTypes.func.isRequired,
+		onPinNote: PropTypes.func.isRequired
 	},
 
-	onSelectNote: function(noteId) {
-		this.props.onSelectNote(noteId);
-	},
+	render() {
+		var { selectedNoteId, onSelectNote, onPinNote } = this.props;
 
-	render: function() {
-		var selectedNoteId = this.props.selectedNoteId;
 		return (
-			<div className="note-list" tabIndex="1">
-				{this.props.notes.map(note =>
-					<NoteListItem key={note.id} note={note} selected={note.id === selectedNoteId} onSelectNote={this.onSelectNote.bind(this, note.id)} />
-				)}
+			<div className="note-list">
+				{this.props.notes.map( note => {
+					let text = this.noteTitleAndPreview( note );
+
+					let classes = classNames( 'note-list-item', {
+						'note-list-item-selected': selectedNoteId === note.id,
+						'note-list-item-pinned': note.pinned
+					} );
+
+					return (
+						<div key={note.id} className={classes}>
+							<div className="note-list-item-pinner" tabIndex="0" onClick={onPinNote.bind( null, note )}></div>
+							<div className="note-list-item-text" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
+								<div className="note-list-item-title">{text.title}</div>
+								<div className="note-list-item-excerpt">{text.preview}</div>
+							</div>
+						</div>
+					);
+				})}
 			</div>
 		);
 	}

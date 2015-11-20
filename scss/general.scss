@@ -15,6 +15,10 @@ body {
 	-webkit-touch-callout: none;
 }
 
+img, svg {
+	vertical-align: middle;
+}
+
 .app {
 	position: absolute;
 	top: 0;
