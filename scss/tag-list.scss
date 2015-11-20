@@ -104,7 +104,7 @@
 		transition: $anim;
 	}
 
-	.tag-list-trash {
+	.tag-list-trash svg {
 		fill: $red;
 	}
 
@@ -113,7 +113,10 @@
 		align-items: center;
 		flex: none;
 		transform: translateX(24px);
-		fill: $gray;
+		
+		svg {
+			fill: $gray;
+		}
 	}
 
 	&.tag-list-editing {

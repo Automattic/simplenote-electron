@@ -366,11 +366,11 @@ export default React.createClass({
 								tags={this.state.tags} />
 							<div className="source-list">
 								<div className="search-bar">
-									<div className="button navigation-toggle" tabIndex="-1" onClick={this.onToggleNavigation}>
+									<div className="icon-button" tabIndex="-1" onClick={this.onToggleNavigation}>
 										<TagsIcon />
 									</div>
 									<SearchField onSearch={this.onSearch} placeholder={this.state.listTitle} />
-									<div className={classNames('button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
+									<div className={classNames('icon-button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</div>
 								</div>
