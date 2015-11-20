@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import appState from './flux/app-state'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
 import SearchField from './search-field'
@@ -8,12 +11,30 @@ import NewNoteIcon	from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
-import simperium from 'simperium'
 import PopOver from "react-popover"
 
-export default React.createClass({
+function mapStateToProps(state) {
+	return state;
+}
+
+function mapDispatchToProps(dispatch) {
+	return { actions: bindActionCreators( appState.actionCreators, dispatch ) };
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( React.createClass({
 
 	mixins: [NoteDisplayMixin],
+
+	propTypes: {
+		actions: PropTypes.object.isRequired,
+		appState: PropTypes.object.isRequired,
+
+		client: PropTypes.object.isRequired,
+		noteBucket: PropTypes.object.isRequired,
+		tagBucket: PropTypes.object.isRequired,
+		onAuthenticate: PropTypes.func.isRequired,
+		onSignOut: PropTypes.func.isRequired,
+	},
 
 	getDefaultProps: function() {
 		return {
@@ -22,30 +43,18 @@ export default React.createClass({
 		};
 	},
 
-	getInitialState: function() {
-		return {
-			note_id: null,
-			notes: [],
-			tags: [],
-			showTrash: false,
-			listTitle: "All Notes",
-			authorized: this.props.client.isAuthorized(),
-			showNavigation: false,
-			showNoteInfo: false,
-			editingTags: false
-		};
+	componentWillMount: function() {
+		this.onAuthChanged();
 	},
 
 	componentDidMount: function() {
 
-		window.addEventListener('popstate', this._onPopState);
-
-		this.props.notes
+		this.props.noteBucket
 			.on('index', this.onNotesIndex)
 			.on('update', this.onNoteUpdate)
 			.on('remove', this.onNoteRemoved);
 
-		this.props.tags
+		this.props.tagBucket
 			.on('index', this.onTagsIndex)
 			.on('update', this.onTagsIndex);
 
@@ -55,59 +64,25 @@ export default React.createClass({
 
 		this.onNotesIndex();
 		this.onTagsIndex();
-
-	},
-
-	_onPopState: function(event) {
-		var state = event.state;
-		if (state) {
-			this.props.notes.get(state.id, this._onGetNote);
-		} else {
-			this.setState({note: null});
-		}
-	},
-
-	_onAddNote: function(e, note) {
-		this.onNotesIndex();
-		this.onSelectNote(note.id);
-	},
-
-	_onGetNote: function(e, note) {
-		this.setState({note: note, note_id: note.id, revisions: null});
-	},
-
-	_closeNote: function() {
-		// this.replaceState(null, "Simplenote", "/");
-		this.setState({note: null, note_id: null});
 	},
 
 	onAuthChanged: function() {
-		var authorized = this.props.client.isAuthorized();
-		this.setState({authorized: authorized})
-		if (!authorized) {
-			this.setState({notes: [], tags: []});
-		}
+		this.props.actions.authChanged( {
+			authorized: this.props.client.isAuthorized()
+		} );
 	},
 
-	onSelectNote: function(note_id) {
-		this.props.notes.get(note_id, this._onGetNote);
-		this.onHideNavigation();
+	onSelectNote: function(noteId) {
+		this.props.actions.loadAndSelectNote( {
+			noteBucket: this.props.noteBucket,
+			noteId
+		} );
 	},
 
 	onNotesIndex: function() {
-		var done = this.onFindNotes;
-		this.props.notes.query(function(db) {
-			var notes = [];
-			db.transaction('note').objectStore('note').index('pinned-sort').openCursor(null, 'prev').onsuccess = function(e) {
-				var cursor = e.target.result;
-				if (cursor) {
-					notes.push(cursor.value);
-					cursor.continue();
-				} else {
-					done(null, notes);
-				}
-			};
-		});
+		this.props.actions.loadNotes( {
+			noteBucket: this.props.noteBucket
+		} );
 	},
 
 	onNoteRemoved: function() {
@@ -115,144 +90,47 @@ export default React.createClass({
 	},
 
 	onNewNote: function() {
-		if (this.state.showTrash) {
-			return;
-		}
-
-		// insert a new note into the store and select it
-		var ts = (new Date()).getTime()/1000;
-		this.props.notes.add({
-			content: "",
-			deleted: false,
-			systemTags: [],
-			creationDate: ts,
-			modificationDate: ts,
-			shareURL: "",
-			publishURL: "",
-			tags: [].concat(this.state.tag ? this.state.tag.data.name : [])
-		}, this._onAddNote);
+		this.props.actions.newNote( {
+			noteBucket: this.props.noteBucket
+		} );
 	},
 
-	onNoteUpdate: function(id, data, original, patch) {
-
-		// refresh the notes list
-		this.onNotesIndex();
-
-		if (this.state.note_id == id && !!patch) {
-
-			// working is the state of the note in the editor
-			var working = this.state.note.data;
-
-			// diff of working and original will produce the modifications the client has currently made
-			var working_diff = simperium.util.change.diff(original, working);
-			// generate a patch that composes both the working changes and upstream changes
-			var patch = simperium.util.change.transform(working_diff, patch, original);
-			// apply the new patch to the upstream data
-			var rebased = simperium.util.change.apply(patch, data);
-
-			// TODO: determine where the cursor is and put it in the correct place
-			// when applying the rebased content
-
-			this.state.note.data = rebased;
-
-			// immediately save the content
-			this.setState({note: this.state.note});
-
-			var notes = this.props.notes, note = this.state.note;
-			this.onUpdateContent(note, note.data.content);
-		}
-	},
-
-	onFindNotes: function(e, notes) {
-		this.setState({notes: notes});
-	},
-
-	onFindTags: function(e, tags) {
-		this.setState({tags: tags});
+	onNoteUpdate: function(noteId, data, original, patch) {
+		this.props.actions.noteUpdated( {
+			noteBucket: this.props.noteBucket,
+			noteId, data, original, patch
+		} );
 	},
 
 	onNoteInfo: function(evt) {
-		if (!this.state.note) {
-			return;
-		}
-		this.setState({showNoteInfo: {context: evt.currentTarget.getBoundingClientRect()}, showNavigation: false, editingTags: false});
-	},
-
-	onHideNoteInfo: function() {
-		this.setState({showNoteInfo: false});
+		this.props.actions.showNoteInfo( {
+			context: evt.currentTarget.getBoundingClientRect()
+		} );
 	},
 
 	onTagsIndex: function() {
-		var done = this.onFindTags;
-		this.props.tags.query(function(db) {
-			var tags = [];
-			db.transaction('tag').objectStore('tag').openCursor(null, 'prev').onsuccess = function(e) {
-				var cursor = e.target.result;
-				if (cursor) {
-					tags.push(cursor.value);
-					cursor.continue();
-				} else {
-					done(null, tags);
-				}
-			}
-		})
-	},
-
-	onToggleNavigation: function() {
-		if (this.state.showNavigation) {
-			this.onHideNavigation();
-		}
-		else {
-			this.setState({showNavigation: true, showNoteInfo: false});
-		}
-	},
-
-	onHideNavigation: function() {
-		this.setState({showNavigation: false, editingTags: false});
-	},
-
-	onSelectAllNotes: function() {
-		this.setState({
-			showNavigation: false, editingTags: false,
-			tag: null, showTrash: false, listTitle: "All Notes"
-		});
-	},
-
-	onSelectTrash: function() {
-		this.setState({
-			showNavigation: false, editingTags: false,
-			tag: null, showTrash: true, listTitle: "Trash"
-		});
+		this.props.actions.loadTags( {
+			tagBucket: this.props.tagBucket
+		} );
 	},
 
 	onSelectTag: function(tag) {
-		this.setState({
-			showNavigation: false, editingTags: false,
-			tag: tag, showTrash: false, listTitle: tag.data.name
-		});
-	},
-
-	onEditTags: function() {
-		if (this.state.editingTags) {
-			this.setState({editingTags: false});
-		}
-		else {
-			this.setState({editingTags: true});
-		}
+		this.props.actions.selectTag( { tag } );
 	},
 
 	onUpdateTags: function(tags) {
 	},
 
-	onSearch: function(v) {
-		this.setState({filter: v});
+	onSearch: function(filter) {
+		this.props.actions.search( { filter } );
 	},
 
 	filterNotes: function() {
-		var query = this.state.filter,
-				trash		= this.state.showTrash,
-				notes		= this.state.notes || [],
-				tag			= this.state.tag,
+		var appState = this.props.appState;
+		var query = appState.filter,
+				trash		= appState.showTrash,
+				notes		= appState.notes || [],
+				tag			= appState.tag,
 				filter	= (note) => {
 					// if trash is being viewed, return trashed notes
 					if (trash) {
@@ -283,72 +161,59 @@ export default React.createClass({
 	},
 
 	onUpdateContent: function(note, content) {
-		if (note) {
-			note.data.content = content;
-			this.setState({note_id: note.id});
-
-			// update the bucket but don't fire a sync immediately
-			this.props.notes.update(note.id, note.data, {sync: false});
-			var commit = (function() {
-				this.props.notes.touch(note.id);
-			}).bind(this);
-
-			throttle(note.id, commit);
-		}
+		this.props.actions.updateNoteContent( {
+			noteBucket: this.props.noteBucket,
+			note, content
+		} );
 	},
 
 	onUpdateNoteTags: function(note, tags) {
-		if (note) {
-			note.data.tags = tags;
-			this.props.notes.update(note.id, note.data);
-			this.setState({note_id: note.id});
-		}
+		this.props.actions.updateNoteTags( {
+			noteBucket: this.props.noteBucket,
+			note, tags
+		} );
 	},
 
 	onTrashNote: function(note) {
-		if (note) {
-			note.data.deleted = true;
-			this.props.notes.update(note.id, note.data);
-			this.setState({note_id: null, note: null});
-		}
+		this.props.actions.trashNote( {
+			noteBucket: this.props.noteBucket,
+			note
+		} );
 	},
 
 	onRestoreNote: function(note) {
-		if (note) {
-			note.data.deleted = false;
-			this.props.notes.update(note.id, note.data);
-			this.setState({note_id: null});
-		}
+		this.props.actions.restoreNote( {
+			noteBucket: this.props.noteBucket,
+			note
+		} );
 	},
 
 	onRevisions: function(note) {
-		this.props.notes.getRevisions(note.id, this._loadRevisions);
-	},
-
-	_loadRevisions: function(e, revisions) {
-		if (e) return console.warn("Failed to load revisions", e);
-		this.setState({revisions: revisions});
+		this.props.actions.noteRevisions( {
+			noteBucket: this.props.noteBucket,
+			note
+		} );
 	},
 
 	authorized: function(fn) {
-		if (this.state.authorized) return fn();
+		if (this.props.appState.authorized) return fn();
 	},
 
 	unauthorized: function(fn) {
-		if (!this.state.authorized) return fn();
+		if (!this.props.appState.authorized) return fn();
 	},
 
 	render: function() {
-
+		var appState = this.props.appState;
 		var notes = this.filterNotes();
 		var tags = this.tag
-		var note = this.state.note;
-		var revisions = this.state.revisions;
+		var note = appState.note;
+		var revisions = appState.revisions;
 
 		var classes = classNames( 'simplenote-app', {
 			'touch-enabled': ('ontouchstart' in document.body),
-			'note-open': this.state.note,
-			'navigation-open': this.state.showNavigation
+			'note-open': appState.note,
+			'navigation-open': appState.showNavigation
 		} );
 
 		return (
@@ -357,37 +222,37 @@ export default React.createClass({
 					return (
 						<div className={classes}>
 							<NavigationBar
-								onSelectAllNotes={this.onSelectAllNotes}
-								onSelectTrash={this.onSelectTrash}
+								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
+								onSelectTrash={() => this.props.actions.selectTrash() }
 								onSelectTag={this.onSelectTag}
-								onEditTags={this.onEditTags}
+								onEditTags={() => this.props.actions.editTags() }
 								onUpdateTags={this.onUpdateTags}
-								editingTags={this.state.editingTags}
-								tags={this.state.tags} />
+								editingTags={appState.editingTags}
+								tags={appState.tags} />
 							<div className="source-list">
 								<div className="search-bar">
-									<div className="icon-button" tabIndex="-1" onClick={this.onToggleNavigation}>
+									<div className="icon-button" tabIndex="-1" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</div>
-									<SearchField onSearch={this.onSearch} placeholder={this.state.listTitle} />
-									<div className={classNames('icon-button', {disabled: this.state.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
+									<SearchField onSearch={this.onSearch} placeholder={appState.listTitle} />
+									<div className={classNames('icon-button', {disabled: appState.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</div>
 								</div>
 								<div className="panel">
-									<NoteList ref="list" notes={notes} onSelectNote={this.onSelectNote} note={note} />
+									<NoteList ref="list" notes={notes} selectedNoteId={appState.selectedNoteId} onSelectNote={this.onSelectNote} />
 								</div>
 							</div>
 							<NoteEditor
 								note={note}
-								revisions={this.state.revisions}
+								revisions={appState.revisions}
 								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
 								onRevisions={this.onRevisions}
-								onCloseNote={this._closeNote}
+								onCloseNote={this.closeNote}
 								onNoteInfo={this.onNoteInfo} />
 							{ this.renderNoteInfoPopover() }
 						</div>
@@ -401,62 +266,28 @@ export default React.createClass({
 	},
 
 	renderNoteInfoPopover: function() {
-		if (!this.state.showNoteInfo) {
+		var popoverOptions = this.props.appState.showNoteInfo;
+		if (!popoverOptions) {
 			return;
 		}
 
-		var popoverOptions = this.state.showNoteInfo,
-				style = {
-					overflow: 'auto',
-					maxWidth: '320px',
-					maxHeight: '100%',
-					margin: '0'
-				};
+		let style = {
+			overflow: 'auto',
+			maxWidth: '320px',
+			maxHeight: '100%',
+			margin: '0'
+		};
 
 		return (
 			<PopOver
-				onClosePopover={this.onHideNoteInfo}
+				onClosePopover={() => this.props.actions.hideNoteInfo() }
 				context={popoverOptions.context}>
-				<pre style={style}>{JSON.stringify(this.state.note, null, "	 ")}</pre>
+				<pre style={style}>{JSON.stringify(this.props.appState.note, null, "	")}</pre>
 			</PopOver>
 		);
 
 	}
-});
-
-var timers = {};
-
-function timer(id) {
-	var t = timers[id];
-	if (!t) timers[id] = { start: (new Date()).getTime(), id: -1 }; 
-	return timers[id];
-};
-
-function clearTimer(id) {
-	delete timers[id];
-}
-
-var maxTime = 3000;
-
-function throttle(id, cb) {
-	var t = timer(id),
-			now = (new Date()).getTime(),
-			ellapsed = now - t.start,
-			perform = function() {
-				var t = timer(id),
-						now = (new Date()).getTime(),
-						ellapsed = now - t.start;
-
-				cb();
-				clearTimer(id);
-			};
-
-	clearTimeout(timer.id);
-
-	if (ellapsed > maxTime) return perform();
-
-	timer.id = setTimeout(perform, maxTime);
-}
+} ) );
 
 function and(fn, fn2) {
 	return function(o) {
