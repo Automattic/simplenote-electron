@@ -35,6 +35,10 @@
 	justify-content: space-between;
 	align-items: center;
 
+	.icon-button {
+		flex: none;
+	}
+
 	.search-field {
 		margin: 0 12px;
 		flex-grow: 1;
