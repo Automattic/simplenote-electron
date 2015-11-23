@@ -7,7 +7,9 @@ export default React.createClass( {
 	propTypes: {
 		onSelectTag: PropTypes.func.isRequired,
 		onEditTags: PropTypes.func.isRequired,
-		onUpdateTags: PropTypes.func.isRequired,
+		onRenameTag: PropTypes.func.isRequired,
+		onTrashTag: PropTypes.func.isRequired,
+		onReorderTags: PropTypes.func.isRequired,
 		tags: PropTypes.array.isRequired
 	},
 
@@ -29,8 +31,8 @@ export default React.createClass( {
 					items={this.props.tags}
 					editing={this.props.editingTags}
 					renderItem={this.renderItem}
-					onRemove={this.onTrashTag}
-					onReorder={this.onReorderTags} />
+					onRemove={this.props.onTrashTag}
+					onReorder={this.props.onReorderTags} />
 			</div>
 		);
 	},
@@ -38,7 +40,7 @@ export default React.createClass( {
 	renderItem( tag ) {
 		var valueLink = {
 			value: tag.data.name,
-			requestChange: this.onRenameTag.bind( this, tag )
+			requestChange: this.props.onRenameTag.bind( null, tag )
 		};
 
 		return (
@@ -56,23 +58,5 @@ export default React.createClass( {
 			event.currentTarget.blur();
 			this.props.onSelectTag( tag );
 		}
-	},
-
-	onRenameTag( tag, newName ) {
-		console.log(tag, newName);
-	},
-
-	onTrashTag( tag ) {
-		var index = this.props.tags.indexOf(tag);
-
-		if (index !== -1) {
-			var tags = this.props.tags.slice();
-			tags.splice(index, 1);
-			this.props.onUpdateTags(tags);
-		}
-	},
-
-	onReorderTags( tags ) {
 	}
-
 });
