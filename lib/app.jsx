@@ -79,7 +79,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onPinNote: function(note) {
+	onPinNote: function(note, pin = true) {
+		this.props.actions.pinNote( {
+			noteBucket: this.props.noteBucket,
+			note, pin
+		} );
 	},
 
 	onNotesIndex: function() {
