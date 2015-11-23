@@ -37,42 +37,7 @@
 	}
 
 	.tag-list-items {
-		display: flex;
-		flex-direction: column;
 		flex: 1 1 auto;
-		overflow: auto;
-		overflow-x: hidden;
-		-webkit-overflow-scrolling: touch;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.tag-list-item {
-		display: flex;
-		flex: none;
-		padding: 0;
-		overflow: hidden;
-		white-space: nowrap;
-		-webkit-tap-highlight-color: transparent;
-
-		svg {
-			vertical-align: middle;
-		}
-	}
-
-	.tag-list-item-left {
-		display: flex;
-		align-items: center;
-		flex: 1 0 auto;
-		transform: translateX(-20px);
-		transition: $anim;
-	}
-
-	.tag-list-input-holder {
-		display: flex;
-		flex: 1 1 auto;
-		align-items: center;
 	}
 
 	.tag-list-input {
@@ -92,47 +57,6 @@
 
 		&:focus {
 			outline: none;
-		}
-	}
-
-	.tag-list-trash, .tag-list-reorder {
-		flex: none;
-		opacity: 0;
-		pointer-events: none;
-		width: 24px;
-		transition: $anim;
-	}
-
-	.tag-list-trash svg {
-		fill: $red;
-		margin-right: 2px;
-	}
-
-	.tag-list-reorder {
-		display: flex;
-		align-items: center;
-		flex: none;
-		transform: translateX(24px);
-		
-		svg {
-			fill: $gray;
-		}
-	}
-
-	&.tag-list-editing {
-		.tag-list-item-left {
-			transform: translateX(0);
-		}
-
-		.tag-list-trash {
-			opacity: 1;
-			pointer-events: auto;
-		}
-
-		.tag-list-reorder {
-			opacity: 1;
-			pointer-events: auto;
-			transform: translateX(0);
 		}
 	}
 }
