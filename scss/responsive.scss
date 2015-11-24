@@ -12,20 +12,4 @@
 		display: flex;
 	}
 
-	.detail {
-		background: $white;
-		transition: $anim-transition;
-		transform: translate3d(0, 0, 0);
-		@include flex(0, 0, 100%);
-	}
-
-	.note-open {
-
-		.detail {
-			transform: translate3d(-100%, 0, 0);
-			transition-property: transform;
-		}
-
-	}
-
 }

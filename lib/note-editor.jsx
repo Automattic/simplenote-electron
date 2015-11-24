@@ -57,7 +57,7 @@ export default React.createClass({
 		var note = this.state.revision ? this.state.revision : this.props.note;
 		var tags = note && note.data && note.data.tags ? note.data.tags : [];
 		return (
-			<div className="detail">
+			<div className="note-editor">
 				<NoteToolbar
 					note={this.props.note}
 					onTrashNote={this.props.onTrashNote}

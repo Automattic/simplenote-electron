@@ -8,7 +8,24 @@
 	border-bottom: 1px solid lighten($gray, 30%);
 }
 
-.detail {
+.note-editor {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	overflow: hidden;
+
+	@media only screen and ( max-width: 520px ) {
+		flex: 0 0 100%;
+		background: $white;
+		transition: $anim-transition;
+		transform: translate3d(0, 0, 0);
+
+		.note-open & {
+			transform: translate3d(-100%, 0, 0);
+			transition-property: transform;
+		}
+	}
+
 	.toolbar {
 		@include flexbox(0, stretch);
 	}
@@ -77,13 +94,4 @@
 	
 	}
 
-}
-
-.detail {
-	@include flexbox(flex-start, stretch, column);
-}
-
-.detail {
-	overflow: hidden;
-	@include flex(1, 1);
 }
