@@ -18,12 +18,10 @@
 
 	.note-toolbar {
 		flex: none;
-		height: 44px;
 	}
 
 	.tag-editor {
 		flex: none;
-		height: 36px;
 		border-bottom: 1px solid lighten($gray, 30%);
 	}
 
@@ -34,7 +32,7 @@
 
 .note-toolbar {
 	display: flex;
-	padding: 8px;
+	padding: 10px 8px;
 
 	> div {
 		display: flex;
