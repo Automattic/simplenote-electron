@@ -7,7 +7,7 @@
 		padding: 3px 8px 3px 15px;
 		-webkit-appearance: none;
 		appearance: none;
-		@include flex(1, 1);
+		flex: 1 1 auto;
 		
 		&:focus {
 			outline: none; 

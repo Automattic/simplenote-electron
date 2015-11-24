@@ -1,7 +1,8 @@
 .tag-editor {
+	display: flex;
 	height: 100%;
 	padding: 0 8px 0 4px;
-	@include flexbox(flex-start, center);
+	align-items: center;
 	overflow-x: scroll;
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
@@ -26,13 +27,13 @@
 }
 
 .tag-chip {
+	flex: 0 0 auto;
 	margin: 2px;
 	padding: 1px 10px;
 	border-radius: 14px;
 	white-space: nowrap;
 	background: lighten($gray, 30%);
 	color: darken($gray, 20%);
-	@include flex(0, 0);
 	text-decoration: none;
 	font-size: 14px;
 	-webkit-tap-highlight-color: transparent;
@@ -46,7 +47,7 @@
 
 .tag-field {
 	margin: 4px 6px;
-	@include flex(1, 0);
+	flex: 1 0 auto;
 	
 	input {
 		width: 100%;
