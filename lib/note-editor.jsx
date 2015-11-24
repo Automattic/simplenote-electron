@@ -70,11 +70,9 @@ export default React.createClass({
 					onSignOut={this.props.onSignOut}
 					onCloseNote={this.props.onCloseNote}
 					onNoteInfo={this.props.onNoteInfo} />
-				<div className="toolbar-compact">
-					<TagField ref="tags"
-						tags={tags}
-						onUpdateNoteTags={this.withNote(this.props.onUpdateNoteTags)} />
-				</div>
+				<TagField ref="tags"
+					tags={tags}
+					onUpdateNoteTags={this.withNote(this.props.onUpdateNoteTags)} />
 				<div className="note-editor-detail">
 					<NoteDetail ref="detail"
 						note={note}
