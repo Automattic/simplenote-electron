@@ -257,7 +257,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
 								onRevisions={this.onRevisions}
-								onCloseNote={this.closeNote}
+								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={this.onNoteInfo} />
 							{ this.renderNoteInfoPopover() }
 						</div>
