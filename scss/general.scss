@@ -1,7 +1,8 @@
 *, 
 *:before, 
 *:after {
-	 cursor: default; // Make everything use default cursor
+	cursor: default; // Make everything use default cursor
+	box-sizing: border-box;
 }
 
 html, body {
