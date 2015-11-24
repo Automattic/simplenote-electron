@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import NoteDetail from './note-detail'
 import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
@@ -6,22 +6,26 @@ import RevisionSelector from './revision-selector'
 
 export default React.createClass({
 
+	propTypes: {
+		note: PropTypes.object,
+		revisions: PropTypes.array,
+		onUpdateContent: PropTypes.func.isRequired,
+		onUpdateNoteTags: PropTypes.func.isRequired,
+		onTrashNote: PropTypes.func.isRequired,
+		onRestoreNote: PropTypes.func.isRequired,
+		onRevisions: PropTypes.func.isRequired,
+		onSignOut: PropTypes.func.isRequired,
+		onCloseNote: PropTypes.func.isRequired,
+		onNoteInfo: PropTypes.func.isRequired
+	},
+
 	getDefaultProps: function() {
 		return {
 			note: {
 				data: {
 					tags: []
 				}
-			},
-			revisions: null,
-			onUpdateContent: function() {},
-			onUpdateNoteTags: function() {},
-			onTrashNote: function() {},
-			onRestoreNote: function() {},
-			onRevisions: function() {},
-			onSignOut: function() {},
-			onCloseNote: function() {},
-			onNoteInfo: function() {}
+			}
 		};
 	},
 
@@ -76,24 +80,13 @@ export default React.createClass({
 						note={note}
 						onChangeContent={this.withNote(this.props.onUpdateContent)} />
 				</div>
-				{when(revisions, function() {
-					return (
-						<RevisionSelector
-							revisions={revisions}
-							onViewRevision={this.onViewRevision}
-							onSelectRevision={this.onSelectRevision} />
-					)
-				}, this)}
+				{!!revisions &&
+					<RevisionSelector
+						revisions={revisions}
+						onViewRevision={this.onViewRevision}
+						onSelectRevision={this.onSelectRevision} />
+				}
 			</div>
 		)
 	}
 });
-
-function when(test, func, ctx) {
-	if (typeof test == 'function') {
-		test = test();
-	}
-	if (test) {
-		return func.apply(ctx);
-	}
-}
