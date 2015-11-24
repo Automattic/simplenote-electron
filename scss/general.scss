@@ -37,4 +37,8 @@ img, svg {
 	transform: translateX(0px);
 	-webkit-transition: -webkit-transform 200ms ease-in-out;
 	transition: transform 200ms ease-in-out;
+
+	.note-editor {
+		flex: 1 1 auto;
+	}
 }

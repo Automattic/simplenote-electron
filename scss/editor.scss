@@ -2,7 +2,6 @@
 .note-editor {
 	display: flex;
 	flex-direction: column;
-	flex: 1 1 auto;
 	overflow: hidden;
 
 	@media only screen and ( max-width: 520px ) {
