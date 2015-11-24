@@ -71,7 +71,7 @@ export default React.createClass({
 						tags={tags}
 						onUpdateNoteTags={this.withNote(this.props.onUpdateNoteTags)} />
 				</div>
-				<div className="panel">
+				<div className="note-editor-detail">
 					<NoteDetail ref="detail"
 						note={note}
 						onChangeContent={this.withNote(this.props.onUpdateContent)} />

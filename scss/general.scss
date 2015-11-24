@@ -38,8 +38,3 @@ img, svg {
 	transition: transform 200ms ease-in-out;
 	@include flexbox(flex-start, stretch);
 }
-
-.panel {
-	@include flex(1, 0);
-	position: relative;
-}
