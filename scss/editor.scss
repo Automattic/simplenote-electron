@@ -16,8 +16,9 @@
 		}
 	}
 
-	.toolbar {
-		flex: 0 0 44px;
+	.note-toolbar {
+		flex: none;
+		height: 44px;
 	}
 
 	.tag-editor {
@@ -31,9 +32,33 @@
 	}
 }
 
-.toolbar {
+.note-toolbar {
 	display: flex;
-	position: relative;
+	padding: 8px;
+
+	> div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0 8px;
+		width: 28px;
+
+		&:first-child {
+			margin: 0 8px 0 0;
+		}
+
+		&:last-child {
+			width: auto;
+		}
+	}
+
+	.note-toolbar-back {
+		display: none;
+
+		@media only screen and ( max-width: 520px ) {
+			display: flex;
+		}
+	}
 }
 
 .note-editor-detail {
@@ -70,29 +95,5 @@
 		outline: none;
 		background: $white;
 	}	
-
-}
-
-.detail-toolbar {
-	display: flex;
-	flex: 1 1 100%;
-	padding: 8px;
-	
-	> div {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 0 8px;
-		width: 28px;
-
-		&:first-child {
-			margin: 0 8px 0 0;
-		}
-
-		&:last-child {
-			width: auto;
-		}
-	
-	}
 
 }
