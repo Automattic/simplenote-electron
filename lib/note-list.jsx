@@ -14,7 +14,7 @@ export default React.createClass({
 	},
 
 	render() {
-		var { selectedNoteId, onSelectNote, onPinNote } = this.props;
+		var { selectedNoteId, onSelectNote } = this.props;
 
 		return (
 			<div className="note-list">
@@ -28,7 +28,7 @@ export default React.createClass({
 
 					return (
 						<div key={note.id} className={classes}>
-							<div className="note-list-item-pinner" tabIndex="0" onClick={onPinNote.bind( null, note )}></div>
+							<div className="note-list-item-pinner" tabIndex="0" onClick={this.onPinNote.bind( this, note )}></div>
 							<div className="note-list-item-text" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
 								<div className="note-list-item-title">{text.title}</div>
 								<div className="note-list-item-excerpt">{text.preview}</div>
@@ -38,6 +38,10 @@ export default React.createClass({
 				})}
 			</div>
 		);
+	},
+
+	onPinNote( note, event ) {
+		this.props.onPinNote( note, !note.pinned );
 	}
 
 });
