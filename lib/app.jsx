@@ -128,6 +128,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	onRenameTag: function(tag, name) {
 		this.props.actions.renameTag( {
 			tagBucket: this.props.tagBucket,
+			noteBucket: this.props.noteBucket,
 			tag, name
 		} );
 	},
