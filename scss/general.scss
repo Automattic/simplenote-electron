@@ -41,6 +41,14 @@ img, svg {
 	transform: translateX(0px);
 	transition: transform 200ms ease-in-out;
 
+	&.note-info-open {
+		transform: translateX(-$note-info-width);
+	}
+
+	&.navigation-open {
+		transform: translateX($navigation-bar-width);
+	}
+
 	.note-editor {
 		flex: 1 1 auto;
 	}
@@ -58,4 +66,13 @@ img, svg {
 			transition-property: transform;
 		}
 	}
+}
+
+.panel-title {
+	margin: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-size: 86%;
+	font-weight: normal;
+	color: darken($gray, 20%);
 }
