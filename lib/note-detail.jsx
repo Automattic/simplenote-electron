@@ -33,10 +33,10 @@ export default React.createClass({
 	render: function() {
 		var disabled = this.props.note && this.props.note.data.deleted;
 		return (
-			<div className="editor-wrapper">
-				<textarea ref="content" disabled={disabled} className="editor" value={this.state.content} onChange={this.onChangeContent}/>
+			<div className="note-detail">
+				<textarea ref="content" disabled={disabled} className="note-detail-textarea" value={this.state.content} onChange={this.onChangeContent}/>
 			</div>
 		)
 	}
 
-})
+} )
