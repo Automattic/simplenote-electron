@@ -21,22 +21,28 @@
 
 .note-toolbar {
 	display: flex;
+	align-items: center;
 	padding: 10px 8px;
 
-	> div {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 0 8px;
+	.note-toolbar-icon, .note-toolbar-text {
+		flex: none;
+		margin: 0 8px 0 0;
+		text-align: center;
+	}
+
+	.note-toolbar-icon {
 		width: 28px;
+		height: 28px;
 
-		&:first-child {
-			margin: 0 8px 0 0;
+		button {
+			width: 100%;
+			height: 100%;
 		}
+	}
 
-		&:last-child {
-			width: auto;
-		}
+	.note-toolbar-space {
+		flex: 1 1 auto;
+		visibility: hidden;
 	}
 
 	.note-toolbar-back {
