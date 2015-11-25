@@ -119,7 +119,27 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.props.actions.selectTag( { tag } );
 	},
 
-	onUpdateTags: function(tags) {
+	onRenameTag: function(tag, name) {
+		this.props.actions.renameTag( {
+			tagBucket: this.props.tagBucket,
+			noteBucket: this.props.noteBucket,
+			tag, name
+		} );
+	},
+
+	onTrashTag: function(tag) {
+		this.props.actions.trashTag( {
+			tagBucket: this.props.tagBucket,
+			noteBucket: this.props.noteBucket,
+			tag
+		} );
+	},
+
+	onReorderTags: function(tags) {
+		this.props.actions.reorderTags( {
+			tagBucket: this.props.tagBucket,
+			tags
+		} );
 	},
 
 	onSearch: function(filter) {
@@ -228,7 +248,9 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onSelectTrash={() => this.props.actions.selectTrash() }
 								onSelectTag={this.onSelectTag}
 								onEditTags={() => this.props.actions.editTags() }
-								onUpdateTags={this.onUpdateTags}
+								onRenameTag={this.onRenameTag}
+								onTrashTag={this.onTrashTag}
+								onReorderTags={this.onReorderTags}
 								editingTags={appState.editingTags}
 								tags={appState.tags} />
 							<div className="source-list">

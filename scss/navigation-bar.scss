@@ -44,8 +44,17 @@
 	flex-direction: column;
 	flex: 0 1 auto;
 	overflow: hidden;
-	padding: 20px 30px;
+	min-height: 9em;
+	padding: 12px 0;
 	border-top: 1px solid lighten($gray, 30%);
+
+	.tag-list-title {
+		padding: 8px 30px 0;
+	}
+
+	.editable-list-item {
+		padding: 0 10px 0 26px;
+	}
 }
 
 .navigation-tools {
