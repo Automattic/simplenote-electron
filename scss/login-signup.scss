@@ -1,5 +1,5 @@
 .login-form {
-
+	flex: 1 0 auto;
 	@include flexbox(center, center, column);
 
 	svg {
