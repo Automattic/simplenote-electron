@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import appState from './flux/app-state'
+import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
 import SearchField from './search-field'
@@ -11,7 +12,6 @@ import NewNoteIcon	from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
-import PopOver from "react-popover"
 
 function mapStateToProps(state) {
 	return state;
@@ -106,12 +106,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.props.actions.noteUpdated( {
 			noteBucket: this.props.noteBucket,
 			noteId, data, original, patch
-		} );
-	},
-
-	onNoteInfo: function(evt) {
-		this.props.actions.showNoteInfo( {
-			context: evt.currentTarget.getBoundingClientRect()
 		} );
 	},
 
@@ -220,6 +214,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		var classes = classNames( 'simplenote-app', {
 			'touch-enabled': ('ontouchstart' in document.body),
 			'note-open': appState.note,
+			'note-info-open': appState.showNoteInfo,
 			'navigation-open': appState.showNavigation
 		} );
 
@@ -258,8 +253,10 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onRestoreNote={this.onRestoreNote}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={this.onNoteInfo} />
-							{ this.renderNoteInfoPopover() }
+								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
+							<NoteInfo
+								note={note}
+								onPinNote={this.onPinNote} />
 						</div>
 					)
 				}) }
@@ -268,29 +265,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 				})}
 			</div>
 		)
-	},
-
-	renderNoteInfoPopover: function() {
-		var popoverOptions = this.props.appState.showNoteInfo;
-		if (!popoverOptions) {
-			return;
-		}
-
-		let style = {
-			overflow: 'auto',
-			maxWidth: '320px',
-			maxHeight: '100%',
-			margin: '0'
-		};
-
-		return (
-			<PopOver
-				onClosePopover={() => this.props.actions.hideNoteInfo() }
-				context={popoverOptions.context}>
-				<pre style={style}>{JSON.stringify(this.props.appState.note, null, "	")}</pre>
-			</PopOver>
-		);
-
 	}
 } ) );
 
