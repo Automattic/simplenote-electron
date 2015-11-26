@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ToggleControl from './toggle-control'
 
-export default React.createClass({
+export default React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -81,11 +81,11 @@ export default React.createClass({
 	onPinChanged( event ) {
 		this.props.onPinNote( this.props.note, event.currentTarget.checked );
 	}
-});
+} );
 
 function formatTimestamp( time ) {
-	if (time) {
-		var d = new Date(1000 * time);
+	if ( time ) {
+		let d = new Date( 1000 * time );
 		return d.toLocaleString();
 	}
 }
@@ -95,7 +95,7 @@ function wordCount( content ) {
 }
 
 // https://mathiasbynens.be/notes/javascript-unicode
-var surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+const surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 function characterCount( content ) {
 	return ( content || '' )
 		// replace every surrogate pair with a BMP symbol

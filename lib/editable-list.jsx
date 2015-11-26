@@ -16,7 +16,7 @@ export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			getItemKey: (item => item.id)
+			getItemKey: ( item => item.id )
 		};
 	},
 
@@ -90,7 +90,7 @@ export default React.createClass( {
 							<span className="editable-list-item-left">
 								{ onRemove &&
 									<span className="editable-list-trash"
-											tabIndex={editing ? "0" : "-1"}
+											tabIndex={editing ? '0' : '-1'}
 											onClick={onRemove.bind( null, item )}>
 										<SmallCrossOutlineIcon />
 									</span>
@@ -103,7 +103,7 @@ export default React.createClass( {
 
 							{ onReorder &&
 								<span className="editable-list-reorder"
-										tabIndex={editing ? "0" : "-1"}
+										tabIndex={editing ? '0' : '-1'}
 										onDragStart={e => e.preventDefault()}
 										onMouseDown={this.onReorderStart.bind( this, itemId )}
 										onTouchStart={this.onReorderStart.bind( this, itemId )}
@@ -111,7 +111,7 @@ export default React.createClass( {
 									<ReorderIcon />
 								</span>
 							}
-						</li> 
+						</li>
 					);
 				} )}
 			</ul>
@@ -136,13 +136,12 @@ export default React.createClass( {
 	positionReorderingElement() {
 		if ( this.reorderingElement != null ) {
 			let rect = this.reorderingElement.getBoundingClientRect();
-			let offsetY = this.reorderingClientY - (rect.top - this.reorderingTranslateY);
+			let offsetY = this.reorderingClientY - ( rect.top - this.reorderingTranslateY );
 			let translateY = offsetY - this.reorderingOffsetY;
 
 			if ( translateY < 0 && this.reorderingElement.previousSibling == null ) {
 				translateY = 0;
-			}
-			else if ( translateY > 0 && this.reorderingElement.nextSibling == null ) {
+			} else if ( translateY > 0 && this.reorderingElement.nextSibling == null ) {
 				translateY = 0;
 			}
 
@@ -174,8 +173,7 @@ export default React.createClass( {
 				reorderedItems: this.props.items.slice(),
 				reorderingId: null
 			} );
-		}
-		else {
+		} else {
 			this.setState( {
 				reorderingId: null
 			} );
@@ -261,7 +259,7 @@ export default React.createClass( {
 	onReorderEnd( event ) {
 		event.preventDefault();
 		this.stopReordering();
-		this.props.onReorder(this.state.reorderedItems);
+		this.props.onReorder( this.state.reorderedItems );
 	},
 
 	onReorderCancel() {
@@ -272,8 +270,7 @@ export default React.createClass( {
 		if ( event.key === 'ArrowUp' ) {
 			event.preventDefault();
 			this.reorderItemById( reorderingId, -1 );
-		}
-		else if ( event.key === 'ArrowDown' ) {
+		} else if ( event.key === 'ArrowDown' ) {
 			event.preventDefault();
 			this.reorderItemById( reorderingId, 1 );
 		}
@@ -287,4 +284,4 @@ export default React.createClass( {
 			this.onReorderCancel();
 		}
 	}
-});
+} );

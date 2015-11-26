@@ -1,17 +1,17 @@
 import React from 'react'
 
-export default React.createClass({
+export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			placeholder: "Search",
+			placeholder: 'Search',
 			onSearch: function() {}
 		}
 	},
 
-	onSearch: function(e) {
+	onSearch: function() {
 		var query = this.refs.search.value;
-		this.props.onSearch(query);
+		this.props.onSearch( query );
 	},
 
 	render: function() {
@@ -21,4 +21,4 @@ export default React.createClass({
 			</div>
 		);
 	}
-});
+} );

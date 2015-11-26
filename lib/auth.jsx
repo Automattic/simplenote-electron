@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-export default React.createClass({
+export default React.createClass( {
 
 	propTypes: {
 		onAuthenticate: PropTypes.func.isRequired
@@ -51,12 +51,12 @@ export default React.createClass({
 
 	onForgot( event ) {
 		event.preventDefault();
-		window.open( event.currentTarget.href, null, "width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes" );
+		window.open( event.currentTarget.href, null, 'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes' );
 	},
 
 	onSignUp( event ) {
 		event.preventDefault();
-		window.open( event.currentTarget.href, null, "width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes" );
+		window.open( event.currentTarget.href, null, 'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes' );
 	}
 
 } )

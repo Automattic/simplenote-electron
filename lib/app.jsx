@@ -13,15 +13,15 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 
-function mapStateToProps(state) {
+function mapStateToProps( state ) {
 	return state;
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps( dispatch ) {
 	return { actions: bindActionCreators( appState.actionCreators, dispatch ) };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( React.createClass({
+export default connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
 	mixins: [NoteDisplayMixin],
 
@@ -48,20 +48,19 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentDidMount: function() {
-
 		this.props.noteBucket
-			.on('index', this.onNotesIndex)
-			.on('update', this.onNoteUpdate)
-			.on('remove', this.onNoteRemoved);
+			.on( 'index', this.onNotesIndex )
+			.on( 'update', this.onNoteUpdate )
+			.on( 'remove', this.onNoteRemoved );
 
 		this.props.tagBucket
-			.on('index', this.onTagsIndex)
-			.on('update', this.onTagsIndex)
-			.on('remove', this.onTagsIndex);
+			.on( 'index', this.onTagsIndex )
+			.on( 'update', this.onTagsIndex )
+			.on( 'remove', this.onTagsIndex );
 
 		this.props.client
-			.on('authorized', this.onAuthChanged)
-			.on('unauthorized', this.onAuthChanged);
+			.on( 'authorized', this.onAuthChanged )
+			.on( 'unauthorized', this.onAuthChanged );
 
 		this.onNotesIndex();
 		this.onTagsIndex();
@@ -73,14 +72,14 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onSelectNote: function(noteId) {
+	onSelectNote: function( noteId ) {
 		this.props.actions.loadAndSelectNote( {
 			noteBucket: this.props.noteBucket,
 			noteId
 		} );
 	},
 
-	onPinNote: function(note, pin = true) {
+	onPinNote: function( note, pin = true ) {
 		this.props.actions.pinNote( {
 			noteBucket: this.props.noteBucket,
 			note, pin
@@ -103,7 +102,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onNoteUpdate: function(noteId, data, original, patch) {
+	onNoteUpdate: function( noteId, data, original, patch ) {
 		this.props.actions.noteUpdated( {
 			noteBucket: this.props.noteBucket,
 			noteId, data, original, patch
@@ -116,11 +115,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onSelectTag: function(tag) {
+	onSelectTag: function( tag ) {
 		this.props.actions.selectTag( { tag } );
 	},
 
-	onRenameTag: function(tag, name) {
+	onRenameTag: function( tag, name ) {
 		this.props.actions.renameTag( {
 			tagBucket: this.props.tagBucket,
 			noteBucket: this.props.noteBucket,
@@ -128,7 +127,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onTrashTag: function(tag) {
+	onTrashTag: function( tag ) {
 		this.props.actions.trashTag( {
 			tagBucket: this.props.tagBucket,
 			noteBucket: this.props.noteBucket,
@@ -136,14 +135,14 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onReorderTags: function(tags) {
+	onReorderTags: function( tags ) {
 		this.props.actions.reorderTags( {
 			tagBucket: this.props.tagBucket,
 			tags
 		} );
 	},
 
-	onSearch: function(filter) {
+	onSearch: function( filter ) {
 		this.props.actions.search( { filter } );
 	},
 
@@ -173,14 +172,14 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		return notes.filter( test );
 	},
 
-	onUpdateContent: function(note, content) {
+	onUpdateContent: function( note, content ) {
 		this.props.actions.updateNoteContent( {
 			noteBucket: this.props.noteBucket,
 			note, content
 		} );
 	},
 
-	onUpdateNoteTags: function(note, tags) {
+	onUpdateNoteTags: function( note, tags ) {
 		this.props.actions.updateNoteTags( {
 			noteBucket: this.props.noteBucket,
 			tagBucket: this.props.tagBucket,
@@ -188,21 +187,21 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onTrashNote: function(note) {
+	onTrashNote: function( note ) {
 		this.props.actions.trashNote( {
 			noteBucket: this.props.noteBucket,
 			note
 		} );
 	},
 
-	onRestoreNote: function(note) {
+	onRestoreNote: function( note ) {
 		this.props.actions.restoreNote( {
 			noteBucket: this.props.noteBucket,
 			note
 		} );
 	},
 
-	onRevisions: function(note) {
+	onRevisions: function( note ) {
 		this.props.actions.noteRevisions( {
 			noteBucket: this.props.noteBucket,
 			note

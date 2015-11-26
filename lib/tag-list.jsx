@@ -53,10 +53,10 @@ export default React.createClass( {
 	},
 
 	onSelectTag( tag, event ) {
-		if (!this.props.editingTags) {
+		if ( !this.props.editingTags ) {
 			event.preventDefault();
 			event.currentTarget.blur();
 			this.props.onSelectTag( tag );
 		}
 	}
-});
+} );

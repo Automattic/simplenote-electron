@@ -4,7 +4,7 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 
-export default React.createClass({
+export default React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -30,7 +30,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps: function() {
-		this.setState({revision: null});
+		this.setState( { revision: null } );
 	},
 
 	getInitialState: function() {
@@ -39,25 +39,24 @@ export default React.createClass({
 		}
 	},
 
-	withNote: function(fn) {
+	withNote: function( fn ) {
 		var note = this.props.note;
 		return function() {
-			var args = [note].concat([].slice.call(arguments));
-			fn.apply(null, args);
+			var args = [note].concat( [].slice.call( arguments ) );
+			fn.apply( null, args );
 		};
 	},
 
-	onViewRevision: function(revision) {
-		this.setState({revision: revision});
+	onViewRevision: function( revision ) {
+		this.setState( { revision: revision } );
 	},
 
-	onSelectRevision: function(revision) {
-		console.log("Accept revision: ", revision);
+	onSelectRevision: function( revision ) {
+		console.log( 'Accept revision: ', revision );
 	},
 
 	render: function() {
 		var revisions = this.props.revisions;
-		var revision = this.state.revision;
 		var note = this.state.revision ? this.state.revision : this.props.note;
 		var tags = note && note.data && note.data.tags ? note.data.tags : [];
 		return (
@@ -72,11 +71,11 @@ export default React.createClass({
 					onNoteInfo={this.props.onNoteInfo} />
 				<TagField ref="tags"
 					tags={tags}
-					onUpdateNoteTags={this.withNote(this.props.onUpdateNoteTags)} />
+					onUpdateNoteTags={this.withNote( this.props.onUpdateNoteTags ) } />
 				<div className="note-editor-detail">
 					<NoteDetail ref="detail"
 						note={note}
-						onChangeContent={this.withNote(this.props.onUpdateContent)} />
+						onChangeContent={this.withNote( this.props.onUpdateContent ) } />
 				</div>
 				{!!revisions &&
 					<RevisionSelector
@@ -87,4 +86,4 @@ export default React.createClass({
 			</div>
 		)
 	}
-});
+} );
