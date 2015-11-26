@@ -56,7 +56,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 		this.props.tagBucket
 			.on('index', this.onTagsIndex)
-			.on('update', this.onTagsIndex);
+			.on('update', this.onTagsIndex)
+			.on('remove', this.onTagsIndex);
 
 		this.props.client
 			.on('authorized', this.onAuthChanged)
