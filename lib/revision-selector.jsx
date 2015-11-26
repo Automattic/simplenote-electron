@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default React.createClass({
+export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
@@ -19,19 +19,21 @@ export default React.createClass({
 	onAcceptRevision: function() {
 		var idx = this.state.selection;
 		var revision = this.props.revisions[this.props.revisions.length - 1 - idx];
-		this.props.onSelectRevision(revision);
+
+		this.props.onSelectRevision( revision );
 	},
 
 	onSelectRevision: function() {
 		var idx = this.refs.range.value;
-		this.setState({selection: idx});
 		var revision = this.props.revisions[this.props.revisions.length - 1 - idx];
-		this.props.onViewRevision(revision);
+
+		this.setState( { selection: idx } );
+		this.props.onViewRevision( revision );
 	},
 
 	render: function() {
 		var min = 0;
-		var max = this.props.revisions.length-1;
+		var max = this.props.revisions.length - 1;
 		var selection = this.state.selection && this.state.selection > -1 ? this.state.selection : max;
 		return (
 			<div className="revision-selector">
@@ -41,4 +43,4 @@ export default React.createClass({
 		)
 	}
 
-});
+} );

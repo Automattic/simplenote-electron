@@ -1,9 +1,9 @@
 import React from 'react'
 import classNames from 'classnames'
 
-export default function ToggleControl({className, children, ...props}) {
+export default function ToggleControl( { className, children, ...props } ) {
 	return (
-		<span className={classNames('toggle-control', className)} {...props}>
+		<span className={classNames( 'toggle-control', className ) } {...props}>
 			{children}
 			<span className="toggle-control-layers">
 				<span className="toggle-control-unchecked-color"></span>
