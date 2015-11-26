@@ -35,8 +35,9 @@ export default React.createClass({
 		this.refs.tag.value = "";
 	},
 
-	addTag: function(tag) {
-		var tags = this.props.tags.concat([tag]);
+	addTag: function(tags) {
+		tags = tags.trim().replace(/\s+/g, ',').split(',');
+		tags = this.props.tags.concat(tags);
 		this.props.onUpdateNoteTags(tags);
 	},
 
