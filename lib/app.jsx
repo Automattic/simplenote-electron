@@ -163,9 +163,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 					}
 					// if tag is selected only return those tags
 					if (tag) {
-						var tags = note.data.tags.map((t)=>{return t.toLowerCase()});
-						var includes = tags.indexOf(tag.id) >= 0;
-						return includes;
+						return note.data.tags.indexOf( tag.data.name ) !== -1;
 					}
 					return !note.data.deleted;
 				};
