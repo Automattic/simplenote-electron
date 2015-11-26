@@ -18,7 +18,7 @@ export default React.createClass({
 					<div className="login-fields">
 						<label className="login-field" htmlFor="login-field-username">
 							<span className="login-field-label">Email</span>
-							<span className="login-field-control"><input ref="username" id="login-field-username" type="text" /></span>
+							<span className="login-field-control"><input ref="username" id="login-field-username" type="email" /></span>
 						</label>
 						<label className="login-field" htmlFor="login-field-password">
 							<span className="login-field-label">Password</span>
