@@ -147,36 +147,29 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	filterNotes: function() {
-		var appState = this.props.appState;
-		var query = appState.filter,
-				trash		= appState.showTrash,
-				notes		= appState.notes || [],
-				tag			= appState.tag,
-				filter	= (note) => {
-					// if trash is being viewed, return trashed notes
-					if (trash) {
-						return note.data.deleted;
-					}
-					// if not in trash and note is deleted, don't show it
-					if (note.data.deleted) {
-						return false;
-					}
-					// if tag is selected only return those tags
-					if (tag) {
-						return note.data.tags.indexOf( tag.data.name ) !== -1;
-					}
-					return !note.data.deleted;
-				};
+		var { filter, showTrash, notes, tag } = this.props.appState;
+		var regexp;
 
-		if (query) {
-			var reg = new RegExp(query, 'gi');
-			filter = and(filter, function(note){
-				if (note.data && note.data.content) return reg.test(note.data.content);
-				return false;
-			});
+		if ( filter ) {
+			regexp = new RegExp( filter, 'gi' );
 		}
 
-		return notes.filter(filter);
+		function test( note ) {
+			// if and only if trash is being viewed, return trashed notes
+			if ( showTrash !== !!note.data.deleted ) {
+				return false;
+			}
+			// if tag is selected only return those with the tag
+			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
+				return false;
+			}
+			if ( regexp && !regexp.test( note.data.content || '' ) ) {
+				return false;
+			}
+			return true;
+		}
+
+		return notes.filter( test );
 	},
 
 	onUpdateContent: function(note, content) {
@@ -287,10 +280,3 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		)
 	}
 } ) );
-
-function and(fn, fn2) {
-	return function(o) {
-		if (!fn(o)) return false;
-		return fn2(o);
-	};
-}
