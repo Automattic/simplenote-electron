@@ -183,6 +183,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	onUpdateNoteTags: function(note, tags) {
 		this.props.actions.updateNoteTags( {
 			noteBucket: this.props.noteBucket,
+			tagBucket: this.props.tagBucket,
 			note, tags
 		} );
 	},
