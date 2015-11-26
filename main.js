@@ -8,7 +8,7 @@ module.exports = function main( url ) {
 
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is GCed.
-	let mainWindow = null;
+	var mainWindow = null;
 
 	// Quit when all windows are closed.
 	app.on( 'window-all-closed', function() {
@@ -159,7 +159,7 @@ function createMenuTemplate() {
 	} ];
 
 	if ( process.platform === 'darwin' ) {
-		let name = require( 'app' ).getName();
+		var name = require( 'app' ).getName();
 
 		menuTemplate.unshift( {
 			label: name,
