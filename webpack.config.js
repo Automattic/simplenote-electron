@@ -13,6 +13,9 @@ module.exports = {
 		filename: "app.js"
 	},
 	module: {
+		preLoaders: [
+			{ test: /\.jsx?$/, exclude: /node_modules|lib\/simperium/, loaders: [ 'eslint-loader' ] }
+		],
 		loaders: [
 			{ test: /\.jsx?$/, exclude: /node_modules/, loaders: [ 'babel' ] },
 			{ test: /\.json$/, loader: 'json-loader'},
