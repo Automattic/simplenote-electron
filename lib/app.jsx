@@ -209,32 +209,20 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	authorized: function(fn) {
-		if (this.props.appState.authorized) return fn();
-	},
-
-	unauthorized: function(fn) {
-		if (!this.props.appState.authorized) return fn();
-	},
-
 	render: function() {
-		var appState = this.props.appState;
+		var state = this.props.appState;
 		var notes = this.filterNotes();
-		var tags = this.tag
-		var note = appState.note;
-		var revisions = appState.revisions;
 
 		var classes = classNames( 'simplenote-app', {
-			'touch-enabled': ('ontouchstart' in document.body),
-			'note-open': appState.note,
-			'note-info-open': appState.showNoteInfo,
-			'navigation-open': appState.showNavigation
+			'touch-enabled': ( 'ontouchstart' in document.body ),
+			'note-open': state.note,
+			'note-info-open': state.showNoteInfo,
+			'navigation-open': state.showNavigation
 		} );
 
 		return (
 			<div className="app">
-				{ this.authorized( () => {
-					return (
+				{ state.authorized ?
 						<div className={classes}>
 							<NavigationBar
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
@@ -244,23 +232,23 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onRenameTag={this.onRenameTag}
 								onTrashTag={this.onTrashTag}
 								onReorderTags={this.onReorderTags}
-								editingTags={appState.editingTags}
-								tags={appState.tags} />
+								editingTags={state.editingTags}
+								tags={state.tags} />
 							<div className="source-list">
 								<div className="search-bar">
 									<div className="icon-button" tabIndex="-1" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</div>
-									<SearchField onSearch={this.onSearch} placeholder={appState.listTitle} />
-									<div className={classNames('icon-button', {disabled: appState.showTrash})} tabIndex="-1" onClick={this.onNewNote}>
+									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
+									<div className={classNames( 'icon-button', { disabled: state.showTrash } )} tabIndex="-1" onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</div>
 								</div>
-								<NoteList notes={notes} selectedNoteId={appState.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
+								<NoteList notes={notes} selectedNoteId={state.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
 							</div>
 							<NoteEditor
-								note={note}
-								revisions={appState.revisions}
+								note={state.note}
+								revisions={state.revisions}
 								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
@@ -270,14 +258,12 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
 							<NoteInfo
-								note={note}
+								note={state.note}
 								onPinNote={this.onPinNote} />
 						</div>
-					)
-				}) }
-				{ this.unauthorized( () => {
-					return <Auth onAuthenticate={this.props.onAuthenticate} />
-				})}
+				:
+					<Auth onAuthenticate={this.props.onAuthenticate} />
+				}
 			</div>
 		)
 	}
