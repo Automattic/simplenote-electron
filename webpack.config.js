@@ -1,16 +1,16 @@
-var autoprefixer = require('autoprefixer');
-var AppCachePlugin = require('appcache-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const autoprefixer = require( 'autoprefixer' );
+const AppCachePlugin = require( 'appcache-webpack-plugin' );
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 
 module.exports = {
-	context: __dirname + "/lib",
+	context: __dirname + '/lib',
 	devtool: 'sourcemap',
 	entry: [
 		'./boot'
 	],
 	output: {
-		path: __dirname + "/dist",
-		filename: "app.js"
+		path: __dirname + '/dist',
+		filename: 'app.js'
 	},
 	module: {
 		preLoaders: [
@@ -28,11 +28,11 @@ module.exports = {
 	},
 	plugins: [
 		new AppCachePlugin(),
-		new HtmlWebpackPlugin({
-			title: "Simplenote",
+		new HtmlWebpackPlugin( {
+			title: 'Simplenote',
 			templateContent: require( './index-builder.js' ),
 			inject: false
-		})
+		} )
 	],
 	postcss: [ autoprefixer() ]
 };

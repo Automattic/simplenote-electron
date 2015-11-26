@@ -1,49 +1,49 @@
-var app = require('app');	 // Module to control application life.
-var Menu = require('menu');
-var BrowserWindow = require('browser-window');	// Module to create native browser window.
+var app = require( 'app' );	 // Module to control application life.
+var Menu = require( 'menu' );
+var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
 
-module.exports = function main(url) {
+module.exports = function main( url ) {
 	// Report crashes to our server.
-	require('crash-reporter').start();
+	require( 'crash-reporter' ).start();
 
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is GCed.
-	var mainWindow = null;
+	let mainWindow = null;
 
 	// Quit when all windows are closed.
-	app.on('window-all-closed', function() {
+	app.on( 'window-all-closed', function() {
 		// On OS X it is common for applications and their menu bar
 		// to stay active until the user quits explicitly with Cmd + Q
-		if (process.platform != 'darwin') {
+		if ( process.platform !== 'darwin' ) {
 			app.quit();
 		}
-	});
+	} );
 
 	// This method will be called when Electron has finished
 	// initialization and is ready to create browser windows.
-	app.on('ready', function() {
+	app.on( 'ready', function() {
 		// Configure and set the application menu
 		var menuTemplate = createMenuTemplate();
 		var menu = Menu.buildFromTemplate( menuTemplate );
 		Menu.setApplicationMenu( menu );
 
 		// Create the browser window.
-		mainWindow = new BrowserWindow({width: 800, height: 600});
+		mainWindow = new BrowserWindow( { width: 800, height: 600 } );
 
 		// and load the index.html of the app.
-		mainWindow.loadUrl(url);
+		mainWindow.loadUrl( url );
 
 		// Open the devtools.
 		mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
-		mainWindow.on('closed', function() {
+		mainWindow.on( 'closed', function() {
 			// Dereference the window object, usually you would store windows
 			// in an array if your app supports multi windows, this is the time
 			// when you should delete the corresponding element.
 			mainWindow = null;
-		});
-	});
+		} );
+	} );
 };
 
 function createMenuTemplate() {
@@ -83,7 +83,7 @@ function createMenuTemplate() {
 			submenu: [ {
 				label: 'Larger',
 				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
-				click: function(item, focusedWindow) {
+				click: function( /* item, focusedWindow */ ) {
 					debugger;
 					// TODO increase size of editor font-size
 				}
@@ -110,27 +110,27 @@ function createMenuTemplate() {
 			} ]
 		}, {
 			label: 'Toggle Full Screen',
-			accelerator: (function() {
-				if (process.platform == 'darwin')
+			accelerator: ( function() {
+				if ( process.platform === 'darwin' ) {
 					return 'Ctrl+Command+F';
-				else
-					return 'F11';
-			})(),
-			click(item, focusedWindow) {
-				if (focusedWindow) {
-					focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+				}
+				return 'F11';
+			} )(),
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.setFullScreen( !focusedWindow.isFullScreen() );
 				}
 			}
 		}, {
 			label: 'Toggle Developer Tools',
-			accelerator: (function() {
-				if (process.platform == 'darwin')
+			accelerator: ( function() {
+				if ( process.platform === 'darwin' ) {
 					return 'Alt+Command+I';
-				else
-					return 'Ctrl+Shift+I';
-			})(),
-			click(item, focusedWindow) {
-				if (focusedWindow) {
+				}
+				return 'Ctrl+Shift+I';
+			} )(),
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
 					focusedWindow.toggleDevTools();
 				}
 			}
@@ -153,13 +153,13 @@ function createMenuTemplate() {
 		submenu: [ {
 			label: 'Learn More',
 			click: function() {
-				require('shell').openExternal('http://simplenote.com/help')
+				require( 'shell' ).openExternal( 'http://simplenote.com/help' )
 			}
 		} ]
 	} ];
 
-	if (process.platform === 'darwin') {
-		var name = require('app').getName();
+	if ( process.platform === 'darwin' ) {
+		let name = require( 'app' ).getName();
 
 		menuTemplate.unshift( {
 			label: name,
@@ -190,9 +190,11 @@ function createMenuTemplate() {
 			}, {
 				label: 'Quit',
 				accelerator: 'Command+Q',
-				click: function() { app.quit(); }
+				click: function() {
+					app.quit();
+				}
 			} ]
-		});
+		} );
 
 		// Window menu.
 		menuTemplate[3].submenu.push( {
