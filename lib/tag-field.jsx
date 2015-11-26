@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import TagChip from './tag-chip'
 import classNames from 'classnames';
 
 export default React.createClass({
 
+	propTypes: {
+		tags: PropTypes.array,
+		onUpdateNoteTags: PropTypes.func.isRequired
+	},
+
 	getDefaultProps: function() {
 		return {
-			tags: [],
-			onUpdateNoteTags: function(){}
+			tags: []
 		};
 	},
 
@@ -109,27 +113,20 @@ export default React.createClass({
 		}).bind(this), 1);
 	},
 
-	eachTag: function(cb) {
-		return (this.props.tags || []).map(cb.bind(this));
-	},
-
 	render: function() {
+		var { selectedTag } = this.state;
+
 		return (
 			<div className={classNames('tag-editor', {'has-selection': this.hasSelection()})}
 				tabIndex="-1"
 				onKeyDown={this.onKeyDown}
 				onBlur={this.onBlur}>
 				<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
-				{this.eachTag(function(tag, index) {
-					var selected = index == this.state.selectedTag;
-					var onSelectTag = this.onSelectTag;
-					var onSelect = function(e) {
-						onSelectTag(tag, index)
-					};
-					return (
-						<TagChip key={tag} tag={tag} index={index} selected={selected} onSelect={onSelect} />
-					)
-				})}
+				{this.props.tags.map( ( tag, index ) =>
+					<TagChip key={tag} tag={tag}
+						selected={index === selectedTag}
+						onSelect={this.onSelectTag.bind(this, tag, index)} />
+				)}
 				<div className="tag-field">
 					<input ref="tag" type="text" tabIndex="0" placeholder="Add tags &hellip;" />
 				</div>
