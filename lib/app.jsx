@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import settings from './flux/settings'
 import appState from './flux/app-state'
+import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
@@ -270,7 +271,46 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />
 				}
+				{this.renderDialogs()}
 			</div>
 		)
+	},
+
+	renderDialogs() {
+		var { dialogs } = this.props.appState;
+		var elements = [], modalIndex;
+
+		if ( dialogs.length === 0 ) {
+			return;
+		}
+
+		for ( let i = 0; i < dialogs.length; i++ ) {
+			let dialog = dialogs[i];
+			if ( dialog.modal ) {
+				modalIndex = i;
+			}
+
+			elements.push( this.renderDialog( dialog ) );
+		}
+
+		if ( modalIndex != null ) {
+			elements.splice( modalIndex, 0,
+				<div key="overlay" className="dialogs-overlay" onClick={null}></div>
+			);
+		}
+
+		return (
+			<div className="dialogs">
+				{elements}
+			</div>
+		);
+	},
+
+	renderDialog( dialog ) {
+		var DialogComponent = Dialogs[ dialog.type ];
+
+		return (
+			<DialogComponent {...this.props} dialog={dialog} />
+		);
 	}
 } ) );
