@@ -45,9 +45,7 @@ export default React.createClass( {
 							<span className="note-info-name">Pin to top</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl>
-								<input id="note-info-pin-checkbox" type="checkbox" checked={!!( note && note.pinned )} onChange={this.onPinChanged} />
-							</ToggleControl>
+							<ToggleControl id="note-info-pin-checkbox" checked={!!( note && note.pinned )} onChange={this.onPinChanged} />
 						</span>
 					</label>
 				</div>
@@ -60,9 +58,7 @@ export default React.createClass( {
 							</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl>
-								<input id="note-info-markdown-checkbox" type="checkbox" checked={!!( note && note.markdown )} onChange={this.onPinChanged} />
-							</ToggleControl>
+							<ToggleControl id="note-info-markdown-checkbox" checked={!!( note && note.markdown )} onChange={this.onPinChanged} />
 						</span>
 					</label>
 				</div>

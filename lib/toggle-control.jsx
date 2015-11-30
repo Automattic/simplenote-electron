@@ -1,10 +1,10 @@
 import React from 'react'
 import classNames from 'classnames'
 
-export default function ToggleControl( { className, children, ...props } ) {
+export default function ToggleControl( { id, className, checked, onChange, inputProps, ...props } ) {
 	return (
 		<span className={classNames( 'toggle-control', className ) } {...props}>
-			{children}
+			<input id={id} type="checkbox" checked={checked} onChange={onChange} {...inputProps} />
 			<span className="toggle-control-layers">
 				<span className="toggle-control-unchecked-color"></span>
 				<span className="toggle-control-checked-color"></span>
