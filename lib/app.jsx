@@ -102,7 +102,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-	onNoteUpdate: function(noteId, data, original, patch, isIndexing) {
+	onNoteUpdate: function( noteId, data, original, patch, isIndexing ) {
 		this.props.actions.noteUpdated( {
 			noteBucket: this.props.noteBucket,
 			noteId, data, original, patch, isIndexing
