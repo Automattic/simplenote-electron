@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import ToggleControl from './toggle-control'
+import ToggleControl from './controls/toggle'
 
 export default React.createClass( {
 
