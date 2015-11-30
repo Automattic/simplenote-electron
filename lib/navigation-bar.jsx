@@ -29,7 +29,7 @@ export default React.createClass( {
 					<TagList {...this.props} />
 				</div>
 				<div className="navigation-tools">
-					<button type="button" className="navigation-tools-item text-button">
+					<button type="button" className="navigation-tools-item text-button" onClick={this.props.onSettings}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						Settings
 					</button>

@@ -127,6 +127,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.props.actions.selectTag( { tag } );
 	},
 
+	onSettings: function() {
+		this.props.actions.showDialog( {
+			dialog: {
+				type: 'Settings',
+				modal: true,
+				single: true
+			}
+		} );
+	},
+
 	onRenameTag: function( tag, name ) {
 		this.props.actions.renameTag( {
 			tagBucket: this.props.tagBucket,
@@ -235,6 +245,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 								onSelectTrash={() => this.props.actions.selectTrash() }
 								onSelectTag={this.onSelectTag}
+								onSettings={this.onSettings}
 								onEditTags={() => this.props.actions.editTags() }
 								onRenameTag={this.onRenameTag}
 								onTrashTag={this.onTrashTag}
