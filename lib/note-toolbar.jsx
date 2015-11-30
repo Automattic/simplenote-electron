@@ -28,7 +28,7 @@ export default React.createClass( {
 				{ isTrashed ?
 					<div className="note-toolbar-text"><button type="button" className="icon-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore</button></div>
 				:
-					<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note) }><TrashIcon /></button></div>
+					<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
 				}
 				<div className="note-toolbar-space"></div>
 				<div className="note-toolbar-text"><button type="button" className="text-button" onClick={this.props.onSignOut}>Sign Out</button></div>
