@@ -3,12 +3,12 @@ import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
 
-export default React.createClass({
+export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			onSelectAllNotes: function(){},
-			onSelectTrash: function(){}
+			onSelectAllNotes: function() { },
+			onSelectTrash: function() { }
 		};
 	},
 
@@ -41,4 +41,4 @@ export default React.createClass({
 			</div>
 		);
 	}
-});
+} );

@@ -12,8 +12,10 @@ button {
 }
 
 .basic-button,
+.primary-button,
 .icon-button,
 .text-button {
+	box-sizing: border-box;
 	text-overflow: ellipsis;
 	display: inline-block;
 	margin: 0;
@@ -46,6 +48,17 @@ button {
 		color: $gray;
 		border-color: $blue;
 	}
+}
+
+// Primary buttons
+.primary-button {
+	padding: 8px;
+	background: $blue;
+	border-radius: $border-radius;
+	color: white;
+	line-height: normal;
+	font-weight: bold;
+	font-size: 125%;
 }
 
 // Icon only buttons

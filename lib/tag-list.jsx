@@ -1,109 +1,62 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import classNames from 'classnames'
-import TrashIcon from './icons/trash'
-import DownArrow from './icons/arrow-down'
+import EditableList from './editable-list'
 
-export default React.createClass({
+export default React.createClass( {
 
-	getDefaultProps: function() {
-		return {
-			onSelectTag: function(){},
-			onEditTags: function(){},
-			onUpdateTags: function(){},
-			tags: []
-		};
+	propTypes: {
+		onSelectTag: PropTypes.func.isRequired,
+		onEditTags: PropTypes.func.isRequired,
+		onRenameTag: PropTypes.func.isRequired,
+		onTrashTag: PropTypes.func.isRequired,
+		onReorderTags: PropTypes.func.isRequired,
+		tags: PropTypes.array.isRequired
 	},
 
-	getInitialState: function() {
-		return {
-			reordering: false
-		};
-	},
+	render() {
+		var classes = classNames( 'tag-list', {
+			'tag-list-editing': this.props.editingTags
+		} );
 
-	render: function() {
 		return (
-			<div className={classNames("tag-list", {"tag-list-editing": this.props.editingTags})}>
+			<div className={classes}>
 				<div className="tag-list-title">
-					<h2>Tags</h2>
+					<h2 className="panel-title">Tags</h2>
 					<strong className="tag-list-edit-toggle text-button" tabIndex="0" onClick={this.props.onEditTags}>
 						{this.props.editingTags ? 'Done' : 'Edit' }
 					</strong>
 				</div>
-				<ul className="tag-list-items" onMouseMove={this.onReorderMove} onTouchMove={this.onReorderMove}>
-					{this.props.tags.map((tag, i) => 
-						<li key={tag.id} className="tag-list-item">
-							<span className="tag-list-item-left">
-								<span className="tag-list-trash"
-										tabIndex={this.props.editingTags ? "0" : "-1"}
-										onClick={this.onTrashTag.bind(this, tag)}>
-									<TrashIcon />
-								</span>
-								<span className="tag-list-input-holder">
-									<input
-										className="tag-list-input"
-										readOnly={!this.props.editingTags}
-										onClick={this.onSelectTag.bind(null, tag)}
-										valueLink={{value: tag.data.name, requestChange: this.onRenameTag.bind(this, tag)}} />
-								</span>
-							</span>
-							<span className="tag-list-reorder"
-									tabIndex={this.props.editingTags ? "0" : "-1"}
-									onDragStart={e => e.preventDefault()}
-									onMouseDown={this.onReorderStart}
-									onTouchStart={this.onReorderStart}
-									onMouseUp={this.onReorderEnd}
-									onTouchEnd={this.onReorderEnd}
-									onTouchCancel={this.onReorderCancel}>
-								<DownArrow />
-							</span>
-						</li>
-					)}
-				</ul>
+				<EditableList
+					className="tag-list-items"
+					items={this.props.tags}
+					editing={this.props.editingTags}
+					renderItem={this.renderItem}
+					onRemove={this.props.onTrashTag}
+					onReorder={this.props.onReorderTags} />
 			</div>
 		);
 	},
 
-	onTrashTag: function(tag) {
-		var index = this.props.tags.indexOf(tag);
+	renderItem( tag ) {
+		var valueLink = {
+			value: tag.data.name,
+			requestChange: this.props.onRenameTag.bind( null, tag )
+		};
 
-		if (index !== -1) {
-			var tags = this.props.tags.slice();
-			tags.splice(index, 1);
-			this.props.onUpdateTags(tags);
-		}
+		return (
+			<input
+				className="tag-list-input"
+				readOnly={!this.props.editingTags}
+				onClick={this.onSelectTag.bind( this, tag )}
+				valueLink={valueLink} />
+		);
 	},
 
-	onSelectTag: function(tag, event) {
-		if (!this.props.editingTags) {
+	onSelectTag( tag, event ) {
+		if ( !this.props.editingTags ) {
 			event.preventDefault();
-			this.props.onSelectTag(tag);
+			event.currentTarget.blur();
+			this.props.onSelectTag( tag );
 		}
-	},
-
-	onRenameTag: function(tag, newName) {
-		console.log(tag, newName);
-	},
-
-	onReorderStart: function() {
-		console.log('onReorderStart', this.props.tags);
-		this.setState({ reordering: true });
-	},
-
-	onReorderMove: function() {
-		if (!this.state.reordering) {
-			return;
-		}
-
-		console.log('onReorderMove');
-	},
-
-	onReorderEnd: function() {
-		console.log('onReorderEnd');
-		this.setState({ reordering: false });
-	},
-
-	onReorderCancel: function() {
-		console.log('onReorderCancel');
-		this.setState({ reordering: false });
 	}
-});
+} );

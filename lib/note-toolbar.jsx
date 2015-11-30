@@ -1,69 +1,39 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import BackIcon from './icons/back'
 import InfoIcon from './icons/info'
 import RevisionsIcon from './icons/revisions'
 import TrashIcon from './icons/trash'
 
-export default React.createClass({
+export default React.createClass( {
 
-	getDefaultProps: function() {
-		return {
-			note: {
-				data: {
-					tags: []
-				}
-			},
-			revisions: null,
-			onTrashNote: function() {},
-			onRestoreNote: function() {},
-			onRevisions: function() {},
-			onSignOut: function() {},
-			onCloseNote: function() {},
-			onNoteInfo: function() {}
-		};
-	},
-
-	withNote: function(fn) {
-		var note = this.props.note;
-		return function() {
-			var args = [note].concat([].slice.call(arguments));
-			fn.apply(null, args);
-		};
-	},
-
-	isTrashed: function(fn) {
-		var note = this.props.note;
-		if (note && note.data.deleted) {
-			return fn.call(this, note);
-		}
-	},
-
-	isNotTrashed: function(fn) {
-		var note = this.props.note;
-		if (note && !note.data.deleted) {
-			return fn.call(this, note);
-		}
+	propTypes: {
+		note: PropTypes.object,
+		onTrashNote: PropTypes.func.isRequired,
+		onRestoreNote: PropTypes.func.isRequired,
+		onRevisions: PropTypes.func.isRequired,
+		onSignOut: PropTypes.func.isRequired,
+		onCloseNote: PropTypes.func.isRequired,
+		onNoteInfo: PropTypes.func.isRequired
 	},
 
 	render: function() {
+		var { note } = this.props;
+		var isTrashed = !!( note && note.data.deleted );
+
 		return (
 			<div className="note-toolbar">
-				<div ref="responsive-back" onClick={this.props.onCloseNote} className="icon-button note-toolbar-back" tabIndex="-1"><BackIcon /></div>
-				<div ref="info" tabIndex="-1" className="icon-button infoButton" onClick={this.props.onNoteInfo}><InfoIcon /></div>
-				<div ref="revisions" tabIndex="-1" className="icon-button revisionsButton" onClick={this.withNote(this.props.onRevisions)}><RevisionsIcon /></div>
-				{ this.isNotTrashed(function() {
-					return (
-						<div ref="trash" tabIndex="-1" className="icon-button trashButton" onClick={this.withNote(this.props.onTrashNote)}><TrashIcon /></div>
-					)
-				})}
-				{ this.isTrashed(function() {
-					return (
-						<div ref="trash" tabIndex="-1" className="icon-button trashButton" onClick={this.withNote(this.props.onRestoreNote)}>Restore</div>
-					)
-				})}
-				<div className="space" style={{"flex": "1 1 auto", "visibility": "hidden"}}></div>
-				<div ref="logout" tabIndex="-1" className="text-button signoutButton" onClick={this.props.onSignOut}>Sign Out</div>
+				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="icon-button" onClick={this.props.onCloseNote}><BackIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
+				{ isTrashed ?
+					<div className="note-toolbar-text"><button type="button" className="icon-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore</button></div>
+				:
+					<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
+				}
+				<div className="note-toolbar-space"></div>
+				<div className="note-toolbar-text"><button type="button" className="text-button" onClick={this.props.onSignOut}>Sign Out</button></div>
 			</div>
 		)
 	}
-});
+
+} );

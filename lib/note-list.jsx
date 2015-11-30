@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames from 'classnames'
 
-export default React.createClass({
+export default React.createClass( {
 
 	mixins: [ NoteDisplayMixin ],
 
@@ -35,13 +35,13 @@ export default React.createClass({
 							</div>
 						</div>
 					);
-				})}
+				} )}
 			</div>
 		);
 	},
 
-	onPinNote( note, event ) {
+	onPinNote( note ) {
 		this.props.onPinNote( note, !note.pinned );
 	}
 
-});
+} );

@@ -1,17 +1,9 @@
-* {
-  -webkit-user-select: inherit;
-  user-select: inherit;
-}
+
 body {
-  -webkit-user-select: none;
-  user-select: none;
-}
-input, textarea, div[contenteditable], {
-  -webkit-user-select: auto;
-  user-select: auto;
+	user-select: none;
 }
 
 // Make sure inputs that are readonly (i.e. tag list) are not selectable
 input[readonly] {
- user-select: inherit;
+	user-select: none;
 }
