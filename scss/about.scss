@@ -1,0 +1,86 @@
+.about {
+	.dialog-box {
+		position: relative;
+		max-width: 472px;
+		background: #0098DD; 
+		color: white;
+	}
+
+	.dialog-content {
+		padding: 30px 20px 20px;
+	}
+
+	.about-top {
+		margin-bottom: 40px;
+		text-align: center;
+
+		svg {
+			display: block;
+			margin: 0 auto 10px;
+			fill: white;
+		}
+
+		h1 {
+			margin: 0;
+			line-height: 1.25em;
+			font-size: 250%;
+			font-weight: 300;
+		}
+
+		small {
+			font-size: 90%;
+		}
+	}
+
+	a {
+		color: white;
+		text-decoration: none;
+	}
+
+	.about-links {
+		max-width: 275px;
+		margin: 0 auto;
+		padding: 0;
+		list-style: none;
+		line-height: normal;
+
+		li {
+			border-bottom: 1px solid #59BCE9;
+
+			&:first-child {
+				border-top: 1px solid #59BCE9;
+			}
+		}
+
+		a {
+			display: block;
+			padding: 10px 2px;
+		}
+
+		.about-links-title {
+			font-size: 143%;
+			font-weight: 300;
+		}
+	}
+
+	.about-bottom {
+		margin-top: 50px;
+		font-size: 90%;
+		text-align: center;
+
+		p {
+			margin: 0.25em 0;
+		}
+	}
+
+	.about-done {
+		position: absolute;
+		top: 0;
+		right: 0;
+		padding: 20px;
+		
+		& svg, &:active svg {
+			fill: white;
+		}
+	}
+}

@@ -52,13 +52,15 @@ export default React.createClass( {
 				<input type="text" className="focus-guard" onFocus={() => this.focusLastInput()} />
 
 				<div ref="box" className="dialog-box color-bg color-fg">
-					<div className="dialog-title-bar color-border">
-						<div className="dialog-title-side"></div>
-						<h2 id={titleElementId} className="dialog-title-text">{title}</h2>
-						<div className="dialog-title-side">
-							{!!onDone && <button type="button" className="text-button" onClick={onDone}>Done</button>}
+					{( title != null || onDone != null ) &&
+						<div className="dialog-title-bar color-border">
+							<div className="dialog-title-side"></div>
+							<h2 id={titleElementId} className="dialog-title-text">{title}</h2>
+							<div className="dialog-title-side">
+								{!!onDone && <button type="button" className="text-button" onClick={onDone}>Done</button>}
+							</div>
 						</div>
-					</div>
+					}
 
 					<div ref="content" className="dialog-content">
 						{children}
