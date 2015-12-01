@@ -61,7 +61,7 @@ export default React.createClass( {
 						<h3 className="panel-title">Account</h3>
 						<div className="settings-items">
 							<label htmlFor="" className="settings-item">
-								{accountName}
+								<span className="settings-item-text-input">{accountName}</span>
 							</label>
 						</div>
 
