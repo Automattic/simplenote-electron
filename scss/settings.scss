@@ -4,7 +4,9 @@
 	}
 
 	.dialog-tab-content {
-		min-height: 34em;
+		height: 30.5em;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.toggle-control .toggle-control-checked-color {
