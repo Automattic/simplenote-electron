@@ -7,6 +7,12 @@
 		height: 30.5em;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
+
+		// On small screens, the tab bar uses up too much space so it should
+		// move out of the way while scrolling.
+		@media only screen and ( max-height: 640px ) {
+			height: auto;
+		}
 	}
 
 	.toggle-control .toggle-control-checked-color {
