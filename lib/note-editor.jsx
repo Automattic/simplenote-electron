@@ -39,14 +39,6 @@ export default React.createClass( {
 		}
 	},
 
-	withNote: function( fn ) {
-		var note = this.props.note;
-		return function() {
-			var args = [note].concat( [].slice.call( arguments ) );
-			fn.apply( null, args );
-		};
-	},
-
 	onViewRevision: function( revision ) {
 		this.setState( { revision: revision } );
 	},
@@ -56,25 +48,26 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var revisions = this.props.revisions;
-		var note = this.state.revision ? this.state.revision : this.props.note;
-		var tags = note && note.data && note.data.tags ? note.data.tags : [];
+		var { note, revisions } = this.props;
+		var revision = this.state.revision || note;
+		var tags = revision && revision.data && revision.data.tags || [];
+
 		return (
 			<div className="note-editor">
 				<NoteToolbar
-					note={this.props.note}
+					note={note}
 					onTrashNote={this.props.onTrashNote}
 					onRestoreNote={this.props.onRestoreNote}
 					onRevisions={this.props.onRevisions}
 					onSignOut={this.props.onSignOut}
 					onCloseNote={this.props.onCloseNote}
 					onNoteInfo={this.props.onNoteInfo} />
-				<TagField ref="tags"
+				<TagField
 					tags={tags}
-					onUpdateNoteTags={this.withNote( this.props.onUpdateNoteTags ) } />
+					onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
 				<div className="note-editor-detail">
-					<NoteDetail ref="detail"
-						note={note}
+					<NoteDetail
+						note={revision}
 						onChangeContent={this.props.onUpdateContent} />
 				</div>
 				{!!revisions &&
