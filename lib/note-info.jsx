@@ -11,6 +11,7 @@ export default React.createClass( {
 	render: function() {
 		var note = this.props.note;
 		var data = note && note.data;
+		var systemTags = data && data.systemTags || [];
 
 		return (
 			<div className="note-info">
@@ -45,7 +46,7 @@ export default React.createClass( {
 							<span className="note-info-name">Pin to top</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl id="note-info-pin-checkbox" checked={!!( note && note.pinned )} onChange={this.onPinChanged} />
+							<ToggleControl id="note-info-pin-checkbox" checked={systemTags.indexOf( 'pinned' ) !== -1} onChange={this.onPinChanged} />
 						</span>
 					</label>
 				</div>
