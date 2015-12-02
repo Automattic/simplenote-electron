@@ -32,12 +32,12 @@ button {
 	background: $white;
 	border-color: $blue;
 	border-style: solid;
-	border-width: 2px;
+	border-width: 1px;
 	color: $blue;
 	font-size: 14px;
 	line-height: 21px;
-	border-radius: $border-radius;
-	padding: 3px 14px 5px;
+	border-radius: 3px;
+	padding: 0.6em 14px;
 
 	&:active {
 		background: $blue;

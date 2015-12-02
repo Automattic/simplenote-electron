@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import settings from './flux/settings'
 import appState from './flux/app-state'
+import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
@@ -18,7 +20,12 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return { actions: bindActionCreators( appState.actionCreators, dispatch ) };
+	var actionCreators = Object.assign( {},
+		settings.actionCreators,
+		appState.actionCreators
+	);
+
+	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
@@ -28,6 +35,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	propTypes: {
 		actions: PropTypes.object.isRequired,
 		appState: PropTypes.object.isRequired,
+		settings: PropTypes.object.isRequired,
 
 		client: PropTypes.object.isRequired,
 		noteBucket: PropTypes.object.isRequired,
@@ -117,6 +125,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	onSelectTag: function( tag ) {
 		this.props.actions.selectTag( { tag } );
+	},
+
+	onSettings: function() {
+		this.props.actions.showDialog( {
+			dialog: {
+				type: 'Settings',
+				modal: true,
+				single: true
+			}
+		} );
 	},
 
 	onRenameTag: function( tag, name ) {
@@ -227,6 +245,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 								onSelectTrash={() => this.props.actions.selectTrash() }
 								onSelectTag={this.onSelectTag}
+								onSettings={this.onSettings}
 								onEditTags={() => this.props.actions.editTags() }
 								onRenameTag={this.onRenameTag}
 								onTrashTag={this.onTrashTag}
@@ -263,7 +282,46 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />
 				}
+				{this.renderDialogs()}
 			</div>
 		)
+	},
+
+	renderDialogs() {
+		var { dialogs } = this.props.appState;
+		var elements = [], modalIndex;
+
+		if ( dialogs.length === 0 ) {
+			return;
+		}
+
+		for ( let i = 0; i < dialogs.length; i++ ) {
+			let dialog = dialogs[i];
+			if ( dialog.modal ) {
+				modalIndex = i;
+			}
+
+			elements.push( this.renderDialog( dialog ) );
+		}
+
+		if ( modalIndex != null ) {
+			elements.splice( modalIndex, 0,
+				<div key="overlay" className="dialogs-overlay" onClick={null}></div>
+			);
+		}
+
+		return (
+			<div className="dialogs">
+				{elements}
+			</div>
+		);
+	},
+
+	renderDialog( dialog ) {
+		var DialogComponent = Dialogs[ dialog.type ];
+
+		return (
+			<DialogComponent {...this.props} dialog={dialog} />
+		);
 	}
 } ) );

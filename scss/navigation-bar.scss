@@ -27,12 +27,13 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	color: $gray-darkest;
+	text-align: left;
 }
 
 .navigation-folders-item {
 	height: 3em;
 	line-height: 3em;
-	color: $gray-darkest;
 	
 	svg {
 		fill: $gray;
@@ -78,10 +79,11 @@
 
 .navigation-icon {
 	display: inline-block;
-	fill: darken($gray, 20%);
 	margin-right: 0.5em;
+	vertical-align: middle;
 
 	svg {
+		fill: darken($gray, 20%);
 		vertical-align: middle;
 		position: relative;
 		top: -0.2em;

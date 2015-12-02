@@ -4,6 +4,10 @@
   background: transparent;
 }
 
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
   background: lighten($gray, 30%);
   border-radius: 100px;

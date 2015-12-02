@@ -16,27 +16,27 @@ export default React.createClass( {
 		return (
 			<div className="navigation">
 				<div className="navigation-folders">
-					<div className="navigation-folders-item text-button" tabIndex="0" onClick={this.props.onSelectAllNotes}>
+					<button type="button" className="navigation-folders-item text-button" onClick={this.props.onSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
-					</div>
-					<div className="navigation-folders-item text-button" tabIndex="0" onClick={this.props.onSelectTrash}>
+					</button>
+					<button type="button" className="navigation-folders-item text-button" onClick={this.props.onSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
-					</div>
+					</button>
 				</div>
 				<div className="navigation-tags">
 					<TagList {...this.props} />
 				</div>
 				<div className="navigation-tools">
-					<div className="navigation-tools-item" tabIndex="0">
+					<button type="button" className="navigation-tools-item text-button" onClick={this.props.onSettings}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						Settings
-					</div>
+					</button>
 				</div>
 				<div className="navigation-footer">
-					<div className="navigation-footer-item" tabIndex="0">Help &amp; Support</div>
-					<div className="navigation-footer-item" tabIndex="0">About</div>
+					<button type="button" className="navigation-footer-item">Help &amp; Support</button>
+					<button type="button" className="navigation-footer-item">About</button>
 				</div>
 			</div>
 		);
