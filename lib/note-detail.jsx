@@ -1,46 +1,42 @@
-import React from 'react'
+import React, { PropTypes } from 'react';
 
 export default React.createClass( {
 
-	getDefaultProps: function() {
-		return {
-			note: {},
-			onChangeContent: function() {}
-		};
+	propTypes: {
+		note: PropTypes.object,
+		onChangeContent: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {
+		var note = this.props.note;
+
 		return {
-			content: this.noteContent( this.props.note )
+			content: note ? note.data.content : ''
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
+		var note = nextProps.note;
+
 		this.setState( {
-			content: this.noteContent( nextProps.note )
+			content: note ? note.data.content : ''
 		} );
 	},
 
-	noteContent: function( note ) {
-		if ( !note ) {
-			return '';
-		}
-		let data = note.data;
-		return data ? data.content : null;
-	},
-
-	onChangeContent: function() {
-		var v = this.refs.content.value;
-		this.props.onChangeContent( v );
-	},
-
 	render: function() {
-		var disabled = this.props.note && this.props.note.data.deleted;
+		var { note } = this.props;
+		var valueLink = {
+			value: this.state.content,
+			requestChange: this.props.onChangeContent.bind( null, note )
+		};
+
 		return (
 			<div className="note-detail">
-				<textarea ref="content" disabled={disabled} className="note-detail-textarea" value={this.state.content} onChange={this.onChangeContent}/>
+				<textarea className="note-detail-textarea"
+					disabled={!!( note && note.data.deleted )}
+					valueLink={valueLink} />
 			</div>
-		)
+		);
 	}
 
 } )

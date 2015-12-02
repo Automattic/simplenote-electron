@@ -75,7 +75,7 @@ export default React.createClass( {
 				<div className="note-editor-detail">
 					<NoteDetail ref="detail"
 						note={note}
-						onChangeContent={this.withNote( this.props.onUpdateContent ) } />
+						onChangeContent={this.props.onUpdateContent} />
 				</div>
 				{!!revisions &&
 					<RevisionSelector
