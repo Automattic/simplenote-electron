@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import classNames from 'classnames'
 import NoteDetail from './note-detail'
 import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
@@ -7,8 +8,11 @@ import RevisionSelector from './revision-selector'
 export default React.createClass( {
 
 	propTypes: {
+		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
 		revisions: PropTypes.array,
+		markdownEnabled: PropTypes.bool,
+		onSetEditorMode: PropTypes.func.isRequired,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
 		onTrashNote: PropTypes.func.isRequired,
@@ -21,6 +25,7 @@ export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			editorMode: 'edit',
 			note: {
 				data: {
 					tags: []
@@ -48,9 +53,13 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { note, revisions } = this.props;
+		var { note, revisions, markdownEnabled } = this.props;
 		var revision = this.state.revision || note;
 		var tags = revision && revision.data && revision.data.tags || [];
+
+		markdownEnabled = markdownEnabled && revision &&
+			revision.data && revision.data.systemTags &&
+			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		return (
 			<div className="note-editor">
@@ -65,6 +74,7 @@ export default React.createClass( {
 				<TagField
 					tags={tags}
 					onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
+				{!!markdownEnabled && this.renderModeBar()}
 				<div className="note-editor-detail">
 					<NoteDetail
 						note={revision}
@@ -78,5 +88,20 @@ export default React.createClass( {
 				}
 			</div>
 		)
+	},
+
+	renderModeBar() {
+		var { editorMode } = this.props;
+
+		return (
+			<div className="note-editor-mode-bar pill-buttons">
+				<button type="button"
+					className={classNames( 'pill-button', { active: editorMode === 'edit' } )}
+					onClick={this.props.onSetEditorMode.bind( null, 'edit' )}>Edit</button>
+				<button type="button"
+					className={classNames( 'pill-button', { active: editorMode === 'markdown' } )}
+					onClick={this.props.onSetEditorMode.bind( null, 'markdown' )}>Preview</button>
+			</div>
+		);
 	}
 } );

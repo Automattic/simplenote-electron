@@ -54,6 +54,17 @@
 	}
 }
 
+.note-editor-mode-bar {
+	margin: 0 auto;
+	padding: 20px 10px;
+
+	.pill-button {
+		width: 5.75em;
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
 .note-editor-detail {
 	position: relative;
 

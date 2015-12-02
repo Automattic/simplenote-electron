@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import settings from './flux/settings'
+import settingsMap from './flux/settings'
 import appState from './flux/app-state'
 import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
@@ -21,7 +21,7 @@ function mapStateToProps( state ) {
 
 function mapDispatchToProps( dispatch ) {
 	var actionCreators = Object.assign( {},
-		settings.actionCreators,
+		settingsMap.actionCreators,
 		appState.actionCreators
 	);
 
@@ -197,6 +197,10 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		return notes.filter( test );
 	},
 
+	onSetEditorMode: function( mode ) {
+		this.props.actions.setEditorMode( { mode } );
+	},
+
 	onUpdateContent: function( note, content ) {
 		this.props.actions.updateNoteContent( {
 			noteBucket: this.props.noteBucket,
@@ -235,6 +239,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	render: function() {
 		var state = this.props.appState;
+		var { settings } = this.props;
 		var notes = this.filterNotes();
 
 		var classes = classNames( 'simplenote-app', {
@@ -272,8 +277,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								<NoteList notes={notes} selectedNoteId={state.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
 							</div>
 							<NoteEditor
+								editorMode={state.editorMode}
 								note={state.note}
 								revisions={state.revisions}
+								markdownEnabled={settings.markdownEnabled}
+								onSetEditorMode={this.onSetEditorMode}
 								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
