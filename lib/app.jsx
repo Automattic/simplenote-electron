@@ -242,17 +242,20 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		var { settings } = this.props;
 		var notes = this.filterNotes();
 
-		var classes = classNames( 'simplenote-app', {
+		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
+		} );
+
+		var mainClasses = classNames( 'simplenote-app', {
 			'note-open': state.note,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation
 		} );
 
 		return (
-			<div className="app">
+			<div className={appClasses}>
 				{ state.authorized ?
-						<div className={classes}>
+						<div className={mainClasses}>
 							<NavigationBar
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 								onSelectTrash={() => this.props.actions.selectTrash() }
@@ -264,8 +267,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
 								tags={state.tags} />
-							<div className="source-list">
-								<div className="search-bar">
+							<div className="source-list color-bg color-fg color-border">
+								<div className="search-bar color-border">
 									<div className="icon-button" tabIndex="-1" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</div>

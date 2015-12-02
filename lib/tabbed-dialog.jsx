@@ -28,7 +28,7 @@ export default React.createClass( {
 
 		return (
 			<Dialog className="settings" {...dialog}>
-				<nav className="dialog-tabs">
+				<nav className="dialog-tabs color-border">
 					<ul>
 						{tabs.map( tab =>
 							<li key={tab}>

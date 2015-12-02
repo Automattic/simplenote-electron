@@ -91,16 +91,9 @@
 	resize: none;
 	-webkit-tap-highlight-color: transparent;
 
-	&:hover {
-		background: $white;
-	}
-	
 	&:focus {
-		color: $gray-darkest;
 		outline: none;
-		background: $white;
-	}	
-
+	}
 }
 
 .note-detail-markdown {

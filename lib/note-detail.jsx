@@ -68,7 +68,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<textarea className="note-detail-textarea"
+			<textarea className="note-detail-textarea color-bg color-fg"
 				disabled={!!( note && note.data.deleted )}
 				valueLink={valueLink} />
 		);

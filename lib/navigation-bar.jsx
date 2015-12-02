@@ -14,29 +14,29 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="navigation">
+			<div className="navigation color-bg color-fg color-border">
 				<div className="navigation-folders">
-					<button type="button" className="navigation-folders-item text-button" onClick={this.props.onSelectAllNotes}>
+					<button type="button" className="navigation-folders-item text-button color-fg" onClick={this.props.onSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</button>
-					<button type="button" className="navigation-folders-item text-button" onClick={this.props.onSelectTrash}>
+					<button type="button" className="navigation-folders-item text-button color-fg" onClick={this.props.onSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
 					</button>
 				</div>
-				<div className="navigation-tags">
+				<div className="navigation-tags color-border">
 					<TagList {...this.props} />
 				</div>
-				<div className="navigation-tools">
-					<button type="button" className="navigation-tools-item text-button" onClick={this.props.onSettings}>
+				<div className="navigation-tools color-border">
+					<button type="button" className="navigation-tools-item text-button color-fg" onClick={this.props.onSettings}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						Settings
 					</button>
 				</div>
 				<div className="navigation-footer">
-					<button type="button" className="navigation-footer-item">Help &amp; Support</button>
-					<button type="button" className="navigation-footer-item">About</button>
+					<button type="button" className="navigation-footer-item color-fg-dim">Help &amp; Support</button>
+					<button type="button" className="navigation-footer-item color-fg-dim">About</button>
 				</div>
 			</div>
 		);

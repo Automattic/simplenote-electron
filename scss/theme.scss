@@ -1,0 +1,75 @@
+
+.theme-light {
+	background-color: #fff;
+	color: #000;
+
+	.color-bg {
+		background-color: #fff;
+	}
+	.color-bg-lighter {
+		background-color: lighten($gray, 30%);
+	}
+	.color-fg {
+		color: #000;
+	}
+	.color-fg-dim {
+		color: darken($gray, 20%);
+	}
+	.color-border {
+		border-color: lighten($gray, 30%);
+	}
+
+	.tag-chip.selected {
+		background: $gray;
+	}
+}
+
+.theme-dark {
+	background-color: $gray-darkest;
+	color: #839AAF;
+
+	.color-bg {
+		background-color: $gray-darkest;
+	}
+	.color-bg-lighter {
+		background-color: darken($gray, 20%);
+	}
+	.color-fg {
+		color: #839AAF;
+	}
+	.color-fg-dim {
+		color: lighten($gray, 20%);
+	}
+	.color-border {
+		border-color: #434C5D;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: darken($gray, 20%);
+		border-color: $gray-darkest;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: darken($gray, 10%);
+	}
+	::-webkit-scrollbar-thumb:active {
+		background-color: darken($gray, 30%);
+	}
+
+	input, textarea {
+		border-color: black;
+		color: #839AAF;
+		background-color: #6E7A92;
+	}
+
+	input::placeholder {
+		color: $gray-darkest;
+	}
+
+	.tag-field input {
+		background: transparent;
+
+		&::placeholder {
+			color: lighten($gray, 10%);
+		}
+	}
+}

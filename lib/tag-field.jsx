@@ -120,7 +120,7 @@ export default React.createClass( {
 		var { selectedTag } = this.state;
 
 		return (
-			<div className={classNames( 'tag-editor', { 'has-selection': this.hasSelection() } )}
+			<div className={classNames( 'tag-editor', 'color-border', { 'has-selection': this.hasSelection() } )}
 				tabIndex="-1"
 				onKeyDown={this.onKeyDown}
 				onBlur={this.onBlur}>
