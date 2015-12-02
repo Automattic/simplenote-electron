@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
+import marked from 'marked';
 
 export default React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
+		previewingMarkdown: PropTypes.bool,
 		onChangeContent: PropTypes.func.isRequired
 	},
 
@@ -24,6 +26,28 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		var { previewingMarkdown } = this.props;
+
+		return (
+			<div className="note-detail">
+				{previewingMarkdown ?
+					this.renderMarkdown()
+				:
+					this.renderEditable()
+				}
+			</div>
+		);
+	},
+
+	renderMarkdown() {
+		var markdownHTML = marked( this.state.content );
+
+		return (
+			<div className="note-detail-markdown" dangerouslySetInnerHTML={{__html: markdownHTML}} />
+		);
+	},
+
+	renderEditable() {
 		var { note } = this.props;
 		var valueLink = {
 			value: this.state.content,
@@ -31,11 +55,9 @@ export default React.createClass( {
 		};
 
 		return (
-			<div className="note-detail">
-				<textarea className="note-detail-textarea"
-					disabled={!!( note && note.data.deleted )}
-					valueLink={valueLink} />
-			</div>
+			<textarea className="note-detail-textarea"
+				disabled={!!( note && note.data.deleted )}
+				valueLink={valueLink} />
 		);
 	}
 

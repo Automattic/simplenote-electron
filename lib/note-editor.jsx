@@ -53,7 +53,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { note, revisions, markdownEnabled } = this.props;
+		var { editorMode, note, revisions, markdownEnabled } = this.props;
 		var revision = this.state.revision || note;
 		var tags = revision && revision.data && revision.data.tags || [];
 
@@ -78,6 +78,7 @@ export default React.createClass( {
 				<div className="note-editor-detail">
 					<NoteDetail
 						note={revision}
+						previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 						onChangeContent={this.props.onUpdateContent} />
 				</div>
 				{!!revisions &&
