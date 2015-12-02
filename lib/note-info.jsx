@@ -5,7 +5,8 @@ export default React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
-		onPinNote: PropTypes.func.isRequired
+		onPinNote: PropTypes.func.isRequired,
+		onMarkdownNote: PropTypes.func.isRequired
 	},
 
 	render: function() {
@@ -59,7 +60,7 @@ export default React.createClass( {
 							</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl id="note-info-markdown-checkbox" checked={!!( note && note.markdown )} onChange={this.onPinChanged} />
+							<ToggleControl id="note-info-markdown-checkbox" checked={systemTags.indexOf( 'markdown' ) !== -1} onChange={this.onMarkdownChanged} />
 						</span>
 					</label>
 				</div>
@@ -77,6 +78,10 @@ export default React.createClass( {
 
 	onPinChanged( event ) {
 		this.props.onPinNote( this.props.note, event.currentTarget.checked );
+	},
+
+	onMarkdownChanged( event ) {
+		this.props.onMarkdownNote( this.props.note, event.currentTarget.checked );
 	}
 } );
 

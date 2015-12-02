@@ -94,6 +94,13 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+	onMarkdownNote: function( note, markdown = true ) {
+		this.props.actions.markdownNote( {
+			noteBucket: this.props.noteBucket,
+			note, markdown
+		} );
+	},
+
 	onNotesIndex: function() {
 		this.props.actions.loadNotes( {
 			noteBucket: this.props.noteBucket
@@ -277,7 +284,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
 							<NoteInfo
 								note={state.note}
-								onPinNote={this.onPinNote} />
+								onPinNote={this.onPinNote}
+								onMarkdownNote={this.onMarkdownNote} />
 						</div>
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />
