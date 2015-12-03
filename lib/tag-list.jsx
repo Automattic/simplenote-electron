@@ -45,7 +45,7 @@ export default React.createClass( {
 
 		return (
 			<input
-				className="tag-list-input"
+				className="tag-list-input color-fg"
 				readOnly={!this.props.editingTags}
 				onClick={this.onSelectTag.bind( this, tag )}
 				valueLink={valueLink} />
