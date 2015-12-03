@@ -25,6 +25,17 @@ export default React.createClass( {
 		} );
 	},
 
+	onPreviewClick( event ) {
+		// open markdown preview links in a new window
+		for ( let node = event.target; node != null; node = node.parentNode ) {
+			if ( node.tagName === 'A' ) {
+				event.preventDefault();
+				window.open( node.href );
+				break;
+			}
+		}
+	},
+
 	render: function() {
 		var { previewingMarkdown } = this.props;
 
@@ -43,7 +54,9 @@ export default React.createClass( {
 		var markdownHTML = marked( this.state.content );
 
 		return (
-			<div className="note-detail-markdown" dangerouslySetInnerHTML={{__html: markdownHTML}} />
+			<div className="note-detail-markdown"
+				dangerouslySetInnerHTML={{__html: markdownHTML}}
+				onClick={this.onPreviewClick} />
 		);
 	},
 
