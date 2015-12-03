@@ -60,9 +60,9 @@ export default React.createClass( {
 					<div className="dialog-column settings-account">
 						<h3 className="panel-title">Account</h3>
 						<div className="settings-items">
-							<label htmlFor="" className="settings-item">
+							<div className="settings-item">
 								<span className="settings-item-text-input">{accountName}</span>
-							</label>
+							</div>
 						</div>
 
 						<ul className="dialog-actions">
