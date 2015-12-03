@@ -292,6 +292,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
 							<NoteInfo
 								note={state.note}
+								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
 								onMarkdownNote={this.onMarkdownNote} />
 						</div>

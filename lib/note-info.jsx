@@ -5,12 +5,13 @@ export default React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
+		markdownEnabled: PropTypes.bool,
 		onPinNote: PropTypes.func.isRequired,
 		onMarkdownNote: PropTypes.func.isRequired
 	},
 
 	render: function() {
-		var note = this.props.note;
+		var { note, markdownEnabled } = this.props;
 		var data = note && note.data;
 		var systemTags = data && data.systemTags || [];
 
@@ -51,7 +52,7 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>
-				<div className="note-info-panel note-info-markdown">
+				{!!markdownEnabled && <div className="note-info-panel note-info-markdown">
 					<label className="note-info-item" htmlFor="note-info-markdown-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Markdown</span>
@@ -63,7 +64,7 @@ export default React.createClass( {
 							<ToggleControl id="note-info-markdown-checkbox" checked={systemTags.indexOf( 'markdown' ) !== -1} onChange={this.onMarkdownChanged} />
 						</span>
 					</label>
-				</div>
+				</div>}
 				<div className="note-info-panel note-info-public-link">
 					<p className="note-info-item">
 						<span className="note-info-item-text">
