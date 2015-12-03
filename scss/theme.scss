@@ -65,6 +65,10 @@
 		color: $gray-darkest;
 	}
 
+	.note-list-item.note-list-item-pinned .note-list-item-pinner {
+		background: darken($gray, 10%);
+	}
+
 	.tag-field input {
 		background: transparent;
 
