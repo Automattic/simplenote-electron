@@ -4,7 +4,7 @@
 	background: $white;
 	display: flex;
 	flex-direction: column;
-	transition: $anim-transition;
+	transition: flex 200ms ease-in-out, transform 200ms ease-in-out;
 
 	@media only screen and ( max-width: 700px ) {
 		flex: 0 1 35%;
