@@ -6,6 +6,10 @@ export default React.createClass( {
 		onAuthenticate: PropTypes.func.isRequired
 	},
 
+	componentDidMount() {
+		this.refs.username.focus();
+	},
+
 	render() {
 		return (
 			<div className="login">
