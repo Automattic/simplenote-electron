@@ -9,7 +9,7 @@
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
 	-webkit-transform: translate3d(0, 0, 0);
-	
+
 	&:focus {
 		outline: none;
 	}
@@ -62,5 +62,9 @@
 		font: 14px/1.5 $sans;
 		color: darken($gray, 20%);
 		background: transparent;
+
+		@media print {
+			display: none;
+		}
 	}
 }

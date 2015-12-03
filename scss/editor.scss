@@ -24,6 +24,10 @@
 	align-items: center;
 	padding: 10px 8px;
 
+	@media print {
+		display: none;
+	}
+
 	.note-toolbar-icon, .note-toolbar-text {
 		flex: none;
 		margin: 0 8px 0 0;
@@ -67,6 +71,12 @@
 
 .note-editor-detail {
 	position: relative;
+
+	@media print {
+		// add a transparent border to work around a weird bug
+		// that causes the note text to not print
+		border-bottom: 10px solid transparent;
+	}
 
 	.note-detail {
 		position: absolute;

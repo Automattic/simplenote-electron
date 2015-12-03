@@ -62,7 +62,12 @@ function createMenuTemplate() {
 			type: 'separator'
 		}, {
 			label: 'Print',
-			accelerator: 'CmdOrCtrl+P'
+			accelerator: 'CmdOrCtrl+P',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.print();
+				}
+			}
 		} ]
 	}, {
 		label: 'Edit',
