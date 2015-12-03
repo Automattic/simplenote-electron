@@ -47,7 +47,7 @@ You can deploy a build to [http://electron-dot-simple-note-hrd.appspot.com]() by
 **Warning**: Changes to the jade/html will not be reflected, any modifications to the DOM should be done via JavaScript.
 
 
-## Dependenies
+## Dependencies
 
 - [node-simperium](https://github.com/automattic/node-simperium) for Simperium syncing.
 - [ReactJS](https://facebook.github.io/react/) for UI.
