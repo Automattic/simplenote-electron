@@ -48,6 +48,23 @@ module.exports = function main( url ) {
 
 function createMenuTemplate() {
 	var menuTemplate = [ {
+		label: 'Note',
+		submenu: [ {
+			label: 'New',
+			accelerator: 'CmdOrCtrl+N'
+		}, {
+			label: 'Move to Trash',
+			accelerator: 'CmdOrCtrl+Backspace'
+		}, {
+			label: 'Show Properties',
+			accelerator: 'CmdOrCtrl+Alt+P'
+		}, {
+			type: 'separator'
+		}, {
+			label: 'Print',
+			accelerator: 'CmdOrCtrl+P'
+		} ]
+	}, {
 		label: 'Edit',
 		submenu: [ {
 			label: 'Undo',
