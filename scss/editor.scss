@@ -87,20 +87,12 @@
 	font-size: 14px;
 	color: darken($gray, 20%);
 	background: $white;
-	transition: 200ms;
 	resize: none;
 	-webkit-tap-highlight-color: transparent;
 
-	&:hover {
-		background: $white;
-	}
-	
 	&:focus {
-		color: $gray-darkest;
 		outline: none;
-		background: $white;
-	}	
-
+	}
 }
 
 .note-detail-markdown {

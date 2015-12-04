@@ -62,7 +62,7 @@ export default React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		return (
-			<div className="note-editor">
+			<div className="note-editor color-bg color-fg">
 				<NoteToolbar
 					note={note}
 					onTrashNote={this.props.onTrashNote}

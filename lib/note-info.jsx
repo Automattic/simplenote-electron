@@ -16,9 +16,9 @@ export default React.createClass( {
 		var systemTags = data && data.systemTags || [];
 
 		return (
-			<div className="note-info">
-				<div className="note-info-panel note-info-stats">
-					<h2 className="panel-title">Info</h2>
+			<div className="note-info color-bg color-fg color-border">
+				<div className="note-info-panel note-info-stats color-border">
+					<h2 className="panel-title color-fg-dim">Info</h2>
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Created</span>
@@ -42,7 +42,7 @@ export default React.createClass( {
 						</span>
 					</p>
 				</div>
-				<div className="note-info-panel note-info-pin">
+				<div className="note-info-panel note-info-pin color-border">
 					<label className="note-info-item" htmlFor="note-info-pin-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Pin to top</span>
@@ -52,7 +52,7 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>
-				{!!markdownEnabled && <div className="note-info-panel note-info-markdown">
+				{!!markdownEnabled && <div className="note-info-panel note-info-markdown color-border">
 					<label className="note-info-item" htmlFor="note-info-markdown-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Markdown</span>
@@ -65,7 +65,7 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>}
-				<div className="note-info-panel note-info-public-link">
+				<div className="note-info-panel note-info-public-link color-border">
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Public link</span>
