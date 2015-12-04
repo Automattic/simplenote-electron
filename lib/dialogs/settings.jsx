@@ -207,7 +207,10 @@ export default React.createClass( {
 										Enable Markdown
 									</div>
 									<div className="settings-item-control">
-										<ToggleControl id="settings-field-markdown" />
+										<ToggleControl name="markdownEnabled" value="enabled"
+											id="settings-field-markdown"
+											checked={!!settings.markdownEnabled}
+											onChange={this.onUpdateSettingBool} />
 									</div>
 								</label>
 							</div>

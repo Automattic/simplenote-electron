@@ -1,46 +1,77 @@
-import React from 'react'
+import React, { PropTypes } from 'react';
+import marked from 'marked';
 
 export default React.createClass( {
 
-	getDefaultProps: function() {
-		return {
-			note: {},
-			onChangeContent: function() {}
-		};
+	propTypes: {
+		note: PropTypes.object,
+		previewingMarkdown: PropTypes.bool,
+		onChangeContent: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {
+		var note = this.props.note;
+
 		return {
-			content: this.noteContent( this.props.note )
+			content: note ? note.data.content : ''
 		};
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
+		var note = nextProps.note;
+
 		this.setState( {
-			content: this.noteContent( nextProps.note )
+			content: note ? note.data.content : ''
 		} );
 	},
 
-	noteContent: function( note ) {
-		if ( !note ) {
-			return '';
+	onPreviewClick( event ) {
+		// open markdown preview links in a new window
+		for ( let node = event.target; node != null; node = node.parentNode ) {
+			if ( node.tagName === 'A' ) {
+				event.preventDefault();
+				window.open( node.href );
+				break;
+			}
 		}
-		let data = note.data;
-		return data ? data.content : null;
-	},
-
-	onChangeContent: function() {
-		var v = this.refs.content.value;
-		this.props.onChangeContent( v );
 	},
 
 	render: function() {
-		var disabled = this.props.note && this.props.note.data.deleted;
+		var { previewingMarkdown } = this.props;
+
 		return (
 			<div className="note-detail">
-				<textarea ref="content" disabled={disabled} className="note-detail-textarea" value={this.state.content} onChange={this.onChangeContent}/>
+				{previewingMarkdown ?
+					this.renderMarkdown()
+				:
+					this.renderEditable()
+				}
 			</div>
-		)
+		);
+	},
+
+	renderMarkdown() {
+		var markdownHTML = marked( this.state.content );
+
+		return (
+			<div className="note-detail-markdown"
+				dangerouslySetInnerHTML={{__html: markdownHTML}}
+				onClick={this.onPreviewClick} />
+		);
+	},
+
+	renderEditable() {
+		var { note } = this.props;
+		var valueLink = {
+			value: this.state.content,
+			requestChange: this.props.onChangeContent.bind( null, note )
+		};
+
+		return (
+			<textarea className="note-detail-textarea"
+				disabled={!!( note && note.data.deleted )}
+				valueLink={valueLink} />
+		);
 	}
 
 } )

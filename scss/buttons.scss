@@ -12,12 +12,14 @@ button {
 }
 
 .basic-button,
+.pill-button,
 .primary-button,
 .icon-button,
 .text-button {
-	box-sizing: border-box;
-	text-overflow: ellipsis;
 	display: inline-block;
+	box-sizing: border-box;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
@@ -47,6 +49,47 @@ button {
 	&:disabled {
 		color: $gray;
 		border-color: $blue;
+	}
+}
+
+// Pill buttons
+.pill-buttons {
+	display: flex;
+	flex-direction: row;
+
+	.pill-button {
+		border-radius: 0;
+		border-left-width: 0;
+
+		&:first-child {
+			border-left-width: 2px;
+			border-radius: 4px 0 0 4px;
+		}
+
+		&:last-child {
+			border-radius: 0 4px 4px 0;
+		}
+	}
+}
+.pill-button {
+	height: 2em;
+	padding: 0 14px;
+	border: 2px solid $blue;
+	border-radius: 4px;
+	line-height: 1.25em;
+	font-size: 100%;
+	text-align: center;
+	color: $blue;
+	background: transparent;
+
+	&:active, &.active {
+		color: $white;
+		background: $blue;
+	}
+
+	&:disabled, &[disabled] {
+		border-color: $blue;
+		color: $gray;
 	}
 }
 

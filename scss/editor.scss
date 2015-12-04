@@ -54,6 +54,17 @@
 	}
 }
 
+.note-editor-mode-bar {
+	margin: 0 auto;
+	padding: 20px 10px;
+
+	.pill-button {
+		width: 5.75em;
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
 .note-editor-detail {
 	position: relative;
 
@@ -66,13 +77,14 @@
 	}
 }
 
-.note-detail-textarea {
+.note-detail-textarea, .note-detail-markdown {
 	box-sizing: border-box;
 	width: 100%;
 	height: 100%;
 	padding: 24px 48px;
 	border: none;
-	font: 14px/1.5 $sans;
+	line-height: 1.5em;
+	font-size: 14px;
 	color: darken($gray, 20%);
 	background: $white;
 	transition: 200ms;
@@ -89,4 +101,22 @@
 		background: $white;
 	}	
 
+}
+
+.note-detail-markdown {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+
+	p {
+		margin: 0 0 1.5em;
+	}
+
+	a {
+		cursor: pointer;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
 }
