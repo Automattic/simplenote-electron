@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "cookie": "^0.2.2",
+    "create-hash": "^1.1.2",
     "marked": "^0.3.5",
     "promise": "^7.0.4",
     "react": "0.14.3",

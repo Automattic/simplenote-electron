@@ -17,6 +17,7 @@ export default React.createClass( {
 		onUpdateNoteTags: PropTypes.func.isRequired,
 		onTrashNote: PropTypes.func.isRequired,
 		onRestoreNote: PropTypes.func.isRequired,
+		onShareNote: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
 		onSignOut: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
@@ -67,6 +68,7 @@ export default React.createClass( {
 					note={note}
 					onTrashNote={this.props.onTrashNote}
 					onRestoreNote={this.props.onRestoreNote}
+					onShareNote={this.props.onShareNote}
 					onRevisions={this.props.onRevisions}
 					onSignOut={this.props.onSignOut}
 					onCloseNote={this.props.onCloseNote}
