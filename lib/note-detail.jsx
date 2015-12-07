@@ -54,7 +54,7 @@ export default React.createClass( {
 		var markdownHTML = marked( this.state.content );
 
 		return (
-			<div className="note-detail-markdown"
+			<div className="note-detail-markdown color-bg color-fg"
 				dangerouslySetInnerHTML={{__html: markdownHTML}}
 				onClick={this.onPreviewClick} />
 		);
