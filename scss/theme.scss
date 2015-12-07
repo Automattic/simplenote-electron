@@ -69,10 +69,6 @@
 		border-color: darken($gray, 20%);
 	}
 
-	.note-list-item.note-list-item-pinned .note-list-item-pinner {
-		background: darken($gray, 10%);
-	}
-
 	.tag-field input {
 		background: transparent;
 
@@ -83,5 +79,33 @@
 	
 	.dialogs-overlay {
 		background: rgba($gray-darkest, 0.75);
+	}
+	
+	.note-list-item {
+		&:hover .note-list-item-pinner {
+			box-shadow: inset 0 0 0 2px darken($gray, 30%), inset 0 0 0 3px $gray-darkest;
+
+			&:hover {
+				background: darken($gray, 10%);
+			}
+		}
+
+		&.note-list-item-pinned .note-list-item-pinner {
+			background: $white;
+			box-shadow: inset 0 0 0 2px darken($gray, 10%), inset 0 0 0 3px $gray-darkest;
+
+			&:hover {
+				background: darken($gray, 30%);
+			}
+		}
+
+		&.note-list-item-pinned.note-list-item-selected .note-list-item-pinner {
+			background: $blue;
+			box-shadow: inset 0 0 0 2px darken($blue, 10%), inset 0 0 0 3px $gray-darkest;
+
+			&:hover {
+				background: lighten($blue, 10%);
+			}
+		}
 	}
 }
