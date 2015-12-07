@@ -64,6 +64,10 @@
 	input::placeholder {
 		color: $gray;
 	}
+	
+	.checkbox-control-base {
+		border-color: darken($gray, 20%);
+	}
 
 	.note-list-item.note-list-item-pinned .note-list-item-pinner {
 		background: darken($gray, 10%);
@@ -76,4 +80,6 @@
 			color: lighten($gray, 10%);
 		}
 	}
+	
+	
 }
