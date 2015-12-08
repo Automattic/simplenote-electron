@@ -106,19 +106,21 @@ button {
 
 // Icon only buttons
 .icon-button {
+	svg[class^="icon-"] {
+		fill: $gray;
+	}
+
+	&:active {
 		svg[class^="icon-"] {
-			fill: $gray;
+			fill: $blue;
 		}
-		
-		&:active {
-			svg[class^="icon-"] {
-				fill: $blue;
-			}
-		}
-		&[disabled],
-		&:disabled {
+	}
+
+	&[disabled], &:disabled {
+		svg[class^="icon-"] {
 			fill: lighten($gray, 30%);
 		}
+	}
 }
 
 // Text buttons (may contain icon)
