@@ -15,6 +15,14 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
 
+var _require;
+
+try {
+	_require = __non_webpack_require__;
+} catch ( e ) {
+	_require = null;
+}
+
 function mapStateToProps( state ) {
 	return state;
 }
@@ -52,10 +60,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentWillMount: function() {
+		this.props.actions.applySettings();
 		this.onAuthChanged();
 	},
 
 	componentDidMount: function() {
+		if ( typeof _require === 'function' ) {
+			let ipc = _require( 'ipc' );
+			ipc.on( 'appCommand', this.onAppCommand );
+		}
+
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
 			.on( 'update', this.onNoteUpdate )
@@ -72,6 +86,19 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 		this.onNotesIndex();
 		this.onTagsIndex();
+	},
+
+	componentWillUnmount: function() {
+		if ( typeof _require === 'function' ) {
+			let ipc = _require( 'ipc' );
+			ipc.removeListener( 'appCommand', this.onAppCommand );
+		}
+	},
+
+	onAppCommand: function( command ) {
+		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
+			this.props.actions[ command.action ]( command );
+		}
 	},
 
 	onAuthChanged: function() {
