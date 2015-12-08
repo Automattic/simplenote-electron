@@ -14,6 +14,7 @@ function getConfig() {
 
 function getTemplateContent( templateParams ) {
 	return jade.renderFile( './views/app.jade', {
+		pkg: require( './package.json' ),
 		o: templateParams,
 		config: getConfig()
 	} );
