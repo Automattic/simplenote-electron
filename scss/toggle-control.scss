@@ -49,11 +49,11 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
 	}
 
 	.toggle-control-unchecked-color {
-		background: #A8BECE;
+		background: lighten($gray, 10%);
 	}
 
 	.toggle-control-checked-color {
-		background: #00AADC;
+		background: $blue;
 		transition: all .150s linear;
 		opacity: 0;
 	}
