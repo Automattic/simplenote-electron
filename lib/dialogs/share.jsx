@@ -137,13 +137,13 @@ export default React.createClass( {
 							<h3 className="panel-title">Public link</h3>
 							<div className="settings-items color-border">
 								<div className="settings-item color-border">
-									<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder="Note not published" value={publishURL} onClick={this.copyPublishURL} />
+									<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder={isPublished ? 'Publishing note…' : 'Note not published'} value={publishURL} onClick={this.copyPublishURL} />
 									<div className="settings-item-control">
 										<button ref={e => this.copyUrlElement = e} type="button" className="text-button" onClick={this.copyPublishURL}>Copy</button>
 									</div>
 								</div>
 							</div>
-							{isPublished && <p>Note published!</p>}
+							{isPublished && publishURL && <p>Note published!</p>}
 						</div>
 					</div>
 				);
