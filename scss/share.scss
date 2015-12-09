@@ -36,10 +36,15 @@
 		flex: 1 1 auto;
 		font-size: 143%;
 		font-weight: 300;
+		line-height: 1.5em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.share-collaborator-remove {
 		flex: none;
+		margin-left: 10px;
 		color: $red;
 		font-weight: 600;
 		opacity: 0;
