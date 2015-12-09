@@ -159,7 +159,7 @@ export default React.createClass( {
 							</p>
 							<div className="settings-items color-border">
 								<form className="settings-item color-border" onSubmit={this.onAddCollaborator}>
-									<input ref={e => this.collaboratorElement = e} className="settings-item-text-input transparent-input" placeholder="email@example.com" />
+									<input ref={e => this.collaboratorElement = e} type="email" pattern="[^@]+@[^@]+" className="settings-item-text-input transparent-input" placeholder="email@example.com" />
 									<div className="settings-item-control">
 										<button type="submit" className="text-button">Add Email</button>
 									</div>
