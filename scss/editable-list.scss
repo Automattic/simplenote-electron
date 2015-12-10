@@ -26,6 +26,10 @@
 
 	&.editable-list-reordering .editable-list-item {
 		transition: none;
+		
+		* {
+			cursor: ns-resize;
+		}
 	}
 
 	.editable-list-item-reordering {
