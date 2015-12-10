@@ -37,7 +37,7 @@
     "react-transform-hmr": "^1.0.0",
     "redbox-react": "^1.0.1",
     "sass-loader": "^3.0.0",
-    "simperium": "git://github.com/automattic/node-simperium.git",
+    "simperium": "git://github.com/automattic/node-simperium.git#server",
     "style-loader": "^0.12.4",
     "webpack": "^1.12.2",
     "webpack-dev-middleware": "^1.2.0",
