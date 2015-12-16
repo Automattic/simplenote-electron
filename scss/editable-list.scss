@@ -26,6 +26,10 @@
 
 	&.editable-list-reordering .editable-list-item {
 		transition: none;
+		
+		* {
+			cursor: ns-resize;
+		}
 	}
 
 	.editable-list-item-reordering {
@@ -62,10 +66,6 @@
 
 		&:focus {
 			outline: none;
-
-			svg {
-				transform: scale(1.2, 1.2);
-			}
 		}
 	}
 
@@ -86,7 +86,6 @@
 		display: flex;
 		align-items: center;
 		flex: none;
-		width: 39px;
 		transform: translateX(24px);
 		
 		svg {
