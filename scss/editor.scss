@@ -85,7 +85,6 @@
 	width: 100%;
 	height: 100%;
 	max-width: 780px;
-	overflow: visible;
 	padding: 24px 48px;
 	border: none;
 	line-height: 1.5em;
@@ -101,6 +100,7 @@
 }
 
 .note-detail-textarea {
+	overflow: hidden;
 	cursor: text;
 }
 
