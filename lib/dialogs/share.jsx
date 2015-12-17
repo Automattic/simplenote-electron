@@ -86,7 +86,7 @@ export default React.createClass( {
 		hash.update( email.trim().toLowerCase() );
 		let digest = hash.digest().toString( 'hex' ).toLowerCase();
 
-		return `https://secure.gravatar.com/avatar/${digest}.jpg?s=34`;
+		return `https://secure.gravatar.com/avatar/${digest}.jpg?s=68`;
 	},
 
 	render() {
