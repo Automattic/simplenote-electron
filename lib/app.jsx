@@ -240,6 +240,17 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+
+	onShareNote: function( note ) {
+		this.props.actions.showDialog( {
+			dialog: {
+				type: 'Share',
+				modal: true
+			},
+			params: { note }
+		} );
+	},
+
 	onDeleteNoteForever: function( note ) {
 		this.props.actions.deleteNoteForever( {
 			noteBucket: this.props.noteBucket,
@@ -318,6 +329,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onUpdateNoteTags={this.onUpdateNoteTags}
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
+								onShareNote={this.onShareNote}
 								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
@@ -366,11 +378,15 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		);
 	},
 
-	renderDialog( dialog ) {
+	renderDialog( { params, ...dialog } ) {
 		var DialogComponent = Dialogs[ dialog.type ];
 
+		if ( DialogComponent == null ) {
+			throw new Error( 'Unknown dialog type.' );
+		}
+
 		return (
-			<DialogComponent {...this.props} dialog={dialog} />
+			<DialogComponent {...this.props} dialog={dialog} params={params} />
 		);
 	}
 } ) );

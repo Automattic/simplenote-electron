@@ -73,6 +73,10 @@
 		color: $gray;
 	}
 	
+	.transparent-input::placeholder {
+		color: darken($gray, 10%);
+	}
+
 	.checkbox-control-base {
 		border-color: darken($gray, 20%);
 	}
@@ -115,5 +119,12 @@
 				background: lighten($blue, 10%);
 			}
 		}
+	}
+}
+
+.theme-light, .theme-dark {
+	.transparent-input {
+		color: inherit;
+		background-color: transparent;
 	}
 }

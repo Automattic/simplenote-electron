@@ -3,6 +3,7 @@ import BackIcon from './icons/back'
 import InfoIcon from './icons/info'
 import RevisionsIcon from './icons/revisions'
 import TrashIcon from './icons/trash'
+import ShareIcon from './icons/share'
 
 export default React.createClass( {
 
@@ -12,6 +13,7 @@ export default React.createClass( {
 		onRestoreNote: PropTypes.func.isRequired,
 		onDeleteNoteForever: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
+		onShareNote: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired
 	},
@@ -32,6 +34,7 @@ export default React.createClass( {
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
 			</div>
 		);
 	},

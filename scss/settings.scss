@@ -52,6 +52,10 @@
 		border-bottom: none;
 	}
 
+	.text-button {
+		font-weight: 600;
+	}
+
 	.settings-item-label {
 		flex: 1 1 auto;
 		align-items: center;
@@ -70,9 +74,7 @@
 		padding: 0.25em 0.15em;
 		border: none;
 		line-height: 1.5em;
-		font-size: 143%;
-		font-weight: 300;
-		color: $gray-darkest;
+		font-size: 115%;
 
 		&:focus {
 			position: relative;
