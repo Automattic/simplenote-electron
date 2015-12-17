@@ -1,6 +1,5 @@
 .source-list {
 	width: 328px;
-	border-right: 1px solid lighten($gray, 30%);
 	background: $white;
 	display: flex;
 	flex-direction: column;
@@ -29,6 +28,7 @@
 
 	.note-list {
 		flex: 1 1 auto;
+		overflow: hidden;
 	}
 }
 
@@ -51,9 +51,22 @@
 }
 
 .note-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.note-list-items {
+	flex: 1 1 auto;
 	overflow: auto;
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
+}
+
+.note-list-empty-trash {
+	flex: none;
+	padding: 1em 20px;
+	border-top: 1px solid lighten($gray, 30%);
+	text-align: center;
 }
 
 .note-list-item {

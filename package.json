@@ -37,7 +37,7 @@
     "react-transform-hmr": "^1.0.0",
     "redbox-react": "^1.0.1",
     "sass-loader": "^3.0.0",
-    "simperium": "git://github.com/automattic/node-simperium.git#browserify",
+    "simperium": "git://github.com/automattic/node-simperium.git",
     "style-loader": "^0.12.4",
     "webpack": "^1.12.2",
     "webpack-dev-middleware": "^1.2.0",
@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "cookie": "^0.2.2",
+    "create-hash": "^1.1.2",
     "marked": "^0.3.5",
     "promise": "^7.0.4",
     "react": "0.14.3",

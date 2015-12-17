@@ -240,10 +240,34 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+
+	onShareNote: function( note ) {
+		this.props.actions.showDialog( {
+			dialog: {
+				type: 'Share',
+				modal: true
+			},
+			params: { note }
+		} );
+	},
+
+	onDeleteNoteForever: function( note ) {
+		this.props.actions.deleteNoteForever( {
+			noteBucket: this.props.noteBucket,
+			note
+		} );
+	},
+
 	onRevisions: function( note ) {
 		this.props.actions.noteRevisions( {
 			noteBucket: this.props.noteBucket,
 			note
+		} );
+	},
+
+	onEmptyTrash: function() {
+		this.props.actions.emptyTrash( {
+			noteBucket: this.props.noteBucket
 		} );
 	},
 
@@ -278,17 +302,22 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
 								tags={state.tags} />
-							<div className="source-list color-bg color-fg color-border">
+							<div className="source-list color-bg color-fg">
 								<div className="search-bar color-border">
-									<div className="icon-button" tabIndex="-1" onClick={() => this.props.actions.toggleNavigation() }>
+									<button className="icon-button" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
-									</div>
+									</button>
 									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
-									<div className={classNames( 'icon-button', { disabled: state.showTrash } )} tabIndex="-1" onClick={this.onNewNote}>
+									<button className="icon-button" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
-									</div>
+									</button>
 								</div>
-								<NoteList notes={notes} selectedNoteId={state.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
+								<NoteList
+									notes={notes}
+									selectedNoteId={state.selectedNoteId}
+									onSelectNote={this.onSelectNote}
+									onPinNote={this.onPinNote}
+									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}
@@ -296,11 +325,12 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								revisions={state.revisions}
 								markdownEnabled={settings.markdownEnabled}
 								onSetEditorMode={this.onSetEditorMode}
-								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
+								onShareNote={this.onShareNote}
+								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
@@ -348,11 +378,15 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		);
 	},
 
-	renderDialog( dialog ) {
+	renderDialog( { params, ...dialog } ) {
 		var DialogComponent = Dialogs[ dialog.type ];
 
+		if ( DialogComponent == null ) {
+			throw new Error( 'Unknown dialog type.' );
+		}
+
 		return (
-			<DialogComponent {...this.props} dialog={dialog} />
+			<DialogComponent {...this.props} dialog={dialog} params={params} />
 		);
 	}
 } ) );
