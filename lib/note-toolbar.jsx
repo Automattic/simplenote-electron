@@ -11,32 +11,43 @@ export default React.createClass( {
 		note: PropTypes.object,
 		onTrashNote: PropTypes.func.isRequired,
 		onRestoreNote: PropTypes.func.isRequired,
+		onDeleteNoteForever: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
 		onShareNote: PropTypes.func.isRequired,
-		onSignOut: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired
 	},
 
-	render: function() {
-		var { note } = this.props;
-		var isTrashed = !!( note && note.data.deleted );
+	render() {
+		const { note } = this.props;
+		const isTrashed = !!( note && note.data.deleted );
+
+		return isTrashed ? this.renderTrashed() : this.renderNormal();
+	},
+
+	renderNormal() {
+		const { note } = this.props;
 
 		return (
 			<div className="note-toolbar">
 				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="icon-button" onClick={this.props.onCloseNote}><BackIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
-				{ isTrashed ?
-					<div className="note-toolbar-text"><button type="button" className="icon-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore</button></div>
-				:
-					<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
-				}
+				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
-				<div className="note-toolbar-space"></div>
-				<div className="note-toolbar-text"><button type="button" className="text-button" onClick={this.props.onSignOut}>Sign Out</button></div>
 			</div>
-		)
+		);
+	},
+
+	renderTrashed() {
+		const { note } = this.props;
+
+		return (
+			<div className="note-toolbar-trashed">
+				<div className="note-toolbar-text"><button type="button" className="basic-button thin-button danger-button" onClick={this.props.onDeleteNoteForever.bind( null, note )}>Delete Forever</button></div>
+				<div className="note-toolbar-text"><button type="button" className="primary-button thin-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore Note</button></div>
+			</div>
+		);
 	}
 
 } );

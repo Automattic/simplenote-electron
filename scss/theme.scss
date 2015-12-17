@@ -55,6 +55,14 @@
 		background-color: $gray;
 	}
 
+	.icon-button {
+		&[disabled], &:disabled {
+			svg[class^="icon-"] {
+				fill: darken($gray, 30%);
+			}
+		}
+	}
+
 	input, textarea {
 		border-color: darken($gray, 25%);
 		color: $gray-lightest;
