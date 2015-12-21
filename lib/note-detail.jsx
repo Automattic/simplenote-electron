@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
+import Textarea from 'react-textarea-autosize';
 
 export default React.createClass( {
 
@@ -68,7 +69,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<textarea className="note-detail-textarea color-bg color-fg"
+			<Textarea className="note-detail-textarea color-bg color-fg"
 				disabled={!!( note && note.data.deleted )}
 				valueLink={valueLink} />
 		);
