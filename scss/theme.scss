@@ -120,6 +120,27 @@
 			}
 		}
 	}
+	
+	.note-detail-markdown {
+		hr {
+			border-color: darken($gray, 20%);
+		}
+		
+		blockquote {
+			border-color: darken($gray, 20%);
+		}
+		
+		code {
+			background: darken($gray, 30%);
+		}
+		pre {
+			border-color: darken($gray, 20%);
+		}
+		pre code {
+			color: $gray;
+			background: transparent;	
+		}
+	}
 }
 
 .theme-light, .theme-dark {
