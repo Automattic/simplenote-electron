@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import includes from 'lodash/collection/includes';
 import ToggleControl from './controls/toggle'
 
 export default React.createClass( {
@@ -11,9 +12,12 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { note, markdownEnabled } = this.props;
-		var data = note && note.data;
-		var systemTags = data && data.systemTags || [];
+		const { note, markdownEnabled } = this.props;
+		const data = note && note.data || {};
+		const isPinned = includes( data.systemTags, 'pinned' );
+		const isMarkdown = includes( data.systemTags, 'markdown' );
+		const isPublished = includes( data.systemTags, 'published' );
+		const publishURL = isPublished && data.publishURL !== '' && data.publishURL && `http://simp.ly/publish/${data.publishURL}` || null;
 
 		return (
 			<div className="note-info color-bg color-fg color-border">
@@ -48,7 +52,7 @@ export default React.createClass( {
 							<span className="note-info-name">Pin to top</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl id="note-info-pin-checkbox" checked={systemTags.indexOf( 'pinned' ) !== -1} onChange={this.onPinChanged} />
+							<ToggleControl id="note-info-pin-checkbox" checked={isPinned} onChange={this.onPinChanged} />
 						</span>
 					</label>
 				</div>
@@ -61,7 +65,7 @@ export default React.createClass( {
 							</span>
 						</span>
 						<span className="note-info-item-control">
-							<ToggleControl id="note-info-markdown-checkbox" checked={systemTags.indexOf( 'markdown' ) !== -1} onChange={this.onMarkdownChanged} />
+							<ToggleControl id="note-info-markdown-checkbox" checked={isMarkdown} onChange={this.onMarkdownChanged} />
 						</span>
 					</label>
 				</div>}
@@ -69,7 +73,7 @@ export default React.createClass( {
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Public link</span>
-							<br /><span className="note-info-detail">{data && data.publishURL}</span>
+							<br /><span className="note-info-detail">{publishURL}</span>
 						</span>
 					</p>
 				</div>

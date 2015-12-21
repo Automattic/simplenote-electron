@@ -61,7 +61,7 @@ export default React.createClass( {
 						<h3 className="panel-title color-fg-dim">Account</h3>
 						<div className="settings-items color-border">
 							<div className="settings-item color-border">
-								<span className="settings-item-text-input">{accountName}</span>
+								<span className="settings-item-text-input transparent-input">{accountName}</span>
 							</div>
 						</div>
 

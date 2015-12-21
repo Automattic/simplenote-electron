@@ -17,8 +17,9 @@ export default React.createClass( {
 		onUpdateNoteTags: PropTypes.func.isRequired,
 		onTrashNote: PropTypes.func.isRequired,
 		onRestoreNote: PropTypes.func.isRequired,
+		onShareNote: PropTypes.func.isRequired,
+		onDeleteNoteForever: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
-		onSignOut: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired
 	},
@@ -56,6 +57,7 @@ export default React.createClass( {
 		var { editorMode, note, revisions, markdownEnabled } = this.props;
 		var revision = this.state.revision || note;
 		var tags = revision && revision.data && revision.data.tags || [];
+		const isTrashed = !!( note && note.data.deleted );
 
 		markdownEnabled = markdownEnabled && revision &&
 			revision.data && revision.data.systemTags &&
@@ -63,30 +65,37 @@ export default React.createClass( {
 
 		return (
 			<div className="note-editor color-bg color-fg">
-				<NoteToolbar
-					note={note}
-					onTrashNote={this.props.onTrashNote}
-					onRestoreNote={this.props.onRestoreNote}
-					onRevisions={this.props.onRevisions}
-					onSignOut={this.props.onSignOut}
-					onCloseNote={this.props.onCloseNote}
-					onNoteInfo={this.props.onNoteInfo} />
-				<TagField
-					tags={tags}
-					onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
-				{!!markdownEnabled && this.renderModeBar()}
-				<div className="note-editor-detail">
-					<NoteDetail
-						note={revision}
-						previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-						onChangeContent={this.props.onUpdateContent} />
+				<div className="note-editor-controls color-border">
+					{!isTrashed &&
+						<TagField
+							tags={tags}
+							onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
+					}
+					<NoteToolbar
+						note={note}
+						onTrashNote={this.props.onTrashNote}
+						onRestoreNote={this.props.onRestoreNote}
+						onShareNote={this.props.onShareNote}
+						onDeleteNoteForever={this.props.onDeleteNoteForever}
+						onRevisions={this.props.onRevisions}
+						onCloseNote={this.props.onCloseNote}
+						onNoteInfo={this.props.onNoteInfo} />
 				</div>
-				{!!revisions &&
-					<RevisionSelector
-						revisions={revisions}
-						onViewRevision={this.onViewRevision}
-						onSelectRevision={this.onSelectRevision} />
-				}
+				<div className="note-editor-content color-border">
+					{!!markdownEnabled && this.renderModeBar()}
+					<div className="note-editor-detail">
+						<NoteDetail
+							note={revision}
+							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
+							onChangeContent={this.props.onUpdateContent} />
+					</div>
+					{!!revisions &&
+						<RevisionSelector
+							revisions={revisions}
+							onViewRevision={this.onViewRevision}
+							onSelectRevision={this.onSelectRevision} />
+					}
+				</div>
 			</div>
 		)
 	},

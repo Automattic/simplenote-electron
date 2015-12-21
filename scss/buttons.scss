@@ -97,6 +97,7 @@ button {
 .primary-button {
 	padding: 8px;
 	background: $blue;
+	border: 1px solid $blue;
 	border-radius: $border-radius;
 	color: white;
 	line-height: normal;
@@ -138,4 +139,16 @@ button {
 	 &:disabled {
 		 color: lighten($gray, 20%);
 	 }
+}
+
+.thin-button {
+	padding: 0.3em 18px;
+	line-height: 1.25em;
+	font-size: 90%;
+}
+
+.danger-button {
+	color: $red;
+	border-color: $red;
+	font-weight: 600;
 }
