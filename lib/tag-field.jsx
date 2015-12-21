@@ -85,6 +85,7 @@ export default React.createClass( {
 		var tag = this.refs.tag.value.trim();
 		switch ( e.which ) {
 			case 13: // return key
+			case 9: // tab key
 				// commit the value of the tag
 				if ( tag === '' ) return;
 				this.addTag( tag );
