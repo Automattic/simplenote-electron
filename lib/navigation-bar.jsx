@@ -36,7 +36,7 @@ export default React.createClass( {
 				</div>
 				<div className="navigation-footer">
 					<button type="button" className="navigation-footer-item color-fg-dim">Help &amp; Support</button>
-					<button type="button" className="navigation-footer-item color-fg-dim">About</button>
+					<button type="button" className="navigation-footer-item color-fg-dim" onClick={this.props.onAbout}>About</button>
 				</div>
 			</div>
 		);
