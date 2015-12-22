@@ -60,7 +60,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentWillMount: function() {
-		this.props.actions.applySettings();
 		this.onAuthChanged();
 	},
 
@@ -360,7 +359,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
+								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+								fontSize={settings.fontSize} />
 							<NoteInfo
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}

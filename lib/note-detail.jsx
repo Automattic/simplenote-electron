@@ -7,6 +7,7 @@ export default React.createClass( {
 	propTypes: {
 		note: PropTypes.object,
 		previewingMarkdown: PropTypes.bool,
+		fontSize: PropTypes.number,
 		onChangeContent: PropTypes.func.isRequired
 	},
 
@@ -38,30 +39,35 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { previewingMarkdown } = this.props;
+		var { previewingMarkdown, fontSize } = this.props;
+
+		var divStyle = {
+  			fontSize: fontSize + 'px'
+		};
 
 		return (
 			<div className="note-detail">
 				{previewingMarkdown ?
-					this.renderMarkdown()
+					this.renderMarkdown(divStyle)
 				:
-					this.renderEditable()
+					this.renderEditable(divStyle)
 				}
 			</div>
 		);
 	},
 
-	renderMarkdown() {
+	renderMarkdown(divStyle) {
 		var markdownHTML = marked( this.state.content );
 
 		return (
 			<div className="note-detail-markdown color-bg color-fg"
 				dangerouslySetInnerHTML={{__html: markdownHTML}}
-				onClick={this.onPreviewClick} />
+				onClick={this.onPreviewClick}
+				style={divStyle} />
 		);
 	},
 
-	renderEditable() {
+	renderEditable(divStyle) {
 		var { note } = this.props;
 		var valueLink = {
 			value: this.state.content,
@@ -71,7 +77,8 @@ export default React.createClass( {
 		return (
 			<Textarea className="note-detail-textarea color-bg color-fg"
 				disabled={!!( note && note.data.deleted )}
-				valueLink={valueLink} />
+				valueLink={valueLink}
+				style={divStyle} />
 		);
 	}
 
