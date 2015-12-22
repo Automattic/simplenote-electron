@@ -31,7 +31,11 @@ module.exports = function main( url ) {
 		mainWindow = new BrowserWindow( { width: 800, height: 600 } );
 
 		// and load the index.html of the app.
-		mainWindow.loadUrl( url );
+		if ( typeof mainWindow.loadURL === 'function' ) {
+			mainWindow.loadURL( url );
+		} else {
+			mainWindow.loadUrl( url );
+		}
 
 		// Open the devtools.
 		mainWindow.openDevTools();

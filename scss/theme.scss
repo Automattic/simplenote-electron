@@ -55,6 +55,14 @@
 		background-color: $gray;
 	}
 
+	.icon-button {
+		&[disabled], &:disabled {
+			svg[class^="icon-"] {
+				fill: darken($gray, 30%);
+			}
+		}
+	}
+
 	input, textarea {
 		border-color: darken($gray, 25%);
 		color: $gray-lightest;
@@ -65,6 +73,10 @@
 		color: $gray;
 	}
 	
+	.transparent-input::placeholder {
+		color: darken($gray, 10%);
+	}
+
 	.checkbox-control-base {
 		border-color: darken($gray, 20%);
 	}
@@ -107,5 +119,33 @@
 				background: lighten($blue, 10%);
 			}
 		}
+	}
+	
+	.note-detail-markdown {
+		hr {
+			border-color: darken($gray, 20%);
+		}
+		
+		blockquote {
+			border-color: darken($gray, 20%);
+		}
+		
+		code {
+			background: darken($gray, 30%);
+		}
+		pre {
+			border-color: darken($gray, 20%);
+		}
+		pre code {
+			color: $gray;
+			background: transparent;	
+		}
+	}
+}
+
+.theme-light, .theme-dark {
+	.transparent-input {
+		color: inherit;
+		background-color: transparent;
 	}
 }

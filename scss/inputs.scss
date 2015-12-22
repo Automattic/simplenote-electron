@@ -8,6 +8,15 @@ input {
 	-webkit-tap-highlight-color: transparent;
 }
 
+.transparent-input {
+	color: inherit;
+	background-color: transparent;
+
+	&::placeholder {
+		color: $gray;
+	}
+}
+
 .focus-guard {
 	position: absolute;
 	left: -100px;
