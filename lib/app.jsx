@@ -14,6 +14,22 @@ import NewNoteIcon	from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
+import noop from 'lodash/utility/noop';
+
+let ipc = getIpc();
+
+function getIpc() {
+	try {
+		ipc = __non_webpack_require__( 'ipc' );
+	} catch ( e ) {
+		ipc = {
+			on: noop,
+			removeListener: noop
+		};
+	}
+
+	return ipc;
+}
 
 function mapStateToProps( state ) {
 	return state;
@@ -56,6 +72,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentDidMount: function() {
+		ipc.on( 'appCommand', this.onAppCommand );
+
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
 			.on( 'update', this.onNoteUpdate )
@@ -72,6 +90,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 		this.onNotesIndex();
 		this.onTagsIndex();
+	},
+
+	componentWillUnmount: function() {
+		ipc.removeListener( 'appCommand', this.onAppCommand );
+	},
+
+	onAppCommand: function( command ) {
+		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
+			this.props.actions[ command.action ]( command );
+		}
 	},
 
 	onAuthChanged: function() {
@@ -240,7 +268,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
-
 	onShareNote: function( note ) {
 		this.props.actions.showDialog( {
 			dialog: {
@@ -333,7 +360,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
+								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+								fontSize={settings.fontSize} />
 							<NoteInfo
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}

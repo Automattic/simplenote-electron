@@ -12,6 +12,7 @@ export default React.createClass( {
 		note: PropTypes.object,
 		revisions: PropTypes.array,
 		markdownEnabled: PropTypes.bool,
+		fontSize: PropTypes.number,
 		onSetEditorMode: PropTypes.func.isRequired,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
@@ -54,7 +55,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { editorMode, note, revisions, markdownEnabled } = this.props;
+		var { editorMode, note, revisions, markdownEnabled, fontSize } = this.props;
 		var revision = this.state.revision || note;
 		var tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
@@ -87,7 +88,8 @@ export default React.createClass( {
 						<NoteDetail
 							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-							onChangeContent={this.props.onUpdateContent} />
+							onChangeContent={this.props.onUpdateContent}
+							fontSize={fontSize} />
 					</div>
 					{!!revisions &&
 						<RevisionSelector

@@ -85,18 +85,29 @@ function createMenuTemplate() {
 		submenu: [ {
 			label: 'Font Size',
 			submenu: [ {
-				label: 'Larger',
+				label: 'Bigger',
 				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
-				click: function( /* item, focusedWindow */ ) {
-					debugger;
-					// TODO increase size of editor font-size
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeBigger' } );
+					}
 				}
 			}, {
 				label: 'Smaller',
-				accelerator: 'CmdOrCtrl+-'
+				accelerator: 'CmdOrCtrl+-',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeSmaller' } );
+					}
+				}
 			}, {
 				label: 'Reset',
-				accelerator: 'CmdOrCtrl+0'
+				accelerator: 'CmdOrCtrl+0',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
+					}
+				}
 			} ]
 		}, {
 			label: 'Sort Order',
