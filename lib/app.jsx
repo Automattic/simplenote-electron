@@ -19,16 +19,16 @@ import noop from 'lodash/utility/noop';
 let ipc = getIpc();
 
 function getIpc() {
-    try {
-        ipc = __non_webpack_require__( 'ipc' );
-    } catch ( e ) {
-        ipc = {
-            on: noop,
-            removeListener: noop
-        };
-    }
+	try {
+		ipc = __non_webpack_require__( 'ipc' );
+	} catch ( e ) {
+		ipc = {
+			on: noop,
+			removeListener: noop
+		};
+	}
 
-    return ipc;
+	return ipc;
 }
 
 function mapStateToProps( state ) {
@@ -267,7 +267,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			note
 		} );
 	},
-
 
 	onShareNote: function( note ) {
 		this.props.actions.showDialog( {
