@@ -83,7 +83,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			authorized: isAuthorized
 		} );
 
-		if (isAuthorized) {
+		if ( isAuthorized ) {
 			analytics.initialize( this.props.appState.accountName );
 		}
 	},
@@ -254,7 +254,6 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 		analytics.tracks.recordEvent( 'editor_note_restored' );
 	},
-
 
 	onShareNote: function( note ) {
 		this.props.actions.showDialog( {
