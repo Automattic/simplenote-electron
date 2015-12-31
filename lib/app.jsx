@@ -14,13 +14,21 @@ import NewNoteIcon	from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import classNames	from 'classnames'
+import noop from 'lodash/utility/noop';
 
-var _require;
+let ipc = getIpc();
 
-try {
-	_require = __non_webpack_require__;
-} catch ( e ) {
-	_require = null;
+function getIpc() {
+    try {
+        ipc = __non_webpack_require__( 'ipc' );
+    } catch ( e ) {
+        ipc = {
+            on: noop,
+            removeListener: noop
+        };
+    }
+
+    return ipc;
 }
 
 function mapStateToProps( state ) {
@@ -64,10 +72,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentDidMount: function() {
-		if ( typeof _require === 'function' ) {
-			let ipc = _require( 'ipc' );
-			ipc.on( 'appCommand', this.onAppCommand );
-		}
+		ipc.on( 'appCommand', this.onAppCommand );
 
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
@@ -88,10 +93,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentWillUnmount: function() {
-		if ( typeof _require === 'function' ) {
-			let ipc = _require( 'ipc' );
-			ipc.removeListener( 'appCommand', this.onAppCommand );
-		}
+		ipc.removeListener( 'appCommand', this.onAppCommand );
 	},
 
 	onAppCommand: function( command ) {
