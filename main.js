@@ -28,17 +28,17 @@ module.exports = function main( url ) {
 		Menu.setApplicationMenu( menu );
 
 		// Create the browser window.
-		mainWindow = new BrowserWindow( { width: 800, height: 600 } );
+		mainWindow = new BrowserWindow( { width: 1024, height: 768 } );
 
-		// and load the index.html of the app.
+		// and load the index of the app.
 		if ( typeof mainWindow.loadURL === 'function' ) {
 			mainWindow.loadURL( url );
 		} else {
 			mainWindow.loadUrl( url );
 		}
 
-		// Open the devtools.
-		mainWindow.openDevTools();
+		// Uncomment me to debug in the electron window
+		// mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
@@ -119,9 +119,19 @@ function createMenuTemplate() {
 		}, {
 			label: 'Theme',
 			submenu: [ {
-				label: 'Light'
+				label: 'Light',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setLightThemeActive' } );
+					}
+				}
 			}, {
-				label: 'Dark'
+				label: 'Dark',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setDarkThemeActive' } );
+					}
+				}
 			} ]
 		}, {
 			label: 'Toggle Full Screen',
