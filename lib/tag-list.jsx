@@ -21,7 +21,7 @@ export default React.createClass( {
 		return (
 			<div className={classes}>
 				<div className="tag-list-title">
-					<h2 className="panel-title color-fg-dim">Tags</h2>
+					<h2 className="panel-title theme-color-fg-dim">Tags</h2>
 					<strong className="tag-list-edit-toggle text-button" tabIndex="0" onClick={this.props.onEditTags}>
 						{this.props.editingTags ? 'Done' : 'Edit' }
 					</strong>
@@ -45,7 +45,7 @@ export default React.createClass( {
 
 		return (
 			<input
-				className="tag-list-input color-fg"
+				className="tag-list-input theme-color-fg"
 				readOnly={!this.props.editingTags}
 				onClick={this.onSelectTag.bind( this, tag )}
 				valueLink={valueLink} />

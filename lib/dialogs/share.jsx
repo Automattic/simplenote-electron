@@ -118,8 +118,8 @@ export default React.createClass( {
 				return (
 					<div className="dialog-column share-publish">
 						<div className="settings-group">
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-public" className="settings-item color-border">
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-public" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Make public link
 									</div>
@@ -135,8 +135,8 @@ export default React.createClass( {
 								Anyone with the public link will be able to view the latest version.
 							</p>
 							<h3 className="panel-title">Public link</h3>
-							<div className="settings-items color-border">
-								<div className="settings-item color-border">
+							<div className="settings-items theme-color-border">
+								<div className="settings-item theme-color-border">
 									<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder={isPublished ? 'Publishing note…' : 'Note not published'} value={publishURL} />
 									<div className="settings-item-control">
 										<button ref={e => this.copyUrlElement = e} type="button" className="text-button" onClick={this.copyPublishURL}>Copy</button>
@@ -157,8 +157,8 @@ export default React.createClass( {
 								You'll both be able to edit and view the note.
 								You can also add the email as a tag.
 							</p>
-							<div className="settings-items color-border">
-								<form className="settings-item color-border" onSubmit={this.onAddCollaborator}>
+							<div className="settings-items theme-color-border">
+								<form className="settings-item theme-color-border" onSubmit={this.onAddCollaborator}>
 									<input ref={e => this.collaboratorElement = e} type="email" pattern="[^@]+@[^@]+" className="settings-item-text-input transparent-input" placeholder="email@example.com" />
 									<div className="settings-item-control">
 										<button type="submit" className="text-button">Add Email</button>
@@ -166,7 +166,7 @@ export default React.createClass( {
 								</form>
 							</div>
 						</div>
-						<h3 className="panel-title color-border">Collaborators</h3>
+						<h3 className="panel-title theme-color-border">Collaborators</h3>
 						<ul className="share-collaborators">
 							{this.collaborators().map( collaborator =>
 								<li key={collaborator} className="share-collaborator">
