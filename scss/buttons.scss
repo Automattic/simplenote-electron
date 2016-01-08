@@ -12,7 +12,7 @@ button {
 }
 
 .basic-button,
-.pill-button,
+.segmented-control-item,
 .primary-button,
 .icon-button,
 .text-button {
@@ -53,11 +53,11 @@ button {
 }
 
 // Pill buttons
-.pill-buttons {
+.segmented-control {
 	display: flex;
 	flex-direction: row;
 
-	.pill-button {
+	.segmented-control-item {
 		border-radius: 0;
 		border-left-width: 0;
 
@@ -71,7 +71,7 @@ button {
 		}
 	}
 }
-.pill-button {
+.segmented-control-item {
 	height: 2em;
 	padding: 0 14px;
 	border: 2px solid $blue;
@@ -141,7 +141,7 @@ button {
 	 }
 }
 
-.thin-button {
+.compact-button {
 	padding: 0.3em 18px;
 	line-height: 1.25em;
 	font-size: 90%;
