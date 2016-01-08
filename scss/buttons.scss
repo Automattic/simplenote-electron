@@ -35,7 +35,7 @@ button {
 	line-height: 1.5;
 	font-weight: bold;
 	border-radius: $border-radius;
-	padding: 8px;
+	padding: 8px 12px;
 
 	&:active,
 	&.active {
@@ -60,6 +60,22 @@ button {
 	&.active {
 		background: darken($blue, 10%);
 		border-color: darken($blue, 10%);
+	}
+}
+
+.button-compact {
+	padding: 0.3em 18px;
+	line-height: 1.25em;
+	font-size: 90%;
+}
+
+.button-danger {
+	color: $red;
+	border-color: $red;
+	
+	&:active {
+		background: $red;
+		color: $white;
 	}
 }
 
@@ -125,7 +141,6 @@ button {
 
 // Text buttons (may contain icon)
 .text-button {
-	 color: $blue;
 	 border-width: 0;
 
 	 &:active {
@@ -138,19 +153,9 @@ button {
 	 }
 }
 
-.button-compact {
-	padding: 0.3em 18px;
-	line-height: 1.25em;
-	font-size: 90%;
-}
-
-.button-danger {
-	color: $red;
-	border-color: $red;
-	
+.text-button.button-danger {
 	&:active {
-		background: $red;
-		color: $white;
+		color: darken($red, 20%);
 	}
 }
 
