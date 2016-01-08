@@ -11,13 +11,11 @@ button {
 	vertical-align: baseline;
 }
 
-.basic-button,
-.segmented-control-item,
-.primary-button,
-.icon-button,
-.text-button {
+// Generic button base class
+// Can be used by itself, or in conjunction with the .button-* modifier classes
+.button {
 	display: inline-block;
-	box-sizing: border-box;
+	// box-sizing: border-box;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	margin: 0;
@@ -27,83 +25,84 @@ button {
 	vertical-align: top;
 	transition: $anim-fast;
 	-webkit-tap-highlight-color: transparent;
-}
-
-// Rectangle buttons
-.basic-button {
+	
 	background: transparent;
 	border-color: $blue;
 	border-style: solid;
-	border-width: 1px;
+	border-width: 2px;
 	color: $blue;
 	font-size: 14px;
-	line-height: 21px;
-	border-radius: 3px;
-	padding: 0.6em 14px;
+	line-height: 1.5;
+	font-weight: bold;
+	border-radius: $border-radius;
+	padding: 8px;
 
-	&:active {
+	&:active,
+	&.active {
 		background: $blue;
 		color: $white;
 	}
 	&[disabled],
 	&:disabled {
-		color: $gray;
-		border-color: $blue;
-	}
-}
-
-// Pill buttons
-.segmented-control {
-	display: flex;
-	flex-direction: row;
-
-	.segmented-control-item {
-		border-radius: 0;
-		border-left-width: 0;
-
-		&:first-child {
-			border-left-width: 2px;
-			border-radius: 4px 0 0 4px;
-		}
-
-		&:last-child {
-			border-radius: 0 4px 4px 0;
-		}
-	}
-}
-.segmented-control-item {
-	height: 2em;
-	padding: 0 14px;
-	border: 2px solid $blue;
-	border-radius: 4px;
-	line-height: 1.25em;
-	font-size: 100%;
-	text-align: center;
-	color: $blue;
-	background: transparent;
-
-	&:active, &.active {
-		color: $white;
-		background: $blue;
-	}
-
-	&:disabled, &[disabled] {
-		border-color: $blue;
-		color: $gray;
+		opacity: 0.5;
+		// color: $gray;
+		// border-color: $blue;
 	}
 }
 
 // Primary buttons
-	padding: 8px;
 .button-primary {
 	background: $blue;
-	border: 1px solid $blue;
-	border-radius: $border-radius;
 	color: white;
-	line-height: normal;
-	font-weight: bold;
 	font-size: 125%;
+	
+	&:active,
+	&.active {
+		background: darken($blue, 10%);
+		border-color: darken($blue, 10%);
+	}
 }
+
+// .basic-button, done
+// .button-segmented-control, done
+// .button-primary, done
+// .icon-button,
+// .text-button {
+// 	display: inline-block;
+// 	box-sizing: border-box;
+// 	white-space: nowrap;
+// 	text-overflow: ellipsis;
+// 	margin: 0;
+// 	outline: 0;
+// 	overflow: hidden;
+// 	text-decoration: none;
+// 	vertical-align: top;
+// 	transition: $anim-fast;
+// 	-webkit-tap-highlight-color: transparent;
+// }
+
+// Rectangle buttons
+// .basic-button {
+// 	background: transparent;
+// 	border-color: $blue;
+// 	border-style: solid;
+// 	border-width: 2px;
+// 	color: $blue;
+// 	font-size: 14px;
+// 	line-height: 21px;
+// 	border-radius: $border-radius;
+// 	padding: 8px;
+// 
+// 	&:active {
+// 		background: $blue;
+// 		color: $white;
+// 	}
+// 	&[disabled],
+// 	&:disabled {
+// 		color: $gray;
+// 		border-color: $blue;
+// 	}
+// }
 
 // Icon only buttons
 .icon-button {
@@ -127,17 +126,15 @@ button {
 // Text buttons (may contain icon)
 .text-button {
 	 color: $blue;
+	 border-width: 0;
 
 	 &:active {
-		 color: darken($blue, 15%);
+		 color: darken($blue, 20%);
+		 background: transparent;
 		 
 		 svg[class^="icon-"] {
 			 fill: $blue; // Make sure the icon stays $blue if active
 		 }
-	 }
-	 &[disabled],
-	 &:disabled {
-		 color: lighten($gray, 20%);
 	 }
 }
 
@@ -150,5 +147,32 @@ button {
 .button-danger {
 	color: $red;
 	border-color: $red;
-	font-weight: 600;
+	
+	&:active {
+		background: $red;
+		color: $white;
+	}
+}
+
+// Segmented control wrapper
+.segmented-control {
+	display: flex;
+	flex-direction: row;
+	
+	//Individual segmented control buttons
+	.button-segmented-control {
+		border-radius: 0;
+		border-left-width: 0;
+		padding-left: 0;
+		padding-right: 0;
+
+		&:first-child {
+			border-left-width: 2px;
+			border-radius: $border-radius 0 0 $border-radius;
+		}
+
+		&:last-child {
+			border-radius: 0 $border-radius $border-radius 0;
+		}
+	}
 }
