@@ -94,8 +94,8 @@ button {
 }
 
 // Primary buttons
-.primary-button {
 	padding: 8px;
+.button-primary {
 	background: $blue;
 	border: 1px solid $blue;
 	border-radius: $border-radius;
@@ -141,13 +141,13 @@ button {
 	 }
 }
 
-.compact-button {
+.button-compact {
 	padding: 0.3em 18px;
 	line-height: 1.25em;
 	font-size: 90%;
 }
 
-.danger-button {
+.button-danger {
 	color: $red;
 	border-color: $red;
 	font-weight: 600;
