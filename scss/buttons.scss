@@ -83,7 +83,7 @@ button {
 // .button-segmented-control, done
 // .button-primary, done
 // .icon-button,
-// .text-button {
+// .button-text { done
 // 	display: inline-block;
 // 	box-sizing: border-box;
 // 	white-space: nowrap;
@@ -140,7 +140,7 @@ button {
 }
 
 // Text buttons (may contain icon)
-.text-button {
+.button-text {
 	 border-width: 0;
 
 	 &:active {
@@ -153,7 +153,7 @@ button {
 	 }
 }
 
-.text-button.button-danger {
+.button-text.button-danger {
 	&:active {
 		color: darken($red, 20%);
 	}

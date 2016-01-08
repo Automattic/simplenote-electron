@@ -33,7 +33,7 @@ export default React.createClass( {
 						{tabs.map( tab =>
 							<li key={tab}>
 								<button type="button"
-										className={classNames( 'button text-button', { 'dialog-tab-active': tab === currentTab } )}
+										className={classNames( 'button button-text', { 'dialog-tab-active': tab === currentTab } )}
 										onClick={this.setCurrentTab.bind( this, tab )}>
 									{renderTabName( tab )}
 								</button>

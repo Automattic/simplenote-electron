@@ -22,7 +22,7 @@ export default React.createClass( {
 			<div className={classes}>
 				<div className="tag-list-title">
 					<h2 className="panel-title color-fg-dim">Tags</h2>
-					<button className="tag-list-edit-toggle button text-button" tabIndex="0" onClick={this.props.onEditTags}>
+					<button className="tag-list-edit-toggle button button-text" tabIndex="0" onClick={this.props.onEditTags}>
 						{this.props.editingTags ? 'Done' : 'Edit' }
 					</button>
 				</div>
