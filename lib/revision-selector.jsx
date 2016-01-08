@@ -38,7 +38,7 @@ export default React.createClass( {
 		return (
 			<div className="revision-selector">
 				<input ref="range" type="range" min={min} max={max} value={selection} onChange={this.onSelectRevision} />
-				<div className="text-button" onClick={this.onAcceptRevision}>Restore</div>
+				<div className="button text-button" onClick={this.onAcceptRevision}>Restore</div>
 			</div>
 		)
 	}

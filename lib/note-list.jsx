@@ -41,7 +41,7 @@ export default React.createClass( {
 				</div>
 				{!!onEmptyTrash &&
 					<div className="note-list-empty-trash">
-						<button type="button" className="text-button button-danger" onClick={onEmptyTrash}>Empty Trash</button>
+						<button type="button" className="button text-button button-danger" onClick={onEmptyTrash}>Empty Trash</button>
 					</div>
 				}
 			</div>

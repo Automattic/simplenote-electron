@@ -16,11 +16,11 @@ export default React.createClass( {
 		return (
 			<div className="navigation color-bg color-fg color-border">
 				<div className="navigation-folders">
-					<button type="button" className="navigation-folders-item text-button color-fg" onClick={this.props.onSelectAllNotes}>
+					<button type="button" className="navigation-folders-item button text-button color-fg" onClick={this.props.onSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</button>
-					<button type="button" className="navigation-folders-item text-button color-fg" onClick={this.props.onSelectTrash}>
+					<button type="button" className="navigation-folders-item button text-button color-fg" onClick={this.props.onSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
 					</button>
@@ -29,7 +29,7 @@ export default React.createClass( {
 					<TagList {...this.props} />
 				</div>
 				<div className="navigation-tools color-border">
-					<button type="button" className="navigation-tools-item text-button color-fg" onClick={this.props.onSettings}>
+					<button type="button" className="navigation-tools-item button text-button color-fg" onClick={this.props.onSettings}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						Settings
 					</button>
