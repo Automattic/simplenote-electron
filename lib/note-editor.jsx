@@ -108,10 +108,10 @@ export default React.createClass( {
 		return (
 			<div className="note-editor-mode-bar segmented-control">
 				<button type="button"
-					className={classNames( 'segmented-control-item', { active: editorMode === 'edit' } )}
+					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'edit' } )}
 					onClick={this.props.onSetEditorMode.bind( null, 'edit' )}>Edit</button>
 				<button type="button"
-					className={classNames( 'segmented-control-item', { active: editorMode === 'markdown' } )}
+					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'markdown' } )}
 					onClick={this.props.onSetEditorMode.bind( null, 'markdown' )}>Preview</button>
 			</div>
 		);

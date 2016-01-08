@@ -44,8 +44,8 @@ export default React.createClass( {
 
 		return (
 			<div className="note-toolbar-trashed">
-				<div className="note-toolbar-text"><button type="button" className="basic-button compact-button danger-button" onClick={this.props.onDeleteNoteForever.bind( null, note )}>Delete Forever</button></div>
-				<div className="note-toolbar-text"><button type="button" className="primary-button compact-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore Note</button></div>
+				<div className="note-toolbar-text"><button type="button" className="button button-compact button-danger" onClick={this.props.onDeleteNoteForever.bind( null, note )}>Delete Forever</button></div>
+				<div className="note-toolbar-text"><button type="button" className="button button-primary button-compact" onClick={this.props.onRestoreNote.bind( null, note )}>Restore Note</button></div>
 			</div>
 		);
 	}
