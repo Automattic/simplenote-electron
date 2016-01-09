@@ -82,8 +82,8 @@ button {
 // .basic-button, done
 // .button-segmented-control, done
 // .button-primary, done
-// .icon-button,
-// .button-text { done
+// .button-borderless, done
+// .button-borderless { done
 // 	display: inline-block;
 // 	box-sizing: border-box;
 // 	white-space: nowrap;
@@ -139,8 +139,8 @@ button {
 	}
 }
 
-// Text buttons (may contain icon)
-.button-text {
+// Borderless buttons don't have a border or background. Use it for icon or text buttons.
+.button-borderless {
 	 border-width: 0;
 
 	 &:active {
@@ -153,7 +153,7 @@ button {
 	 }
 }
 
-.button-text.button-danger {
+.button-borderless.button-danger {
 	&:active {
 		color: darken($red, 20%);
 	}

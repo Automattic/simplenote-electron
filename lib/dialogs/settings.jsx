@@ -67,7 +67,7 @@ export default React.createClass( {
 
 						<ul className="dialog-actions">
 							<li><button type="button" className="button button-primary" onClick={this.props.onSignOut}>Sign Out</button></li>
-							<li><button type="button" className="button button button-text" onClick={this.onEditAccount}>Edit Account</button></li>
+							<li><button type="button" className="button button button-borderless" onClick={this.onEditAccount}>Edit Account</button></li>
 						</ul>
 					</div>
 				);

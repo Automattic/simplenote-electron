@@ -64,7 +64,7 @@ export default React.createClass( {
 					</p>
 				</div>
 
-				<button type="button" className="about-done icon-button" onClick={this.onDone}>
+				<button type="button" className="about-done button button-borderless" onClick={this.onDone}>
 					<CrossIcon />
 				</button>
 			</Dialog>

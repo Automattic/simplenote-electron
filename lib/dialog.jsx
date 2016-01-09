@@ -57,7 +57,7 @@ export default React.createClass( {
 							<div className="dialog-title-side"></div>
 							<h2 id={titleElementId} className="dialog-title-text">{title}</h2>
 							<div className="dialog-title-side">
-								{!!onDone && <button type="button" className="button button-text" onClick={onDone}>Done</button>}
+								{!!onDone && <button type="button" className="button button-borderless" onClick={onDone}>Done</button>}
 							</div>
 						</div>
 					}
