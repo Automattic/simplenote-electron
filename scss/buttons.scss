@@ -15,7 +15,6 @@ button {
 // Can be used by itself, or in conjunction with the .button-* modifier classes
 .button {
 	display: inline-block;
-	// box-sizing: border-box;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	margin: 0;
@@ -25,7 +24,6 @@ button {
 	vertical-align: top;
 	transition: $anim-fast;
 	-webkit-tap-highlight-color: transparent;
-	
 	background: transparent;
 	border-color: $blue;
 	border-style: solid;
@@ -45,12 +43,10 @@ button {
 	&[disabled],
 	&:disabled {
 		opacity: 0.5;
-		// color: $gray;
-		// border-color: $blue;
 	}
 }
 
-// Primary buttons
+// Primary buttons. Solid buttons.
 .button-primary {
 	background: $blue;
 	color: white;
@@ -63,12 +59,14 @@ button {
 	}
 }
 
+// Compact buttons. Use to make buttons smaller.
 .button-compact {
 	padding: 0.3em 18px;
 	line-height: 1.25em;
 	font-size: 90%;
 }
 
+// Danger buttons
 .button-danger {
 	color: $red;
 	border-color: $red;
@@ -78,66 +76,6 @@ button {
 		color: $white;
 	}
 }
-
-// .basic-button, done
-// .button-segmented-control, done
-// .button-primary, done
-// .button-borderless, done
-// .button-borderless { done
-// 	display: inline-block;
-// 	box-sizing: border-box;
-// 	white-space: nowrap;
-// 	text-overflow: ellipsis;
-// 	margin: 0;
-// 	outline: 0;
-// 	overflow: hidden;
-// 	text-decoration: none;
-// 	vertical-align: top;
-// 	transition: $anim-fast;
-// 	-webkit-tap-highlight-color: transparent;
-// }
-
-// Rectangle buttons
-// .basic-button {
-// 	background: transparent;
-// 	border-color: $blue;
-// 	border-style: solid;
-// 	border-width: 2px;
-// 	color: $blue;
-// 	font-size: 14px;
-// 	line-height: 21px;
-// 	border-radius: $border-radius;
-// 	padding: 8px;
-// 
-// 	&:active {
-// 		background: $blue;
-// 		color: $white;
-// 	}
-// 	&[disabled],
-// 	&:disabled {
-// 		color: $gray;
-// 		border-color: $blue;
-// 	}
-// }
-
-// Icon only buttons
-// .icon-button {
-// 	svg[class^="icon-"] {
-// 		fill: $gray;
-// 	}
-// 
-// 	&:active {
-// 		svg[class^="icon-"] {
-// 			fill: $blue;
-// 		}
-// 	}
-// 
-// 	&[disabled], &:disabled {
-// 		svg[class^="icon-"] {
-// 			fill: lighten($gray, 30%);
-// 		}
-// 	}
-// }
 
 // Borderless buttons don't have a border or background. Use it for icon or text buttons.
 .button-borderless {
