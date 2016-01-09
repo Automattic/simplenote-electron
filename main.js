@@ -40,7 +40,7 @@ module.exports = function main( url ) {
 		}
 
 		// Uncomment me to debug in the electron window
-		mainWindow.openDevTools();
+		// mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
