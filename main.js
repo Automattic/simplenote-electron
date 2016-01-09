@@ -1,6 +1,7 @@
 var app = require( 'app' );	 // Module to control application life.
 var Menu = require( 'menu' );
 var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
+var path = require('path')
 
 module.exports = function main( url ) {
 	// Report crashes to our server.
@@ -28,7 +29,8 @@ module.exports = function main( url ) {
 		Menu.setApplicationMenu( menu );
 
 		// Create the browser window.
-		mainWindow = new BrowserWindow( { width: 1024, height: 768 } );
+		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
+		mainWindow = new BrowserWindow( { width: 1024, height: 768, icon: iconPath } );
 
 		// and load the index of the app.
 		if ( typeof mainWindow.loadURL === 'function' ) {
@@ -38,7 +40,7 @@ module.exports = function main( url ) {
 		}
 
 		// Uncomment me to debug in the electron window
-		// mainWindow.openDevTools();
+		mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
