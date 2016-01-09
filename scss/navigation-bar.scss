@@ -1,7 +1,6 @@
 .navigation {
 	display: flex;
 	flex-direction: column;
-	box-sizing: border-box;
 	position: absolute;
 	top: 0;
 	left: -$navigation-bar-width;
@@ -19,7 +18,6 @@
 
 .navigation-folders-item,
 .navigation-tools-item {
-	box-sizing: border-box;
 	width: 100%;
 	height: 2em;
 	line-height: 2em;
@@ -27,8 +25,18 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	color: $gray-darkest;
 	text-align: left;
+}
+
+.theme-dark,
+.theme-light {
+	.navigation-folders-item,
+	.navigation-tools-item {
+		&:active,
+		&.active {
+			color: $blue;
+		}
+	}
 }
 
 .navigation-folders-item {
@@ -87,7 +95,6 @@
 	vertical-align: middle;
 
 	svg {
-		fill: darken($gray, 20%);
 		vertical-align: middle;
 		position: relative;
 		top: -0.2em;

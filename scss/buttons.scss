@@ -121,35 +121,40 @@ button {
 // }
 
 // Icon only buttons
-.icon-button {
-	svg[class^="icon-"] {
-		fill: $gray;
-	}
-
-	&:active {
-		svg[class^="icon-"] {
-			fill: $blue;
-		}
-	}
-
-	&[disabled], &:disabled {
-		svg[class^="icon-"] {
-			fill: lighten($gray, 30%);
-		}
-	}
-}
+// .icon-button {
+// 	svg[class^="icon-"] {
+// 		fill: $gray;
+// 	}
+// 
+// 	&:active {
+// 		svg[class^="icon-"] {
+// 			fill: $blue;
+// 		}
+// 	}
+// 
+// 	&[disabled], &:disabled {
+// 		svg[class^="icon-"] {
+// 			fill: lighten($gray, 30%);
+// 		}
+// 	}
+// }
 
 // Borderless buttons don't have a border or background. Use it for icon or text buttons.
 .button-borderless {
 	 border-width: 0;
+	 background: transparent;
+	 
+	 svg[class^="icon-"] {
+		 fill: $gray;
+	 }
 
 	 &:active {
 		 color: darken($blue, 20%);
 		 background: transparent;
 		 
 		 svg[class^="icon-"] {
-			 fill: $blue; // Make sure the icon stays $blue if active
-		 }
+			fill: $blue;
+		}
 	 }
 }
 
