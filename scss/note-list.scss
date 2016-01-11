@@ -18,6 +18,10 @@
 		}
 	}
 
+	@media print {
+		display: none;
+	}
+
 	.search-bar {
 		flex: none;
 	}

@@ -8,6 +8,10 @@
 	.note-editor-controls {
 		flex: none;
 		border-bottom: 1px solid lighten($gray, 30%);
+
+		@media print {
+			border: none;
+		}
 	}
 
 	.note-editor-content {
@@ -23,6 +27,10 @@
 	.tag-editor {
 		flex: 1 1 auto;
 		border-left: 1px solid lighten($gray, 30%);
+
+		@media print {
+			display: none;
+		}
 	}
 
 	.note-toolbar {
@@ -34,6 +42,10 @@
 	display: flex;
 	align-items: center;
 	padding: 10px 8px;
+
+	@media print {
+		display: none;
+	}
 
 	.note-toolbar-icon, .note-toolbar-text {
 		flex: none;
@@ -79,6 +91,10 @@
 	display: flex;
 	flex-direction: column;
 	border-left: 1px solid lighten($gray, 30%);
+
+	@media print {
+		border: none;
+	}
 }
 
 .note-editor-mode-bar {
@@ -97,6 +113,12 @@
 	flex: 1 1 auto;
 	overflow: hidden;
 	position: relative;
+
+	@media print {
+		// add a transparent border to work around a weird bug
+		// that causes the note text to not print
+		border-bottom: 10px solid transparent;
+	}
 
 	.note-detail {
 		position: absolute;
@@ -126,6 +148,11 @@
 
 	&:focus {
 		outline: none;
+	}
+
+	@media print {
+		font-size: 26px;
+		border: none;
 	}
 }
 
