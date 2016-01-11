@@ -26,6 +26,10 @@
 
 .settings-group {
 	margin-bottom: 50px;
+	
+	&:last-child {
+		margin-bottom: 0;
+	}
 
 	p {
 		line-height: normal;
