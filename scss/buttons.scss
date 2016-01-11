@@ -84,6 +84,7 @@ button {
 	 
 	 svg[class^="icon-"] {
 		 fill: $gray;
+		 transition: $anim-fast;
 	 }
 
 	 &:active {
