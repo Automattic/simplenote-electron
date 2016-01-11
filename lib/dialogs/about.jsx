@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import SimplenoteLogo from '../icons/simplenote';
 import CrossIcon from '../icons/cross';
+import TopRightArrowIcon from '../icons/arrow-top-right';
 import Dialog from '../dialog';
 
 export default React.createClass( {
@@ -32,24 +33,28 @@ export default React.createClass( {
 							<span className="about-links-title">Blog</span>
 							<br />simplenote.com/blog/
 						</a>
+						<TopRightArrowIcon />
 					</li>
 					<li>
 						<a target="_blank" href="https://twitter.com/simplenoteapp">
 							<span className="about-links-title">Twitter</span>
 							<br />@simplenoteapp
 						</a>
+						<TopRightArrowIcon />
 					</li>
 					<li>
 						<a target="_blank" href="http://simplenote.com/">
 							<span className="about-links-title">Apps</span>
 							<br />simplenote.com
 						</a>
+						<TopRightArrowIcon />
 					</li>
 					<li>
 						<a target="_blank" href="https://automattic.com/work-with-us/">
 							Made with love by the folks at Automattic.
 							<br />Are you a developer? We&rsquo;re hiring.
 						</a>
+						<TopRightArrowIcon />
 					</li>
 				</ul>
 
