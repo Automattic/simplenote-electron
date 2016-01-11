@@ -331,11 +331,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								tags={state.tags} />
 							<div className="source-list color-bg color-fg">
 								<div className="search-bar color-border">
-									<button className="icon-button" onClick={() => this.props.actions.toggleNavigation() }>
+									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>
 									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
-									<button className="icon-button" disabled={state.showTrash} onClick={this.onNewNote}>
+									<button className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</button>
 								</div>
