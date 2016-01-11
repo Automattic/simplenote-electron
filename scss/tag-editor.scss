@@ -7,7 +7,7 @@
 	overflow: auto;
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
-	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
 	
 	&:focus {
 		outline: none;
