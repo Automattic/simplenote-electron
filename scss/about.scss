@@ -45,6 +45,9 @@
 	line-height: normal;
 
 	li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		border-bottom: 1px solid rgba($white, 0.25);
 
 		&:first-child {
@@ -54,6 +57,7 @@
 
 	a {
 		display: block;
+		width: 100%;
 		padding: 10px 2px;
 	}
 }
