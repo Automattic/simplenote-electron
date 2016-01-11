@@ -4,7 +4,6 @@ $toggle-control-knob-margin: 2px;
 $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin - $toggle-control-knob-margin;
 
 .toggle-control {
-	user-select: none;
 	-webkit-touch-callout: none;
 
 	position: relative;
