@@ -52,8 +52,8 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
 	}
 
 	.toggle-control-checked-color {
-		transition: all .150s linear;
 		background: $green;
+		transition: $anim;
 		opacity: 0;
 	}
 
@@ -64,7 +64,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
 		background: white;
 		border-radius: $toggle-control-height * 0.5;
 		transform: translate($toggle-control-knob-margin, $toggle-control-knob-margin);
-		transition: all .150s linear;
+		transition: $anim;
 	}
 
 	input:checked + .toggle-control-layers {

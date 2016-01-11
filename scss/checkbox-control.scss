@@ -46,7 +46,7 @@
 
 	.checkbox-control-checked {
 		background: $green;
-		transition: all .150s linear;
+		transition: all .150s ease;
 		opacity: 0;
 	}
 
