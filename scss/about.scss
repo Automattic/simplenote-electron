@@ -2,7 +2,7 @@
 	.dialog-box {
 		position: relative;
 		max-width: 472px;
-		background: #0098DD !important;
+		background: $blue !important;
 		color: white !important;
 	}
 
@@ -23,7 +23,6 @@
 	svg {
 		display: block;
 		margin: 0 auto 10px;
-		fill: white;
 	}
 
 	h1 {
@@ -46,10 +45,10 @@
 	line-height: normal;
 
 	li {
-		border-bottom: 1px solid #59BCE9;
+		border-bottom: 1px solid rgba($white, 0.25);
 
 		&:first-child {
-			border-top: 1px solid #59BCE9;
+			border-top: 1px solid rgba($white, 0.25);
 		}
 	}
 

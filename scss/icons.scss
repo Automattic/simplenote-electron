@@ -1,3 +1,11 @@
 svg[class^="icon-"] {
 	fill: currentColor;
 }
+
+// Color for the Simplenote logo
+.logo path {
+	fill: $blue;
+}
+.logo circle {
+	fill: $white;
+}
