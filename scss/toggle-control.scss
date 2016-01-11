@@ -52,8 +52,8 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
 	}
 
 	.toggle-control-checked-color {
-		background: $blue;
 		transition: all .150s linear;
+		background: $green;
 		opacity: 0;
 	}
 
