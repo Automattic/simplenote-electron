@@ -23,7 +23,7 @@
 
 	.login-fields {
 		border: 1px solid lighten($gray, 25%);
-		border-radius: 2px;
+		border-radius: $border-radius;
 	}
 
 	.login-field {

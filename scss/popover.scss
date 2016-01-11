@@ -2,7 +2,7 @@
 	position: absolute;
 	background: $gray-darkest;
 	color: $white;
-	border-radius: 4px;
+	border-radius: $border-radius;
 	top: 0;
 	left: 0;
 	opacity: 0.95;
@@ -33,7 +33,7 @@
 	z-index: 1;
 	height: 100%;
 	overflow: hidden;
-	border-radius: 2px;
+	border-radius: $border-radius;
 
 	&:focus {
 		outline: none;
