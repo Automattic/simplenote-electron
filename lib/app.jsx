@@ -13,8 +13,24 @@ import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
-import classNames from 'classnames'
 import analytics from './analytics'
+import classNames	from 'classnames'
+import noop from 'lodash/utility/noop';
+
+let ipc = getIpc();
+
+function getIpc() {
+	try {
+		ipc = __non_webpack_require__( 'ipc' );
+	} catch ( e ) {
+		ipc = {
+			on: noop,
+			removeListener: noop
+		};
+	}
+
+	return ipc;
+}
 
 function mapStateToProps( state ) {
 	return state;
@@ -57,6 +73,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentDidMount: function() {
+		ipc.on( 'appCommand', this.onAppCommand );
+
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
 			.on( 'update', this.onNoteUpdate )
@@ -75,6 +93,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.onTagsIndex();
 
 		analytics.tracks.recordEvent( 'application_opened' );
+	},
+
+	componentWillUnmount: function() {
+		ipc.removeListener( 'appCommand', this.onAppCommand );
+	},
+
+	onAppCommand: function( command ) {
+		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
+			this.props.actions[ command.action ]( command );
+		}
 	},
 
 	onAuthChanged: function() {
@@ -319,11 +347,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								tags={state.tags} />
 							<div className="source-list color-bg color-fg">
 								<div className="search-bar color-border">
-									<button className="icon-button" onClick={() => this.props.actions.toggleNavigation() }>
+									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>
 									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
-									<button className="icon-button" disabled={state.showTrash} onClick={this.onNewNote}>
+									<button className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</button>
 								</div>
@@ -348,7 +376,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
+								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+								fontSize={settings.fontSize} />
 							<NoteInfo
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}

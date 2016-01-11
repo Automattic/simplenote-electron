@@ -30,11 +30,11 @@ export default React.createClass( {
 
 		return (
 			<div className="note-toolbar">
-				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="icon-button" onClick={this.props.onCloseNote}><BackIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="icon-button" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
+				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="button button-borderless" onClick={this.props.onCloseNote}><BackIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
 			</div>
 		);
 	},
@@ -44,8 +44,8 @@ export default React.createClass( {
 
 		return (
 			<div className="note-toolbar-trashed">
-				<div className="note-toolbar-text"><button type="button" className="basic-button thin-button danger-button" onClick={this.props.onDeleteNoteForever.bind( null, note )}>Delete Forever</button></div>
-				<div className="note-toolbar-text"><button type="button" className="primary-button thin-button" onClick={this.props.onRestoreNote.bind( null, note )}>Restore Note</button></div>
+				<div className="note-toolbar-text"><button type="button" className="button button-compact button-danger" onClick={this.props.onDeleteNoteForever.bind( null, note )}>Delete Forever</button></div>
+				<div className="note-toolbar-text"><button type="button" className="button button-primary button-compact" onClick={this.props.onRestoreNote.bind( null, note )}>Restore Note</button></div>
 			</div>
 		);
 	}

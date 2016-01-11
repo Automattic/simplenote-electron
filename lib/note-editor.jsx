@@ -12,6 +12,7 @@ export default React.createClass( {
 		note: PropTypes.object,
 		revisions: PropTypes.array,
 		markdownEnabled: PropTypes.bool,
+		fontSize: PropTypes.number,
 		onSetEditorMode: PropTypes.func.isRequired,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
@@ -54,7 +55,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { editorMode, note, revisions, markdownEnabled } = this.props;
+		var { editorMode, note, revisions, markdownEnabled, fontSize } = this.props;
 		var revision = this.state.revision || note;
 		var tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
@@ -87,7 +88,8 @@ export default React.createClass( {
 						<NoteDetail
 							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-							onChangeContent={this.props.onUpdateContent} />
+							onChangeContent={this.props.onUpdateContent}
+							fontSize={fontSize} />
 					</div>
 					{!!revisions &&
 						<RevisionSelector
@@ -104,12 +106,12 @@ export default React.createClass( {
 		var { editorMode } = this.props;
 
 		return (
-			<div className="note-editor-mode-bar pill-buttons">
+			<div className="note-editor-mode-bar segmented-control">
 				<button type="button"
-					className={classNames( 'pill-button', { active: editorMode === 'edit' } )}
+					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'edit' } )}
 					onClick={this.props.onSetEditorMode.bind( null, 'edit' )}>Edit</button>
 				<button type="button"
-					className={classNames( 'pill-button', { active: editorMode === 'markdown' } )}
+					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'markdown' } )}
 					onClick={this.props.onSetEditorMode.bind( null, 'markdown' )}>Preview</button>
 			</div>
 		);
