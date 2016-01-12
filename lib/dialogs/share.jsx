@@ -139,7 +139,7 @@ export default React.createClass( {
 								<div className="settings-item theme-color-border">
 									<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder={isPublished ? 'Publishing note…' : 'Note not published'} value={publishURL} />
 									<div className="settings-item-control">
-										<button ref={e => this.copyUrlElement = e} type="button" className="text-button" onClick={this.copyPublishURL}>Copy</button>
+										<button ref={e => this.copyUrlElement = e} type="button" className="button button-borderless" onClick={this.copyPublishURL}>Copy</button>
 									</div>
 								</div>
 							</div>
@@ -161,7 +161,7 @@ export default React.createClass( {
 								<form className="settings-item theme-color-border" onSubmit={this.onAddCollaborator}>
 									<input ref={e => this.collaboratorElement = e} type="email" pattern="[^@]+@[^@]+" className="settings-item-text-input transparent-input" placeholder="email@example.com" />
 									<div className="settings-item-control">
-										<button type="submit" className="text-button">Add Email</button>
+										<button type="submit" className="button button-borderless">Add Email</button>
 									</div>
 								</form>
 							</div>
@@ -172,7 +172,7 @@ export default React.createClass( {
 								<li key={collaborator} className="share-collaborator">
 									<span className="share-collaborator-photo"><img src={this.gravatarURL( collaborator )} width="34" height="34" /></span>
 									<span className="share-collaborator-name">{collaborator}</span>
-									<button className="share-collaborator-remove text-button" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
+									<button className="share-collaborator-remove button button-borderless" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
 								</li>
 							)}
 						</ul>

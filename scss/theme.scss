@@ -55,7 +55,7 @@
 		background-color: $gray;
 	}
 
-	.icon-button {
+	.button-borderless {
 		&[disabled], &:disabled {
 			svg[class^="icon-"] {
 				fill: darken($gray, 30%);

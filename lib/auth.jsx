@@ -29,7 +29,7 @@ export default React.createClass( {
 						</label>
 					</div>
 					<div className="login-actions">
-						<button type="submit" className="primary-button">Log in</button>
+						<button type="submit" className="button button-primary">Log in</button>
 						<p className="login-forgot">
 							<a href="https://app.simplenote.com/forgot/" target="_blank" onClick={this.onForgot}>Forgot your password?</a>
 						</p>

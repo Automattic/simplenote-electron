@@ -61,7 +61,7 @@ export default React.createClass( {
 						<span className="note-info-item-text">
 							<span className="note-info-name">Markdown</span>
 							<br /><span className="note-info-detail">
-								Enable markdown formatting on this note. Learn more…
+								Enable markdown formatting on this note. <a target="_blank" href="http://simplenote.com/help/#markdown">Learn more…</a>
 							</span>
 						</span>
 						<span className="note-info-item-control">
