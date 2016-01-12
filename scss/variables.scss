@@ -31,8 +31,8 @@ $sans-fallback: Helvetica, Arial, sans-serif;
 $sans: 'Source Sans Pro', $sans-fallback; // 300,300italic,400,400italic,600,600italic,700,700italic
 
 $anim-transition: all 200ms ease-in-out;
-$anim-fast: all 0.1s linear;
-$anim: all .2s linear;
+$anim-fast: all .1s ease-in-out;
+$anim: all .2s ease-in-out;
 
 $border-radius: 3px;
 

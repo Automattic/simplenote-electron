@@ -6,7 +6,6 @@ button {
 	padding: 0;
 	cursor: default;
 	font-size: 14px;
-	-webkit-appearance: none;
 	appearance: none;
 	vertical-align: baseline;
 }
@@ -83,7 +82,7 @@ button {
 	 background: transparent;
 	 
 	 svg[class^="icon-"] {
-		 fill: $gray;
+		 transition: $anim-fast;
 	 }
 
 	 &:active {

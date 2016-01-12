@@ -7,7 +7,7 @@
 	overflow: auto;
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
-	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
 	
 	&:focus {
 		outline: none;
@@ -19,7 +19,6 @@
 		border: 0;
 		padding: 0;
 		opacity: 0;
-		box-sizing: border-box;
 
 		&:focus {
 			outline: none;
@@ -45,7 +44,13 @@
 		background: $gray;
 		color: $white;
 	}
-	
+}
+
+.theme-dark {
+	.tag-chip {
+		background: darken($gray, 25%);
+		color: lighten($gray, 10%);
+	}
 }
 
 .tag-field {

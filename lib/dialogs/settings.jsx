@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import CheckboxControl from '../controls/checkbox';
+import TopRightArrowIcon from '../icons/arrow-top-right';
 
 const settingTabs = [ 'account', 'display', 'writing' ];
 
@@ -67,7 +68,7 @@ export default React.createClass( {
 
 						<ul className="dialog-actions">
 							<li><button type="button" className="button button-primary" onClick={this.props.onSignOut}>Sign Out</button></li>
-							<li><button type="button" className="button button button-borderless" onClick={this.onEditAccount}>Edit Account</button></li>
+							<li><button type="button" className="button button button-borderless" onClick={this.onEditAccount}>Edit Account <TopRightArrowIcon /></button></li>
 						</ul>
 					</div>
 				);
