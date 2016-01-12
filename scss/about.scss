@@ -2,8 +2,6 @@
 	.dialog-box {
 		position: relative;
 		max-width: 472px;
-		background: $blue !important;
-		color: white !important;
 	}
 
 	.dialog-content {
@@ -14,6 +12,14 @@
 		color: white;
 		text-decoration: none;
 	}
+}
+
+.theme-light,
+.theme-dark {
+ .about .dialog-box {
+	 background: $blue;
+	 color: white;
+ }
 }
 
 .about-top {

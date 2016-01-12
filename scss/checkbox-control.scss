@@ -1,6 +1,5 @@
 
 .checkbox-control {
-	user-select: none;
 	-webkit-touch-callout: none;
 
 	width: 16px;
@@ -29,7 +28,6 @@
 
 	.checkbox-control-base,
 	.checkbox-control-checked {
-		box-sizing: border-box;
 		display: block;
 		position: absolute;
 		top: 0;
@@ -48,7 +46,7 @@
 
 	.checkbox-control-checked {
 		background: $green;
-		transition: all .150s linear;
+		transition: all .150s ease;
 		opacity: 0;
 	}
 
