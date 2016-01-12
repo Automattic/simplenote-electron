@@ -134,6 +134,8 @@ export default React.createClass( {
 								Ready to share your note with the world?
 								Anyone with the public link will be able to view the latest version.
 							</p>
+						</div>
+						<div className="settings-group">
 							<h3 className="panel-title">Public link</h3>
 							<div className="settings-items color-border">
 								<div className="settings-item color-border">
@@ -166,16 +168,18 @@ export default React.createClass( {
 								</form>
 							</div>
 						</div>
-						<h3 className="panel-title color-border">Collaborators</h3>
-						<ul className="share-collaborators">
-							{this.collaborators().map( collaborator =>
-								<li key={collaborator} className="share-collaborator">
-									<span className="share-collaborator-photo"><img src={this.gravatarURL( collaborator )} width="34" height="34" /></span>
-									<span className="share-collaborator-name">{collaborator}</span>
-									<button className="share-collaborator-remove button button-borderless" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
-								</li>
-							)}
-						</ul>
+						<div className="settings-group">
+							<h3 className="panel-title color-border">Collaborators</h3>
+							<ul className="share-collaborators">
+								{this.collaborators().map( collaborator =>
+									<li key={collaborator} className="share-collaborator">
+										<span className="share-collaborator-photo"><img src={this.gravatarURL( collaborator )} width="34" height="34" /></span>
+										<span className="share-collaborator-name">{collaborator}</span>
+										<button className="share-collaborator-remove button button-borderless button-danger" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
+									</li>
+								)}
+							</ul>
+						</div>
 					</div>
 				);
 		}

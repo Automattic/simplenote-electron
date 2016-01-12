@@ -10,9 +10,10 @@ import NoteEditor	from './note-editor'
 import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
 import Auth from './auth'
-import NewNoteIcon	from './icons/new-note'
+import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
+import analytics from './analytics'
 import classNames	from 'classnames'
 import noop from 'lodash/utility/noop';
 
@@ -90,6 +91,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 		this.onNotesIndex();
 		this.onTagsIndex();
+
+		analytics.tracks.recordEvent( 'application_opened' );
 	},
 
 	componentWillUnmount: function() {
@@ -103,9 +106,14 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onAuthChanged: function() {
+		let isAuthorized = this.props.client.isAuthorized();
 		this.props.actions.authChanged( {
-			authorized: this.props.client.isAuthorized()
+			authorized: isAuthorized
 		} );
+
+		if ( isAuthorized ) {
+			analytics.initialize( this.props.appState.accountName );
+		}
 	},
 
 	onSelectNote: function( noteId ) {
@@ -113,6 +121,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			noteId
 		} );
+		analytics.tracks.recordEvent( 'list_note_opened' );
 	},
 
 	onPinNote: function( note, pin = true ) {
@@ -143,6 +152,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.props.actions.newNote( {
 			noteBucket: this.props.noteBucket
 		} );
+		analytics.tracks.recordEvent( 'list_note_created' );
 	},
 
 	onNoteUpdate: function( noteId, data, original, patch ) {
@@ -160,6 +170,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	onSelectTag: function( tag ) {
 		this.props.actions.selectTag( { tag } );
+		analytics.tracks.recordEvent( 'list_tag_viewed' );
 	},
 
 	onSettings: function() {
@@ -196,6 +207,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			tag
 		} );
+		analytics.tracks.recordEvent( 'list_trash_viewed' );
 	},
 
 	onReorderTags: function( tags ) {
@@ -207,6 +219,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	onSearch: function( filter ) {
 		this.props.actions.search( { filter } );
+		analytics.tracks.recordEvent( 'list_notes_searched' );
 	},
 
 	filterNotes: function() {
@@ -259,6 +272,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			note
 		} );
+		analytics.tracks.recordEvent( 'editor_note_deleted' );
 	},
 
 	onRestoreNote: function( note ) {
@@ -266,6 +280,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			note
 		} );
+		analytics.tracks.recordEvent( 'editor_note_restored' );
 	},
 
 	onShareNote: function( note ) {
@@ -290,6 +305,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			note
 		} );
+		analytics.tracks.recordEvent( 'editor_versions_accessed' );
 	},
 
 	onEmptyTrash: function() {
