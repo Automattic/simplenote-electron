@@ -314,6 +314,22 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+	onToolbarOutsideClick: function( isNavigationBar ) {
+		var state = this.props.appState;
+		// Don't dismiss toolbar if a dialog is showing
+		if ( state.dialogs.length > 0 ) {
+			return;
+		}
+
+		if ( isNavigationBar && state.showNavigation ) {
+			this.props.actions.toggleNavigation();
+		}
+
+		if ( !isNavigationBar && state.showNoteInfo ) {
+			this.props.actions.toggleNoteInfo();
+		}
+	},
+
 	render: function() {
 		var state = this.props.appState;
 		var { settings } = this.props;
@@ -344,7 +360,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onTrashTag={this.onTrashTag}
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
-								tags={state.tags} />
+								tags={state.tags}
+								onOutsideClick={this.onToolbarOutsideClick} />
 							<div className="source-list color-bg color-fg">
 								<div className="search-bar color-border">
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
@@ -382,7 +399,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
-								onMarkdownNote={this.onMarkdownNote} />
+								onMarkdownNote={this.onMarkdownNote}
+								onOutsideClick={this.onToolbarOutsideClick} />
 						</div>
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />

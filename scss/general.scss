@@ -78,3 +78,19 @@ a {
 	font-size: 86%;
 	color: darken($gray, 20%);
 }
+
+/* Fade content when toolbars are visible */
+.note-info-open {
+	.note-editor, .source-list {
+		opacity: $fade-alpha;
+		transition: $anim;
+	}
+}
+
+.navigation-open {
+	.note-editor, .source-list {
+		opacity: $fade-alpha;
+		transition: $anim;
+	}
+}
+

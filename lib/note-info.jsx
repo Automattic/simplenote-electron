@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react'
+import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
-import ToggleControl from './controls/toggle'
+import ToggleControl from './controls/toggle';
 
 export default React.createClass( {
 
@@ -8,7 +8,16 @@ export default React.createClass( {
 		note: PropTypes.object,
 		markdownEnabled: PropTypes.bool,
 		onPinNote: PropTypes.func.isRequired,
-		onMarkdownNote: PropTypes.func.isRequired
+		onMarkdownNote: PropTypes.func.isRequired,
+		onOutsideClick: PropTypes.func.isRequired
+	},
+
+	mixins: [
+		require( 'react-onclickoutside' )
+	],
+
+	handleClickOutside: function() {
+		this.props.onOutsideClick( false );
 	},
 
 	render: function() {

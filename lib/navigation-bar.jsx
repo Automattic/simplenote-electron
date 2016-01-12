@@ -12,6 +12,14 @@ export default React.createClass( {
 		};
 	},
 
+	mixins: [
+		require( 'react-onclickoutside' )
+	],
+
+	handleClickOutside: function() {
+		this.props.onOutsideClick( true );
+	},
+
 	render: function() {
 		return (
 			<div className="navigation color-bg color-fg color-border">
