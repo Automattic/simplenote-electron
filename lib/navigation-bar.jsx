@@ -2,7 +2,7 @@ import React from 'react'
 import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
-import UrlUtils from './utils/url-utils'
+import { viewExternalUrl } from './utils/url-utils'
 
 export default React.createClass( {
 
@@ -14,7 +14,7 @@ export default React.createClass( {
 	},
 
 	onHelpClicked: function() {
-		UrlUtils.viewExternalUrl( 'http://simplenote.com/help' );
+		viewExternalUrl( 'http://simplenote.com/help' );
 	},
 
 	render: function() {
