@@ -2,9 +2,9 @@ import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import CheckboxControl from '../controls/checkbox';
+import UrlUtils from '../utils/url-utils'
 
 const settingTabs = [ 'account', 'display', 'writing' ];
-const settingsUrl = 'https://app.simplenote.com/settings';
 
 export default React.createClass( {
 
@@ -18,14 +18,7 @@ export default React.createClass( {
 	},
 
 	onEditAccount() {
-			// If running in electron, open url in external browser
-			// See https://github.com/atom/electron/issues/2288
-			if ( window && window.process && window.process.versions.electron ) {
-				var shell = window.require( 'shell' );
-				shell.openExternal( settingsUrl );
-			} else if ( window ) {
-				window.open( settingsUrl );
-			}
+		UrlUtils.viewExternalUrl( 'https://app.simplenote.com/settings' );
 	},
 
 	onUpdateSettingValue( event ) {
