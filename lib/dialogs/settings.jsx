@@ -23,7 +23,7 @@ export default React.createClass( {
 			if ( window && window.process && window.process.versions.electron ) {
 				var shell = window.require( 'shell' );
 				shell.openExternal( settingsUrl );
-			} else if (window) {
+			} else if ( window ) {
 				window.open( settingsUrl );
 			}
 	},
