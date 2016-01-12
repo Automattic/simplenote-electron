@@ -84,6 +84,7 @@ a {
 	.note-editor, .source-list {
 		opacity: $fade-alpha;
 		transition: $anim;
+		pointer-events: none;
 	}
 }
 
@@ -91,6 +92,7 @@ a {
 	.note-editor, .source-list {
 		opacity: $fade-alpha;
 		transition: $anim;
+		pointer-events: none;
 	}
 }
 

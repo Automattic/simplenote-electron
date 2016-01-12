@@ -315,18 +315,21 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onToolbarOutsideClick: function( isNavigationBar ) {
-		var state = this.props.appState;
-		// Don't dismiss toolbar if a dialog is showing
-		if ( state.dialogs.length > 0 ) {
+		const {
+			actions: { toggleNavigation, toggleNoteInfo },
+			appState: { dialogs, showNavigation, showNoteInfo }
+		} = this.props;
+
+		if ( dialogs.length > 0 ) { 
 			return;
 		}
 
-		if ( isNavigationBar && state.showNavigation ) {
-			this.props.actions.toggleNavigation();
+		if ( isNavigationBar && showNavigation ) {
+			return toggleNavigation();
 		}
 
-		if ( !isNavigationBar && state.showNoteInfo ) {
-			this.props.actions.toggleNoteInfo();
+		if ( ! isNavigationBar && showNoteInfo ) {
+			return toggleNoteInfo();
 		}
 	},
 
