@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import CheckboxControl from '../controls/checkbox';
+import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
 
 const settingTabs = [ 'account', 'display', 'writing' ];
@@ -18,6 +19,7 @@ export default React.createClass( {
 	},
 
 	onEditAccount() {
+		viewExternalUrl( 'https://app.simplenote.com/settings' );
 	},
 
 	onUpdateSettingValue( event ) {

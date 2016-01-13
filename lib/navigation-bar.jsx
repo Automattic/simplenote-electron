@@ -2,6 +2,7 @@ import React from 'react'
 import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
+import { viewExternalUrl } from './utils/url-utils'
 
 export default React.createClass( {
 
@@ -10,6 +11,10 @@ export default React.createClass( {
 			onSelectAllNotes: function() { },
 			onSelectTrash: function() { }
 		};
+	},
+
+	onHelpClicked: function() {
+		viewExternalUrl( 'http://simplenote.com/help' );
 	},
 
 	render: function() {
@@ -35,7 +40,7 @@ export default React.createClass( {
 					</button>
 				</div>
 				<div className="navigation-footer">
-					<button type="button" className="navigation-footer-item color-fg-dim">Help &amp; Support</button>
+					<button type="button" className="navigation-footer-item color-fg-dim" onClick={this.onHelpClicked}>Help &amp; Support</button>
 					<button type="button" className="navigation-footer-item color-fg-dim" onClick={this.props.onAbout}>About</button>
 				</div>
 			</div>
