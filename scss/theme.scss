@@ -3,19 +3,19 @@
 	background-color: $white;
 	color: $gray-darkest;
 
-	.color-bg {
+	.theme-color-bg {
 		background-color: $white;
 	}
-	.color-bg-lighter {
+	.theme-color-bg-lighter {
 		background-color: lighten($gray, 30%);
 	}
-	.color-fg {
+	.theme-color-fg {
 		color: $gray-darkest;
 	}
-	.color-fg-dim {
+	.theme-color-fg-dim {
 		color: darken($gray, 20%);
 	}
-	.color-border {
+	.theme-color-border {
 		border-color: lighten($gray, 30%);
 	}
 
@@ -28,19 +28,19 @@
 	background-color: $gray-darkest;
 	color: $gray;
 
-	.color-bg {
+	.theme-color-bg {
 		background-color: $gray-darkest;
 	}
-	.color-bg-lighter {
+	.theme-color-bg-lighter {
 		background-color: darken($gray, 20%);
 	}
-	.color-fg {
+	.theme-color-fg {
 		color: lighten($gray, 30%);
 	}
-	.color-fg-dim {
+	.theme-color-fg-dim {
 		color: lighten($gray, 20%);
 	}
-	.color-border {
+	.theme-color-border {
 		border-color: darken($gray, 25%);
 	}
 

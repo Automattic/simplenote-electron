@@ -45,7 +45,7 @@
 	}
 
 	&.editable-list-removable .editable-list-item-left {
-		transform: translateX(-20px);
+		transform: translateX(-24px);
 	}
 
 	.editable-list-item-content {
@@ -99,7 +99,7 @@
 
 	&.editable-list-editing {
 		.editable-list-item-left {
-			transform: translateX(0);
+			transform: translateX(-4px);
 		}
 
 		.editable-list-trash {

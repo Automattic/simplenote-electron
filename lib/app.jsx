@@ -345,8 +345,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
 								tags={state.tags} />
-							<div className="source-list color-bg color-fg">
-								<div className="search-bar color-border">
+							<div className="source-list theme-color-bg theme-color-fg">
+								<div className="search-bar theme-color-border">
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>

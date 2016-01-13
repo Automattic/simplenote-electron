@@ -60,7 +60,7 @@ export default React.createClass( {
 		var markdownHTML = marked( this.state.content );
 
 		return (
-			<div className="note-detail-markdown color-bg color-fg"
+			<div className="note-detail-markdown theme-color-bg theme-color-fg"
 				dangerouslySetInnerHTML={ { __html: markdownHTML } }
 				onClick={ this.onPreviewClick }
 				style={ divStyle } />
@@ -75,7 +75,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<Textarea className="note-detail-textarea color-bg color-fg"
+			<Textarea className="note-detail-textarea theme-color-bg theme-color-fg"
 				disabled={ !!( note && note.data.deleted ) }
 				valueLink={ valueLink }
 				style={ divStyle } />
