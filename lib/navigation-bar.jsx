@@ -2,6 +2,7 @@ import React from 'react'
 import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
+import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
 
 export default React.createClass( {
@@ -35,7 +36,7 @@ export default React.createClass( {
 				</div>
 				<div className="navigation-tools theme-color-border">
 					<button type="button" className="navigation-tools-item button button-borderless theme-color-fg" onClick={this.props.onSettings}>
-						<span className="navigation-icon"><NotesIcon /></span>
+						<span className="navigation-icon"><SettingsIcon /></span>
 						Settings
 					</button>
 				</div>
