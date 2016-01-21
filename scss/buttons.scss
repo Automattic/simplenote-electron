@@ -90,7 +90,7 @@ button {
 		 background: transparent;
 		 
 		 svg[class^="icon-"] {
-			fill: $blue;
+			fill: darken($blue, 20%);
 		}
 	 }
 }
