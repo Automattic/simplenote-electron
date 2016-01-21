@@ -38,6 +38,10 @@
 		&:active,
 		&.active {
 			color: $blue;
+			
+			svg[class^="icon-"] {
+ 			fill: $blue;
+ 		}
 		}
 	}
 }
