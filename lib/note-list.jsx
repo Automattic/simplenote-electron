@@ -40,7 +40,7 @@ export default React.createClass( {
 					} )}
 				</div>
 				{!!onEmptyTrash &&
-					<div className="note-list-empty-trash color-border">
+					<div className="note-list-empty-trash theme-color-border">
 						<button type="button" className="button button-borderless button-danger" onClick={onEmptyTrash}>Empty Trash</button>
 					</div>
 				}
