@@ -51,13 +51,13 @@ export default React.createClass( {
 			<div className={classNames( 'dialog', className ) } role="dialog" aria-labelledby={titleElementId}>
 				<input type="text" className="focus-guard" onFocus={() => this.focusLastInput()} />
 
-				<div ref="box" className="dialog-box color-bg color-fg">
+				<div ref="box" className="dialog-box theme-color-bg theme-color-fg">
 					{( title != null || onDone != null ) &&
-						<div className="dialog-title-bar color-border">
+						<div className="dialog-title-bar theme-color-border">
 							<div className="dialog-title-side"></div>
 							<h2 id={titleElementId} className="dialog-title-text">{title}</h2>
 							<div className="dialog-title-side">
-								{!!onDone && <button type="button" className="text-button" onClick={onDone}>Done</button>}
+								{!!onDone && <button type="button" className="button button-borderless" onClick={onDone}>Done</button>}
 							</div>
 						</div>
 					}

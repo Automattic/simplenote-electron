@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import TagChip from './tag-chip'
 import classNames from 'classnames';
+import analytics from './analytics';
 
 export default React.createClass( {
 
@@ -39,6 +40,7 @@ export default React.createClass( {
 		tags = tags.trim().replace( /\s+/g, ',' ).split( ',' );
 		tags = this.props.tags.concat( tags );
 		this.props.onUpdateNoteTags( tags );
+		analytics.tracks.recordEvent( 'editor_tag_added' );
 	},
 
 	onSelectTag: function( tag, index ) {
@@ -63,6 +65,7 @@ export default React.createClass( {
 		this.props.onUpdateNoteTags( tags );
 
 		this.setState( state );
+		analytics.tracks.recordEvent( 'editor_tag_removed' );
 	},
 
 	deleteSelection: function() {
@@ -85,6 +88,7 @@ export default React.createClass( {
 		var tag = this.refs.tag.value.trim();
 		switch ( e.which ) {
 			case 13: // return key
+			case 9: // tab key
 				// commit the value of the tag
 				if ( tag === '' ) return;
 				this.addTag( tag );
@@ -120,7 +124,7 @@ export default React.createClass( {
 		var { selectedTag } = this.state;
 
 		return (
-			<div className={classNames( 'tag-editor', 'color-border', { 'has-selection': this.hasSelection() } )}
+			<div className={classNames( 'tag-editor', 'theme-color-border', { 'has-selection': this.hasSelection() } )}
 				tabIndex="-1"
 				onKeyDown={this.onKeyDown}
 				onBlur={this.onBlur}>

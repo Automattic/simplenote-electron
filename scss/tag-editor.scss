@@ -1,6 +1,5 @@
 .tag-editor {
 	display: flex;
-	height: 4.5em;
 	padding: 20px 20px 0;
 	align-items: flex-start;
 	line-height: 1.75em;
@@ -8,7 +7,7 @@
 	overflow: auto;
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
-	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
 	
 	&:focus {
 		outline: none;
@@ -20,7 +19,6 @@
 		border: 0;
 		padding: 0;
 		opacity: 0;
-		box-sizing: border-box;
 
 		&:focus {
 			outline: none;
@@ -46,7 +44,13 @@
 		background: $gray;
 		color: $white;
 	}
-	
+}
+
+.theme-dark {
+	.tag-chip {
+		background: darken($gray, 25%);
+		color: lighten($gray, 10%);
+	}
 }
 
 .tag-field {

@@ -33,7 +33,7 @@
 	flex: 1 1 auto;
 	margin: auto;
 	background: white;
-	border-radius: 2px;
+	border-radius: $border-radius;
 	box-shadow: 0 0 6px rgba(0,0,0,0.5);
 }
 
@@ -51,7 +51,6 @@
 		width: 100%;
 		margin: 0 auto;
 		font-size: 130%;
-		font-weight: 600;
 	}
 }
 
@@ -87,6 +86,7 @@
 		font-weight: 300;
 		color: darken($gray, 10%);
 		text-transform: capitalize;
+		border-radius: 0;
 	}
 
 	.dialog-tab-active {

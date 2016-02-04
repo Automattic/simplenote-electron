@@ -33,7 +33,7 @@ Install electron globally `npm install -g electron-prebuilt`, then:
 
 ## Deploying to simplenote.com
 
-You can deploy a build to [http://electron-dot-simple-note-hrd.appspot.com]() by pushing the `/dist` directory to `gh-pages`:
+You can deploy a build to [http://electron-dot-simple-note-hrd.appspot.com](http://electron-dot-simple-note-hrd.appspot.com) by pushing the `/dist` directory to `gh-pages`:
 
 1. Delete the `./dist` directory if it exists `rm -r dist`
 2. Clone the `gh-pages` branch to the `dist` directory: `git clone git@github.com:automattic/simplenote-electron.git -b gh-pages dist`

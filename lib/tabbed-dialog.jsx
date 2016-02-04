@@ -28,12 +28,12 @@ export default React.createClass( {
 
 		return (
 			<Dialog className="settings" {...dialog}>
-				<nav className="dialog-tabs color-border">
+				<nav className="dialog-tabs theme-color-border">
 					<ul>
 						{tabs.map( tab =>
 							<li key={tab}>
 								<button type="button"
-										className={classNames( 'text-button', { 'dialog-tab-active': tab === currentTab } )}
+										className={classNames( 'button button-borderless', { 'dialog-tab-active': tab === currentTab } )}
 										onClick={this.setCurrentTab.bind( this, tab )}>
 									{renderTabName( tab )}
 								</button>

@@ -11,7 +11,7 @@ html, body {
 
 body {
 	margin: 0;
-	font: 14px/1.65 $sans;
+	font: 14px/1.5 $sans;
 	overflow: hidden;
 	-webkit-touch-callout: none;
 
@@ -75,8 +75,24 @@ a {
 .panel-title {
 	margin: 0;
 	text-transform: uppercase;
-	letter-spacing: 0.1em;
 	font-size: 86%;
-	font-weight: normal;
 	color: darken($gray, 20%);
 }
+
+/* Fade content when toolbars are visible */
+.note-info-open {
+	.note-editor, .source-list {
+		opacity: $fade-alpha;
+		transition: $anim;
+		pointer-events: none;
+	}
+}
+
+.navigation-open {
+	.note-editor, .source-list {
+		opacity: $fade-alpha;
+		transition: $anim;
+		pointer-events: none;
+	}
+}
+

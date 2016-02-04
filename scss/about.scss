@@ -2,8 +2,6 @@
 	.dialog-box {
 		position: relative;
 		max-width: 472px;
-		background: #0098DD !important;
-		color: white !important;
 	}
 
 	.dialog-content {
@@ -16,6 +14,14 @@
 	}
 }
 
+.theme-light,
+.theme-dark {
+ .about .dialog-box {
+	 background: $blue;
+	 color: white;
+ }
+}
+
 .about-top {
 	margin-bottom: 40px;
 	text-align: center;
@@ -23,7 +29,6 @@
 	svg {
 		display: block;
 		margin: 0 auto 10px;
-		fill: white;
 	}
 
 	h1 {
@@ -39,22 +44,26 @@
 }
 
 .about-links {
-	max-width: 275px;
+	max-width: 300px;
 	margin: 0 auto;
 	padding: 0;
 	list-style: none;
 	line-height: normal;
 
 	li {
-		border-bottom: 1px solid #59BCE9;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid rgba($white, 0.25);
 
 		&:first-child {
-			border-top: 1px solid #59BCE9;
+			border-top: 1px solid rgba($white, 0.25);
 		}
 	}
 
 	a {
 		display: block;
+		width: 100%;
 		padding: 10px 2px;
 	}
 }

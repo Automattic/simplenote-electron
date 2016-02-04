@@ -10,10 +10,27 @@ import NoteEditor	from './note-editor'
 import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
 import Auth from './auth'
-import NewNoteIcon	from './icons/new-note'
+import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
+import analytics from './analytics'
 import classNames	from 'classnames'
+import noop from 'lodash/utility/noop';
+
+let ipc = getIpc();
+
+function getIpc() {
+	try {
+		ipc = __non_webpack_require__( 'ipc' );
+	} catch ( e ) {
+		ipc = {
+			on: noop,
+			removeListener: noop
+		};
+	}
+
+	return ipc;
+}
 
 function mapStateToProps( state ) {
 	return state;
@@ -56,6 +73,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	componentDidMount: function() {
+		ipc.on( 'appCommand', this.onAppCommand );
+
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
 			.on( 'update', this.onNoteUpdate )
@@ -72,12 +91,29 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 		this.onNotesIndex();
 		this.onTagsIndex();
+
+		analytics.tracks.recordEvent( 'application_opened' );
+	},
+
+	componentWillUnmount: function() {
+		ipc.removeListener( 'appCommand', this.onAppCommand );
+	},
+
+	onAppCommand: function( command ) {
+		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
+			this.props.actions[ command.action ]( command );
+		}
 	},
 
 	onAuthChanged: function() {
+		let isAuthorized = this.props.client.isAuthorized();
 		this.props.actions.authChanged( {
-			authorized: this.props.client.isAuthorized()
+			authorized: isAuthorized
 		} );
+
+		if ( isAuthorized ) {
+			analytics.initialize( this.props.appState.accountName );
+		}
 	},
 
 	onSelectNote: function( noteId ) {
@@ -85,6 +121,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			noteId
 		} );
+		analytics.tracks.recordEvent( 'list_note_opened' );
 	},
 
 	onPinNote: function( note, pin = true ) {
@@ -115,12 +152,13 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		this.props.actions.newNote( {
 			noteBucket: this.props.noteBucket
 		} );
+		analytics.tracks.recordEvent( 'list_note_created' );
 	},
 
-	onNoteUpdate: function( noteId, data, original, patch ) {
+	onNoteUpdate: function( noteId, data, original, patch, isIndexing ) {
 		this.props.actions.noteUpdated( {
 			noteBucket: this.props.noteBucket,
-			noteId, data, original, patch
+			noteId, data, original, patch, isIndexing
 		} );
 	},
 
@@ -132,6 +170,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	onSelectTag: function( tag ) {
 		this.props.actions.selectTag( { tag } );
+		analytics.tracks.recordEvent( 'list_tag_viewed' );
 	},
 
 	onSettings: function() {
@@ -168,6 +207,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			tag
 		} );
+		analytics.tracks.recordEvent( 'list_trash_viewed' );
 	},
 
 	onReorderTags: function( tags ) {
@@ -179,6 +219,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	onSearch: function( filter ) {
 		this.props.actions.search( { filter } );
+		analytics.tracks.recordEvent( 'list_notes_searched' );
 	},
 
 	filterNotes: function() {
@@ -231,10 +272,29 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			note
 		} );
+		analytics.tracks.recordEvent( 'editor_note_deleted' );
 	},
 
 	onRestoreNote: function( note ) {
 		this.props.actions.restoreNote( {
+			noteBucket: this.props.noteBucket,
+			note
+		} );
+		analytics.tracks.recordEvent( 'editor_note_restored' );
+	},
+
+	onShareNote: function( note ) {
+		this.props.actions.showDialog( {
+			dialog: {
+				type: 'Share',
+				modal: true
+			},
+			params: { note }
+		} );
+	},
+
+	onDeleteNoteForever: function( note ) {
+		this.props.actions.deleteNoteForever( {
 			noteBucket: this.props.noteBucket,
 			note
 		} );
@@ -245,6 +305,32 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			noteBucket: this.props.noteBucket,
 			note
 		} );
+		analytics.tracks.recordEvent( 'editor_versions_accessed' );
+	},
+
+	onEmptyTrash: function() {
+		this.props.actions.emptyTrash( {
+			noteBucket: this.props.noteBucket
+		} );
+	},
+
+	onToolbarOutsideClick: function( isNavigationBar ) {
+		const {
+			actions: { toggleNavigation, toggleNoteInfo },
+			appState: { dialogs, showNavigation, showNoteInfo }
+		} = this.props;
+
+		if ( dialogs.length > 0 ) { 
+			return;
+		}
+
+		if ( isNavigationBar && showNavigation ) {
+			return toggleNavigation();
+		}
+
+		if ( ! isNavigationBar && showNoteInfo ) {
+			return toggleNoteInfo();
+		}
 	},
 
 	render: function() {
@@ -277,18 +363,24 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onTrashTag={this.onTrashTag}
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
-								tags={state.tags} />
-							<div className="source-list color-bg color-fg color-border">
-								<div className="search-bar color-border">
-									<div className="icon-button" tabIndex="-1" onClick={() => this.props.actions.toggleNavigation() }>
+								tags={state.tags}
+								onOutsideClick={this.onToolbarOutsideClick} />
+							<div className="source-list theme-color-bg theme-color-fg">
+								<div className="search-bar theme-color-border">
+									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
-									</div>
+									</button>
 									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
-									<div className={classNames( 'icon-button', { disabled: state.showTrash } )} tabIndex="-1" onClick={this.onNewNote}>
+									<button className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
-									</div>
+									</button>
 								</div>
-								<NoteList notes={notes} selectedNoteId={state.selectedNoteId} onSelectNote={this.onSelectNote} onPinNote={this.onPinNote} />
+								<NoteList
+									notes={notes}
+									selectedNoteId={state.selectedNoteId}
+									onSelectNote={this.onSelectNote}
+									onPinNote={this.onPinNote}
+									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}
@@ -296,19 +388,22 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								revisions={state.revisions}
 								markdownEnabled={settings.markdownEnabled}
 								onSetEditorMode={this.onSetEditorMode}
-								onSignOut={this.props.onSignOut}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
 								onTrashNote={this.onTrashNote}
 								onRestoreNote={this.onRestoreNote}
+								onShareNote={this.onShareNote}
+								onDeleteNoteForever={this.onDeleteNoteForever}
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={() => this.props.actions.toggleNoteInfo()} />
+								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+								fontSize={settings.fontSize} />
 							<NoteInfo
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
-								onMarkdownNote={this.onMarkdownNote} />
+								onMarkdownNote={this.onMarkdownNote}
+								onOutsideClick={this.onToolbarOutsideClick} />
 						</div>
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />
@@ -348,11 +443,15 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		);
 	},
 
-	renderDialog( dialog ) {
+	renderDialog( { params, ...dialog } ) {
 		var DialogComponent = Dialogs[ dialog.type ];
 
+		if ( DialogComponent == null ) {
+			throw new Error( 'Unknown dialog type.' );
+		}
+
 		return (
-			<DialogComponent {...this.props} dialog={dialog} />
+			<DialogComponent {...this.props} dialog={dialog} params={params} />
 		);
 	}
 } ) );

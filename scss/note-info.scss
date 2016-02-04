@@ -1,7 +1,6 @@
 .note-info {
 	display: flex;
 	flex-direction: column;
-	box-sizing: border-box;
 	position: absolute;
 	top: 0;
 	left: 100%;
@@ -15,7 +14,7 @@
 
 	.note-info-panel {
 		flex: none;
-		padding: 20px 30px;
+		padding: 20px;
 		border-bottom: 1px solid lighten($gray, 30%);
 
 		&:last-child {
@@ -26,7 +25,6 @@
 	.note-info-item {
 		display: flex;
 		align-items: center;
-		line-height: 1.1em;
 		margin-bottom: 2.25em;
 
 		&:last-child {
@@ -45,8 +43,7 @@
 	}
 
 	.note-info-detail {
-		font-size: 81.25%;
-		color: darken($gray, 20%);
+		color: $gray;
 	}
 
 	.note-info-public-link {

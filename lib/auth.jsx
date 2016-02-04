@@ -18,18 +18,18 @@ export default React.createClass( {
 					<div className="login-logo">
 						<SimplenoteLogo />
 					</div>
-					<div className="login-fields color-border">
-						<label className="login-field color-border" htmlFor="login-field-username">
+					<div className="login-fields theme-color-border theme-color-fg">
+						<label className="login-field theme-color-border" htmlFor="login-field-username">
 							<span className="login-field-label">Email</span>
 							<span className="login-field-control"><input ref="username" id="login-field-username" type="email" /></span>
 						</label>
-						<label className="login-field color-border" htmlFor="login-field-password">
+						<label className="login-field theme-color-border" htmlFor="login-field-password">
 							<span className="login-field-label">Password</span>
 							<span className="login-field-control"><input ref="password" id="login-field-password" type="password" /></span>
 						</label>
 					</div>
 					<div className="login-actions">
-						<button type="submit" className="primary-button">Log in</button>
+						<button type="submit" className="button button-primary">Log in</button>
 						<p className="login-forgot">
 							<a href="https://app.simplenote.com/forgot/" target="_blank" onClick={this.onForgot}>Forgot your password?</a>
 						</p>

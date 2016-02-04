@@ -1,6 +1,7 @@
 var app = require( 'app' );	 // Module to control application life.
 var Menu = require( 'menu' );
 var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
+var path = require('path')
 
 module.exports = function main( url ) {
 	// Report crashes to our server.
@@ -28,13 +29,18 @@ module.exports = function main( url ) {
 		Menu.setApplicationMenu( menu );
 
 		// Create the browser window.
-		mainWindow = new BrowserWindow( { width: 800, height: 600 } );
+		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
+		mainWindow = new BrowserWindow( { width: 1024, height: 768, icon: iconPath } );
 
-		// and load the index.html of the app.
-		mainWindow.loadUrl( url );
+		// and load the index of the app.
+		if ( typeof mainWindow.loadURL === 'function' ) {
+			mainWindow.loadURL( url );
+		} else {
+			mainWindow.loadUrl( url );
+		}
 
-		// Open the devtools.
-		mainWindow.openDevTools();
+		// Uncomment me to debug in the electron window
+		// mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
@@ -81,18 +87,29 @@ function createMenuTemplate() {
 		submenu: [ {
 			label: 'Font Size',
 			submenu: [ {
-				label: 'Larger',
+				label: 'Bigger',
 				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
-				click: function( /* item, focusedWindow */ ) {
-					debugger;
-					// TODO increase size of editor font-size
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeBigger' } );
+					}
 				}
 			}, {
 				label: 'Smaller',
-				accelerator: 'CmdOrCtrl+-'
+				accelerator: 'CmdOrCtrl+-',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeSmaller' } );
+					}
+				}
 			}, {
 				label: 'Reset',
-				accelerator: 'CmdOrCtrl+0'
+				accelerator: 'CmdOrCtrl+0',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
+					}
+				}
 			} ]
 		}, {
 			label: 'Sort Order',
@@ -104,9 +121,19 @@ function createMenuTemplate() {
 		}, {
 			label: 'Theme',
 			submenu: [ {
-				label: 'Light'
+				label: 'Light',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setLightThemeActive' } );
+					}
+				}
 			}, {
-				label: 'Dark'
+				label: 'Dark',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setDarkThemeActive' } );
+					}
+				}
 			} ]
 		}, {
 			label: 'Toggle Full Screen',
