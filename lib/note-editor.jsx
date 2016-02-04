@@ -65,8 +65,8 @@ export default React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		return (
-			<div className="note-editor color-bg color-fg">
-				<div className="note-editor-controls color-border">
+			<div className="note-editor theme-color-bg theme-color-fg">
+				<div className="note-editor-controls theme-color-border">
 					{!isTrashed &&
 						<TagField
 							tags={tags}
@@ -82,7 +82,7 @@ export default React.createClass( {
 						onCloseNote={this.props.onCloseNote}
 						onNoteInfo={this.props.onNoteInfo} />
 				</div>
-				<div className="note-editor-content color-border">
+				<div className="note-editor-content theme-color-border">
 					{!!markdownEnabled && this.renderModeBar()}
 					<div className="note-editor-detail">
 						<NoteDetail

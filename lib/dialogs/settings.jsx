@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import CheckboxControl from '../controls/checkbox';
+import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
 
 const settingTabs = [ 'account', 'display', 'writing' ];
@@ -18,6 +19,7 @@ export default React.createClass( {
 	},
 
 	onEditAccount() {
+		viewExternalUrl( 'https://app.simplenote.com/settings' );
 	},
 
 	onUpdateSettingValue( event ) {
@@ -59,9 +61,9 @@ export default React.createClass( {
 			case 'account':
 				return (
 					<div className="dialog-column settings-account">
-						<h3 className="panel-title color-fg-dim">Account</h3>
-						<div className="settings-items color-border">
-							<div className="settings-item color-border">
+						<h3 className="panel-title theme-color-fg-dim">Account</h3>
+						<div className="settings-items theme-color-border">
+							<div className="settings-item theme-color-border">
 								<span className="settings-item-text-input transparent-input">{accountName}</span>
 							</div>
 						</div>
@@ -77,9 +79,9 @@ export default React.createClass( {
 				return (
 					<div className="dialog-column settings-display">
 						<div className="settings-group">
-							<h3 className="panel-title color-fg-dim">Sort type</h3>
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-sordType-last-modified" className="settings-item color-border">
+							<h3 className="panel-title theme-color-fg-dim">Sort type</h3>
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-sordType-last-modified" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Last modified
 									</div>
@@ -90,7 +92,7 @@ export default React.createClass( {
 											onChange={this.onUpdateSettingValue} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-sordType-last-created" className="settings-item color-border">
+								<label htmlFor="settings-field-sordType-last-created" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Last created
 									</div>
@@ -101,7 +103,7 @@ export default React.createClass( {
 											onChange={this.onUpdateSettingValue} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-sordType-alphabetical" className="settings-item color-border">
+								<label htmlFor="settings-field-sordType-alphabetical" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Alphabetical
 									</div>
@@ -115,9 +117,9 @@ export default React.createClass( {
 							</div>
 						</div>
 						<div className="settings-group">
-							<h3 className="panel-title color-fg-dim">Sort order</h3>
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-sortReversed" className="settings-item color-border">
+							<h3 className="panel-title theme-color-fg-dim">Sort order</h3>
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-sortReversed" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Reversed
 									</div>
@@ -131,9 +133,9 @@ export default React.createClass( {
 							</div>
 						</div>
 						<div className="settings-group">
-							<h3 className="panel-title color-fg-dim">Note display</h3>
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-noteDisplay-comfy" className="settings-item color-border">
+							<h3 className="panel-title theme-color-fg-dim">Note display</h3>
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-noteDisplay-comfy" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Comfy
 									</div>
@@ -144,7 +146,7 @@ export default React.createClass( {
 											onChange={this.onUpdateSettingValue} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-noteDisplay-condensed" className="settings-item color-border">
+								<label htmlFor="settings-field-noteDisplay-condensed" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Condensed
 									</div>
@@ -155,7 +157,7 @@ export default React.createClass( {
 											onChange={this.onUpdateSettingValue} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-noteDisplay-expanded" className="settings-item color-border">
+								<label htmlFor="settings-field-noteDisplay-expanded" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Expanded
 									</div>
@@ -169,9 +171,9 @@ export default React.createClass( {
 							</div>
 						</div>
 						<div className="settings-group">
-							<h3 className="panel-title color-fg-dim">Theme</h3>
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-theme-light" className="settings-item color-border">
+							<h3 className="panel-title theme-color-fg-dim">Theme</h3>
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-theme-light" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Light
 									</div>
@@ -182,7 +184,7 @@ export default React.createClass( {
 											onChange={this.onUpdateSettingValue} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-theme-dark" className="settings-item color-border">
+								<label htmlFor="settings-field-theme-dark" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Dark
 									</div>
@@ -202,8 +204,8 @@ export default React.createClass( {
 				return (
 					<div className="dialog-column settings-writing">
 						<div className="settings-group">
-							<div className="settings-items color-border">
-								<label htmlFor="settings-field-markdown" className="settings-item color-border">
+							<div className="settings-items theme-color-border">
+								<label htmlFor="settings-field-markdown" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Enable Markdown
 									</div>

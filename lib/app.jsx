@@ -365,8 +365,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								editingTags={state.editingTags}
 								tags={state.tags}
 								onOutsideClick={this.onToolbarOutsideClick} />
-							<div className="source-list color-bg color-fg">
-								<div className="search-bar color-border">
+							<div className="source-list theme-color-bg theme-color-fg">
+								<div className="search-bar theme-color-border">
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>

@@ -29,9 +29,9 @@ export default React.createClass( {
 		const publishURL = isPublished && data.publishURL !== '' && data.publishURL && `http://simp.ly/publish/${data.publishURL}` || null;
 
 		return (
-			<div className="note-info color-bg color-fg color-border">
-				<div className="note-info-panel note-info-stats color-border">
-					<h2 className="panel-title color-fg-dim">Info</h2>
+			<div className="note-info theme-color-bg theme-color-fg theme-color-border">
+				<div className="note-info-panel note-info-stats theme-color-border">
+					<h2 className="panel-title theme-color-fg-dim">Info</h2>
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Created</span>
@@ -55,7 +55,7 @@ export default React.createClass( {
 						</span>
 					</p>
 				</div>
-				<div className="note-info-panel note-info-pin color-border">
+				<div className="note-info-panel note-info-pin theme-color-border">
 					<label className="note-info-item" htmlFor="note-info-pin-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Pin to top</span>
@@ -65,7 +65,7 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>
-				{!!markdownEnabled && <div className="note-info-panel note-info-markdown color-border">
+				{!!markdownEnabled && <div className="note-info-panel note-info-markdown theme-color-border">
 					<label className="note-info-item" htmlFor="note-info-markdown-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Markdown</span>
@@ -78,7 +78,7 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>}
-				<div className="note-info-panel note-info-public-link color-border">
+				<div className="note-info-panel note-info-public-link theme-color-border">
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Public link</span>

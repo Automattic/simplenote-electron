@@ -31,7 +31,7 @@ export default React.createClass( {
 						return (
 							<div key={note.id} className={classes}>
 								<div className="note-list-item-pinner" tabIndex="0" onClick={this.onPinNote.bind( this, note )}></div>
-								<div className="note-list-item-text color-border" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
+								<div className="note-list-item-text theme-color-border" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
 									<div className="note-list-item-title">{text.title}</div>
 									<div className="note-list-item-excerpt">{text.preview}</div>
 								</div>
@@ -40,7 +40,7 @@ export default React.createClass( {
 					} )}
 				</div>
 				{!!onEmptyTrash &&
-					<div className="note-list-empty-trash color-border">
+					<div className="note-list-empty-trash theme-color-border">
 						<button type="button" className="button button-borderless button-danger" onClick={onEmptyTrash}>Empty Trash</button>
 					</div>
 				}
