@@ -314,6 +314,25 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+	onToolbarOutsideClick: function( isNavigationBar ) {
+		const {
+			actions: { toggleNavigation, toggleNoteInfo },
+			appState: { dialogs, showNavigation, showNoteInfo }
+		} = this.props;
+
+		if ( dialogs.length > 0 ) { 
+			return;
+		}
+
+		if ( isNavigationBar && showNavigation ) {
+			return toggleNavigation();
+		}
+
+		if ( ! isNavigationBar && showNoteInfo ) {
+			return toggleNoteInfo();
+		}
+	},
+
 	render: function() {
 		var state = this.props.appState;
 		var { settings } = this.props;
@@ -344,7 +363,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onTrashTag={this.onTrashTag}
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
-								tags={state.tags} />
+								tags={state.tags}
+								onOutsideClick={this.onToolbarOutsideClick} />
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
@@ -382,7 +402,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								note={state.note}
 								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
-								onMarkdownNote={this.onMarkdownNote} />
+								onMarkdownNote={this.onMarkdownNote}
+								onOutsideClick={this.onToolbarOutsideClick} />
 						</div>
 				:
 					<Auth onAuthenticate={this.props.onAuthenticate} />
