@@ -34,6 +34,20 @@ export default React.createClass( {
 		} );
 	},
 
+	onUpdateSortType( event ) {
+		this.onUpdateSettingValue( event );
+		this.props.actions.loadNotes( {
+			noteBucket: this.props.noteBucket
+		} );
+	},
+
+	onUpdateSortReversed( event ) {
+		this.onUpdateSettingBool( event );
+		this.props.actions.loadNotes( {
+			noteBucket: this.props.noteBucket
+		} );
+	},
+
 	render() {
 		var dialog = this.props.dialog;
 
@@ -86,21 +100,21 @@ export default React.createClass( {
 										Last modified
 									</div>
 									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="sortType" value="last-modified"
-											id="settings-field-sordType-last-modified"
-											checked={settings.sortType === 'last-modified'}
-											onChange={this.onUpdateSettingValue} />
+										<CheckboxControl type="radio" name="sortType" value="modificationDate"
+											id="settings-field-sordType-modificationDate"
+											checked={settings.sortType === 'modificationDate'}
+											onChange={this.onUpdateSortType} />
 									</div>
 								</label>
-								<label htmlFor="settings-field-sordType-last-created" className="settings-item theme-color-border">
+								<label htmlFor="settings-field-sordType-creationDate" className="settings-item theme-color-border">
 									<div className="settings-item-label">
 										Last created
 									</div>
 									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="sortType" value="last-created"
-											id="settings-field-sordType-last-created"
-											checked={settings.sortType === 'last-created'}
-											onChange={this.onUpdateSettingValue} />
+										<CheckboxControl type="radio" name="sortType" value="creationDate"
+											id="settings-field-sordType-creationDate"
+											checked={settings.sortType === 'creationDate'}
+											onChange={this.onUpdateSortType} />
 									</div>
 								</label>
 								<label htmlFor="settings-field-sordType-alphabetical" className="settings-item theme-color-border">
@@ -111,7 +125,7 @@ export default React.createClass( {
 										<CheckboxControl type="radio" name="sortType" value="alphabetical"
 											id="settings-field-sordType-alphabetical"
 											checked={settings.sortType === 'alphabetical'}
-											onChange={this.onUpdateSettingValue} />
+											onChange={this.onUpdateSortType} />
 									</div>
 								</label>
 							</div>
@@ -127,7 +141,7 @@ export default React.createClass( {
 										<ToggleControl name="sortReversed" value="reversed"
 											id="settings-field-sortReversed"
 											checked={!!settings.sortReversed}
-											onChange={this.onUpdateSettingBool} />
+											onChange={this.onUpdateSortReversed} />
 									</div>
 								</label>
 							</div>
