@@ -27,8 +27,7 @@ $green: #4ab866;
 $black: #000; // use $gray-darkest instead
 $white: #fff;
 
-$sans-fallback: Roboto, "Segoe UI", "Helvetica Neue", Noto, sans-serif;
-$sans: -apple-system, $sans-fallback; // 300,300italic,400,400italic,600,600italic,700,700italic
+$sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
 $anim-transition: all 200ms ease-in-out;
 $anim-fast: all .1s ease-in-out;
