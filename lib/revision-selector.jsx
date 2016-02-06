@@ -4,41 +4,84 @@ export default React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			revisions: [],
-			onSelectRevision: function() {},
-			onViewRevision: function() {}
+			revisions: []
 		}
+	},
+
+	componentDidMount: function() {
+		// Note: this is intentionally not in state so that the UI doesn't update after resetSelection()
+		this.selection = -1;
+	},
+
+	mixins: [
+		require( 'react-onclickoutside' )
+	],
+
+	handleClickOutside: function() {
+		this.onCancelRevision();
 	},
 
 	getInitialState: function() {
 		return {
-			selection: -1
+			revisionDate: 'Latest'
 		};
 	},
 
 	onAcceptRevision: function() {
-		var idx = this.state.selection;
-		var revision = this.props.revisions[this.props.revisions.length - 1 - idx];
+		const idx = this.selection;
+		const revisions = this.props.revisions || [];
+		const revision = revisions.slice( -idx ).shift();
 
 		this.props.onSelectRevision( revision );
+		this.resetSelection();
+	},
+
+	resetSelection: function() {
+		this.selection = -1;
 	},
 
 	onSelectRevision: function() {
-		var idx = this.refs.range.value;
-		var revision = this.props.revisions[this.props.revisions.length - 1 - idx];
+		const idx = this.refs.range.value;
+		const revisions = this.props.revisions || [];
+		const revision = revisions.slice( -idx ).shift();
 
-		this.setState( { selection: idx } );
+		const { data: { modificationDate } } = revision;
+		const revisionDate = ( new Date( 1000 * modificationDate ) ).toLocaleString();
+
+		this.selection = idx;
+		this.setState( { revisionDate } );
 		this.props.onViewRevision( revision );
 	},
 
+	onCancelRevision: function() {
+		this.props.onCancelRevision();
+		this.resetSelection();
+	},
+
 	render: function() {
-		var min = 0;
-		var max = this.props.revisions.length - 1;
-		var selection = this.state.selection && this.state.selection > -1 ? this.state.selection : max;
+		const min = 0;
+		const revisions = this.props.revisions || [];
+		const max = Math.max( revisions.length - 1, 1 );
+		const selection = this.selection > -1 ? parseInt( this.selection, 10 ) : max;
+
+		let { revisionDate } = this.state;
+		// if the last index, use a string instead of the date
+		if ( selection === max ) {
+			revisionDate = 'Latest';
+		}
+
+		const revisionButtonStyle = selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
+
 		return (
 			<div className="revision-selector">
-				<input ref="range" type="range" min={min} max={max} value={selection} onChange={this.onSelectRevision} />
-				<div className="button button-borderless" onClick={this.onAcceptRevision}>Restore</div>
+				<div className="revision-date">{revisionDate}</div>
+				<div className="revision-slider">
+					<input ref="range" type="range" min={min} max={max} value={selection} onChange={this.onSelectRevision} />
+				</div>
+				<div className="revision-buttons">
+					<div className="button button-secondary button-compact" onClick={this.onCancelRevision}>Cancel</div>
+					<div style={revisionButtonStyle} className="button button-primary button-compact" onClick={this.onAcceptRevision}>Restore Note</div>
+				</div>
 			</div>
 		)
 	}
