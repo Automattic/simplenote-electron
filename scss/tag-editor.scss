@@ -50,6 +50,11 @@
 	.tag-chip {
 		background: darken($gray, 25%);
 		color: lighten($gray, 10%);
+		
+		&.selected {
+			background: lighten($gray, 10%);
+			color: darken($gray, 30%);
+		}
 	}
 }
 
