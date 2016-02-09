@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
 
@@ -21,10 +22,19 @@ export default React.createClass( {
 
 	componentWillReceiveProps: function( nextProps ) {
 		var note = nextProps.note;
+		var noteContent = note ? note.data.content : '';
 
 		this.setState( {
-			content: note ? note.data.content : ''
+			content: noteContent
 		} );
+
+		// Let's focus the editor for new/blank notes
+		if ( noteContent === '' ) {
+			let editorNode = ReactDOM.findDOMNode( this.refs.noteEditor );
+			if ( editorNode ) {
+				editorNode.focus();
+			}
+		}
 	},
 
 	onPreviewClick( event ) {
@@ -75,7 +85,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<Textarea className="note-detail-textarea theme-color-bg theme-color-fg"
+			<Textarea ref="noteEditor" className="note-detail-textarea theme-color-bg theme-color-fg"
 				disabled={ !!( note && note.data.deleted ) }
 				valueLink={ valueLink }
 				style={ divStyle } />
