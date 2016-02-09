@@ -32,8 +32,8 @@ export default React.createClass( {
 			<div className="note-toolbar">
 				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="button button-borderless" onClick={this.props.onCloseNote}><BackIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
 			</div>
 		);
