@@ -35,7 +35,7 @@
 		margin: 0;
 		line-height: 1.25em;
 		font-size: 250%;
-		font-weight: 300;
+		font-weight: $light;
 	}
 
 	small {
@@ -44,7 +44,7 @@
 }
 
 .about-links {
-	max-width: 300px;
+	max-width: 315px;
 	margin: 0 auto;
 	padding: 0;
 	list-style: none;
@@ -70,7 +70,7 @@
 
 .about-links-title {
 	font-size: 143%;
-	font-weight: 300;
+	font-weight: $light;
 }
 
 .about-bottom {

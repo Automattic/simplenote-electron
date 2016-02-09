@@ -41,7 +41,7 @@
 			width: 7.5em;
 			padding: 8px 12px;
 			font-size: 13px;
-			font-weight: 600;
+			font-weight: $bold;
 			text-transform: uppercase;
 			color: $gray;
 		}
@@ -57,7 +57,7 @@
 			padding: 0.25em 0.15em;
 			border: none;
 			font-size: 143%;
-			font-weight: 300;
+			font-weight: $light;
 		}
 
 		input:focus {
@@ -92,7 +92,7 @@
 		}
 
 		a {
-			font-weight: 600;
+			font-weight: $bold;
 		}
 	}
 }

@@ -58,7 +58,7 @@
 	flex: 1 1 auto;
 	margin: 15px 0;
 	font-size: 130%;
-	font-weight: 600;
+	font-weight: $bold;
 	text-align: center;
 }
 
@@ -83,7 +83,7 @@
 		border-top: 4px solid transparent;
 		border-bottom: 4px solid transparent;
 		font-size: 143%;
-		font-weight: 300;
+		font-weight: $light;
 		color: darken($gray, 10%);
 		text-transform: capitalize;
 		border-radius: 0;
@@ -104,7 +104,7 @@
 .dialog .panel-title {
 	margin-bottom: 0.5em;
 	font-size: 90%;
-	font-weight: 600;
+	font-weight: $bold;
 }
 
 .dialog-actions {
@@ -123,6 +123,6 @@
 	button {
 		width: 100%;
 		font-size: 130%;
-		font-weight: 600;
+		font-weight: $bold;
 	}
 }
