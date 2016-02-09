@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
-import { noop } from 'lodash';
-import { get } from 'lodash';
+import { noop, get } from 'lodash';
 
 const uninitializedNoteEditor = { focus: noop };
 
