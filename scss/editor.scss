@@ -33,17 +33,21 @@
 .note-toolbar {
 	display: flex;
 	align-items: center;
-	padding: 10px 8px;
+	padding: 0 15px;
 
 	.note-toolbar-icon, .note-toolbar-text {
 		flex: none;
-		margin: 0 0 0 8px;
+		margin-right: 14px;
 		text-align: center;
+		
+		&:last-child {
+			margin-right: 0;
+		}
 	}
 
 	.note-toolbar-icon {
-		width: 28px;
-		height: 2em;
+		width: 32px;
+		height: 32px;
 
 		button {
 			width: 100%;
