@@ -337,8 +337,9 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		var state = this.props.appState;
 		var { settings } = this.props;
 		var notes = this.filterNotes();
-		var selectedNote = state.note || get( notes, '0', null );
-		var selectedNoteId = state.selectedNoteId || get( notes, '0.id', null );
+		
+		const selectedNote = get( state, 'note', notes[ 0 ] );
+		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
 		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
