@@ -124,18 +124,20 @@ export default React.createClass( {
 		var { selectedTag } = this.state;
 
 		return (
-			<div className={classNames( 'tag-editor', 'theme-color-border', { 'has-selection': this.hasSelection() } )}
-				tabIndex="-1"
-				onKeyDown={this.onKeyDown}
-				onBlur={this.onBlur}>
-				<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
-				{this.props.tags.map( ( tag, index ) =>
-					<TagChip key={tag} tag={tag}
-						selected={index === selectedTag}
-						onSelect={this.onSelectTag.bind( this, tag, index )} />
-				)}
-				<div className="tag-field">
-					<input ref="tag" type="text" tabIndex="0" placeholder="Add tags &hellip;" />
+			<div className="tag-entry theme-color-border">
+				<div className={classNames( 'tag-editor', { 'has-selection': this.hasSelection() } )}
+					tabIndex="-1"
+					onKeyDown={this.onKeyDown}
+					onBlur={this.onBlur}>
+					<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
+					{this.props.tags.map( ( tag, index ) =>
+						<TagChip key={tag} tag={tag}
+							selected={index === selectedTag}
+							onSelect={this.onSelectTag.bind( this, tag, index )} />
+					)}
+					<div className="tag-field">
+						<input ref="tag" type="text" tabIndex="0" placeholder="Add tags &hellip;" />
+					</div>
 				</div>
 			</div>
 		);

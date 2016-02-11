@@ -1,6 +1,14 @@
+.tag-entry {
+	display: flex;
+	width: 100%;
+	flex-direction: row;
+	justify-content: center;
+	border-left: 1px solid $gray;
+	padding: 10px 0;
+}
+
 .tag-editor {
 	display: flex;
-	padding: 20px 20px 0;
 	align-items: flex-start;
 	line-height: 1.75em;
 	white-space: nowrap;
@@ -8,6 +16,9 @@
 	overflow-y: hidden;
 	-webkit-overflow-scrolling: touch;
 	transform: translate3d(0, 0, 0);
+	width: 100%;
+	max-width: 780px;
+	padding: 0 48px;
 	
 	&:focus {
 		outline: none;
@@ -29,7 +40,7 @@
 
 .tag-chip {
 	flex: none;
-	margin: 2px;
+	margin: 2px 12px 2px 0;
 	padding: 1px 14px;
 	border-radius: 14px;
 	line-height: 1.25em;
@@ -59,7 +70,6 @@
 }
 
 .tag-field {
-	margin: 0 6px 0 12px;
 	flex: 1 0 auto;
 	
 	input {

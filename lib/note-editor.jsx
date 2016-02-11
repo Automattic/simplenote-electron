@@ -67,11 +67,6 @@ export default React.createClass( {
 		return (
 			<div className="note-editor theme-color-bg theme-color-fg">
 				<div className="note-editor-controls theme-color-border">
-					{!isTrashed &&
-						<TagField
-							tags={tags}
-							onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
-					}
 					<NoteToolbar
 						note={note}
 						onTrashNote={this.props.onTrashNote}
@@ -98,6 +93,11 @@ export default React.createClass( {
 							onSelectRevision={this.onSelectRevision} />
 					}
 				</div>
+				{ ! isTrashed &&
+					<TagField
+						tags={tags}
+						onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
+				}
 			</div>
 		)
 	},
