@@ -30,25 +30,22 @@ export default React.createClass( {
 	// Determine if the selected class should be applied for the 'all notes' or 'trash' rows
 	getNavigationItemClass: function( isTrashRow ) {
 		const { showTrash, selectedTag } = this.props;
-		const isItemSelected = isTrashRow ? showTrash : ! showTrash;
+		const isItemSelected = isTrashRow === showTrash;
 
-		return isItemSelected && ! selectedTag ? 
-			'navigation-folders-item-selected'
-			:
-			'navigation-folders-item';
+		return isItemSelected && ! selectedTag
+			? 'navigation-folders-item-selected'
+			: 'navigation-folders-item';
 	},
 
 	render: function() {
-		const { showTrash, selectedTag } = this.props;
-
 		const classes = classNames( 'button', 'button-borderless', 'theme-color-fg' );
-		const allNotesClasses = classNames( 
-			this.getNavigationItemClass( false ), 
-			classes 
+		const allNotesClasses = classNames(
+			this.getNavigationItemClass( false ),
+			classes
 		);
-		const trashClasses = classNames( 
-			this.getNavigationItemClass( true ), 
-			classes 
+		const trashClasses = classNames(
+			this.getNavigationItemClass( true ),
+			classes
 		);
 
 		return (
