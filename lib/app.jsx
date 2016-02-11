@@ -15,7 +15,7 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import analytics from './analytics'
 import classNames	from 'classnames'
-import noop from 'lodash/utility/noop';
+import { noop, get } from 'lodash';
 
 let ipc = getIpc();
 
@@ -337,13 +337,16 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		var state = this.props.appState;
 		var { settings } = this.props;
 		var notes = this.filterNotes();
+		
+		const selectedNote = get( state, 'note', notes[ 0 ] );
+		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
 		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
 		var mainClasses = classNames( 'simplenote-app', {
-			'note-open': state.note,
+			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation
 		} );
@@ -377,14 +380,14 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								</div>
 								<NoteList
 									notes={notes}
-									selectedNoteId={state.selectedNoteId}
+									selectedNoteId={selectedNoteId}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
 									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}
-								note={state.note}
+								note={selectedNote}
 								revisions={state.revisions}
 								markdownEnabled={settings.markdownEnabled}
 								onSetEditorMode={this.onSetEditorMode}
@@ -399,7 +402,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
 								fontSize={settings.fontSize} />
 							<NoteInfo
-								note={state.note}
+								note={selectedNote}
 								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
 								onMarkdownNote={this.onMarkdownNote}
