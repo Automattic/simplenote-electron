@@ -17,7 +17,8 @@
 }
 
 .navigation-folders-item,
-.navigation-tools-item {
+.navigation-tools-item, 
+.navigation-folders-item-selected {
 	width: 100%;
 	line-height: 2em;
 	padding: 8px 20px;
@@ -29,6 +30,16 @@
 	svg {
 		fill: $gray;
 	}
+}
+
+.navigation-folders-item-selected {
+	span {
+		color: $blue;
+	}
+			
+	svg[class^="icon-"] {
+ 		fill: $blue;
+ 	}
 }
 
 .theme-light,

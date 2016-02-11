@@ -366,6 +366,8 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onTrashTag={this.onTrashTag}
 								onReorderTags={this.onReorderTags}
 								editingTags={state.editingTags}
+								showTrash={state.showTrash}
+								selectedTag={state.tag}
 								tags={state.tags}
 								onOutsideClick={this.onToolbarOutsideClick} />
 							<div className="source-list theme-color-bg theme-color-fg">
