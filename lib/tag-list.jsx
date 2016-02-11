@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import classNames from 'classnames'
 import EditableList from './editable-list'
+import { get } from 'lodash'
 
 export default React.createClass( {
 
@@ -32,20 +33,27 @@ export default React.createClass( {
 					editing={this.props.editingTags}
 					renderItem={this.renderItem}
 					onRemove={this.props.onTrashTag}
-					onReorder={this.props.onReorderTags} />
+					onReorder={this.props.onReorderTags}
+					selectedTag={this.props.selectedTag} />
 			</div>
 		);
 	},
 
 	renderItem( tag ) {
-		var valueLink = {
+		const { selectedTag } = this.props;
+		const valueLink = {
 			value: tag.data.name,
 			requestChange: this.props.onRenameTag.bind( null, tag )
 		};
 
+		const isSelected = tag.data.name === get( selectedTag, 'data.name', '' );
+		const classes = classNames( 'tag-list-input', 'theme-color-fg', {
+			active: isSelected
+		} );
+
 		return (
 			<input
-				className="tag-list-input theme-color-fg"
+				className={classes}
 				readOnly={!this.props.editingTags}
 				onClick={this.onSelectTag.bind( this, tag )}
 				valueLink={valueLink} />

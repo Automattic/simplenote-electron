@@ -4,6 +4,7 @@ import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
 import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
+import classNames from 'classnames'
 
 export default React.createClass( {
 
@@ -26,15 +27,38 @@ export default React.createClass( {
 		viewExternalUrl( 'http://simplenote.com/help' );
 	},
 
+	// Determine if the selected class should be applied for the 'all notes' or 'trash' rows
+	getNavigationItemClass: function( isTrashRow ) {
+		const { showTrash, selectedTag } = this.props;
+		const isItemSelected = isTrashRow ? showTrash : ! showTrash;
+
+		return isItemSelected && ! selectedTag ? 
+			'navigation-folders-item-selected'
+			:
+			'navigation-folders-item';
+	},
+
 	render: function() {
+		const { showTrash, selectedTag } = this.props;
+
+		const classes = classNames( 'button', 'button-borderless', 'theme-color-fg' );
+		const allNotesClasses = classNames( 
+			this.getNavigationItemClass( false ), 
+			classes 
+		);
+		const trashClasses = classNames( 
+			this.getNavigationItemClass( true ), 
+			classes 
+		);
+
 		return (
 			<div className="navigation theme-color-bg theme-color-fg theme-color-border">
 				<div className="navigation-folders">
-					<button type="button" className="navigation-folders-item button button-borderless theme-color-fg" onClick={this.props.onSelectAllNotes}>
+					<button type="button" className={allNotesClasses} onClick={this.props.onSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</button>
-					<button type="button" className="navigation-folders-item button button-borderless theme-color-fg" onClick={this.props.onSelectTrash}>
+					<button type="button" className={trashClasses} onClick={this.props.onSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
 					</button>
