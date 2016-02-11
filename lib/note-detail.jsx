@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
+import { noop, get } from 'lodash';
+
+const uninitializedNoteEditor = { focus: noop };
 
 export default React.createClass( {
 
@@ -15,16 +18,30 @@ export default React.createClass( {
 		var note = this.props.note;
 
 		return {
-			content: note ? note.data.content : ''
+			content: get( note, 'data.content', '' )
 		};
 	},
 
+	componentWillMount: function() {
+		this.noteEditor = uninitializedNoteEditor;
+	},
+
+	initializeNoteEditor: function( noteEditor ) {
+		this.noteEditor = noteEditor;
+	},
+
 	componentWillReceiveProps: function( nextProps ) {
-		var note = nextProps.note;
+		const note = nextProps.note;
+		const noteContent = get( note, 'data.content', '' );
 
 		this.setState( {
-			content: note ? note.data.content : ''
+			content: noteContent
 		} );
+
+		// Let's focus the editor for new/blank notes
+		if ( noteContent === '' ) {
+			this.noteEditor.focus();
+		}
 	},
 
 	onPreviewClick( event ) {
@@ -75,7 +92,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<Textarea className="note-detail-textarea theme-color-bg theme-color-fg"
+			<Textarea ref={ this.initializeNoteEditor } className="note-detail-textarea theme-color-bg theme-color-fg"
 				disabled={ !!( note && note.data.deleted ) }
 				valueLink={ valueLink }
 				style={ divStyle } />
