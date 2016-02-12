@@ -320,7 +320,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 			appState: { dialogs, showNavigation, showNoteInfo }
 		} = this.props;
 
-		if ( dialogs.length > 0 ) { 
+		if ( dialogs.length > 0 ) {
 			return;
 		}
 

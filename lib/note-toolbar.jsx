@@ -15,7 +15,13 @@ export default React.createClass( {
 		onRevisions: PropTypes.func.isRequired,
 		onShareNote: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
-		onNoteInfo: PropTypes.func.isRequired
+		onNoteInfo: PropTypes.func.isRequired,
+		setIsViewingRevisions: PropTypes.func.isRequired
+	},
+
+	showRevisions: function() {
+		this.props.setIsViewingRevisions( true );
+		this.props.onRevisions( this.props.note );
 	},
 
 	render() {
@@ -31,7 +37,7 @@ export default React.createClass( {
 		return (
 			<div className="note-toolbar">
 				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="button button-borderless" onClick={this.props.onCloseNote}><BackIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onRevisions.bind( null, note )}><RevisionsIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.showRevisions}><RevisionsIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
 				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
