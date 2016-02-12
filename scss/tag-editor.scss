@@ -4,14 +4,16 @@
 
 .tag-editor {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
+	flex-wrap: wrap;
 	line-height: 1.75em;
 	white-space: nowrap;
 	overflow: hidden;
 	transform: translate3d(0, 0, 0);
-	width: 100%;
+	margin: 0 auto;
 	max-width: 780px;
-	padding: 0 48px;
+	max-height: 120px; 
+	padding: 20px 48px;
 	
 	&:focus {
 		outline: none;
