@@ -7,9 +7,7 @@
 	align-items: flex-start;
 	line-height: 1.75em;
 	white-space: nowrap;
-	overflow: auto;
-	overflow-y: hidden;
-	-webkit-overflow-scrolling: touch;
+	overflow: hidden;
 	transform: translate3d(0, 0, 0);
 	width: 100%;
 	max-width: 780px;
