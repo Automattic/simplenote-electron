@@ -9,7 +9,7 @@
 		flex: 0 1 35%;
 	}
 
-	@media only screen and ( max-width: 520px ) {
+	@media only screen and ( max-width: $single-column ) {
 		flex: 0 0 100%;
 		transform: translate3d(0, 0, 0);
 

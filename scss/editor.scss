@@ -79,7 +79,7 @@
 	.note-toolbar-back {
 		display: none;
 
-		@media only screen and ( max-width: 520px ) {
+		@media only screen and ( max-width: $single-column ) {
 			display: flex;
 		}
 	}
