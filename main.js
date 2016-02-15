@@ -54,6 +54,17 @@ module.exports = function main( url ) {
 
 function createMenuTemplate() {
 	var menuTemplate = [ {
+		label: 'File',
+		submenu: [ {
+			label: 'Print',
+			accelerator: 'CmdOrCtrl+P',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+				}
+			}
+		} ]
+	}, {
 		label: 'Edit',
 		submenu: [ {
 			label: 'Undo',

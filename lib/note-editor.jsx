@@ -4,6 +4,8 @@ import NoteDetail from './note-detail'
 import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
+import marked from 'marked'
+import { get } from 'lodash'
 
 export default React.createClass( {
 
@@ -13,6 +15,7 @@ export default React.createClass( {
 		revisions: PropTypes.array,
 		markdownEnabled: PropTypes.bool,
 		fontSize: PropTypes.number,
+		shouldPrint: PropTypes.bool,
 		onSetEditorMode: PropTypes.func.isRequired,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
@@ -22,7 +25,8 @@ export default React.createClass( {
 		onDeleteNoteForever: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
-		onNoteInfo: PropTypes.func.isRequired
+		onNoteInfo: PropTypes.func.isRequired,
+		onPrintNote: PropTypes.func.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -44,6 +48,14 @@ export default React.createClass( {
 		return {
 			revision: null,
 			isViewingRevisions: false
+		}
+	},
+
+	componentDidUpdate: function() {
+		// Immediately print once `shouldPrint` has been set
+		if ( this.props.shouldPrint ) {
+			window.print();
+			this.props.onNotePrinted();
 		}
 	},
 
@@ -74,10 +86,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { editorMode, note, revisions, markdownEnabled, fontSize } = this.props;
-		var revision = this.state.revision || note;
-		var isViewingRevisions = this.state.isViewingRevisions;
-		var tags = revision && revision.data && revision.data.tags || [];
+		var { editorMode, note, revisions, markdownEnabled, fontSize, shouldPrint } = this.props;
+		var noteContent = '';
+		const revision = this.state.revision || note;
+		const isViewingRevisions = this.state.isViewingRevisions;
+		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
 		markdownEnabled = markdownEnabled && revision &&
@@ -87,6 +100,16 @@ export default React.createClass( {
 		const editorClasses = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
 			revisions: isViewingRevisions, markdown: markdownEnabled
 		} );
+
+		if ( shouldPrint && markdownEnabled ) {
+			noteContent = marked( get( revision, 'data.content', '' ) );
+		} else if ( shouldPrint ) {
+			noteContent = get( revision, 'data.content', '' );
+		}
+
+		const printStyle = {
+			fontSize: fontSize + 'px'
+		};
 
 		return (
 			<div className={editorClasses}>
@@ -122,6 +145,10 @@ export default React.createClass( {
 							fontSize={fontSize} />
 					</div>
 				</div>
+				{ shouldPrint &&
+					<div style={printStyle} className="note-print note-detail-markdown"
+					dangerouslySetInnerHTML={ { __html: noteContent } } />
+				}
 			</div>
 		)
 	},
