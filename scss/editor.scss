@@ -57,7 +57,7 @@
 	
 	@media only screen and ( max-width: $single-column ) {
 		width: 100%;
-		justify-content: space-around;
+		justify-content: space-between;
 	}
 
 	.note-toolbar-icon, .note-toolbar-text {
@@ -158,6 +158,10 @@
 
 	&:focus {
 		outline: none;
+	}
+	
+	@media only screen and ( max-width: $medium ) {
+		padding: 24px;
 	}
 }
 
