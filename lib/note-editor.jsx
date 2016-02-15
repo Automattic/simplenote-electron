@@ -101,10 +101,9 @@ export default React.createClass( {
 			revisions: isViewingRevisions, markdown: markdownEnabled
 		} );
 
-		if ( shouldPrint && markdownEnabled ) {
-			noteContent = marked( get( revision, 'data.content', '' ) );
-		} else if ( shouldPrint ) {
-			noteContent = get( revision, 'data.content', '' );
+		if ( shouldPrint ) {
+			const content = get( revision, 'data.content', '' );
+			noteContent = markdownEnabled ? marked( content ) : content;
 		}
 
 		const printStyle = {
