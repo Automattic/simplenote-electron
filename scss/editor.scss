@@ -16,6 +16,16 @@
 	}
 }
 
+@media only screen and ( max-width: 520px ) {
+	.tag-entry {
+		display: none;
+	}
+
+	.scroll-bottom .tag-entry {
+		display: block;
+	}
+}
+
 .note-editor-controls {
 	display: flex;
 	justify-content: flex-end;
