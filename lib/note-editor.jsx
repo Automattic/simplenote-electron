@@ -43,6 +43,7 @@ export default React.createClass( {
 	getInitialState: function() {
 		return {
 			revision: null,
+			isViewingRevisions: false,
 			isScrolledToBottom: false
 		}
 	},
@@ -56,12 +57,31 @@ export default React.createClass( {
 	},
 
 	onSelectRevision: function( revision ) {
-		console.log( 'Accept revision: ', revision );
+		if ( ! revision ) {
+			return;
+		}
+
+		const { note, onUpdateContent } = this.props;
+		const { data: { content } } = revision;
+
+		onUpdateContent( note, content );
+		this.setIsViewingRevisions( false );
+	},
+
+	onCancelRevision: function() {
+		// clear out the revision
+		this.setState( { revision: null } );
+		this.setIsViewingRevisions( false );
+	},
+
+	setIsViewingRevisions: function( isViewing ) {
+		this.setState( { isViewingRevisions: isViewing } );
 	},
 
 	render: function() {
 		var { editorMode, note, revisions, markdownEnabled, fontSize } = this.props;
 		var revision = this.state.revision || note;
+		var isViewingRevisions = this.state.isViewingRevisions;
 		var tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -70,12 +90,19 @@ export default React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-				'scroll-bottom': this.state.isScrolledToBottom
+				'scroll-bottom': this.state.isScrolledToBottom,
+				revisions: isViewingRevisions, 
+				markdown: markdownEnabled
 			}
 		);
 
 		return (
 			<div className={classes}>
+				<RevisionSelector
+					revisions={revisions}
+					onViewRevision={this.onViewRevision}
+					onSelectRevision={this.onSelectRevision}
+					onCancelRevision={this.onCancelRevision} />
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar
 						note={note}
@@ -84,6 +111,7 @@ export default React.createClass( {
 						onShareNote={this.props.onShareNote}
 						onDeleteNoteForever={this.props.onDeleteNoteForever}
 						onRevisions={this.props.onRevisions}
+						setIsViewingRevisions={this.setIsViewingRevisions}
 						onCloseNote={this.props.onCloseNote}
 						onNoteInfo={this.props.onNoteInfo} />
 				</div>
@@ -97,12 +125,6 @@ export default React.createClass( {
 							fontSize={fontSize}
 							onScrollToBottom={this.onScrollToBottom} />
 					</div>
-					{!!revisions &&
-						<RevisionSelector
-							revisions={revisions}
-							onViewRevision={this.onViewRevision}
-							onSelectRevision={this.onSelectRevision} />
-					}
 				</div>
 				{ ! isTrashed &&
 					<TagField
