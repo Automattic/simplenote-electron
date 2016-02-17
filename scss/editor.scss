@@ -16,16 +16,6 @@
 	}
 }
 
-@media only screen and ( max-width: 520px ) {
-	.tag-entry {
-		display: none;
-	}
-
-	.scroll-bottom .tag-entry {
-		display: block;
-	}
-}
-
 .revisions {
 	.revision-selector {
 		top: 0 !important;

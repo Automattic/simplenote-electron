@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
 import { noop, get } from 'lodash';
@@ -12,8 +11,7 @@ export default React.createClass( {
 		note: PropTypes.object,
 		previewingMarkdown: PropTypes.bool,
 		fontSize: PropTypes.number,
-		onChangeContent: PropTypes.func.isRequired,
-		onScrollToBottom: PropTypes.func.isRequired
+		onChangeContent: PropTypes.func.isRequired
 	},
 
 	getInitialState: function() {
@@ -28,30 +26,8 @@ export default React.createClass( {
 		this.noteEditor = uninitializedNoteEditor;
 	},
 
-	componentDidMount: function() {
-		this.noteDetailNode = ReactDOM.findDOMNode( this.refs.noteDetail );
-	},
-
 	initializeNoteEditor: function( noteEditor ) {
 		this.noteEditor = noteEditor;
-	},
-
-	handleScroll: function() {
-		const noteDetailNode = this.noteDetailNode;
-		if ( ! noteDetailNode ) {
-			return;
-		}
-
-		this.toggleScrollState( noteDetailNode.scrollTop + noteDetailNode.clientHeight >= noteDetailNode.scrollHeight )
-	},
-
-	toggleScrollState: function( isBottom ) {
-		const { onScrollToBottom } = this.props;
-		if ( this.isScrolledToBottom !== isBottom ) {
-			this.isScrolledToBottom = isBottom;
-
-			onScrollToBottom( isBottom );
-		}
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -80,14 +56,14 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { previewingMarkdown, fontSize } = this.props;
+		var { previewingMarkdown, fontSize } = this.props;
 
-		const divStyle = {
+		var divStyle = {
 			fontSize: fontSize + 'px'
 		};
 
 		return (
-			<div onScroll={this.handleScroll} ref="noteDetail" className="note-detail">
+			<div className="note-detail">
 				{previewingMarkdown ?
 					this.renderMarkdown( divStyle )
 				:

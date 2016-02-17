@@ -43,13 +43,8 @@ export default React.createClass( {
 	getInitialState: function() {
 		return {
 			revision: null,
-			isViewingRevisions: false,
-			isScrolledToBottom: false
+			isViewingRevisions: false
 		}
-	},
-
-	onScrollToBottom: function( isBottom ) {
-		this.setState( { isScrolledToBottom: isBottom } );
 	},
 
 	onViewRevision: function( revision ) {
@@ -90,7 +85,6 @@ export default React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-				'scroll-bottom': this.state.isScrolledToBottom,
 				revisions: isViewingRevisions, 
 				markdown: markdownEnabled
 			}
@@ -122,8 +116,7 @@ export default React.createClass( {
 							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 							onChangeContent={this.props.onUpdateContent}
-							fontSize={fontSize}
-							onScrollToBottom={this.onScrollToBottom} />
+							fontSize={fontSize} />
 					</div>
 				</div>
 				{ ! isTrashed &&
