@@ -268,17 +268,30 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onTrashNote: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.trashNote( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 		analytics.tracks.recordEvent( 'editor_note_deleted' );
 	},
 
+	// gets the index of the note located before the currently selected one
+	getPreviousNoteIndex: function( note ) {
+		function noteIndex( filteredNote, index, array ) {
+  			return note.id === filteredNote.id;
+  		}
+
+  		return Math.max( this.filteredNotes.findIndex( noteIndex ) - 1, 0 );
+	},
+
 	onRestoreNote: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.restoreNote( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 		analytics.tracks.recordEvent( 'editor_note_restored' );
 	},
@@ -294,9 +307,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onDeleteNoteForever: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.deleteNoteForever( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 	},
 
@@ -336,9 +351,10 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	render: function() {
 		var state = this.props.appState;
 		var { settings } = this.props;
-		var notes = this.filterNotes();
+		this.filteredNotes = this.filterNotes();
 		
-		const selectedNote = get( state, 'note', notes[ 0 ] );
+		const noteIndex = Math.max( state.previousIndex, 0 );
+		const selectedNote = state.note ? state.note : this.filteredNotes[ noteIndex ];
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
 		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
@@ -381,7 +397,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 									</button>
 								</div>
 								<NoteList
-									notes={notes}
+									notes={this.filteredNotes}
 									selectedNoteId={selectedNoteId}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
