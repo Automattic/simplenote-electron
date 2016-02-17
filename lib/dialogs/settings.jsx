@@ -234,7 +234,7 @@ export default React.createClass( {
 							<p>
 								Markdown lets you write notes with links, lists, and
 								other styles using regular characters and
-								punctuation marks. Learn more…
+								punctuation marks. <a target="_blank" href="http://simplenote.com/help/#markdown">Learn more…</a>
 							</p>
 						</div>
 					</div>
