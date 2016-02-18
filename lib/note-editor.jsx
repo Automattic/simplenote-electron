@@ -98,10 +98,9 @@ export default React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-				revisions: isViewingRevisions, 
-				markdown: markdownEnabled
-			}
-		);
+			revisions: isViewingRevisions,
+			markdown: markdownEnabled
+		} );
 
 		if ( shouldPrint ) {
 			const content = get( revision, 'data.content', '' );
