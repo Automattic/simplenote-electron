@@ -1,0 +1,26 @@
+@media print {
+	html, body, .note-editor {
+		overflow: visible;
+		height: auto;
+	}
+
+	.app, .simplenote-app, .simplenote-app .note-editor {
+		display: block;
+		height: auto;
+	}
+
+	.navigation, .source-list, .revisions-selector, .note-editor-controls, .note-editor-detail, 
+	.note-editor-detail .note-detail, .note-editor-mode-bar, .note-info, .tag-entry {
+		display: none;
+	}
+}
+
+.note-print {
+	display: block;
+	max-width: 100%;
+	width: 100%;
+	padding: 5%;
+	color: $black;
+	overflow: visible;
+	white-space: pre-line;
+}

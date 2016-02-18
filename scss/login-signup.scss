@@ -85,11 +85,7 @@
 	}
 
 	.login-signup {
-		margin-top: 6.5em;
-
-		@media only screen and ( max-height: 800px ) {
-			margin-top: 1em;
-		}
+		margin-top: 1em;
 
 		a {
 			font-weight: $bold;

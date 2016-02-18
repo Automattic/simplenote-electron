@@ -15,7 +15,7 @@ body {
 	overflow: hidden;
 	-webkit-touch-callout: none;
 
-	@media only screen and ( max-width: 520px ) {
+	@media only screen and ( max-width: $single-column ) {
 		font-size: 16px;
 	}
 }
@@ -57,7 +57,7 @@ a {
 		flex: 1 1 auto;
 	}
 
-	@media only screen and ( max-width: 520px ) {
+	@media only screen and ( max-width: $single-column ) {
 		.note-editor {
 			flex: 1 0 100%;
 			width: 100%;
