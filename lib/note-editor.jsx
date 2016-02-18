@@ -97,9 +97,11 @@ export default React.createClass( {
 			revision.data && revision.data.systemTags &&
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
-		const editorClasses = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: isViewingRevisions, markdown: markdownEnabled
-		} );
+		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
+				revisions: isViewingRevisions, 
+				markdown: markdownEnabled
+			}
+		);
 
 		if ( shouldPrint ) {
 			const content = get( revision, 'data.content', '' );
@@ -111,18 +113,13 @@ export default React.createClass( {
 		};
 
 		return (
-			<div className={editorClasses}>
+			<div className={classes}>
 				<RevisionSelector
 					revisions={revisions}
 					onViewRevision={this.onViewRevision}
 					onSelectRevision={this.onSelectRevision}
 					onCancelRevision={this.onCancelRevision} />
 				<div className="note-editor-controls theme-color-border">
-					{!isTrashed &&
-						<TagField
-							tags={tags}
-							onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
-					}
 					<NoteToolbar
 						note={note}
 						onTrashNote={this.props.onTrashNote}
@@ -147,6 +144,11 @@ export default React.createClass( {
 				{ shouldPrint &&
 					<div style={printStyle} className="note-print note-detail-markdown"
 					dangerouslySetInnerHTML={ { __html: noteContent } } />
+				}
+				{ ! isTrashed &&
+					<TagField
+						tags={tags}
+						onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
 				}
 			</div>
 		)

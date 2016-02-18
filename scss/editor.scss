@@ -8,6 +8,7 @@
 	.note-editor-controls {
 		flex: none;
 		border-bottom: 1px solid lighten($gray, 30%);
+		border-left: 1px solid lighten($gray, 30%);
 	}
 
 	.note-editor-content {
@@ -54,6 +55,11 @@
 	display: flex;
 	align-items: center;
 	padding: 0 15px;
+	
+	@media only screen and ( max-width: $single-column ) {
+		width: 100%;
+		justify-content: space-between;
+	}
 
 	.note-toolbar-icon, .note-toolbar-text {
 		flex: none;
@@ -79,7 +85,7 @@
 	.note-toolbar-back {
 		display: none;
 
-		@media only screen and ( max-width: 520px ) {
+		@media only screen and ( max-width: $single-column ) {
 			display: flex;
 		}
 	}
@@ -153,6 +159,10 @@
 
 	&:focus {
 		outline: none;
+	}
+	
+	@media only screen and ( max-width: $medium ) {
+		padding: 24px;
 	}
 }
 
