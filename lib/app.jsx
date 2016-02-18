@@ -279,11 +279,13 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	// gets the index of the note located before the currently selected one
 	getPreviousNoteIndex: function( note ) {
-		function noteIndex( filteredNote, index, array ) {
-  			return note.id === filteredNote.id;
-  		}
+		const filteredNotes = this.filterNotes();
 
-  		return Math.max( this.filteredNotes.findIndex( noteIndex ) - 1, 0 );
+		const noteIndex = function( filteredNote ) {
+			return note.id === filteredNote.id;
+		};
+
+		return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
 	},
 
 	onRestoreNote: function( note ) {
@@ -349,19 +351,19 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	render: function() {
-		var state = this.props.appState;
-		var { settings } = this.props;
-		this.filteredNotes = this.filterNotes();
-		
+		const state = this.props.appState;
+		const { settings } = this.props;
+		const filteredNotes = this.filterNotes();
+
 		const noteIndex = Math.max( state.previousIndex, 0 );
-		const selectedNote = state.note ? state.note : this.filteredNotes[ noteIndex ];
+		const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
-		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
+		const appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
-		var mainClasses = classNames( 'simplenote-app', {
+		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation
@@ -397,7 +399,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 									</button>
 								</div>
 								<NoteList
-									notes={this.filteredNotes}
+									notes={filteredNotes}
 									selectedNoteId={selectedNoteId}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
