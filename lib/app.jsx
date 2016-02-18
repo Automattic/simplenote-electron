@@ -131,6 +131,12 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		} );
 	},
 
+	onNotePrinted: function() {
+		this.props.actions.setShouldPrintNote( {
+			shouldPrint: false
+		} );
+	},
+
 	onMarkdownNote: function( note, markdown = true ) {
 		this.props.actions.markdownNote( {
 			noteBucket: this.props.noteBucket,
@@ -337,7 +343,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		var state = this.props.appState;
 		var { settings } = this.props;
 		var notes = this.filterNotes();
-		
+
 		const selectedNote = get( state, 'note', notes[ 0 ] );
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
@@ -402,7 +408,9 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-								fontSize={settings.fontSize} />
+								fontSize={settings.fontSize}
+								shouldPrint={state.shouldPrint}
+								onNotePrinted={this.onNotePrinted} />
 							<NoteInfo
 								note={selectedNote}
 								markdownEnabled={settings.markdownEnabled}
