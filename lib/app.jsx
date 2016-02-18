@@ -274,17 +274,32 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onTrashNote: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.trashNote( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 		analytics.tracks.recordEvent( 'editor_note_deleted' );
 	},
 
+	// gets the index of the note located before the currently selected one
+	getPreviousNoteIndex: function( note ) {
+		const filteredNotes = this.filterNotes();
+
+		const noteIndex = function( filteredNote ) {
+			return note.id === filteredNote.id;
+		};
+
+		return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
+	},
+
 	onRestoreNote: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.restoreNote( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 		analytics.tracks.recordEvent( 'editor_note_restored' );
 	},
@@ -300,9 +315,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	onDeleteNoteForever: function( note ) {
+		const previousIndex = this.getPreviousNoteIndex( note );
 		this.props.actions.deleteNoteForever( {
 			noteBucket: this.props.noteBucket,
-			note
+			note,
+			previousIndex
 		} );
 	},
 
@@ -340,18 +357,19 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 	},
 
 	render: function() {
-		var state = this.props.appState;
-		var { settings } = this.props;
-		var notes = this.filterNotes();
+		const state = this.props.appState;
+		const { settings } = this.props;
+		const filteredNotes = this.filterNotes();
 
-		const selectedNote = get( state, 'note', notes[ 0 ] );
+		const noteIndex = Math.max( state.previousIndex, 0 );
+		const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
-		var appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
+		const appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
-		var mainClasses = classNames( 'simplenote-app', {
+		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation
@@ -387,7 +405,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 									</button>
 								</div>
 								<NoteList
-									notes={notes}
+									notes={filteredNotes}
 									selectedNoteId={selectedNoteId}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
