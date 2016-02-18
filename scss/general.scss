@@ -65,13 +65,13 @@ a {
 			height: 100%;
 			top: 0;
 			left: 0;
-			opacity: 0.0;
+			opacity: 0;
 			z-index: -1;
 			transition: $anim-transition;
 		}
 
 		&.note-open .note-editor {
-			opacity: 1.0;
+			opacity: 1;
 		}
 
 		&.note-info-open {
