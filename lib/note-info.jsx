@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
 import ToggleControl from './controls/toggle';
 import CrossIcon from './icons/cross';
+import dateFormat from 'dateformat';
 
 export default React.createClass( {
 
@@ -38,12 +39,6 @@ export default React.createClass( {
 							<CrossIcon />
 						</button>
 					</div>
-					<p className="note-info-item">
-						<span className="note-info-item-text">
-							<span className="note-info-name">Created</span>
-							<br /><span className="note-info-detail">{formatTimestamp( data && data.creationDate )}</span>
-						</span>
-					</p>
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Modified</span>
@@ -107,8 +102,8 @@ export default React.createClass( {
 
 function formatTimestamp( time ) {
 	if ( time ) {
-		let d = new Date( 1000 * time );
-		return d.toLocaleString();
+		const d = new Date( 1000 * time );
+		return dateFormat( d, 'mmm dd, yyyy h:MM TT' );
 	}
 }
 
