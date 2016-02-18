@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
 import ToggleControl from './controls/toggle';
-import CrossIcon from './icons/cross'
+import CrossIcon from './icons/cross';
 
 export default React.createClass( {
 
