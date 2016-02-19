@@ -30,6 +30,10 @@ export default React.createClass( {
 		this.noteEditor = noteEditor;
 	},
 
+	isValidNote: function( note ) {
+		return note && note.id;
+	},
+
 	componentWillReceiveProps: function( nextProps ) {
 		const note = nextProps.note;
 		const noteContent = get( note, 'data.content', '' );
@@ -38,8 +42,8 @@ export default React.createClass( {
 			content: noteContent
 		} );
 
-		// Let's focus the editor for new/blank notes
-		if ( noteContent === '' ) {
+		// Let's focus the editor for new and empty notes
+		if ( this.isValidNote( note ) && noteContent === '' ) {
 			this.noteEditor.focus();
 		}
 	},
