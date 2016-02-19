@@ -39,7 +39,7 @@ export default React.createClass( {
 		} );
 
 		// Let's focus the editor for new/blank notes
-		if ( noteContent === '' ) {
+		if ( note.id && noteContent === '' ) {
 			this.noteEditor.focus();
 		}
 	},
