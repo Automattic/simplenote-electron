@@ -1,5 +1,5 @@
 import React from 'react'
-import dateFormat from 'dateformat'
+import moment from 'moment'
 
 export default React.createClass( {
 
@@ -47,8 +47,7 @@ export default React.createClass( {
 		const revision = revisions.slice( -idx ).shift();
 
 		const { data: { modificationDate } } = revision;
-		const d = new Date( 1000 * modificationDate );
-		const revisionDate = dateFormat( d, 'mmm dd, yyyy h:MM TT' );
+		const revisionDate = moment.unix( modificationDate ).format( 'MMM D, YYYY h:mm a' );
 
 		this.selection = idx;
 		this.setState( { revisionDate } );

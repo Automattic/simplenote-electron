@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
 import ToggleControl from './controls/toggle';
+import moment from 'moment';
 import CrossIcon from './icons/cross';
-import dateFormat from 'dateformat';
 
 export default React.createClass( {
 
@@ -25,6 +25,8 @@ export default React.createClass( {
 	render: function() {
 		const { note, markdownEnabled } = this.props;
 		const data = note && note.data || {};
+		const { modificationDate } = data;
+		const formattedDate = modificationDate && formatTimestamp( modificationDate );
 		const isPinned = includes( data.systemTags, 'pinned' );
 		const isMarkdown = includes( data.systemTags, 'markdown' );
 		const isPublished = includes( data.systemTags, 'published' );
@@ -39,12 +41,14 @@ export default React.createClass( {
 							<CrossIcon />
 						</button>
 					</div>
-					<p className="note-info-item">
-						<span className="note-info-item-text">
-							<span className="note-info-name">Modified</span>
-							<br /><span className="note-info-detail">{formatTimestamp( data && data.modificationDate )}</span>
-						</span>
-					</p>
+					{ formattedDate &&
+						<p className="note-info-item">
+							<span className="note-info-item-text">
+								<span className="note-info-name">Modified</span>
+								<br /><span className="note-info-detail">{formattedDate}</span>
+							</span>
+						</p>
+					}
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">{wordCount( data && data.content )} words</span>
@@ -100,11 +104,8 @@ export default React.createClass( {
 	}
 } );
 
-function formatTimestamp( time ) {
-	if ( time ) {
-		const d = new Date( 1000 * time );
-		return dateFormat( d, 'mmm dd, yyyy h:MM TT' );
-	}
+function formatTimestamp( unixTime ) {
+	return moment.unix( unixTime ).format( 'MMM D, YYYY h:mm a' );
 }
 
 function wordCount( content ) {
