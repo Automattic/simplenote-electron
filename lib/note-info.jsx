@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import includes from 'lodash/collection/includes';
 import ToggleControl from './controls/toggle';
+import CrossIcon from './icons/cross';
 
 export default React.createClass( {
 
@@ -31,7 +32,12 @@ export default React.createClass( {
 		return (
 			<div className="note-info theme-color-bg theme-color-fg theme-color-border">
 				<div className="note-info-panel note-info-stats theme-color-border">
-					<h2 className="panel-title theme-color-fg-dim">Info</h2>
+					<div className="note-info-header">
+						<h2 className="panel-title theme-color-fg-dim">Info</h2>
+						<button type="button" className="about-done button button-borderless" onClick={this.handleClickOutside}>
+							<CrossIcon />
+						</button>
+					</div>
 					<p className="note-info-item">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Created</span>

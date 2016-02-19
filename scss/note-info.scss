@@ -22,6 +22,20 @@
 		}
 	}
 
+	.note-info-header {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		h2 {
+			flex-grow: 1;
+		}
+
+		button {
+			padding: 0;
+		}
+	}
+
 	.note-info-item {
 		display: flex;
 		align-items: center;
