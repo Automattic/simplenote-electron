@@ -50,6 +50,7 @@
     "lodash": "^3.10.1",
     "create-hash": "^1.1.2",
     "marked": "^0.3.5",
+    "moment": "^2.11.2",
     "promise": "^7.0.4",
     "react": "0.14.3",
     "react-addons-pure-render-mixin": "0.14.3",
