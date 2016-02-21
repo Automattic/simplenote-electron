@@ -46,7 +46,7 @@ function mapDispatchToProps( dispatch ) {
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
-const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
+export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
 	mixins: [NoteDisplayMixin],
 
