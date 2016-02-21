@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import settingsMap from './flux/settings'
 import appState from './flux/app-state'
+import browserShell from './browser-shell'
 import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
@@ -45,7 +46,7 @@ function mapDispatchToProps( dispatch ) {
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
+export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
 	mixins: [NoteDisplayMixin],
 
@@ -358,11 +359,11 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 
 	render: function() {
 		const state = this.props.appState;
-		const { settings } = this.props;
+		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = this.filterNotes();
 
 		const noteIndex = Math.max( state.previousIndex, 0 );
-		const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
+		const selectedNote = isSmallScreen || state.note ? state.note : filteredNotes[ noteIndex ];
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
 		const appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
@@ -486,3 +487,5 @@ export default connect( mapStateToProps, mapDispatchToProps )( React.createClass
 		);
 	}
 } ) );
+
+export default browserShell( App );
