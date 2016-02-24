@@ -34,16 +34,17 @@ export default React.createClass( {
 		return note && note.id;
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-		const note = nextProps.note;
-		const noteContent = get( note, 'data.content', '' );
-
+	componentWillReceiveProps: function( { note } ) {
 		this.setState( {
-			content: noteContent
+			content: get( note, 'data.content', '' )
 		} );
+	},
 
+	componentDidUpdate: function() {
 		// Let's focus the editor for new and empty notes
-		if ( this.isValidNote( note ) && noteContent === '' ) {
+		const { note } = this.props;
+		const { content } = this.state;
+		if ( this.isValidNote( note ) && content === '' ) {
 			this.noteEditor.focus();
 		}
 	},
