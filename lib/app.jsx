@@ -366,7 +366,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		const selectedNote = isSmallScreen || state.note ? state.note : filteredNotes[ noteIndex ];
 		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
-		const appClasses = classNames( 'app', `theme-${this.props.settings.theme}`, {
+		const appClasses = classNames( 'app', `theme-${settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
@@ -408,6 +408,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<NoteList
 									notes={filteredNotes}
 									selectedNoteId={selectedNoteId}
+									noteDisplay={settings.noteDisplay}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
 									onEmptyTrash={state.showTrash && this.onEmptyTrash} />

@@ -11,15 +11,18 @@ export default React.createClass( {
 		selectedNoteId: PropTypes.any,
 		onSelectNote: PropTypes.func.isRequired,
 		onPinNote: PropTypes.func.isRequired,
+		noteDisplay: PropTypes.string.isRequired,
 		onEmptyTrash: PropTypes.func
 	},
 
 	render() {
-		var { selectedNoteId, onSelectNote, onEmptyTrash } = this.props;
+		var { selectedNoteId, onSelectNote, onEmptyTrash, noteDisplay } = this.props;
+
+		const listItemsClasses = classNames( 'note-list-items', noteDisplay );
 
 		return (
 			<div className="note-list">
-				<div className="note-list-items">
+				<div className={listItemsClasses}>
 					{this.props.notes.map( note => {
 						let text = this.noteTitleAndPreview( note );
 

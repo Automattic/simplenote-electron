@@ -60,6 +60,15 @@
 .note-list {
 	display: flex;
 	flex-direction: column;
+
+	.condensed .note-list-item-excerpt {
+		display: none;
+	}
+
+	.expanded .note-list-item-excerpt {
+		white-space: normal;
+		max-height: 88px;
+	}
 }
 
 .note-list-items {
