@@ -89,6 +89,7 @@ export default React.createClass( {
 		switch ( e.which ) {
 			case 13: // return key
 			case 9: // tab key
+				e.preventDefault();
 				// commit the value of the tag
 				if ( tag === '' ) return;
 				this.addTag( tag );
