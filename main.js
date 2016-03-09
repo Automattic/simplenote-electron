@@ -59,7 +59,46 @@ module.exports = function main( url ) {
 };
 
 function createMenuTemplate() {
-	var menuTemplate = [ {
+	const name = require( 'app' ).getName();
+
+	const aboutMenuItem = {
+		label: 'About ' + name,
+		click: function( item, focusedWindow ) {
+			if ( focusedWindow ) {
+				focusedWindow.webContents.send( 'appCommand', { action: 'showDialog', dialog: {
+					type: 'About',
+					modal: true,
+					single: true
+				} } );
+			}
+		}
+	};
+
+	const settingsMenuItem = {
+		label: 'Preferences',
+		accelerator: 'Command+,',
+		click: function( item, focusedWindow ) {
+			if ( focusedWindow ) {
+				focusedWindow.webContents.send( 'appCommand', { action: 'showDialog', dialog: {
+					type: 'Settings',
+					modal: true,
+					single: true
+				} } );
+			}
+		}
+	};
+
+	var helpMenu = {
+		label: 'Help',
+		submenu: [ {
+			label: 'Help && Support',
+			click: function() {
+				require( 'shell' ).openExternal( 'http://simplenote.com/help' )
+			}
+		} ]
+	};
+
+	var fileMenu = {
 		label: 'File',
 		submenu: [ {
 			label: 'Print',
@@ -70,7 +109,34 @@ function createMenuTemplate() {
 				}
 			}
 		} ]
-	}, {
+	};
+
+	// non-osx menu item adjustments
+	if ( process.platform !== 'darwin' ) {
+		// add about menu item to Help
+		helpMenu[ 'submenu' ].push( {
+			type: 'separator'
+		} );
+		helpMenu[ 'submenu' ].push( aboutMenuItem );
+
+		// add exit and settings items to File
+		fileMenu[ 'submenu' ].push( {
+			type: 'separator'
+		} );
+		fileMenu[ 'submenu' ].push( settingsMenuItem );
+		fileMenu[ 'submenu' ].push( {
+			type: 'separator'
+		} );
+		fileMenu[ 'submenu' ].push( {
+			label: 'Exit',
+			accelerator: 'Alt+F4',
+			click: function() {
+				app.quit();
+			}
+		} );
+	}
+
+	var menuTemplate = [ fileMenu, {
 		label: 'Edit',
 		submenu: [ {
 			label: 'Undo',
@@ -165,19 +231,6 @@ function createMenuTemplate() {
 					focusedWindow.setFullScreen( !focusedWindow.isFullScreen() );
 				}
 			}
-		}, {
-			label: 'Toggle Developer Tools',
-			accelerator: ( function() {
-				if ( process.platform === 'darwin' ) {
-					return 'Alt+Command+I';
-				}
-				return 'Ctrl+Shift+I';
-			} )(),
-			click( item, focusedWindow ) {
-				if ( focusedWindow ) {
-					focusedWindow.toggleDevTools();
-				}
-			}
 		} ]
 	}, {
 		label: 'Window',
@@ -191,26 +244,15 @@ function createMenuTemplate() {
 			accelerator: 'CmdOrCtrl+W',
 			role: 'close'
 		} ]
-	}, {
-		label: 'Help',
-		role: 'help',
-		submenu: [ {
-			label: 'Learn More',
-			click: function() {
-				require( 'shell' ).openExternal( 'http://simplenote.com/help' )
-			}
-		} ]
-	} ];
+	}, helpMenu ];
 
 	if ( process.platform === 'darwin' ) {
-		var name = require( 'app' ).getName();
-
+		// Add the 'Simplenote' menu for os x
 		menuTemplate.unshift( {
 			label: name,
-			submenu: [ {
-				label: 'About ' + name,
-				role: 'about'
-			}, {
+			submenu: [ aboutMenuItem, {
+				type: 'separator'
+			}, settingsMenuItem, {
 				type: 'separator'
 			}, {
 				label: 'Services',

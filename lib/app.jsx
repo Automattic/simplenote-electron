@@ -397,7 +397,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
-			'navigation-open': state.showNavigation
+			'navigation-open': state.showNavigation,
+			'is-electron': isElectron()
 		} );
 
 		return (
