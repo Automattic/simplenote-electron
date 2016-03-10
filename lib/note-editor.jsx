@@ -26,7 +26,7 @@ export default React.createClass( {
 		onRevisions: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
-		onPrintNote: PropTypes.func.isRequired
+		onPrintNote: PropTypes.func
 	},
 
 	getDefaultProps: function() {

@@ -98,6 +98,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		this.onNotesIndex();
 		this.onTagsIndex();
 
+		this.configureContextMenu();
+
 		analytics.tracks.recordEvent( 'application_opened' );
 	},
 
@@ -119,6 +121,51 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		if ( isAuthorized ) {
 			analytics.initialize( this.props.appState.accountName );
+		}
+	},
+
+	// Add the context (right-click) menu when running in electron
+	configureContextMenu: function() {
+		try {
+			const remote = __non_webpack_require__( 'remote' );
+			if ( ! remote ) return;
+
+			const Menu = remote.require( 'menu' );
+			const currentWindow = remote.getCurrentWindow();
+
+			const menu = Menu.buildFromTemplate( [ {
+				label: 'Undo',
+				role: 'undo'
+			}, {
+				label: 'Redo',
+				role: 'redo'
+			}, {
+				type: 'separator'
+			}, {
+				label: 'Cut',
+				role: 'cut'
+			}, {
+				label: 'Copy',
+				role: 'copy'
+			}, {
+				label: 'Paste',
+				role: 'paste'
+			}, {
+				label: 'Select All',
+				role: 'selectall'
+			} ] );
+
+			window.addEventListener( 'contextmenu', function( e ) {
+				e.preventDefault();
+				if ( ! e.target.closest( 'textarea, input' ) ) {
+					return;
+				}
+
+				menu.popup( currentWindow );
+			}, false );
+		} catch ( e ) {
+			// Not electron
+			return;
 		}
 	},
 
