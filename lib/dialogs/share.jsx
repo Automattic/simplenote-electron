@@ -4,7 +4,7 @@ import includes from 'lodash/collection/includes';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 
-const shareTabs = [ 'publish', 'collaborate' ];
+const shareTabs = [ 'collaborate', 'publish' ];
 
 export default React.createClass( {
 
@@ -114,6 +114,39 @@ export default React.createClass( {
 		const publishURL = isPublished && data.publishURL !== '' && data.publishURL && `http://simp.ly/publish/${data.publishURL}` || null;
 
 		switch ( tabName ) {
+			case 'collaborate':
+				return (
+					<div className="dialog-column share-collaborate">
+						<div className="settings-group">
+							<p>
+								Add an email address of another Simplenote user to share a note.
+								You'll both be able to edit and view the note.
+								You can also add the email as a tag.
+							</p>
+							<div className="settings-items theme-color-border">
+								<form className="settings-item theme-color-border" onSubmit={this.onAddCollaborator}>
+									<input ref={e => this.collaboratorElement = e} type="email" pattern="[^@]+@[^@]+" className="settings-item-text-input transparent-input" placeholder="email@example.com" />
+									<div className="settings-item-control">
+										<button type="submit" className="button button-borderless">Add Email</button>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div className="settings-group">
+							<h3 className="panel-title theme-color-border">Collaborators</h3>
+							<ul className="share-collaborators">
+								{this.collaborators().map( collaborator =>
+									<li key={collaborator} className="share-collaborator">
+										<span className="share-collaborator-photo"><img src={this.gravatarURL( collaborator )} width="34" height="34" /></span>
+										<span className="share-collaborator-name">{collaborator}</span>
+										<button className="share-collaborator-remove button button-borderless button-danger" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
+									</li>
+								)}
+							</ul>
+						</div>
+					</div>
+				);
+
 			case 'publish':
 				return (
 					<div className="dialog-column share-publish">
@@ -146,39 +179,6 @@ export default React.createClass( {
 								</div>
 							</div>
 							{isPublished && publishURL && <p>Note published!</p>}
-						</div>
-					</div>
-				);
-
-			case 'collaborate':
-				return (
-					<div className="dialog-column share-collaborate">
-						<div className="settings-group">
-							<p>
-								Add an email address to share a note with someone.
-								You'll both be able to edit and view the note.
-								You can also add the email as a tag.
-							</p>
-							<div className="settings-items theme-color-border">
-								<form className="settings-item theme-color-border" onSubmit={this.onAddCollaborator}>
-									<input ref={e => this.collaboratorElement = e} type="email" pattern="[^@]+@[^@]+" className="settings-item-text-input transparent-input" placeholder="email@example.com" />
-									<div className="settings-item-control">
-										<button type="submit" className="button button-borderless">Add Email</button>
-									</div>
-								</form>
-							</div>
-						</div>
-						<div className="settings-group">
-							<h3 className="panel-title theme-color-border">Collaborators</h3>
-							<ul className="share-collaborators">
-								{this.collaborators().map( collaborator =>
-									<li key={collaborator} className="share-collaborator">
-										<span className="share-collaborator-photo"><img src={this.gravatarURL( collaborator )} width="34" height="34" /></span>
-										<span className="share-collaborator-name">{collaborator}</span>
-										<button className="share-collaborator-remove button button-borderless button-danger" onClick={this.onRemoveCollaborator.bind( this, collaborator )}>Remove</button>
-									</li>
-								)}
-							</ul>
 						</div>
 					</div>
 				);
