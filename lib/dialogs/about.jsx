@@ -50,6 +50,13 @@ export default React.createClass( {
 						<TopRightArrowIcon />
 					</li>
 					<li>
+						<a target="_blank" href="https://github.com/Automattic/simplenote-electron">
+							<span className="about-links-title">Contribute</span>
+							<br />GitHub.com
+						</a>
+						<TopRightArrowIcon />
+					</li>
+					<li>
 						<a target="_blank" href="https://automattic.com/work-with-us/">
 							Made with love by the folks at Automattic.
 							<br />Are you a developer? We&rsquo;re hiring.
@@ -65,7 +72,7 @@ export default React.createClass( {
 						<a target="_blank" href="http://simplenote.com/terms/">Terms of Service</a>
 					</p>
 					<p>
-						<a target="_blank" href="https://automattic.com/">&copy; 2015 Automattic, Inc.</a>
+						<a target="_blank" href="https://automattic.com/">&copy; 2016 Automattic, Inc.</a>
 					</p>
 				</div>
 
