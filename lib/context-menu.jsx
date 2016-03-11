@@ -22,7 +22,6 @@ export const ContextMenu = React.createClass( {
 	},
 
 	componentDidMount() {
-		this.updateMenu( this.props );
 		this.startListening();
 	},
 
@@ -74,7 +73,7 @@ export const ContextMenu = React.createClass( {
 	}
 } );
 
-export const MenuItem = () => {};
+export const MenuItem = () => null;
 MenuItem.displayName = 'MenuItem';
 
 MenuItem.propTypes = {
@@ -89,5 +88,5 @@ MenuItem.propTypes = {
 	] )
 };
 
-export const Separator = () => {};
+export const Separator = () => null;
 Separator.displayName = 'MenuSeparator';

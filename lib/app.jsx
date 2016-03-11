@@ -20,7 +20,6 @@ import classNames	from 'classnames'
 import { noop, get, has } from 'lodash';
 
 let ipc = getIpc();
-let electron = {};
 
 function getIpc() {
 	try {
@@ -48,19 +47,12 @@ function mapDispatchToProps( dispatch ) {
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
-function initializeElectron() {
-	const remote = __non_webpack_require__( 'remote' );
-
-	electron = Object.assign( {}, electron, {
-		currentWindow: remote.getCurrentWindow(),
-		Menu: remote.require( 'menu' )
-	} );
-}
-
-function isElectron() {
+const isElectron = ( () => {
 	// https://github.com/atom/electron/issues/2288
-	return has( window, 'process.type' );
-}
+	const foundElectron = has( window, 'process.type' );
+
+	return () => foundElectron;
+} )();
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -87,7 +79,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	componentWillMount: function() {
 		if ( isElectron() ) {
-			initializeElectron();
+			this.initializeElectron();
 		}
 
 		this.onAuthChanged();
@@ -247,6 +239,17 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	onSearch: function( filter ) {
 		this.props.actions.search( { filter } );
 		analytics.tracks.recordEvent( 'list_notes_searched' );
+	},
+
+	initializeElectron() {
+		const remote = __non_webpack_require__( 'remote' );
+
+		this.setState( {
+			electron: {
+				currentWindow: remote.getCurrentWindow(),
+				Menu: remote.require( 'menu' )
+			}
+		} );
 	},
 
 	filterNotes: function() {
