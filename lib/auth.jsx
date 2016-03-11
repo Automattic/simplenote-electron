@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { get } from 'lodash';
 import SimplenoteLogo from './icons/simplenote';
 
 export default React.createClass( {
@@ -9,7 +10,9 @@ export default React.createClass( {
 	},
 
 	componentDidMount() {
-		this.refs.username.focus();
+		if ( this.usernameInput ) {
+			this.usernameInput.focus();
+		}
 	},
 
 	render() {
@@ -24,11 +27,15 @@ export default React.createClass( {
 					<div className="login-fields theme-color-border theme-color-fg">
 						<label className="login-field theme-color-border" htmlFor="login-field-username">
 							<span className="login-field-label">Email</span>
-							<span className="login-field-control"><input ref="username" id="login-field-username" type="email" /></span>
+							<span className="login-field-control">
+								<input ref={ ref => this.usernameInput = ref } id="login-field-username" type="email" />
+							</span>
 						</label>
 						<label className="login-field theme-color-border" htmlFor="login-field-password">
 							<span className="login-field-label">Password</span>
-							<span className="login-field-control"><input ref="password" id="login-field-password" type="password" /></span>
+							<span className="login-field-control">
+								<input ref={ ref => this.passwordInput = ref } id="login-field-password" type="password" />
+							</span>
 						</label>
 					</div>
 					{ ( isAuthenticated === false ) &&
@@ -52,10 +59,14 @@ export default React.createClass( {
 	onLogin( event ) {
 		event.preventDefault();
 
-		this.props.onAuthenticate(
-			this.refs.username.value,
-			this.refs.password.value
-		)
+		const username = get( this.usernameInput, 'value' );
+		const password = get( this.passwordInput, 'value' );
+
+		if ( ! ( username && password ) ) {
+			return;
+		}
+
+		this.props.onAuthenticate( username, password );
 	},
 
 	onForgot( event ) {
