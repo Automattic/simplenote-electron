@@ -11,18 +11,14 @@ module.exports = function main( url ) {
 	// be closed automatically when the JavaScript object is GCed.
 	var mainWindow = null;
 
-	// Quit when all windows are closed.
-	app.on( 'window-all-closed', function() {
-		// On OS X it is common for applications and their menu bar
-		// to stay active until the user quits explicitly with Cmd + Q
-		if ( process.platform !== 'darwin' ) {
-			app.quit();
-		}
-	} );
+	const activateWindow = function() {
 
-	// This method will be called when Electron has finished
-	// initialization and is ready to create browser windows.
-	app.on( 'ready', function() {
+		// Only allow a single window
+		// to be open at any given time
+		if ( mainWindow ) {
+			return;
+		}
+
 		// Configure and set the application menu
 		var menuTemplate = createMenuTemplate();
 		var menu = Menu.buildFromTemplate( menuTemplate );
@@ -55,7 +51,21 @@ module.exports = function main( url ) {
 			// when you should delete the corresponding element.
 			mainWindow = null;
 		} );
+	};
+
+	// Quit when all windows are closed.
+	app.on( 'window-all-closed', function() {
+		// On OS X it is common for applications and their menu bar
+		// to stay active until the user quits explicitly with Cmd + Q
+		if ( process.platform !== 'darwin' ) {
+			app.quit();
+		}
 	} );
+
+	// This method will be called when Electron has finished
+	// initialization and is ready to create browser windows.
+	app.on( 'ready', activateWindow );
+	app.on( 'activate', activateWindow );
 };
 
 function createMenuTemplate() {
