@@ -14,10 +14,6 @@ body {
 	font: 14px/1.5 $sans;
 	overflow: hidden;
 	-webkit-touch-callout: none;
-
-	@media only screen and ( max-width: $single-column ) {
-		font-size: 16px;
-	}
 }
 
 img, svg {

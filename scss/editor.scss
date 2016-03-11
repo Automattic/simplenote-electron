@@ -39,7 +39,7 @@
 .note-editor-controls {
 	display: flex;
 	justify-content: flex-end;
-	height: 4.5em;
+	height: $toolbar-height;
 
 	.tag-editor {
 		flex: 1 1 auto;
@@ -151,7 +151,7 @@
 	padding: 24px 48px;
 	border: none;
 	line-height: 1.5em;
-	font-size: 18px;
+	font-size: 16px;
 	color: darken($gray, 20%);
 	background: $white;
 	resize: none;
