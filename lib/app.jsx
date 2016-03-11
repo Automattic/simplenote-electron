@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import settingsMap from './flux/settings'
 import appState from './flux/app-state'
 import browserShell from './browser-shell'
+import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
@@ -46,10 +47,12 @@ function mapDispatchToProps( dispatch ) {
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
 }
 
-function isElectron() {
+const isElectron = ( () => {
 	// https://github.com/atom/electron/issues/2288
-	return has( window, 'process.type' );
-}
+	const foundElectron = has( window, 'process.type' );
+
+	return () => foundElectron;
+} )();
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -75,6 +78,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	componentWillMount: function() {
+		if ( isElectron() ) {
+			this.initializeElectron();
+		}
+
 		this.onAuthChanged();
 	},
 
@@ -234,6 +241,17 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		analytics.tracks.recordEvent( 'list_notes_searched' );
 	},
 
+	initializeElectron() {
+		const remote = __non_webpack_require__( 'remote' );
+
+		this.setState( {
+			electron: {
+				currentWindow: remote.getCurrentWindow(),
+				Menu: remote.require( 'menu' )
+			}
+		} );
+	},
+
 	filterNotes: function() {
 		var { filter, showTrash, notes, tag } = this.props.appState;
 		var regexp;
@@ -364,6 +382,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	render: function() {
 		const state = this.props.appState;
+		const electron = get( this.state, 'electron' );
 		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = this.filterNotes();
 
@@ -383,6 +402,17 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		return (
 			<div className={appClasses}>
+				{ isElectron() &&
+					<ContextMenu Menu={ electron.Menu } window={ electron.currentWindow }>
+						<MenuItem label="Undo" role="undo" />
+						<MenuItem label="Redo" role="redo" />
+						<Separator />
+						<MenuItem label="Cut" role="cut" />
+						<MenuItem label="Copy" role="copy" />
+						<MenuItem label="Paste" role="paste" />
+						<MenuItem label="Select All" role="selectall" />
+					</ContextMenu>
+				}
 				{ state.authorized ?
 						<div className={mainClasses}>
 							<NavigationBar
