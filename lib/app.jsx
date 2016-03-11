@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import settingsMap from './flux/settings'
 import appState from './flux/app-state'
 import browserShell from './browser-shell'
+import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
 import NoteInfo from './note-info'
 import NoteList from './note-list'
@@ -19,6 +20,7 @@ import classNames	from 'classnames'
 import { noop, get, has } from 'lodash';
 
 let ipc = getIpc();
+let electron = {};
 
 function getIpc() {
 	try {
@@ -44,6 +46,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
+}
+
+function initializeElectron() {
+	const remote = __non_webpack_require__( 'remote' );
+
+	electron = Object.assign( {}, electron, {
+		currentWindow: remote.getCurrentWindow(),
+		Menu: remote.require( 'menu' )
+	} );
 }
 
 function isElectron() {
@@ -75,6 +86,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	componentWillMount: function() {
+		if ( isElectron() ) {
+			initializeElectron();
+		}
+
 		this.onAuthChanged();
 	},
 
@@ -98,8 +113,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		this.onNotesIndex();
 		this.onTagsIndex();
 
-		this.configureContextMenu();
-
 		analytics.tracks.recordEvent( 'application_opened' );
 	},
 
@@ -121,51 +134,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		if ( isAuthorized ) {
 			analytics.initialize( this.props.appState.accountName );
-		}
-	},
-
-	// Add the context (right-click) menu when running in electron
-	configureContextMenu: function() {
-		try {
-			const remote = __non_webpack_require__( 'remote' );
-			if ( ! remote ) return;
-
-			const Menu = remote.require( 'menu' );
-			const currentWindow = remote.getCurrentWindow();
-
-			const menu = Menu.buildFromTemplate( [ {
-				label: 'Undo',
-				role: 'undo'
-			}, {
-				label: 'Redo',
-				role: 'redo'
-			}, {
-				type: 'separator'
-			}, {
-				label: 'Cut',
-				role: 'cut'
-			}, {
-				label: 'Copy',
-				role: 'copy'
-			}, {
-				label: 'Paste',
-				role: 'paste'
-			}, {
-				label: 'Select All',
-				role: 'selectall'
-			} ] );
-
-			window.addEventListener( 'contextmenu', function( e ) {
-				e.preventDefault();
-				if ( ! e.target.closest( 'textarea, input' ) ) {
-					return;
-				}
-
-				menu.popup( currentWindow );
-			}, false );
-		} catch ( e ) {
-			// Not electron
-			return;
 		}
 	},
 
@@ -430,6 +398,17 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		return (
 			<div className={appClasses}>
+				{ isElectron() &&
+					<ContextMenu Menu={ electron.Menu } window={ electron.currentWindow }>
+						<MenuItem label="Undo" role="undo" />
+						<MenuItem label="Redo" role="redo" />
+						<Separator />
+						<MenuItem label="Cut" role="cut" />
+						<MenuItem label="Copy" role="copy" />
+						<MenuItem label="Paste" role="paste" />
+						<MenuItem label="Select All" role="selectall" />
+					</ContextMenu>
+				}
 				{ state.authorized ?
 						<div className={mainClasses}>
 							<NavigationBar

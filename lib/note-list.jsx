@@ -12,7 +12,7 @@ export default React.createClass( {
 		onSelectNote: PropTypes.func.isRequired,
 		onPinNote: PropTypes.func.isRequired,
 		noteDisplay: PropTypes.string.isRequired,
-		onEmptyTrash: PropTypes.func
+		onEmptyTrash: PropTypes.any.isRequired
 	},
 
 	render() {
