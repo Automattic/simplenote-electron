@@ -30,12 +30,12 @@ module.exports = function main( url ) {
 
 		// Create the browser window.
 		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
-		mainWindow = new BrowserWindow( { 
-			width: 1024, 
+		mainWindow = new BrowserWindow( {
+			width: 1024,
 			height: 768,
 			minWidth: 370,
 			minHeight: 520,
-			icon: iconPath 
+			icon: iconPath
 		} );
 
 		// and load the index of the app.
