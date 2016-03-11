@@ -382,6 +382,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	render: function() {
 		const state = this.props.appState;
+		const { electron } = this.state;
 		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = this.filterNotes();
 
