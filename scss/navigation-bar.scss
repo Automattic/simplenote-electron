@@ -64,7 +64,7 @@
 	flex: 0 1 auto;
 	overflow: hidden;
 	min-height: 9em;
-	padding: 12px 0;
+	padding: 12px 0 0;
 	border-top: 1px solid lighten($gray, 30%);
 
 	.tag-list-title {
@@ -89,6 +89,12 @@
 	align-items: center;
 	padding: 0 20px 20px 20px;
 	color: darken($gray, 20%);
+}
+
+.is-electron {
+	.navigation-tools, .navigation-footer {
+		display: none;
+	}
 }
 
 .navigation-footer-item {
