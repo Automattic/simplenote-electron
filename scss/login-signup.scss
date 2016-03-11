@@ -67,9 +67,17 @@
 		}
 	}
 
-	.login-failed {
-		color: $red;
-		text-align: center;
+	.login-auth-message {
+		opacity: 0;
+		margin-top: 8px;
+		margin-bottom: 0;
+
+		&.login-auth-failure {
+			color: $red;
+			text-align: center;
+			opacity: 1;
+			transition: opacity 0.5s ease-in-out;
+		}
 	}
 
 	.login-actions {
@@ -80,6 +88,10 @@
 
 	.button-primary {
 		width: 100%;
+		min-height: 47px; // so that the button doesn't get smaller with the spinner
+		display: flex;
+		justify-content: center; // centers spinner
+		align-items: center;
 	}
 
 	.login-forgot {
