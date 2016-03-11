@@ -16,7 +16,7 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import analytics from './analytics'
 import classNames	from 'classnames'
-import { noop, get } from 'lodash';
+import { noop, get, has } from 'lodash';
 
 let ipc = getIpc();
 
@@ -44,6 +44,11 @@ function mapDispatchToProps( dispatch ) {
 	);
 
 	return { actions: bindActionCreators( actionCreators, dispatch ) };
+}
+
+function isElectron() {
+	// https://github.com/atom/electron/issues/2288
+	return has( window, 'process.type' );
 }
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
