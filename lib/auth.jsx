@@ -4,6 +4,7 @@ import SimplenoteLogo from './icons/simplenote';
 export default React.createClass( {
 
 	propTypes: {
+		isAuthenticated: PropTypes.bool,
 		onAuthenticate: PropTypes.func.isRequired
 	},
 
@@ -12,6 +13,8 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { isAuthenticated } = this.props;
+
 		return (
 			<div className="login">
 				<form className="login-form" onSubmit={this.onLogin}>
@@ -28,6 +31,9 @@ export default React.createClass( {
 							<span className="login-field-control"><input ref="password" id="login-field-password" type="password" /></span>
 						</label>
 					</div>
+					{ ( isAuthenticated === false ) &&
+						<p className="login-failed">The credentials you entered don't match.</p>
+					}
 					<div className="login-actions">
 						<button type="submit" className="button button-primary">Log in</button>
 						<p className="login-forgot">

@@ -67,6 +67,11 @@
 		}
 	}
 
+	.login-failed {
+		color: $red;
+		text-align: center;
+	}
+
 	.login-actions {
 		margin-top: 22px;
 		text-align: center;

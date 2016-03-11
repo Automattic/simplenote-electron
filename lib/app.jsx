@@ -475,7 +475,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onOutsideClick={this.onToolbarOutsideClick} />
 						</div>
 				:
-					<Auth onAuthenticate={this.props.onAuthenticate} />
+					<Auth
+						isAuthenticated={state.authorized}
+						onAuthenticate={this.props.onAuthenticate}
+					/>
 				}
 				{this.renderDialogs()}
 			</div>
