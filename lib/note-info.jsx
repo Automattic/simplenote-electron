@@ -83,14 +83,16 @@ export default React.createClass( {
 						</span>
 					</label>
 				</div>}
-				<div className="note-info-panel note-info-public-link theme-color-border">
-					<p className="note-info-item">
-						<span className="note-info-item-text">
-							<span className="note-info-name">Public link</span>
-							<br /><span className="note-info-detail">{publishURL}</span>
-						</span>
-					</p>
-				</div>
+				{ isPublished &&
+					<div className="note-info-panel note-info-public-link theme-color-border">
+						<p className="note-info-item">
+							<span className="note-info-item-text">
+								<span className="note-info-name">Public link</span>
+								<br /><span className="note-info-detail">{publishURL}</span>
+							</span>
+						</p>
+					</div>
+				}
 			</div>
 		);
 	},
