@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { pick } from 'lodash';
+import { isObject, pick } from 'lodash';
 
 const toTemplateItem = ( { type: { displayName }, props } ) => {
 	switch ( displayName ) {
@@ -57,7 +57,9 @@ export const ContextMenu = React.createClass( {
 	buildMenu( children ) {
 		const { Menu } = this.props;
 		const menuItems = React.Children.toArray( children );
-		const template = menuItems.map( toTemplateItem );
+		const template = menuItems
+			.map( toTemplateItem )
+			.filter( isObject );
 
 		return Menu.buildFromTemplate( template );
 	},
