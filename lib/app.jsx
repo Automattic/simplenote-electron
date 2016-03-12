@@ -476,6 +476,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						</div>
 				:
 					<Auth
+						authPending={state.authPending}
 						isAuthenticated={state.authorized}
 						onAuthenticate={this.props.onAuthenticate}
 					/>

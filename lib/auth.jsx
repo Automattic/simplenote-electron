@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
+import classNames from 'classnames';
 import { get } from 'lodash';
 import SimplenoteLogo from './icons/simplenote';
+import Spinner from './components/spinner';
 
 export default React.createClass( {
 
@@ -16,7 +18,10 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { isAuthenticated } = this.props;
+		const { isAuthenticated, authPending } = this.props;
+		const submitClasses = classNames( 'button', 'button-primary', {
+			'pending': authPending
+		} );
 
 		return (
 			<div className="login">
@@ -39,10 +44,19 @@ export default React.createClass( {
 						</label>
 					</div>
 					{ ( isAuthenticated === false ) &&
-						<p className="login-failed">The credentials you entered don't match.</p>
+						<p className="login-auth-message login-auth-failure">The credentials you entered don't match</p>
 					}
 					<div className="login-actions">
-						<button type="submit" className="button button-primary">Log in</button>
+						<div
+							className={ submitClasses }
+							onClick={ this.onLogin }
+							type="submit"
+						>
+							{ authPending
+								? <Spinner />
+								: 'Log in'
+							}
+						</div>
 						<p className="login-forgot">
 							<a href="https://app.simplenote.com/forgot/" target="_blank" onClick={this.onForgot}>Forgot your password?</a>
 						</p>
