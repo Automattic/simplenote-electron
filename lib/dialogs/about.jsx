@@ -19,7 +19,7 @@ export default React.createClass( {
 		var dialog = this.props.dialog;
 
 		return (
-			<Dialog className="about" {...dialog}>
+			<Dialog className="about" {...dialog} onDone={ this.onDone }>
 				<div className="about-top">
 					<SimplenoteLogo />
 

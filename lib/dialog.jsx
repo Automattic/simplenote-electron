@@ -12,9 +12,11 @@ export default React.createClass( {
 	componentDidMount() {
 		this.previouslyActiveElement = document.activeElement;
 		this.focusFirstInput( this.refs.content );
+		this.startListening();
 	},
 
 	componentWillUnmount() {
+		this.stopListening();
 		if ( this.previouslyActiveElement != null ) {
 			this.previouslyActiveElement.focus();
 			this.previouslyActiveElement = null;
@@ -39,8 +41,25 @@ export default React.createClass( {
 		}
 	},
 
+	interceptClick( event ) {
+		if ( 'dialog' !== event.srcElement.getAttribute( 'role' ) ) {
+			return;
+		}
+
+		event.preventDefault();
+		this.props.onDone();
+	},
+
 	queryAllEnabledControls( parent ) {
 		return ( parent || this.refs.box ).querySelectorAll( 'button:enabled, input:enabled, textarea:enabled' );
+	},
+
+	startListening() {
+		window.addEventListener( 'click', this.interceptClick );
+	},
+
+	stopListening() {
+		window.removeEventListener( 'click', this.interceptClick );
 	},
 
 	render() {
@@ -52,7 +71,7 @@ export default React.createClass( {
 				<input type="text" className="focus-guard" onFocus={() => this.focusLastInput()} />
 
 				<div ref="box" className="dialog-box theme-color-bg theme-color-fg">
-					{( title != null || onDone != null ) &&
+					{( title != null && onDone != null ) &&
 						<div className="dialog-title-bar theme-color-border">
 							<div className="dialog-title-side"></div>
 							<h2 id={titleElementId} className="dialog-title-text">{title}</h2>
