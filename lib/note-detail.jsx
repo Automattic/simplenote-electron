@@ -3,6 +3,8 @@ import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
 import { noop, get } from 'lodash';
 
+import { unbold } from './note-display-mixin';
+
 const uninitializedNoteEditor = { focus: noop };
 
 export default React.createClass( {
@@ -79,7 +81,7 @@ export default React.createClass( {
 	},
 
 	renderMarkdown( divStyle ) {
-		var markdownHTML = marked( this.state.content );
+		var markdownHTML = marked( unbold( this.state.content ) );
 
 		return (
 			<div className="note-detail-markdown theme-color-bg theme-color-fg"

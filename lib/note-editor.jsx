@@ -5,6 +5,7 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
+import { unbold } from './note-display-mixin'
 import { get } from 'lodash'
 
 export default React.createClass( {
@@ -104,7 +105,7 @@ export default React.createClass( {
 
 		if ( shouldPrint ) {
 			const content = get( revision, 'data.content', '' );
-			noteContent = markdownEnabled ? marked( content ) : content;
+			noteContent = markdownEnabled ? marked( unbold( content ) ) : content;
 		}
 
 		const printStyle = {
