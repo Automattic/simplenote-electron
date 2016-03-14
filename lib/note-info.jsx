@@ -114,12 +114,6 @@ function wordCount( content ) {
 	return ( ( content || '' ).match( /\b\S+\b/g ) || [] ).length;
 }
 
-// https://mathiasbynens.be/notes/javascript-unicode
-const surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 function characterCount( content ) {
-	return ( content || '' )
-		// replace every surrogate pair with a BMP symbol
-		.replace( surrogatePairs, '_' )
-		// then get the length
-		.length;
+	return [ ...content || '' ].length;
 }
