@@ -168,18 +168,25 @@ export default React.createClass( {
 								Anyone with the public link will be able to view the latest version.
 							</p>
 						</div>
-						<div className="settings-group">
-							<h3 className="panel-title">Public link</h3>
-							<div className="settings-items theme-color-border">
-								<div className="settings-item theme-color-border">
-									<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder={isPublished ? 'Publishing note…' : 'Note not published'} value={publishURL} />
-									<div className="settings-item-control">
-										<button ref={e => this.copyUrlElement = e} type="button" className="button button-borderless" onClick={this.copyPublishURL}>Copy</button>
+						{ isPublished &&
+							<div className="settings-group">
+								<h3 className="panel-title">Public link</h3>
+								<div className="settings-items theme-color-border">
+									<div className="settings-item theme-color-border">
+										<input ref={e => this.publishUrlElement = e} className="settings-item-text-input transparent-input" placeholder={isPublished ? 'Publishing note…' : 'Note not published'} value={publishURL} />
+										<div className="settings-item-control">
+											<button
+												ref={e => this.copyUrlElement = e}
+												disabled={ ! publishURL }
+												type="button"
+												className="button button-borderless"
+												onClick={this.copyPublishURL}>Copy</button>
+										</div>
 									</div>
 								</div>
+								{publishURL && <p>Note published!</p>}
 							</div>
-							{isPublished && publishURL && <p>Note published!</p>}
-						</div>
+						}
 					</div>
 				);
 		}
