@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
 import NoteDisplayMixin from './note-display-mixin'
+import PublishIcon from './icons/feed'
 import classNames from 'classnames'
+import { isEmpty } from 'lodash';
 
 export default React.createClass( {
 
@@ -25,10 +27,12 @@ export default React.createClass( {
 				<div className={listItemsClasses}>
 					{this.props.notes.map( note => {
 						let text = this.noteTitleAndPreview( note );
+						const isPublished = ! isEmpty( note.data.publishURL );
 
 						let classes = classNames( 'note-list-item', {
 							'note-list-item-selected': selectedNoteId === note.id,
-							'note-list-item-pinned': note.pinned
+							'note-list-item-pinned': note.pinned,
+							'published-note': isPublished
 						} );
 
 						return (
@@ -38,6 +42,8 @@ export default React.createClass( {
 									<div className="note-list-item-title">{text.title}</div>
 									<div className="note-list-item-excerpt">{text.preview}</div>
 								</div>
+								{ isPublished &&
+									<div className="note-list-item-published-icon"><PublishIcon /></div> }
 							</div>
 						);
 					} )}

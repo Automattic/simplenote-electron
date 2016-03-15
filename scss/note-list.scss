@@ -86,6 +86,7 @@
 }
 
 .note-list-item {
+	position: relative;
 	display: flex;
 	padding-left: 8px;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -149,6 +150,18 @@
 	&.note-list-item-selected {
 		.note-list-item-title, .note-list-item-excerpt {
 			color: $blue;
+		}
+	}
+
+	.note-list-item-published-icon {
+		position: absolute;
+		left: 13px;
+		top: 35px;
+
+		& svg {
+			fill: $gray;
+			height: 12px;
+			width: 12px;
 		}
 	}
 
