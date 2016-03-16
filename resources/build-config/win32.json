@@ -1,0 +1,10 @@
+{
+	"win": {
+		"title": "Simplenote",
+		"icon": "resources/images/simplenote.ico",
+		"nsiTemplate": "resources/build-config/nsi.tpl",
+		"verbosity": 2
+	},
+
+	"description": "Simplenote Installer"
+}
