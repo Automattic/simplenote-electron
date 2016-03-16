@@ -86,7 +86,6 @@
 }
 
 .note-list-item {
-	position: relative;
 	display: flex;
 	padding-left: 8px;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -154,9 +153,7 @@
 	}
 
 	.note-list-item-published-icon {
-		position: absolute;
-		left: 13px;
-		top: 35px;
+		margin-left: auto;
 
 		& svg {
 			fill: $gray;
@@ -166,7 +163,13 @@
 	}
 
 	.note-list-item-title {
+		display: flex;
 		font-size: 16px;
+
+		& span {
+			width: calc(100% - 24px);
+			text-overflow: ellipsis;
+		}
 	}
 
 	.note-list-item-excerpt {

@@ -39,11 +39,13 @@ export default React.createClass( {
 							<div key={note.id} className={classes}>
 								<div className="note-list-item-pinner" tabIndex="0" onClick={this.onPinNote.bind( this, note )}></div>
 								<div className="note-list-item-text theme-color-border" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
-									<div className="note-list-item-title">{text.title}</div>
+									<div className="note-list-item-title">
+										<span>{text.title}</span>
+										{ isPublished &&
+											<div className="note-list-item-published-icon"><PublishIcon /></div> }
+									</div>
 									<div className="note-list-item-excerpt">{text.preview}</div>
 								</div>
-								{ isPublished &&
-									<div className="note-list-item-published-icon"><PublishIcon /></div> }
 							</div>
 						);
 					} )}
