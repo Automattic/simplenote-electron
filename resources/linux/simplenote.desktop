@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Simplenote
+Comment=Simplenote for Linux
+Exec=/usr/share/simplenote/simplenote
+Icon=simplenote
+Type=Application
+StartupNotify=true
+Categories=Development;

@@ -1,6 +1,10 @@
 node_modules/**/*
 build/
 dist/
-config.js
+release/
+/config.js
+*.pvk
+*.spc
 *.tgz
 .idea
+.DS_Store
