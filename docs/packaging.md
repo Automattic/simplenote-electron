@@ -37,4 +37,9 @@ The Linux package is build using [FPM][1] which is a tool that makes it easy to 
 
 `gem install fpm`
 
+FRM needs ruby and `gnu-tar`. You can install ruby using [RVM][2] and `gnu-tar` with:
+
+`brew install gnu-tar`
+
 [1]: https://github.com/jordansissel/fpm
+[2]: https://rvm.io/rvm/install
