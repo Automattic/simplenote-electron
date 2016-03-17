@@ -70,7 +70,7 @@ export default React.createClass( {
 			<div className={classNames( 'dialog', className ) } role="dialog" aria-labelledby={titleElementId}>
 				<input type="text" className="focus-guard" onFocus={() => this.focusLastInput()} />
 
-				<div ref="box" className="dialog-box theme-color-bg theme-color-fg">
+				<div ref="box" className="dialog-box theme-color-bg theme-color-fg theme-color-border">
 					{( title != null && onDone != null ) &&
 						<div className="dialog-title-bar theme-color-border">
 							<div className="dialog-title-side"></div>

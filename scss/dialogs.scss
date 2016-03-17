@@ -34,7 +34,14 @@
 	margin: auto;
 	background: white;
 	border-radius: $border-radius;
-	box-shadow: 0 0 6px rgba(0,0,0,0.5);
+	border: 1px solid lighten($gray, 30%);
+	box-shadow: 0 2px 4px 0 rgba($gray-darkest, 0.15);
+}
+
+.theme-dark {
+	.dialog-box {
+		box-shadow: 0 2px 4px 0 rgba(darken($gray, 45%), 0.5); 
+	}
 }
 
 .dialog-title-bar {
