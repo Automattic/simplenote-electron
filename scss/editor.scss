@@ -55,7 +55,7 @@
 	display: flex;
 	align-items: center;
 	padding: 0 15px;
-	
+
 	@media only screen and ( max-width: $single-column ) {
 		width: 100%;
 		justify-content: space-between;
@@ -65,7 +65,7 @@
 		flex: none;
 		margin-right: 14px;
 		text-align: center;
-		
+
 		&:last-child {
 			margin-right: 0;
 		}
@@ -118,7 +118,8 @@
 	flex: none;
 	margin: 0 auto;
 	padding-top: 24px;
-	display: auto;
+	display: flex;
+	justify-content: center;
 	transition: all .3s ease-in-out;
 
 	.button-segmented-control {
@@ -160,7 +161,7 @@
 	&:focus {
 		outline: none;
 	}
-	
+
 	@media only screen and ( max-width: $medium ) {
 		padding: 24px;
 	}
