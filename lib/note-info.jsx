@@ -3,6 +3,7 @@ import { includes } from 'lodash';
 import ToggleControl from './controls/toggle';
 import moment from 'moment';
 import CrossIcon from './icons/cross';
+import { isEmpty } from 'lodash';
 
 export default React.createClass( {
 
@@ -22,6 +23,22 @@ export default React.createClass( {
 		this.props.onOutsideClick( false );
 	},
 
+	copyPublishURL: function() {
+		this.publishUrlElement.select();
+
+		try {
+			document.execCommand( 'copy' );
+		} catch ( err ) {
+			return;
+		}
+
+		this.copyUrlElement.focus();
+	},
+
+	getPublishURL: function( url ) {
+		return isEmpty( url ) ? null : `http://simp.ly/p/${url}`;
+	},
+
 	render: function() {
 		const { note, markdownEnabled } = this.props;
 		const data = note && note.data || {};
@@ -30,7 +47,7 @@ export default React.createClass( {
 		const isPinned = includes( data.systemTags, 'pinned' );
 		const isMarkdown = includes( data.systemTags, 'markdown' );
 		const isPublished = includes( data.systemTags, 'published' );
-		const publishURL = isPublished && data.publishURL !== '' && data.publishURL && `http://simp.ly/publish/${data.publishURL}` || null;
+		const publishURL = this.getPublishURL( data.publishURL );
 
 		return (
 			<div className="note-info theme-color-bg theme-color-fg theme-color-border">
@@ -85,12 +102,17 @@ export default React.createClass( {
 				</div>}
 				{ isPublished &&
 					<div className="note-info-panel note-info-public-link theme-color-border">
-						<p className="note-info-item">
 							<span className="note-info-item-text">
 								<span className="note-info-name">Public link</span>
-								<br /><span className="note-info-detail">{publishURL}</span>
+								<div className="note-info-form">
+									<input ref={e => this.publishUrlElement = e} className="note-info-detail note-info-link-text" value={publishURL} />
+									<button
+										ref={e => this.copyUrlElement = e}
+										type="button"
+										className="button button-borderless note-info-copy-button"
+										onClick={this.copyPublishURL}>Copy</button>
+								</div>
 							</span>
-						</p>
 					</div>
 				}
 			</div>
