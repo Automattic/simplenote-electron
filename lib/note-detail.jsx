@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
-import { noop, get } from 'lodash';
+import { noop, get, debounce } from 'lodash';
+import analytics from './analytics'
 
 const uninitializedNoteEditor = { focus: noop };
+const saveDelay = 2000;
 
 export default React.createClass( {
 
@@ -14,16 +16,14 @@ export default React.createClass( {
 		onChangeContent: PropTypes.func.isRequired
 	},
 
-	getInitialState: function() {
-		var note = this.props.note;
-
-		return {
-			content: get( note, 'data.content', '' )
-		};
+	componentWillMount: function() {
+		this.queueNoteSave = debounce( this.saveNote, saveDelay );
+		this.noteEditor = uninitializedNoteEditor;
 	},
 
-	componentWillMount: function() {
-		this.noteEditor = uninitializedNoteEditor;
+	componentDidMount: function() {
+		// Ensures note gets saved if user abruptly quits the app
+		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
 	},
 
 	initializeNoteEditor: function( noteEditor ) {
@@ -34,22 +34,28 @@ export default React.createClass( {
 		return note && note.id;
 	},
 
-	componentWillReceiveProps: function( { note } ) {
-		this.setState( {
-			content: get( note, 'data.content', '' )
-		} );
+	componentWillReceiveProps: function() {
+		this.queueNoteSave.flush();
 	},
 
 	componentDidUpdate: function() {
-		// Let's focus the editor for new and empty notes
 		const { note } = this.props;
-		const { content } = this.state;
-		if ( this.isValidNote( note ) && content === '' ) {
-			this.noteEditor.focus();
+		const content = get( note, 'data.content', '' );
+		if ( this.isValidNote( note ) && this.noteEditor ) {
+			this.noteEditor.value = content;
+
+			// Let's focus the editor for new and empty notes
+			if ( content === '' ) {
+				this.noteEditor.focus();
+			}
 		}
 	},
 
-	onPreviewClick( event ) {
+	componentWillUnmount: function() {
+		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
+	},
+
+	onPreviewClick: function( event ) {
 		// open markdown preview links in a new window
 		for ( let node = event.target; node != null; node = node.parentNode ) {
 			if ( node.tagName === 'A' ) {
@@ -58,6 +64,15 @@ export default React.createClass( {
 				break;
 			}
 		}
+	},
+
+	saveNote: function() {
+		const { note } = this.props;
+
+		if ( ! this.isValidNote( note ) ) return;
+
+		this.props.onChangeContent( note, this.noteEditor.value );
+		analytics.tracks.recordEvent( 'editor_note_edited' );
 	},
 
 	render: function() {
@@ -79,7 +94,8 @@ export default React.createClass( {
 	},
 
 	renderMarkdown( divStyle ) {
-		var markdownHTML = marked( this.state.content );
+		const { content = '' } = this.props.note.data;
+		const markdownHTML = marked( content );
 
 		return (
 			<div className="note-detail-markdown theme-color-bg theme-color-fg"
@@ -90,16 +106,12 @@ export default React.createClass( {
 	},
 
 	renderEditable( divStyle ) {
-		var { note } = this.props;
-		var valueLink = {
-			value: this.state.content,
-			requestChange: this.props.onChangeContent.bind( null, note )
-		};
+		const note = this.props.note;
 
 		return (
 			<Textarea ref={ this.initializeNoteEditor } className="note-detail-textarea theme-color-bg theme-color-fg"
 				disabled={ !!( note && note.data.deleted ) }
-				valueLink={ valueLink }
+				onChange={ this.queueNoteSave }
 				style={ divStyle } />
 		);
 	}

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import createHash from 'create-hash/browser';
-import includes from 'lodash/collection/includes';
+import { includes } from 'lodash';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 

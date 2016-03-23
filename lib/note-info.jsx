@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import includes from 'lodash/collection/includes';
+import { includes } from 'lodash';
 import ToggleControl from './controls/toggle';
 import moment from 'moment';
 import CrossIcon from './icons/cross';
