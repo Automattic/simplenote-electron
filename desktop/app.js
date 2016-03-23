@@ -1,11 +1,18 @@
+'use strict';
+
 var app = require( 'app' );	 // Module to control application life.
 var Menu = require( 'menu' );
 var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
 var path = require('path')
 
-module.exports = function main( url ) {
+require( 'module' ).globalPaths.push( path.resolve( path.join( __dirname ) ) );
+
+module.exports = function main() {
+	var url = 'file://' + path.join( __dirname, '..', 'dist', 'index.html' );
+
 	// Report crashes to our server.
 	require( 'crash-reporter' ).start();
+	require( './updater' )();
 
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is GCed.

@@ -51,3 +51,5 @@ var cmd = [
 ];
 
 cp.execSync( cmd.join(' '), onErrorBail );
+
+cp.execSync( "rm -rf release/tmp", onErrorBail );

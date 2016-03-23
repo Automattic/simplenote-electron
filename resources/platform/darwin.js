@@ -54,9 +54,6 @@ function cleanBuild( appPath, buildOpts ) {
 		}
 	} );
 
-	console.log( ' - Renaming index file.' )
-	fs.renameSync( app.getResourcesPath( 'app/index.dist.js' ), app.getResourcesPath( 'app/index.js' ) );
-
 	if ( buildOpts.platform !== 'mas' ) {
 		console.log( ' - Signing app' );
 		exec( 'codesign --force --sign "' + buildOpts.appSign + '" release/' + buildOpts.name + '-darwin-x64/' + buildOpts.name + '.app/ --deep --timestamp=none' );

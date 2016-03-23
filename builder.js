@@ -64,9 +64,7 @@ function whitelistInDirectory( directory, whitelist ) {
 }
 
 opts.ignore = opts.ignore.concat( whitelistInDirectory( './dist', [ 'index.html', 'app.js', 'manifest.appcache' ] ) );
-// opts.ignore = opts.ignore.concat( whitelistInDirectory( './resources/images', [ 'app-icon.icns' ] ) );
-// opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'index.dist.js', 'main.js', 'package.json', 'dist', 'resources/images' ] ) );
-opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'index.dist.js', 'main.js', 'package.json', 'dist' ] ) );
+opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'package.json', 'dist', 'desktop' ] ) );
 
 builder.beforeBuild( __dirname, opts, function( error ) {
 	if ( error ) {

@@ -18,10 +18,6 @@ function cleanBuild( appPath, buildOpts ) {
 		var file = path.join( appPath, files[i] );
 		exec( "/usr/bin/sed -i '' 's/Electron/" + buildOpts.name + "/' '" + file + "'" );
 	}
-
-
-	exec( 'mv ' + appPath + '/resources/app/index.dist.js ' + appPath + '/resources/app/index.js' );
-
 }
 
 module.exports = {
