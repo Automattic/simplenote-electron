@@ -1,11 +1,27 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 
 export default React.createClass( {
+
+	propTypes: {
+		placeholder: PropTypes.string.isRequired,
+		searchFocus: PropTypes.bool.isRequired,
+		onSearch: PropTypes.func.isRequired,
+		onSearchFocused: PropTypes.func.isRequired
+	},
 
 	getDefaultProps: function() {
 		return {
 			placeholder: 'Search',
 			onSearch: function() {}
+		}
+	},
+
+	componentDidUpdate: function() {
+		const { searchFocus, onSearchFocused } = this.props;
+		const { search } = this.refs;
+		if ( searchFocus ) {
+			search.focus();
+			onSearchFocused();
 		}
 	},
 
