@@ -60,7 +60,23 @@
 		color: $gray;
 	}
 
-	.note-info-public-link {
+	.note-info-link-text {
+		width: 100%;
+		border: none;
+		padding: 0 8px 0 0;
+		text-overflow: ellipsis;
+		
+		&:focus {
+			outline: none;
+		}
+	}
+	
+	.note-info-form {
+		display: flex;
+	}
+
+	.note-info-copy-button {
+		padding: 0;
 		flex: 1 0 auto;
 	}
 }

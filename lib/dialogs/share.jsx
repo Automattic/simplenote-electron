@@ -3,6 +3,7 @@ import createHash from 'create-hash/browser';
 import { includes } from 'lodash';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
+import { isEmpty } from 'lodash';
 
 const shareTabs = [ 'collaborate', 'publish' ];
 
@@ -38,6 +39,10 @@ export default React.createClass( {
 		}
 
 		this.copyUrlElement.focus();
+	},
+
+	getPublishURL( url ) {
+		return isEmpty( url ) ? null : `http://simp.ly/p/${url}`;
 	},
 
 	onAddCollaborator( event ) {
@@ -111,7 +116,7 @@ export default React.createClass( {
 		const { note } = this.props.params;
 		const data = note && note.data || {};
 		const isPublished = includes( data.systemTags, 'published' );
-		const publishURL = isPublished && data.publishURL !== '' && data.publishURL && `http://simp.ly/publish/${data.publishURL}` || null;
+		const publishURL = this.getPublishURL( data.publishURL );
 
 		switch ( tabName ) {
 			case 'collaborate':
