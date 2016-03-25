@@ -18,10 +18,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { isAuthenticated, authPending } = this.props;
-		const submitClasses = classNames( 'button', 'button-primary', {
-			'pending': authPending
-		} );
+		const { isAuthenticated, authPending: pending } = this.props;
+		const submitClasses = classNames( 'button', 'button-primary', { pending } );
 
 		return (
 			<div className="login">

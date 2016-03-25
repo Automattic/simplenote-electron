@@ -114,7 +114,12 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	onAppCommand: function( command ) {
 		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
-			this.props.actions[ command.action ]( command );
+			// newNote expects a bucket to be passed in, but the action method itself wouldn't do that
+			if ( command.action === 'newNote' ) {
+				this.onNewNote();
+			} else {
+				this.props.actions[ command.action ]( command );
+			}
 		}
 	},
 
@@ -147,6 +152,12 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	onNotePrinted: function() {
 		this.props.actions.setShouldPrintNote( {
 			shouldPrint: false
+		} );
+	},
+
+	onSearchFocused: function() {
+		this.props.actions.setSearchFocus( {
+			searchFocus: false
 		} );
 	},
 
@@ -436,7 +447,11 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>
-									<SearchField onSearch={this.onSearch} placeholder={state.listTitle} />
+									<SearchField
+										onSearch={this.onSearch}
+										placeholder={state.listTitle}
+										searchFocus={state.searchFocus}
+										onSearchFocused={this.onSearchFocused} />
 									<button className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</button>
