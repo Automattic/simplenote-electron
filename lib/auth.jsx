@@ -18,8 +18,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { isAuthenticated, authPending: pending } = this.props;
-		const submitClasses = classNames( 'button', 'button-primary', { pending } );
+		const submitClasses = classNames( 'button', 'button-primary', { pending: this.props.authPending } );
 
 		return (
 			<div className="login">
@@ -41,7 +40,7 @@ export default React.createClass( {
 							</span>
 						</label>
 					</div>
-					{ ( isAuthenticated === false ) &&
+					{ ( this.props.isAuthenticated === false ) &&
 						<p className="login-auth-message login-auth-failure">The credentials you entered don't match</p>
 					}
 					<div className="login-actions">
@@ -50,7 +49,7 @@ export default React.createClass( {
 							onClick={ this.onLogin }
 							type="submit"
 						>
-							{ authPending
+							{ this.props.authPending
 								? <Spinner />
 								: 'Log in'
 							}
