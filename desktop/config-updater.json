@@ -1,5 +1,5 @@
 {
-	"forceUpdate": true,
+	"forceUpdate": false,
 	"updater": {
 		"url": "https://app.simplenote.com/desktop/{platform}/version?compare={version}",
 		"delay": 2000,
