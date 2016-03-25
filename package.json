@@ -1,9 +1,9 @@
 {
   "name": "simplenote",
   "productName": "Simplenote",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0-rc.1",
   "description": "The Simplenote app running as an electron app.",
-  "main": "index.js",
+  "main": "desktop/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "NODE_ENV=development `npm bin`/webpack --config ./webpack.config.js",
