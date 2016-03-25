@@ -43,7 +43,7 @@ module.exports = function() {
 			updater = new ManualUpdater( url );
 		}
 
-		updater.on( 'end', () => setTimeout( updater.ping.bind( updater), 5000 ) );
+		updater.on( 'end', () => setTimeout( updater.ping.bind( updater), config.updater.interval ) );
 
 		// Start one straight away
 		setTimeout( updater.ping.bind( updater ), config.updater.delay );
