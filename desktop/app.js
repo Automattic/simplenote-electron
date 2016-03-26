@@ -118,14 +118,23 @@ function createMenuTemplate() {
 	var fileMenu = {
 		label: 'File',
 		submenu: [ {
-			label: 'Print',
-			accelerator: 'CmdOrCtrl+P',
-			click( item, focusedWindow ) {
-				if ( focusedWindow ) {
-					focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+				label: 'New Note',
+				accelerator: 'CmdOrCtrl+N',
+				click( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
+					}
 				}
-			}
-		} ]
+			},
+		 	{
+				label: 'Print',
+				accelerator: 'CmdOrCtrl+P',
+				click( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+					}
+				}
+			}	]
 	};
 
 	// non-osx menu item adjustments
