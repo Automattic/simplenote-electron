@@ -232,13 +232,6 @@ function createMenuTemplate() {
 				}
 			} ]
 		}, {
-			label: 'Sort Order',
-			submenu: [ {
-				label: 'Date Updated'
-			}, {
-				label: 'Alphabetical'
-			} ]
-		}, {
 			label: 'Theme',
 			submenu: [ {
 				label: 'Light',
