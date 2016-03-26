@@ -49,7 +49,7 @@ module.exports = function main() {
 		}
 
 		// Uncomment me to debug in the electron window
-		// mainWindow.openDevTools();
+		mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
@@ -228,6 +228,56 @@ function createMenuTemplate() {
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
 						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
+					}
+				}
+			} ]
+		}, {
+			label: 'Sort Type',
+			submenu: [ {
+				label: 'Last modified',
+				type: 'radio',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'updateSettings',
+							sortType: 'modificationDate'
+						} );
+					}
+				}
+			}, {
+				label: 'Last created',
+				type: 'radio',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'updateSettings',
+							sortType: 'creationDate'
+						} );
+					}
+				}
+			}, {
+				label: 'Alphabetical',
+				type: 'radio',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'updateSettings',
+							sortType: 'alphabetical'
+						} );
+					}
+				}
+			} ]
+		}, {
+			label: 'Note Display',
+			submenu: [ {
+				label: 'Reversed',
+				type: 'checkbox',
+				click: function( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'updateSettings',
+							sortReversed: true
+						} );
 					}
 				}
 			} ]
