@@ -125,8 +125,9 @@ function createMenuTemplate() {
 						focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
 					}
 				}
-			},
-		 	{
+			}, {
+				type: 'separator'
+			}, {
 				label: 'Print',
 				accelerator: 'CmdOrCtrl+P',
 				click( item, focusedWindow ) {
@@ -134,7 +135,7 @@ function createMenuTemplate() {
 						focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
 					}
 				}
-			}	]
+		} ]
 	};
 
 	// non-osx menu item adjustments
@@ -190,6 +191,16 @@ function createMenuTemplate() {
 			label: 'Select All',
 			accelerator: 'CmdOrCtrl+A',
 			role: 'selectall'
+		}, {
+			type: 'separator'
+		}, {
+			label: 'Search Notes',
+			accelerator: 'CmdOrCtrl+F',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.webContents.send( 'appCommand', { action: 'setSearchFocus' } );
+				}
+			}
 		} ]
 	}, {
 		label: 'View',
