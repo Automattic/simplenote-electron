@@ -118,13 +118,23 @@ function createMenuTemplate() {
 	var fileMenu = {
 		label: 'File',
 		submenu: [ {
-			label: 'Print',
-			accelerator: 'CmdOrCtrl+P',
-			click( item, focusedWindow ) {
-				if ( focusedWindow ) {
-					focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+				label: 'New Note',
+				accelerator: 'CmdOrCtrl+N',
+				click( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
+					}
 				}
-			}
+			}, {
+				type: 'separator'
+			}, {
+				label: 'Print',
+				accelerator: 'CmdOrCtrl+P',
+				click( item, focusedWindow ) {
+					if ( focusedWindow ) {
+						focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+					}
+				}
 		} ]
 	};
 
@@ -181,6 +191,16 @@ function createMenuTemplate() {
 			label: 'Select All',
 			accelerator: 'CmdOrCtrl+A',
 			role: 'selectall'
+		}, {
+			type: 'separator'
+		}, {
+			label: 'Search Notes',
+			accelerator: 'CmdOrCtrl+F',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.webContents.send( 'appCommand', { action: 'setSearchFocus' } );
+				}
+			}
 		} ]
 	}, {
 		label: 'View',
@@ -210,13 +230,6 @@ function createMenuTemplate() {
 						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
 					}
 				}
-			} ]
-		}, {
-			label: 'Sort Order',
-			submenu: [ {
-				label: 'Date Updated'
-			}, {
-				label: 'Alphabetical'
 			} ]
 		}, {
 			label: 'Theme',
