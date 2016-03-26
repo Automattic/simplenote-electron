@@ -17,13 +17,7 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import analytics from './analytics'
 import classNames	from 'classnames'
-import {
-	get,
-	has,
-	includes,
-	matchesProperty,
-	noop
-} from 'lodash';
+import { noop, get, has } from 'lodash';
 
 let ipc = getIpc();
 
@@ -59,19 +53,6 @@ const isElectron = ( () => {
 
 	return () => foundElectron;
 } )();
-
-/* Note filters */
-const untrashedAndVisibleTrash = showTrash =>
-	matchesProperty( 'data.deleted', showTrash );
-
-const matchingSelectedTag = tag => note =>
-	! tag || includes( note.data.tags, tag.data.name );
-
-const matchesSearch = regexp => note =>
-	! regexp || regexp.test( get( note, 'data.content', '' ) );
-
-const matchesAll = ( ...filters ) => o =>
-	filters.reduce( (t, c) => t && c(o), true );
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -283,15 +264,29 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	filterNotes: function() {
-		const  { filter, showTrash, notes, tag } = this.props.appState;
-		const regexp = filter && new RegExp( filter, 'gi' );
+		var { filter, showTrash, notes, tag } = this.props.appState;
+		var regexp;
 
-		return notes
-			.filter( matchesAll(
-				untrashedAndVisibleTrash( showTrash ),
-				matchingSelectedTag( tag ),
-				matchesSearch( regexp )
-			) );
+		if ( filter ) {
+			regexp = new RegExp( filter, 'gi' );
+		}
+
+		function test( note ) {
+			// if and only if trash is being viewed, return trashed notes
+			if ( showTrash !== !!note.data.deleted ) {
+				return false;
+			}
+			// if tag is selected only return those with the tag
+			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
+				return false;
+			}
+			if ( regexp && !regexp.test( note.data.content || '' ) ) {
+				return false;
+			}
+			return true;
+		}
+
+		return notes.filter( test );
 	},
 
 	onSetEditorMode: function( mode ) {
