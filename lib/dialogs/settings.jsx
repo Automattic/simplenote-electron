@@ -4,34 +4,15 @@ import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
-import { flowRight, fromPairs, pick, zip } from 'lodash';
+import { pick } from 'lodash';
 
 import RadioGroup from './radio-settings-group';
 import ToggleGroup from './toggle-settings-group';
-import SettingsGroup from './settings-group';
+import SettingsGroup, { Item } from './settings-group';
 
 import * as settingsActions from '../flux/actions-settings';
 
-const displayTypes = [
-	[ 'comfy', 'Comfy' ],
-	[ 'condensed', 'Condensed' ],
-	[ 'expanded', 'Expanded' ]
-];
 const settingTabs = [ 'account', 'display', 'writing' ];
-const sortOrders = [
-	[ 'reversed', 'Reversed' ]
-];
-const sortTypes = [
-	[ 'modificationDate', 'Last Modified' ],
-	[ 'creationDate', 'Last Created' ],
-	[ 'alphabetical', 'Alphabetical' ]
-];
-const themeTypes = [
-	[ 'light', 'Light' ],
-	[ 'dark', 'Dark' ]
-];
-
-const addSettingNames = l => zip( [ 'groupTitle', 'groupSlug', 'items', 'activeItem', 'onChange', 'renderer' ], l );
 
 export const SettingsDialog = React.createClass( {
 	propTypes: {
@@ -89,13 +70,6 @@ export const SettingsDialog = React.createClass( {
 			toggleSortOrder, sortIsReversed
 		} = this.props;
 
-		const settingGroups = [
-			[ 'Sort type', 'sortType', sortTypes, sortType, setSortType, RadioGroup ],
-			[ 'Sort order', 'sortReversed', sortOrders, sortIsReversed ? 'reversed' : '', toggleSortOrder, ToggleGroup ],
-			[ 'Note display', 'noteDisplay', displayTypes, noteDisplay, setNoteDisplay, RadioGroup ],
-			[ 'Theme', 'theme', themeTypes, activeTheme, activateTheme, RadioGroup ]
-		].map( flowRight( fromPairs, addSettingNames ) );
-
 		switch ( tabName ) {
 			case 'account':
 				return (
@@ -117,9 +91,50 @@ export const SettingsDialog = React.createClass( {
 			case 'display':
 				return (
 					<div className="dialog-column settings-display">
-						{ settingGroups.map( ( props, key ) => (
-							<SettingsGroup { ...props } { ...{ key } } />
-						) ) }
+						<SettingsGroup
+							title="Sort type"
+							slug="sortType"
+							activeSlug={ sortType }
+							onChange={ setSortType }
+							renderer={ RadioGroup }
+						>
+							<Item title="Last modified" slug="modificationDate" />
+							<Item title="Last created" slug="creationDate" />
+							<Item title="Alphabetical" slug="alphabetical" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Sort order"
+							slug="sortOrder"
+							activeSlug={ sortIsReversed ? 'reversed' : '' }
+							onChange={ toggleSortOrder }
+							renderer={ ToggleGroup }
+						>
+							<Item title="Reversed" slug="reversed" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Note display"
+							slug="noteDisplay"
+							activeSlug={ noteDisplay }
+							onChange={ setNoteDisplay }
+							renderer={ RadioGroup }
+						>
+							<Item title="Comfy" slug="comfy" />
+							<Item title="Condensed" slug="condensed" />
+							<Item title="Expanded" slug="expanded" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Theme"
+							slug="theme"
+							activeSlug={ activeTheme }
+							onChange={ activateTheme }
+							renderer={ RadioGroup }
+						>
+							<Item title="Light" slug="light" />
+							<Item title="Dark" slug="dark" />
+						</SettingsGroup>
 					</div>
 				);
 

@@ -1,21 +1,26 @@
 import React from 'react';
 
-export const SettingsGroup = ( { groupTitle, groupSlug, items, activeItem, onChange, renderer } ) => (
+export const Item = () => null;
+
+export const SettingsGroup = ( { title: groupTitle, slug: groupSlug, activeSlug, onChange, renderer, children } ) => (
 	<div className="settings-group">
 		<h3 className="panel-title theme-color-fg-dim">{ groupTitle }</h3>
 		<div className="settings-items theme-color-border">
-			{ items.map( ( [ slug, title ], key ) => (
+			{ React.Children.map( children, ( { props: { slug, title } } ) => (
 				<label
 					className="settings-item theme-color-border"
 					htmlFor={ `settings-field-${ groupSlug }-${ slug }` }
-					key={ key }
+					key={ slug }
 				>
 					<div className="settings-item-label">{ title }</div>
 					<div className="settings-item-control">
 						{ renderer( {
+							activeSlug,
+							groupTitle,
 							groupSlug,
 							slug,
-							isEnabled: ( activeItem === slug ),
+							title,
+							isEnabled: slug === activeSlug,
 							onChange
 						} ) }
 					</div>
