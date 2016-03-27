@@ -4,7 +4,6 @@ import classNames from 'classnames';
 export default React.createClass( {
 
 	propTypes: {
-		key: PropTypes.string.isRequired,
 		title: PropTypes.string,
 		onDone: PropTypes.func
 	},
@@ -63,8 +62,8 @@ export default React.createClass( {
 	},
 
 	render() {
-		var { key, className, title, children, onDone } = this.props;
-		var titleElementId = `dialog-title-${key}`;
+		var { className, title, children, onDone } = this.props;
+		var titleElementId = `dialog-title-${ title }`;
 
 		return (
 			<div className={classNames( 'dialog', className ) } role="dialog" aria-labelledby={titleElementId}>

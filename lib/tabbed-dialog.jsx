@@ -30,20 +30,22 @@ export default React.createClass( {
 			<Dialog className="settings" {...dialog}>
 				<nav className="dialog-tabs theme-color-border">
 					<ul>
-						{tabs.map( tab =>
-							<li key={tab}>
-								<button type="button"
-										className={classNames( 'button button-borderless', { 'dialog-tab-active': tab === currentTab } )}
-										onClick={this.setCurrentTab.bind( this, tab )}>
-									{renderTabName( tab )}
+						{ tabs.map( ( tab, key ) =>
+							<li key={ key }>
+								<button
+									type="button"
+									className={ classNames( 'button button-borderless', { 'dialog-tab-active': tab === currentTab } ) }
+									onClick={ this.setCurrentTab.bind( this, tab ) }
+								>
+									{ renderTabName( tab ) }
 								</button>
 							</li>
-						)}
+						) }
 					</ul>
 				</nav>
 
 				<div className="dialog-tab-content">
-					{renderTabContent( this.state.currentTab )}
+					{ renderTabContent( this.state.currentTab ) }
 				</div>
 			</Dialog>
 		);

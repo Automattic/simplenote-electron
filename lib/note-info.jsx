@@ -5,7 +5,7 @@ import moment from 'moment';
 import CrossIcon from './icons/cross';
 import { isEmpty } from 'lodash';
 
-export default React.createClass( {
+export const NoteInfo = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -145,3 +145,5 @@ function characterCount( content ) {
 		// then get the length
 		.length;
 }
+
+export default NoteInfo;
