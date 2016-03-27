@@ -17,6 +17,22 @@ var buildRadioGroup = function( activePredicate ) {
 	};
 };
 
+var buildFontGroup = function( item ) {
+	var label = item[0],
+		accelerator = item[1],
+		action = item[2];
+
+	return {
+		label: label,
+		accelerator: accelerator,
+		click: function( item, focusedWindow ) {
+			if ( ! focusedWindow ) { return; }
+
+			focusedWindow.webContents.send( 'appCommand', { action: action } );
+		}
+	};
+};
+
 var equalTo = function( a ) {
 	return function( b ) {
 		return a === b;
@@ -28,33 +44,15 @@ var buildViewMenu = function( settings ) {
 
 	return {
 		label: 'View',
-			submenu: [ {
+		submenu: [ {
 			label: 'Font Size',
-			submenu: [ {
-				label: 'Bigger',
-				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'increaseFontSize' } );
-					}
-				}
-			}, {
-				label: 'Smaller',
-				accelerator: 'CmdOrCtrl+-',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'decreaseFontSize' } );
-					}
-				}
-			}, {
-				label: 'Reset',
-				accelerator: 'CmdOrCtrl+0',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'resetFontSize' } );
-					}
-				}
-			} ]
+			submenu: [
+				// For the oddity with "Command" vs "Cmd"
+				// Cite: https://github.com/atom/electron/issues/1507
+				[ 'Bigger', 'CommandOrControl+=', 'increaseFontSize' ],
+				[ 'Smaller', 'CmdOrCtrl+-', 'decreaseFontSize' ],
+				[ 'Reset', 'CmdOrCtrl+0', 'resetFontSize' ]
+			].map( buildFontGroup )
 		}, {
 			label: 'Sort Type',
 			submenu: [
