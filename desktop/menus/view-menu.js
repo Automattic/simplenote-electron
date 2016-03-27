@@ -1,3 +1,28 @@
+var buildRadioGroup = function( activePredicate ) {
+	return function( item ) {
+		var label  = item[ 0 ],
+			prop   = item[ 1 ],
+			action = item[ 2 ];
+
+		return {
+			label: label,
+			type: 'radio',
+			checked: activePredicate( prop ),
+			click: function( item, focusedWindow ) {
+				if ( ! focusedWindow ) { return; }
+
+				focusedWindow.webContents.send( 'appCommand', action );
+			}
+		};
+	};
+};
+
+var equalTo = function( a ) {
+	return function( b ) {
+		return a === b;
+	};
+};
+
 var buildViewMenu = function( settings ) {
 	settings = settings || {};
 
@@ -32,43 +57,11 @@ var buildViewMenu = function( settings ) {
 			} ]
 		}, {
 			label: 'Sort Type',
-			submenu: [ {
-				label: 'Last modified',
-				type: 'radio',
-				checked: settings.sortType === 'modificationDate',
-				click: function( item, focusedWindow ) {
-					if ( ! focusedWindow ) { return; }
-
-					focusedWindow.webContents.send( 'appCommand', {
-						action: 'setSortType',
-						sortType: 'modificationDate'
-					} );
-				}
-			}, {
-				label: 'Last created',
-				type: 'radio',
-				checked: settings.sortType === 'creationDate',
-				click: function( item, focusedWindow ) {
-					if ( ! focusedWindow ) { return; }
-
-					focusedWindow.webContents.send( 'appCommand', {
-						action: 'setSortType',
-						sortType: 'creationDate'
-					} );
-				}
-			}, {
-				label: 'Alphabetical',
-				type: 'radio',
-				checked: settings.sortType === 'alphabetical',
-				click: function( item, focusedWindow ) {
-					if ( ! focusedWindow ) { return; }
-
-					focusedWindow.webContents.send( 'appCommand', {
-						action: 'setSortType',
-						sortType: 'alphabetical'
-					} );
-				}
-			}, {
+			submenu: [
+				[ 'Last modified', 'modificationDate', { action: 'setSortType', sortType: 'modificationDate' } ],
+				[ 'Last created', 'creationDate', { action: 'setSortType', sortType: 'creationDate' } ],
+				[ 'Alphabetical', 'alphabetical', { action: 'setSortType', sortType: 'alphabetical' } ]
+			].map( buildRadioGroup( equalTo( settings.sortType ) ) ).concat( [ {
 				type: 'separator'
 			}, {
 				label: 'Reversed',
@@ -81,34 +74,20 @@ var buildViewMenu = function( settings ) {
 						action: 'toggleSortOrder'
 					} );
 				}
-			} ]
+			} ] )
+		}, {
+			label: 'Note Display',
+			submenu: [
+				[ 'Comfy', 'comfy', { action: 'setNoteDisplay', noteDisplay: 'comfy' } ],
+				[ 'Condensed', 'condensed', { action: 'setNoteDisplay', noteDisplay: 'condensed' } ],
+				[ 'Expanded', 'expanded', { action: 'setNoteDisplay', noteDisplay: 'expanded' } ]
+			].map( buildRadioGroup( equalTo( settings.noteDisplay ) ) )
 		}, {
 			label: 'Theme',
-			submenu: [ {
-				label: 'Light',
-				type: 'radio',
-				checked: settings.theme === 'light',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', {
-							action: 'activateTheme',
-							theme: 'light'
-						} );
-					}
-				}
-			}, {
-				label: 'Dark',
-				type: 'radio',
-				checked: settings.theme === 'dark',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', {
-							action: 'activateTheme',
-							theme: 'dark'
-						} );
-					}
-				}
-			} ]
+			submenu: [
+				[ 'Light', 'light', { action: 'activateTheme', theme: 'light' } ],
+				[ 'Dark', 'dark', { action: 'activateTheme', theme: 'dark' } ]
+			].map( buildRadioGroup( equalTo( settings.theme ) ) )
 		}, {
 			label: 'Toggle Full Screen',
 			accelerator: ( function() {

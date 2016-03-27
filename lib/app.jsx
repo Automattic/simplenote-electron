@@ -60,6 +60,7 @@ function mapDispatchToProps( dispatch ) {
 			'decreaseFontSize',
 			'increaseFontSize',
 			'resetFontSize',
+			'setNoteDisplay',
 			'setSortType',
 			'toggleSortOrder'
 		] ), dispatch )
