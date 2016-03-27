@@ -3,7 +3,10 @@
 var app = require( 'app' );	 // Module to control application life.
 var Menu = require( 'menu' );
 var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
-var path = require('path')
+var path = require('path');
+var ipcMain = require( 'electron' ).ipcMain;
+
+var buildViewMenu = require( './menus/view-menu' );
 
 require( 'module' ).globalPaths.push( path.resolve( path.join( __dirname ) ) );
 
@@ -49,7 +52,11 @@ module.exports = function main() {
 		}
 
 		// Uncomment me to debug in the electron window
-		// mainWindow.openDevTools();
+		mainWindow.openDevTools();
+
+		ipcMain.on( 'settingsUpdate', function( event, settings ) {
+			Menu.setApplicationMenu( Menu.buildFromTemplate( createMenuTemplate( settings ) ) );
+		} );
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
@@ -75,7 +82,7 @@ module.exports = function main() {
 	app.on( 'activate', activateWindow );
 };
 
-function createMenuTemplate() {
+function createMenuTemplate( settings ) {
 	const name = require( 'app' ).getName();
 
 	const aboutMenuItem = {
@@ -202,67 +209,7 @@ function createMenuTemplate() {
 				}
 			}
 		} ]
-	}, {
-		label: 'View',
-		submenu: [ {
-			label: 'Font Size',
-			submenu: [ {
-				label: 'Bigger',
-				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeBigger' } );
-					}
-				}
-			}, {
-				label: 'Smaller',
-				accelerator: 'CmdOrCtrl+-',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeSmaller' } );
-					}
-				}
-			}, {
-				label: 'Reset',
-				accelerator: 'CmdOrCtrl+0',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
-					}
-				}
-			} ]
-		}, {
-			label: 'Theme',
-			submenu: [ {
-				label: 'Light',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'setLightThemeActive' } );
-					}
-				}
-			}, {
-				label: 'Dark',
-				click: function( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'setDarkThemeActive' } );
-					}
-				}
-			} ]
-		}, {
-			label: 'Toggle Full Screen',
-			accelerator: ( function() {
-				if ( process.platform === 'darwin' ) {
-					return 'Ctrl+Command+F';
-				}
-				return 'F11';
-			} )(),
-			click( item, focusedWindow ) {
-				if ( focusedWindow ) {
-					focusedWindow.setFullScreen( !focusedWindow.isFullScreen() );
-				}
-			}
-		} ]
-	}, {
+	}, buildViewMenu( settings ), {
 		label: 'Window',
 		role: 'window',
 		submenu: [ {

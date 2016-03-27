@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import classNames from 'classnames'
 import NoteDetail from './note-detail'
 import TagField from './tag-field'
@@ -7,8 +8,7 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get } from 'lodash'
 
-export default React.createClass( {
-
+export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
@@ -168,3 +168,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = ( { settings } ) => ( {
+	fontSize: settings.fontSize,
+	markdownEnabled: settings.markdownEnabled
+} );
+
+export default connect( mapStateToProps )( NoteEditor );
