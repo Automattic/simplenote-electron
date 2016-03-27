@@ -32,11 +32,12 @@ let ipc = getIpc();
 
 function getIpc() {
 	try {
-		ipc = __non_webpack_require__( 'ipc' );
+		ipc = __non_webpack_require__( 'electron' ).ipcRenderer;
 	} catch ( e ) {
 		ipc = {
 			on: noop,
-			removeListener: noop
+			removeListener: noop,
+			send: noop
 		};
 	}
 
@@ -103,6 +104,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	componentDidMount: function() {
 		ipc.on( 'appCommand', this.onAppCommand );
+		ipc.send( 'settingsUpdate', this.props.settings );
 
 		this.props.noteBucket
 			.on( 'index', this.onNotesIndex )
@@ -128,7 +130,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		ipc.removeListener( 'appCommand', this.onAppCommand );
 	},
 
-	onAppCommand: function( command ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.settings !== prevProps.settings ) {
+			ipc.send( 'settingsUpdate', this.props.settings );
+		}
+	},
+
+	onAppCommand: function( event, command ) {
 		const canRun = overEvery(
 			isObject,
 			o => o.action !== null,
