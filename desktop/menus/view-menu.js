@@ -31,6 +31,58 @@ var buildViewMenu = function( settings ) {
 				}
 			} ]
 		}, {
+			label: 'Sort Type',
+			submenu: [ {
+				label: 'Last modified',
+				type: 'radio',
+				checked: settings.sortType === 'modificationDate',
+				click: function( item, focusedWindow ) {
+					if ( ! focusedWindow ) { return; }
+
+					focusedWindow.webContents.send( 'appCommand', {
+						action: 'setSortType',
+						sortType: 'modificationDate'
+					} );
+				}
+			}, {
+				label: 'Last created',
+				type: 'radio',
+				checked: settings.sortType === 'creationDate',
+				click: function( item, focusedWindow ) {
+					if ( ! focusedWindow ) { return; }
+
+					focusedWindow.webContents.send( 'appCommand', {
+						action: 'setSortType',
+						sortType: 'creationDate'
+					} );
+				}
+			}, {
+				label: 'Alphabetical',
+				type: 'radio',
+				checked: settings.sortType === 'alphabetical',
+				click: function( item, focusedWindow ) {
+					if ( ! focusedWindow ) { return; }
+
+					focusedWindow.webContents.send( 'appCommand', {
+						action: 'setSortType',
+						sortType: 'alphabetical'
+					} );
+				}
+			}, {
+				type: 'separator'
+			}, {
+				label: 'Reversed',
+				type: 'checkbox',
+				checked: settings.sortReversed,
+				click: function( item, focusedWindow ) {
+					if ( ! focusedWindow ) { return; }
+
+					focusedWindow.webContents.send( 'appCommand', {
+						action: 'toggleSortOrder'
+					} );
+				}
+			} ]
+		}, {
 			label: 'Theme',
 			submenu: [ {
 				label: 'Light',

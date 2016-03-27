@@ -59,7 +59,9 @@ function mapDispatchToProps( dispatch ) {
 			'activateTheme',
 			'decreaseFontSize',
 			'increaseFontSize',
-			'resetFontSize'
+			'resetFontSize',
+			'setSortType',
+			'toggleSortOrder'
 		] ), dispatch )
 	};
 }
