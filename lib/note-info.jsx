@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import ToggleControl from './controls/toggle';
 import moment from 'moment';
 import CrossIcon from './icons/cross';
 import { isEmpty } from 'lodash';
 
-export default React.createClass( {
+export const NoteInfo = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -145,3 +146,9 @@ function characterCount( content ) {
 		// then get the length
 		.length;
 }
+
+const mapStateToProps = ( { settings } ) => ( {
+	markdownEnabled: settings.markdownEnabled
+} );
+
+export default connect( mapStateToProps )( NoteInfo );

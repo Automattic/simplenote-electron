@@ -49,7 +49,7 @@ module.exports = function main() {
 		}
 
 		// Uncomment me to debug in the electron window
-		// mainWindow.openDevTools();
+		mainWindow.openDevTools();
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
@@ -211,7 +211,7 @@ function createMenuTemplate() {
 				accelerator: 'CommandOrControl+=', // doh: https://github.com/atom/electron/issues/1507
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeBigger' } );
+						focusedWindow.webContents.send( 'appCommand', { action: 'increaseFontSize' } );
 					}
 				}
 			}, {
@@ -219,7 +219,7 @@ function createMenuTemplate() {
 				accelerator: 'CmdOrCtrl+-',
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeSmaller' } );
+						focusedWindow.webContents.send( 'appCommand', { action: 'decreaseFontSize' } );
 					}
 				}
 			}, {
@@ -227,7 +227,7 @@ function createMenuTemplate() {
 				accelerator: 'CmdOrCtrl+0',
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'fontSizeReset' } );
+						focusedWindow.webContents.send( 'appCommand', { action: 'resetFontSize' } );
 					}
 				}
 			} ]
@@ -237,14 +237,20 @@ function createMenuTemplate() {
 				label: 'Light',
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'setLightThemeActive' } );
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'activateTheme',
+							theme: 'light'
+						} );
 					}
 				}
 			}, {
 				label: 'Dark',
 				click: function( item, focusedWindow ) {
 					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'setDarkThemeActive' } );
+						focusedWindow.webContents.send( 'appCommand', {
+							action: 'activateTheme',
+							theme: 'dark'
+						} );
 					}
 				}
 			} ]

@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import settingsMap from './flux/settings'
 import appState from './flux/app-state'
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
@@ -17,7 +16,17 @@ import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import analytics from './analytics'
 import classNames	from 'classnames'
-import { noop, get, has } from 'lodash';
+import {
+	noop,
+	get,
+	has,
+	isObject,
+	overEvery,
+	pick,
+	values
+} from 'lodash';
+
+import * as settingsActions from './flux/actions-settings';
 
 let ipc = getIpc();
 
@@ -40,11 +49,18 @@ function mapStateToProps( state ) {
 
 function mapDispatchToProps( dispatch ) {
 	var actionCreators = Object.assign( {},
-		settingsMap.actionCreators,
 		appState.actionCreators
 	);
 
-	return { actions: bindActionCreators( actionCreators, dispatch ) };
+	return {
+		actions: bindActionCreators( actionCreators, dispatch ),
+		...bindActionCreators( pick( settingsActions, [
+			'activateTheme',
+			'decreaseFontSize',
+			'increaseFontSize',
+			'resetFontSize'
+		] ), dispatch )
+	};
 }
 
 const isElectron = ( () => {
@@ -113,10 +129,20 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	onAppCommand: function( command ) {
-		if ( command != null && typeof command === 'object' && command.action != null && this.props.actions.hasOwnProperty( command.action ) ) {
+		const canRun = overEvery(
+			isObject,
+			o => o.action !== null,
+			o => has( this.props.actions, o.action ) || has( this.props, o.action )
+		);
+
+		if ( canRun( command ) ) {
 			// newNote expects a bucket to be passed in, but the action method itself wouldn't do that
 			if ( command.action === 'newNote' ) {
 				this.onNewNote();
+			} else if ( has( this.props, command.action ) ) {
+				const { action, ...args } = command;
+
+				this.props[ action ]( ...values( args ) );
 			} else {
 				this.props.actions[ command.action ]( command );
 			}
@@ -468,7 +494,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								editorMode={state.editorMode}
 								note={selectedNote}
 								revisions={state.revisions}
-								markdownEnabled={settings.markdownEnabled}
 								onSetEditorMode={this.onSetEditorMode}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
@@ -479,12 +504,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-								fontSize={settings.fontSize}
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
 							<NoteInfo
 								note={selectedNote}
-								markdownEnabled={settings.markdownEnabled}
 								onPinNote={this.onPinNote}
 								onMarkdownNote={this.onMarkdownNote}
 								onOutsideClick={this.onToolbarOutsideClick} />
@@ -496,42 +519,28 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						onAuthenticate={this.props.onAuthenticate}
 					/>
 				}
-				{this.renderDialogs()}
+				{ this.props.appState.dialogs.length &&
+					<div className="dialogs">
+						{ this.renderDialogs() }
+					</div> }
 			</div>
 		)
 	},
 
 	renderDialogs() {
 		var { dialogs } = this.props.appState;
-		var elements = [], modalIndex;
 
-		if ( dialogs.length === 0 ) {
-			return;
-		}
-
-		for ( let i = 0; i < dialogs.length; i++ ) {
-			let dialog = dialogs[i];
-			if ( dialog.modal ) {
-				modalIndex = i;
-			}
-
-			elements.push( this.renderDialog( dialog ) );
-		}
-
-		if ( modalIndex != null ) {
-			elements.splice( modalIndex, 0,
-				<div key="overlay" className="dialogs-overlay" onClick={null}></div>
-			);
-		}
-
-		return (
-			<div className="dialogs">
-				{elements}
-			</div>
-		);
+		return dialogs
+			.map( ( dialog, key ) => [
+				dialog.modal
+					? <div key="overlay" className="dialogs-overlay" onClick={null}></div>
+					: undefined,
+				this.renderDialog( dialog, key )
+			] )
+			.reduce( ( a, b ) => [ ...a, ...b ], [] );
 	},
 
-	renderDialog( { params, ...dialog } ) {
+	renderDialog( { params, ...dialog }, key ) {
 		var DialogComponent = Dialogs[ dialog.type ];
 
 		if ( DialogComponent == null ) {
@@ -539,7 +548,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		}
 
 		return (
-			<DialogComponent {...this.props} dialog={dialog} params={params} />
+			<DialogComponent {...this.props} { ...{ key, dialog, params } } />
 		);
 	}
 } ) );

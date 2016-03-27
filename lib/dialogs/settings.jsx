@@ -1,13 +1,22 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
 import CheckboxControl from '../controls/checkbox';
 import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
 
+import {
+	activateTheme,
+	setNoteDisplay,
+	setSortType,
+	toggleMarkdown,
+	toggleSortOrder,
+} from '../flux/actions-settings';
+
 const settingTabs = [ 'account', 'display', 'writing' ];
 
-export default React.createClass( {
+export const SettingsDialog = React.createClass( {
 
 	propTypes: {
 		actions: PropTypes.object.isRequired,
@@ -68,8 +77,14 @@ export default React.createClass( {
 
 	renderTabContent( tabName ) {
 		var state = this.props.appState;
-		var settings = this.props.settings;
 		var { accountName } = state;
+		const {
+			activateTheme, activeTheme,
+			setNoteDisplay, noteDisplay,
+			setSortType, sortType,
+			toggleMarkdown, markdownIsEnabled,
+			toggleSortOrder, sortIsReversed
+		} = this.props;
 
 		switch ( tabName ) {
 			case 'account':
@@ -102,8 +117,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="sortType" value="modificationDate"
 											id="settings-field-sordType-modificationDate"
-											checked={settings.sortType === 'modificationDate'}
-											onChange={this.onUpdateSortType} />
+											checked={ sortType === 'modificationDate' }
+											onChange={ () => setSortType( 'modificationDate' ) } />
 									</div>
 								</label>
 								<label htmlFor="settings-field-sordType-creationDate" className="settings-item theme-color-border">
@@ -113,8 +128,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="sortType" value="creationDate"
 											id="settings-field-sordType-creationDate"
-											checked={settings.sortType === 'creationDate'}
-											onChange={this.onUpdateSortType} />
+											checked={ sortType === 'creationDate' }
+											onChange={ () => setSortType( 'creationDate' ) } />
 									</div>
 								</label>
 								<label htmlFor="settings-field-sordType-alphabetical" className="settings-item theme-color-border">
@@ -124,8 +139,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="sortType" value="alphabetical"
 											id="settings-field-sordType-alphabetical"
-											checked={settings.sortType === 'alphabetical'}
-											onChange={this.onUpdateSortType} />
+											checked={ sortType === 'alphabetical' }
+											onChange={ () => setSortType( 'alphabetical' ) } />
 									</div>
 								</label>
 							</div>
@@ -140,8 +155,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<ToggleControl name="sortReversed" value="reversed"
 											id="settings-field-sortReversed"
-											checked={!!settings.sortReversed}
-											onChange={this.onUpdateSortReversed} />
+											checked={ sortIsReversed }
+											onChange={ toggleSortOrder } />
 									</div>
 								</label>
 							</div>
@@ -156,8 +171,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="noteDisplay" value="comfy"
 											id="settings-field-noteDisplay-comfy"
-											checked={settings.noteDisplay === 'comfy'}
-											onChange={this.onUpdateSettingValue} />
+											checked={ noteDisplay === 'comfy' }
+											onChange={ () => setNoteDisplay( 'comfy' ) } />
 									</div>
 								</label>
 								<label htmlFor="settings-field-noteDisplay-condensed" className="settings-item theme-color-border">
@@ -167,8 +182,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="noteDisplay" value="condensed"
 											id="settings-field-noteDisplay-condensed"
-											checked={settings.noteDisplay === 'condensed'}
-											onChange={this.onUpdateSettingValue} />
+											checked={ noteDisplay === 'condensed' }
+											onChange={ () => setNoteDisplay( 'condensed' ) } />
 									</div>
 								</label>
 								<label htmlFor="settings-field-noteDisplay-expanded" className="settings-item theme-color-border">
@@ -178,8 +193,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="noteDisplay" value="expanded"
 											id="settings-field-noteDisplay-expanded"
-											checked={settings.noteDisplay === 'expanded'}
-											onChange={this.onUpdateSettingValue} />
+											checked={ noteDisplay === 'expanded' }
+											onChange={ () => setNoteDisplay( 'expanded' ) } />
 									</div>
 								</label>
 							</div>
@@ -194,8 +209,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="theme" value="light"
 											id="settings-field-theme-light"
-											checked={settings.theme === 'light'}
-											onChange={this.onUpdateSettingValue} />
+											checked={ activeTheme === 'light'}
+											onChange={ () => activateTheme( 'light' ) } />
 									</div>
 								</label>
 								<label htmlFor="settings-field-theme-dark" className="settings-item theme-color-border">
@@ -205,8 +220,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<CheckboxControl type="radio" name="theme" value="dark"
 											id="settings-field-theme-dark"
-											checked={settings.theme === 'dark'}
-											onChange={this.onUpdateSettingValue} />
+											checked={ activeTheme === 'dark'}
+											onChange={ () => activateTheme( 'dark' ) } />
 									</div>
 								</label>
 							</div>
@@ -226,8 +241,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<ToggleControl name="markdownEnabled" value="enabled"
 											id="settings-field-markdown"
-											checked={!!settings.markdownEnabled}
-											onChange={this.onUpdateSettingBool} />
+											checked={ markdownIsEnabled }
+											onChange={ toggleMarkdown } />
 									</div>
 								</label>
 							</div>
@@ -243,3 +258,21 @@ export default React.createClass( {
 	}
 
 } );
+
+const mapStateToProps = ( { settings } ) => ( {
+	activeTheme: settings.theme,
+	markdownIsEnabled: settings.markdownEnabled,
+	noteDisplay: settings.noteDisplay,
+	sortType: settings.sortType,
+	sortIsReversed: settings.sortReversed
+} );
+
+const mapDispatchToProps = {
+	activateTheme,
+	setNoteDisplay,
+	setSortType,
+	toggleMarkdown,
+	toggleSortOrder
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( SettingsDialog );
