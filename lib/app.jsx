@@ -15,12 +15,13 @@ import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
 import analytics from './analytics'
+import filterNotes from './note-filters';
 import classNames	from 'classnames'
 import {
-	noop,
 	get,
 	has,
 	isObject,
+	noop,
 	overEvery,
 	pick,
 	values
@@ -45,7 +46,10 @@ function getIpc() {
 }
 
 function mapStateToProps( state ) {
-	return state;
+	return {
+		...state,
+		notes: filterNotes( { ...state.appState, ...state.settings } )
+	};
 }
 
 function mapDispatchToProps( dispatch ) {
@@ -300,32 +304,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		} );
 	},
 
-	filterNotes: function() {
-		var { filter, showTrash, notes, tag } = this.props.appState;
-		var regexp;
-
-		if ( filter ) {
-			regexp = new RegExp( filter, 'gi' );
-		}
-
-		function test( note ) {
-			// if and only if trash is being viewed, return trashed notes
-			if ( showTrash !== !!note.data.deleted ) {
-				return false;
-			}
-			// if tag is selected only return those with the tag
-			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
-				return false;
-			}
-			if ( regexp && !regexp.test( note.data.content || '' ) ) {
-				return false;
-			}
-			return true;
-		}
-
-		return notes.filter( test );
-	},
-
 	onSetEditorMode: function( mode ) {
 		this.props.actions.setEditorMode( { mode } );
 	},
@@ -357,7 +335,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	// gets the index of the note located before the currently selected one
 	getPreviousNoteIndex: function( note ) {
-		const filteredNotes = this.filterNotes();
+		const filteredNotes = this.props.notes;
 
 		const noteIndex = function( filteredNote ) {
 			return note.id === filteredNote.id;
@@ -432,7 +410,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		const state = this.props.appState;
 		const electron = get( this.state, 'electron' );
 		const { settings, isSmallScreen } = this.props;
-		const filteredNotes = this.filterNotes();
+		const filteredNotes = this.props.notes;
 
 		const noteIndex = Math.max( state.previousIndex, 0 );
 		const selectedNote = isSmallScreen || state.note ? state.note : filteredNotes[ noteIndex ];
