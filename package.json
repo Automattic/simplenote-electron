@@ -9,7 +9,7 @@
     "build": "NODE_ENV=development `npm bin`/webpack --config ./webpack.config.js",
     "build:prod": "NODE_ENV=production `npm bin`/webpack -p --config ./webpack.config.js",
     "lint": "`npm bin`/eslint lib",
-    "start": "NODE_ENV=hot node devServer.js"
+    "start": "NODE_ENV=development node `npm bin`/webpack-dev-server --hot --progress --inline --port 4000 --history-api-fallback"
   },
   "author": "",
   "license": "ISC",
@@ -38,15 +38,11 @@
     "postcss-loader": "0.7.0",
     "react-onclickoutside": "4.5.0",
     "react-textarea-autosize": "3.3.0",
-    "react-transform-catch-errors": "1.0.2",
-    "react-transform-hmr": "1.0.4",
-    "redbox-react": "1.2.2",
     "sass-loader": "3.1.2",
-    "simperium": "git://github.com/automattic/node-simperium.git#6c401c0cccd909b756df6fce492f88545f2ea656",
+	"simperium": "git://github.com/automattic/node-simperium.git#6c401c0cccd909b756df6fce492f88545f2ea656",
     "style-loader": "0.12.4",
     "webpack": "1.12.14",
-    "webpack-dev-middleware": "1.5.1",
-    "webpack-hot-middleware": "2.10.0"
+    "webpack-dev-server": "1.14.1"
   },
   "dependencies": {
     "cookie": "0.2.3",
