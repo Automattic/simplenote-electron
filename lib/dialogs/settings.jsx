@@ -1,14 +1,16 @@
 import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
-import CheckboxControl from '../controls/checkbox';
 import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
 
+import RadioGroup from './radio-settings-group';
+import ToggleGroup from './toggle-settings-group';
+import SettingsGroup, { Item } from './settings-group';
+
 const settingTabs = [ 'account', 'display', 'writing' ];
 
-export default React.createClass( {
-
+export const SettingsDialog = React.createClass( {
 	propTypes: {
 		actions: PropTypes.object.isRequired,
 		onSignOut: PropTypes.func.isRequired,
@@ -20,18 +22,6 @@ export default React.createClass( {
 
 	onEditAccount() {
 		viewExternalUrl( 'https://app.simplenote.com/settings' );
-	},
-
-	onUpdateSettingValue( event ) {
-		this.props.actions.updateSettings( {
-			[event.currentTarget.name]: event.currentTarget.value
-		} );
-	},
-
-	onUpdateSettingBool( event ) {
-		this.props.actions.updateSettings( {
-			[event.currentTarget.name]: event.currentTarget.checked
-		} );
 	},
 
 	onUpdateSortType( event ) {
@@ -52,13 +42,15 @@ export default React.createClass( {
 		var dialog = this.props.dialog;
 
 		return (
-			<TabbedDialog className="settings"
+			<TabbedDialog
+				className="settings"
 				title="Settings"
-				tabs={settingTabs}
-				onDone={this.onDone}
-				renderTabName={this.renderTabName}
-				renderTabContent={this.renderTabContent}
-				{...dialog} />
+				tabs={ settingTabs }
+				onDone={ this.onDone }
+				renderTabName={ this.renderTabName }
+				renderTabContent={ this.renderTabContent }
+				{ ...dialog }
+			/>
 		);
 	},
 
@@ -67,9 +59,22 @@ export default React.createClass( {
 	},
 
 	renderTabContent( tabName ) {
-		var state = this.props.appState;
-		var settings = this.props.settings;
-		var { accountName } = state;
+		const { accountName } = this.props.appState;
+		const {
+			activateTheme,
+			setNoteDisplay,
+			setSortType,
+			toggleMarkdown,
+			toggleSortOrder,
+		} = this.props;
+
+		const { settings: {
+			theme: activeTheme,
+			markdownEnabled: markdownIsEnabled,
+			noteDisplay,
+			sortType,
+			sortReversed: sortIsReversed
+		} } = this.props;
 
 		switch ( tabName ) {
 			case 'account':
@@ -92,125 +97,50 @@ export default React.createClass( {
 			case 'display':
 				return (
 					<div className="dialog-column settings-display">
-						<div className="settings-group">
-							<h3 className="panel-title theme-color-fg-dim">Sort type</h3>
-							<div className="settings-items theme-color-border">
-								<label htmlFor="settings-field-sordType-last-modified" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Last modified
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="sortType" value="modificationDate"
-											id="settings-field-sordType-modificationDate"
-											checked={settings.sortType === 'modificationDate'}
-											onChange={this.onUpdateSortType} />
-									</div>
-								</label>
-								<label htmlFor="settings-field-sordType-creationDate" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Last created
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="sortType" value="creationDate"
-											id="settings-field-sordType-creationDate"
-											checked={settings.sortType === 'creationDate'}
-											onChange={this.onUpdateSortType} />
-									</div>
-								</label>
-								<label htmlFor="settings-field-sordType-alphabetical" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Alphabetical
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="sortType" value="alphabetical"
-											id="settings-field-sordType-alphabetical"
-											checked={settings.sortType === 'alphabetical'}
-											onChange={this.onUpdateSortType} />
-									</div>
-								</label>
-							</div>
-						</div>
-						<div className="settings-group">
-							<h3 className="panel-title theme-color-fg-dim">Sort order</h3>
-							<div className="settings-items theme-color-border">
-								<label htmlFor="settings-field-sortReversed" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Reversed
-									</div>
-									<div className="settings-item-control">
-										<ToggleControl name="sortReversed" value="reversed"
-											id="settings-field-sortReversed"
-											checked={!!settings.sortReversed}
-											onChange={this.onUpdateSortReversed} />
-									</div>
-								</label>
-							</div>
-						</div>
-						<div className="settings-group">
-							<h3 className="panel-title theme-color-fg-dim">Note display</h3>
-							<div className="settings-items theme-color-border">
-								<label htmlFor="settings-field-noteDisplay-comfy" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Comfy
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="noteDisplay" value="comfy"
-											id="settings-field-noteDisplay-comfy"
-											checked={settings.noteDisplay === 'comfy'}
-											onChange={this.onUpdateSettingValue} />
-									</div>
-								</label>
-								<label htmlFor="settings-field-noteDisplay-condensed" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Condensed
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="noteDisplay" value="condensed"
-											id="settings-field-noteDisplay-condensed"
-											checked={settings.noteDisplay === 'condensed'}
-											onChange={this.onUpdateSettingValue} />
-									</div>
-								</label>
-								<label htmlFor="settings-field-noteDisplay-expanded" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Expanded
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="noteDisplay" value="expanded"
-											id="settings-field-noteDisplay-expanded"
-											checked={settings.noteDisplay === 'expanded'}
-											onChange={this.onUpdateSettingValue} />
-									</div>
-								</label>
-							</div>
-						</div>
-						<div className="settings-group">
-							<h3 className="panel-title theme-color-fg-dim">Theme</h3>
-							<div className="settings-items theme-color-border">
-								<label htmlFor="settings-field-theme-light" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Light
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="theme" value="light"
-											id="settings-field-theme-light"
-											checked={settings.theme === 'light'}
-											onChange={this.onUpdateSettingValue} />
-									</div>
-								</label>
-								<label htmlFor="settings-field-theme-dark" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Dark
-									</div>
-									<div className="settings-item-control">
-										<CheckboxControl type="radio" name="theme" value="dark"
-											id="settings-field-theme-dark"
-											checked={settings.theme === 'dark'}
-											onChange={this.onUpdateSettingValue} />
-									</div>
-								</label>
-							</div>
-						</div>
+						<SettingsGroup
+							title="Sort type"
+							slug="sortType"
+							activeSlug={ sortType }
+							onChange={ setSortType }
+							renderer={ RadioGroup }
+						>
+							<Item title="Last modified" slug="modificationDate" />
+							<Item title="Last created" slug="creationDate" />
+							<Item title="Alphabetical" slug="alphabetical" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Sort order"
+							slug="sortOrder"
+							activeSlug={ sortIsReversed ? 'reversed' : '' }
+							onChange={ toggleSortOrder }
+							renderer={ ToggleGroup }
+						>
+							<Item title="Reversed" slug="reversed" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Note display"
+							slug="noteDisplay"
+							activeSlug={ noteDisplay }
+							onChange={ setNoteDisplay }
+							renderer={ RadioGroup }
+						>
+							<Item title="Comfy" slug="comfy" />
+							<Item title="Condensed" slug="condensed" />
+							<Item title="Expanded" slug="expanded" />
+						</SettingsGroup>
+
+						<SettingsGroup
+							title="Theme"
+							slug="theme"
+							activeSlug={ activeTheme }
+							onChange={ activateTheme }
+							renderer={ RadioGroup }
+						>
+							<Item title="Light" slug="light" />
+							<Item title="Dark" slug="dark" />
+						</SettingsGroup>
 					</div>
 				);
 
@@ -226,8 +156,8 @@ export default React.createClass( {
 									<div className="settings-item-control">
 										<ToggleControl name="markdownEnabled" value="enabled"
 											id="settings-field-markdown"
-											checked={!!settings.markdownEnabled}
-											onChange={this.onUpdateSettingBool} />
+											checked={ markdownIsEnabled }
+											onChange={ toggleMarkdown } />
 									</div>
 								</label>
 							</div>
@@ -243,3 +173,5 @@ export default React.createClass( {
 	}
 
 } );
+
+export default SettingsDialog;
