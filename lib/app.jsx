@@ -99,7 +99,11 @@ const preventDefaultThen = ( fn ) => ( e ) => {
 const whenCanResize = when( ( { canResize } ) => canResize );
 const whenIsResizing = when( ( { isResizing } ) => isResizing );
 
-const detectCanResize = ( { onResizable, width } ) => ( e ) => onResizable( Math.abs( e.clientX - width ) < 3 )
+const detectCanResize = ( { onResizable, sourceListSelector } ) => ( e ) => {
+	const node = document.querySelector( sourceListSelector )
+	if ( !node ) return;
+	onResizable( e.clientX - Math.abs( node.getBoundingClientRect().right ) < 3 )
+}
 
 const makeResizable = whenIsResizing( ( { onUpdateWidth } ) => ( e ) => onUpdateWidth( e.clientX ), detectCanResize )
 const startResizing = whenCanResize( ( { onStartResizing } ) => preventDefaultThen( () => onStartResizing() ) )
@@ -500,7 +504,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				}
 				{ state.authorized ?
 						<div className={mainClasses}
-							onMouseMove={ makeResizable( { isResizing, width: sourceList.width, onResizable: this.props.setSourceListCanResize, onUpdateWidth: this.props.setSourceListWidth } ) }
+							onMouseMove={ makeResizable( { isResizing, sourceListSelector: '.source-list', onResizable: this.props.setSourceListCanResize, onUpdateWidth: this.props.setSourceListWidth } ) }
 							onMouseDown={ startResizing( { canResize, onStartResizing: this.props.setSourceListResizing } ) }
 							onMouseUp={ stopResizing( { isResizing, onStopResizing: () => this.props.setSourceListResizing( false ) } ) } >
 							<NavigationBar
