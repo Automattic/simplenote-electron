@@ -84,6 +84,9 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 			'resetFontSize',
 			'setNoteDisplay',
 			'setMarkdown',
+			'setSourceListWidth',
+			'setSourceListResizing',
+			'setSourceListCanResize',
 			'setAccountName'
 		] ), dispatch ),
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
@@ -102,6 +105,42 @@ const isElectron = ( () => {
 } )();
 
 const isElectronMac = () => matchesProperty( 'process.platform', 'darwin' )( window );
+
+const includesSearch = ( text, search ) =>
+	( text || '' )
+		.toLocaleLowerCase()
+		.includes( ( search || '' ).toLocaleLowerCase() );
+
+const matchesTrashView = isViewingTrash => note =>
+	isViewingTrash === !! get( note, 'data.deleted', false );
+
+const matchesTag = tag => note =>
+	! tag || includes( get( note, 'data.tags', [] ), get( tag, 'data.name', '' ) );
+
+const matchesSearch = query => note =>
+	! query || includesSearch( get( note, 'data.content' ), query );
+
+const when = ( condition ) => ( action, fallback = noop ) => ( ... args ) => (
+	condition( ... args ) ? action( ... args ) : fallback( ... args )
+);
+
+const preventDefaultThen = ( fn ) => ( e ) => {
+	e.preventDefault();
+	return fn( e );
+};
+
+const whenCanResize = when( ( { canResize } ) => canResize );
+const whenIsResizing = when( ( { isResizing } ) => isResizing );
+const startResizing = whenCanResize( ( { onStartResizing } ) => preventDefaultThen( () => onStartResizing() ) );
+
+const detectCanResize = ( { onResizable, sourceListSelector } ) => ( e ) => {
+	const node = document.querySelector( sourceListSelector );
+	if ( !node ) return;
+	onResizable( e.clientX - Math.abs( node.getBoundingClientRect().right ) < 3 )
+};
+
+const makeResizable = whenIsResizing( ( { onUpdateWidth } ) => ( e ) => onUpdateWidth( e.clientX ), detectCanResize );
+const stopResizing = whenIsResizing( ( { onStopResizing } ) => preventDefaultThen( onStopResizing ) );
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -425,13 +464,18 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		const appClasses = classNames( 'app', `theme-${settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
+		const { sourceList } = this.props.settings;
+
+		const { canResize, isResizing } = sourceList;
 
 		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
 			'is-electron': isElectron(),
-			'is-macos': isMacApp
+			'is-macos': isMacApp,
+			'can-resize': canResize,
+			'is-resizing': isResizing,
 		} );
 
 		return (
@@ -448,7 +492,12 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 					</ContextMenu>
 				}
 				{ isAuthorized ?
-						<div className={mainClasses}>
+						<div
+							className={mainClasses}
+							onMouseMove={ makeResizable( { isResizing, sourceListSelector: '.source-list', onResizable: this.props.setSourceListCanResize, onUpdateWidth: this.props.setSourceListWidth } ) }
+							onMouseDown={ startResizing( { canResize, onStartResizing: this.props.setSourceListResizing } ) }
+							onMouseUp={ stopResizing( { isResizing, onStopResizing: () => this.props.setSourceListResizing( false ) } ) }
+						>
 							{ state.showNavigation &&
 								<NavigationBar
 									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
@@ -466,7 +515,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									tags={state.tags}
 									onOutsideClick={this.onToolbarOutsideClick} />
 							}
-							<div className="source-list theme-color-bg theme-color-fg">
+							<div className="source-list theme-color-bg theme-color-fg" ref={ ( ref ) => {
+								if ( !ref ) return;
+								ref.style.flexBasis = sourceList.width + 'px';
+							} }>
 								<div className="search-bar theme-color-border">
 									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
