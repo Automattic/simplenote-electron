@@ -70,7 +70,10 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 			'increaseFontSize',
 			'resetFontSize',
 			'setNoteDisplay',
-			'toggleMarkdown'
+			'toggleMarkdown',
+			'setSourceListWidth',
+			'setSourceListResizing',
+			'setSourceListCanResize'
 		] ), dispatch ),
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
 		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder )
@@ -83,6 +86,24 @@ const isElectron = ( () => {
 
 	return () => foundElectron;
 } )();
+
+const when = ( condition ) => ( action, fallback = noop ) => ( ... args ) => (
+	condition( ... args ) ? action( ... args ) : fallback( ... args )
+)
+
+const preventDefaultThen = ( fn ) => ( e ) => {
+	e.preventDefault()
+	return fn( e )
+}
+
+const whenCanResize = when( ( { canResize } ) => canResize );
+const whenIsResizing = when( ( { isResizing } ) => isResizing );
+
+const detectCanResize = ( { onResizable, width } ) => ( e ) => onResizable( Math.abs( e.clientX - width ) < 3 )
+
+const makeResizable = whenIsResizing( ( { onUpdateWidth } ) => ( e ) => onUpdateWidth( e.clientX ), detectCanResize )
+const startResizing = whenCanResize( ( { onStartResizing } ) => preventDefaultThen( () => onStartResizing() ) )
+const stopResizing = whenIsResizing( ( { onStopResizing } ) => preventDefaultThen( onStopResizing ) )
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -452,11 +473,16 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
+		const { sourceList } = this.props.settings;
+		const { canResize, isResizing } = sourceList;
+
 		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
-			'is-electron': isElectron()
+			'is-electron': isElectron(),
+			'can-resize': canResize,
+			'is-resizing': isResizing
 		} );
 
 		return (
@@ -473,7 +499,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 					</ContextMenu>
 				}
 				{ state.authorized ?
-						<div className={mainClasses}>
+						<div className={mainClasses}
+							onMouseMove={ makeResizable( { isResizing, width: sourceList.width, onResizable: this.props.setSourceListCanResize, onUpdateWidth: this.props.setSourceListWidth } ) }
+							onMouseDown={ startResizing( { canResize, onStartResizing: this.props.setSourceListResizing } ) }
+							onMouseUp={ stopResizing( { isResizing, onStopResizing: () => this.props.setSourceListResizing( false ) } ) } >
 							<NavigationBar
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 								onSelectTrash={() => this.props.actions.selectTrash() }
@@ -489,7 +518,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								selectedTag={state.tag}
 								tags={state.tags}
 								onOutsideClick={this.onToolbarOutsideClick} />
-							<div className="source-list theme-color-bg theme-color-fg">
+							<div className="source-list theme-color-bg theme-color-fg" ref={ ( ref ) => {
+								if ( !ref ) return;
+								ref.style.flexBasis = sourceList.width + 'px';
+							} }>
 								<div className="search-bar theme-color-border">
 									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
