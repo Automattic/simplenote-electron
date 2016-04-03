@@ -491,7 +491,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onOutsideClick={this.onToolbarOutsideClick} />
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
-									<button className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
+									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
 									</button>
 									<SearchField
@@ -499,7 +499,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 										placeholder={state.listTitle}
 										searchFocus={state.searchFocus}
 										onSearchFocused={this.onSearchFocused} />
-									<button className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
+									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</button>
 								</div>
