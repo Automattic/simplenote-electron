@@ -30,13 +30,23 @@ export default React.createClass( {
 						<label className="login-field theme-color-border" htmlFor="login-field-username">
 							<span className="login-field-label">Email</span>
 							<span className="login-field-control">
-								<input ref={ ref => this.usernameInput = ref } id="login-field-username" type="email" />
+								<input
+									ref={ ref => this.usernameInput = ref }
+									id="login-field-username"
+									type="email"
+									onKeyDown={ this.onLogin }
+                />
 							</span>
 						</label>
 						<label className="login-field theme-color-border" htmlFor="login-field-password">
 							<span className="login-field-label">Password</span>
 							<span className="login-field-control">
-								<input ref={ ref => this.passwordInput = ref } id="login-field-password" type="password" />
+								<input
+									ref={ ref => this.passwordInput = ref }
+									id="login-field-password"
+									type="password"
+									onKeyDown={ this.onLogin }
+								/>
 							</span>
 						</label>
 					</div>
@@ -68,6 +78,9 @@ export default React.createClass( {
 	},
 
 	onLogin( event ) {
+		if ( event.type === 'keydown' && event.keyCode !== 13 ) {
+			return;
+		}
 		event.preventDefault();
 
 		const username = get( this.usernameInput, 'value' );
