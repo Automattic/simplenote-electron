@@ -43,26 +43,26 @@ var buildViewMenu = function( settings ) {
 	settings = settings || {};
 
 	return {
-		label: 'View',
+		label: '&View',
 		submenu: [ {
-			label: 'Font Size',
+			label: '&Font Size',
 			submenu: [
 				// For the oddity with "Command" vs "Cmd"
 				// Cite: https://github.com/atom/electron/issues/1507
-				[ 'Bigger', 'CommandOrControl+=', 'increaseFontSize' ],
-				[ 'Smaller', 'CmdOrCtrl+-', 'decreaseFontSize' ],
-				[ 'Reset', 'CmdOrCtrl+0', 'resetFontSize' ]
+				[ '&Bigger', 'CommandOrControl+=', 'increaseFontSize' ],
+				[ '&Smaller', 'CmdOrCtrl+-', 'decreaseFontSize' ],
+				[ '&Reset', 'CmdOrCtrl+0', 'resetFontSize' ]
 			].map( buildFontGroup )
 		}, {
-			label: 'Sort Type',
+			label: '&Sort Type',
 			submenu: [
-				[ 'Last modified', 'modificationDate', { action: 'setSortType', sortType: 'modificationDate' } ],
-				[ 'Last created', 'creationDate', { action: 'setSortType', sortType: 'creationDate' } ],
-				[ 'Alphabetical', 'alphabetical', { action: 'setSortType', sortType: 'alphabetical' } ]
+				[ 'Last &modified', 'modificationDate', { action: 'setSortType', sortType: 'modificationDate' } ],
+				[ 'Last &created', 'creationDate', { action: 'setSortType', sortType: 'creationDate' } ],
+				[ '&Alphabetical', 'alphabetical', { action: 'setSortType', sortType: 'alphabetical' } ]
 			].map( buildRadioGroup( equalTo( settings.sortType ) ) ).concat( [ {
 				type: 'separator'
 			}, {
-				label: 'Reversed',
+				label: '&Reversed',
 				type: 'checkbox',
 				checked: settings.sortReversed,
 				click: function( item, focusedWindow ) {
@@ -74,20 +74,20 @@ var buildViewMenu = function( settings ) {
 				}
 			} ] )
 		}, {
-			label: 'Note Display',
+			label: '&Note Display',
 			submenu: [
-				[ 'Comfy', 'comfy', { action: 'setNoteDisplay', noteDisplay: 'comfy' } ],
-				[ 'Condensed', 'condensed', { action: 'setNoteDisplay', noteDisplay: 'condensed' } ],
-				[ 'Expanded', 'expanded', { action: 'setNoteDisplay', noteDisplay: 'expanded' } ]
+				[ '&Comfy', 'comfy', { action: 'setNoteDisplay', noteDisplay: 'comfy' } ],
+				[ 'C&ondensed', 'condensed', { action: 'setNoteDisplay', noteDisplay: 'condensed' } ],
+				[ '&Expanded', 'expanded', { action: 'setNoteDisplay', noteDisplay: 'expanded' } ]
 			].map( buildRadioGroup( equalTo( settings.noteDisplay ) ) )
 		}, {
-			label: 'Theme',
+			label: '&Theme',
 			submenu: [
-				[ 'Light', 'light', { action: 'activateTheme', theme: 'light' } ],
-				[ 'Dark', 'dark', { action: 'activateTheme', theme: 'dark' } ]
+				[ '&Light', 'light', { action: 'activateTheme', theme: 'light' } ],
+				[ '&Dark', 'dark', { action: 'activateTheme', theme: 'dark' } ]
 			].map( buildRadioGroup( equalTo( settings.theme ) ) )
 		}, {
-			label: 'Toggle Full Screen',
+			label: 'T&oggle Full Screen',
 			accelerator: ( function() {
 				if ( process.platform === 'darwin' ) {
 					return 'Ctrl+Command+F';
