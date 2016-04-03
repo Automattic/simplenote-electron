@@ -3,26 +3,38 @@
 /**
  * External Dependencies
  */
-var path = require( 'path' );
-var fs = require( 'fs' );
 
-/**
- * Internal dependencies
- */
-var config = require( '../lib/config' );
-var cp = require('child_process');
+var path = require("path")
+	, config = require("../lib/config")
+	, cp = require("child_process")
+	, fs = require("fs")
+	, usingBundler
+;
 
 /**
  * Module variables
  */
 console.log('Building Linux package...');
-
 var onErrorBail = function( error ) {
 	if (error) {
 		console.log("Error: " + error);
 		process.exit(1);
 	}
 };
+
+/**
+ * Detect FPM install type.
+ */
+
+try {
+	if (cp.execSync("bundle list fpm")) {
+		usingBundler = true
+	}
+}
+
+catch(e) {
+	usingBundler = false
+}
 
 // copy build into place for packaging
 cp.execSync( "rm -rf release/tmp", onErrorBail ); // clean start
@@ -34,7 +46,7 @@ cp.execSync( "cp resources/linux/simplenote.desktop release/tmp/usr/share/applic
 cp.execSync( "cp resources/images/icon_256x256.png release/tmp/usr/share/pixmaps/simplenote.png", onErrorBail );
 
 var cmd = [
-	'fpm',
+	usingBundler ? "bundle exec fpm" : "fpm",
 	'--version '  + config.version,
 	'--license "GPLv2"',
 	'--name "simplenote"',

@@ -1,4 +1,5 @@
 node_modules/**/*
+vendor/
 build/
 dist/
 release/
@@ -8,3 +9,5 @@ release/
 *.tgz
 .idea
 .DS_Store
+/Gemfile.lock
+/.bundle/config
