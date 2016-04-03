@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import marked from 'marked';
 import Textarea from 'react-textarea-autosize';
 import { noop, get, debounce } from 'lodash';
-import analytics from './analytics'
+import analytics from './analytics';
+import { viewExternalUrl } from './utils/url-utils';
 
 const uninitializedNoteEditor = { focus: noop };
 const saveDelay = 2000;
@@ -60,7 +61,7 @@ export default React.createClass( {
 		for ( let node = event.target; node != null; node = node.parentNode ) {
 			if ( node.tagName === 'A' ) {
 				event.preventDefault();
-				window.open( node.href );
+				viewExternalUrl( node.href );
 				break;
 			}
 		}
