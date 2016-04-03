@@ -36,11 +36,11 @@ export default React.createClass( {
 
 		return (
 			<div className="note-toolbar">
-				<div className="note-toolbar-icon note-toolbar-back"><button type="button" className="button button-borderless" onClick={this.props.onCloseNote}><BackIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.showRevisions}><RevisionsIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
-				<div className="note-toolbar-icon"><button type="button" className="button button-borderless" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
+				<div className="note-toolbar-icon note-toolbar-back"><button type="button" title="Back" className="button button-borderless" onClick={this.props.onCloseNote}><BackIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" title="History" className="button button-borderless" onClick={this.showRevisions}><RevisionsIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" title="Share" className="button button-borderless" onClick={this.props.onShareNote.bind( null, note )}><ShareIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" title="Trash" className="button button-borderless" onClick={this.props.onTrashNote.bind( null, note )}><TrashIcon /></button></div>
+				<div className="note-toolbar-icon"><button type="button" title="Info" className="button button-borderless" onClick={this.props.onNoteInfo}><InfoIcon /></button></div>
 			</div>
 		);
 	},
