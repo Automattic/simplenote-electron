@@ -95,7 +95,7 @@
 		height: 14px;
 		width: 14px;
 		margin-right: 8px;
-		margin-top: 17px;
+		margin-top: 14px;
 		border-radius: 50%;
 
 		&:focus {
@@ -132,7 +132,7 @@
 	.note-list-item-text {
 		flex: 1 1 auto;
 		overflow: hidden;
-		padding: 12px 0;
+		padding: 9px 0;
 		border-bottom: 1px solid lighten($gray, 30%);
 
 		&:focus {
