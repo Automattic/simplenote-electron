@@ -44,6 +44,7 @@ cp.execSync( "cp -r release/Simplenote-linux-x64 release/tmp/usr/share/simplenot
 cp.execSync( "mv release/tmp/usr/share/simplenote/Simplenote release/tmp/usr/share/simplenote/simplenote", onErrorBail );	// rename binary to wpcom
 cp.execSync( "cp resources/linux/simplenote.desktop release/tmp/usr/share/applications/", onErrorBail );
 cp.execSync( "cp resources/images/icon_256x256.png release/tmp/usr/share/pixmaps/simplenote.png", onErrorBail );
+cp.execSync( "mkdir -p release/tmp/usr/bin && cd release/tmp/usr/bin && ln -sf /usr/share/simplenote/simplenote" );
 
 var cmd = [
 	usingBundler ? "bundle exec fpm" : "fpm",
