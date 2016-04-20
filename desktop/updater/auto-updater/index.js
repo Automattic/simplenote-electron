@@ -25,7 +25,7 @@ function AutoUpdater( url ) {
 	try {
 		autoUpdater.setFeedURL( url );
 	} catch (e) {
-		dialog.showErrorBox( 'An Error Has Occured', e.message );
+		console.log( e.message );
 	}
 }
 
