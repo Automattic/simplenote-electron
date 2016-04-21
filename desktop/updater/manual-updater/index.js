@@ -34,13 +34,13 @@ ManualUpdater.prototype.ping = function() {
 					this.onAvailable( update );
 				} catch ( e ) {
 					this.emit( 'end' );
-					dialog.showErrorBox( 'An Error Has Occured', e.message );
+					console.log( e.message );
 				}
 			}
 		} );
 	} ).on( 'error', error => {
 		this.emit( 'end' );
-		dialog.showErrorBox( 'An Error Has Occured', error.message );
+		console.log( error.message );
 	} );
 };
 
