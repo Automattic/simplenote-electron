@@ -28,6 +28,7 @@ export default React.createClass( {
 					{this.props.notes.map( note => {
 						let text = this.noteTitleAndPreview( note );
 						const isPublished = ! isEmpty( note.data.publishURL );
+						const showPublishIcon = isPublished && ( 'condensed' !== noteDisplay );
 
 						let classes = classNames( 'note-list-item', {
 							'note-list-item-selected': selectedNoteId === note.id,
@@ -41,7 +42,7 @@ export default React.createClass( {
 								<div className="note-list-item-text theme-color-border" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
 									<div className="note-list-item-title">
 										<span>{text.title}</span>
-										{ isPublished &&
+										{ showPublishIcon &&
 											<div className="note-list-item-published-icon"><PublishIcon /></div> }
 									</div>
 									<div className="note-list-item-excerpt">{text.preview}</div>
