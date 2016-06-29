@@ -41,6 +41,10 @@ a {
 	transform: translateX(0px);
 	transition: transform 200ms ease-in-out;
 
+	&.can-resize *, &.is-resizing * {
+		cursor: ew-resize;
+	}
+
 	&.note-info-open {
 		transform: translateX(-$note-info-width);
 	}
