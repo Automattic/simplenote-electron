@@ -70,7 +70,8 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 			'increaseFontSize',
 			'resetFontSize',
 			'setNoteDisplay',
-			'toggleMarkdown'
+			'toggleMarkdown',
+			'setAccountName'
 		] ), dispatch ),
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
 		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder )
