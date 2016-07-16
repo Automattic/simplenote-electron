@@ -171,6 +171,10 @@
 	min-height: 100%;
 	overflow: hidden;
 	cursor: text;
+
+	&::first-line {
+ 		font-size: 120%;
+	}
 }
 
 .note-detail-markdown {
