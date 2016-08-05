@@ -300,12 +300,12 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	initializeElectron() {
-		const remote = __non_webpack_require__( 'remote' );
+		const remote = __non_webpack_require__( 'electron' ).remote;
 
 		this.setState( {
 			electron: {
 				currentWindow: remote.getCurrentWindow(),
-				Menu: remote.require( 'menu' )
+				Menu: remote.Menu
 			}
 		} );
 	},
