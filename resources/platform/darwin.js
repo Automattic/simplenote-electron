@@ -4,7 +4,7 @@
  */
 var path = require( 'path' );
 var exec = require( 'child_process' ).execSync;
-var fs = require( 'fs' );
+var fs = require( 'fs-extra' );
 
 /**
  * Internal dependencies
