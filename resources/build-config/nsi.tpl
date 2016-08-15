@@ -60,6 +60,7 @@ Section
   # create the uninstaller
   WriteUninstaller "$INSTDIR\Uninstall ${APP_NAME}.exe"
 
+
   # create shortcuts in the start menu and on the desktop
   CreateDirectory "$SMPROGRAMS\${APP_DIR}"
   CreateShortCut "$SMPROGRAMS\${APP_DIR}\${APP_NAME}.lnk" "$INSTDIR\${APP_NAME}.exe"
@@ -76,6 +77,10 @@ Section
                    "Publisher" "${APP_PUBLISHER}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" \
                    "EstimatedSize" "${APP_INSTALLSIZE}"
+
+  # create directory for AppData
+  SetShellVarContext current
+  CreateDirectory "$APPDATA\${APP_NAME}"
 
 SectionEnd
 
@@ -104,6 +109,10 @@ Section "Uninstall"
   rmDir  "$SMPROGRAMS\${APP_DIR}"
   delete "$DESKTOP\${APP_NAME}.lnk"
 
-
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+
+  # Delete AppData, only works for current user
+  SetShellVarContext current
+  RMDir /r "$APPDATA\${APP_NAME}"
+
 SectionEnd
