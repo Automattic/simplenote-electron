@@ -59,7 +59,6 @@ export const SettingsDialog = React.createClass( {
 	},
 
 	renderTabContent( tabName ) {
-		const { accountName } = this.props.appState;
 		const {
 			activateTheme,
 			setNoteDisplay,
@@ -73,7 +72,8 @@ export const SettingsDialog = React.createClass( {
 			markdownEnabled: markdownIsEnabled,
 			noteDisplay,
 			sortType,
-			sortReversed: sortIsReversed
+			sortReversed: sortIsReversed,
+			accountName
 		} } = this.props;
 
 		switch ( tabName ) {
@@ -83,7 +83,7 @@ export const SettingsDialog = React.createClass( {
 						<h3 className="panel-title theme-color-fg-dim">Account</h3>
 						<div className="settings-items theme-color-border">
 							<div className="settings-item theme-color-border">
-								<span className="settings-item-text-input transparent-input">{accountName}</span>
+								<span className="settings-account-name">{accountName}</span>
 							</div>
 						</div>
 
