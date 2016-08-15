@@ -1,21 +1,21 @@
 'use strict';
 
-var app = require( 'app' );	 // Module to control application life.
-var Menu = require( 'menu' );
-var BrowserWindow = require( 'browser-window' );	// Module to create native browser window.
-var path = require('path');
-var ipcMain = require( 'electron' ).ipcMain;
+const {
+	app,
+	BrowserWindow,
+	ipcMain,
+	shell,
+	Menu
+} = require( 'electron' );
 
-var buildViewMenu = require( './menus/view-menu' );
+const path = require( 'path' );
+const buildViewMenu = require( './menus/view-menu' );
 
 require( 'module' ).globalPaths.push( path.resolve( path.join( __dirname ) ) );
 
 module.exports = function main() {
-	var url = 'file://' + path.join( __dirname, '..', 'dist', 'index.html' );
-
-	// Report crashes to our server.
-	require( 'crash-reporter' ).start();
 	require( './updater' )();
+	const url = 'file://' + path.join( __dirname, '..', 'dist', 'index.html' );
 
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is GCed.
@@ -28,11 +28,6 @@ module.exports = function main() {
 		if ( mainWindow ) {
 			return;
 		}
-
-		// Configure and set the application menu
-		var menuTemplate = createMenuTemplate();
-		var menu = Menu.buildFromTemplate( menuTemplate );
-		Menu.setApplicationMenu( menu );
 
 		// Create the browser window.
 		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
@@ -52,7 +47,12 @@ module.exports = function main() {
 		}
 
 		// Uncomment me to debug in the electron window
-		// mainWindow.openDevTools();
+		//mainWindow.openDevTools();
+
+		// Configure and set the application menu
+		const menuTemplate = createMenuTemplate();
+		const appMenu = Menu.buildFromTemplate( menuTemplate );
+		Menu.setApplicationMenu( appMenu );
 
 		ipcMain.on( 'settingsUpdate', function( event, settings ) {
 			Menu.setApplicationMenu( Menu.buildFromTemplate( createMenuTemplate( settings ) ) );
@@ -83,7 +83,7 @@ module.exports = function main() {
 };
 
 function createMenuTemplate( settings ) {
-	const name = require( 'app' ).getName();
+	const name = app.getName();
 
 	const aboutMenuItem = {
 		label: 'About ' + name,
@@ -117,7 +117,7 @@ function createMenuTemplate( settings ) {
 		submenu: [ {
 			label: 'Help && Support',
 			click: function() {
-				require( 'shell' ).openExternal( 'http://simplenote.com/help' )
+				shell.openExternal( 'http://simplenote.com/help' )
 			}
 		} ]
 	};

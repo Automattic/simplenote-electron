@@ -13,6 +13,10 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "5.12.0",
+    "npm": "3.8.6"
+  },
   "devDependencies": {
     "appcache-webpack-plugin": "1.2.1",
     "autoprefixer": "6.3.3",
@@ -55,7 +59,7 @@
     "marked": "0.3.5",
     "moment": "2.12.0",
     "promise": "7.1.1",
-    "react": "0.14.3",
+    "react": "15.3.0",
     "react-addons-pure-render-mixin": "0.14.3",
     "react-addons-update": "0.14.3",
     "react-dom": "0.14.3",
