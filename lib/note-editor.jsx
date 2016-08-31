@@ -13,7 +13,6 @@ export const NoteEditor = React.createClass( {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
 		revisions: PropTypes.array,
-		markdownEnabled: PropTypes.bool,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
 		onSetEditorMode: PropTypes.func.isRequired,
@@ -86,14 +85,14 @@ export const NoteEditor = React.createClass( {
 	},
 
 	render: function() {
-		var { editorMode, note, revisions, markdownEnabled, fontSize, shouldPrint } = this.props;
-		var noteContent = '';
+		let noteContent = '';
+		const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
 		const revision = this.state.revision || note;
 		const isViewingRevisions = this.state.isViewingRevisions;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
-		markdownEnabled = markdownEnabled && revision &&
+		const markdownEnabled = revision &&
 			revision.data && revision.data.systemTags &&
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 

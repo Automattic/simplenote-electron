@@ -70,7 +70,7 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 			'increaseFontSize',
 			'resetFontSize',
 			'setNoteDisplay',
-			'toggleMarkdown',
+			'setMarkdown',
 			'setAccountName'
 		] ), dispatch ),
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
@@ -214,6 +214,9 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			noteBucket: this.props.noteBucket,
 			note, markdown
 		} );
+
+		// Update global setting to set markdown flag for new notes
+		this.props.setMarkdown( markdown );
 	},
 
 	onNotesIndex: function() {
@@ -529,7 +532,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
 							<NoteInfo
-								markdownEnabled={ settings.markdownEnabled }
 								note={selectedNote}
 								onPinNote={this.onPinNote}
 								onMarkdownNote={this.onMarkdownNote}

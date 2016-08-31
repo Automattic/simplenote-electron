@@ -87,7 +87,7 @@ export const NoteInfo = React.createClass( {
 						</span>
 					</label>
 				</div>
-				{!!markdownEnabled && <div className="note-info-panel note-info-markdown theme-color-border">
+				<div className="note-info-panel note-info-markdown theme-color-border">
 					<label className="note-info-item" htmlFor="note-info-markdown-checkbox">
 						<span className="note-info-item-text">
 							<span className="note-info-name">Markdown</span>
@@ -99,7 +99,7 @@ export const NoteInfo = React.createClass( {
 							<ToggleControl id="note-info-markdown-checkbox" checked={isMarkdown} onChange={this.onMarkdownChanged} />
 						</span>
 					</label>
-				</div>}
+				</div>
 				{ isPublished &&
 					<div className="note-info-panel note-info-public-link theme-color-border">
 							<span className="note-info-item-text">
