@@ -53,8 +53,8 @@ export default React.createClass( {
 		)
 
 		// avoids weird caret position if content is changed
-		// while the editor had focus (see
-		// https://github.com/facebook/draft-js/issues/410#issuecomment-223408160)
+		// while the editor had focus, see
+		// https://github.com/facebook/draft-js/issues/410#issuecomment-223408160
 		if ( oldEditorState.getSelection().getHasFocus() ) {
 			newEditorState = EditorState.moveFocusToEnd( newEditorState )
 		}
