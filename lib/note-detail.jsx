@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
-import { get, debounce } from 'lodash';
+import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
