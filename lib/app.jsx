@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import escapeStringRegexp from 'escape-string-regexp'
 import appState from './flux/app-state'
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
@@ -319,7 +320,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		var regexp;
 
 		if ( filter ) {
-			regexp = new RegExp( filter, 'gi' );
+			regexp = new RegExp( escapeStringRegexp( filter ), 'gi' );
 		}
 
 		function test( note ) {
