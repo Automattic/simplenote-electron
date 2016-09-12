@@ -101,7 +101,7 @@ export default React.createClass( {
 	},
 
 	renderEditable( divStyle ) {
-		const { content = '' } = this.props.note.data;
+		const content = get( this.props, 'note.data.content', '' );
 
 		return (
 			<div
