@@ -8,6 +8,8 @@ import { viewExternalUrl } from './utils/url-utils';
 const saveDelay = 2000;
 
 const isValidNote = note => note && note.id;
+const prependTab = l => `\t${ l }`;
+const removeLeadingTab = l => l[0] === '\t' ? l.substring( 1 ) : l;
 
 export default class NoteDetail extends Component {
 	static propTypes = {
@@ -57,16 +59,57 @@ export default class NoteDetail extends Component {
 			'Tab' !== event.code ||
 			! this.noteEditor ||
 			'TEXTAREA' !== event.target.nodeName ||
-			this.props.previewingMarkdown
+			this.props.previewingMarkdown ||
+			event.altKey ||
+			event.ctrlKey ||
+			event.metaKey
 		) {
-			console.log( 'skipping' );
 			return;
 		}
 
 		event.preventDefault();
 		event.stopPropagation();
 
-		document.execCommand( 'insertText', false, '\t' );
+		const {
+			selectionStart,
+			selectionEnd,
+			value,
+		} = this.noteEditor;
+
+		// if inserting at a cursor position
+		if ( ! event.shiftKey && selectionStart === selectionEnd ) {
+			return document.execCommand( 'insertText', false, '\t' );
+		}
+
+		return event.shiftKey
+			? this.transformSelectedLines( removeLeadingTab )
+			: this.transformSelectedLines( prependTab );
+	};
+
+	transformSelectedLines = transform => {
+		const {
+			selectionStart,
+			selectionEnd,
+			value,
+		} = this.noteEditor;
+
+		const firstLineStart = value.lastIndexOf( '\n', selectionStart ) + 1;
+		const lastLineEnd = Math.max( value.indexOf( '\n', selectionEnd ), 0 ) || value.length;
+
+		this.noteEditor.selectionStart = firstLineStart;
+		this.noteEditor.selectionEnd = lastLineEnd;
+
+		const indented = this
+			.noteEditor
+			.value
+			.substring( firstLineStart, lastLineEnd )
+			.split( '\n' )
+			.map( transform )
+			.join( '\n' );
+
+		document.execCommand( 'insertText', false, indented );
+
+		this.noteEditor.selectionStart = firstLineStart;
 	};
 
 	onPreviewClick = event => {
