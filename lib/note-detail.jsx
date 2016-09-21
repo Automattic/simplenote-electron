@@ -86,6 +86,31 @@ export default class NoteDetail extends Component {
 			: this.transformSelectedLines( prependTab );
 	};
 
+	onPreviewClick = event => {
+		// open markdown preview links in a new window
+		for ( let node = event.target; node != null; node = node.parentNode ) {
+			if ( node.tagName === 'A' ) {
+				event.preventDefault();
+				viewExternalUrl( node.href );
+				break;
+			}
+		}
+	};
+
+	saveNote = () => {
+		const {
+			note,
+			onChangeContent,
+		} = this.props;
+
+		if ( ! isValidNote( note ) ) {
+			return;
+		}
+
+		onChangeContent( note, this.noteEditor.value );
+		analytics.tracks.recordEvent( 'editor_note_edited' );
+	};
+
 	transformSelectedLines = transform => {
 		const {
 			selectionStart,
@@ -110,31 +135,6 @@ export default class NoteDetail extends Component {
 		document.execCommand( 'insertText', false, indented );
 
 		this.noteEditor.selectionStart = firstLineStart;
-	};
-
-	onPreviewClick = event => {
-		// open markdown preview links in a new window
-		for ( let node = event.target; node != null; node = node.parentNode ) {
-			if ( node.tagName === 'A' ) {
-				event.preventDefault();
-				viewExternalUrl( node.href );
-				break;
-			}
-		}
-	};
-
-	saveNote = () => {
-		const {
-			note,
-			onChangeContent,
-		} = this.props;
-
-		if ( ! isValidNote( note ) ) {
-			return;
-		}
-
-		onChangeContent( note, this.noteEditor.value );
-		analytics.tracks.recordEvent( 'editor_note_edited' );
 	};
 
 	render = () => {
