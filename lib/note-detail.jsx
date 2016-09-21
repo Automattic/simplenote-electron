@@ -27,7 +27,7 @@ export default class NoteDetail extends Component {
 	componentDidMount = () => {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
-		window.addEventListener( 'keydown', this.insertTabCharacter );
+		window.addEventListener( 'keydown', this.interceptTabPresses );
 	};
 
 	componentWillReceiveProps = () => {
@@ -49,7 +49,24 @@ export default class NoteDetail extends Component {
 
 	componentWillUnmount = () => {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
-		window.removeEventListener( 'keydown', this.insertTabCharacter );
+		window.removeEventListener( 'keydown', this.interceptTabPresses );
+	};
+
+	interceptTabPresses = event => {
+		if (
+			'Tab' !== event.code ||
+			! this.noteEditor ||
+			'TEXTAREA' !== event.target.nodeName ||
+			this.props.previewingMarkdown
+		) {
+			console.log( 'skipping' );
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		document.execCommand( 'insertText', false, '\t' );
 	};
 
 	onPreviewClick = event => {
@@ -61,36 +78,6 @@ export default class NoteDetail extends Component {
 				break;
 			}
 		}
-	};
-
-	insertTabCharacter = event => {
-		if ( 'Tab' !== event.code ) {
-			return;
-		}
-
-		if ( ! this.noteEditor ) {
-			return;
-		}
-
-		const {
-			selectionStart,
-			selectionEnd,
-			value,
-		} = this.noteEditor;
-
-		this.noteEditor.value = [
-			value.substring( 0, selectionStart ),
-			'\t',
-			value.substring( selectionEnd ),
-		].join( '' );
-		this.queueNoteSave();
-
-		this.noteEditor.selectionStart = selectionStart + 1;
-		this.noteEditor.selectionEnd = selectionStart + 1;
-		this.noteEditor.focus();
-
-		event.preventDefault();
-		event.stopPropagation();
 	};
 
 	saveNote = () => {
