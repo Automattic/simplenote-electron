@@ -73,7 +73,6 @@ export default class NoteDetail extends Component {
 		const {
 			selectionStart,
 			selectionEnd,
-			value,
 		} = this.noteEditor;
 
 		// if inserting at a cursor position
