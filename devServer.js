@@ -18,7 +18,7 @@ app.get( '*', function( req, res ) {
 	res.send( compiler.outputFileSystem.readFileSync( path.join( __dirname, 'dist', 'index.html' ) ) );
 } );
 
-app.listen( 4000, 'localhost', function( err ) {
+app.listen( 4000, '0.0.0.0', function( err ) {
 	if ( err ) {
 		console.log( err );
 		return;

@@ -25,6 +25,7 @@ export default React.createClass( {
 	componentDidMount: function() {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
+		window.addEventListener( 'keydown', this.insertTabCharacter );
 	},
 
 	initializeNoteEditor: function( noteEditor ) {
@@ -54,6 +55,7 @@ export default React.createClass( {
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
+		window.removeEventListener( 'keydown', this.insertTabCharacter );
 	},
 
 	onPreviewClick: function( event ) {
@@ -65,6 +67,36 @@ export default React.createClass( {
 				break;
 			}
 		}
+	},
+
+	insertTabCharacter( event ) {
+		if ( 'Tab' !== event.code ) {
+			return;
+		}
+
+		if ( ! this.noteEditor ) {
+			return;
+		}
+
+		const {
+			selectionStart,
+			selectionEnd,
+			value,
+		} = this.noteEditor
+
+		this.noteEditor.value = [
+			value.substring( 0, selectionStart ),
+			'\t',
+			value.substring( selectionEnd ),
+		].join( '' );
+		this.queueNoteSave();
+
+		this.noteEditor.selectionStart = selectionStart + 1;
+		this.noteEditor.selectionEnd = selectionStart + 1;
+		this.noteEditor.focus();
+
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	saveNote: function() {
@@ -110,10 +142,13 @@ export default React.createClass( {
 		const note = this.props.note;
 
 		return (
-			<Textarea ref={ this.initializeNoteEditor } className="note-detail-textarea theme-color-bg theme-color-fg"
+			<Textarea
+				ref={ this.initializeNoteEditor }
+				className="note-detail-textarea theme-color-bg theme-color-fg"
 				disabled={ !!( note && note.data.deleted ) }
 				onChange={ this.queueNoteSave }
-				style={ divStyle } />
+				style={ divStyle }
+			/>
 		);
 	}
 
