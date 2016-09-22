@@ -63,7 +63,6 @@
     "react-addons-pure-render-mixin": "0.14.3",
     "react-addons-update": "0.14.3",
     "react-dom": "0.14.3",
-    "react-popover": "https://github.com/beaucollins/react-popover.git",
     "react-redux": "4.4.0",
     "redux": "3.3.1",
     "redux-localstorage": "0.4.0",
