@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import TabbedDialog from '../tabbed-dialog';
-import ToggleControl from '../controls/toggle';
 import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
 
@@ -8,7 +7,10 @@ import RadioGroup from './radio-settings-group';
 import ToggleGroup from './toggle-settings-group';
 import SettingsGroup, { Item } from './settings-group';
 
-const settingTabs = [ 'account', 'display', 'writing' ];
+const settingTabs = [
+	'account',
+	'display'
+];
 
 export const SettingsDialog = React.createClass( {
 	propTypes: {
@@ -63,13 +65,11 @@ export const SettingsDialog = React.createClass( {
 			activateTheme,
 			setNoteDisplay,
 			setSortType,
-			toggleMarkdown,
 			toggleSortOrder,
 		} = this.props;
 
 		const { settings: {
 			theme: activeTheme,
-			markdownEnabled: markdownIsEnabled,
 			noteDisplay,
 			sortType,
 			sortReversed: sortIsReversed,
@@ -141,32 +141,6 @@ export const SettingsDialog = React.createClass( {
 							<Item title="Light" slug="light" />
 							<Item title="Dark" slug="dark" />
 						</SettingsGroup>
-					</div>
-				);
-
-			case 'writing':
-				return (
-					<div className="dialog-column settings-writing">
-						<div className="settings-group">
-							<div className="settings-items theme-color-border">
-								<label htmlFor="settings-field-markdown" className="settings-item theme-color-border">
-									<div className="settings-item-label">
-										Enable Markdown
-									</div>
-									<div className="settings-item-control">
-										<ToggleControl name="markdownEnabled" value="enabled"
-											id="settings-field-markdown"
-											checked={ markdownIsEnabled }
-											onChange={ toggleMarkdown } />
-									</div>
-								</label>
-							</div>
-							<p>
-								Markdown lets you write notes with links, lists, and
-								other styles using regular characters and
-								punctuation marks. <a target="_blank" href="http://simplenote.com/help/#markdown">Learn more…</a>
-							</p>
-						</div>
 					</div>
 				);
 		}
