@@ -74,7 +74,7 @@ export default class NoteDetail extends Component {
 
 		const prevLineStart = value.lastIndexOf( '\n', selectionStart - 1 ) + 1;
 		const prevLine = value.substring( prevLineStart, selectionStart - 1 );
-		const prevIndent = prevLine.match( /^(\s+)([-*])/ );
+		const prevIndent = prevLine.match( /^(\s+[-*])/ );
 
 		// The previous line did not start with
 		// indentation, so continue as normal
@@ -82,9 +82,7 @@ export default class NoteDetail extends Component {
 			return true;
 		}
 
-		const indent = prevIndent[ 1 ];
-		const bullet = prevIndent[ 2 ];
-		const nextIndent = `\n${ indent }${ bullet } `;
+		const nextIndent = `\n${ prevIndent[ 1 ] } `;
 
 		// If going a second time in a row that means we
 		// want to escape the list structure, so unwind
