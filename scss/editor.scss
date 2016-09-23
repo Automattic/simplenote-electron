@@ -108,6 +108,7 @@
 
 .note-editor-content {
 	display: flex;
+	z-index: 0;
 	flex-direction: column;
 	border-left: 1px solid lighten($gray, 30%);
 	padding-top: 0;

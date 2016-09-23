@@ -1,0 +1,23 @@
+.tag-input {
+	overflow: visible;
+	position: relative;
+
+	& .tag-input__entry {
+		z-index: 100;
+	}
+
+	& .tag-input__suggestion {
+		z-index: 50;
+		color: lighten( $gray, 10% );
+	}
+}
+
+.tag-input__entry,
+.tag-input__suggestion {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+

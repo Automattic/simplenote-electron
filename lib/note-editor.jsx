@@ -6,7 +6,7 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
-import { get } from 'lodash'
+import { get, property } from 'lodash'
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -145,6 +145,7 @@ export const NoteEditor = React.createClass( {
 				}
 				{ ! isTrashed &&
 					<TagField
+						allTags={ this.props.allTags.map( property( 'data.name' ) ) }
 						tags={tags}
 						onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
 				}
