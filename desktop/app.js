@@ -86,7 +86,7 @@ function createMenuTemplate( settings ) {
 	const name = app.getName();
 
 	const aboutMenuItem = {
-		label: 'About ' + name,
+		label: '&About ' + name,
 		click: function( item, focusedWindow ) {
 			if ( focusedWindow ) {
 				focusedWindow.webContents.send( 'appCommand', { action: 'showDialog', dialog: {
@@ -99,7 +99,7 @@ function createMenuTemplate( settings ) {
 	};
 
 	const settingsMenuItem = {
-		label: 'Preferences',
+		label: 'P&references',
 		accelerator: 'Command+,',
 		click: function( item, focusedWindow ) {
 			if ( focusedWindow ) {
@@ -113,9 +113,9 @@ function createMenuTemplate( settings ) {
 	};
 
 	var helpMenu = {
-		label: 'Help',
+		label: '&Help',
 		submenu: [ {
-			label: 'Help && Support',
+			label: 'Help && &Support',
 			click: function() {
 				shell.openExternal( 'http://simplenote.com/help' )
 			}
@@ -123,9 +123,9 @@ function createMenuTemplate( settings ) {
 	};
 
 	var fileMenu = {
-		label: 'File',
+		label: '&File',
 		submenu: [ {
-				label: 'New Note',
+				label: '&New Note',
 				accelerator: 'CmdOrCtrl+N',
 				click( item, focusedWindow ) {
 					if ( focusedWindow ) {
@@ -135,7 +135,7 @@ function createMenuTemplate( settings ) {
 			}, {
 				type: 'separator'
 			}, {
-				label: 'Print',
+				label: '&Print',
 				accelerator: 'CmdOrCtrl+P',
 				click( item, focusedWindow ) {
 					if ( focusedWindow ) {
@@ -162,7 +162,7 @@ function createMenuTemplate( settings ) {
 			type: 'separator'
 		} );
 		fileMenu[ 'submenu' ].push( {
-			label: 'Exit',
+			label: 'E&xit',
 			accelerator: 'Alt+F4',
 			click: function() {
 				app.quit();
@@ -171,37 +171,37 @@ function createMenuTemplate( settings ) {
 	}
 
 	var menuTemplate = [ fileMenu, {
-		label: 'Edit',
+		label: '&Edit',
 		submenu: [ {
-			label: 'Undo',
+			label: '&Undo',
 			accelerator: 'CmdOrCtrl+Z',
 			role: 'undo'
 		}, {
-			label: 'Redo',
+			label: '&Redo',
 			accelerator: 'Shift+CmdOrCtrl+Z',
 			role: 'redo'
 		}, {
 			type: 'separator'
 		}, {
-			label: 'Cut',
+			label: '&Cut',
 			accelerator: 'CmdOrCtrl+X',
 			role: 'cut'
 		}, {
-			label: 'Copy',
+			label: 'C&opy',
 			accelerator: 'CmdOrCtrl+C',
 			role: 'copy'
 		}, {
-			label: 'Paste',
+			label: '&Paste',
 			accelerator: 'CmdOrCtrl+V',
 			role: 'paste'
 		}, {
-			label: 'Select All',
+			label: '&Select All',
 			accelerator: 'CmdOrCtrl+A',
 			role: 'selectall'
 		}, {
 			type: 'separator'
 		}, {
-			label: 'Search Notes',
+			label: 'Search &Notes',
 			accelerator: 'CmdOrCtrl+F',
 			click( item, focusedWindow ) {
 				if ( focusedWindow ) {
@@ -210,14 +210,14 @@ function createMenuTemplate( settings ) {
 			}
 		} ]
 	}, buildViewMenu( settings ), {
-		label: 'Window',
+		label: '&Window',
 		role: 'window',
 		submenu: [ {
-			label: 'Minimize',
+			label: '&Minimize',
 			accelerator: 'CmdOrCtrl+M',
 			role: 'minimize'
 		}, {
-			label: 'Close',
+			label: '&Close',
 			accelerator: 'CmdOrCtrl+W',
 			role: 'close'
 		} ]
