@@ -40,7 +40,7 @@ export const NoteInfo = React.createClass( {
 	},
 
 	render: function() {
-		const { note, markdownEnabled } = this.props;
+		const { note } = this.props;
 		const data = note && note.data || {};
 		const { modificationDate } = data;
 		const formattedDate = modificationDate && formatTimestamp( modificationDate );
