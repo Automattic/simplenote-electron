@@ -7,6 +7,7 @@ import { viewExternalUrl } from './utils/url-utils';
 
 const saveDelay = 2000;
 
+const hasModKeys = ( keys, event ) => keys.some( k => get( event, k ) );
 const isValidNote = note => note && note.id;
 const prependTab = l => `\t${ l }`;
 const removeLeadingTab = l => l && l.length && l[0] === '\t' ? l.substring( 1 ) : l;
@@ -29,7 +30,6 @@ export default class NoteDetail extends Component {
 	componentDidMount = () => {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
-		window.addEventListener( 'keydown', this.interceptTabPresses );
 	};
 
 	componentWillReceiveProps = () => {
@@ -51,26 +51,28 @@ export default class NoteDetail extends Component {
 
 	componentWillUnmount = () => {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
-		window.removeEventListener( 'keydown', this.interceptTabPresses );
 	};
 
 	handleKey = event => {
-		if (
-			'Enter' !== event.key ||
-			! this.noteEditor ||
-			this.props.previewingMarkdown ||
-			event.shiftKey ||
-			event.altKey ||
-			event.ctrlKey ||
-			event.metaKey
-		) {
-			return true;
+		if ( ! this.noteEditor || this.props.previewingMarkdown ) {
+			return;
 		}
 
+		invoke( {
+			Tab: this.interceptTabPresses,
+			Enter: this.interceptEnterPresses,
+		}, event.key, event );
+	};
+
+	interceptEnterPresses = event => {
 		const {
 			selectionStart,
 			value,
 		} = this.noteEditor;
+
+		if ( hasModKeys( [ 'altKey', 'ctrlKey', 'metaKey', 'shiftKey' ], event ) ) {
+			return true;
+		}
 
 		const prevLineStart = value.lastIndexOf( '\n', selectionStart - 1 ) + 1;
 		const prevLine = value.substring( prevLineStart, selectionStart - 1 );
@@ -92,7 +94,7 @@ export default class NoteDetail extends Component {
 			this.noteEditor.selectionEnd = Math.min( value.indexOf( '\n', prevLineStart ), value.length );
 			document.execCommand( 'delete', false, null );
 			this.noteEditor.selectionStart = prevLineStart - 1;
-			return true;
+			return;
 		}
 
 		// Prepend the next list prefix to the line
@@ -107,15 +109,7 @@ export default class NoteDetail extends Component {
 	};
 
 	interceptTabPresses = event => {
-		if (
-			'Tab' !== event.code ||
-			! this.noteEditor ||
-			'TEXTAREA' !== event.target.nodeName ||
-			this.props.previewingMarkdown ||
-			event.altKey ||
-			event.ctrlKey ||
-			event.metaKey
-		) {
+		if ( hasModKeys( [ 'altKey', 'ctrlKey', 'metaKey' ], event ) ) {
 			return;
 		}
 
@@ -234,7 +228,7 @@ export default class NoteDetail extends Component {
 						className="note-detail-textarea theme-color-bg theme-color-fg"
 						disabled={ !! ( note && note.data.deleted ) }
 						onChange={ this.queueNoteSave }
-						onKeyPress={ this.handleKey }
+						onKeyDown={ this.handleKey }
 						style={ divStyle }
 					/>
 				}
