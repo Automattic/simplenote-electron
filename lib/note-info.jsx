@@ -137,8 +137,8 @@ function wordCount( content ) {
 	const matches = ( content || '' )
 		.replace( /[\u200B]+/, '' )
 		.trim()
-		.replace(/['";:,.?¿\-!¡]+/g, '')
-		.match(/\S+/g);
+		.replace( /['";:,.?¿\-!¡]+/g, '' )
+		.match( /\S+/g );
 
 	return ( matches || [] ).length;
 }
