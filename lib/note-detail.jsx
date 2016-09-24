@@ -27,16 +27,16 @@ export default class NoteDetail extends Component {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
 	}
 
-	componentDidMount = () => {
+	componentDidMount() {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
 	};
 
-	componentWillReceiveProps = () => {
+	componentWillReceiveProps() {
 		this.queueNoteSave.flush();
 	};
 
-	componentDidUpdate = () => {
+	componentDidUpdate() {
 		const { note } = this.props;
 		const content = get( note, 'data.content', '' );
 		if ( isValidNote( note ) && this.noteEditor ) {
@@ -49,7 +49,7 @@ export default class NoteDetail extends Component {
 		}
 	};
 
-	componentWillUnmount = () => {
+	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
 	};
 
