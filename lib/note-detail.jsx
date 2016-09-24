@@ -147,6 +147,18 @@ export default class NoteDetail extends Component {
 			return document.execCommand( 'insertText', false, '\t' );
 		}
 
+		// if "outdenting" when previous character is a tab
+		if (
+			event.shiftKey &&
+			selectionStart === selectionEnd &&
+			selectionStart > 0 &&
+			value[ selectionStart - 1 ] === '\t'
+		) {
+			document.execCommand( 'delete', false, null );
+
+			return;
+		}
+
 		return event.shiftKey
 			? this.transformSelectedLines( removeLeadingTab )
 			: this.transformSelectedLines( prependTab );
