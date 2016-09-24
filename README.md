@@ -24,8 +24,8 @@ module.exports = function() {
 };
 ```
 
-4. npm install
-5. npm start
+4. `npm install` _or_ `docker-compose up install` (if Docker installed)
+5. `npm start` _or_ `docker-compose up dev` (if Docker installed)
 6. Open http://localhost:4000. You can sign in to the app with your Simperium credentials.
 
 _Note: Simplenote API features such as sharing and publishing will not work with development builds._
