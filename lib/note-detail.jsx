@@ -30,11 +30,11 @@ export default class NoteDetail extends Component {
 	componentDidMount() {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
-	};
+	}
 
 	componentWillReceiveProps() {
 		this.queueNoteSave.flush();
-	};
+	}
 
 	componentDidUpdate() {
 		const { note } = this.props;
@@ -47,11 +47,11 @@ export default class NoteDetail extends Component {
 				invoke( this.noteEditor, 'focus' );
 			}
 		}
-	};
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
-	};
+	}
 
 	handleKey = event => {
 		if ( ! this.noteEditor || this.props.previewingMarkdown ) {
