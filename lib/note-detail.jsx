@@ -7,7 +7,7 @@ import { viewExternalUrl } from './utils/url-utils';
 
 const saveDelay = 2000;
 
-const hasModKeys = ( keys, event ) => keys.some( k => get( event, k ) );
+const hasModKeys = ( keys, event ) => keys.some( k => get( event, `${ k }Key` ) );
 const isValidNote = note => note && note.id;
 const prependTab = l => `\t${ l }`;
 const removeLeadingTab = l => l && l.length && l[0] === '\t' ? l.substring( 1 ) : l;
@@ -70,7 +70,7 @@ export default class NoteDetail extends Component {
 			value,
 		} = this.noteEditor;
 
-		if ( hasModKeys( [ 'altKey', 'ctrlKey', 'metaKey', 'shiftKey' ], event ) ) {
+		if ( hasModKeys( [ 'alt', 'ctrl', 'meta', 'shift' ], event ) ) {
 			return true;
 		}
 
@@ -109,7 +109,7 @@ export default class NoteDetail extends Component {
 	};
 
 	interceptTabPresses = event => {
-		if ( hasModKeys( [ 'altKey', 'ctrlKey', 'metaKey' ], event ) ) {
+		if ( hasModKeys( [ 'alt', 'ctrl', 'meta' ], event ) ) {
 			return;
 		}
 
