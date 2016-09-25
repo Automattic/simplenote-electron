@@ -132,8 +132,15 @@ function formatTimestamp( unixTime ) {
 	return moment.unix( unixTime ).format( 'MMM D, YYYY h:mm a' );
 }
 
+// https://github.com/RadLikeWhoa/Countable
 function wordCount( content ) {
-	return ( ( content || '' ).match( /\b\S+\b/g ) || [] ).length;
+	const matches = ( content || '' )
+		.replace( /[\u200B]+/, '' )
+		.trim()
+		.replace( /['";:,.?¿\-!¡]+/g, '' )
+		.match( /\S+/g );
+
+	return ( matches || [] ).length;
 }
 
 // https://mathiasbynens.be/notes/javascript-unicode
