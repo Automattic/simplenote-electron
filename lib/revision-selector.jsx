@@ -7,12 +7,6 @@ export default React.createClass( {
 		require( 'react-onclickoutside' )
 	],
 
-	getDefaultProps: function() {
-		return {
-			revisions: []
-		}
-	},
-
 	getInitialState() {
 		return {
 			selection: Infinity,
@@ -74,7 +68,7 @@ export default React.createClass( {
 	},
 
 	sortedRevisions() {
-		return this.props.revisions
+		return ( this.props.revisions || [] )
 			.slice()
 			.sort( ( a, b ) => a.data.modificationDate - b.data.modificationDate );
 	},
