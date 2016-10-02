@@ -73,7 +73,8 @@ export default React.createClass( {
 				spellCheck
 				stripPastedStyles
 				onChange={this.handleEditorStateChange}
-				editorState={this.state.editorState} />
+				editorState={this.state.editorState}
+			/>
 		);
 	},
 
