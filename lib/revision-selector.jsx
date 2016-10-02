@@ -3,54 +3,68 @@ import moment from 'moment'
 
 export default React.createClass( {
 
+	mixins: [
+		require( 'react-onclickoutside' )
+	],
+
 	getDefaultProps: function() {
 		return {
 			revisions: []
 		}
 	},
 
-	componentDidMount: function() {
-		// Note: this is intentionally not in state so that the UI doesn't update after resetSelection()
-		this.selection = -1;
+	getInitialState() {
+		return {
+			selection: Infinity,
+		}
 	},
 
-	mixins: [
-		require( 'react-onclickoutside' )
-	],
+	componentDidUpdate( { revisions: prevRevisions } ) {
+		const { revisions: nextRevisions } = this.props;
+
+		if ( prevRevisions !== nextRevisions ) {
+			// I'm not sure why exactly, but
+			// this control wasn't refreshing
+			// after loading in the revisions
+			// the first time.
+			//
+			// This led to the 'Latest' revision
+			// being in position 1 instead of
+			// on the far right.
+			//
+			// This forces the refresh to correct
+			// things until we figure out what's
+			// really causing the problem.
+			this.forceUpdate();
+		}
+	},
 
 	handleClickOutside: function() {
 		this.onCancelRevision();
 	},
 
-	getInitialState: function() {
-		return {
-			revisionDate: 'Latest'
-		};
-	},
-
 	onAcceptRevision: function() {
-		const idx = this.selection;
-		const revisions = this.props.revisions || [];
-		const revision = revisions.slice( -idx ).shift();
+		const idx = this.state.selection;
+		const revisions = this.sortedRevisions();
+		const revision = revisions[ idx ];
 
 		this.props.onSelectRevision( revision );
 		this.resetSelection();
 	},
 
 	resetSelection: function() {
-		this.selection = -1;
+		this.setState( {
+			selection: Infinity,
+		} );
 	},
 
-	onSelectRevision: function() {
-		const idx = this.refs.range.value;
-		const revisions = this.props.revisions || [];
-		const revision = revisions.slice( -idx ).shift();
+	onSelectRevision: function( { target: { value } } ) {
+		const selection = parseInt( value, 10 );
+		const revision = this.sortedRevisions()[ selection ];
 
-		const { data: { modificationDate } } = revision;
-		const revisionDate = moment.unix( modificationDate ).format( 'MMM D, YYYY h:mm a' );
-
-		this.selection = idx;
-		this.setState( { revisionDate } );
+		this.setState( {
+			selection,
+		} );
 		this.props.onViewRevision( revision );
 	},
 
@@ -59,17 +73,23 @@ export default React.createClass( {
 		this.resetSelection();
 	},
 
+	sortedRevisions() {
+		return this.props.revisions
+			.slice()
+			.sort( ( a, b ) => a.data.modificationDate - b.data.modificationDate );
+	},
+
 	render: function() {
 		const min = 0;
-		const revisions = this.props.revisions || [];
+		const revisions = this.sortedRevisions();
 		const max = Math.max( revisions.length - 1, 1 );
-		const selection = this.selection > -1 ? parseInt( this.selection, 10 ) : max;
+		const selection = Math.min( this.state.selection, max );
 
-		let { revisionDate } = this.state;
-		// if the last index, use a string instead of the date
-		if ( selection === max ) {
-			revisionDate = 'Latest';
-		}
+		const revisionDate = ( ! revisions.length ) || ( selection === max )
+			? 'Latest'
+			: moment
+				.unix( revisions[ selection ].data.modificationDate )
+				.format( 'MMM D, YYYY h:mm a' );
 
 		const revisionButtonStyle = selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
 
@@ -77,7 +97,13 @@ export default React.createClass( {
 			<div className="revision-selector">
 				<div className="revision-date">{revisionDate}</div>
 				<div className="revision-slider">
-					<input ref="range" type="range" min={min} max={max} value={selection} onChange={this.onSelectRevision} />
+					<input
+						type="range"
+						min={min}
+						max={max}
+						value={selection}
+						onChange={this.onSelectRevision}
+					/>
 				</div>
 				<div className="revision-buttons">
 					<div className="button button-secondary button-compact" onClick={this.onCancelRevision}>Cancel</div>
