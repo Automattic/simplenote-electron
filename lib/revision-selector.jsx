@@ -1,15 +1,9 @@
 import React, { PropTypes } from 'react'
 import moment from 'moment'
-import { property } from 'lodash';
+import { orderBy } from 'lodash';
 
-const lastUpdateOf = property( 'data.modificationDate' );
-const revisionSorter = ( a, b ) => lastUpdateOf( a ) - lastUpdateOf( b );
-
-const sortedRevisions = revisions => (
-	revisions
-		.slice()
-		.sort( revisionSorter )
-);
+const sortedRevisions = revisions =>
+	orderBy( revisions, 'data.modificationDate', 'asc' );
 
 export const RevisionSelector = React.createClass( {
 	mixins: [
