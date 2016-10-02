@@ -1,16 +1,38 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import moment from 'moment'
+import { property } from 'lodash';
 
-export default React.createClass( {
+const lastUpdateOf = property( 'data.modificationDate' );
+const revisionSorter = ( a, b ) => lastUpdateOf( a ) - lastUpdateOf( b );
 
+const sortedRevisions = revisions => (
+	revisions
+		.slice()
+		.sort( revisionSorter )
+);
+
+export const RevisionSelector = React.createClass( {
 	mixins: [
 		require( 'react-onclickoutside' )
 	],
 
 	getInitialState() {
 		return {
+			revisions: sortedRevisions( this.props.revisions ),
 			selection: Infinity,
 		}
+	},
+
+	componentWillReceiveProps( { revisions: nextRevisions } ) {
+		const { revisions: prevRevisions } = this.props;
+
+		if ( nextRevisions === prevRevisions ) {
+			return;
+		}
+
+		this.setState( {
+			revisions: sortedRevisions( nextRevisions ),
+		} );
 	},
 
 	componentDidUpdate( { revisions: prevRevisions } ) {
@@ -38,11 +60,12 @@ export default React.createClass( {
 	},
 
 	onAcceptRevision: function() {
-		const idx = this.state.selection;
-		const revisions = this.sortedRevisions();
-		const revision = revisions[ idx ];
+		const {
+			revisions,
+			selection,
+		} = this.state;
 
-		this.props.onSelectRevision( revision );
+		this.props.onSelectRevision( revisions[ selection ] );
 		this.resetSelection();
 	},
 
@@ -53,8 +76,10 @@ export default React.createClass( {
 	},
 
 	onSelectRevision: function( { target: { value } } ) {
+		const { revisions } = this.state;
+
 		const selection = parseInt( value, 10 );
-		const revision = this.sortedRevisions()[ selection ];
+		const revision = revisions[ selection ];
 
 		this.setState( {
 			selection,
@@ -67,17 +92,15 @@ export default React.createClass( {
 		this.resetSelection();
 	},
 
-	sortedRevisions() {
-		return ( this.props.revisions || [] )
-			.slice()
-			.sort( ( a, b ) => a.data.modificationDate - b.data.modificationDate );
-	},
-
 	render: function() {
+		const {
+			revisions,
+			selection: rawSelection,
+		} = this.state;
+
 		const min = 0;
-		const revisions = this.sortedRevisions();
 		const max = Math.max( revisions.length - 1, 1 );
-		const selection = Math.min( this.state.selection, max );
+		const selection = Math.min( rawSelection, max );
 
 		const revisionDate = ( ! revisions.length ) || ( selection === max )
 			? 'Latest'
@@ -85,7 +108,9 @@ export default React.createClass( {
 				.unix( revisions[ selection ].data.modificationDate )
 				.format( 'MMM D, YYYY h:mm a' );
 
-		const revisionButtonStyle = selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
+		const revisionButtonStyle = selection === max
+			? { opacity: '0.5', pointerEvents: 'none' }
+			: {};
 
 		return (
 			<div className="revision-selector">
@@ -106,5 +131,10 @@ export default React.createClass( {
 			</div>
 		)
 	}
-
 } );
+
+RevisionSelector.propTypes = {
+	revisions: PropTypes.array.isRequired,
+};
+
+export default RevisionSelector;
