@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Editor, EditorState, ContentState } from 'draft-js';
+import { invoke } from 'lodash';
 
 function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
@@ -18,6 +19,10 @@ export default React.createClass( {
 		return {
 			editorState: EditorState.createWithContent( contentState )
 		}
+	},
+
+	saveEditorRef( ref ) {
+		this.editor = ref
 	},
 
 	handleEditorStateChange( editorState ) {
@@ -48,17 +53,16 @@ export default React.createClass( {
 
 	focus() {
 		if ( !this.state.editorState.getSelection().getHasFocus() ) {
-			this.refs.editor.focus();
+			invoke( this, 'editor.focus' );
 		}
 	},
 
 	render() {
 		return (
 			<Editor
-				ref='editor'
+				ref={this.saveEditorRef}
 				spellCheck
 				stripPastedStyles
-				textAlignment='left'
 				onChange={this.handleEditorStateChange}
 				editorState={this.state.editorState} />
 		);

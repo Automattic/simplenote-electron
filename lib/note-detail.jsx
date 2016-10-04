@@ -18,12 +18,15 @@ export default React.createClass( {
 
 	componentWillMount: function() {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
-		this.focusEditor = () => this.refs.editor.focus();
 	},
 
 	componentDidMount: function() {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
+	},
+
+	saveEditorRef( ref ) {
+		this.editor = ref
 	},
 
 	isValidNote: function( note ) {
@@ -39,7 +42,7 @@ export default React.createClass( {
 		const content = get( note, 'data.content', '' );
 		if ( this.isValidNote( note ) && content === '' ) {
 			// Let's focus the editor for new and empty notes
-			this.focusEditor();
+			invoke( this, 'editor.focus' );
 		}
 	},
 
@@ -105,7 +108,7 @@ export default React.createClass( {
 				className="note-detail-textarea theme-color-bg theme-color-fg"
 				style={ divStyle }>
 				<NoteContentEditor
-					ref='editor'
+					ref={this.saveEditorRef}
 					content={content}
 					onChangeContent={this.queueNoteSave} />
 			</div>
