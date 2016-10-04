@@ -36,19 +36,23 @@ export default React.createClass( {
 		} );
 	},
 
-	componentWillReceiveProps( nextProps ) {
-		if (
-			// if we've received this content before there's nothing to do now
-			nextProps.content !== this.props.content
-			// if the new content isn't different from what's rendered
-			// don't change it because we'd lose the SelectionState
-			&& plainTextContent( this.state.editorState ) !== nextProps.content
-		) {
-			const contentState = ContentState.createFromText( nextProps.content, '\n' );
-			this.setState( {
-				editorState: EditorState.createWithContent( contentState )
-			} );
+	componentWillReceiveProps( { content: newContent } ) {
+		const { content: oldContent } = this.props;
+		const { editorState } = this.state;
+
+		if ( newContent === oldContent ) {
+			return; // identical to previous `content` prop
 		}
+
+		if ( newContent === plainTextContent( editorState ) ) {
+			return; // identical to rendered content
+		}
+
+		this.setState( {
+			editorState: EditorState.createWithContent(
+				ContentState.createFromText( newContent, '\n' )
+			)
+		} );
 	},
 
 	focus() {
