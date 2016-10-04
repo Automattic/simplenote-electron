@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Editor, EditorState, ContentState } from 'draft-js';
-import { invoke } from 'lodash';
+import { invoke, noop } from 'lodash';
 
 function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
@@ -26,14 +26,14 @@ export default React.createClass( {
 	},
 
 	handleEditorStateChange( editorState ) {
-		const contentHasChanged = plainTextContent( editorState )
-			!== plainTextContent( this.state.editorState )
+		const nextContent = plainTextContent( editorState );
+		const prevContent = plainTextContent( this.state.editorState );
 
-		this.setState( { editorState }, () => {
-			if ( contentHasChanged ) {
-				this.props.onChangeContent( plainTextContent( editorState ) );
-			}
-		} );
+		const announceChanges = nextContent !== prevContent
+			? () => this.props.onChangeContent( nextContent )
+			: noop;
+
+		this.setState( { editorState }, announceChanges );
 	},
 
 	componentWillReceiveProps( { content: newContent } ) {
