@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import escapeStringRegexp from 'escape-string-regexp'
 import appState from './flux/app-state'
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
@@ -317,10 +316,9 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	filterNotes: function() {
 		var { filter, showTrash, notes, tag } = this.props.appState;
-		var regexp;
 
 		if ( filter ) {
-			regexp = new RegExp( escapeStringRegexp( filter ), 'gi' );
+			filter = filter.toLowerCase();
 		}
 
 		function test( note ) {
@@ -332,7 +330,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
 				return false;
 			}
-			if ( regexp && !regexp.test( note.data.content || '' ) ) {
+			if ( filter && ( note.data.content || '' ).toLowerCase().indexOf( filter ) === -1 ) {
 				return false;
 			}
 			return true;
