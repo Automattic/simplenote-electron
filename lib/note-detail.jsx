@@ -1,19 +1,13 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
 import { get, debounce } from 'lodash';
-import { Editor, EditorState, ContentState } from 'draft-js';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
+import NoteContentEditor from './note-content-editor';
 
 const saveDelay = 2000;
 
 export default React.createClass( {
-
-	getInitialState: function() {
-		return {
-			editorState: EditorState.createEmpty(),
-		}
-	},
 
 	propTypes: {
 		note: PropTypes.object,
@@ -24,50 +18,20 @@ export default React.createClass( {
 
 	componentWillMount: function() {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
-		this.focus = () => this.refs.editor.focus();
+		this.focusEditor = () => this.refs.editor.focus();
 	},
 
 	componentDidMount: function() {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
-		this.readNoteFromProps( this.props );
 	},
 
 	isValidNote: function( note ) {
 		return note && note.id;
 	},
 
-	hasContentChanged( editorState, note ) {
-		return get( note, 'data.content', '' )
-			!== editorState.getCurrentContent().getPlainText( '\n' )
-	},
-
-	handleEditorStateChange( editorState ) {
-		this.setState( { editorState } );
-		// only queue note save if it was the content that changed
-		if ( this.hasContentChanged( editorState, this.props.note ) ) {
-			this.queueNoteSave();
-		}
-	},
-
-	readNoteFromProps( props ) {
-		const { note } = props;
-		const { editorState } = this.state;
-		if (
-			this.isValidNote( note )
-			&& this.hasContentChanged( editorState, note )
-		) {
-			const content = get( note, 'data.content', '' );
-			const contentState = ContentState.createFromText( content, '\n' )
-			this.setState( {
-				editorState: EditorState.createWithContent( contentState )
-			} )
-		}
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps: function() {
 		this.queueNoteSave.flush();
-		this.readNoteFromProps( nextProps );
 	},
 
 	componentDidUpdate: function() {
@@ -75,7 +39,7 @@ export default React.createClass( {
 		const content = get( note, 'data.content', '' );
 		if ( this.isValidNote( note ) && content === '' ) {
 			// Let's focus the editor for new and empty notes
-			this.focus();
+			this.focusEditor();
 		}
 	},
 
@@ -94,13 +58,11 @@ export default React.createClass( {
 		}
 	},
 
-	saveNote: function() {
+	saveNote: function( content ) {
 		const { note } = this.props;
-		const { editorState } = this.state;
 
 		if ( ! this.isValidNote( note ) ) return;
 
-		const content = editorState.getCurrentContent().getPlainText( '\n' );
 		this.props.onChangeContent( note, content );
 		analytics.tracks.recordEvent( 'editor_note_edited' );
 	},
@@ -113,7 +75,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<div className="note-detail" onClick={this.focus}>
+			<div className="note-detail">
 				{previewingMarkdown ?
 					this.renderMarkdown( divStyle )
 				:
@@ -136,17 +98,16 @@ export default React.createClass( {
 	},
 
 	renderEditable( divStyle ) {
+		const { content = '' } = this.props.note.data;
+
 		return (
 			<div
 				className="note-detail-textarea theme-color-bg theme-color-fg"
 				style={ divStyle }>
-				<Editor
-					textAlignment='left'
-					spellCheck
-					stripPastedStyles
+				<NoteContentEditor
 					ref='editor'
-					onChange={this.handleEditorStateChange}
-					editorState={this.state.editorState} />
+					content={content}
+					onChangeContent={this.queueNoteSave} />
 			</div>
 		);
 	}
