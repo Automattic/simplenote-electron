@@ -54,7 +54,7 @@
   "dependencies": {
     "cookie": "0.2.3",
     "create-hash": "1.1.2",
-    "draft-js": "0.8.1",
+    "draft-js": "0.9.1",
     "lodash": "4.6.1",
     "marked": "0.3.5",
     "moment": "2.12.0",
