@@ -6,26 +6,23 @@ function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
 }
 
-export default React.createClass( {
-
-	propTypes: {
+export default class NoteContentEditor extends React.Component {
+	static propTypes = {
 		content: PropTypes.string.isRequired,
 		onChangeContent: PropTypes.func.isRequired
-	},
+	}
 
-	getInitialState() {
-		const { content } = this.props;
-		const contentState = ContentState.createFromText( content, '\n' );
-		return {
-			editorState: EditorState.createWithContent( contentState )
-		}
-	},
+	state = {
+		editorState: EditorState.createWithContent(
+			ContentState.createFromText( this.props.content, '\n' )
+		)
+	}
 
-	saveEditorRef( ref ) {
+	saveEditorRef = ( ref ) => {
 		this.editor = ref
-	},
+	}
 
-	handleEditorStateChange( editorState ) {
+	handleEditorStateChange = ( editorState ) => {
 		const nextContent = plainTextContent( editorState );
 		const prevContent = plainTextContent( this.state.editorState );
 
@@ -34,7 +31,7 @@ export default React.createClass( {
 			: noop;
 
 		this.setState( { editorState }, announceChanges );
-	},
+	}
 
 	componentWillReceiveProps( { content: newContent } ) {
 		const { content: oldContent } = this.props;
@@ -60,11 +57,11 @@ export default React.createClass( {
 		}
 
 		this.setState( { editorState: newEditorState } );
-	},
+	}
 
-	focus() {
+	focus = () => {
 		invoke( this, 'editor.focus' );
-	},
+	}
 
 	render() {
 		return (
@@ -76,6 +73,5 @@ export default React.createClass( {
 				editorState={this.state.editorState}
 			/>
 		);
-	},
-
-} )
+	}
+}
