@@ -113,7 +113,7 @@ export const NoteEditor = React.createClass( {
 		return (
 			<div className={classes}>
 				<RevisionSelector
-					revisions={revisions}
+					revisions={revisions || []}
 					onViewRevision={this.onViewRevision}
 					onSelectRevision={this.onSelectRevision}
 					onCancelRevision={this.onCancelRevision} />
