@@ -38,27 +38,32 @@ export default React.createClass( {
 
 	componentWillReceiveProps( { content: newContent } ) {
 		const { content: oldContent } = this.props;
-		const { editorState } = this.state;
+		const { editorState: oldEditorState } = this.state;
 
 		if ( newContent === oldContent ) {
 			return; // identical to previous `content` prop
 		}
 
-		if ( newContent === plainTextContent( editorState ) ) {
+		if ( newContent === plainTextContent( oldEditorState ) ) {
 			return; // identical to rendered content
 		}
 
-		this.setState( {
-			editorState: EditorState.createWithContent(
-				ContentState.createFromText( newContent, '\n' )
-			)
-		} );
+		let newEditorState = EditorState.createWithContent(
+			ContentState.createFromText( newContent, '\n' )
+		)
+
+		// avoids weird caret position if content is changed
+		// while the editor had focus (see
+		// https://github.com/facebook/draft-js/issues/410#issuecomment-223408160)
+		if ( oldEditorState.getSelection().getHasFocus() ) {
+			newEditorState = EditorState.moveFocusToEnd( newEditorState )
+		}
+
+		this.setState( { editorState: newEditorState } );
 	},
 
 	focus() {
-		if ( !this.state.editorState.getSelection().getHasFocus() ) {
-			invoke( this, 'editor.focus' );
-		}
+		invoke( this, 'editor.focus' );
 	},
 
 	render() {
