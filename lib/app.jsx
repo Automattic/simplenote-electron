@@ -330,7 +330,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
 				return false;
 			}
-			if ( filter && ( note.data.content || '' ).toLowerCase().indexOf( filter ) === -1 ) {
+			if ( filter && ( note.data.content || '' ).toLowerCase().includes( filter ) ) {
 				return false;
 			}
 			return true;
