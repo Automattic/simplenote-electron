@@ -316,10 +316,9 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	filterNotes: function() {
 		var { filter, showTrash, notes, tag } = this.props.appState;
-		var regexp;
 
 		if ( filter ) {
-			regexp = new RegExp( filter, 'gi' );
+			filter = filter.toLowerCase();
 		}
 
 		function test( note ) {
@@ -331,7 +330,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
 				return false;
 			}
-			if ( regexp && !regexp.test( note.data.content || '' ) ) {
+			if ( filter && ( note.data.content || '' ).toLowerCase().includes( filter ) ) {
 				return false;
 			}
 			return true;
