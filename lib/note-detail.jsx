@@ -1,62 +1,91 @@
-import React, { PropTypes } from 'react';
-import marked from 'marked';
+import React, { Component, PropTypes } from 'react';
 import Textarea from 'react-textarea-autosize';
-import { noop, get, debounce } from 'lodash';
 import analytics from './analytics';
+import marked from 'marked';
+import { get, debounce, invoke } from 'lodash';
 import { viewExternalUrl } from './utils/url-utils';
 
-const uninitializedNoteEditor = { focus: noop };
 const saveDelay = 2000;
 
-export default React.createClass( {
+const isValidNote = note => note && note.id;
+const prependTab = l => `\t${ l }`;
+const removeLeadingTab = l => l[0] === '\t' ? l.substring( 1 ) : l;
 
-	propTypes: {
+export default class NoteDetail extends Component {
+	static propTypes = {
 		note: PropTypes.object,
 		previewingMarkdown: PropTypes.bool,
 		fontSize: PropTypes.number,
 		onChangeContent: PropTypes.func.isRequired
-	},
+	};
 
-	componentWillMount: function() {
+	constructor( props ) {
+		super( props );
+
+		this.storeNoteEditor = r => this.noteEditor = r;
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
-		this.noteEditor = uninitializedNoteEditor;
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount = () => {
 		// Ensures note gets saved if user abruptly quits the app
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
-	},
+		window.addEventListener( 'keydown', this.interceptTabPresses );
+	};
 
-	initializeNoteEditor: function( noteEditor ) {
-		this.noteEditor = noteEditor;
-	},
-
-	isValidNote: function( note ) {
-		return note && note.id;
-	},
-
-	componentWillReceiveProps: function() {
+	componentWillReceiveProps = () => {
 		this.queueNoteSave.flush();
-	},
+	};
 
-	componentDidUpdate: function() {
+	componentDidUpdate = () => {
 		const { note } = this.props;
 		const content = get( note, 'data.content', '' );
-		if ( this.isValidNote( note ) && this.noteEditor ) {
+		if ( isValidNote( note ) && this.noteEditor ) {
 			this.noteEditor.value = content;
 
 			// Let's focus the editor for new and empty notes
 			if ( content === '' ) {
-				this.noteEditor.focus();
+				invoke( this.noteEditor, 'focus' );
 			}
 		}
-	},
+	};
 
-	componentWillUnmount: function() {
+	componentWillUnmount = () => {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
-	},
+		window.removeEventListener( 'keydown', this.interceptTabPresses );
+	};
 
-	onPreviewClick: function( event ) {
+	interceptTabPresses = event => {
+		if (
+			'Tab' !== event.code ||
+			! this.noteEditor ||
+			'TEXTAREA' !== event.target.nodeName ||
+			this.props.previewingMarkdown ||
+			event.altKey ||
+			event.ctrlKey ||
+			event.metaKey
+		) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		const {
+			selectionStart,
+			selectionEnd,
+		} = this.noteEditor;
+
+		// if inserting at a cursor position
+		if ( ! event.shiftKey && selectionStart === selectionEnd ) {
+			return document.execCommand( 'insertText', false, '\t' );
+		}
+
+		return event.shiftKey
+			? this.transformSelectedLines( removeLeadingTab )
+			: this.transformSelectedLines( prependTab );
+	};
+
+	onPreviewClick = event => {
 		// open markdown preview links in a new window
 		for ( let node = event.target; node != null; node = node.parentNode ) {
 			if ( node.tagName === 'A' ) {
@@ -65,56 +94,77 @@ export default React.createClass( {
 				break;
 			}
 		}
-	},
+	};
 
-	saveNote: function() {
-		const { note } = this.props;
+	saveNote = () => {
+		const {
+			note,
+			onChangeContent,
+		} = this.props;
 
-		if ( ! this.isValidNote( note ) ) return;
+		if ( ! isValidNote( note ) ) {
+			return;
+		}
 
-		this.props.onChangeContent( note, this.noteEditor.value );
+		onChangeContent( note, this.noteEditor.value );
 		analytics.tracks.recordEvent( 'editor_note_edited' );
-	},
+	};
 
-	render: function() {
-		var { previewingMarkdown, fontSize } = this.props;
+	transformSelectedLines = transform => {
+		const {
+			selectionStart,
+			selectionEnd,
+			value,
+		} = this.noteEditor;
 
-		var divStyle = {
-			fontSize: fontSize + 'px'
-		};
+		const firstLineStart = value.lastIndexOf( '\n', selectionStart ) + 1;
+		const lastLineEnd = Math.max( value.indexOf( '\n', selectionEnd ), 0 ) || value.length;
+
+		this.noteEditor.selectionStart = firstLineStart;
+		this.noteEditor.selectionEnd = lastLineEnd;
+
+		const indented = this
+			.noteEditor
+			.value
+			.substring( firstLineStart, lastLineEnd )
+			.split( '\n' )
+			.map( transform )
+			.join( '\n' );
+
+		document.execCommand( 'insertText', false, indented );
+
+		this.noteEditor.selectionStart = firstLineStart;
+	};
+
+	render = () => {
+		var {
+			fontSize,
+			note,
+			previewingMarkdown,
+		} = this.props;
+
+		const divStyle = { fontSize: fontSize + 'px' };
 
 		return (
 			<div className="note-detail">
-				{previewingMarkdown ?
-					this.renderMarkdown( divStyle )
-				:
-					this.renderEditable( divStyle )
+				{ previewingMarkdown &&
+					<div
+						className="note-detail-markdown theme-color-bg theme-color-fg"
+						dangerouslySetInnerHTML={ { __html: marked( get( note, 'data.content', '' ) ) } }
+						onClick={ this.onPreviewClick }
+						style={ divStyle }
+					/>
+				}
+				{ ! previewingMarkdown &&
+					<Textarea
+						ref={ this.storeNoteEditor }
+						className="note-detail-textarea theme-color-bg theme-color-fg"
+						disabled={ !! ( note && note.data.deleted ) }
+						onChange={ this.queueNoteSave }
+						style={ divStyle }
+					/>
 				}
 			</div>
 		);
-	},
-
-	renderMarkdown( divStyle ) {
-		const { content = '' } = this.props.note.data;
-		const markdownHTML = marked( content );
-
-		return (
-			<div className="note-detail-markdown theme-color-bg theme-color-fg"
-				dangerouslySetInnerHTML={ { __html: markdownHTML } }
-				onClick={ this.onPreviewClick }
-				style={ divStyle } />
-		);
-	},
-
-	renderEditable( divStyle ) {
-		const note = this.props.note;
-
-		return (
-			<Textarea ref={ this.initializeNoteEditor } className="note-detail-textarea theme-color-bg theme-color-fg"
-				disabled={ !!( note && note.data.deleted ) }
-				onChange={ this.queueNoteSave }
-				style={ divStyle } />
-		);
-	}
-
-} )
+	};
+};
