@@ -169,8 +169,11 @@
 
 .note-detail-textarea {
 	min-height: 100%;
-	overflow: hidden;
 	cursor: text;
+
+	div, span {
+		cursor: inherit;
+	}
 
 	&::first-line {
  		font-size: 120%;

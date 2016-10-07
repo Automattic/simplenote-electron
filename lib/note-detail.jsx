@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
 import marked from 'marked';
-import Textarea from 'react-textarea-autosize';
-import { noop, get, debounce } from 'lodash';
+import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
+import NoteContentEditor from './note-content-editor';
 
-const uninitializedNoteEditor = { focus: noop };
 const saveDelay = 2000;
 
 export default React.createClass( {
@@ -19,7 +18,6 @@ export default React.createClass( {
 
 	componentWillMount: function() {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
-		this.noteEditor = uninitializedNoteEditor;
 	},
 
 	componentDidMount: function() {
@@ -27,8 +25,8 @@ export default React.createClass( {
 		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
 	},
 
-	initializeNoteEditor: function( noteEditor ) {
-		this.noteEditor = noteEditor;
+	saveEditorRef( ref ) {
+		this.editor = ref
 	},
 
 	isValidNote: function( note ) {
@@ -42,13 +40,9 @@ export default React.createClass( {
 	componentDidUpdate: function() {
 		const { note } = this.props;
 		const content = get( note, 'data.content', '' );
-		if ( this.isValidNote( note ) && this.noteEditor ) {
-			this.noteEditor.value = content;
-
+		if ( this.isValidNote( note ) && content === '' ) {
 			// Let's focus the editor for new and empty notes
-			if ( content === '' ) {
-				this.noteEditor.focus();
-			}
+			invoke( this, 'editor.focus' );
 		}
 	},
 
@@ -67,12 +61,12 @@ export default React.createClass( {
 		}
 	},
 
-	saveNote: function() {
+	saveNote: function( content ) {
 		const { note } = this.props;
 
 		if ( ! this.isValidNote( note ) ) return;
 
-		this.props.onChangeContent( note, this.noteEditor.value );
+		this.props.onChangeContent( note, content );
 		analytics.tracks.recordEvent( 'editor_note_edited' );
 	},
 
@@ -107,13 +101,17 @@ export default React.createClass( {
 	},
 
 	renderEditable( divStyle ) {
-		const note = this.props.note;
+		const content = get( this.props, 'note.data.content', '' );
 
 		return (
-			<Textarea ref={ this.initializeNoteEditor } className="note-detail-textarea theme-color-bg theme-color-fg"
-				disabled={ !!( note && note.data.deleted ) }
-				onChange={ this.queueNoteSave }
-				style={ divStyle } />
+			<div
+				className="note-detail-textarea theme-color-bg theme-color-fg"
+				style={ divStyle }>
+				<NoteContentEditor
+					ref={this.saveEditorRef}
+					content={content}
+					onChangeContent={this.queueNoteSave} />
+			</div>
 		);
 	}
 

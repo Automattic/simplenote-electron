@@ -47,7 +47,7 @@ export const ContextMenu = React.createClass( {
 
 		event.preventDefault();
 
-		if ( ! event.target.closest( 'textarea, input' ) ) {
+		if ( ! event.target.closest( 'textarea, input, [contenteditable="true"]' ) ) {
 			return;
 		}
 
