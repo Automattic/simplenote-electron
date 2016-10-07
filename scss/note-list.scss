@@ -167,8 +167,8 @@
 		font-size: 16px;
 
 		& span {
-			width: calc(100% - 24px);
 			text-overflow: ellipsis;
+			overflow: hidden;
 		}
 	}
 
