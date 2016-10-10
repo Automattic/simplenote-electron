@@ -123,6 +123,7 @@ export default React.createClass( {
 
 	render: function() {
 		var { selectedTag } = this.state;
+		const { tags } = this.props;
 
 		return (
 			<div className="tag-entry theme-color-border">
@@ -131,7 +132,7 @@ export default React.createClass( {
 					onKeyDown={this.onKeyDown}
 					onBlur={this.onBlur}>
 					<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
-					{this.props.tags.map( ( tag, index ) =>
+					{ tags.map( ( tag, index ) =>
 						<TagChip key={tag} tag={tag}
 							selected={index === selectedTag}
 							onSelect={this.onSelectTag.bind( this, tag, index )} />

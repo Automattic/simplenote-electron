@@ -10,6 +10,8 @@ import {
 	authIsPending,
 	isAuthorized,
 } from './state/auth/selectors';
+import { getSelectedTag } from './state/tags/selectors';
+import { getSelectedCollection } from './state/ui/selectors';
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
@@ -63,7 +65,9 @@ const mapStateToProps = state => ( {
 	...state,
 	authIsPending: authIsPending( state ),
 	isAuthorized: isAuthorized( state ),
-} )
+	selectedCollection: getSelectedCollection( state ),
+	selectedTag: getSelectedTag( state ),
+} );
 
 function mapDispatchToProps( dispatch, { noteBucket } ) {
 	var actionCreators = Object.assign( {},
@@ -90,6 +94,8 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder ),
 
 		resetAuth: () => dispatch( resetAuth() ),
+		selectAllNotes: () => dispatch( actionCreators.selectAllNotes() ),
+		selectTrashedNotes: () => dispatch( actionCreators.selectTrash() ),
 		setAuthorized: () => dispatch( setAuthorized() ),
 	};
 }
@@ -413,7 +419,11 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			authIsPending,
 			isAuthorized,
 			noteBucket,
+			selectAllNotes,
+			selectedCollection,
+			selectTrashedNotes,
 		} = this.props;
+
 		const electron = get( this.state, 'electron' );
 		const isMacApp = isElectronMac();
 		const { settings, isSmallScreen } = this.props;
@@ -450,21 +460,19 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				{ isAuthorized ?
 						<div className={mainClasses}>
 							{ state.showNavigation &&
-								<NavigationBar
-									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
-									onSelectTrash={() => this.props.actions.selectTrash() }
-									onSelectTag={this.onSelectTag}
-									onSettings={this.onSettings}
-									onAbout={this.onAbout}
-									onEditTags={() => this.props.actions.editTags() }
-									onRenameTag={this.onRenameTag}
-									onTrashTag={this.onTrashTag}
-									onReorderTags={this.onReorderTags}
-									editingTags={state.editingTags}
-									showTrash={state.showTrash}
-									selectedTag={state.tag}
-									tags={state.tags}
-									onOutsideClick={this.onToolbarOutsideClick} />
+							<NavigationBar
+								onSelectAllNotes={ selectAllNotes }
+								onSelectTrash={ selectTrashedNotes }
+								onSelectTag={this.onSelectTag}
+								onSettings={this.onSettings}
+								onAbout={this.onAbout}
+								onEditTags={() => this.props.actions.editTags() }
+								onRenameTag={this.onRenameTag}
+								onTrashTag={this.onTrashTag}
+								onReorderTags={this.onReorderTags}
+								editingTags={state.editingTags}
+								showTrash={state.showTrash}
+								onOutsideClick={this.onToolbarOutsideClick} />
 							}
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
