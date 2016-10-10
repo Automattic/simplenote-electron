@@ -1,6 +1,10 @@
 import React, { PropTypes } from 'react';
 import {
-	Editor, EditorState, ContentState, SelectionState, Modifier
+	ContentState,
+	Editor,
+	EditorState,
+	Modifier,
+	SelectionState,
 } from 'draft-js';
 import { invoke, noop } from 'lodash';
 
@@ -92,7 +96,7 @@ export default class NoteContentEditor extends React.Component {
 		let editorState = this.state.editorState;
 		const selection = editorState.getSelection();
 
-		if ( !selection.isCollapsed() ) {
+		if ( ! selection.isCollapsed() ) {
 			return
 		}
 
@@ -103,7 +107,7 @@ export default class NoteContentEditor extends React.Component {
 
 		const atStart = line.trim() === '-' || line.trim() === '*';
 
-		if ( !e.shiftKey ) {
+		if ( ! e.shiftKey ) {
 			// inserting a tab character
 
 			const offset = atStart ? 0 : selectionStart
