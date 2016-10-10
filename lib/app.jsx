@@ -31,7 +31,7 @@ import {
 	values,
 } from 'lodash';
 
-import * as settingsActions from './flux/actions-settings';
+import * as settingsActions from './state/settings/actions';
 
 let ipc = getIpc();
 
