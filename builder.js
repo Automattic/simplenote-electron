@@ -15,7 +15,7 @@ var pkg = require( './package.json' );
 /**
  * Module variables
  */
-var electronVersion = pkg.devDependencies['electron-prebuilt'].replace( '^', '' );
+var electronVersion = pkg.devDependencies['electron'].replace( '^', '' );
 var key;
 
 var opts = {
