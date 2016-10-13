@@ -4,7 +4,6 @@ import {
 	Editor,
 	EditorState,
 	Modifier,
-	SelectionState,
 } from 'draft-js';
 import { invoke, noop } from 'lodash';
 
@@ -12,24 +11,80 @@ function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
 }
 
-const EditorStateModifier = {
-	insertText( editorState, selection, characters ) {
-		return EditorState.push(
-			editorState,
-			Modifier.insertText(
-				editorState.getCurrentContent(), selection, characters
-			),
-			'insert-characters'
-		);
-	},
+function indentCurrentBlock( editorState ) {
+	const selection = editorState.getSelection();
+	const selectionStart = selection.getStartOffset();
 
-	removeRange( editorState, selection = editorState.getSelection() ) {
-		return EditorState.push(
-			editorState,
-			Modifier.removeRange( editorState.getCurrentContent(), selection ),
-			'remove-range'
-		);
-	},
+	const content = editorState.getCurrentContent();
+	const block = content.getBlockForKey( selection.getFocusKey() );
+	const line = block.getText();
+
+	const atStart = line.trim() === '-' || line.trim() === '*';
+	const offset = atStart ? 0 : selectionStart;
+
+	// add tab
+	const afterInsert = EditorState.push(
+		editorState,
+		Modifier.insertText(
+			content,
+			selection.merge( {
+				anchorOffset: offset,
+				focusOffset: offset,
+			} ),
+			'\t'
+		),
+		'insert-characters'
+	);
+
+	// move selection to where it was
+	return EditorState.forceSelection(
+		afterInsert,
+		selection.merge( {
+			anchorOffset: selectionStart + 1, // +1 because 1 char was added
+			focusOffset: selectionStart + 1,
+		} )
+	);
+}
+
+function outdentCurrentBlock( editorState ) {
+	const selection = editorState.getSelection();
+	const selectionStart = selection.getStartOffset();
+
+	const content = editorState.getCurrentContent();
+	const block = content.getBlockForKey( selection.getFocusKey() );
+	const line = block.getText();
+
+	const atStart = line.trim() === '-' || line.trim() === '*';
+	const rangeStart = atStart ? 0 : selectionStart - 1;
+	const rangeEnd = atStart ? 1 : selectionStart;
+	const prevChar = block.getText().slice( rangeStart, rangeEnd );
+
+	// there's no indentation to remove
+	if ( prevChar !== '\t' ) {
+		return editorState
+	}
+
+	// remove tab
+	const afterRemove = EditorState.push(
+		editorState,
+		Modifier.removeRange(
+			content,
+			selection.merge( {
+				anchorOffset: rangeStart,
+				focusOffset: rangeEnd,
+			} )
+		),
+		'remove-range'
+	);
+
+	// move selection to where it was
+	return EditorState.forceSelection(
+		afterRemove,
+		selection.merge( {
+			anchorOffset: selectionStart - 1, // -1 because 1 char was removed
+			focusOffset: selectionStart - 1,
+		} )
+	);
 }
 
 export default class NoteContentEditor extends React.Component {
@@ -49,6 +104,10 @@ export default class NoteContentEditor extends React.Component {
 	}
 
 	handleEditorStateChange = ( editorState ) => {
+		if ( editorState === this.state.editorState ) {
+			return
+		}
+
 		const nextContent = plainTextContent( editorState );
 		const prevContent = plainTextContent( this.state.editorState );
 
@@ -90,75 +149,24 @@ export default class NoteContentEditor extends React.Component {
 	}
 
 	onTab = ( e ) => {
+		const { editorState } = this.state;
+
 		// prevent moving focus to next input
 		e.preventDefault()
 
-		let editorState = this.state.editorState;
-		const selection = editorState.getSelection();
-
-		if ( ! selection.isCollapsed() ) {
+		if ( ! editorState.getSelection().isCollapsed() ) {
 			return
 		}
 
-		const content = editorState.getCurrentContent();
-		const selectionStart = selection.getStartOffset();
-		const block = content.getBlockForKey( selection.getFocusKey() );
-		const line = block.getText();
-
-		const atStart = line.trim() === '-' || line.trim() === '*';
-
-		if ( ! e.shiftKey ) {
-			// inserting a tab character
-
-			const offset = atStart ? 0 : selectionStart
-
-			// add tab
-			editorState = EditorStateModifier.insertText(
-				editorState,
-				SelectionState.createEmpty( block.getKey() ).merge( {
-					anchorOffset: offset,
-					focusOffset: offset,
-				} ),
-				'\t'
-			);
-
-			// move selection to where it was
-			editorState = EditorState.forceSelection(
-				editorState,
-				SelectionState.createEmpty( block.getKey() ).merge( {
-					anchorOffset: selectionStart + 1, // +1 because 1 char was added
-					focusOffset: selectionStart + 1,
-				} )
-			);
-		} else {
-			// outdenting
-
-			const rangeStart = atStart ? 0 : selectionStart - 1;
-			const rangeEnd = atStart ? 1 : selectionStart;
-			const prevChar = block.getText().slice( rangeStart, rangeEnd );
-
-			if ( prevChar === '\t' ) {
-				// remove tab
-				editorState = EditorStateModifier.removeRange(
-					editorState,
-					SelectionState.createEmpty( block.getKey() ).merge( {
-						anchorOffset: rangeStart,
-						focusOffset: rangeEnd,
-					} )
-				);
-
-				// move selection to where it was
-				editorState = EditorState.forceSelection(
-					editorState,
-					SelectionState.createEmpty( block.getKey() ).merge( {
-						anchorOffset: selectionStart - 1, // -1 because 1 char was removed
-						focusOffset: selectionStart - 1,
-					} )
-				);
-			}
+		if ( e.altKey || e.ctrlKey || e.metaKey ) {
+			return
 		}
 
-		this.handleEditorStateChange( editorState );
+		this.handleEditorStateChange(
+			e.shiftKey
+				? outdentCurrentBlock( editorState )
+				: indentCurrentBlock( editorState )
+		)
 	}
 
 	render() {
