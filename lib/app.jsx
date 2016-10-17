@@ -23,11 +23,12 @@ import {
 	noop,
 	get,
 	has,
+	includes,
 	isObject,
 	map,
 	overEvery,
 	pick,
-	values
+	values,
 } from 'lodash';
 
 import * as settingsActions from './flux/actions-settings';
@@ -84,6 +85,20 @@ const isElectron = ( () => {
 
 	return () => foundElectron;
 } )();
+
+const includesSearch = ( text, search ) =>
+	( text || '' )
+		.toLocaleLowerCase()
+		.includes( ( search || '' ).toLocaleLowerCase() );
+
+const matchesTrashView = isViewingTrash => note =>
+	isViewingTrash === !! get( note, 'data.deleted', false );
+
+const matchesTag = tag => note =>
+	! tag || includes( get( note, 'data.tags', [] ), get( tag, 'data.name', '' ) );
+
+const matchesSearch = query => note =>
+	! query || includesSearch( get( note, 'data.content' ), query );
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -314,29 +329,20 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		} );
 	},
 
-	filterNotes: function() {
-		var { filter, showTrash, notes, tag } = this.props.appState;
+	filterNotes() {
+		const {
+			filter,    // {string} search query from input
+			notes,     // {[note]} list of all available notes
+			showTrash, // {bool} whether we are looking at the trashed notes
+			tag,       // {tag|null} whether we are looking at a specific tag
+		} = this.props.appState;
 
-		if ( filter ) {
-			filter = filter.toLowerCase();
-		}
-
-		function test( note ) {
-			// if and only if trash is being viewed, return trashed notes
-			if ( showTrash !== !!note.data.deleted ) {
-				return false;
-			}
-			// if tag is selected only return those with the tag
-			if ( tag && note.data.tags.indexOf( tag.data.name ) === -1 ) {
-				return false;
-			}
-			if ( filter && ( note.data.content || '' ).toLowerCase().includes( filter ) ) {
-				return false;
-			}
-			return true;
-		}
-
-		return notes.filter( test );
+		return notes
+			.filter( overEvery( [
+				matchesTrashView( showTrash ),
+				matchesTag( tag ),
+				matchesSearch( filter ),
+			] ) );
 	},
 
 	onSetEditorMode: function( mode ) {
