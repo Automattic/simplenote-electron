@@ -55,7 +55,7 @@
     "cookie": "0.2.3",
     "create-hash": "1.1.2",
     "draft-js": "0.9.1",
-    "highlight.js": "^9.7.0",
+    "highlight.js": "9.7.0",
     "lodash": "4.6.1",
     "marked": "0.3.5",
     "moment": "2.12.0",
