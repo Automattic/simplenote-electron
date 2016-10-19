@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import highlight from 'highlight.js';
 import marked from 'marked';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
@@ -90,7 +91,11 @@ export default React.createClass( {
 
 	renderMarkdown( divStyle ) {
 		const { content = '' } = this.props.note.data;
-		const markdownHTML = marked( content );
+		const markdownHTML = marked( content, {
+			highlight: function( code ) {
+				return highlight.highlightAuto( code ).value;
+			}
+		} );
 
 		return (
 			<div className="note-detail-markdown theme-color-bg theme-color-fg"
