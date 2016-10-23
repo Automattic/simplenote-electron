@@ -9,6 +9,7 @@ const {
 } = require( 'electron' );
 
 const path = require( 'path' );
+const windowStateKeeper = require( 'electron-window-state' );
 const buildViewMenu = require( './menus/view-menu' );
 
 require( 'module' ).globalPaths.push( path.resolve( path.join( __dirname ) ) );
@@ -29,11 +30,18 @@ module.exports = function main() {
 			return;
 		}
 
+		const mainWindowState = windowStateKeeper( {
+		    defaultWidth: 1024,
+		    defaultHeight: 768
+		} );
+
 		// Create the browser window.
 		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
 		mainWindow = new BrowserWindow( {
-			width: 1024,
-			height: 768,
+			x: mainWindowState.x,
+			y: mainWindowState.y,
+			width: mainWindowState.width,
+			height: mainWindowState.height,
 			minWidth: 370,
 			minHeight: 520,
 			icon: iconPath
@@ -57,6 +65,8 @@ module.exports = function main() {
 		ipcMain.on( 'settingsUpdate', function( event, settings ) {
 			Menu.setApplicationMenu( Menu.buildFromTemplate( createMenuTemplate( settings ) ) );
 		} );
+
+		mainWindowState.manage( mainWindow );
 
 		// Emitted when the window is closed.
 		mainWindow.on( 'closed', function() {
