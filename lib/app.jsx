@@ -505,8 +505,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									</button>
 									<SearchField
 										onSearch={this.onSearch}
-										placeholder={state.listTitle}
-										searchFocus={state.searchFocus}
 										onSearchFocused={this.onSearchFocused} />
 									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />

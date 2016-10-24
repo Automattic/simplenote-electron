@@ -1,40 +1,60 @@
-import React, { PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
-export default React.createClass( {
+const KEY_ESC = 27;
 
-	propTypes: {
+export class SearchField extends Component {
+	static propTypes = {
 		placeholder: PropTypes.string.isRequired,
+		query: PropTypes.string.isRequired,
 		searchFocus: PropTypes.bool.isRequired,
 		onSearch: PropTypes.func.isRequired,
 		onSearchFocused: PropTypes.func.isRequired
-	},
+	};
 
-	getDefaultProps: function() {
-		return {
-			placeholder: 'Search',
-			onSearch: function() {}
-		}
-	},
-
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		const { searchFocus, onSearchFocused } = this.props;
-		const { search } = this.refs;
-		if ( searchFocus ) {
-			search.focus();
+
+		if ( searchFocus && this.searchField ) {
+			searchField.focus();
 			onSearchFocused();
 		}
-	},
+	}
 
-	onSearch: function() {
-		var query = this.refs.search.value;
-		this.props.onSearch( query );
-	},
+	interceptEsc = ( { keyCode } ) =>
+		KEY_ESC === keyCode
+			? this.props.onSearch( '' )
+			: null;
 
-	render: function() {
+	storeInput = r => this.inputField = r;
+
+	update = ( { target: { value: query } } ) => this.props.onSearch( query );
+
+	render() {
+		const {
+			placeholder,
+			query,
+		} = this.props;
+
 		return (
 			<div className="search-field">
-				<input ref="search" type="text" placeholder={this.props.placeholder} onChange={this.onSearch} />
+				<input
+					ref={ this.storeInput }
+					type="text"
+					placeholder={ placeholder }
+					onChange={ this.update }
+					onKeyUp={ this.interceptEsc }
+					value={ query }
+				/>
 			</div>
 		);
 	}
+};
+
+const mapStateToProps = ( { appState } ) => ( {
+	query: appState.filter,
+	placeholder: appState.listTitle,
+	searchFocus: appState.searchFocus,
 } );
+
+export default connect( mapStateToProps )( SearchField );
