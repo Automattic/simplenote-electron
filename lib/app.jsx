@@ -2,6 +2,14 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import appState from './flux/app-state'
+import {
+	reset as resetAuth,
+	setAuthorized,
+} from './state/auth/actions';
+import {
+	authIsPending,
+	isAuthorized,
+} from './state/auth/selectors';
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
@@ -31,7 +39,7 @@ import {
 	values,
 } from 'lodash';
 
-import * as settingsActions from './flux/actions-settings';
+import * as settingsActions from './state/settings/actions';
 
 let ipc = getIpc();
 
@@ -49,9 +57,11 @@ function getIpc() {
 	return ipc;
 }
 
-function mapStateToProps( state ) {
-	return state;
-}
+const mapStateToProps = state => ( {
+	...state,
+	authIsPending: authIsPending( state ),
+	isAuthorized: isAuthorized( state ),
+} )
 
 function mapDispatchToProps( dispatch, { noteBucket } ) {
 	var actionCreators = Object.assign( {},
@@ -75,7 +85,10 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 			'setAccountName'
 		] ), dispatch ),
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
-		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder )
+		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder ),
+
+		resetAuth: () => dispatch( resetAuth() ),
+		setAuthorized: () => dispatch( setAuthorized() ),
 	};
 }
 
@@ -186,15 +199,23 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		}
 	},
 
-	onAuthChanged: function() {
-		let isAuthorized = this.props.client.isAuthorized();
-		this.props.actions.authChanged( {
-			authorized: isAuthorized
-		} );
+	onAuthChanged() {
+		const {
+			actions,
+			appState: { accountName },
+			client,
+			resetAuth,
+			setAuthorized,
+		} = this.props;
 
-		if ( isAuthorized ) {
-			analytics.initialize( this.props.appState.accountName );
+		actions.authChanged();
+
+		if ( ! client.isAuthorized() ) {
+			return resetAuth();
 		}
+
+		setAuthorized();
+		analytics.initialize( accountName );
 	},
 
 	onSelectNote: function( noteId ) {
@@ -448,7 +469,11 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	render: function() {
-		const state = this.props.appState;
+		const {
+			appState: state,
+			authIsPending,
+			isAuthorized,
+		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = this.filterNotes();
@@ -481,7 +506,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						<MenuItem label="Select All" role="selectall" />
 					</ContextMenu>
 				}
-				{ state.authorized ?
+				{ isAuthorized ?
 						<div className={mainClasses}>
 							<NavigationBar
 								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
@@ -542,8 +567,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						</div>
 				:
 					<Auth
-						authPending={state.authPending}
-						isAuthenticated={state.authorized}
+						authPending={ authIsPending }
+						isAuthenticated={ isAuthorized }
 						onAuthenticate={this.props.onAuthenticate}
 					/>
 				}

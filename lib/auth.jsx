@@ -1,10 +1,16 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import SimplenoteLogo from './icons/simplenote';
 import Spinner from './components/spinner';
 
-export default React.createClass( {
+import {
+	hasInvalidCredentials,
+	hasLoginError,
+} from './state/auth/selectors';
+
+export const Auth = React.createClass( {
 
 	propTypes: {
 		isAuthenticated: PropTypes.bool,
@@ -50,8 +56,11 @@ export default React.createClass( {
 							</span>
 						</label>
 					</div>
-					{ ( this.props.isAuthenticated === false ) &&
+					{ this.props.hasInvalidCredentials &&
 						<p className="login-auth-message login-auth-failure">The credentials you entered don't match</p>
+					}
+					{ this.props.hasLoginError &&
+						<p className="login-auth-message login-auth-failure">Login failed. Please try again.</p>
 					}
 					<div className="login-actions">
 						<div
@@ -103,4 +112,11 @@ export default React.createClass( {
 		window.open( event.currentTarget.href, null, 'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes' );
 	}
 
-} )
+} );
+
+const mapStateToProps = state => ( {
+	hasInvalidCredentials: hasInvalidCredentials( state ),
+	hasLoginError: hasLoginError( state ),
+} );
+
+export default connect( mapStateToProps )( Auth );
