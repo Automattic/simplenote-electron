@@ -25,12 +25,14 @@ function indentCurrentBlock( editorState ) {
 	// add tab
 	const afterInsert = EditorState.push(
 		editorState,
-		Modifier.insertText(
+		Modifier.replaceText(
 			content,
-			selection.merge( {
-				anchorOffset: offset,
-				focusOffset: offset,
-			} ),
+			selection.isCollapsed()
+				? selection.merge( {
+					anchorOffset: offset,
+					focusOffset: offset,
+				} )
+				: selection,
 			'\t'
 		),
 		'insert-characters'
@@ -39,7 +41,7 @@ function indentCurrentBlock( editorState ) {
 	// move selection to where it was
 	return EditorState.forceSelection(
 		afterInsert,
-		selection.merge( {
+		afterInsert.getSelection().merge( {
 			anchorOffset: selectionStart + 1, // +1 because 1 char was added
 			focusOffset: selectionStart + 1,
 		} )
@@ -154,7 +156,7 @@ export default class NoteContentEditor extends React.Component {
 		// prevent moving focus to next input
 		e.preventDefault()
 
-		if ( ! editorState.getSelection().isCollapsed() ) {
+		if ( ! editorState.getSelection().isCollapsed() && e.shiftKey ) {
 			return
 		}
 
