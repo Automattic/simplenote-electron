@@ -199,7 +199,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		}
 	},
 
-	onAuthChanged: function() {
+	onAuthChanged() {
 		const {
 			actions,
 			appState: { accountName },
@@ -208,11 +208,9 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			setAuthorized,
 		} = this.props;
 
-		const isAuthorized = client.isAuthorized();
-
 		actions.authChanged();
 
-		if ( ! isAuthorized ) {
+		if ( ! client.isAuthorized() ) {
 			return resetAuth();
 		}
 
