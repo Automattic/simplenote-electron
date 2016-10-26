@@ -5,7 +5,14 @@ import {
 	EditorState,
 	Modifier,
 } from 'draft-js';
-import { includes, invoke, noop } from 'lodash';
+import {
+	includes,
+	invoke,
+	noop,
+	some,
+} from 'lodash';
+
+import markdownDecorator from './utils/markdownDecorator';
 
 function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
@@ -144,17 +151,20 @@ export default class NoteContentEditor extends React.Component {
 	static propTypes = {
 		content: PropTypes.string.isRequired,
 		onChangeContent: PropTypes.func.isRequired
-	}
+	};
 
 	state = {
 		editorState: EditorState.createWithContent(
-			ContentState.createFromText( this.props.content, '\n' )
+			ContentState.createFromText( this.props.content, '\n' ),
+			this.props.markdownEnabled
+				? markdownDecorator
+				: undefined
 		)
-	}
+	};
 
 	saveEditorRef = ( ref ) => {
 		this.editor = ref
-	}
+	};
 
 	handleEditorStateChange = ( editorState ) => {
 		if ( editorState === this.state.editorState ) {
@@ -169,23 +179,36 @@ export default class NoteContentEditor extends React.Component {
 			: noop;
 
 		this.setState( { editorState }, announceChanges );
-	}
+	};
 
-	componentWillReceiveProps( { content: newContent } ) {
-		const { content: oldContent } = this.props;
+	componentWillReceiveProps( nextProps ) {
+		const {
+			content: newContent,
+			markdownEnabled: newMarkdownEnabled,
+		} = nextProps;
+
+		const {
+			content: oldContent,
+			markdownEnabled: oldMarkdownEnabled,
+		} = this.props;
+
 		const { editorState: oldEditorState } = this.state;
 
-		if ( newContent === oldContent ) {
-			return; // identical to previous `content` prop
-		}
+		const needsRefresh = some( [
+			newMarkdownEnabled !== oldMarkdownEnabled, // change markdown highlighting?
+			newContent !== oldContent && newContent !== plainTextContent( oldEditorState ), // compare to rendered content
+		] );
 
-		if ( newContent === plainTextContent( oldEditorState ) ) {
-			return; // identical to rendered content
+		if ( ! needsRefresh ) {
+			return;
 		}
 
 		let newEditorState = EditorState.createWithContent(
-			ContentState.createFromText( newContent, '\n' )
-		)
+			ContentState.createFromText( newContent, '\n' ),
+			newMarkdownEnabled
+				? markdownDecorator
+				: undefined
+		);
 
 		// avoids weird caret position if content is changed
 		// while the editor had focus, see
@@ -199,13 +222,13 @@ export default class NoteContentEditor extends React.Component {
 
 	focus = () => {
 		invoke( this, 'editor.focus' );
-	}
+	};
 
 	onTab = ( e ) => {
 		const { editorState } = this.state;
 
 		// prevent moving focus to next input
-		e.preventDefault()
+		e.preventDefault();
 
 		if ( ! editorState.getSelection().isCollapsed() && e.shiftKey ) {
 			return
@@ -220,7 +243,7 @@ export default class NoteContentEditor extends React.Component {
 				? outdentCurrentBlock( editorState )
 				: indentCurrentBlock( editorState )
 		)
-	}
+	};
 
 	handleReturn = () => {
 		// matches lines that start with `- `, `* `, or `+ `

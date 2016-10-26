@@ -104,15 +104,18 @@ export default React.createClass( {
 
 	renderEditable( divStyle ) {
 		const content = get( this.props, 'note.data.content', '' );
+		const { markdownEnabled } = this.props;
 
 		return (
 			<div
-				className="note-detail-textarea theme-color-bg theme-color-fg"
+				className={ `note-detail-textarea theme-color-bg theme-color-fg ${ markdownEnabled ? 'markdown-editor' : '' }` }
 				style={ divStyle }>
 				<NoteContentEditor
 					ref={this.saveEditorRef}
 					content={content}
-					onChangeContent={this.queueNoteSave} />
+					onChangeContent={this.queueNoteSave}
+					markdownEnabled={ markdownEnabled }
+				/>
 			</div>
 		);
 	}

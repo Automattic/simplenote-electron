@@ -55,6 +55,7 @@
     "cookie": "0.3.1",
     "create-hash": "1.1.2",
     "draft-js": "0.9.1",
+    "draft-js-simpledecorator": "1.0.1",
     "electron-window-state": "4.0.1",
     "highlight.js": "9.9.0",
     "jszip": "3.1.3",
@@ -73,6 +74,7 @@
     "redux-thunk": "1.0.3",
     "sanitize-filename": "1.6.1",
     "serve-favicon": "2.3.2",
-    "simperium": "0.2.5"
+    "simperium": "0.2.5",
+    "simplenote-grammar-pegjs": "0.1.4"
   }
 }
