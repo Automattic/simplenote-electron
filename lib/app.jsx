@@ -559,11 +559,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
-							<NoteInfo
-								note={selectedNote}
-								onPinNote={this.onPinNote}
-								onMarkdownNote={this.onMarkdownNote}
-								onOutsideClick={this.onToolbarOutsideClick} />
+							{ state.showNoteInfo &&
+								<NoteInfo
+									note={selectedNote}
+									onPinNote={this.onPinNote}
+									onMarkdownNote={this.onMarkdownNote}
+									onOutsideClick={this.onToolbarOutsideClick} />
+							}
 						</div>
 				:
 					<Auth
