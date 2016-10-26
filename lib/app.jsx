@@ -508,21 +508,23 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				}
 				{ isAuthorized ?
 						<div className={mainClasses}>
-							<NavigationBar
-								onSelectAllNotes={() => this.props.actions.selectAllNotes() }
-								onSelectTrash={() => this.props.actions.selectTrash() }
-								onSelectTag={this.onSelectTag}
-								onSettings={this.onSettings}
-								onAbout={this.onAbout}
-								onEditTags={() => this.props.actions.editTags() }
-								onRenameTag={this.onRenameTag}
-								onTrashTag={this.onTrashTag}
-								onReorderTags={this.onReorderTags}
-								editingTags={state.editingTags}
-								showTrash={state.showTrash}
-								selectedTag={state.tag}
-								tags={state.tags}
-								onOutsideClick={this.onToolbarOutsideClick} />
+							{ state.showNavigation &&
+								<NavigationBar
+									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
+									onSelectTrash={() => this.props.actions.selectTrash() }
+									onSelectTag={this.onSelectTag}
+									onSettings={this.onSettings}
+									onAbout={this.onAbout}
+									onEditTags={() => this.props.actions.editTags() }
+									onRenameTag={this.onRenameTag}
+									onTrashTag={this.onTrashTag}
+									onReorderTags={this.onReorderTags}
+									editingTags={state.editingTags}
+									showTrash={state.showTrash}
+									selectedTag={state.tag}
+									tags={state.tags}
+									onOutsideClick={this.onToolbarOutsideClick} />
+							}
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
 									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
@@ -559,11 +561,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
-							<NoteInfo
-								note={selectedNote}
-								onPinNote={this.onPinNote}
-								onMarkdownNote={this.onMarkdownNote}
-								onOutsideClick={this.onToolbarOutsideClick} />
+							{ state.showNoteInfo &&
+								<NoteInfo
+									note={selectedNote}
+									onPinNote={this.onPinNote}
+									onMarkdownNote={this.onMarkdownNote}
+									onOutsideClick={this.onToolbarOutsideClick} />
+							}
 						</div>
 				:
 					<Auth
