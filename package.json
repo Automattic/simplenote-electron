@@ -75,6 +75,6 @@
     "sanitize-filename": "1.6.1",
     "serve-favicon": "2.3.2",
     "simperium": "0.2.5",
-    "simplenote-grammar-pegjs": "0.1.9"
+    "simplenote-grammar-pegjs": "0.1.13"
   }
 }
