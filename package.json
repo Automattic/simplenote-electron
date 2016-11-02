@@ -1,7 +1,7 @@
 {
   "name": "simplenote",
   "productName": "Simplenote",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The Simplenote app running as an electron app.",
   "main": "desktop/index.js",
   "scripts": {
