@@ -499,6 +499,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 							<NoteEditor
 								allTags={ state.tags }
 								editorMode={state.editorMode}
+								filter={state.filter}
 								note={selectedNote}
 								revisions={state.revisions}
 								onSetEditorMode={this.onSetEditorMode}

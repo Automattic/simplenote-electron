@@ -112,6 +112,7 @@ export default React.createClass( {
 				<NoteContentEditor
 					ref={this.saveEditorRef}
 					content={content}
+					filter={ this.props.filter }
 					onChangeContent={this.queueNoteSave} />
 			</div>
 		);

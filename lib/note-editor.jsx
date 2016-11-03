@@ -133,6 +133,7 @@ export const NoteEditor = React.createClass( {
 					{!!markdownEnabled && this.renderModeBar()}
 					<div className="note-editor-detail">
 						<NoteDetail
+							filter={this.props.filter}
 							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 							onChangeContent={this.props.onUpdateContent}
