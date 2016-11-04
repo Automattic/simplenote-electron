@@ -100,7 +100,7 @@ function createMenuTemplate( settings ) {
 
 	const settingsMenuItem = {
 		label: 'P&references',
-		accelerator: 'Command+,',
+		accelerator: 'CommandOrControl+,',
 		click: function( item, focusedWindow ) {
 			if ( focusedWindow ) {
 				focusedWindow.webContents.send( 'appCommand', { action: 'showDialog', dialog: {
@@ -239,11 +239,11 @@ function createMenuTemplate( settings ) {
 				type: 'separator'
 			}, {
 				label: 'Hide ' + name,
-				accelerator: 'Command+H',
+				accelerator: 'CommandOrControl+H',
 				role: 'hide'
 			}, {
 				label: 'Hide Others',
-				accelerator: 'Command+Shift+H',
+				accelerator: 'CommandOrControl+Shift+H',
 				role: 'hideothers'
 			}, {
 				label: 'Show All',
@@ -252,7 +252,7 @@ function createMenuTemplate( settings ) {
 				type: 'separator'
 			}, {
 				label: 'Quit',
-				accelerator: 'Command+Q',
+				accelerator: 'CommandOrControl+Q',
 				click: function() {
 					app.quit();
 				}
