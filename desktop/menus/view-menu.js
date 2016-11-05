@@ -50,8 +50,8 @@ var buildViewMenu = function( settings ) {
 				// For the oddity with "Command" vs "Cmd"
 				// Cite: https://github.com/atom/electron/issues/1507
 				[ '&Bigger', 'CommandOrControl+=', 'increaseFontSize' ],
-				[ '&Smaller', 'CmdOrCtrl+-', 'decreaseFontSize' ],
-				[ '&Reset', 'CmdOrCtrl+0', 'resetFontSize' ]
+				[ '&Smaller', 'CommandOrControl+-', 'decreaseFontSize' ],
+				[ '&Reset', 'CommandOrControl+0', 'resetFontSize' ]
 			].map( buildFontGroup )
 		}, {
 			label: '&Sort Type',

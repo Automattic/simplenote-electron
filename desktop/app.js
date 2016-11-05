@@ -126,7 +126,7 @@ function createMenuTemplate( settings ) {
 		label: '&File',
 		submenu: [ {
 				label: '&New Note',
-				accelerator: 'CmdOrCtrl+N',
+				accelerator: 'CommandOrControl+N',
 				click( item, focusedWindow ) {
 					if ( focusedWindow ) {
 						focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
@@ -136,7 +136,7 @@ function createMenuTemplate( settings ) {
 				type: 'separator'
 			}, {
 				label: '&Print',
-				accelerator: 'CmdOrCtrl+P',
+				accelerator: 'CommandOrControl+P',
 				click( item, focusedWindow ) {
 					if ( focusedWindow ) {
 						focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
@@ -174,35 +174,35 @@ function createMenuTemplate( settings ) {
 		label: '&Edit',
 		submenu: [ {
 			label: '&Undo',
-			accelerator: 'CmdOrCtrl+Z',
+			accelerator: 'CommandOrControl+Z',
 			role: 'undo'
 		}, {
 			label: '&Redo',
-			accelerator: 'Shift+CmdOrCtrl+Z',
+			accelerator: 'Shift+CommandOrControl+Z',
 			role: 'redo'
 		}, {
 			type: 'separator'
 		}, {
 			label: '&Cut',
-			accelerator: 'CmdOrCtrl+X',
+			accelerator: 'CommandOrControl+X',
 			role: 'cut'
 		}, {
 			label: 'C&opy',
-			accelerator: 'CmdOrCtrl+C',
+			accelerator: 'CommandOrControl+C',
 			role: 'copy'
 		}, {
 			label: '&Paste',
-			accelerator: 'CmdOrCtrl+V',
+			accelerator: 'CommandOrControl+V',
 			role: 'paste'
 		}, {
 			label: '&Select All',
-			accelerator: 'CmdOrCtrl+A',
+			accelerator: 'CommandOrControl+A',
 			role: 'selectall'
 		}, {
 			type: 'separator'
 		}, {
 			label: 'Search &Notes',
-			accelerator: 'CmdOrCtrl+F',
+			accelerator: 'CommandOrControl+F',
 			click( item, focusedWindow ) {
 				if ( focusedWindow ) {
 					focusedWindow.webContents.send( 'appCommand', { action: 'setSearchFocus' } );
@@ -214,11 +214,11 @@ function createMenuTemplate( settings ) {
 		role: 'window',
 		submenu: [ {
 			label: '&Minimize',
-			accelerator: 'CmdOrCtrl+M',
+			accelerator: 'CommandOrControl+M',
 			role: 'minimize'
 		}, {
 			label: '&Close',
-			accelerator: 'CmdOrCtrl+W',
+			accelerator: 'CommandOrControl+W',
 			role: 'close'
 		} ]
 	}, helpMenu ];
