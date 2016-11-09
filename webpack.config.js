@@ -1,6 +1,7 @@
 const autoprefixer = require( 'autoprefixer' );
 const AppCachePlugin = require( 'appcache-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const DefinePlugin = require( 'webpack' ).DefinePlugin;
 
 module.exports = {
 	context: __dirname + '/lib',
@@ -32,7 +33,12 @@ module.exports = {
 			title: 'Simplenote',
 			templateContent: require( './index-builder.js' ),
 			inject: false
-		} )
+		} ),
+		new DefinePlugin( {
+			'process.env.NODE_ENV': JSON.stringify(
+				process.env.NODE_ENV || 'development'
+			)
+		} ),
 	],
 	postcss: [ autoprefixer() ]
 };
