@@ -11,14 +11,16 @@ function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
 }
 
+function getCurrentBlock( editorState ) {
+	const key = editorState.getSelection().getFocusKey();
+	return editorState.getCurrentContent().getBlockForKey( key );
+}
+
 function indentCurrentBlock( editorState ) {
 	const selection = editorState.getSelection();
 	const selectionStart = selection.getStartOffset();
 
-	const content = editorState.getCurrentContent();
-	const block = content.getBlockForKey( selection.getFocusKey() );
-	const line = block.getText();
-
+	const line = getCurrentBlock( editorState ).getText();
 	const atStart = line.trim() === '-' || line.trim() === '*';
 	const offset = atStart ? 0 : selectionStart;
 
@@ -26,7 +28,7 @@ function indentCurrentBlock( editorState ) {
 	const afterInsert = EditorState.push(
 		editorState,
 		Modifier.replaceText(
-			content,
+			editorState.getCurrentContent(),
 			selection.isCollapsed()
 				? selection.merge( {
 					anchorOffset: offset,
@@ -52,15 +54,12 @@ function outdentCurrentBlock( editorState ) {
 	const selection = editorState.getSelection();
 	const selectionStart = selection.getStartOffset();
 
-	const content = editorState.getCurrentContent();
-	const block = content.getBlockForKey( selection.getFocusKey() );
-	const line = block.getText();
-
+	const line = getCurrentBlock( editorState ).getText();
 	const atStart = line.trim() === '-' || line.trim() === '*';
 	const rangeStart = atStart ? 0 : selectionStart - 1;
 	const rangeEnd = atStart ? 1 : selectionStart;
-	const prevChar = block.getText().slice( rangeStart, rangeEnd );
 
+	const prevChar = line.slice( rangeStart, rangeEnd );
 	// there's no indentation to remove
 	if ( prevChar !== '\t' ) {
 		return editorState
@@ -70,7 +69,7 @@ function outdentCurrentBlock( editorState ) {
 	const afterRemove = EditorState.push(
 		editorState,
 		Modifier.removeRange(
-			content,
+			editorState.getCurrentContent(),
 			selection.merge( {
 				anchorOffset: rangeStart,
 				focusOffset: rangeEnd,
@@ -86,6 +85,56 @@ function outdentCurrentBlock( editorState ) {
 			anchorOffset: selectionStart - 1, // -1 because 1 char was removed
 			focusOffset: selectionStart - 1,
 		} )
+	);
+}
+
+function finishList( editorState ) {
+	// remove `- ` from the current line
+	const withoutBullet = EditorState.push(
+		editorState,
+		Modifier.removeRange(
+			editorState.getCurrentContent(),
+			editorState.getSelection().merge( {
+				anchorOffset: 0,
+				focusOffset: getCurrentBlock( editorState ).getLength(),
+			} )
+		),
+		'remove-range'
+	);
+
+	// move selection to the start of the line
+	return EditorState.forceSelection(
+		withoutBullet,
+		withoutBullet.getCurrentContent().getSelectionAfter()
+	);
+}
+
+function continueList( editorState, listItemMatch ) {
+	// create a new line
+	const withNewLine = EditorState.push(
+		editorState,
+		Modifier.splitBlock(
+			editorState.getCurrentContent(),
+			editorState.getSelection()
+		),
+		'split-block'
+	);
+
+	// insert `- ` in the new line
+	const withBullet = EditorState.push(
+		withNewLine,
+		Modifier.insertText(
+			withNewLine.getCurrentContent(),
+			withNewLine.getCurrentContent().getSelectionAfter(),
+			listItemMatch[0]
+		),
+		'insert-characters'
+	);
+
+	// move selection to the end of the new line
+	return EditorState.forceSelection(
+		withBullet,
+		withBullet.getCurrentContent().getSelectionAfter()
 	);
 }
 
@@ -171,6 +220,29 @@ export default class NoteContentEditor extends React.Component {
 		)
 	}
 
+	handleReturn = () => {
+		// matches lines that start with `- ` or `* `
+		// preceded by 0 or more tab characters
+		const listItemRe = /^\t*[-*]\s/;
+
+		const { editorState } = this.state;
+		const line = getCurrentBlock( editorState ).getText();
+
+		const trimmedLine = line.trim()
+		if ( trimmedLine === '-' || trimmedLine === '*' ) {
+			this.handleEditorStateChange( finishList( editorState ) );
+			return 'handled'
+		}
+
+		const listItemMatch = line.match( listItemRe )
+		if ( listItemMatch ) {
+			this.handleEditorStateChange( continueList( editorState, listItemMatch ) );
+			return 'handled'
+		}
+
+		return 'not-handled';
+	}
+
 	render() {
 		return (
 			<Editor
@@ -180,6 +252,7 @@ export default class NoteContentEditor extends React.Component {
 				onChange={this.handleEditorStateChange}
 				editorState={this.state.editorState}
 				onTab={this.onTab}
+				handleReturn={this.handleReturn}
 			/>
 		);
 	}
