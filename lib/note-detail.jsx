@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import highlight from 'highlight.js';
 import marked from 'marked';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
@@ -6,6 +7,7 @@ import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
 
 const saveDelay = 2000;
+const highlighter = code => highlight.highlightAuto( code ).value;
 
 export default React.createClass( {
 
@@ -90,7 +92,7 @@ export default React.createClass( {
 
 	renderMarkdown( divStyle ) {
 		const { content = '' } = this.props.note.data;
-		const markdownHTML = marked( content );
+		const markdownHTML = marked( content, { highlight: highlighter } );
 
 		return (
 			<div className="note-detail-markdown theme-color-bg theme-color-fg"
