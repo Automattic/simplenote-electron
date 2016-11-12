@@ -4,6 +4,10 @@
   "version": "1.0.6",
   "description": "The Simplenote app running as an electron app.",
   "main": "desktop/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Automattic/simplenote-electron.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "NODE_ENV=development `npm bin`/webpack --config ./webpack.config.js",
