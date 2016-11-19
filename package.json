@@ -10,10 +10,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "NODE_ENV=development `npm bin`/webpack --config ./webpack.config.js",
-    "build:prod": "NODE_ENV=production `npm bin`/webpack -p --config ./webpack.config.js",
+    "build": "NODE_ENV=development npm run build:dll && npm run build:app",
+    "build:app": "`npm bin`/webpack --config ./webpack.config.js",
+    "build:dll": "`npm bin`/webpack --config ./webpack.config.dll.js",
+    "build:prod": "NODE_ENV=production `npm bin`/webpack -p --config ./webpack.config.dll.js && `npm bin`/webpack -p --config ./webpack.config.js",
     "lint": "`npm bin`/eslint lib",
-    "start": "NODE_ENV=hot `npm bin`/webpack-dev-server --config ./webpack.config.js --host 0.0.0.0 --port 4000 --hot --inline"
+    "start": "NODE_ENV=hot npm run build && `npm bin`/webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
   },
   "author": "",
   "license": "ISC",
@@ -49,12 +51,9 @@
     "react-transform-hmr": "1.0.4",
     "redbox-react": "1.2.2",
     "sass-loader": "3.1.2",
-    "simperium": "0.2.5",
     "style-loader": "0.12.4",
     "webpack": "1.13.2",
-    "webpack-dev-middleware": "1.5.1",
-    "webpack-dev-server": "1.16.2",
-    "webpack-hot-middleware": "2.10.0"
+    "webpack-dev-server": "1.16.2"
   },
   "dependencies": {
     "cookie": "0.2.3",
@@ -73,6 +72,7 @@
     "redux": "3.3.1",
     "redux-localstorage": "0.4.0",
     "redux-thunk": "1.0.3",
-    "serve-favicon": "2.3.0"
+    "serve-favicon": "2.3.0",
+    "simperium": "0.2.5"
   }
 }
