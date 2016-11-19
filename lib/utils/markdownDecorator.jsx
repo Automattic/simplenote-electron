@@ -94,7 +94,11 @@ const Blockquote = ( { children, level } ) =>
 	<span { ...{ className: `blockquote level-${ level }` } }>{ children }</span>;
 
 const Header = ( { children, level } ) =>
-	<div { ...{ className: `header level-${ level }` } }>{ children }</div>;
+	React.createElement(
+		`h${ level }`,
+		{ className: `header level-${ level }` },
+		children,
+	);
 
 const Link = ( { url, children } ) =>
 	<a href={ addMissingScheme( url ) } onClick={ openLink }>{ children }</a>;

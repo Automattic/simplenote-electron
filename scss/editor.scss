@@ -200,13 +200,17 @@
 	}
 }
 
-.public-DraftEditor-content {
+.is-markdown .public-DraftEditor-content {
+	&::first-line {
+		font-size: 100%;
+	}
+
 	.at-mention {
 		color: $blue-light;
 	}
 
 	.blockquote {
-		color: $gray;
+		font-style: italic;
 	}
 
 	.bullet {
@@ -223,23 +227,15 @@
 	}
 
 	.header {
-		font-weight: bold;
-		margin-top: 0.25em;
+		line-height: 1.15;
 
 		&.level-1 {
-			font-size: 2.25em;
-			margin-top: 0.5em;
-			margin-bottom: 0.75em;
+			font-weight: $light;
 		}
 
-		&.level-2 {
-			font-size: 1.75em;
-			margin-bottom: 0.5em;
-		}
-
-		&.level-3 {
-			font-size: 1.5em;
-			margin-bottom: 0.25em;
+		&.level-5,
+		&.level-6 {
+			text-transform: uppercase;
 		}
 	}
 
