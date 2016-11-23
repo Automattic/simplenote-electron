@@ -120,5 +120,9 @@ a {
 		box-sizing: border-box;
 		-webkit-app-region: drag;
 	}
+
+	.navigation, .note-info {
+		padding-top: 10px;
+	}
 }
 
