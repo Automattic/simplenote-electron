@@ -8,7 +8,7 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get } from 'lodash'
 
-import { setRevisionState } from './state/settings/actions';
+import { setRevisionState } from './state/revisions/actions';
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -163,10 +163,10 @@ export const NoteEditor = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
+const mapStateToProps = ( { revisions, settings } ) => ( {
 	fontSize: settings.fontSize,
 	markdownEnabled: settings.markdownEnabled,
-	revisionState: settings.revisionState,
+	revisionState: revisions.revisionState,
 } );
 
 const mapDispatchToProps = dispatch => ( {

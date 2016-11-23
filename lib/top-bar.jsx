@@ -1,10 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux'
 
-import {
-	toggleLayoutType,
-	setRevisionState
-} from './state/settings/actions';
+import { setRevisionState } from './state/revisions/actions';
+import { toggleLayoutType } from './state/settings/actions'
 import NewNoteIcon from './icons/new-note';
 import NoteToolbar from './note-toolbar';
 
@@ -79,9 +77,9 @@ class TopBar extends Component {
 
 }
 
-const mapStateToProps = ( { settings } ) => ( {
+const mapStateToProps = ( { revisions, settings } ) => ( {
 	layoutType: settings.layoutType,
-	revisionState: settings.revisionState,
+	revisionState: revisions.revisionState,
 } );
 
 const mapDispatchToProps = dispatch => ( {
