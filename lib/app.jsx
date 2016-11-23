@@ -99,6 +99,11 @@ const isElectron = ( () => {
 	return () => foundElectron;
 } )();
 
+const isElectronMac = () => {
+	return isElectron() &&
+		get( window, 'process.platform', '' ) === 'darwin';
+}
+
 const includesSearch = ( text, search ) =>
 	( text || '' )
 		.toLocaleLowerCase()
@@ -490,7 +495,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
-			'is-electron': isElectron()
+			'is-electron': isElectron(),
+			'is-macos': isElectronMac()
 		} );
 
 		return (
