@@ -18,6 +18,7 @@ import NoteList from './note-list'
 import NoteEditor	from './note-editor'
 import SearchField from './search-field'
 import NavigationBar from './navigation-bar'
+import TopBar from './top-bar'
 import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
@@ -486,7 +487,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'touch-enabled': ( 'ontouchstart' in document.body ),
 		} );
 
-		const mainClasses = classNames( 'simplenote-app', {
+		const mainClasses = classNames( 'main-layout', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
@@ -507,6 +508,18 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 					</ContextMenu>
 				}
 				{ isAuthorized ?
+					<div className="simplenote-app">
+						<TopBar
+							note={selectedNote}
+							onNewNote={ this.onNewNote }
+							onTrashNote={this.onTrashNote}
+							onRestoreNote={this.onRestoreNote}
+							onShareNote={this.onShareNote}
+							onDeleteNoteForever={this.onDeleteNoteForever}
+							onRevisions={this.onRevisions}
+							onCloseNote={ () => this.props.actions.closeNote() }
+							onNoteInfo={ () => this.props.actions.toggleNoteInfo() }
+						/>
 						<div className={mainClasses}>
 							{ state.showNavigation &&
 								<NavigationBar
@@ -569,6 +582,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									onOutsideClick={this.onToolbarOutsideClick} />
 							}
 						</div>
+					</div>
 				:
 					<Auth
 						authPending={ authIsPending }

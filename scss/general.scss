@@ -1,5 +1,5 @@
-*, 
-*:before, 
+*,
+*:before,
 *:after {
 	cursor: default; // Make everything use default cursor
 	box-sizing: border-box;
@@ -34,6 +34,14 @@ a {
 }
 
 .simplenote-app {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.main-layout {
 	display: flex;
 	position: relative;
 	width: 100%;
@@ -107,4 +115,3 @@ a {
 		pointer-events: none;
 	}
 }
-
