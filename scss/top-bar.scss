@@ -1,0 +1,22 @@
+.top-bar {
+	width: 100%;
+	height: $toolbar-height;
+	padding: 20px 15px;
+	border-bottom: 1px solid lighten($gray, 30%);
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex: none;
+
+	@media only screen and ( max-width: $single-column ) {
+		display: none;
+	}
+
+	.button {
+		flex: none;
+		padding: 0;
+		width: 32px;
+		height: 32px;
+		margin-right: 14px;
+	}
+}

@@ -3,22 +3,34 @@
 	height: $toolbar-height;
 	padding: 20px 15px;
 	border-bottom: 1px solid lighten($gray, 30%);
+	border-right: 1px solid lighten($gray, 30%);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex: none;
 
 	.button {
+		display: none;
 		flex: none;
 		padding: 0;
 		width: 32px;
 		height: 32px;
 	}
+
+	@media only screen and ( max-width: $single-column ) {
+		border-right: none;
+		.button {
+			display: block;
+		}
+	}
 }
 
 .search-field {
-	margin: 0 12px;
 	flex-grow: 1;
+
+	@media only screen and ( max-width: $single-column ) {
+		margin: 0 12px;
+	}
 
 	input {
 		width: 100%;

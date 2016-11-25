@@ -513,6 +513,14 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				{ isAuthorized ?
 						<div className={mainClasses}>
 							<div className="sidebar">
+								<div className="top-bar theme-color-border">
+									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
+										<TagsIcon />
+									</button>
+									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
+										<NewNoteIcon />
+									</button>
+								</div>
 								<div className="search-bar theme-color-border">
 									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
 										<TagsIcon />
