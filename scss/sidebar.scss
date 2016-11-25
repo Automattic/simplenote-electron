@@ -4,11 +4,29 @@
 	align-content: stretch;
 	align-items: stretch;
 	flex-shrink: 0;
-	width: $navigation-bar-width + $note-list-width;
+	width: 0;
 	height: 100%;
 
-	@media only screen and ( max-width: $medium ) {
-		width: $navigation-bar-width + $note-list-small-width;
+	.layout-has-note-list.layout-has-no-navigation-bar & {
+		width: $note-list-width;
+
+		@media only screen and ( max-width: $medium ) {
+			width: $note-list-small-width;
+		}
+		@media only screen and ( max-width: $single-column ) {
+			width: 100%;
+		}
+	}
+
+	.layout-has-navigation-bar.layout-has-note-list & {
+		width: $navigation-bar-width + $note-list-width;
+
+		@media only screen and ( max-width: $medium ) {
+			width: $navigation-bar-width + $note-list-small-width;
+		}
+		@media only screen and ( max-width: $single-column ) {
+			width: 100%;
+		}
 	}
 
 	@media only screen and ( max-width: $single-column ) {

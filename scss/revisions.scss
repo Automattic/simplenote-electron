@@ -17,6 +17,21 @@
 		width: 100%;
 	}
 
+	.layout-has-no-navigation-bar & {
+		width: calc( 100% - #{ $note-list-width } );
+
+		@media only screen and ( max-width: $medium ) {
+			width: calc( 100% - #{ $note-list-small-width } );
+		}
+
+		@media only screen and ( max-width: $single-column ) {
+			width: 100%;
+		}
+	}
+
+	.layout-is-only-editor & {
+		width: 100%;
+	}
 
 	.revision-buttons {
 		display: flex;

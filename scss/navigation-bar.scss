@@ -1,11 +1,15 @@
 .navigation {
-	display: flex;
+	display: none;
 	flex-direction: column;
 	width: $navigation-bar-width;
 	height: calc( 100% - #{ $toolbar-height * 2 } );
 	overflow: hidden;
 	border-right: 1px solid lighten($gray, 30%);
 	background: white;
+
+	.layout-has-navigation-bar & {
+		display: flex;
+	}
 
 	@media only screen and ( max-width: $single-column ) {
 		position: absolute;

@@ -495,7 +495,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
 			'is-electron': isElectron(),
-			'is-macos': isElectronMac()
+			'is-macos': isElectronMac(),
+			'layout-has-navigation-bar': settings.visiblePanes.includes( 'navigation-bar' ),
+			'layout-has-no-navigation-bar': ! settings.visiblePanes.includes( 'navigation-bar' ),
+			'layout-has-note-list': settings.visiblePanes.includes( 'note-list' ),
+			'layout-is-only-editor': (
+				! settings.visiblePanes.includes( 'navigation-bar' ) && ! settings.visiblePanes.includes( 'note-list' )
+			)
 		} );
 
 		return (

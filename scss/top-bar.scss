@@ -1,5 +1,8 @@
 .top-bar {
-	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: $navigation-bar-width + $note-list-small-width;
 	height: $toolbar-height;
 	padding: 20px 15px;
 	border-bottom: 1px solid lighten($gray, 30%);
@@ -7,6 +10,12 @@
 	justify-content: flex-start;
 	align-items: center;
 	flex: none;
+
+	.layout-has-note-list &,
+	.layout-has-navigation-bar & {
+		position: relative;
+		width: 100%;
+	}
 
 	@media only screen and ( max-width: $single-column ) {
 		display: none;
