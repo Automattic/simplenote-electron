@@ -22,6 +22,7 @@ import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
+import ChangeLayout from './change-layout';
 import analytics from './analytics'
 import classNames	from 'classnames'
 import {
@@ -514,9 +515,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						<div className={mainClasses}>
 							<div className="sidebar">
 								<div className="top-bar theme-color-border">
-									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
-										<TagsIcon />
-									</button>
+									<ChangeLayout />
 									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
 										<NewNoteIcon />
 									</button>
