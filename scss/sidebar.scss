@@ -1,0 +1,21 @@
+.sidebar {
+	display: flex;
+	flex-flow: row wrap;
+	align-content: stretch;
+	align-items: stretch;
+	flex-shrink: 0;
+	width: $navigation-bar-width + $note-list-width;
+	height: 100%;
+
+	.search-bar {
+		width: 100%;
+	}
+
+	.navigation {
+		height: calc( 100% - #{ $toolbar-height } );
+	}
+
+	.note-list {
+		height: calc( 100% - #{ $toolbar-height } );
+	}
+}

@@ -15,14 +15,6 @@ export default React.createClass( {
 		};
 	},
 
-	mixins: [
-		require( 'react-onclickoutside' )
-	],
-
-	handleClickOutside: function() {
-		this.props.onOutsideClick( true );
-	},
-
 	onHelpClicked: function() {
 		viewExternalUrl( 'http://simplenote.com/help' );
 	},

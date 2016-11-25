@@ -1,9 +1,6 @@
 .navigation {
 	display: flex;
 	flex-direction: column;
-	position: absolute;
-	top: 0;
-	left: -$navigation-bar-width;
 	width: $navigation-bar-width;
 	height: 100%;
 	overflow: hidden;
@@ -17,7 +14,7 @@
 }
 
 .navigation-folders-item,
-.navigation-tools-item, 
+.navigation-tools-item,
 .navigation-folders-item-selected {
 	width: 100%;
 	line-height: 2em;
@@ -26,7 +23,7 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	text-align: left;
-	
+
 	svg {
 		fill: $gray;
 	}
@@ -36,7 +33,7 @@
 	span {
 		color: $blue;
 	}
-			
+
 	svg[class^="icon-"] {
  		fill: $blue;
  	}
@@ -49,7 +46,7 @@
 		&:active,
 		&.active {
 			color: $blue;
-			
+
 			svg[class^="icon-"] {
  			fill: $blue;
  		}
@@ -99,7 +96,7 @@
 
 .navigation-footer-item {
 	margin-right: 10px;
-	
+
 	&:last-child {
 		margin-right: 0;
 	}

@@ -512,7 +512,19 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				}
 				{ isAuthorized ?
 						<div className={mainClasses}>
-							{ state.showNavigation &&
+							<div className="sidebar">
+								<div className="search-bar theme-color-border">
+									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
+										<TagsIcon />
+									</button>
+									<SearchField
+										onSearch={this.onSearch}
+										onSearchFocused={this.onSearchFocused}
+									/>
+									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
+										<NewNoteIcon />
+									</button>
+								</div>
 								<NavigationBar
 									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 									onSelectTrash={() => this.props.actions.selectTrash() }
@@ -527,27 +539,15 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									showTrash={state.showTrash}
 									selectedTag={state.tag}
 									tags={state.tags}
-									onOutsideClick={this.onToolbarOutsideClick} />
-							}
-							<div className="source-list theme-color-bg theme-color-fg">
-								<div className="search-bar theme-color-border">
-									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
-										<TagsIcon />
-									</button>
-									<SearchField
-										onSearch={this.onSearch}
-										onSearchFocused={this.onSearchFocused} />
-									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
-										<NewNoteIcon />
-									</button>
-								</div>
+								/>
 								<NoteList
 									notes={filteredNotes}
 									selectedNoteId={selectedNoteId}
 									noteDisplay={settings.noteDisplay}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
-									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
+									onEmptyTrash={state.showTrash && this.onEmptyTrash}
+								/>
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}

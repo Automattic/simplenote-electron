@@ -2,13 +2,13 @@
 	background: $blue;
 	padding: 10px 20px 20px 20px;
 	color: $white;
-	width: calc(100% - 328px);
+	width: calc( 100% - #{ $navigation-bar-width + $note-list-width } );
 	z-index: 1000;
 	position: absolute;
 	height: 114px;
 	top: -114px;
 	transition: all .3s ease-in-out;
-	
+
 	@media only screen and ( max-width: $single-column ) {
 		width: 100%;
 	}
@@ -23,18 +23,18 @@
 		background: $white;
 		color: $blue;
 		border-color: $white;
-		
+
 		&:active {
 			background: lighten($blue, 30%);
 			border-color: lighten($blue, 30%);
 		}
 	}
-	
+
 	.button-secondary {
 		border-color: $white;
 		color: $white;
 		margin-right: 10px;
-		
+
 		&:active {
 			background: $white;
 			color: $blue;
@@ -56,7 +56,7 @@
 	  	border-radius: 5px;
 	  	outline: 0;
 	}
-	
+
 	input[type="range"]::-webkit-slider-thumb {
 	  	-webkit-appearance: none;
 	  	background: $white;
@@ -66,7 +66,7 @@
 	  	border: 2px solid $blue;
 	  	transition: .15s ease-in-out;
 	}
-	
+
 	input[type="range"]::-webkit-slider-thumb:active {
 		transform: scale(1.15);
 	}
