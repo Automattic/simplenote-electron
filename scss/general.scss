@@ -1,5 +1,5 @@
-*, 
-*:before, 
+*,
+*:before,
 *:after {
 	cursor: default; // Make everything use default cursor
 	box-sizing: border-box;
@@ -45,8 +45,10 @@ a {
 		transform: translateX(-$note-info-width);
 	}
 
-	&.navigation-open {
-		transform: translateX($navigation-bar-width);
+	@media only screen and ( max-width: $single-column ) {
+		&.navigation-open {
+			transform: translateX( $navigation-bar-width );
+		}
 	}
 
 	.note-editor {
@@ -108,7 +110,7 @@ a {
 	}
 }
 
-.is-macos { 
+.is-macos {
 	.note-editor-controls {
 		box-sizing: border-box;
 		-webkit-app-region: drag;
@@ -125,4 +127,3 @@ a {
 		padding-top: 10px;
 	}
 }
-

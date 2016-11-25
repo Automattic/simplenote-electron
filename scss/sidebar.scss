@@ -7,15 +7,16 @@
 	width: $navigation-bar-width + $note-list-width;
 	height: 100%;
 
-	.search-bar {
+	@media only screen and ( max-width: $medium ) {
+		width: $navigation-bar-width + $note-list-small-width;
+	}
+
+	@media only screen and ( max-width: $single-column ) {
 		width: 100%;
-	}
 
-	.navigation {
-		height: calc( 100% - #{ $toolbar-height } );
-	}
-
-	.note-list {
-		height: calc( 100% - #{ $toolbar-height } );
+		.note-open & {
+			opacity: 0;
+			pointer-events: none;
+		}
 	}
 }

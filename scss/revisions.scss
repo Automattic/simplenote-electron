@@ -9,6 +9,10 @@
 	top: -114px;
 	transition: all .3s ease-in-out;
 
+	@media only screen and ( max-width: $medium ) {
+		width: calc( 100% - #{ $navigation-bar-width + $note-list-small-width } );
+	}
+
 	@media only screen and ( max-width: $single-column ) {
 		width: 100%;
 	}
