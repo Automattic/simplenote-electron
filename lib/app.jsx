@@ -22,7 +22,7 @@ import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
-import ChangeLayout from './change-layout';
+import LayoutChanger from './layout-changer';
 import analytics from './analytics'
 import classNames	from 'classnames'
 import {
@@ -515,20 +515,34 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						<div className={mainClasses}>
 							<div className="sidebar">
 								<div className="top-bar theme-color-border">
-									<ChangeLayout />
-									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
+									<LayoutChanger />
+									<button
+										className="button button-borderless"
+										disabled={ state.showTrash }
+										onClick={ this.onNewNote }
+										title="New Note"
+									>
 										<NewNoteIcon />
 									</button>
 								</div>
 								<div className="search-bar theme-color-border">
-									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
+									<button
+										className="button button-borderless"
+										onClick={ () => this.props.actions.toggleNavigation() }
+										title="Tags"
+									>
 										<TagsIcon />
 									</button>
 									<SearchField
-										onSearch={this.onSearch}
-										onSearchFocused={this.onSearchFocused}
+										onSearch={ this.onSearch }
+										onSearchFocused={ this.onSearchFocused }
 									/>
-									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
+									<button
+										className="button button-borderless"
+										disabled={ state.showTrash }
+										onClick={ this.onNewNote }
+										title="New Note"
+									>
 										<NewNoteIcon />
 									</button>
 								</div>

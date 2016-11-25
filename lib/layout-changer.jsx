@@ -9,7 +9,7 @@ import ThreePanesIcon from './icons/three-panes';
 import TwoPanesIcon from './icons/two-panes';
 import EditorOnlyIcon from './icons/editor-only';
 
-class ChangeLayout extends Component {
+class LayoutChanger extends Component {
 
 	changeLayout = () => {
 		const {
@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => ( {
 	hidePane: pane => dispatch( hidePaneAction( pane ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( ChangeLayout );
+export default connect( mapStateToProps, mapDispatchToProps )( LayoutChanger );
