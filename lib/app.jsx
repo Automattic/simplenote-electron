@@ -34,6 +34,7 @@ import {
 	includes,
 	isObject,
 	map,
+	matchesProperty,
 	overEvery,
 	pick,
 	values,
@@ -99,10 +100,7 @@ const isElectron = ( () => {
 	return () => foundElectron;
 } )();
 
-const isElectronMac = () => {
-	return isElectron() &&
-		get( window, 'process.platform', '' ) === 'darwin';
-}
+const isElectronMac = () => matchesProperty( 'process.platform', 'darwin' )( window );
 
 const includesSearch = ( text, search ) =>
 	( text || '' )
