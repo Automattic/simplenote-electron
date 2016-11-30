@@ -13,6 +13,7 @@ import {
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
+import exportNotes from './utils/export';
 import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
@@ -38,6 +39,17 @@ import {
 	pick,
 	values,
 } from 'lodash';
+
+window.exportNotes = () =>
+	exportNotes()
+		.then( data => {
+			const link = document.createElement( 'a' );
+			link.href = 'data:application/json;charset=utf-8,' + encodeURI( data );
+			link.target = '_blank';
+			link.download = 'notes.json';
+			link.click();
+		} )
+		.catch( console.log );
 
 import * as settingsActions from './state/settings/actions';
 
