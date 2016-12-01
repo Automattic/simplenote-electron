@@ -8,6 +8,8 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get } from 'lodash'
 
+import { setRevisionState } from './state/revisions/actions';
+
 export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
@@ -25,7 +27,9 @@ export const NoteEditor = React.createClass( {
 		onRevisions: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
-		onPrintNote: PropTypes.func
+		onPrintNote: PropTypes.func,
+		revisionState: PropTypes.object,
+		onRevisionChange: PropTypes.func,
 	},
 
 	getDefaultProps: function() {
@@ -39,17 +43,6 @@ export const NoteEditor = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { revision: null } );
-	},
-
-	getInitialState: function() {
-		return {
-			revision: null,
-			isViewingRevisions: false
-		}
-	},
-
 	componentDidUpdate: function() {
 		// Immediately print once `shouldPrint` has been set
 		if ( this.props.shouldPrint ) {
@@ -59,13 +52,15 @@ export const NoteEditor = React.createClass( {
 	},
 
 	onViewRevision: function( revision ) {
-		this.setState( { revision: revision } );
+		this.props.onRevisionChange( { revision } );
 	},
 
 	onSelectRevision: function( revision ) {
 		if ( ! revision ) {
 			return;
 		}
+
+		console.log( revision );
 
 		const { note, onUpdateContent } = this.props;
 		const { data: { content } } = revision;
@@ -76,19 +71,19 @@ export const NoteEditor = React.createClass( {
 
 	onCancelRevision: function() {
 		// clear out the revision
-		this.setState( { revision: null } );
+		this.props.onRevisionChange( { revision: null } );
 		this.setIsViewingRevisions( false );
 	},
 
-	setIsViewingRevisions: function( isViewing ) {
-		this.setState( { isViewingRevisions: isViewing } );
+	setIsViewingRevisions: function( isViewingRevisions ) {
+		this.props.onRevisionChange( { isViewingRevisions } );
 	},
 
 	render: function() {
 		let noteContent = '';
-		const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
-		const revision = this.state.revision || note;
-		const isViewingRevisions = this.state.isViewingRevisions;
+		const { editorMode, note, revisions, fontSize, shouldPrint, revisionState } = this.props;
+		const revision = revisionState.revision || note;
+		const isViewingRevisions = revisionState.isViewingRevisions;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -168,9 +163,16 @@ export const NoteEditor = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
+const mapStateToProps = ( { revisions, settings } ) => ( {
 	fontSize: settings.fontSize,
-	markdownEnabled: settings.markdownEnabled
+	markdownEnabled: settings.markdownEnabled,
+	revisionState: revisions.revisionState,
 } );
 
-export default connect( mapStateToProps )( NoteEditor );
+const mapDispatchToProps = dispatch => ( {
+	onRevisionChange: revisionState => {
+		dispatch( setRevisionState( revisionState ) );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NoteEditor );

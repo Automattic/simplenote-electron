@@ -2,6 +2,7 @@
 .note-editor {
 	display: flex;
 	flex-direction: column;
+	position: relative;
 	overflow: hidden;
 	background: $white;
 
@@ -22,7 +23,7 @@
 	}
 
 	.note-editor-content {
-		padding-top: 51px !important;
+		padding-top: 51px + $toolbar-height !important;
 	}
 
 	.note-editor-mode-bar {
@@ -37,9 +38,14 @@
 }
 
 .note-editor-controls {
-	display: flex;
+	display: none;
 	justify-content: flex-end;
 	height: $toolbar-height;
+
+	@media only screen and ( max-width: $single-column ) {
+		display: flex;
+	}
+
 
 	.tag-editor {
 		flex: 1 1 auto;

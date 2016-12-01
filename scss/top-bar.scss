@@ -1,0 +1,23 @@
+.top-bar {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	height: $toolbar-height;
+	border-bottom: 1px solid lighten($gray, 30%);
+
+	@media only screen and ( max-width: $single-column ) {
+		display: none;
+	}
+}
+
+.top-bar-left,
+.top-bar-right {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+}
+
+.top-bar-left {
+	padding-left: 10px;
+}
