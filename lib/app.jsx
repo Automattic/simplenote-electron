@@ -34,6 +34,7 @@ import {
 	includes,
 	isObject,
 	map,
+	matchesProperty,
 	overEvery,
 	pick,
 	values,
@@ -98,6 +99,8 @@ const isElectron = ( () => {
 
 	return () => foundElectron;
 } )();
+
+const isElectronMac = () => matchesProperty( 'process.platform', 'darwin' )( window );
 
 const includesSearch = ( text, search ) =>
 	( text || '' )
@@ -490,7 +493,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
-			'is-electron': isElectron()
+			'is-electron': isElectron(),
+			'is-macos': isElectronMac()
 		} );
 
 		return (

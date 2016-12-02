@@ -108,3 +108,21 @@ a {
 	}
 }
 
+.is-macos { 
+	.note-editor-controls {
+		box-sizing: border-box;
+		-webkit-app-region: drag;
+		padding: 40px 0 30px;
+	}
+
+	.search-bar {
+		padding: 40px 15px 30px;
+		box-sizing: border-box;
+		-webkit-app-region: drag;
+	}
+
+	.navigation, .note-info {
+		padding-top: 10px;
+	}
+}
+

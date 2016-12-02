@@ -36,7 +36,8 @@ module.exports = function main() {
 			height: 768,
 			minWidth: 370,
 			minHeight: 520,
-			icon: iconPath
+			icon: iconPath,
+			titleBarStyle: 'hidden'
 		} );
 
 		// and load the index of the app.
