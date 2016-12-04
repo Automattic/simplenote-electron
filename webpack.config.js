@@ -1,7 +1,7 @@
 const autoprefixer = require( 'autoprefixer' );
+const webpack = require( 'webpack' );
 const AppCachePlugin = require( 'appcache-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const DefinePlugin = require( 'webpack' ).DefinePlugin;
 
 module.exports = {
 	context: __dirname + '/lib',
@@ -28,17 +28,21 @@ module.exports = {
 		moduleDirectories: [ 'lib', 'node_modules' ]
 	},
 	plugins: [
+		new webpack.DllReferencePlugin( {
+			context: process.cwd(),
+			manifest: require( process.cwd() + '/dist/vendor.json' )
+		} ),
 		new AppCachePlugin(),
 		new HtmlWebpackPlugin( {
 			title: 'Simplenote',
 			templateContent: require( './index-builder.js' ),
 			inject: false
 		} ),
-		new DefinePlugin( {
+		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify(
 				process.env.NODE_ENV || 'development'
 			)
-		} ),
+		} )
 	],
 	postcss: [ autoprefixer() ]
 };

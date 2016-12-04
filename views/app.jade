@@ -11,5 +11,5 @@ html(manifest=o.htmlWebpackPlugin.files.manifest)
     script(type="text/javascript")
       != 'var config=' + JSON.stringify( Object.assign( { version: pkg.version }, config ) ) + ';'
   body
-    each chunk in o.htmlWebpackPlugin.files.chunks
-      script(type="text/javascript" charset="utf-8" src=chunk.entry)
+    script(src="vendor.dll.js")
+    script(src="app.js")
