@@ -14,6 +14,7 @@ import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
 import exportNotes from './utils/export';
+import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
@@ -44,11 +45,18 @@ window.exportNotes = () =>
 	exportNotes()
 		.then( data => {
 			const link = document.createElement( 'a' );
-			link.href = 'data:application/json;charset=utf-8,' + encodeURI( data );
+			const jsonData = encodeURI( JSON.stringify( data, null, 2 ) );
+			link.href = 'data:application/json;charset=utf-8,' + jsonData;
 			link.target = '_blank';
 			link.download = 'notes.json';
 			link.click();
 		} )
+		.catch( console.log );
+
+window.exportToZip = () =>
+	exportNotes()
+		.then( exportToZip )
+		.then( data => location.href='data:application/zip;base64,' + data )
 		.catch( console.log );
 
 import * as settingsActions from './state/settings/actions';
