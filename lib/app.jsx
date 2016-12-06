@@ -523,17 +523,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<div className="top-bar theme-color-border">
 									<LayoutChanger />
 									<button
-										className="button button-borderless"
-										disabled={ state.showTrash }
-										onClick={ this.onNewNote }
-										title="New Note"
-									>
-										<NewNoteIcon />
-									</button>
-								</div>
-								<div className="search-bar theme-color-border">
-									<button
-										className="button button-borderless"
+										className="button button-borderless toggle-navigation"
 										onClick={ () => this.props.actions.toggleNavigation() }
 										title="Tags"
 									>

@@ -10,6 +10,7 @@
 	justify-content: flex-start;
 	align-items: center;
 	flex: none;
+	transition: padding-left 200ms ease-in-out;
 
 	.layout-has-note-list &,
 	.layout-has-navigation-bar & {
@@ -17,8 +18,8 @@
 		width: 100%;
 	}
 
-	@media only screen and ( max-width: $single-column ) {
-		display: none;
+	.layout-has-no-navigation-bar & {
+		padding-left: $navigation-bar-width + 15px;
 	}
 
 	.button {
@@ -26,6 +27,31 @@
 		padding: 0;
 		width: 32px;
 		height: 32px;
-		margin-right: 14px;
 	}
+
+	.search-field {
+		margin: 0 14px;
+		.layout-has-navigation-bar & {
+			margin-left: 184px;
+		}
+		@media only screen and ( max-width: $single-column ) {
+			margin: 0 12px;
+			.layout-has-navigation-bar & {
+				margin-left: 12px;
+			}
+		}
+	}
+
+	.toggle-navigation {
+		display: none;
+	}
+	@media only screen and ( max-width: $single-column ) {
+		.toggle-navigation {
+			display: block;
+		}
+		.layout-changer {
+			display: none;
+		}
+	}
+
 }

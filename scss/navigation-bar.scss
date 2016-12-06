@@ -1,8 +1,8 @@
 .navigation {
-	display: none;
+	display: flex;
 	flex-direction: column;
 	width: $navigation-bar-width;
-	height: calc( 100% - #{ $toolbar-height * 2 } );
+	height: calc( 100% - #{ $toolbar-height } );
 	overflow: hidden;
 	border-right: 1px solid lighten($gray, 30%);
 	background: white;

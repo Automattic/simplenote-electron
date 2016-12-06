@@ -5,9 +5,7 @@ import {
 	showPane as showPaneAction,
 	hidePane as hidePaneAction,
 } from './state/settings/actions';
-import ThreePanesIcon from './icons/three-panes';
-import TwoPanesIcon from './icons/two-panes';
-import EditorOnlyIcon from './icons/editor-only';
+import Tags from './icons/tags';
 
 class LayoutChanger extends Component {
 
@@ -19,31 +17,19 @@ class LayoutChanger extends Component {
 		} = this.props;
 		if ( visiblePanes.includes( 'navigation-bar' ) ) {
 			hidePane( 'navigation-bar' );
-		} else if ( visiblePanes.includes( 'note-list' ) ) {
-			hidePane( 'note-list' );
 		} else {
-			showPane( 'note-list' );
 			showPane( 'navigation-bar' );
 		}
 	}
 
 	render() {
-		const { visiblePanes } = this.props;
 		return (
 			<button
 				title="Change Layout"
-				className="button button-borderless"
+				className="button button-borderless layout-changer"
 				onClick={ this.changeLayout }
 			>
-				{ visiblePanes.includes( 'navigation-bar' ) &&
-					<TwoPanesIcon />
-				}
-				{ ! visiblePanes.includes( 'navigation-bar' ) && visiblePanes.includes( 'note-list' ) &&
-					<EditorOnlyIcon />
-				}
-				{ ! visiblePanes.includes( 'note-list' ) && ! visiblePanes.includes( 'navigation-bar' ) &&
-					<ThreePanesIcon />
-				}
+				<Tags />
 			</button>
 		);
 	}
