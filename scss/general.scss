@@ -1,5 +1,5 @@
-*, 
-*:before, 
+*,
+*:before,
 *:after {
 	cursor: default; // Make everything use default cursor
 	box-sizing: border-box;
@@ -108,7 +108,7 @@ a {
 	}
 }
 
-.is-macos { 
+.is-macos {
 	.note-editor-controls {
 		box-sizing: border-box;
 		-webkit-app-region: drag;
@@ -124,5 +124,8 @@ a {
 	.navigation, .note-info {
 		padding-top: 10px;
 	}
-}
 
+	.button, .search-field {
+		-webkit-app-region: no-drag;
+	}
+}

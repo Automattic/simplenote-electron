@@ -1,11 +1,21 @@
 .login {
-	flex: 1 1 auto;
 	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+ 	justify-content: center;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 
+	.login-draggable-area {
+		-webkit-app-region: drag;
+		width: 100%;
+		height: 40px;
+		top: 0;
+		left: 0;
+		position: absolute;
+	}
+
 	.login-form {
-		flex: 1 1 auto;
 		max-width: 320px;
 		margin: auto;
 		padding: 10px;
