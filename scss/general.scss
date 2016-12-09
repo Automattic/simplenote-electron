@@ -5,6 +5,11 @@
 	box-sizing: border-box;
 }
 
+a[href^="http://"],
+a[href^="https://"] {
+	cursor: pointer; // Make all web links use pointer cursor
+}
+
 html, body {
 	height: 100%;
 }
