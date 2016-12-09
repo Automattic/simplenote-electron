@@ -23,7 +23,7 @@
 }
 
 .about-top {
-	margin-bottom: 40px;
+	margin-bottom: 20px;
 	text-align: center;
 
 	svg {
@@ -34,7 +34,6 @@
 	h1 {
 		margin: 0;
 		line-height: 1.25em;
-		font-size: 250%;
 		font-weight: $light;
 	}
 
@@ -65,6 +64,7 @@
 		display: block;
 		width: 100%;
 		padding: 10px 2px;
+		font-weight: 300;
 	}
 }
 
