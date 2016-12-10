@@ -1,8 +1,9 @@
 [Desktop Entry]
 Name=Simplenote
+GenericName=Note Taking
 Comment=Simplenote for Linux
+Categories=GNOME;GTK;Utility;Note;Notes;Development;
 Exec=/usr/share/simplenote/simplenote
 Icon=simplenote
 Type=Application
 StartupNotify=true
-Categories=Development;

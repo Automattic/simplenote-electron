@@ -33,13 +33,19 @@ The Windows build doesn't get signed until the packaging stage
 
 ## Linux Package
 
-The Linux package is build using [FPM][1] which is a tool that makes it easy to build different package systems. To install FPM just run:
+The Linux package is built using [FPM][1] which is a tool that makes it easy to build packages for different distributions. To install FPM you can do the following:
 
-`gem install fpm`
+```bash
+gem install fpm # For a global install
+bundle install --path vendor/bundle # For a local install.
+```
 
-FRM needs ruby and `gnu-tar`. You can install ruby using [RVM][2] and `gnu-tar` with:
+You can install ruby using [RVM][2] or on Ubuntu/Debian:
 
-`brew install gnu-tar`
+```bash
+sudo apt-get install ruby2.0 ruby2.0-dev # Ubuntu 14.04+/Debian Stable
+sudo apt-get install ruby2.3 ruby2.3-dev # Ubuntu 16.04+/Debian Unstable
+```
 
 [1]: https://github.com/jordansissel/fpm
 [2]: https://rvm.io/rvm/install
