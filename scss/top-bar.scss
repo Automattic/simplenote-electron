@@ -31,6 +31,7 @@
 
 	.search-field {
 		margin: 0 14px;
+		transition: margin-left 200ms ease-in-out;
 		.layout-has-navigation-bar & {
 			margin-left: 184px;
 		}
