@@ -20,7 +20,9 @@ export const NoteInfo = React.createClass( {
 	],
 
 	handleClickOutside: function() {
-		this.props.onOutsideClick( false );
+		if ( window.innerWidth <= 750 ) {
+			this.props.onOutsideClick( false );
+		}
 	},
 
 	copyPublishURL: function() {
@@ -40,7 +42,7 @@ export const NoteInfo = React.createClass( {
 	},
 
 	render: function() {
-		const { note } = this.props;
+		const { note, onOutsideClick } = this.props;
 		const data = note && note.data || {};
 		const { modificationDate } = data;
 		const formattedDate = modificationDate && formatTimestamp( modificationDate );
@@ -54,7 +56,9 @@ export const NoteInfo = React.createClass( {
 				<div className="note-info-panel note-info-stats theme-color-border">
 					<div className="note-info-header">
 						<h2 className="panel-title theme-color-fg-dim">Info</h2>
-						<button type="button" className="about-done button button-borderless" onClick={this.handleClickOutside}>
+						<button type="button" className="about-done button button-borderless" onClick={ () => {
+							onOutsideClick( false )
+						} }>
 							<CrossIcon />
 						</button>
 					</div>

@@ -41,8 +41,10 @@ a {
 	transform: translateX(0px);
 	transition: transform 200ms ease-in-out;
 
-	&.note-info-open {
-		transform: translateX(-$note-info-width);
+	@media only screen and ( max-width: $single-column ) {
+		&.note-info-open {
+			transform: translateX(-$note-info-width);
+		}
 	}
 
 	@media only screen and ( max-width: $single-column ) {
@@ -94,19 +96,20 @@ a {
 }
 
 /* Fade content when toolbars are visible */
-.note-info-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
+@media only screen and ( max-width: $single-column ) {
+	.note-info-open {
+		.note-editor, .source-list {
+			opacity: $fade-alpha;
+			transition: $anim;
+			pointer-events: none;
+		}
 	}
-}
-
-.navigation-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
+	.navigation-open {
+		.note-editor, .source-list {
+			opacity: $fade-alpha;
+			transition: $anim;
+			pointer-events: none;
+		}
 	}
 }
 

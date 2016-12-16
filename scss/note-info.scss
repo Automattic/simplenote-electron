@@ -1,16 +1,25 @@
 .note-info {
 	display: flex;
 	flex-direction: column;
-	position: absolute;
-	top: 0;
-	left: 100%;
 	width: $note-info-width;
-	height: 100%;
 	border-left: 1px solid lighten($gray, 30%);
 	overflow: auto;
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
 	background: white;
+	margin-right: - $note-info-width;
+	transition: margin-right 200ms ease-in-out;
+
+	.note-info-open & {
+		margin-right: 0;
+	}
+
+	@media only screen and ( max-width: $single-column ) {
+		height: 100%;
+		left: 100%;
+		position: absolute;
+		top: 0;
+	}
 
 	.note-info-panel {
 		flex: none;
@@ -65,12 +74,12 @@
 		border: none;
 		padding: 0 8px 0 0;
 		text-overflow: ellipsis;
-		
+
 		&:focus {
 			outline: none;
 		}
 	}
-	
+
 	.note-info-form {
 		display: flex;
 	}

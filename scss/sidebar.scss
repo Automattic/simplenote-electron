@@ -12,9 +12,6 @@
 	@media only screen and ( max-width: $medium ) {
 		width: $navigation-bar-width + $note-list-small-width;
 	}
-	@media only screen and ( max-width: $single-column ) {
-		width: 100%;
-	}
 
 	.layout-has-note-list.layout-has-no-navigation-bar & {
 		margin-left: - $navigation-bar-width;
@@ -25,6 +22,10 @@
 		margin-left: 0;
 
 		.layout-has-navigation-bar.layout-has-note-list & {
+			margin-left: 0;
+		}
+
+		.layout-has-note-list.layout-has-no-navigation-bar & {
 			margin-left: 0;
 		}
 
