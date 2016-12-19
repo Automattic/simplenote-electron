@@ -9,8 +9,9 @@
 		height: auto;
 	}
 
-	.navigation, .source-list, .revisions-selector, .note-editor-controls, .note-editor-detail, 
-	.note-editor-detail .note-detail, .note-editor-mode-bar, .note-info, .tag-entry {
+	.navigation, .source-list, .revision-selector, .note-editor-controls,
+	.note-editor-detail, .note-editor-detail .note-detail,
+	.note-editor-mode-bar, .note-info, .tag-entry {
 		display: none;
 	}
 }
