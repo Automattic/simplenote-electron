@@ -5,7 +5,7 @@ import {
 	EditorState,
 	Modifier,
 } from 'draft-js';
-import { invoke, noop } from 'lodash';
+import { includes, invoke, noop } from 'lodash';
 
 function plainTextContent( editorState ) {
 	return editorState.getCurrentContent().getPlainText( '\n' )
@@ -16,12 +16,14 @@ function getCurrentBlock( editorState ) {
 	return editorState.getCurrentContent().getBlockForKey( key );
 }
 
+const isLonelyBullet = line => includes( [ '-', '*', '+' ], line.trim() );
+
 function indentCurrentBlock( editorState ) {
 	const selection = editorState.getSelection();
 	const selectionStart = selection.getStartOffset();
 
 	const line = getCurrentBlock( editorState ).getText();
-	const atStart = line.trim() === '-' || line.trim() === '*';
+	const atStart = isLonelyBullet( line );
 	const offset = atStart ? 0 : selectionStart;
 
 	// add tab
@@ -55,7 +57,7 @@ function outdentCurrentBlock( editorState ) {
 	const selectionStart = selection.getStartOffset();
 
 	const line = getCurrentBlock( editorState ).getText();
-	const atStart = line.trim() === '-' || line.trim() === '*';
+	const atStart = isLonelyBullet( line );
 	const rangeStart = atStart ? 0 : selectionStart - 1;
 	const rangeEnd = atStart ? 1 : selectionStart;
 
@@ -221,15 +223,15 @@ export default class NoteContentEditor extends React.Component {
 	}
 
 	handleReturn = () => {
-		// matches lines that start with `- ` or `* `
-		// preceded by 0 or more tab characters
-		const listItemRe = /^\t*[-*]\s/;
+		// matches lines that start with `- `, `* `, or `+ `
+		// preceded by 0 or more space characters
+		// i.e. a line prefixed by a list bullet
+		const listItemRe = /^[ \t\u2000-\u200a]*[-*+]\s/;
 
 		const { editorState } = this.state;
 		const line = getCurrentBlock( editorState ).getText();
 
-		const trimmedLine = line.trim()
-		if ( trimmedLine === '-' || trimmedLine === '*' ) {
+		if ( isLonelyBullet( line ) ) {
 			this.handleEditorStateChange( finishList( editorState ) );
 			return 'handled'
 		}
