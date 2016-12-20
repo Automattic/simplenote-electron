@@ -78,6 +78,23 @@ module.exports = function main() {
 		} );
 	};
 
+	const shouldQuit = app.makeSingleInstance( () => {
+		if ( ! mainWindow ) {
+			return;
+		}
+
+		// Focus the main window if a second instance is attempted to be created
+		if ( mainWindow.isMinimized() ) {
+			mainWindow.restore();
+		}
+		mainWindow.focus();
+	} );
+
+	if ( shouldQuit ) {
+		app.quit();
+		return;
+	}
+
 	// Quit when all windows are closed.
 	app.on( 'window-all-closed', function() {
 		// On OS X it is common for applications and their menu bar
