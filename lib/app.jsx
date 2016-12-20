@@ -17,7 +17,7 @@ import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
 import SearchField from './search-field'
-import NavigationBar from './navigation-bar'
+import NavigationBar from './blocks/navigation-bar/index';
 import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
@@ -476,6 +476,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			appState: state,
 			authIsPending,
 			isAuthorized,
+			noteBucket,
+			tagBucket,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const { settings, isSmallScreen } = this.props;
@@ -513,21 +515,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				{ isAuthorized ?
 						<div className={mainClasses}>
 							{ state.showNavigation &&
-								<NavigationBar
-									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
-									onSelectTrash={() => this.props.actions.selectTrash() }
-									onSelectTag={this.onSelectTag}
-									onSettings={this.onSettings}
-									onAbout={this.onAbout}
-									onEditTags={() => this.props.actions.editTags() }
-									onRenameTag={this.onRenameTag}
-									onTrashTag={this.onTrashTag}
-									onReorderTags={this.onReorderTags}
-									editingTags={state.editingTags}
-									showTrash={state.showTrash}
-									selectedTag={state.tag}
-									tags={state.tags}
-									onOutsideClick={this.onToolbarOutsideClick} />
+								<NavigationBar noteBucket={ noteBucket } tagBucket={ tagBucket } />
 							}
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
