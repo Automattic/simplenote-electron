@@ -46,7 +46,7 @@
     "json-loader": "0.5.4",
     "node-sass": "3.4.2",
     "postcss-loader": "0.7.0",
-    "react-onclickoutside": "4.5.0",
+    "react-onclickoutside": "4.9.0",
     "react-transform-catch-errors": "1.0.2",
     "react-transform-hmr": "1.0.4",
     "redbox-react": "1.2.2",
