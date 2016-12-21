@@ -478,6 +478,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			isAuthorized,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
+		const isMacApp = isElectronMac();
 		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = this.filterNotes();
 
@@ -494,7 +495,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
 			'is-electron': isElectron(),
-			'is-macos': isElectronMac()
+			'is-macos': isMacApp
 		} );
 
 		return (
@@ -577,7 +578,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 					<Auth
 						authPending={ authIsPending }
 						isAuthenticated={ isAuthorized }
-						onAuthenticate={this.props.onAuthenticate}
+						onAuthenticate={ this.props.onAuthenticate }
+						isMacApp={ isMacApp }
 					/>
 				}
 				{ ( this.props.appState.dialogs.length > 0 ) &&

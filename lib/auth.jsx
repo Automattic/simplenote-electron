@@ -14,7 +14,8 @@ export const Auth = React.createClass( {
 
 	propTypes: {
 		isAuthenticated: PropTypes.bool,
-		onAuthenticate: PropTypes.func.isRequired
+		isMacApp: PropTypes.bool,
+		onAuthenticate: PropTypes.func.isRequired,
 	},
 
 	componentDidMount() {
@@ -24,10 +25,14 @@ export const Auth = React.createClass( {
 	},
 
 	render() {
+		const { isMacApp } = this.props;
 		const submitClasses = classNames( 'button', 'button-primary', { pending: this.props.authPending } );
 
 		return (
 			<div className="login">
+				{ isMacApp &&
+					<div className="login-draggable-area" />
+				}
 				<form className="login-form" onSubmit={this.onLogin}>
 					<div className="login-logo">
 						<SimplenoteLogo />
@@ -41,7 +46,7 @@ export const Auth = React.createClass( {
 									id="login-field-username"
 									type="email"
 									onKeyDown={ this.onLogin }
-                />
+								/>
 							</span>
 						</label>
 						<label className="login-field theme-color-border" htmlFor="login-field-password">
