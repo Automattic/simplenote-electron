@@ -1,5 +1,5 @@
-*, 
-*:before, 
+*,
+*:before,
 *:after {
 	cursor: default; // Make everything use default cursor
 	box-sizing: border-box;
@@ -41,12 +41,16 @@ a {
 	transform: translateX(0px);
 	transition: transform 200ms ease-in-out;
 
-	&.note-info-open {
-		transform: translateX(-$note-info-width);
+	@media only screen and ( max-width: $single-column ) {
+		&.note-info-open {
+			transform: translateX(-$note-info-width);
+		}
 	}
 
-	&.navigation-open {
-		transform: translateX($navigation-bar-width);
+	@media only screen and ( max-width: $single-column ) {
+		&.navigation-open {
+			transform: translateX( $navigation-bar-width );
+		}
 	}
 
 	.note-editor {
@@ -92,23 +96,24 @@ a {
 }
 
 /* Fade content when toolbars are visible */
-.note-info-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
+@media only screen and ( max-width: $single-column ) {
+	.note-info-open {
+		.note-editor, .source-list {
+			opacity: $fade-alpha;
+			transition: $anim;
+			pointer-events: none;
+		}
+	}
+	.navigation-open {
+		.note-editor, .source-list {
+			opacity: $fade-alpha;
+			transition: $anim;
+			pointer-events: none;
+		}
 	}
 }
 
-.navigation-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
-	}
-}
-
-.is-macos { 
+.is-macos {
 	.note-editor-controls {
 		box-sizing: border-box;
 		-webkit-app-region: drag;
@@ -125,4 +130,3 @@ a {
 		padding-top: 10px;
 	}
 }
-

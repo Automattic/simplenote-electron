@@ -1,0 +1,58 @@
+.top-bar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: $navigation-bar-width + $note-list-small-width;
+	height: $toolbar-height;
+	padding: 20px 15px;
+	border-bottom: 1px solid lighten($gray, 30%);
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex: none;
+	transition: padding-left 200ms ease-in-out;
+
+	.layout-has-note-list &,
+	.layout-has-navigation-bar & {
+		position: relative;
+		width: 100%;
+	}
+
+	.layout-has-no-navigation-bar & {
+		padding-left: $navigation-bar-width + 15px;
+	}
+
+	.button {
+		flex: none;
+		padding: 0;
+		width: 32px;
+		height: 32px;
+	}
+
+	.search-field {
+		margin: 0 14px;
+		transition: margin-left 200ms ease-in-out;
+		.layout-has-navigation-bar & {
+			margin-left: 184px;
+		}
+		@media only screen and ( max-width: $single-column ) {
+			margin: 0 12px;
+			.layout-has-navigation-bar & {
+				margin-left: 12px;
+			}
+		}
+	}
+
+	.toggle-navigation {
+		display: none;
+	}
+	@media only screen and ( max-width: $single-column ) {
+		.toggle-navigation {
+			display: block;
+		}
+		.layout-changer {
+			display: none;
+		}
+	}
+
+}

@@ -1,0 +1,37 @@
+.sidebar {
+	display: flex;
+	flex-flow: row wrap;
+	align-content: stretch;
+	align-items: stretch;
+	flex-shrink: 0;
+	width: $navigation-bar-width + $note-list-width;
+	height: 100%;
+	margin-left: 0;
+	transition: all 200ms ease-in-out;
+
+	@media only screen and ( max-width: $medium ) {
+		width: $navigation-bar-width + $note-list-small-width;
+	}
+
+	.layout-has-note-list.layout-has-no-navigation-bar & {
+		margin-left: - $navigation-bar-width;
+	}
+
+	@media only screen and ( max-width: $single-column ) {
+		width: 100%;
+		margin-left: 0;
+
+		.layout-has-navigation-bar.layout-has-note-list & {
+			margin-left: 0;
+		}
+
+		.layout-has-note-list.layout-has-no-navigation-bar & {
+			margin-left: 0;
+		}
+
+		.note-open & {
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+}

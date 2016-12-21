@@ -1,14 +1,22 @@
 .navigation {
 	display: flex;
 	flex-direction: column;
-	position: absolute;
-	top: 0;
-	left: -$navigation-bar-width;
 	width: $navigation-bar-width;
-	height: 100%;
+	height: calc( 100% - #{ $toolbar-height } );
 	overflow: hidden;
 	border-right: 1px solid lighten($gray, 30%);
 	background: white;
+
+	.layout-has-navigation-bar & {
+		display: flex;
+	}
+
+	@media only screen and ( max-width: $single-column ) {
+		position: absolute;
+		top: 0;
+		left: - $navigation-bar-width;
+		height: 100%;
+	}
 }
 
 .navigation-folders {
@@ -17,7 +25,7 @@
 }
 
 .navigation-folders-item,
-.navigation-tools-item, 
+.navigation-tools-item,
 .navigation-folders-item-selected {
 	width: 100%;
 	line-height: 2em;
@@ -26,7 +34,7 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	text-align: left;
-	
+
 	svg {
 		fill: $gray;
 	}
@@ -36,7 +44,7 @@
 	span {
 		color: $blue;
 	}
-			
+
 	svg[class^="icon-"] {
  		fill: $blue;
  	}
@@ -49,7 +57,7 @@
 		&:active,
 		&.active {
 			color: $blue;
-			
+
 			svg[class^="icon-"] {
  			fill: $blue;
  		}
@@ -99,7 +107,7 @@
 
 .navigation-footer-item {
 	margin-right: 10px;
-	
+
 	&:last-child {
 		margin-right: 0;
 	}

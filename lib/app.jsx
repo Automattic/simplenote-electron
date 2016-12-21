@@ -22,6 +22,7 @@ import Auth from './auth'
 import NewNoteIcon from './icons/new-note'
 import TagsIcon from './icons/tags'
 import NoteDisplayMixin from './note-display-mixin'
+import LayoutChanger from './layout-changer';
 import analytics from './analytics'
 import classNames	from 'classnames'
 import {
@@ -494,7 +495,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			'note-info-open': state.showNoteInfo,
 			'navigation-open': state.showNavigation,
 			'is-electron': isElectron(),
-			'is-macos': isElectronMac()
+			'is-macos': isElectronMac(),
+			'layout-has-navigation-bar': settings.visiblePanes.includes( 'navigation-bar' ),
+			'layout-has-no-navigation-bar': ! settings.visiblePanes.includes( 'navigation-bar' ),
+			'layout-has-note-list': settings.visiblePanes.includes( 'note-list' ),
+			'layout-is-only-editor': (
+				! settings.visiblePanes.includes( 'navigation-bar' ) && ! settings.visiblePanes.includes( 'note-list' )
+			)
 		} );
 
 		return (
@@ -512,7 +519,29 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				}
 				{ isAuthorized ?
 						<div className={mainClasses}>
-							{ state.showNavigation &&
+							<div className="sidebar">
+								<div className="top-bar theme-color-border">
+									<LayoutChanger />
+									<button
+										className="button button-borderless toggle-navigation"
+										onClick={ () => this.props.actions.toggleNavigation() }
+										title="Tags"
+									>
+										<TagsIcon />
+									</button>
+									<SearchField
+										onSearch={ this.onSearch }
+										onSearchFocused={ this.onSearchFocused }
+									/>
+									<button
+										className="button button-borderless"
+										disabled={ state.showTrash }
+										onClick={ this.onNewNote }
+										title="New Note"
+									>
+										<NewNoteIcon />
+									</button>
+								</div>
 								<NavigationBar
 									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
 									onSelectTrash={() => this.props.actions.selectTrash() }
@@ -527,27 +556,15 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 									showTrash={state.showTrash}
 									selectedTag={state.tag}
 									tags={state.tags}
-									onOutsideClick={this.onToolbarOutsideClick} />
-							}
-							<div className="source-list theme-color-bg theme-color-fg">
-								<div className="search-bar theme-color-border">
-									<button title="Tags" className="button button-borderless" onClick={() => this.props.actions.toggleNavigation() }>
-										<TagsIcon />
-									</button>
-									<SearchField
-										onSearch={this.onSearch}
-										onSearchFocused={this.onSearchFocused} />
-									<button title="New Note" className="button button-borderless" disabled={state.showTrash} onClick={this.onNewNote}>
-										<NewNoteIcon />
-									</button>
-								</div>
+								/>
 								<NoteList
 									notes={filteredNotes}
 									selectedNoteId={selectedNoteId}
 									noteDisplay={settings.noteDisplay}
 									onSelectNote={this.onSelectNote}
 									onPinNote={this.onPinNote}
-									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
+									onEmptyTrash={state.showTrash && this.onEmptyTrash}
+								/>
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}
@@ -565,13 +582,11 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
-							{ state.showNoteInfo &&
-								<NoteInfo
-									note={selectedNote}
-									onPinNote={this.onPinNote}
-									onMarkdownNote={this.onMarkdownNote}
-									onOutsideClick={this.onToolbarOutsideClick} />
-							}
+							<NoteInfo
+								note={selectedNote}
+								onPinNote={this.onPinNote}
+								onMarkdownNote={this.onMarkdownNote}
+								onOutsideClick={this.onToolbarOutsideClick} />
 						</div>
 				:
 					<Auth
