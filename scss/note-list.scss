@@ -152,8 +152,24 @@
 		}
 	}
 
+	.note-list-item-published-icon {
+		margin-left: auto;
+
+		& svg {
+			fill: $gray;
+			height: 12px;
+			width: 12px;
+		}
+	}
+
 	.note-list-item-title {
+		display: flex;
 		font-size: 16px;
+
+		& span {
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
 	}
 
 	.note-list-item-excerpt {
