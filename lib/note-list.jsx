@@ -1,10 +1,14 @@
-import React, { PropTypes } from 'react'
-import NoteDisplayMixin from './note-display-mixin'
-import PublishIcon from './icons/feed'
-import classNames from 'classnames'
-import { isEmpty } from 'lodash';
+import React, { PropTypes } from 'react';
+import NoteDisplayMixin from './note-display-mixin';
+import PublishIcon from './icons/feed';
+import classNames from 'classnames';
+import { get, isEmpty } from 'lodash';
+import { connect } from 'react-redux';
+import { actionCreators } from './flux/app-state';
+import { tracks } from './analytics'
+import filterNotes from './utils/filter-notes';
 
-export default React.createClass( {
+const NoteList = React.createClass( {
 
 	mixins: [ NoteDisplayMixin ],
 
@@ -14,11 +18,12 @@ export default React.createClass( {
 		onSelectNote: PropTypes.func.isRequired,
 		onPinNote: PropTypes.func.isRequired,
 		noteDisplay: PropTypes.string.isRequired,
-		onEmptyTrash: PropTypes.any.isRequired
+		onEmptyTrash: PropTypes.any.isRequired,
+		showTrash: PropTypes.bool,
 	},
 
 	render() {
-		var { selectedNoteId, onSelectNote, onEmptyTrash, noteDisplay } = this.props;
+		var { selectedNoteId, onSelectNote, onEmptyTrash, noteDisplay, showTrash } = this.props;
 
 		const listItemsClasses = classNames( 'note-list-items', noteDisplay );
 
@@ -51,7 +56,7 @@ export default React.createClass( {
 						);
 					} )}
 				</div>
-				{!!onEmptyTrash &&
+				{!!showTrash &&
 					<div className="note-list-empty-trash theme-color-border">
 						<button type="button" className="button button-borderless button-danger" onClick={onEmptyTrash}>Empty Trash</button>
 					</div>
@@ -65,3 +70,37 @@ export default React.createClass( {
 	}
 
 } );
+
+const {
+	emptyTrash,
+	loadAndSelectNote,
+	pinNote,
+} = actionCreators;
+const { recordEvent } = tracks;
+
+const mapStateToProps = ( {
+	appState: state,
+	settings: { noteDisplay }
+} ) => {
+	const filteredNotes = filterNotes( state );
+	const noteIndex = Math.max( state.previousIndex, 0 );
+	const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
+	const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
+	return {
+		noteDisplay,
+		notes: filteredNotes,
+		selectedNoteId,
+		showTrash: state.showTrash,
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
+	onEmptyTrash: () => dispatch( emptyTrash( { noteBucket } ) ),
+	onSelectNote: noteId => {
+		dispatch( loadAndSelectNote( { noteBucket, noteId } ) );
+		recordEvent( 'list_note_opened' );
+	},
+	onPinNote: ( note, pin ) => dispatch( pinNote( { noteBucket, note, pin } ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NoteList );
