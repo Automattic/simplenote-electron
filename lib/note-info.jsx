@@ -6,10 +6,9 @@ import CrossIcon from './icons/cross';
 import { connect } from 'react-redux';
 import { actionCreators } from './flux/app-state';
 import { setMarkdown } from './state/settings/actions';
-//import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 
-const NoteInfo = React.createClass( {
+export const NoteInfo = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
