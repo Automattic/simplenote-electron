@@ -31,7 +31,6 @@ import {
 	noop,
 	get,
 	has,
-	includes,
 	isObject,
 	map,
 	matchesProperty,
@@ -41,6 +40,8 @@ import {
 } from 'lodash';
 
 import * as settingsActions from './state/settings/actions';
+
+import filterNotes from './utils/filter-notes';
 
 let ipc = getIpc();
 
@@ -101,20 +102,6 @@ const isElectron = ( () => {
 } )();
 
 const isElectronMac = () => matchesProperty( 'process.platform', 'darwin' )( window );
-
-const includesSearch = ( text, search ) =>
-	( text || '' )
-		.toLocaleLowerCase()
-		.includes( ( search || '' ).toLocaleLowerCase() );
-
-const matchesTrashView = isViewingTrash => note =>
-	isViewingTrash === !! get( note, 'data.deleted', false );
-
-const matchesTag = tag => note =>
-	! tag || includes( get( note, 'data.tags', [] ), get( tag, 'data.name', '' ) );
-
-const matchesSearch = query => note =>
-	! query || includesSearch( get( note, 'data.content' ), query );
 
 export const App = connect( mapStateToProps, mapDispatchToProps )( React.createClass( {
 
@@ -219,14 +206,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		setAuthorized();
 		analytics.initialize( accountName );
-	},
-
-	onSelectNote: function( noteId ) {
-		this.props.actions.loadAndSelectNote( {
-			noteBucket: this.props.noteBucket,
-			noteId
-		} );
-		analytics.tracks.recordEvent( 'list_note_opened' );
 	},
 
 	onPinNote: function( note, pin = true ) {
@@ -353,22 +332,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		} );
 	},
 
-	filterNotes() {
-		const {
-			filter,    // {string} search query from input
-			notes,     // {[note]} list of all available notes
-			showTrash, // {bool} whether we are looking at the trashed notes
-			tag,       // {tag|null} whether we are looking at a specific tag
-		} = this.props.appState;
-
-		return notes
-			.filter( overEvery( [
-				matchesTrashView( showTrash ),
-				matchesTag( tag ),
-				matchesSearch( filter ),
-			] ) );
-	},
-
 	onSetEditorMode: function( mode ) {
 		this.props.actions.setEditorMode( { mode } );
 	},
@@ -400,7 +363,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	// gets the index of the note located before the currently selected one
 	getPreviousNoteIndex: function( note ) {
-		const filteredNotes = this.filterNotes();
+		const filteredNotes = filterNotes( this.props.appState );
 
 		const noteIndex = function( filteredNote ) {
 			return note.id === filteredNote.id;
@@ -446,12 +409,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		analytics.tracks.recordEvent( 'editor_versions_accessed' );
 	},
 
-	onEmptyTrash: function() {
-		this.props.actions.emptyTrash( {
-			noteBucket: this.props.noteBucket
-		} );
-	},
-
 	onToolbarOutsideClick: function( isNavigationBar ) {
 		const {
 			actions: { toggleNavigation, toggleNoteInfo },
@@ -476,15 +433,15 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			appState: state,
 			authIsPending,
 			isAuthorized,
+			noteBucket,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const isMacApp = isElectronMac();
 		const { settings, isSmallScreen } = this.props;
-		const filteredNotes = this.filterNotes();
+		const filteredNotes = filterNotes( state );
 
 		const noteIndex = Math.max( state.previousIndex, 0 );
 		const selectedNote = isSmallScreen || state.note ? state.note : filteredNotes[ noteIndex ];
-		const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 
 		const appClasses = classNames( 'app', `theme-${settings.theme}`, {
 			'touch-enabled': ( 'ontouchstart' in document.body ),
@@ -542,13 +499,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 										<NewNoteIcon />
 									</button>
 								</div>
-								<NoteList
-									notes={filteredNotes}
-									selectedNoteId={selectedNoteId}
-									noteDisplay={settings.noteDisplay}
-									onSelectNote={this.onSelectNote}
-									onPinNote={this.onPinNote}
-									onEmptyTrash={state.showTrash && this.onEmptyTrash} />
+								<NoteList noteBucket={ noteBucket } />
 							</div>
 							<NoteEditor
 								editorMode={state.editorMode}
