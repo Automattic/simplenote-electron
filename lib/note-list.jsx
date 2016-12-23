@@ -4,7 +4,7 @@ import PublishIcon from './icons/feed';
 import classNames from 'classnames';
 import { get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { actionCreators } from './flux/app-state';
+import appState from './flux/app-state';
 import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 
@@ -75,7 +75,7 @@ const {
 	emptyTrash,
 	loadAndSelectNote,
 	pinNote,
-} = actionCreators;
+} = appState.actionCreators;
 const { recordEvent } = tracks;
 
 const mapStateToProps = ( {
