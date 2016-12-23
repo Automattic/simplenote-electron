@@ -3,12 +3,12 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import appState from './flux/app-state'
 import {
-	reset as resetAuth,
-	setAuthorized,
+	reset as resetAuthAction,
+	setAuthorized as setAuthorizedAction,
 } from './state/auth/actions';
 import {
-	authIsPending,
-	isAuthorized,
+	authIsPending as authIsPendingSelector,
+	isAuthorized as isAuthorizedSelector,
 } from './state/auth/selectors';
 import { getSelectedTag } from './state/tags/selectors';
 import { getSelectedCollection } from './state/ui/selectors';
@@ -63,8 +63,8 @@ function getIpc() {
 
 const mapStateToProps = state => ( {
 	...state,
-	authIsPending: authIsPending( state ),
-	isAuthorized: isAuthorized( state ),
+	authIsPending: authIsPendingSelector( state ),
+	isAuthorized: isAuthorizedSelector( state ),
 	selectedCollection: getSelectedCollection( state ),
 	selectedTag: getSelectedTag( state ),
 } );
@@ -93,10 +93,10 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
 		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder ),
 
-		resetAuth: () => dispatch( resetAuth() ),
+		resetAuth: () => dispatch( resetAuthAction() ),
 		selectAllNotes: () => dispatch( actionCreators.selectAllNotes() ),
 		selectTrashedNotes: () => dispatch( actionCreators.selectTrash() ),
-		setAuthorized: () => dispatch( setAuthorized() ),
+		setAuthorized: () => dispatch( setAuthorizedAction() ),
 	};
 }
 
@@ -420,7 +420,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			isAuthorized,
 			noteBucket,
 			selectAllNotes,
-			selectedCollection,
 			selectTrashedNotes,
 		} = this.props;
 
