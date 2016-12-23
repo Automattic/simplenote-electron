@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import EditableList from './editable-list'
 import { get } from 'lodash'
 
-export default class TagList extends Component {
+export class TagList extends Component {
 	static propTypes = {
 		onSelectTag: PropTypes.func.isRequired,
 		onEditTags: PropTypes.func.isRequired,

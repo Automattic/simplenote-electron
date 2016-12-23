@@ -14,7 +14,6 @@ module.exports = {
 			'moment',
 			'promise',
 			'react',
-			'react-addons-pure-render-mixin',
 			'react-addons-update',
 			'react-redux',
 			'redux',
