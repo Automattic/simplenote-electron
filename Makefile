@@ -27,7 +27,7 @@ config:
 # Builds Calypso (desktop)
 build: install
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
-	@NODE_ENV=production $(NPM_BIN)/webpack -p --config $(THIS_DIR)/webpack.config.js
+	@$(NPM) run build:prod
 
 build-if-not-exists:
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
