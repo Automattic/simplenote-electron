@@ -208,13 +208,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		analytics.initialize( accountName );
 	},
 
-	onPinNote: function( note, pin = true ) {
-		this.props.actions.pinNote( {
-			noteBucket: this.props.noteBucket,
-			note, pin
-		} );
-	},
-
 	onNotePrinted: function() {
 		this.props.actions.setShouldPrintNote( {
 			shouldPrint: false
@@ -225,16 +218,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		this.props.actions.setSearchFocus( {
 			searchFocus: false
 		} );
-	},
-
-	onMarkdownNote: function( note, markdown = true ) {
-		this.props.actions.markdownNote( {
-			noteBucket: this.props.noteBucket,
-			note, markdown
-		} );
-
-		// Update global setting to set markdown flag for new notes
-		this.props.setMarkdown( markdown );
 	},
 
 	onNotesIndex: function() {
@@ -411,8 +394,8 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 	onToolbarOutsideClick: function( isNavigationBar ) {
 		const {
-			actions: { toggleNavigation, toggleNoteInfo },
-			appState: { dialogs, showNavigation, showNoteInfo }
+			actions: { toggleNavigation },
+			appState: { dialogs, showNavigation }
 		} = this.props;
 
 		if ( dialogs.length > 0 ) {
@@ -421,10 +404,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 
 		if ( isNavigationBar && showNavigation ) {
 			return toggleNavigation();
-		}
-
-		if ( ! isNavigationBar && showNoteInfo ) {
-			return toggleNoteInfo();
 		}
 	},
 
@@ -518,11 +497,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								shouldPrint={state.shouldPrint}
 								onNotePrinted={this.onNotePrinted} />
 							{ state.showNoteInfo &&
-								<NoteInfo
-									note={selectedNote}
-									onPinNote={this.onPinNote}
-									onMarkdownNote={this.onMarkdownNote}
-									onOutsideClick={this.onToolbarOutsideClick} />
+								<NoteInfo noteBucket={ noteBucket } />
 							}
 						</div>
 				:
