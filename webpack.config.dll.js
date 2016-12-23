@@ -12,7 +12,6 @@ module.exports = {
 			'lodash',
 			'marked',
 			'moment',
-			'promise',
 			'react',
 			'react-addons-update',
 			'react-redux',
