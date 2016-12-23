@@ -4,7 +4,7 @@ import ToggleControl from './controls/toggle';
 import moment from 'moment';
 import CrossIcon from './icons/cross';
 import { connect } from 'react-redux';
-import { actionCreators } from './flux/app-state';
+import appState from './flux/app-state';
 import { setMarkdown } from './state/settings/actions';
 import filterNotes from './utils/filter-notes';
 
@@ -157,7 +157,7 @@ const {
 	markdownNote,
 	pinNote,
 	toggleNoteInfo,
-} = actionCreators;
+} = appState.actionCreators;
 
 const mapStateToProps = ( { appState: state } ) => {
 	const filteredNotes = filterNotes( state );
