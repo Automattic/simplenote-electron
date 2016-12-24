@@ -38,6 +38,7 @@ var opts = {
 	overwrite: true,
 	asar: false,
 	sign: false,
+	prune: true,
 	'version-string': {
 		CompanyName: config.author,
 		LegalCopyright: config.copyright,
@@ -50,21 +51,22 @@ var opts = {
 	}
 };
 
-function whitelistInDirectory( directory, whitelist ) {
-	var client = fs.readdirSync( directory );
-	var ignore = [];
-
-	for ( key = 0; key < client.length; key++ ) {
-		if ( whitelist.indexOf( client[key] ) === -1 ) {
-			ignore.push( path.join( directory, client[key] ) );
-		}
-	}
-
-	return ignore;
-}
-
-opts.ignore = opts.ignore.concat( whitelistInDirectory( './dist', [ 'index.html', 'app.js', 'manifest.appcache' ] ) );
-opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'package.json', 'dist', 'desktop' ] ) );
+// function whitelistInDirectory( directory, whitelist ) {
+// 	var client = fs.readdirSync( directory );
+// 	var ignore = [];
+//
+// 	for ( key = 0; key < client.length; key++ ) {
+// 		if ( whitelist.indexOf( client[key] ) === -1 ) {
+// 			ignore.push( path.join( directory, client[key] ) );
+// 		}
+// 	}
+//
+// 	return ignore;
+// }
+//
+// opts.ignore = opts.ignore.concat( whitelistInDirectory( './node_modules', [ 'deep-equal', 'electron-window-state', 'jsonfile', 'mkdirp' ] ) );
+// opts.ignore = opts.ignore.concat( whitelistInDirectory( './dist', [ 'index.html', 'app.js', 'manifest.appcache' ] ) );
+// opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'package.json', 'dist', 'desktop', 'node_modules' ] ) );
 
 builder.beforeBuild( __dirname, opts, function( error ) {
 	if ( error ) {
