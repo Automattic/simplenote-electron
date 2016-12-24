@@ -49,7 +49,7 @@ function cleanBuild( appPath, buildOpts ) {
 	console.log( ' - Removing unused localization folders' );
 	var lprojFolders = app.getFileList( '' );
 	lprojFolders.forEach( function( lprojFolder ) {
-		if ( [ 'app', 'atom.asar', 'atom.icns' ].indexOf( lprojFolder ) === -1 ) {
+		if ( [ 'app', 'electron.asar', 'electron.icns' ].indexOf( lprojFolder ) === -1 ) {
 			builder.rmdir( app.getResourcesPath( lprojFolder ) );
 		}
 	} );
