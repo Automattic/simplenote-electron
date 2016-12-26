@@ -36,8 +36,7 @@ module.exports = {
 		} ),
 		new AppCachePlugin(),
 		new HtmlWebpackPlugin( {
-			title: 'Simplenote',
-			hash: true
+			title: 'Simplenote'
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify(
@@ -47,7 +46,6 @@ module.exports = {
 		} ),
 		new AddAssetHtmlWebpackPlugin( {
 			filepath: require.resolve( './dist/vendor.dll.js' ),
-			hash: true,
 			includeSourcemap: true
 		} )
 	],
