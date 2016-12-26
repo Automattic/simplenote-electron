@@ -3,6 +3,8 @@ const webpack = require( 'webpack' );
 module.exports = {
 	context: process.cwd(),
 
+	devtool: '#source-map',
+
 	entry: {
 		vendor: [
 			'cookie',

@@ -48,7 +48,7 @@ module.exports = {
 		new AddAssetHtmlWebpackPlugin( {
 			filepath: require.resolve( './dist/vendor.dll.js' ),
 			hash: true,
-			includeSourcemap: false
+			includeSourcemap: true
 		} )
 	],
 	postcss: [ autoprefixer() ]
