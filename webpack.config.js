@@ -2,6 +2,8 @@ const autoprefixer = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const AppCachePlugin = require( 'appcache-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const AddAssetHtmlWebpackPlugin = require( 'add-asset-html-webpack-plugin' );
+const config = require( './get-config' );
 
 module.exports = {
 	context: __dirname + '/lib',
@@ -35,13 +37,18 @@ module.exports = {
 		new AppCachePlugin(),
 		new HtmlWebpackPlugin( {
 			title: 'Simplenote',
-			templateContent: require( './index-builder.js' ),
-			inject: false
+			hash: true
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify(
 				process.env.NODE_ENV || 'development'
-			)
+			),
+			config: JSON.stringify( config() )
+		} ),
+		new AddAssetHtmlWebpackPlugin( {
+			filepath: require.resolve( './dist/vendor.dll.js' ),
+			hash: true,
+			includeSourcemap: false
 		} )
 	],
 	postcss: [ autoprefixer() ]
