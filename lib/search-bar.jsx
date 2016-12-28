@@ -15,8 +15,6 @@ import TagsIcon from './icons/tags';
 
 export const SearchBar = ( {
 	onNewNote,
-	onSearch,
-	onSearchFocused,
 	onToggleNavigation,
 	showTrash,
 } ) =>
@@ -24,7 +22,7 @@ export const SearchBar = ( {
 		<button className="button button-borderless" onClick={ onToggleNavigation } title="Tags">
 			<TagsIcon />
 		</button>
-		<SearchField onSearch={ onSearch } onSearchFocused={ onSearchFocused } />
+		<SearchField />
 		<button
 			className="button button-borderless"
 			disabled={ showTrash }
@@ -37,8 +35,6 @@ export const SearchBar = ( {
 
 const {
 	newNote,
-	search,
-	setSearchFocus,
 	toggleNavigation,
 } = appState.actionCreators;
 const { recordEvent } = tracks;
@@ -52,11 +48,6 @@ const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
 		dispatch( newNote( { noteBucket } ) );
 		recordEvent( 'list_note_created' );
 	},
-	onSearch: filter => {
-		dispatch( search( { filter } ) );
-		recordEvent( 'list_notes_searched' );
-	},
-	onSearchFocused: () => dispatch( setSearchFocus( { searchFocus: false } ) ),
 	onToggleNavigation: () => dispatch( toggleNavigation() ),
 } );
 
