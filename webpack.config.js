@@ -35,7 +35,9 @@ module.exports = {
 		} ),
 		new AppCachePlugin(),
 		new HtmlWebpackPlugin( {
-			title: 'Simplenote'
+			title: 'Simplenote',
+			favicon: process.cwd() + '/public_html/favicon.ico',
+			template: 'index.ejs'
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify(
