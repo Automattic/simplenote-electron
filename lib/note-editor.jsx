@@ -11,6 +11,15 @@ import appState from './flux/app-state';
 import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 
+const {
+	noteRevisions,
+	setEditorMode,
+	setShouldPrintNote,
+	updateNoteContent,
+	updateNoteTags,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
 export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
@@ -186,15 +195,6 @@ export const NoteEditor = React.createClass( {
 		);
 	}
 } );
-
-const {
-	noteRevisions,
-	setEditorMode,
-	setShouldPrintNote,
-	updateNoteContent,
-	updateNoteTags,
-} = appState.actionCreators;
-const { recordEvent } = tracks;
 
 const mapStateToProps = ( {
 	appState: state,

@@ -9,6 +9,25 @@ import appState from './flux/app-state';
 import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 
+const {
+	closeNote,
+	deleteNoteForever,
+	noteRevisions,
+	restoreNote,
+	showDialog,
+	toggleNoteInfo,
+	trashNote,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
+// gets the index of the note located before the currently selected one
+function getPreviousNoteIndex( note, filteredNotes ) {
+	const noteIndex = function( filteredNote ) {
+		return note.id === filteredNote.id;
+	};
+	return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
+}
+
 export const NoteToolbar = React.createClass( {
 
 	propTypes: {
@@ -61,25 +80,6 @@ export const NoteToolbar = React.createClass( {
 	}
 
 } );
-
-const {
-	closeNote,
-	deleteNoteForever,
-	noteRevisions,
-	restoreNote,
-	showDialog,
-	toggleNoteInfo,
-	trashNote,
-} = appState.actionCreators;
-const { recordEvent } = tracks;
-
-// gets the index of the note located before the currently selected one
-function getPreviousNoteIndex( note, filteredNotes ) {
-	const noteIndex = function( filteredNote ) {
-		return note.id === filteredNote.id;
-	};
-	return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
-}
 
 const mapStateToProps = ( { appState: state } ) => {
 	const filteredNotes = filterNotes( state );
