@@ -225,12 +225,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		analytics.initialize( accountName );
 	},
 
-	onNotePrinted: function() {
-		this.props.actions.setShouldPrintNote( {
-			shouldPrint: false
-		} );
-	},
-
 	onNotesIndex: function() {
 		this.props.actions.loadNotes( {
 			noteBucket: this.props.noteBucket
@@ -263,83 +257,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				Menu: remote.Menu
 			}
 		} );
-	},
-
-	onSetEditorMode: function( mode ) {
-		this.props.actions.setEditorMode( { mode } );
-	},
-
-	onUpdateContent: function( note, content ) {
-		this.props.actions.updateNoteContent( {
-			noteBucket: this.props.noteBucket,
-			note, content
-		} );
-	},
-
-	onUpdateNoteTags: function( note, tags ) {
-		this.props.actions.updateNoteTags( {
-			noteBucket: this.props.noteBucket,
-			tagBucket: this.props.tagBucket,
-			note, tags
-		} );
-	},
-
-	onTrashNote: function( note ) {
-		const previousIndex = this.getPreviousNoteIndex( note );
-		this.props.actions.trashNote( {
-			noteBucket: this.props.noteBucket,
-			note,
-			previousIndex
-		} );
-		analytics.tracks.recordEvent( 'editor_note_deleted' );
-	},
-
-	// gets the index of the note located before the currently selected one
-	getPreviousNoteIndex: function( note ) {
-		const filteredNotes = filterNotes( this.props.appState );
-
-		const noteIndex = function( filteredNote ) {
-			return note.id === filteredNote.id;
-		};
-
-		return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
-	},
-
-	onRestoreNote: function( note ) {
-		const previousIndex = this.getPreviousNoteIndex( note );
-		this.props.actions.restoreNote( {
-			noteBucket: this.props.noteBucket,
-			note,
-			previousIndex
-		} );
-		analytics.tracks.recordEvent( 'editor_note_restored' );
-	},
-
-	onShareNote: function( note ) {
-		this.props.actions.showDialog( {
-			dialog: {
-				type: 'Share',
-				modal: true
-			},
-			params: { note }
-		} );
-	},
-
-	onDeleteNoteForever: function( note ) {
-		const previousIndex = this.getPreviousNoteIndex( note );
-		this.props.actions.deleteNoteForever( {
-			noteBucket: this.props.noteBucket,
-			note,
-			previousIndex
-		} );
-	},
-
-	onRevisions: function( note ) {
-		this.props.actions.noteRevisions( {
-			noteBucket: this.props.noteBucket,
-			note
-		} );
-		analytics.tracks.recordEvent( 'editor_versions_accessed' );
 	},
 
 	render: function() {
@@ -392,24 +309,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<SearchBar noteBucket={ noteBucket } />
 								<NoteList noteBucket={ noteBucket } />
 							</div>
-							<NoteEditor
-								allTags={ state.tags }
-								editorMode={state.editorMode}
-								filter={state.filter}
-								note={selectedNote}
-								revisions={state.revisions}
-								onSetEditorMode={this.onSetEditorMode}
-								onUpdateContent={this.onUpdateContent}
-								onUpdateNoteTags={this.onUpdateNoteTags}
-								onTrashNote={this.onTrashNote}
-								onRestoreNote={this.onRestoreNote}
-								onShareNote={this.onShareNote}
-								onDeleteNoteForever={this.onDeleteNoteForever}
-								onRevisions={this.onRevisions}
-								onCloseNote={() => this.props.actions.closeNote()}
-								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-								shouldPrint={state.shouldPrint}
-								onNotePrinted={this.onNotePrinted} />
+							<NoteEditor allTags={ state.tags } noteBucket={ noteBucket } tagBucket={ tagBucket } />
 							{ state.showNoteInfo &&
 								<NoteInfo noteBucket={ noteBucket } />
 							}

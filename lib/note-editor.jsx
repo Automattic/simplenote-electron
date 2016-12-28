@@ -7,6 +7,9 @@ import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get, property } from 'lodash'
+import appState from './flux/app-state';
+import { tracks } from './analytics'
+import filterNotes from './utils/filter-notes';
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -196,9 +199,81 @@ export const NoteEditor = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
-	fontSize: settings.fontSize,
-	markdownEnabled: settings.markdownEnabled
+const {
+	closeNote,
+	deleteNoteForever,
+	noteRevisions,
+	restoreNote,
+	setEditorMode,
+	setShouldPrintNote,
+	showDialog,
+	toggleNoteInfo,
+	trashNote,
+	updateNoteContent,
+	updateNoteTags,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
+// gets the index of the note located before the currently selected one
+function getPreviousNoteIndex( note, filteredNotes ) {
+	const noteIndex = function( filteredNote ) {
+		return note.id === filteredNote.id;
+	};
+	return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
+}
+
+const mapStateToProps = ( {
+	appState: state,
+	settings: { fontSize, markdownEnabled },
+} ) => {
+	const { editorMode, revisions, shouldPrint } = state;
+	const filteredNotes = filterNotes( state );
+	const noteIndex = Math.max( state.previousIndex, 0 );
+	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const previousIndex = getPreviousNoteIndex( note, filteredNotes );
+	return {
+		editorMode,
+		fontSize,
+		markdownEnabled,
+		note,
+		previousIndex,
+		revisions,
+		shouldPrint,
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket, previousIndex, tagBucket } ) => ( {
+	onCloseNote: () =>
+		dispatch( closeNote() ),
+	onDeleteNoteForever: note =>
+		dispatch( deleteNoteForever( { noteBucket, note, previousIndex } ) ),
+	onNoteInfo: () =>
+		dispatch( toggleNoteInfo() ),
+	onNotePrinted: () =>
+		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
+	onRestoreNote: note => {
+		dispatch( restoreNote( { noteBucket, note, previousIndex } ) );
+		recordEvent( 'editor_note_restored' );
+	},
+	onRevisions: note => {
+		dispatch( noteRevisions( { noteBucket, note } ) );
+		recordEvent( 'editor_versions_accessed' );
+	},
+	onSetEditorMode: mode =>
+		dispatch( setEditorMode( { mode } ) ),
+	onShareNote: note =>
+		dispatch( showDialog( {
+			dialog: { modal: true, type: 'Share' },
+			params: { note },
+		} ) ),
+	onUpdateContent: ( note, content ) =>
+		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
+	onUpdateNoteTags: ( note, tags ) =>
+		dispatch( updateNoteTags( { noteBucket, tagBucket, note, tags } ) ),
+	onTrashNote: note => {
+		dispatch( trashNote( { noteBucket, note, previousIndex } ) );
+		recordEvent( 'editor_note_deleted' );
+	},
 } );
 
-export default connect( mapStateToProps )( NoteEditor );
+export default connect( mapStateToProps, mapDispatchToProps )( NoteEditor );
