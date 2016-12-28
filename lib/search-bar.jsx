@@ -13,6 +13,12 @@ import NewNoteIcon from './icons/new-note';
 import SearchField from './search-field';
 import TagsIcon from './icons/tags';
 
+const {
+	newNote,
+	toggleNavigation,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
 export const SearchBar = ( {
 	onNewNote,
 	onToggleNavigation,
@@ -32,12 +38,6 @@ export const SearchBar = ( {
 			<NewNoteIcon />
 		</button>
 	</div>;
-
-const {
-	newNote,
-	toggleNavigation,
-} = appState.actionCreators;
-const { recordEvent } = tracks;
 
 const mapStateToProps = ( { appState: state } ) => ( {
 	showTrash: state.showTrash,
