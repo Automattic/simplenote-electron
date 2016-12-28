@@ -2,7 +2,6 @@ const autoprefixer = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const AppCachePlugin = require( 'appcache-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-const AddAssetHtmlWebpackPlugin = require( 'add-asset-html-webpack-plugin' );
 const config = require( './get-config' );
 
 module.exports = {
@@ -43,10 +42,6 @@ module.exports = {
 				process.env.NODE_ENV || 'development'
 			),
 			config: JSON.stringify( config() )
-		} ),
-		new AddAssetHtmlWebpackPlugin( {
-			filepath: require.resolve( './dist/vendor.dll.js' ),
-			includeSourcemap: true
 		} )
 	],
 	postcss: [ autoprefixer() ]
