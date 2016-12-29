@@ -8,17 +8,15 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get, property } from 'lodash'
 import appState from './flux/app-state';
-import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 import ModeBar from './mode-bar';
+import { setIsViewingRevisions, selectRevision } from './state/revision/actions';
 
 const {
-	noteRevisions,
 	setShouldPrintNote,
 	updateNoteContent,
 	updateNoteTags,
 } = appState.actionCreators;
-const { recordEvent } = tracks;
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -29,7 +27,6 @@ export const NoteEditor = React.createClass( {
 		shouldPrint: PropTypes.bool,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
-		onRevisions: PropTypes.func.isRequired,
 		onPrintNote: PropTypes.func
 	},
 
@@ -44,15 +41,8 @@ export const NoteEditor = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { revision: null } );
-	},
-
-	getInitialState: function() {
-		return {
-			revision: null,
-			isViewingRevisions: false
-		}
+	componentWillMount: function() {
+		this.props.onSelectRevision( null );
 	},
 
 	componentDidUpdate: function() {
@@ -64,7 +54,7 @@ export const NoteEditor = React.createClass( {
 	},
 
 	onViewRevision: function( revision ) {
-		this.setState( { revision: revision } );
+		this.props.onSelectRevision( revision );
 	},
 
 	onSelectRevision: function( revision ) {
@@ -76,34 +66,31 @@ export const NoteEditor = React.createClass( {
 		const { data: { content } } = revision;
 
 		onUpdateContent( note, content );
-		this.setIsViewingRevisions( false );
+		this.props.onSetIsViewingRevisions( false );
 	},
 
 	onCancelRevision: function() {
 		// clear out the revision
-		this.setState( { revision: null } );
-		this.setIsViewingRevisions( false );
-	},
-
-	setEditorMode( event ) {
-		const editorMode = get( event, 'target.dataset.editorMode' );
-
-		if ( ! editorMode ) {
-			return;
-		}
-
-		this.props.onSetEditorMode( editorMode );
-	},
-
-	setIsViewingRevisions: function( isViewing ) {
-		this.setState( { isViewingRevisions: isViewing } );
+		this.props.onSelectRevision( null );
+		this.props.onSetIsViewingRevisions( false );
 	},
 
 	render: function() {
 		let noteContent = '';
-		const { editorMode, note, revisions, fontSize, shouldPrint, noteBucket } = this.props;
-		const revision = this.state.revision || note;
-		const isViewingRevisions = this.state.isViewingRevisions;
+		const {
+			editorMode,
+			fontSize,
+			isViewingRevisions,
+			note,
+			noteBucket,
+			onSetIsViewingRevisions,
+			onSelectRevision,
+			selectedRevision,
+			revisions,
+			shouldPrint,
+		} = this.props;
+
+		const revision = selectedRevision || note;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -129,13 +116,13 @@ export const NoteEditor = React.createClass( {
 			<div className={classes}>
 				<RevisionSelector
 					revisions={revisions || []}
-					onViewRevision={this.onViewRevision}
+					onViewRevision={ onSelectRevision }
 					onSelectRevision={this.onSelectRevision}
 					onCancelRevision={this.onCancelRevision} />
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar
 						noteBucket={ noteBucket }
-						setIsViewingRevisions={this.setIsViewingRevisions}
+						setIsViewingRevisions={ onSetIsViewingRevisions }
 					/>
 				</div>
 				<div className="note-editor-content theme-color-border">
@@ -168,6 +155,7 @@ export const NoteEditor = React.createClass( {
 
 const mapStateToProps = ( {
 	appState: state,
+	revision: { isViewingRevisions, selectedRevision },
 	settings: { fontSize, markdownEnabled },
 } ) => {
 	const { editorMode, revisions, shouldPrint } = state;
@@ -177,8 +165,10 @@ const mapStateToProps = ( {
 	return {
 		editorMode,
 		fontSize,
+		isViewingRevisions,
 		markdownEnabled,
 		note,
+		selectedRevision,
 		revisions,
 		shouldPrint,
 	};
@@ -187,10 +177,10 @@ const mapStateToProps = ( {
 const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 	onNotePrinted: () =>
 		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
-	onRevisions: note => {
-		dispatch( noteRevisions( { noteBucket, note } ) );
-		recordEvent( 'editor_versions_accessed' );
-	},
+	onSetIsViewingRevisions: isViewing =>
+		dispatch( setIsViewingRevisions( isViewing ) ),
+	onSelectRevision: revision =>
+		dispatch( selectRevision( revision ) ),
 	onUpdateContent: ( note, content ) =>
 		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
 	onUpdateNoteTags: ( note, tags ) =>
