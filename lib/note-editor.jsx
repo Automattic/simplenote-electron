@@ -10,10 +10,10 @@ import { get, property } from 'lodash'
 import appState from './flux/app-state';
 import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
+import ModeBar from './mode-bar';
 
 const {
 	noteRevisions,
-	setEditorMode,
 	setShouldPrintNote,
 	updateNoteContent,
 	updateNoteTags,
@@ -27,7 +27,6 @@ export const NoteEditor = React.createClass( {
 		revisions: PropTypes.array,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
-		onSetEditorMode: PropTypes.func.isRequired,
 		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
 		onRevisions: PropTypes.func.isRequired,
@@ -140,7 +139,9 @@ export const NoteEditor = React.createClass( {
 					/>
 				</div>
 				<div className="note-editor-content theme-color-border">
-					{!!markdownEnabled && this.renderModeBar()}
+					{ !! markdownEnabled &&
+						<ModeBar />
+					}
 					<div className="note-editor-detail">
 						<NoteDetail
 							filter={this.props.filter}
@@ -163,37 +164,6 @@ export const NoteEditor = React.createClass( {
 			</div>
 		)
 	},
-
-	renderModeBar() {
-		const { editorMode } = this.props;
-
-		const isPreviewing = ( editorMode === 'markdown' );
-
-		return (
-			<div className="note-editor-mode-bar segmented-control">
-				<button type="button"
-					className={ classNames(
-						'button button-segmented-control button-compact',
-						{ active: ! isPreviewing },
-					) }
-					data-editor-mode="edit"
-					onClick={ this.setEditorMode }
-				>
-					Edit
-				</button>
-				<button type="button"
-					className={ classNames(
-						'button button-segmented-control button-compact',
-						{ active: isPreviewing },
-					) }
-					data-editor-mode="markdown"
-					onClick={ this.setEditorMode }
-				>
-					Preview
-				</button>
-			</div>
-		);
-	}
 } );
 
 const mapStateToProps = ( {
@@ -221,8 +191,6 @@ const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 		dispatch( noteRevisions( { noteBucket, note } ) );
 		recordEvent( 'editor_versions_accessed' );
 	},
-	onSetEditorMode: mode =>
-		dispatch( setEditorMode( { mode } ) ),
 	onUpdateContent: ( note, content ) =>
 		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
 	onUpdateNoteTags: ( note, tags ) =>
