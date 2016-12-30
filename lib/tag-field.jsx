@@ -118,10 +118,10 @@ export default React.createClass( {
 		this.tagInput = r;
 	},
 
-	storeTagInput( value ) {
+	storeTagInput( value, callback ) {
 		this.setState( {
 			tagInput: value,
-		} );
+		}, callback );
 	},
 
 	unselect( event ) {

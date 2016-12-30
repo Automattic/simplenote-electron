@@ -5,16 +5,12 @@
 .tag-editor {
 	display: flex;
 	justify-content: flex-start;
-	align-items: center;
 	flex-wrap: wrap;
 	line-height: 1.75em;
 	white-space: nowrap;
 	overflow: visible;
-	transform: translate3d(0, 0, 0);
-	margin: 0 auto;
-	max-width: 780px;
 	max-height: 120px;
-	padding: 16px 48px;
+	padding: 8px 48px 8px 12px;
 
 	&:focus {
 		outline: none;
@@ -31,13 +27,12 @@
 			outline: none;
 		}
 	}
-
 }
 
 .tag-chip {
 	flex: none;
-	margin: 2px 12px 2px 0;
-	padding: 1px 14px;
+	margin: 2px 12px 3px 0;
+	padding: 1px 14px 3px 14px;
 	border-radius: 14px;
 	line-height: 1.25em;
 	white-space: nowrap;
@@ -47,7 +42,8 @@
 	font-size: 14px;
 	-webkit-tap-highlight-color: transparent;
 
-	&.selected {
+	&.selected,
+	&:hover {
 		background: $gray;
 		color: $white;
 	}
@@ -72,7 +68,6 @@
 		width: 100%;
 		height: 1.75em;
 		min-width: 140px;
-		border: none;
 		outline: none;
 		font: 14px/1.5 $sans;
 		color: darken($gray, 20%);

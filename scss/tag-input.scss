@@ -1,23 +1,31 @@
 .tag-input {
+	display: flex;
 	overflow: visible;
-	position: relative;
+	min-height: 26px;
+}
 
-	& .tag-input__entry {
-		z-index: 100;
-	}
-
-	& .tag-input__suggestion {
-		z-index: 50;
+.tag-input__entry {
+	&:empty:before {
+		content: attr(placeholder);
+		display: block;
 		color: lighten( $gray, 10% );
 	}
+
+	& b,
+	& strong {
+		font-weight: normal;
+	}
+
+	& i,
+	& em {
+		font-style: normal;
+	}
+
+	&:focus {
+		outline: none;
+	}
 }
 
-.tag-input__entry,
 .tag-input__suggestion {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	color: lighten( $gray, 10% );
 }
-
