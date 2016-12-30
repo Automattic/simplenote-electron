@@ -4,34 +4,11 @@ import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
 import {
-	difference,
+	differenceBy,
+	intersectionBy,
 	invoke,
-	unionBy,
+	union,
 } from 'lodash';
-
-/**
- * Performs a set union on case-insensitive matching
- *
- * @example
- * // returns [ 'Bob', 'Alice', 'jOHNNy' ]
- * caseInsensitiveUnion( [ 'Bob', 'Alice' ], [ 'bob', 'aLiCe', 'jOHNNy' ]
- *
- * @param {Array} tags existing list of tag names
- * @param {Array} newTags list of new tag names to add
- * @return {Array} case-insensitive union of old and new tags
- */
-const caseInsensitiveUnion = ( tags, newTags ) => {
-	// map the strings once before the union iteration
-	// [ CasedString ] -> [ [ CasedString, UnCasedString ] ]
-	const lowerTags = tags.map( tag => [ tag, tag.toLocaleLowerCase() ] );
-	const lowerNewTags = newTags.map( tag => [ tag, tag.toLocaleLowerCase() ] );
-
-	return unionBy(
-		lowerTags, // prefer existing tags and their cases
-		lowerNewTags, // merge in the new ones
-		( [ /* name */, lower ] ) => lower // compare the uncased strings
-	).map( ( [ name, /* lower */ ] ) => name ); // extract the original strings
-};
 
 export default React.createClass( {
 
@@ -69,9 +46,19 @@ export default React.createClass( {
 	},
 
 	addTag: function( tags ) {
+		const {
+			allTags,
+			tags: existingTags,
+		} = this.props;
+
 		const newTags = tags.trim().replace( /\s+/g, ',' ).split( ',' );
 
-		this.props.onUpdateNoteTags( caseInsensitiveUnion( this.props.tags, newTags ) );
+		const nextTagList = union(
+			existingTags, // tags already in note
+			intersectionBy( allTags, newTags, s => s.toLocaleLowerCase() ), // use existing case if tag known
+			differenceBy( newTags, allTags, s => s.toLocaleLowerCase() ), // add completely new tags
+		);
+		this.props.onUpdateNoteTags( nextTagList );
 		this.storeTagInput( '' );
 		invoke( this, 'tagInput.focus' );
 		analytics.tracks.recordEvent( 'editor_tag_added' );
@@ -85,7 +72,7 @@ export default React.createClass( {
 		const { onUpdateNoteTags, tags } = this.props;
 		const { selectedTag } = this.state;
 
-		onUpdateNoteTags( difference( tags, [ tagName ] ) );
+		onUpdateNoteTags( differenceBy( tags, [ tagName ], s => s.toLocaleLowerCase() ) );
 
 		if ( selectedTag === tagName ) {
 			this.setState( { selectedTag: '' } );
@@ -179,11 +166,12 @@ export default React.createClass( {
 						/>
 					) }
 					<TagInput
+						allTags={ allTags }
 						inputRef={ this.storeInputRef }
 						value={ tagInput }
 						onChange={ this.storeTagInput }
 						onSelect={ this.addTag }
-						tagNames={ difference( allTags, tags ) }
+						tagNames={ differenceBy( allTags, tags, s => s.toLocaleLowerCase() ) }
 					/>
 				</div>
 			</div>
