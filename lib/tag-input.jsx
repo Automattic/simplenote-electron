@@ -120,6 +120,7 @@ export class TagInput extends Component {
 					onInput={ this.onChange }
 					onKeyDown={ this.interceptKeys }
 					placeholder="Enter a tag name…"
+					suppressContentEditableWarning
 				>
 					{ value }
 				</div>
