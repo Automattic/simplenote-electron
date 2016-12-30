@@ -24,6 +24,7 @@ module.exports = {
 			'redux-thunk',
 			'react-virtualized',
 			'simperium',
+			'simplenote-grammar-pegjs',
 			'sockjs-client'
 		]
 	},
