@@ -1,13 +1,14 @@
 function readConfig() {
-	var config = {};
-
 	try {
-		config = require( './config' );
+		return require( './config' )();
 	} catch ( e ) {
-		console.warn( 'no configuration file present' );
+		console.error(
+			'Could not read in the required configuration file.\n' +
+			'This file should exist as `config.js` inside the project root directory.\n' +
+			'Please consult the project README.md for further information.\n'
+		);
+		process.exit( 0 );
 	}
-
-	return config();
 }
 
 function getConfig() {
