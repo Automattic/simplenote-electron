@@ -3,6 +3,7 @@ const webpack = require( 'webpack' );
 const AppCachePlugin = require( 'appcache-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const config = require( './get-config' );
+const spawnSync = require( 'child_process' ).spawnSync;
 
 module.exports = {
 	context: __dirname + '/lib',
@@ -35,9 +36,12 @@ module.exports = {
 		} ),
 		new AppCachePlugin(),
 		new HtmlWebpackPlugin( {
-			title: 'Simplenote',
+			'build-platform': process.platform,
+			'build-reference': spawnSync( 'git', [ 'describe', '--always', '--dirty' ] ).stdout.toString( 'utf8' ).replace( '\n', '' ),
 			favicon: process.cwd() + '/public_html/favicon.ico',
-			template: 'index.ejs'
+			'node-version': process.version,
+			template: 'index.ejs',
+			title: 'Simplenote',
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify(

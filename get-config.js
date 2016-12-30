@@ -7,8 +7,8 @@ function readConfig() {
 		console.warn( 'no configuration file present' );
 	}
 
-	return config;
-};
+	return config();
+}
 
 function getConfig() {
 	var config = readConfig();
