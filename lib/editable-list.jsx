@@ -97,7 +97,7 @@ export default React.createClass( {
 								}
 
 								<span className="editable-list-item-content">
-									{this.props.renderItem( item )}
+									{this.props.renderItem( item, this.props )}
 								</span>
 							</span>
 

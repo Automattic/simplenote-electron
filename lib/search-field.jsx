@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import { getSelectedCollection } from './state/ui/selectors';
+
 const KEY_ESC = 27;
 
 export class SearchField extends Component {
@@ -49,12 +51,16 @@ export class SearchField extends Component {
 			</div>
 		);
 	}
-};
+}
 
-const mapStateToProps = ( { appState } ) => ( {
-	query: appState.filter,
-	placeholder: appState.listTitle,
-	searchFocus: appState.searchFocus,
-} );
+const mapStateToProps = state => {
+	const { appState } = state;
+
+	return {
+		query: appState.filter,
+		placeholder: appState.listTitle || getSelectedCollection( state ),
+		searchFocus: appState.searchFocus,
+	}
+};
 
 export default connect( mapStateToProps )( SearchField );
