@@ -6,6 +6,7 @@ import {
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
+const KEY_RIGHT = 39;
 
 const startsWith = prefix => text =>
 	text
@@ -32,6 +33,20 @@ export class TagInput extends Component {
 		this.inputField && this.inputField.removeEventListener( 'paste', this.removePastedFormatting, false );
 	}
 
+	completeSuggestion = () => {
+		const { onChange, tagNames, value } = this.props;
+
+		if ( ! value.length ) {
+			return;
+		}
+
+		const suggestion = tagNames.find( startsWith( value ) );
+
+		if ( suggestion ) {
+			onChange( suggestion, this.focusInput );
+		}
+	};
+
 	focusInput = () => {
 		if ( ! this.inputField ) {
 			return;
@@ -51,20 +66,28 @@ export class TagInput extends Component {
 	interceptKeys = event => invoke( {
 		[ KEY_ENTER ]: this.submitTag,
 		[ KEY_TAB ]: this.interceptTabPress,
+		[ KEY_RIGHT ]: this.interceptRightArrow,
 	}, event.keyCode, event );
 
-	interceptTabPress = event => {
-		const { onChange, tagNames, value } = this.props;
+	interceptRightArrow = event => {
+		const { value } = this.props;
 
-		if ( ! value.length ) {
+		// if we aren't already at the right-most extreme
+		// then don't complete the suggestion; we could
+		// be moving the cursor around inside the input
+		const caretPosition = window.getSelection().getRangeAt( 0 ).endOffset;
+		if ( caretPosition !== value.length ) {
 			return;
 		}
 
-		const suggestion = tagNames.find( startsWith( value ) );
+		this.completeSuggestion();
 
-		if ( suggestion ) {
-			onChange( suggestion, this.focusInput );
-		}
+		event.preventDefault();
+		event.stopPropagation();
+	};
+
+	interceptTabPress = event => {
+		this.completeSuggestion();
 
 		event.preventDefault();
 		event.stopPropagation();
