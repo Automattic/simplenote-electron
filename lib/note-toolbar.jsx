@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import appState from './flux/app-state';
 import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
+import { selectRevision } from './state/revision/actions';
 
 const {
 	closeNote,
@@ -39,11 +40,9 @@ export const NoteToolbar = React.createClass( {
 		onShareNote: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
-		setIsViewingRevisions: PropTypes.func.isRequired
 	},
 
 	showRevisions: function() {
-		this.props.setIsViewingRevisions( true );
 		this.props.onRevisions( this.props.note );
 	},
 
@@ -102,6 +101,7 @@ const mapDispatchToProps = ( dispatch, { noteBucket, previousIndex } ) => ( {
 	},
 	onRevisions: note => {
 		dispatch( noteRevisions( { noteBucket, note } ) );
+		dispatch( selectRevision( note ) );
 		recordEvent( 'editor_versions_accessed' );
 	},
 	onShareNote: note =>

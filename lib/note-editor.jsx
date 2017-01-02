@@ -10,7 +10,7 @@ import { get, property } from 'lodash'
 import appState from './flux/app-state';
 import filterNotes from './utils/filter-notes';
 import ModeBar from './mode-bar';
-import { setIsViewingRevisions, selectRevision } from './state/revision/actions';
+import { selectRevision } from './state/revision/actions';
 
 const {
 	setShouldPrintNote,
@@ -42,7 +42,7 @@ export const NoteEditor = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		this.props.onSelectRevision( null );
+		this.props.onCancelRevision();
 	},
 
 	componentDidUpdate: function() {
@@ -62,17 +62,11 @@ export const NoteEditor = React.createClass( {
 			return;
 		}
 
-		const { note, onUpdateContent } = this.props;
+		const { note, onCancelRevision, onUpdateContent } = this.props;
 		const { data: { content } } = revision;
 
 		onUpdateContent( note, content );
-		this.props.onSetIsViewingRevisions( false );
-	},
-
-	onCancelRevision: function() {
-		// clear out the revision
-		this.props.onSelectRevision( null );
-		this.props.onSetIsViewingRevisions( false );
+		onCancelRevision();
 	},
 
 	render: function() {
@@ -80,10 +74,9 @@ export const NoteEditor = React.createClass( {
 		const {
 			editorMode,
 			fontSize,
-			isViewingRevisions,
 			note,
 			noteBucket,
-			onSetIsViewingRevisions,
+			onCancelRevision,
 			onSelectRevision,
 			selectedRevision,
 			revisions,
@@ -99,7 +92,7 @@ export const NoteEditor = React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: isViewingRevisions,
+			revisions: selectedRevision,
 			markdown: markdownEnabled
 		} );
 
@@ -116,14 +109,11 @@ export const NoteEditor = React.createClass( {
 			<div className={classes}>
 				<RevisionSelector
 					revisions={revisions || []}
-					onViewRevision={ onSelectRevision }
-					onSelectRevision={this.onSelectRevision}
-					onCancelRevision={this.onCancelRevision} />
+					onViewRevision={ this.onViewRevision }
+					onSelectRevision={ onSelectRevision }
+					onCancelRevision={ onCancelRevision } />
 				<div className="note-editor-controls theme-color-border">
-					<NoteToolbar
-						noteBucket={ noteBucket }
-						setIsViewingRevisions={ onSetIsViewingRevisions }
-					/>
+					<NoteToolbar noteBucket={ noteBucket } />
 				</div>
 				<div className="note-editor-content theme-color-border">
 					{ !! markdownEnabled &&
@@ -175,10 +165,9 @@ const mapStateToProps = ( {
 };
 
 const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+	onCancelRevision: () => dispatch( selectRevision( null ) ),
 	onNotePrinted: () =>
 		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
-	onSetIsViewingRevisions: isViewing =>
-		dispatch( setIsViewingRevisions( isViewing ) ),
 	onSelectRevision: revision =>
 		dispatch( selectRevision( revision ) ),
 	onUpdateContent: ( note, content ) =>
