@@ -1,15 +1,20 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import marked from 'marked';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
+import appState from './flux/app-state';
+import filterNotes from './utils/filter-notes';
+
+const { updateNoteContent } = appState.actionCreators;
 
 const saveDelay = 2000;
 const highlighter = code => highlight.highlightAuto( code ).value;
 
-export default React.createClass( {
+export const NoteDetail = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -74,7 +79,6 @@ export default React.createClass( {
 
 	render: function() {
 		const {
-			filter,
 			fontSize,
 			previewingMarkdown,
 		} = this.props;
@@ -101,7 +105,6 @@ export default React.createClass( {
 						<NoteContentEditor
 							ref={ this.saveEditorRef }
 							content={ content }
-							filter={ filter }
 							onChangeContent={ this.queueNoteSave }
 						/>
 					</div>
@@ -110,3 +113,25 @@ export default React.createClass( {
 		);
 	},
 } );
+
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+	settings: { fontSize, markdownEnabled },
+} ) => {
+	const filteredNotes = filterNotes( state );
+	const noteIndex = Math.max( state.previousIndex, 0 );
+	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const revision = selectedRevision || note;
+	return {
+		fontSize,
+		note: revision,
+		previewingMarkdown: markdownEnabled && state.editorMode === 'markdown',
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
+	onChangeContent: ( note, content ) =>
+		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
+} );
+export default connect( mapStateToProps, mapDispatchToProps )( NoteDetail );

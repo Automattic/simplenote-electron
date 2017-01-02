@@ -14,24 +14,20 @@ import { selectRevision } from './state/revision/actions';
 
 const {
 	setShouldPrintNote,
-	updateNoteContent,
 	updateNoteTags,
 } = appState.actionCreators;
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
-		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
-		onUpdateContent: PropTypes.func.isRequired,
 		onUpdateNoteTags: PropTypes.func.isRequired,
 		onPrintNote: PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			editorMode: 'edit',
 			note: {
 				data: {
 					tags: []
@@ -55,7 +51,6 @@ export const NoteEditor = React.createClass( {
 	render: function() {
 		let noteContent = '';
 		const {
-			editorMode,
 			fontSize,
 			isTrashed,
 			note,
@@ -93,12 +88,7 @@ export const NoteEditor = React.createClass( {
 						<ModeBar />
 					}
 					<div className="note-editor-detail">
-						<NoteDetail
-							filter={this.props.filter}
-							note={revision}
-							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-							onChangeContent={this.props.onUpdateContent}
-							fontSize={fontSize} />
+						<NoteDetail noteBucket={ noteBucket } />
 					</div>
 				</div>
 				{ shouldPrint &&
@@ -121,20 +111,18 @@ const mapStateToProps = ( {
 	revision: { selectedRevision },
 	settings: { fontSize, markdownEnabled },
 } ) => {
-	const { editorMode, shouldPrint } = state;
 	const filteredNotes = filterNotes( state );
 	const noteIndex = Math.max( state.previousIndex, 0 );
 	const note = state.note ? state.note : filteredNotes[ noteIndex ];
 	const revision = selectedRevision || note;
 	return {
-		editorMode,
 		fontSize,
 		isTrashed: !! ( note && note.data.deleted ),
 		markdownEnabled,
 		note,
 		revision,
 		selectedRevision,
-		shouldPrint,
+		shouldPrint: state.shouldPrint,
 		tags: get( revision, 'data.tags', [] ),
 	};
 };
@@ -143,8 +131,6 @@ const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 	onCancelRevision: () => dispatch( selectRevision( null ) ),
 	onNotePrinted: () =>
 		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
-	onUpdateContent: ( note, content ) =>
-		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
 	onUpdateNoteTags: ( note, tags ) =>
 		dispatch( updateNoteTags( { noteBucket, tagBucket, note, tags } ) ),
 } );
