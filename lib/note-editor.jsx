@@ -8,7 +8,7 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get, property } from 'lodash'
 import appState from './flux/app-state';
-import filterNotes from './utils/filter-notes';
+import getNote from './utils/get-note';
 import ModeBar from './mode-bar';
 import { selectRevision } from './state/revision/actions';
 
@@ -104,9 +104,7 @@ const mapStateToProps = ( {
 	revision: { selectedRevision },
 	settings: { fontSize },
 } ) => {
-	const filteredNotes = filterNotes( state );
-	const noteIndex = Math.max( state.previousIndex, 0 );
-	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const note = getNote( state );
 	const revision = selectedRevision || note;
 	return {
 		fontSize,

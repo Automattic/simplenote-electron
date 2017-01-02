@@ -11,7 +11,7 @@ import {
 	union,
 } from 'lodash';
 import appState from './flux/app-state';
-import filterNotes from './utils/filter-notes';
+import getNote from './utils/get-note';
 
 const { updateNoteTags } = appState.actionCreators;
 
@@ -191,9 +191,7 @@ const mapStateToProps = ( {
 	appState: state,
 	revision: { selectedRevision },
 } ) => {
-	const filteredNotes = filterNotes( state );
-	const noteIndex = Math.max( state.previousIndex, 0 );
-	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const note = getNote( state );
 	const revision = selectedRevision || note;
 	return {
 		note,

@@ -7,7 +7,7 @@ import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
 import appState from './flux/app-state';
-import filterNotes from './utils/filter-notes';
+import getNote from './utils/get-note';
 
 const { updateNoteContent } = appState.actionCreators;
 
@@ -119,10 +119,7 @@ const mapStateToProps = ( {
 	revision: { selectedRevision },
 	settings: { fontSize },
 } ) => {
-	const filteredNotes = filterNotes( state );
-	const noteIndex = Math.max( state.previousIndex, 0 );
-	const note = state.note ? state.note : filteredNotes[ noteIndex ];
-	const revision = selectedRevision || note;
+	const revision = selectedRevision || getNote( state );
 	const previewingMarkdown = get( revision, 'data.systemTags', '' ).indexOf( 'markdown' ) !== -1
 		&& state.editorMode === 'markdown';
 	return {

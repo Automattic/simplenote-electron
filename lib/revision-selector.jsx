@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import moment from 'moment'
 import { orderBy } from 'lodash';
 import appState from './flux/app-state';
-import filterNotes from './utils/filter-notes';
+import getNote from './utils/get-note';
 import { selectRevision } from './state/revision/actions';
 
 const { updateNoteContent } = appState.actionCreators;
@@ -145,9 +145,7 @@ RevisionSelector.propTypes = {
 };
 
 const mapStateToProps = ( { appState: state } ) => {
-	const filteredNotes = filterNotes( state );
-	const noteIndex = Math.max( state.previousIndex, 0 );
-	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const note = getNote( state );
 	return {
 		note,
 		revisions: state.revisions || [],
