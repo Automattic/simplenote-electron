@@ -117,16 +117,18 @@ export const NoteDetail = React.createClass( {
 const mapStateToProps = ( {
 	appState: state,
 	revision: { selectedRevision },
-	settings: { fontSize, markdownEnabled },
+	settings: { fontSize },
 } ) => {
 	const filteredNotes = filterNotes( state );
 	const noteIndex = Math.max( state.previousIndex, 0 );
 	const note = state.note ? state.note : filteredNotes[ noteIndex ];
 	const revision = selectedRevision || note;
+	const previewingMarkdown = get( revision, 'data.systemTags', '' ).indexOf( 'markdown' ) !== -1
+		&& state.editorMode === 'markdown';
 	return {
 		fontSize,
 		note: revision,
-		previewingMarkdown: markdownEnabled && state.editorMode === 'markdown',
+		previewingMarkdown,
 	};
 };
 
