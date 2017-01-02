@@ -1,6 +1,12 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import moment from 'moment'
 import { orderBy } from 'lodash';
+import appState from './flux/app-state';
+import filterNotes from './utils/filter-notes';
+import { selectRevision } from './state/revision/actions';
+
+const { updateNoteContent } = appState.actionCreators;
 
 const sortedRevisions = revisions =>
 	orderBy( revisions, 'data.modificationDate', 'asc' );
@@ -59,7 +65,14 @@ export const RevisionSelector = React.createClass( {
 			selection,
 		} = this.state;
 
-		this.props.onSelectRevision( revisions[ selection ] );
+		if ( revisions[ selection ] ) {
+			const { note, onCancelRevision, onUpdateContent } = this.props;
+			const { data: { content } } = revisions[ selection ];
+
+			onUpdateContent( note, content );
+			onCancelRevision();
+		}
+
 		this.resetSelection();
 	},
 
@@ -131,4 +144,21 @@ RevisionSelector.propTypes = {
 	revisions: PropTypes.array.isRequired,
 };
 
-export default RevisionSelector;
+const mapStateToProps = ( { appState: state } ) => {
+	const filteredNotes = filterNotes( state );
+	const noteIndex = Math.max( state.previousIndex, 0 );
+	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	return {
+		note,
+		revisions: state.revisions || [],
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
+	onCancelRevision: () => dispatch( selectRevision( null ) ),
+	onUpdateContent: ( note, content ) =>
+		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
+	onViewRevision: revision => dispatch( selectRevision( revision ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( RevisionSelector );

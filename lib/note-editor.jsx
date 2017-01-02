@@ -22,7 +22,6 @@ export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
-		revisions: PropTypes.array,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
 		onUpdateContent: PropTypes.func.isRequired,
@@ -53,22 +52,6 @@ export const NoteEditor = React.createClass( {
 		}
 	},
 
-	onViewRevision: function( revision ) {
-		this.props.onSelectRevision( revision );
-	},
-
-	onSelectRevision: function( revision ) {
-		if ( ! revision ) {
-			return;
-		}
-
-		const { note, onCancelRevision, onUpdateContent } = this.props;
-		const { data: { content } } = revision;
-
-		onUpdateContent( note, content );
-		onCancelRevision();
-	},
-
 	render: function() {
 		let noteContent = '';
 		const {
@@ -76,10 +59,7 @@ export const NoteEditor = React.createClass( {
 			fontSize,
 			note,
 			noteBucket,
-			onCancelRevision,
-			onSelectRevision,
 			selectedRevision,
-			revisions,
 			shouldPrint,
 		} = this.props;
 
@@ -107,11 +87,7 @@ export const NoteEditor = React.createClass( {
 
 		return (
 			<div className={classes}>
-				<RevisionSelector
-					revisions={revisions || []}
-					onViewRevision={ this.onViewRevision }
-					onSelectRevision={ onSelectRevision }
-					onCancelRevision={ onCancelRevision } />
+				<RevisionSelector noteBucket={ noteBucket } />
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar noteBucket={ noteBucket } />
 				</div>
@@ -145,21 +121,19 @@ export const NoteEditor = React.createClass( {
 
 const mapStateToProps = ( {
 	appState: state,
-	revision: { isViewingRevisions, selectedRevision },
+	revision: { selectedRevision },
 	settings: { fontSize, markdownEnabled },
 } ) => {
-	const { editorMode, revisions, shouldPrint } = state;
+	const { editorMode, shouldPrint } = state;
 	const filteredNotes = filterNotes( state );
 	const noteIndex = Math.max( state.previousIndex, 0 );
 	const note = state.note ? state.note : filteredNotes[ noteIndex ];
 	return {
 		editorMode,
 		fontSize,
-		isViewingRevisions,
 		markdownEnabled,
 		note,
 		selectedRevision,
-		revisions,
 		shouldPrint,
 	};
 };
@@ -168,8 +142,6 @@ const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 	onCancelRevision: () => dispatch( selectRevision( null ) ),
 	onNotePrinted: () =>
 		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
-	onSelectRevision: revision =>
-		dispatch( selectRevision( revision ) ),
 	onUpdateContent: ( note, content ) =>
 		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
 	onUpdateNoteTags: ( note, tags ) =>
