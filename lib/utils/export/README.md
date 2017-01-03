@@ -1,25 +1,13 @@
 # Simplenote Export
 
-This module provides a function which can be used to export all of the notes for a given account.
+This module provides a couple of functions for exporting all of the notes in the active account.
 
-The output format is a single JSON file containing a map of two arrays: the active notes in an account; the trashed notes in an account.
+The output of `exportNote()` is an object containing a map of two arrays: the active notes in an account; the trashed notes in an account.
 
 The notes will be sorted by last modification time with the most recently-modified notes appearing first in the list.
 
-Currently the export functionality is only available through the developer console and has no corresponding component in the main app.
-
-## How to export
-
-Open the developer console. This will require either a modified version of the app enabling the console or running the app locally in a development environment inside a browser.
-
-Creating an export is as simple as running the following command from the developer console since the export function is made available in the global namespace.
-
-```js
-exportNotes()
-exportToZip()
-```
-
-After the export finishes it will trigger a download in the browser window.
+The output from `exportNotes()` can be fed into `noteExportToZip()` to generate a [JSZip](https://github.com/Stuk/jszip) object containing the information for creating a zip archive of the notes.
+This archive contains each note as its own file with a generated filename and the list of associated tags at the end of the content.
 
 ## Example export
 
