@@ -7,7 +7,8 @@ function readConfig() {
 			'This file should exist as `config.js` inside the project root directory.\n' +
 			'Please consult the project README.md for further information.\n'
 		);
-		process.exit( 1 );
+
+		throw e;
 	}
 }
 
