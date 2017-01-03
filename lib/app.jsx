@@ -481,6 +481,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<NoteList noteBucket={ noteBucket } />
 							</div>
 							<NoteEditor
+								allTags={ state.tags }
 								editorMode={state.editorMode}
 								note={selectedNote}
 								revisions={state.revisions}

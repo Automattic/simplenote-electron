@@ -1,0 +1,31 @@
+.tag-input {
+	display: flex;
+	overflow: visible;
+	min-height: 26px;
+}
+
+.tag-input__entry {
+	&:empty:before {
+		content: attr(placeholder);
+		display: block;
+		color: lighten( $gray, 10% );
+	}
+
+	& b,
+	& strong {
+		font-weight: normal;
+	}
+
+	& i,
+	& em {
+		font-style: normal;
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.tag-input__suggestion {
+	color: lighten( $gray, 10% );
+}

@@ -1,12 +1,20 @@
-import React, { PropTypes } from 'react'
-import TagChip from './tag-chip'
+import React, { PropTypes } from 'react';
+import TagChip from './tag-chip';
+import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
+import {
+	differenceBy,
+	intersectionBy,
+	invoke,
+	union,
+} from 'lodash';
 
 export default React.createClass( {
 
 	propTypes: {
-		tags: PropTypes.array,
+		unusedTags: PropTypes.arrayOf( PropTypes.string ),
+		usedTags: PropTypes.arrayOf( PropTypes.string ),
 		onUpdateNoteTags: PropTypes.func.isRequired
 	},
 
@@ -18,53 +26,60 @@ export default React.createClass( {
 
 	getInitialState: function() {
 		return {
-			selectedTag: -1
+			selectedTag: '',
+			tagInput: '',
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { selectedTag: -1 } );
+	componentDidMount() {
+		document.addEventListener( 'click', this.unselect, true );
+	},
+
+	componentWillUnmount() {
+		document.removeEventListener( 'click', this.unselect, true );
 	},
 
 	componentDidUpdate: function() {
 		if ( this.hasSelection() ) {
-			this.refs.hiddenTag.focus();
+			this.hiddenTag.focus();
 		}
-	},
-
-	clearTextField: function() {
-		this.refs.tag.value = '';
 	},
 
 	addTag: function( tags ) {
-		tags = tags.trim().replace( /\s+/g, ',' ).split( ',' );
-		tags = this.props.tags.concat( tags );
-		this.props.onUpdateNoteTags( tags );
+		const {
+			allTags,
+			tags: existingTags,
+		} = this.props;
+
+		const newTags = tags.trim().replace( /\s+/g, ',' ).split( ',' );
+
+		const nextTagList = union(
+			existingTags, // tags already in note
+			intersectionBy( allTags, newTags, s => s.toLocaleLowerCase() ), // use existing case if tag known
+			differenceBy( newTags, allTags, s => s.toLocaleLowerCase() ), // add completely new tags
+		);
+		this.props.onUpdateNoteTags( nextTagList );
+		this.storeTagInput( '' );
+		invoke( this, 'tagInput.focus' );
 		analytics.tracks.recordEvent( 'editor_tag_added' );
 	},
 
-	onSelectTag: function( tag, index ) {
-		this.setState( { selectedTag: index } );
-	},
-
 	hasSelection: function() {
-		return this.state.selectedTag !== -1;
+		return !! this.state.selectedTag.length;
 	},
 
-	deleteTag: function( index ) {
-		var tags = this.props.tags.concat( [] );
-		tags.splice( this.state.selectedTag, 1 );
+	deleteTag: function( tagName ) {
+		const { onUpdateNoteTags, tags } = this.props;
+		const { selectedTag } = this.state;
 
-		// var state = {tags: tags};
-		let state = {};
+		onUpdateNoteTags( differenceBy( tags, [ tagName ], s => s.toLocaleLowerCase() ) );
 
-		if ( this.state.selectedTag === index ) {
-			state.selectedTag = -1;
+		if ( selectedTag === tagName ) {
+			this.setState( { selectedTag: '' } );
 		}
 
-		this.props.onUpdateNoteTags( tags );
+		invoke( this, 'tagInput.focus' );
 
-		this.setState( state );
 		analytics.tracks.recordEvent( 'editor_tag_removed' );
 	},
 
@@ -76,69 +91,88 @@ export default React.createClass( {
 
 	selectLastTag: function() {
 		this.setState( {
-			selectedTag: this.props.tags.length - 1
+			selectedTag: this.props.tags.slice( -1 ).shift()
 		} );
 	},
 
-	preventTyping: function( e ) {
-		e.preventDefault();
+	selectTag( event ) {
+		const { target: { dataset: { tagName } } } = event;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		this.deleteTag( tagName );
 	},
 
 	onKeyDown: function( e ) {
-		var tag = this.refs.tag.value.trim();
-		switch ( e.which ) {
-			case 13: // return key
-			case 9: // tab key
-				e.preventDefault();
-				// commit the value of the tag
-				if ( tag === '' ) return;
-				this.addTag( tag );
-				this.clearTextField();
-				break;
-			case 8: // backspace
-				// if a tag is selected, delete it, if no tag is select select right-most tag
-				if ( this.hasSelection() ) {
-					this.deleteSelection();
-				}
-				if ( tag !== '' ) return;
-				// this.getDOMNode().focus();
-				this.selectLastTag();
-				e.preventDefault();
-				break;
-			default:
-				break;
+		// only handle backspace
+		if ( 8 !== e.which ) {
+			return;
+		}
+
+		if ( this.hasSelection() ) {
+			this.deleteSelection();
+		}
+
+		if ( '' !== this.state.tagInput ) {
+			return;
+		}
+
+		this.selectLastTag();
+		e.preventDefault();
+	},
+
+	storeHiddenTag( r ) {
+		this.hiddenTag = r;
+	},
+
+	storeInputRef( r ) {
+		this.tagInput = r;
+	},
+
+	storeTagInput( value, callback ) {
+		this.setState( {
+			tagInput: value,
+		}, callback );
+	},
+
+	unselect( event ) {
+		if ( ! this.state.selectedTag ) {
+			return;
+		}
+
+		if ( this.hiddenTag !== event.relatedTarget ) {
+			this.setState( { selectedTag: '' } );
 		}
 	},
 
-	onBlur: function() {
-		// only deselect if we're not inside the hidden tag
-		// this.setState({selectedTag: -1});
-		setTimeout( () => {
-			var h = this.refs.hiddenTag;
-			if ( h !== document.activeElement ) {
-				this.setState( { selectedTag: -1 } );
-			}
-		}, 1 );
-	},
-
 	render: function() {
-		var { selectedTag } = this.state;
+		const { allTags, tags } = this.props;
+		const { selectedTag, tagInput } = this.state;
 
 		return (
 			<div className="tag-entry theme-color-border">
-				<div className={classNames( 'tag-editor', { 'has-selection': this.hasSelection() } )}
+				<div className={ classNames( 'tag-editor', { 'has-selection': this.hasSelection() } )}
 					tabIndex="-1"
 					onKeyDown={this.onKeyDown}
-					onBlur={this.onBlur}>
-					<input className="hidden-tag" tabIndex="-1" ref="hiddenTag" onKeyDown={this.preventTyping} />
-					{this.props.tags.map( ( tag, index ) =>
-						<TagChip key={tag} tag={tag}
-							selected={index === selectedTag}
-							onSelect={this.onSelectTag.bind( this, tag, index )} />
-					)}
-					<div className="tag-field">
-						<input ref="tag" type="text" tabIndex="0" placeholder="Add tags &hellip;" />
-					</div>
+				>
+					<input className="hidden-tag" tabIndex="-1" ref={ this.storeHiddenTag } />
+					{ tags.map( tag =>
+						<TagChip
+							key={tag}
+							tag={tag}
+							selected={ tag === selectedTag }
+							onSelect={ this.selectTag }
+						/>
+					) }
+					<TagInput
+						allTags={ allTags }
+						inputRef={ this.storeInputRef }
+						value={ tagInput }
+						onChange={ this.storeTagInput }
+						onSelect={ this.addTag }
+						tagNames={ differenceBy( allTags, tags, s => s.toLocaleLowerCase() ) }
+					/>
 				</div>
 			</div>
 		);
