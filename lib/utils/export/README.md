@@ -16,6 +16,7 @@ Creating an export is as simple as running the following command from the develo
 
 ```js
 exportNotes()
+exportToZip()
 ```
 
 After the export finishes it will trigger a download in the browser window.
