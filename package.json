@@ -71,6 +71,7 @@
     "redux": "3.6.0",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "1.0.3",
+    "sanitize-filename": "1.6.1",
     "serve-favicon": "2.3.2",
     "simperium": "0.2.5"
   }
