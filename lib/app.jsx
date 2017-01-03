@@ -41,29 +41,13 @@ import {
 	values,
 } from 'lodash';
 
-window.exportNotes = () =>
-	exportNotes()
-		.then( data => {
-			const link = document.createElement( 'a' );
-			const jsonData = encodeURI( JSON.stringify( data, null, 2 ) );
-			link.href = 'data:application/json;charset=utf-8,' + jsonData;
-			link.target = '_blank';
-			link.download = 'notes.json';
-			link.click();
-		} )
-		.catch( console.log );
-
-window.exportToZip = () =>
-	exportNotes()
-		.then( exportToZip )
-		.then( data => location.href='data:application/zip;base64,' + data )
-		.catch( console.log );
-
 import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 
+// Electron-specific mocks
 let ipc = getIpc();
+let fs = null;
 
 function getIpc() {
 	try {
@@ -117,6 +101,10 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 const isElectron = ( () => {
 	// https://github.com/atom/electron/issues/2288
 	const foundElectron = has( window, 'process.type' );
+
+	if ( foundElectron ) {
+		fs = __non_webpack_require__( 'fs' );
+	}
 
 	return () => foundElectron;
 } )();
@@ -189,6 +177,14 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	onAppCommand: function( event, command ) {
+		if ( 'exportZipArchive' === get( command, 'action' ) ) {
+			return exportNotes()
+				.then( exportToZip )
+				.then( zip => zip.generateAsync( { type: 'base64' } ) )
+				.then( blob => fs.writeFile( command.filename, blob, 'base64' ) )
+				.catch( console.log );
+		}
+
 		const canRun = overEvery(
 			isObject,
 			o => o.action !== null,
