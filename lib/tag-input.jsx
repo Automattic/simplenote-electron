@@ -33,7 +33,7 @@ export class TagInput extends Component {
 		this.inputField && this.inputField.removeEventListener( 'paste', this.removePastedFormatting, false );
 	}
 
-	completeSuggestion = () => {
+	completeSuggestion = ( andThen = identity ) => {
 		const { onChange, tagNames, value } = this.props;
 
 		if ( ! value.length ) {
@@ -43,7 +43,10 @@ export class TagInput extends Component {
 		const suggestion = tagNames.find( startsWith( value ) );
 
 		if ( suggestion ) {
-			onChange( suggestion, this.focusInput );
+			onChange( suggestion, () => {
+				andThen( suggestion );
+				this.focusInput();
+			} );
 		}
 	};
 
@@ -87,7 +90,7 @@ export class TagInput extends Component {
 	};
 
 	interceptTabPress = event => {
-		this.completeSuggestion();
+		this.completeSuggestion( this.submitTag );
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -120,8 +123,9 @@ export class TagInput extends Component {
 
 		value.trim().length && onSelect( value.trim() );
 
-		event.preventDefault();
-		event.stopPropagation();
+		// safe invoke since event could be empty
+		invoke( event, 'preventDefault' );
+		invoke( event, 'stopPropagation' );
 	};
 
 	render() {
