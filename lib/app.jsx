@@ -180,7 +180,11 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		if ( 'exportZipArchive' === get( command, 'action' ) ) {
 			return exportNotes()
 				.then( exportToZip )
-				.then( zip => zip.generateAsync( { type: 'base64' } ) )
+				.then( zip => zip.generateAsync( {
+					compression: 'DEFLATE',
+					platform: get( window, 'process.platform', 'DOS' ),
+					type: 'base64',
+				} ) )
 				.then( blob => fs.writeFile( command.filename, blob, 'base64' ) )
 				.catch( console.log );
 		}
