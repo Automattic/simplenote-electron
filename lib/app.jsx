@@ -13,6 +13,8 @@ import {
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
+import exportNotes from './utils/export';
+import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info'
 import NoteList from './note-list'
 import NoteEditor	from './note-editor'
@@ -43,7 +45,9 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 
+// Electron-specific mocks
 let ipc = getIpc();
+let fs = null;
 
 function getIpc() {
 	try {
@@ -97,6 +101,10 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 const isElectron = ( () => {
 	// https://github.com/atom/electron/issues/2288
 	const foundElectron = has( window, 'process.type' );
+
+	if ( foundElectron ) {
+		fs = __non_webpack_require__( 'fs' );
+	}
 
 	return () => foundElectron;
 } )();
@@ -169,6 +177,18 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 	},
 
 	onAppCommand: function( event, command ) {
+		if ( 'exportZipArchive' === get( command, 'action' ) ) {
+			return exportNotes()
+				.then( exportToZip )
+				.then( zip => zip.generateAsync( {
+					compression: 'DEFLATE',
+					platform: get( window, 'process.platform', 'DOS' ),
+					type: 'base64',
+				} ) )
+				.then( blob => fs.writeFile( command.filename, blob, 'base64' ) )
+				.catch( console.log );
+		}
+
 		const canRun = overEvery(
 			isObject,
 			o => o.action !== null,
