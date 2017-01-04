@@ -1,5 +1,5 @@
 node_modules/**/*
-build/
+desktop-build/
 dist/
 release/
 /config.js

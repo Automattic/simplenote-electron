@@ -19,7 +19,7 @@ var electronVersion = pkg.devDependencies['electron'].replace( '^', '' );
 var key;
 
 var opts = {
-	dir: './',
+	dir: './desktop-build',
 	name: config.name,
 	author: config.author,
 	platform: builder.getPlatform( process.argv ),
@@ -34,11 +34,11 @@ var opts = {
 	'app-category-type': 'public.app-category.social-networking',
 	'app-version': config.version,
 	'build-version': config.version,
-	ignore: [],
 	overwrite: true,
 	asar: false,
 	sign: false,
 	prune: true,
+	ignore: [],
 	'version-string': {
 		CompanyName: config.author,
 		LegalCopyright: config.copyright,
@@ -50,23 +50,6 @@ var opts = {
 		ProductVersion: config.version
 	}
 };
-
-// function whitelistInDirectory( directory, whitelist ) {
-// 	var client = fs.readdirSync( directory );
-// 	var ignore = [];
-//
-// 	for ( key = 0; key < client.length; key++ ) {
-// 		if ( whitelist.indexOf( client[key] ) === -1 ) {
-// 			ignore.push( path.join( directory, client[key] ) );
-// 		}
-// 	}
-//
-// 	return ignore;
-// }
-//
-// opts.ignore = opts.ignore.concat( whitelistInDirectory( './node_modules', [ 'deep-equal', 'electron-window-state', 'jsonfile', 'mkdirp' ] ) );
-// opts.ignore = opts.ignore.concat( whitelistInDirectory( './dist', [ 'index.html', 'app.js', 'manifest.appcache' ] ) );
-// opts.ignore = opts.ignore.concat( whitelistInDirectory( './', [ 'package.json', 'dist', 'desktop', 'node_modules' ] ) );
 
 builder.beforeBuild( __dirname, opts, function( error ) {
 	if ( error ) {
