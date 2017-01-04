@@ -164,7 +164,7 @@ function createMenuTemplate( settings ) {
 		}, {
 			type: 'separator'
 		}, {
-			label: '&Export',
+			label: '&Export Notes',
 			accelerator: 'CommandOrControl+Shift+E',
 			click( item, focusedWindow ) {
 				if ( focusedWindow ) {
