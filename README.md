@@ -11,17 +11,14 @@ A Simplenote [React](https://facebook.github.io/react/) client packaged in [Elec
 ## Running
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
-2. Create a new file in the root directory, named `config.js`
-3. Add the Simplenote application id and token to `config.js`
+2. Create a new file in the root directory, named `config.json`
+3. Add the Simplenote application id and token to `config.json`
 
-```js
-module.exports = function() {
-  return {
-    app_id:     "your-app-id",
-    // For creating/authenticating users
-    app_key:    "yourappkey"
-  };
-};
+```json
+{
+  "app_id":     "your-app-id",
+  "app_key":    "yourappkey"
+}
 ```
 
 4. `npm install` _or_ `docker-compose up install` (if Docker installed)
