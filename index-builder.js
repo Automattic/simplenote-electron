@@ -1,4 +1,4 @@
-var jade = require( 'jade' );
+var pug = require( 'pug' );
 
 function getConfig() {
 	var config = {};
@@ -13,7 +13,7 @@ function getConfig() {
 };
 
 function getTemplateContent( templateParams ) {
-	return jade.renderFile( './views/app.jade', {
+	return pug.renderFile( './views/app.pug', {
 		pkg: require( './package.json' ),
 		o: templateParams,
 		config: getConfig()
