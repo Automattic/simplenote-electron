@@ -10,6 +10,7 @@ RESET=`tput sgr0`
 START_APP := @$(NPM_BIN)/electron .
 ELECTRON_TEST := ELECTRON_PATH=$(NPM_BIN)/electron $(NPM_BIN)/electron-mocha
 CONFIG := $(THIS_DIR)/config.json
+DESKTOP_BUILD_DIR := $(THIS_DIR)/desktop-build
 BUILDER := $(THIS_DIR)/builder.js
 BUILD_CONFIG := $(THIS_DIR)/resources/build-scripts/build-config-file.js
 PACKAGE_DMG := $(THIS_DIR)/resources/build-scripts/package-dmg.js
@@ -36,16 +37,24 @@ build-if-changed: build-if-not-exists
 	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
 
 # Build packages
-osx: config-release build-if-changed
+osx: config-release package
 	@node $(BUILDER) darwin
 
-linux: config-release build-if-changed
+linux: config-release package
 	@node $(BUILDER) linux
 
-win32: config-release build-if-changed
+win32: config-release package
 	@node $(BUILDER) win32
 
 # Packagers
+package: build-if-changed
+	@rm -rf $(DESKTOP_BUILD_DIR)/node_modules $(DESKTOP_BUILD_DIR)/desktop $(DESKTOP_BUILD_DIR)/dist
+	@mkdir -p $(DESKTOP_BUILD_DIR)
+	@cp -rf $(THIS_DIR)/package.json $(DESKTOP_BUILD_DIR)
+	@cp -R $(THIS_DIR)/node_modules $(DESKTOP_BUILD_DIR)
+	@cp -R $(THIS_DIR)/desktop $(DESKTOP_BUILD_DIR)
+	@cp -R $(THIS_DIR)/dist $(DESKTOP_BUILD_DIR)
+
 package-win32: win32
 	@$(PACKAGE_WIN32) ./release/Simplenote-win32-ia32 --platform=win --out=./release --config=./resources/build-config/win32.json
 	@node $(THIS_DIR)/resources/build-scripts/rename-with-version-win.js
