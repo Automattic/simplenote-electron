@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import SmallCrossIcon from './icons/cross-small';
+import classNames from 'classnames';
+
 const KEY_ESC = 27;
 
 export class SearchField extends Component {
@@ -23,12 +26,14 @@ export class SearchField extends Component {
 
 	interceptEsc = ( { keyCode } ) =>
 		KEY_ESC === keyCode
-			? this.props.onSearch( '' )
+			? this.clearQuery()
 			: null;
 
 	storeInput = r => this.inputField = r;
 
 	update = ( { target: { value: query } } ) => this.props.onSearch( query );
+
+	clearQuery = () => this.props.onSearch( '' );
 
 	render() {
 		const {
@@ -36,8 +41,12 @@ export class SearchField extends Component {
 			query,
 		} = this.props;
 
+		const classes = classNames( 'search-field', {
+			'has-query': query && query.length > 0
+		} );
+
 		return (
-			<div className="search-field">
+			<div className={ classes }>
 				<input
 					ref={ this.storeInput }
 					type="text"
@@ -46,6 +55,9 @@ export class SearchField extends Component {
 					onKeyUp={ this.interceptEsc }
 					value={ query }
 				/>
+			<div onClick={ this.clearQuery }>
+				<SmallCrossIcon />
+			</div>
 			</div>
 		);
 	}
