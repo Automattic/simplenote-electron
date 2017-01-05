@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-
-import SmallCrossIcon from './icons/cross-small';
 import classNames from 'classnames';
+import SmallCrossIcon from './icons/cross-small';
 
 const KEY_ESC = 27;
 
