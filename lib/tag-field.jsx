@@ -6,8 +6,10 @@ import classNames from 'classnames';
 import analytics from './analytics';
 import {
 	differenceBy,
+	get,
 	intersectionBy,
 	invoke,
+	property,
 	union,
 } from 'lodash';
 import appState from './flux/app-state';
@@ -194,6 +196,7 @@ const mapStateToProps = ( {
 	const note = getNote( state );
 	const revision = selectedRevision || note;
 	return {
+		allTags: state.tags.map( property( 'data.name' ) ),
 		note,
 		tags: get( revision, 'data.tags', [] ),
 	};

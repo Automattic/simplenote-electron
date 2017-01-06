@@ -6,7 +6,7 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
-import { get, property } from 'lodash'
+import { get } from 'lodash'
 import appState from './flux/app-state';
 import getNote from './utils/get-note';
 import ModeBar from './mode-bar';
@@ -88,11 +88,7 @@ export const NoteEditor = React.createClass( {
 					dangerouslySetInnerHTML={ { __html: noteContent } } />
 				}
 				{ ! isTrashed &&
-					<TagField
-						allTags={ this.props.allTags.map( property( 'data.name' ) ) }
-						noteBucket={ noteBucket }
-						tagBucket={ tagBucket }
-					/>
+					<TagField noteBucket={ noteBucket } tagBucket={ tagBucket } />
 				}
 			</div>
 		)

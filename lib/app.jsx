@@ -309,7 +309,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<SearchBar noteBucket={ noteBucket } />
 								<NoteList noteBucket={ noteBucket } />
 							</div>
-							<NoteEditor allTags={ state.tags } noteBucket={ noteBucket } tagBucket={ tagBucket } />
+							<NoteEditor noteBucket={ noteBucket } tagBucket={ tagBucket } />
 							{ state.showNoteInfo &&
 								<NoteInfo noteBucket={ noteBucket } />
 							}
