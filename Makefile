@@ -23,7 +23,7 @@ SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/
 
 # check for config
 config:
-	@test -s $(THIS_DIR)/config.js || { echo "config.js not found. Required file, see docs"; exit 1; }
+	@test -s $(THIS_DIR)/config.js || test -s $(THIS_DIR)/config.json || { echo "config.json not found. Required file, see docs"; exit 1; }
 
 # Builds Calypso (desktop)
 build: install
