@@ -16,12 +16,15 @@ module.exports = {
 			'moment',
 			'promise',
 			'react',
+			'react-addons-shallow-compare',
 			'react-addons-update',
 			'react-redux',
 			'redux',
 			'redux-localstorage',
 			'redux-thunk',
+			'react-virtualized',
 			'simperium',
+			'simplenote-grammar-pegjs',
 			'sockjs-client'
 		]
 	},

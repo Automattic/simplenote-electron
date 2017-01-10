@@ -199,3 +199,70 @@
 		height: auto;
 	}
 }
+
+.is-markdown .public-DraftEditor-content {
+	&::first-line {
+		font-size: 100%;
+	}
+
+	.at-mention {
+		color: $blue-light;
+	}
+
+	.blockquote {
+		font-style: italic;
+	}
+
+	.bullet {
+		font-family: monospace;
+	}
+
+	.code-inline {
+		font-family: monospace;
+		color: darken( $gray, 10% );
+	}
+
+	.em {
+		font-style: italic;
+	}
+
+	.header {
+		line-height: 1.15;
+
+		&.level-1 {
+			font-weight: $light;
+		}
+
+		&.level-5,
+		&.level-6 {
+			text-transform: uppercase;
+		}
+	}
+
+	.link-title, .link-title-area .link-title {
+		color: $gray;
+		font-style: italic;
+	}
+
+	.link-title-area,
+	.link-url-area {
+		color: lighten( $blue, 20% );
+	}
+
+	.list-bullet {
+		color: $blue;
+	}
+
+	.strikethrough {
+		color: lighten( $gray-darkest, 10% );
+		text-decoration: line-through;
+	}
+
+	.strong {
+		font-weight: bold;
+	}
+
+	.todo-bullet {
+		color: $red;
+	}
+}

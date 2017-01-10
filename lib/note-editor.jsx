@@ -136,7 +136,9 @@ export const NoteEditor = React.createClass( {
 							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 							onChangeContent={this.props.onUpdateContent}
-							fontSize={fontSize} />
+							fontSize={fontSize}
+							markdownEnabled={ markdownEnabled }
+						/>
 					</div>
 				</div>
 				{ shouldPrint &&
