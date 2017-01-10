@@ -40,6 +40,10 @@
 		border-color: darken($gray, 25%);
 	}
 
+	.search-field {
+		border-color: darken($gray, 25%);
+	}
+
 	::-webkit-scrollbar-thumb {
 		background-color: darken($gray, 20%);
 		border-color: $gray-darkest;
