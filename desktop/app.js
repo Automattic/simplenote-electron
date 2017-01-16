@@ -3,6 +3,7 @@
 const {
 	app,
 	BrowserWindow,
+	dialog,
 	ipcMain,
 	shell,
 	Menu
@@ -153,23 +154,38 @@ function createMenuTemplate( settings ) {
 	var fileMenu = {
 		label: '&File',
 		submenu: [ {
-				label: '&New Note',
-				accelerator: 'CommandOrControl+N',
-				click( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
-					}
+			label: '&New Note',
+			accelerator: 'CommandOrControl+N',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.webContents.send( 'appCommand', { action: 'newNote' } );
 				}
-			}, {
-				type: 'separator'
-			}, {
-				label: '&Print',
-				accelerator: 'CommandOrControl+P',
-				click( item, focusedWindow ) {
-					if ( focusedWindow ) {
-						focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
-					}
+			}
+		}, {
+			type: 'separator'
+		}, {
+			label: '&Export Notes',
+			accelerator: 'CommandOrControl+Shift+E',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					dialog.showSaveDialog(
+						focusedWindow,
+						{
+							title: 'Save export as .zip archive',
+							defaultPath: path.join( app.getPath( 'desktop' ), 'notes.zip'),
+						},
+						filename => focusedWindow.webContents.send( 'appCommand', { action: 'exportZipArchive', filename } )
+					);
 				}
+			}
+		}, {
+			label: '&Print',
+			accelerator: 'CommandOrControl+P',
+			click( item, focusedWindow ) {
+				if ( focusedWindow ) {
+					focusedWindow.webContents.send( 'appCommand', { action: 'setShouldPrintNote' } );
+				}
+			}
 		} ]
 	};
 
