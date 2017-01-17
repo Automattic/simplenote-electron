@@ -9,16 +9,29 @@ import { tracks } from './analytics'
 import filterNotes from './utils/filter-notes';
 import noteTitle from './utils/note-title';
 
-// this constant was determined experimentally
-// and is open to adjustment if it doesn't find
-// the proper balance between visual updates
-// and performance impacts recomputing row heights
+/**
+ * Delay for preventing row height calculation thrashing
+ *
+ * this constant was determined experimentally
+ * and is open to adjustment if it doesn't find
+ * the proper balance between visual updates
+ * and performance impacts recomputing row heights
+ *
+ * @type {Number} minimum number of ms between calls to recomputeRowHeights in virtual/list
+ */
 const TYPING_DEBOUNCE_DELAY = 70;
 
-const noteDisplayMaxHeights = {
-	comfy: 24 + 18 + 21,
-	condensed: 24 + 18,
-	expanded: 130,
+/** @type {Number} height of title + vertical padding in list rows */
+const ROW_HEIGHT_BASE = 24 + 18;
+
+/** @type {Number} height of one row of preview text in list rows */
+const ROW_HEIGHT_LINE = 21;
+
+/** @type {Object.<String, Number>} maximum number of lines to display in list rows for display mode */
+const maxPreviewLines = {
+	comfy: 1,
+	condensed: 0,
+	expanded: 4,
 };
 
 /**
@@ -47,14 +60,10 @@ function getTextWidth( text, width ) {
  * @returns {Function} does the actual row-height estimation
  */
 const getRowHeight = ( notes, { noteDisplay, width } ) => ( { index } ) => {
-	if ( 'condensed' === noteDisplay ) {
-		return noteDisplayMaxHeights[ noteDisplay ];
-	}
-
 	const { preview } = noteTitle( notes[ index ] );
 	const lines = Math.ceil( getTextWidth( preview, width - 30 ) / ( width - 30 ) );
 
-	return Math.min( noteDisplayMaxHeights[ noteDisplay ], 24 + 18 + 21 * lines );
+	return ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * Math.min( maxPreviewLines[ noteDisplay ], lines );
 };
 
 /**
@@ -63,8 +72,8 @@ const getRowHeight = ( notes, { noteDisplay, width } ) => ( { index } ) => {
  * @see react-virtual/list
  *
  * @param {Object[]} notes list of filtered notes
- * @param {string} noteDisplay list view style: comfy, condensed, expanded
- * @param {number} selectedNoteId id of currently selected note
+ * @param {String} noteDisplay list view style: comfy, condensed, expanded
+ * @param {Number} selectedNoteId id of currently selected note
  * @param {Function} onSelectNote used to change the current note selection
  * @param {Function} onPinNote used to pin a note to the top of the list
  * @returns {Function} does the actual rendering for the List
@@ -162,7 +171,11 @@ const NoteList = React.createClass( {
 								noteDisplay={ noteDisplay }
 								notes={ this.props.notes }
 								rowCount={ this.props.notes.length }
-								rowHeight={ getRowHeight( this.props.notes, { noteDisplay, width } ) }
+								rowHeight={ (
+									'condensed' === noteDisplay
+										? ROW_HEIGHT_BASE
+										: getRowHeight( this.props.notes, { noteDisplay, width } )
+								) }
 								rowRenderer={ renderNoteRow }
 								width={ width }
 							/>
