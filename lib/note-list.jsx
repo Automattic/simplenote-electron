@@ -51,20 +51,52 @@ function getTextWidth( text, width ) {
 	return context.measureText( text ).width;
 }
 
+/** @type {Map} stores a cache of computed row heights to prevent rerendering the canvas calculation */
+const previewCache = new Map();
+
+const rowHeightCache = f => ( notes, { noteDisplay, width } ) => ( { index } ) => {
+	const note = notes[ index ];
+	const { preview } = noteTitle( note );
+
+	const key = notes[ index ].id;
+	const cached = previewCache.get( key );
+
+	if ( 'undefined' !== typeof cached ) {
+		const [ cWidth, cNoteDisplay, cPreview, cHeight ] = cached;
+
+		if ( cWidth === width && cPreview === preview && cNoteDisplay === noteDisplay ) {
+			return cHeight;
+		}
+	}
+
+	const height = f( width, noteDisplay, preview );
+
+	previewCache.set( key, [ width, noteDisplay, preview, height ] );
+
+	return height;
+};
+
+/**
+ * Computes the pixel height of a row for a given preview text in the list
+ *
+ * @param {Number} width how wide the list renders
+ * @param {string} preview preview snippet from note
+ * @returns {Number} height of the row in the list
+ */
+const computeRowHeight = ( width, noteDisplay, preview ) => {
+	const lines = Math.ceil( getTextWidth( preview, width - 30 ) / ( width - 30 ) );
+	return ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * Math.min( maxPreviewLines[ noteDisplay ], lines );
+};
+
 /**
  * Estimates the pixel height of a given row in the note list
  *
- * @param {Object[]} notes list of filtered notes
- * @param {string} noteDisplay list view style: comfy, condensed, expanded
- * @param {number} width width of box in which excerpts are rendered
- * @returns {Function} does the actual row-height estimation
+ * This function utilizes a cache to prevent rerendering the text into a canvas
+ * @see rowHeightCache
+ *
+ * @function
  */
-const getRowHeight = ( notes, { noteDisplay, width } ) => ( { index } ) => {
-	const { preview } = noteTitle( notes[ index ] );
-	const lines = Math.ceil( getTextWidth( preview, width - 30 ) / ( width - 30 ) );
-
-	return ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * Math.min( maxPreviewLines[ noteDisplay ], lines );
-};
+const getRowHeight = rowHeightCache( computeRowHeight );
 
 /**
  * Renders an individual row in the note list
@@ -159,6 +191,11 @@ const NoteList = React.createClass( {
 			onPinNote: this.onPinNote,
 			selectedNoteId,
 		} );
+
+		const heightGetter = getRowHeight( this.props.notes, { noteDisplay, width: 100 } );
+		console.time('height');
+		this.props.notes.forEach( ( note, index ) => heightGetter( { index } ) );
+		console.timeEnd('height');
 
 		return (
 			<div className="note-list">
