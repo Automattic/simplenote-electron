@@ -67,7 +67,7 @@
     "react-addons-update": "15.4.1",
     "react-dom": "15.4.1",
     "react-redux": "5.0.1",
-    "react-virtualized": "8.8.1",
+    "react-virtualized": "8.10.0",
     "redux": "3.6.0",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "1.0.3",
