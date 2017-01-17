@@ -240,11 +240,6 @@ const NoteList = React.createClass( {
 			selectedNoteId,
 		} );
 
-		const heightGetter = getRowHeight( this.props.notes, { noteDisplay, width: 100 } );
-		console.time('height');
-		this.props.notes.forEach( ( note, index ) => heightGetter( { index } ) );
-		console.timeEnd('height');
-
 		return (
 			<div className="note-list">
 				<div className={listItemsClasses}>
