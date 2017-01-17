@@ -114,13 +114,19 @@ const rowHeightCache = f => ( notes, { noteDisplay, width } ) => ( { index } ) =
 	const key = notes[ index ].id;
 	const cached = previewCache.get( key );
 
-	if ( 'undefined' === typeof cached || width !== cached[ 0 ] || noteDisplay !== cached[ 1 ] || preview !== cached[ 2 ] ) {
-		const height = f( width, noteDisplay, preview );
-		previewCache.set( key, [ width, noteDisplay, preview, height ] );
-		return height;
+	if ( 'undefined' !== typeof cached ) {
+		const [ cWidth, cNoteDisplay, cPreview, cHeight ] = cached;
+
+		if ( cWidth === width && cNoteDisplay === noteDisplay && cPreview === preview ) {
+			return cHeight;
+		}
 	}
 
-	return cached[ 3 ];
+	const height = f( width, noteDisplay, preview );
+
+	previewCache.set( key, [ width, noteDisplay, preview, height ] );
+
+	return height;
 };
 
 /**
