@@ -247,6 +247,7 @@ const NoteList = React.createClass( {
 						{ ( { height, width } ) =>
 							<List
 								ref={ this.refList }
+								estimatedRowSize={ ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * maxPreviewLines[ noteDisplay ] }
 								height={ height }
 								noteDisplay={ noteDisplay }
 								notes={ this.props.notes }
