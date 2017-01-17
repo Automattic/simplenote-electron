@@ -1,3 +1,18 @@
+/**
+ * @module NoteList
+ *
+ * This module includes some ugly code.
+ * The note list display is a significant source of
+ * visual re-render lag for accounts with many notes.
+ * The trade-offs in this file reflect a decision to
+ * optimize heavy inner loops for performance over
+ * code burden.
+ *
+ * Any changes to this code which could affect the
+ * row height calculations should be double-checked
+ * against performance regressions.
+ */
+
 import React, { PropTypes } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from './icons/feed';
@@ -51,36 +66,69 @@ function getTextWidth( text, width ) {
 	return context.measureText( text ).width;
 }
 
-/** @type {Map} stores a cache of computed row heights to prevent rerendering the canvas calculation */
+/** @type {Map} stores a cache of computed row heights to prevent re-rendering the canvas calculation */
 const previewCache = new Map();
 
+/** @type {Map} stores a cache of computed note preview excerpts to prevent re-truncating note content */
+const noteCache = new Map();
+
+/**
+ * Caches based on note id and note content
+ *
+ * @param {Function} f sets the value of the cache
+ * @returns {String} note preview excerpt
+ */
+const noteTitleCache = f => note => {
+	const cached = noteCache.get( note.id );
+
+	if ( 'undefined' === typeof cached || note.data.content !== cached[ 0 ] ) {
+		noteCache.set( note.id, [ note.data.content, f( note ) ] );
+	}
+
+	return cached
+		? cached[ 1 ]
+		: noteCache.get( note.id )[ 1 ];
+};
+
+/**
+ * Gets the note preview excerpt
+ *
+ * This is cached by the note id and content
+ *
+ * @function
+ * @param {Object} note note object
+ * @returns {String} note preview excerpt
+ */
+const getNoteTitle = noteTitleCache( note => noteTitle( note ).preview );
+
+/**
+ * Caches based on note id, width, note display format, and note preview excerpt
+ *
+ * @param {Function} f produces the row height
+ * @returns {Number} row height for note in list
+ */
 const rowHeightCache = f => ( notes, { noteDisplay, width } ) => ( { index } ) => {
 	const note = notes[ index ];
-	const { preview } = noteTitle( note );
+	const preview = getNoteTitle( note );
 
 	const key = notes[ index ].id;
 	const cached = previewCache.get( key );
 
-	if ( 'undefined' !== typeof cached ) {
-		const [ cWidth, cNoteDisplay, cPreview, cHeight ] = cached;
-
-		if ( cWidth === width && cPreview === preview && cNoteDisplay === noteDisplay ) {
-			return cHeight;
-		}
+	if ( 'undefined' === typeof cached || width !== cached[ 0 ] || noteDisplay !== cached[ 1 ] || preview !== cached[ 2 ] ) {
+		const height = f( width, noteDisplay, preview );
+		previewCache.set( key, [ width, noteDisplay, preview, height ] );
+		return height;
 	}
 
-	const height = f( width, noteDisplay, preview );
-
-	previewCache.set( key, [ width, noteDisplay, preview, height ] );
-
-	return height;
+	return cached[ 3 ];
 };
 
 /**
  * Computes the pixel height of a row for a given preview text in the list
  *
  * @param {Number} width how wide the list renders
- * @param {string} preview preview snippet from note
+ * @param {String} noteDisplay mode of list display: 'comfy', 'condensed', or 'expanded'
+ * @param {String} preview preview snippet from note
  * @returns {Number} height of the row in the list
  */
 const computeRowHeight = ( width, noteDisplay, preview ) => {
