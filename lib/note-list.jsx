@@ -160,17 +160,20 @@ const getRowHeight = rowHeightCache( computeRowHeight );
  * our level of recursion should be practically limited by the length of the
  * notes and the frequency of search terms.
  *
+ * Nonetheless we will hard limit it just in case.
+ *
  * @param {RegExp} filter used to split the text
  * @param {Number} sliceLength length of original search text
  * @param {String} text text to split
  * @param {(Object<String, String>)[]} [splits=[]] list of split segments
+ * @param {Number} [maxDepth=1000] limits the number of matches and prevents stack overflow on recursion
  * @returns {(Object<String, String>)[]} split segments with type indications
  */
-const splitWith = ( filter, sliceLength, text, splits = [] ) => {
+const splitWith = ( filter, sliceLength, text, splits = [], maxDepth = 1000 ) => {
 	// prevent splitting a string when the filter is empty
 	// because this could easily cause stack-overflow
-	if ( ! sliceLength ) {
-		return [ { type: 'text', text } ];
+	if ( ! sliceLength || ! maxDepth ) {
+		return [ ...splits, { type: 'text', text } ];
 	}
 
 	const index = text.search( filter );
@@ -186,6 +189,7 @@ const splitWith = ( filter, sliceLength, text, splits = [] ) => {
 				{ type: 'text', text: text.slice( 0, index ) }, // text _before_ the match
 				{ type: 'match', text: text.slice( index, index + sliceLength ) }, // the match itself
 			],
+			maxDepth - 1, // prevent stack overflow on recursion
 		);
 };
 
