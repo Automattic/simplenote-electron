@@ -17,7 +17,7 @@ import React, { PropTypes } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from './icons/feed';
 import classNames from 'classnames';
-import { debounce, get, isEmpty } from 'lodash';
+import { debounce, escapeRegExp, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import appState from './flux/app-state';
 import { tracks } from './analytics'
@@ -153,18 +153,69 @@ const computeRowHeight = ( width, noteDisplay, preview ) => {
 const getRowHeight = rowHeightCache( computeRowHeight );
 
 /**
+ * Splits a text segment by a RegExp and indicates which pieces are matches
+ *
+ * This is a recursive function and therefore inherently carries with it the
+ * risk of stack overflow. However, we can reasonably guard against this because
+ * our level of recursion should be practically limited by the length of the
+ * notes and the frequency of search terms.
+ *
+ * @param {RegExp} filter used to split the text
+ * @param {Number} sliceLength length of original search text
+ * @param {String} text text to split
+ * @param {(Object<String, String>)[]} [splits=[]] list of split segments
+ * @returns {(Object<String, String>)[]} split segments with type indications
+ */
+const splitWith = ( filter, sliceLength, text, splits = [] ) => {
+	// prevent splitting a string when the filter is empty
+	// because this could easily cause stack-overflow
+	if ( ! sliceLength ) {
+		return [ { type: 'text', text } ];
+	}
+
+	const index = text.search( filter );
+
+	return index === -1
+		? [ ...splits, { type: 'text', text } ]
+		: splitWith(
+			filter, // pass along the original filter
+			sliceLength, // and the original slice length
+			text.slice( index + sliceLength ), // text _following_ the match
+			[
+				...splits, // the existing segments
+				{ type: 'text', text: text.slice( 0, index ) }, // text _before_ the match
+				{ type: 'match', text: text.slice( index, index + sliceLength ) }, // the match itself
+			],
+		);
+};
+
+/**
+ * Wraps "match" segments with appropriate CSS
+ *
+ * @param {String[]} splits segments of split text with type indication
+ * @returns {Object[]} the wrapped segments
+ */
+const matchify = splits => splits.map( ( { type, text }, index ) => (
+	type === 'match'
+		? <span key={ index } className="search-match">{ text }</span>
+		: <span key={ index }>{ text }</span>
+) );
+
+/**
  * Renders an individual row in the note list
  *
  * @see react-virtual/list
  *
  * @param {Object[]} notes list of filtered notes
+ * @param {String} filter search filter
+ * @param {RegExp} filterRegExp RegExp version of filter
  * @param {String} noteDisplay list view style: comfy, condensed, expanded
  * @param {Number} selectedNoteId id of currently selected note
  * @param {Function} onSelectNote used to change the current note selection
  * @param {Function} onPinNote used to pin a note to the top of the list
  * @returns {Function} does the actual rendering for the List
  */
-const renderNote = ( notes, { noteDisplay, selectedNoteId, onSelectNote, onPinNote } ) => ( { index, rowIndex, key, style } ) => {
+const renderNote = ( notes, { filter, filterRegExp, noteDisplay, selectedNoteId, onSelectNote, onPinNote } ) => ( { index, rowIndex, key, style } ) => {
 	const note = notes[ 'undefined' === typeof index ? rowIndex : index ];
 	const { title, preview } = noteTitle( note );
 	const isPublished = ! isEmpty( note.data.publishURL );
@@ -176,17 +227,20 @@ const renderNote = ( notes, { noteDisplay, selectedNoteId, onSelectNote, onPinNo
 		'published-note': isPublished
 	} );
 
+	const titleSplits = filter.length > 0 ? splitWith( filterRegExp, filter.length, title ) : [ { type: 'text', text: title } ];
+	const previewSplits = filter.length > 0 ? splitWith( filterRegExp, filter.length, preview ) : [ { type: 'text', text: preview } ];
+
 	return (
 		<div key={key} style={ style } className={classes}>
 			<div className="note-list-item-pinner" tabIndex="0" onClick={onPinNote.bind( null, note )}></div>
 			<div className="note-list-item-text theme-color-border" tabIndex="0" onClick={onSelectNote.bind( null, note.id )}>
 				<div className="note-list-item-title">
-					<span>{ title }</span>
+					<span>{ matchify( titleSplits ) }</span>
 					{ showPublishIcon &&
 					<div className="note-list-item-published-icon"><PublishIcon /></div> }
 				</div>
 				{ 'condensed' !== noteDisplay && preview.trim() &&
-					<div className="note-list-item-excerpt">{ preview }</div>
+					<div className="note-list-item-excerpt">{ matchify( previewSplits ) }</div>
 				}
 			</div>
 		</div>
@@ -230,6 +284,7 @@ const NoteList = React.createClass( {
 
 	render() {
 		const {
+			filter,
 			selectedNoteId,
 			onSelectNote,
 			onEmptyTrash,
@@ -237,9 +292,12 @@ const NoteList = React.createClass( {
 			showTrash
 		} = this.props;
 
+		const filterRegExp = new RegExp( escapeRegExp( filter ), 'gi' );
 		const listItemsClasses = classNames( 'note-list-items', noteDisplay );
 
 		const renderNoteRow = renderNote( this.props.notes, {
+			filter,
+			filterRegExp,
 			noteDisplay,
 			onSelectNote,
 			onPinNote: this.onPinNote,
@@ -300,6 +358,7 @@ const mapStateToProps = ( {
 	const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
 	const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
 	return {
+		filter: state.filter,
 		noteDisplay,
 		notes: filteredNotes,
 		selectedNoteId,
