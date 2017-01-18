@@ -131,7 +131,9 @@ a {
 }
 
 .search-match {
-	background-color: $yellow;
+	background-color: $blue;
 	border-radius: 3px;
-	color: $black;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: $white;
 }
