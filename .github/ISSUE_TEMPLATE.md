@@ -1,6 +1,7 @@
 <!-- 
 Thanks for contributing to Simplenote! Pick a clear title ("Note editor: emojis not displaying correctly") and proceed.
-Please review the FAQs before submitting an issue:https://github.com/Automattic/simplenote-electron/labels/FAQ
+
+Please review the FAQs before submitting an issue: https://github.com/Automattic/simplenote-electron/labels/FAQ
 -->
 
 #### Steps to reproduce
