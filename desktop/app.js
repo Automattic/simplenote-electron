@@ -56,8 +56,9 @@ module.exports = function main() {
 			mainWindow.loadUrl( url );
 		}
 
-		// Uncomment me to debug in the electron window
-		//mainWindow.openDevTools();
+		if ( process.argv.includes( '--devtools' ) ) {
+			mainWindow.openDevTools();
+		}
 
 		// Configure and set the application menu
 		const menuTemplate = createMenuTemplate();
