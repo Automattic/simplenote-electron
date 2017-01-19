@@ -115,7 +115,7 @@ export class TagInput extends Component {
 	storeInput = ref => {
 		this.inputField = ref;
 		this.props.inputRef( ref );
-		this.inputField.addEventListener( 'paste', this.removePastedFormatting, false );
+		invoke( this, 'inputField.addEventListener', 'paste', this.removePastedFormatting, false );
 	};
 
 	submitTag = event => {
