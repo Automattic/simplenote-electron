@@ -30,8 +30,8 @@ export class TagInput extends Component {
 	};
 
 	componentWillUnmount() {
-		this.inputField && this.inputField.removeEventListener( 'paste', this.removePastedFormatting, false );
-	}
+		invoke( this, 'inputField.removeEventListener', 'paste', this.removePastedFormatting, false );
+	};
 
 	completeSuggestion = ( andThen = identity ) => {
 		const { onChange, tagNames, value } = this.props;
@@ -115,7 +115,7 @@ export class TagInput extends Component {
 	storeInput = ref => {
 		this.inputField = ref;
 		this.props.inputRef( ref );
-		this.inputField.addEventListener( 'paste', this.removePastedFormatting, false );
+		invoke( this, 'inputField.addEventListener', 'paste', this.removePastedFormatting, false );
 	};
 
 	submitTag = event => {
