@@ -311,10 +311,8 @@ const NoteList = React.createClass( {
 		return (
 			<div className="note-list">
 				<div className={listItemsClasses}>
-					<AutoSizer
-						disableWidth
-					>
-						{ ( { height } ) =>
+					<AutoSizer>
+						{ ( { height, width } ) =>
 							<List
 								ref={ this.refList }
 								estimatedRowSize={ ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * maxPreviewLines[ noteDisplay ] }
@@ -325,7 +323,7 @@ const NoteList = React.createClass( {
 								rowHeight={ (
 									'condensed' === noteDisplay
 										? ROW_HEIGHT_BASE
-										: getRowHeight( this.props.notes, { noteDisplay, width: 328 } )
+										: getRowHeight( this.props.notes, { noteDisplay, width } )
 								) }
 								rowRenderer={ renderNoteRow }
 								width={ 328 }

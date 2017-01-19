@@ -1,5 +1,6 @@
 .source-list {
 	width: 328px;
+	min-width: 328px;
 	background: $white;
 	display: flex;
 	flex-direction: column;
@@ -7,6 +8,7 @@
 
 	@media only screen and ( max-width: $medium ) {
 		width: 300px;
+		min-width: 300px;
 	}
 
 	@media only screen and ( max-width: $single-column ) {
