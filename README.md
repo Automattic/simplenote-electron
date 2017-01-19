@@ -34,6 +34,8 @@ Install electron globally `npm install -g electron-prebuilt`, then:
 1. Run `npm run build`
 2. Run `electron .`
 
+You can also pass along the `--devtools` option after `electron .` to open the developer tools
+
 ## Coding Guidelines
 
 Please adhere to the same guidelines as found in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines.md).
