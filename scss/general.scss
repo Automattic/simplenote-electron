@@ -128,4 +128,8 @@ a {
 	.button, .search-field {
 		-webkit-app-region: no-drag;
 	}
+
+	.revision-selector {
+		-webkit-app-region: drag;
+	}
 }
