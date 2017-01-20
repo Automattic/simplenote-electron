@@ -9,7 +9,7 @@
     "url": "git://github.com/Automattic/simplenote-electron.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "NODE_ENV=development npm run build:dll && npm run build:app",
     "build:app": "`npm bin`/webpack --config ./webpack.config.js",
     "build:dll": "`npm bin`/webpack --config ./webpack.config.dll.js",
@@ -22,6 +22,9 @@
   "engines": {
     "node": "7.3.0",
     "npm": "3.10.10"
+  },
+  "jest": {
+    "rootDir": "lib"
   },
   "devDependencies": {
     "appcache-webpack-plugin": "1.3.0",
@@ -37,14 +40,19 @@
     "electron": "1.4.13",
     "electron-builder": "2.8.4",
     "electron-packager": "7.5.1",
+    "enzyme": "2.7.0",
     "eslint": "3.12.2",
     "eslint-loader": "1.6.1",
     "eslint-plugin-react": "6.8.0",
     "html-webpack-plugin": "2.24.1",
+    "jest": "18.0.0",
     "json-loader": "0.5.4",
     "node-sass": "4.1.1",
     "postcss-loader": "1.2.1",
+    "react-addons-test-utils": "15.4.2",
+    "react-dom": "15.4.1",
     "react-onclickoutside": "4.5.0",
+    "react-test-renderer": "15.4.1",
     "redbox-react": "1.3.3",
     "sass-loader": "4.1.1",
     "style-loader": "0.13.1",
