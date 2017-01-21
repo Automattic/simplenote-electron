@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import TagChip from 'components/tag-chip';
+import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';

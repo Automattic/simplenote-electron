@@ -27,7 +27,7 @@ module.exports = {
 	},
 	resolve: {
 		extensions: ['', '.js', '.jsx', '.json', '.scss', '.css' ],
-		modulesDirectories: [ 'lib', 'node_modules' ]
+		moduleDirectories: [ 'lib', 'node_modules' ]
 	},
 	plugins: [
 		new webpack.DllReferencePlugin( {
