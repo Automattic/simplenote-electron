@@ -80,6 +80,16 @@ export const NoteEditor = React.createClass( {
 		this.setIsViewingRevisions( false );
 	},
 
+	setEditorMode( event ) {
+		const editorMode = get( event, 'target.dataset.editorMode' );
+
+		if ( ! editorMode ) {
+			return;
+		}
+
+		this.props.onSetEditorMode( editorMode );
+	},
+
 	setIsViewingRevisions: function( isViewing ) {
 		this.setState( { isViewingRevisions: isViewing } );
 	},
@@ -155,16 +165,32 @@ export const NoteEditor = React.createClass( {
 	},
 
 	renderModeBar() {
-		var { editorMode } = this.props;
+		const { editorMode } = this.props;
+
+		const isPreviewing = ( editorMode === 'markdown' );
 
 		return (
 			<div className="note-editor-mode-bar segmented-control">
 				<button type="button"
-					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'edit' } )}
-					onClick={this.props.onSetEditorMode.bind( null, 'edit' )}>Edit</button>
+					className={ classNames(
+						'button button-segmented-control button-compact',
+						{ active: ! isPreviewing },
+					) }
+					data-editor-mode="edit"
+					onClick={ this.setEditorMode }
+				>
+					Edit
+				</button>
 				<button type="button"
-					className={classNames( 'button button-segmented-control button-compact', { active: editorMode === 'markdown' } )}
-					onClick={this.props.onSetEditorMode.bind( null, 'markdown' )}>Preview</button>
+					className={ classNames(
+						'button button-segmented-control button-compact',
+						{ active: isPreviewing },
+					) }
+					data-editor-mode="markdown"
+					onClick={ this.setEditorMode }
+				>
+					Preview
+				</button>
 			</div>
 		);
 	}

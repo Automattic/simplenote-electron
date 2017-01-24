@@ -73,49 +73,40 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var { previewingMarkdown, fontSize } = this.props;
+		const {
+			filter,
+			fontSize,
+			previewingMarkdown,
+		} = this.props;
 
-		var divStyle = {
-			fontSize: fontSize + 'px'
-		};
+		const content = get( this.props, 'note.data.content', '' );
+		const divStyle = { fontSize: `${ fontSize }px` };
 
 		return (
 			<div className="note-detail">
-				{previewingMarkdown ?
-					this.renderMarkdown( divStyle )
-				:
-					this.renderEditable( divStyle )
-				}
+				{ previewingMarkdown && (
+					<div
+						className="note-detail-markdown theme-color-bg theme-color-fg"
+						dangerouslySetInnerHTML={ { __html: marked( content, { highlight: highlighter } ) } }
+						onClick={ this.onPreviewClick }
+						style={ divStyle }
+					/>
+				) }
+
+				{ ! previewingMarkdown && (
+					<div
+						className="note-detail-textarea theme-color-bg theme-color-fg"
+						style={ divStyle }
+					>
+						<NoteContentEditor
+							ref={ this.saveEditorRef }
+							content={ content }
+							filter={ filter }
+							onChangeContent={ this.queueNoteSave }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	},
-
-	renderMarkdown( divStyle ) {
-		const { content = '' } = this.props.note.data;
-		const markdownHTML = marked( content, { highlight: highlighter } );
-
-		return (
-			<div className="note-detail-markdown theme-color-bg theme-color-fg"
-				dangerouslySetInnerHTML={ { __html: markdownHTML } }
-				onClick={ this.onPreviewClick }
-				style={ divStyle } />
-		);
-	},
-
-	renderEditable( divStyle ) {
-		const content = get( this.props, 'note.data.content', '' );
-
-		return (
-			<div
-				className="note-detail-textarea theme-color-bg theme-color-fg"
-				style={ divStyle }>
-				<NoteContentEditor
-					ref={this.saveEditorRef}
-					content={content}
-					filter={ this.props.filter }
-					onChangeContent={this.queueNoteSave} />
-			</div>
-		);
-	}
-
-} )
+} );
