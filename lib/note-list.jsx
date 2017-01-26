@@ -278,7 +278,8 @@ const NoteList = React.createClass( {
 	componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.noteDisplay !== this.props.noteDisplay ||
-			nextProps.notes !== this.props.notes
+			nextProps.notes !== this.props.notes ||
+			nextProps.selectedNoteContent !== this.props.selectedNoteContent
 		) {
 			this.recomputeHeights();
 		}
@@ -371,6 +372,7 @@ const mapStateToProps = ( {
 		filter: state.filter,
 		noteDisplay,
 		notes: filteredNotes,
+		selectedNoteContent: get( selectedNote, 'contentKey' ),
 		selectedNoteId,
 		showTrash: state.showTrash,
 	};
