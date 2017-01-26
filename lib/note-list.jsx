@@ -36,6 +36,19 @@ import noteTitle from './utils/note-title';
  */
 const TYPING_DEBOUNCE_DELAY = 70;
 
+/**
+ * Maximum delay when debouncing the row height calculation
+ *
+ * this is used to make sure that we don't endlessly delay
+ * the row height recalculation in situations like when we
+ * are constantly typing without pause. by setting this value
+ * we can make sure that the updates don't happen
+ * less-frequently than the number of ms set here
+ *
+ * @type {Number} maximum number of ms between calls when debouncing recomputeRowHeights in virtual/list
+ */
+const TYPING_DEBOUNCE_MAX = 1000;
+
 /** @type {Number} height of title + vertical padding in list rows */
 const ROW_HEIGHT_BASE = 24 + 18;
 
@@ -269,7 +282,8 @@ const NoteList = React.createClass( {
 		 */
 		this.recomputeHeights = debounce(
 			() => this.list && this.list.recomputeRowHeights(),
-			TYPING_DEBOUNCE_DELAY
+			TYPING_DEBOUNCE_DELAY,
+			{ maxWait: TYPING_DEBOUNCE_MAX }
 		);
 
 		window.addEventListener( 'resize', this.recomputeHeights );
@@ -368,11 +382,35 @@ const mapStateToProps = ( {
 	const noteIndex = Math.max( state.previousIndex, 0 );
 	const selectedNote = state.note ? state.note : filteredNotes[ noteIndex ];
 	const selectedNoteId = get( selectedNote, 'id', state.selectedNoteId );
+
+	/**
+	 * Although not used directly in the React component this value
+	 * is used to bust the cache when editing a note and the number
+	 * of lines in the preview in the notes list needs to also update.
+	 *
+	 * React virtualized hides data in the DOM in a stateful way in
+	 * the way it has optimized the scrolling performance. This then
+	 * is missed when connect() decides whether or not to redraw the
+	 * component. Even with `{ pure: false }` set in `connect()` it
+	 * misses the updates and I think that is because they come in
+	 * asynchronously through events and not directly
+	 *
+	 * Therefore we have to calculate the height of the note here to
+	 * signal to `connect()` to redraw the component. This could also
+	 * happen in `areStatesEqual()` (option to `connect()`) but since
+	 * we're already grabbing the other data here we can skip a slight
+	 * amount of overhead by just passing it along here.
+	 *
+	 * @type {String} preview excerpt for the current note
+	 */
+	const selectedNoteTitle = selectedNote && getNoteTitle( selectedNote );
+
 	return {
 		filter: state.filter,
 		noteDisplay,
 		notes: filteredNotes,
-		selectedNoteContent: get( selectedNote, 'contentKey' ),
+		selectedNoteTitle,
+		selectedNoteContent: get( selectedNote, 'data.content' ),
 		selectedNoteId,
 		showTrash: state.showTrash,
 	};
