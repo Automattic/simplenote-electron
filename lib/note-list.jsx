@@ -326,7 +326,7 @@ const NoteList = React.createClass( {
 										: getRowHeight( this.props.notes, { noteDisplay, width } )
 								) }
 								rowRenderer={ renderNoteRow }
-								width={ 328 }
+								width={ width }
 							/>
 						}
 					</AutoSizer>
