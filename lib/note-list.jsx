@@ -138,7 +138,7 @@ const rowHeightCache = f => ( notes, { noteDisplay, width } ) => ( { index } ) =
  * @returns {Number} height of the row in the list
  */
 const computeRowHeight = ( width, noteDisplay, preview ) => {
-	const lines = Math.ceil( getTextWidth( preview, width - 30 ) / ( width - 30 ) );
+	const lines = Math.ceil( getTextWidth( preview, width - 24 ) / ( width - 24 ) );
 	return ROW_HEIGHT_BASE + ROW_HEIGHT_LINE * Math.min( maxPreviewLines[ noteDisplay ], lines );
 };
 
@@ -271,6 +271,8 @@ const NoteList = React.createClass( {
 			() => this.list && this.list.recomputeRowHeights(),
 			TYPING_DEBOUNCE_DELAY
 		);
+
+		window.addEventListener( 'resize', this.recomputeHeights );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -280,6 +282,10 @@ const NoteList = React.createClass( {
 		) {
 			this.recomputeHeights();
 		}
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.recomputeHeights );
 	},
 
 	refList( r ) {
