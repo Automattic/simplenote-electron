@@ -155,6 +155,25 @@ export default class NoteContentEditor extends React.Component {
 		)
 	}
 
+	componentWillMount() {
+		document.addEventListener( 'copy', this.stripFormattingFromSelectedText );
+		document.addEventListener( 'cut', this.stripFormattingFromSelectedText );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'copy', this.stripFormattingFromSelectedText );
+		document.removeEventListener( 'cut', this.stripFormattingFromSelectedText );
+	}
+
+	stripFormattingFromSelectedText( event ) {
+		if ( event.path.filter( elem => includes( elem.className, 'note-detail-textarea' ) ).length ) {
+			const selectedText = window.getSelection().toString();
+			event.clipboardData.setData( 'text/plain', selectedText );
+			event.clipboardData.setData( 'text/html', selectedText.replace( /(?:\r\n|\r|\n)/g, '<br />' ) );
+			event.preventDefault();
+		}
+	}
+
 	saveEditorRef = ( ref ) => {
 		this.editor = ref
 	}
