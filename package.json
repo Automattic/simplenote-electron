@@ -28,7 +28,8 @@
   },
   "browserslist": ["Chrome >= 58"],
   "jest": {
-    "rootDir": "lib"
+    "rootDir": "lib",
+    "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
   },
   "prettier": {
     "bracketSpacing": true,

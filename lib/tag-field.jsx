@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
+import isEmailTag from './utils/is-email-tag';
 import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
-import { differenceBy, intersectionBy, invoke, union } from 'lodash';
+import { differenceBy, intersectionBy, invoke, negate, union } from 'lodash';
 
 export default React.createClass({
   propTypes: {
@@ -161,14 +162,16 @@ export default React.createClass({
             tabIndex="-1"
             ref={this.storeHiddenTag}
           />
-          {tags.map(tag => (
-            <TagChip
-              key={tag}
-              tag={tag}
-              selected={tag === selectedTag}
-              onSelect={this.selectTag}
-            />
-          ))}
+          {tags
+            .filter(negate(isEmailTag))
+            .map(tag => (
+              <TagChip
+                key={tag}
+                tag={tag}
+                selected={tag === selectedTag}
+                onSelect={this.selectTag}
+              />
+            ))}
           <TagInput
             allTags={allTags}
             inputRef={this.storeInputRef}
