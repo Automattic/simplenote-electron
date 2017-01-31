@@ -17,8 +17,8 @@ export class SearchField extends Component {
 	componentDidUpdate() {
 		const { searchFocus, onSearchFocused } = this.props;
 
-		if ( searchFocus && this.searchField ) {
-			searchField.focus();
+		if ( searchFocus && this.inputField ) {
+			this.inputField.focus();
 			onSearchFocused();
 		}
 	}
