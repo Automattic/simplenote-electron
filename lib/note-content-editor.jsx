@@ -168,7 +168,8 @@ export default class NoteContentEditor extends React.Component {
 	stripFormattingFromSelectedText( event ) {
 		if ( event.path.filter( elem => includes( elem.className, 'note-detail-textarea' ) ).length ) {
 			const selectedText = window.getSelection().toString();
-			event.clipboardData.setData( 'text/plain', selectedText );
+			// Replace \n with \r\n to keep line breaks on Windows
+			event.clipboardData.setData( 'text/plain', selectedText.replace( /(?!\r)\n/g, '\r\n' ) );
 			event.clipboardData.setData( 'text/html', selectedText.replace( /(?:\r\n|\r|\n)/g, '<br />' ) );
 			event.preventDefault();
 		}
