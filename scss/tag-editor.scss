@@ -1,6 +1,5 @@
 .tag-entry {
   border-left: 1px solid lighten($gray, 30%);
-	padding-top: 16px;
 }
 
 .tag-editor {
@@ -11,7 +10,7 @@
   white-space: nowrap;
   overflow: visible;
   max-height: 120px;
-  padding: 8px 48px 8px 12px;
+	padding: 8px 12px;
 
   &:focus {
     outline: none;
