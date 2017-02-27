@@ -7,6 +7,7 @@ import {
 } from 'draft-js';
 import { includes, invoke, noop } from 'lodash';
 
+import { CRLF_NEWLINE, LF_ONLY_NEWLINES } from './utils/export';
 import matchingTextDecorator from './editor/matching-text-decorator';
 
 function plainTextContent( editorState ) {
@@ -169,7 +170,7 @@ export default class NoteContentEditor extends React.Component {
 		if ( event.path.filter( elem => includes( elem.className, 'note-detail-textarea' ) ).length ) {
 			const selectedText = window.getSelection().toString();
 			// Replace \n with \r\n to keep line breaks on Windows
-			event.clipboardData.setData( 'text/plain', selectedText.replace( /(?!\r)\n/g, '\r\n' ) );
+			event.clipboardData.setData( 'text/plain', selectedText.replace( LF_ONLY_NEWLINES, CRLF_NEWLINE ) );
 			event.clipboardData.setData( 'text/html', selectedText.replace( /(?:\r\n|\r|\n)/g, '<br />' ) );
 			event.preventDefault();
 		}
