@@ -147,8 +147,8 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { allTags, tags } = this.props;
 		const { selectedTag, tagInput } = this.state;
+		const { allTags, tags } = this.props;
 
 		return (
 			<div className="tag-entry theme-color-border">

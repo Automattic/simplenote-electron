@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux';
 import classNames from 'classnames'
+import { get } from 'lodash';
+
 import EditableList from './editable-list'
-import { get } from 'lodash'
+import { getSelectedTagName, getTags } from './state/tags/selectors';
+import { selectTag } from './state/ui/actions';
 
 export class TagList extends Component {
 	static propTypes = {
@@ -13,12 +17,11 @@ export class TagList extends Component {
 		tags: PropTypes.array.isRequired
 	};
 
-	renderItem = ( tag ) => {
-		const {
-			onRenameTag,
-			selectedTag,
-		} = this.props;
-		const isSelected = tag.data.name === get( selectedTag, 'data.name', '' );
+	renderItem = ( tag, parentProps ) => {
+		const { onRenameTag } = this.props;
+		const { selectedTag } = parentProps;
+
+		const isSelected = tag.data.name === selectedTag;
 		const classes = classNames( 'tag-list-input', 'theme-color-fg', {
 			active: isSelected
 		} );
@@ -37,10 +40,10 @@ export class TagList extends Component {
 	};
 
 	onSelectTag = ( tag, event ) => {
-		if ( !this.props.editingTags ) {
+		if ( ! this.props.editingTags ) {
 			event.preventDefault();
 			event.currentTarget.blur();
-			this.props.onSelectTag( tag );
+			this.props.selectTag( tag );
 		}
 	};
 
@@ -70,4 +73,16 @@ export class TagList extends Component {
 	}
 }
 
-export default TagList;
+const mapStateToProps = state => ( {
+	selectedTag: getSelectedTagName( state ),
+	tags: getTags( state ),
+} );
+
+const mapDispatchToProps = ( dispatch, { onSelectTag } ) => ( {
+	selectTag: tag => {
+		dispatch( selectTag( tag ) );
+		onSelectTag( tag )
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( TagList );
