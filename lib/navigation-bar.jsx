@@ -7,20 +7,13 @@ import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
 import classNames from 'classnames'
 import appState from './flux/app-state';
-import { tracks } from './analytics'
 
 const {
-	editTags,
-	renameTag,
-	reorderTags,
 	selectAllNotes,
-	selectTag,
 	selectTrash,
 	showDialog,
 	toggleNavigation,
-	trashTag,
 } = appState.actionCreators;
-const { recordEvent } = tracks;
 
 export const NavigationBar = React.createClass( {
 
@@ -63,6 +56,7 @@ export const NavigationBar = React.createClass( {
 	},
 
 	render: function() {
+		const { noteBucket, tagBucket } = this.props;
 		const classes = classNames( 'button', 'button-borderless', 'theme-color-fg' );
 		const allNotesClasses = classNames(
 			this.getNavigationItemClass( false ),
@@ -86,7 +80,7 @@ export const NavigationBar = React.createClass( {
 					</button>
 				</div>
 				<div className="navigation-tags theme-color-border">
-					<TagList {...this.props} />
+					<TagList noteBucket={ noteBucket } tagBucket={ tagBucket } />
 				</div>
 				<div className="navigation-tools theme-color-border">
 					<button type="button" className="navigation-tools-item button button-borderless theme-color-fg" onClick={this.props.onSettings}>
@@ -105,14 +99,12 @@ export const NavigationBar = React.createClass( {
 
 const mapStateToProps = ( { appState: state } ) => ( {
 	dialogs: state.dialogs,
-	editingTags: state.editingTags,
 	selectedTag: state.tag,
 	showNavigation: state.showNavigation,
 	showTrash: state.showTrash,
-	tags: state.tags,
 } );
 
-const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	onAbout: () => dispatch( showDialog( {
 		dialog: {
 			type: 'About',
@@ -120,23 +112,8 @@ const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 			single: true
 		}
 	} ) ),
-	onEditTags: () => dispatch( editTags() ),
 	onOutsideClick: () => dispatch( toggleNavigation() ),
-	onRenameTag: ( tag, name ) => dispatch( renameTag( {
-		name,
-		noteBucket,
-		tag,
-		tagBucket,
-	} ) ),
-	onReorderTags: tags => dispatch( reorderTags( {
-		tags,
-		tagBucket,
-	} ) ),
 	onSelectAllNotes: () => dispatch( selectAllNotes() ),
-	onSelectTag: tag => {
-		dispatch( selectTag( { tag } ) );
-		recordEvent( 'list_tag_viewed' );
-	},
 	onSelectTrash: () => dispatch( selectTrash() ),
 	onSettings: () => dispatch( showDialog( {
 		dialog: {
@@ -145,14 +122,6 @@ const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
 			single: true
 		}
 	} ) ),
-	onTrashTag: tag => {
-		dispatch( trashTag( {
-			noteBucket,
-			tag,
-			tagBucket,
-		} ) );
-		recordEvent( 'list_trash_viewed' );
-	},
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( NavigationBar );

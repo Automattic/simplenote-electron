@@ -365,7 +365,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			authIsPending,
 			isAuthorized,
 			noteBucket,
-			tagBucket,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const isMacApp = isElectronMac();
@@ -403,7 +402,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				{ isAuthorized ?
 						<div className={mainClasses}>
 							{ state.showNavigation &&
-								<NavigationBar noteBucket={ noteBucket } tagBucket={ tagBucket } />
+								<NavigationBar />
 							}
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">
