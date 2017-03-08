@@ -29,7 +29,6 @@ export const NavigationBar = React.createClass( {
 	],
 
 	handleClickOutside: function() {
-		//this.props.onOutsideClick( true );
 		const { dialogs, onOutsideClick, showNavigation } = this.props;
 
 		if ( dialogs.length > 0 ) {
