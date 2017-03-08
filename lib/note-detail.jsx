@@ -79,6 +79,7 @@ export const NoteDetail = React.createClass( {
 
 	render: function() {
 		const {
+			filter,
 			fontSize,
 			previewingMarkdown,
 		} = this.props;
@@ -103,9 +104,10 @@ export const NoteDetail = React.createClass( {
 						style={ divStyle }
 					>
 						<NoteContentEditor
-							ref={ this.saveEditorRef }
 							content={ content }
+							filter={ filter }
 							onChangeContent={ this.queueNoteSave }
+							ref={ this.saveEditorRef }
 						/>
 					</div>
 				) }
@@ -123,6 +125,7 @@ const mapStateToProps = ( {
 	const previewingMarkdown = get( revision, 'data.systemTags', '' ).indexOf( 'markdown' ) !== -1
 		&& state.editorMode === 'markdown';
 	return {
+		filter: state.filter,
 		fontSize,
 		note: revision,
 		previewingMarkdown,
