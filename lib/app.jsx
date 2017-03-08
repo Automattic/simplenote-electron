@@ -266,55 +266,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		} );
 	},
 
-	onSelectTag: function( tag ) {
-		this.props.actions.selectTag( { tag } );
-		analytics.tracks.recordEvent( 'list_tag_viewed' );
-	},
-
-	onSettings: function() {
-		this.props.actions.showDialog( {
-			dialog: {
-				type: 'Settings',
-				modal: true,
-				single: true
-			}
-		} );
-	},
-
-	onAbout: function() {
-		this.props.actions.showDialog( {
-			dialog: {
-				type: 'About',
-				modal: true,
-				single: true
-			}
-		} );
-	},
-
-	onRenameTag: function( tag, name ) {
-		this.props.actions.renameTag( {
-			tagBucket: this.props.tagBucket,
-			noteBucket: this.props.noteBucket,
-			tag, name
-		} );
-	},
-
-	onTrashTag: function( tag ) {
-		this.props.actions.trashTag( {
-			tagBucket: this.props.tagBucket,
-			noteBucket: this.props.noteBucket,
-			tag
-		} );
-		analytics.tracks.recordEvent( 'list_trash_viewed' );
-	},
-
-	onReorderTags: function( tags ) {
-		this.props.actions.reorderTags( {
-			tagBucket: this.props.tagBucket,
-			tags
-		} );
-	},
-
 	onSearch: function( filter ) {
 		this.props.actions.search( { filter } );
 		analytics.tracks.recordEvent( 'list_notes_searched' );
@@ -408,27 +359,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		analytics.tracks.recordEvent( 'editor_versions_accessed' );
 	},
 
-	onToolbarOutsideClick: function( isNavigationBar ) {
-		const {
-			actions: { toggleNavigation },
-			appState: { dialogs, showNavigation }
-		} = this.props;
-
-		if ( dialogs.length > 0 ) {
-			return;
-		}
-
-		if ( isNavigationBar && showNavigation ) {
-			return toggleNavigation();
-		}
-	},
-
 	render: function() {
 		const {
 			appState: state,
 			authIsPending,
 			isAuthorized,
 			noteBucket,
+			tagBucket,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const isMacApp = isElectronMac();
@@ -466,21 +403,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				{ isAuthorized ?
 						<div className={mainClasses}>
 							{ state.showNavigation &&
-								<NavigationBar
-									onSelectAllNotes={() => this.props.actions.selectAllNotes() }
-									onSelectTrash={() => this.props.actions.selectTrash() }
-									onSelectTag={this.onSelectTag}
-									onSettings={this.onSettings}
-									onAbout={this.onAbout}
-									onEditTags={() => this.props.actions.editTags() }
-									onRenameTag={this.onRenameTag}
-									onTrashTag={this.onTrashTag}
-									onReorderTags={this.onReorderTags}
-									editingTags={state.editingTags}
-									showTrash={state.showTrash}
-									selectedTag={state.tag}
-									tags={state.tags}
-									onOutsideClick={this.onToolbarOutsideClick} />
+								<NavigationBar noteBucket={ noteBucket } tagBucket={ tagBucket } />
 							}
 							<div className="source-list theme-color-bg theme-color-fg">
 								<div className="search-bar theme-color-border">

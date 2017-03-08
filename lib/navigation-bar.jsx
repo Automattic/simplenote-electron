@@ -1,12 +1,28 @@
 import React from 'react'
+import { connect } from 'react-redux';
 import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
 import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
 import classNames from 'classnames'
+import appState from './flux/app-state';
+import { tracks } from './analytics'
 
-export default React.createClass( {
+const {
+	editTags,
+	renameTag,
+	reorderTags,
+	selectAllNotes,
+	selectTag,
+	selectTrash,
+	showDialog,
+	toggleNavigation,
+	trashTag,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
+export const NavigationBar = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
@@ -20,7 +36,16 @@ export default React.createClass( {
 	],
 
 	handleClickOutside: function() {
-		this.props.onOutsideClick( true );
+		//this.props.onOutsideClick( true );
+		const { dialogs, onOutsideClick, showNavigation } = this.props;
+
+		if ( dialogs.length > 0 ) {
+			return;
+		}
+
+		if ( showNavigation ) {
+			onOutsideClick();
+		}
 	},
 
 	onHelpClicked: function() {
@@ -77,3 +102,57 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = ( { appState: state } ) => ( {
+	dialogs: state.dialogs,
+	editingTags: state.editingTags,
+	selectedTag: state.tag,
+	showNavigation: state.showNavigation,
+	showTrash: state.showTrash,
+	tags: state.tags,
+} );
+
+const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+	onAbout: () => dispatch( showDialog( {
+		dialog: {
+			type: 'About',
+			modal: true,
+			single: true
+		}
+	} ) ),
+	onEditTags: () => dispatch( editTags() ),
+	onOutsideClick: () => dispatch( toggleNavigation() ),
+	onRenameTag: ( tag, name ) => dispatch( renameTag( {
+		name,
+		noteBucket,
+		tag,
+		tagBucket,
+	} ) ),
+	onReorderTags: tags => dispatch( reorderTags( {
+		tags,
+		tagBucket,
+	} ) ),
+	onSelectAllNotes: () => dispatch( selectAllNotes() ),
+	onSelectTag: tag => {
+		dispatch( selectTag( { tag } ) );
+		recordEvent( 'list_tag_viewed' );
+	},
+	onSelectTrash: () => dispatch( selectTrash() ),
+	onSettings: () => dispatch( showDialog( {
+		dialog: {
+			type: 'Settings',
+			modal: true,
+			single: true
+		}
+	} ) ),
+	onTrashTag: tag => {
+		dispatch( trashTag( {
+			noteBucket,
+			tag,
+			tagBucket,
+		} ) );
+		recordEvent( 'list_trash_viewed' );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NavigationBar );
