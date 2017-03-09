@@ -1,7 +1,19 @@
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux';
 import classNames from 'classnames'
 import EditableList from './editable-list'
 import { get } from 'lodash'
+import appState from './flux/app-state';
+import { tracks } from './analytics'
+
+const {
+	editTags,
+	renameTag,
+	reorderTags,
+	selectTag,
+	trashTag,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
 
 export class TagList extends Component {
 	static propTypes = {
@@ -23,7 +35,7 @@ export class TagList extends Component {
 			active: isSelected
 		} );
 
-		const renameTag = ( { target: { value } } ) => onRenameTag( tag, value );
+		const handleRenameTag = ( { target: { value } } ) => onRenameTag( tag, value );
 
 		return (
 			<input
@@ -31,7 +43,7 @@ export class TagList extends Component {
 				readOnly={!this.props.editingTags}
 				onClick={this.onSelectTag.bind( this, tag )}
 				value={ tag.data.name }
-				onChange={ renameTag }
+				onChange={ handleRenameTag }
 			/>
 		);
 	};
@@ -70,4 +82,36 @@ export class TagList extends Component {
 	}
 }
 
-export default TagList;
+const mapStateToProps = ( { appState: state } ) => ( {
+	editingTags: state.editingTags,
+	selectedTag: state.tag,
+	tags: state.tags,
+} );
+
+const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+	onEditTags: () => dispatch( editTags() ),
+	onRenameTag: ( tag, name ) => dispatch( renameTag( {
+		name,
+		noteBucket,
+		tag,
+		tagBucket,
+	} ) ),
+	onReorderTags: tags => dispatch( reorderTags( {
+		tags,
+		tagBucket,
+	} ) ),
+	onSelectTag: tag => {
+		dispatch( selectTag( { tag } ) );
+		recordEvent( 'list_tag_viewed' );
+	},
+	onTrashTag: tag => {
+		dispatch( trashTag( {
+			noteBucket,
+			tag,
+			tagBucket,
+		} ) );
+		recordEvent( 'list_trash_viewed' );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( TagList );

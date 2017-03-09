@@ -1,12 +1,21 @@
 import React from 'react'
+import { connect } from 'react-redux';
 import TagList from './tag-list'
 import NotesIcon from './icons/notes'
 import TrashIcon from './icons/trash'
 import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
 import classNames from 'classnames'
+import appState from './flux/app-state';
 
-export default React.createClass( {
+const {
+	selectAllNotes,
+	selectTrash,
+	showDialog,
+	toggleNavigation,
+} = appState.actionCreators;
+
+export const NavigationBar = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
@@ -20,7 +29,15 @@ export default React.createClass( {
 	],
 
 	handleClickOutside: function() {
-		this.props.onOutsideClick( true );
+		const { dialogs, onOutsideClick, showNavigation } = this.props;
+
+		if ( dialogs.length > 0 ) {
+			return;
+		}
+
+		if ( showNavigation ) {
+			onOutsideClick();
+		}
 	},
 
 	onHelpClicked: function() {
@@ -38,6 +55,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const { noteBucket, tagBucket } = this.props;
 		const classes = classNames( 'button', 'button-borderless', 'theme-color-fg' );
 		const allNotesClasses = classNames(
 			this.getNavigationItemClass( false ),
@@ -61,7 +79,7 @@ export default React.createClass( {
 					</button>
 				</div>
 				<div className="navigation-tags theme-color-border">
-					<TagList {...this.props} />
+					<TagList noteBucket={ noteBucket } tagBucket={ tagBucket } />
 				</div>
 				<div className="navigation-tools theme-color-border">
 					<button type="button" className="navigation-tools-item button button-borderless theme-color-fg" onClick={this.props.onSettings}>
@@ -77,3 +95,32 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapStateToProps = ( { appState: state } ) => ( {
+	dialogs: state.dialogs,
+	selectedTag: state.tag,
+	showNavigation: state.showNavigation,
+	showTrash: state.showTrash,
+} );
+
+const mapDispatchToProps = ( dispatch ) => ( {
+	onAbout: () => dispatch( showDialog( {
+		dialog: {
+			type: 'About',
+			modal: true,
+			single: true
+		}
+	} ) ),
+	onOutsideClick: () => dispatch( toggleNavigation() ),
+	onSelectAllNotes: () => dispatch( selectAllNotes() ),
+	onSelectTrash: () => dispatch( selectTrash() ),
+	onSettings: () => dispatch( showDialog( {
+		dialog: {
+			type: 'Settings',
+			modal: true,
+			single: true
+		}
+	} ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NavigationBar );
