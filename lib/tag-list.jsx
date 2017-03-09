@@ -8,6 +8,7 @@ import { tracks } from './analytics'
 
 const {
 	editTags,
+	renameTag,
 	reorderTags,
 	selectTag,
 	trashTag,
@@ -34,7 +35,7 @@ export class TagList extends Component {
 			active: isSelected
 		} );
 
-		const renameTag = ( { target: { value } } ) => onRenameTag( tag, value );
+		const handleRenameTag = ( { target: { value } } ) => onRenameTag( tag, value );
 
 		return (
 			<input
@@ -42,7 +43,7 @@ export class TagList extends Component {
 				readOnly={!this.props.editingTags}
 				onClick={this.onSelectTag.bind( this, tag )}
 				value={ tag.data.name }
-				onChange={ renameTag }
+				onChange={ handleRenameTag }
 			/>
 		);
 	};
