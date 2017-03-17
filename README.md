@@ -29,7 +29,7 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 
 ## Electron
 
-Install electron globally `npm install -g electron-prebuilt`, then:
+Install electron globally `npm install -g electron --save-dev`, then:
 
 1. Run `npm run build`
 2. Run `electron .`
