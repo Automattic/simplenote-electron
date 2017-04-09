@@ -37,7 +37,7 @@ module.exports = function main() {
 		} );
 
 		// Create the browser window.
-		var iconPath = path.join( __dirname, '/lib/icons/app-icon/icon_256x256.png' );
+		var iconPath = path.join( __dirname, '../lib/icons/app-icon/icon_256x256.png' );
 		mainWindow = new BrowserWindow( {
 			x: mainWindowState.x,
 			y: mainWindowState.y,
