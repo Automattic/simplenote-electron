@@ -144,7 +144,6 @@ export const NoteEditor = React.createClass( {
 					<div className="note-editor-detail">
 						<NoteDetail
 							filter={this.props.filter}
-							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 							onChangeContent={this.props.onUpdateContent}
 							fontSize={fontSize} />

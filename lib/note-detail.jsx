@@ -1,15 +1,17 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import marked from 'marked';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
+import getActiveNote from './utils/get-active-note';
 
 const saveDelay = 2000;
 const highlighter = code => highlight.highlightAuto( code ).value;
 
-export default React.createClass( {
+export const NoteDetail = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -110,3 +112,15 @@ export default React.createClass( {
 		);
 	},
 } );
+
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+} ) => {
+	const revision = selectedRevision || getActiveNote( state );
+	return {
+		note: revision,
+	};
+};
+
+export default connect( mapStateToProps )( NoteDetail );
