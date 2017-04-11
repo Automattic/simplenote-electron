@@ -23,7 +23,7 @@ export const SearchBar = ( {
 	onNewNote,
 	onToggleNavigation,
 	showTrash,
-} ) =>
+} ) => (
 	<div className="search-bar theme-color-border">
 		<button className="button button-borderless" onClick={ onToggleNavigation } title="Tags">
 			<TagsIcon />
@@ -37,7 +37,8 @@ export const SearchBar = ( {
 		>
 			<NewNoteIcon />
 		</button>
-	</div>;
+	</div>
+);
 
 const mapStateToProps = ( { appState: state } ) => ( {
 	showTrash: state.showTrash,
