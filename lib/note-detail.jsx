@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import marked from 'marked';
-import { get, debounce, invoke } from 'lodash';
+import { get, debounce, includes, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
@@ -18,7 +18,7 @@ export const NoteDetail = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
-		previewingMarkdown: PropTypes.bool,
+		isPreviewing: PropTypes.bool,
 		fontSize: PropTypes.number,
 		onChangeContent: PropTypes.func.isRequired
 	},
@@ -81,7 +81,7 @@ export const NoteDetail = React.createClass( {
 		const {
 			filter,
 			fontSize,
-			previewingMarkdown,
+			isPreviewing,
 		} = this.props;
 
 		const content = get( this.props, 'note.data.content', '' );
@@ -89,7 +89,7 @@ export const NoteDetail = React.createClass( {
 
 		return (
 			<div className="note-detail">
-				{ previewingMarkdown && (
+				{ isPreviewing && (
 					<div
 						className="note-detail-markdown theme-color-bg theme-color-fg"
 						dangerouslySetInnerHTML={ { __html: marked( content, { highlight: highlighter } ) } }
@@ -98,7 +98,7 @@ export const NoteDetail = React.createClass( {
 					/>
 				) }
 
-				{ ! previewingMarkdown && (
+				{ ! isPreviewing && (
 					<div
 						className="note-detail-textarea theme-color-bg theme-color-fg"
 						style={ divStyle }
@@ -122,13 +122,13 @@ const mapStateToProps = ( {
 	settings: { fontSize },
 } ) => {
 	const revision = selectedRevision || getNote( state );
-	const previewingMarkdown = get( revision, 'data.systemTags', '' ).indexOf( 'markdown' ) !== -1
-		&& state.editorMode === 'markdown';
+	const isMarkdown = includes( get( revision, 'data.systemTags', '' ), 'markdown' );
+	const isPreviewing = isMarkdown && 'markdown' === state.editorMode;
 	return {
 		filter: state.filter,
 		fontSize,
 		note: revision,
-		previewingMarkdown,
+		isPreviewing,
 	};
 };
 
