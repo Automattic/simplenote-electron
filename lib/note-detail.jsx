@@ -116,11 +116,8 @@ export const NoteDetail = React.createClass( {
 const mapStateToProps = ( {
 	appState: state,
 	revision: { selectedRevision },
-} ) => {
-	const revision = selectedRevision || getActiveNote( state );
-	return {
-		note: revision,
-	};
-};
+} ) => ( {
+	note: selectedRevision || getActiveNote( state ),
+} );
 
 export default connect( mapStateToProps )( NoteDetail );

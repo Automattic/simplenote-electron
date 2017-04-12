@@ -144,13 +144,10 @@ RevisionSelector.propTypes = {
 	revisions: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = ( { appState: state } ) => {
-	const note = getActiveNote( state );
-	return {
-		note,
-		revisions: state.revisions || [],
-	}
-};
+const mapStateToProps = ( { appState: state } ) => ( {
+	note: getActiveNote( state ),
+	revisions: state.revisions || [],
+} );
 
 const mapDispatchToProps = dispatch => ( {
 	onCancelRevision: () => dispatch( selectRevision( null ) ),
