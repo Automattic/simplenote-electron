@@ -7,6 +7,8 @@ import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get, property } from 'lodash'
+import getActiveNote from './utils/get-active-note';
+import { selectRevision } from './state/revision/actions';
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -62,18 +64,6 @@ export const NoteEditor = React.createClass( {
 		this.setState( { revision: revision } );
 	},
 
-	onSelectRevision: function( revision ) {
-		if ( ! revision ) {
-			return;
-		}
-
-		const { note, onUpdateContent } = this.props;
-		const { data: { content } } = revision;
-
-		onUpdateContent( note, content );
-		this.setIsViewingRevisions( false );
-	},
-
 	onCancelRevision: function() {
 		// clear out the revision
 		this.setState( { revision: null } );
@@ -96,9 +86,8 @@ export const NoteEditor = React.createClass( {
 
 	render: function() {
 		let noteContent = '';
-		const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
+		const { editorMode, note, selectedRevision, fontSize, shouldPrint } = this.props;
 		const revision = this.state.revision || note;
-		const isViewingRevisions = this.state.isViewingRevisions;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -107,7 +96,7 @@ export const NoteEditor = React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: isViewingRevisions,
+			revisions: selectedRevision,
 			markdown: markdownEnabled
 		} );
 
@@ -123,10 +112,8 @@ export const NoteEditor = React.createClass( {
 		return (
 			<div className={classes}>
 				<RevisionSelector
-					revisions={revisions || []}
-					onViewRevision={this.onViewRevision}
-					onSelectRevision={this.onSelectRevision}
-					onCancelRevision={this.onCancelRevision} />
+					onUpdateContent={this.props.onUpdateContent}
+				/>
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar
 						note={note}
@@ -195,9 +182,22 @@ export const NoteEditor = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
-	fontSize: settings.fontSize,
-	markdownEnabled: settings.markdownEnabled
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+	settings,
+} ) => {
+	const revision = selectedRevision || getActiveNote( state );
+	return {
+		fontSize: settings.fontSize,
+		markdownEnabled: settings.markdownEnabled,
+		note: revision,
+		selectedRevision,
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	onCancelRevision: () => dispatch( selectRevision( null ) ),
 } );
 
-export default connect( mapStateToProps )( NoteEditor );
+export default connect( mapStateToProps, mapDispatchToProps )( NoteEditor );
