@@ -61,10 +61,11 @@ export const NoteEditor = React.createClass( {
 		const {
 			editorMode,
 			note,
-			selectedRevision: revision,
+			selectedRevision,
 			fontSize,
 			shouldPrint,
 		} = this.props;
+		const revision = selectedRevision || note;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -73,7 +74,7 @@ export const NoteEditor = React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: revision,
+			revisions: selectedRevision,
 			markdown: markdownEnabled
 		} );
 
