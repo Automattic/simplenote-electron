@@ -1,11 +1,19 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import BackIcon from './icons/back'
 import InfoIcon from './icons/info'
 import RevisionsIcon from './icons/revisions'
 import TrashIcon from './icons/trash'
 import ShareIcon from './icons/share'
+import appState from './flux/app-state';
+import { tracks } from './analytics'
+import getActiveNote from './utils/get-active-note';
+import { selectRevision } from './state/revision/actions';
 
-export default React.createClass( {
+const { noteRevisions } = appState.actionCreators;
+const { recordEvent } = tracks;
+
+export const NoteToolbar = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -20,7 +28,6 @@ export default React.createClass( {
 	},
 
 	showRevisions: function() {
-		this.props.setIsViewingRevisions( true );
 		this.props.onRevisions( this.props.note );
 	},
 
@@ -57,3 +64,17 @@ export default React.createClass( {
 	}
 
 } );
+
+const mapStateToProps = ( { appState: state } ) => ( {
+	note: getActiveNote( state ),
+} );
+
+const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
+	onRevisions: note => {
+		dispatch( noteRevisions( { noteBucket, note } ) );
+		dispatch( selectRevision( note ) );
+		recordEvent( 'editor_note_restored' );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NoteToolbar );

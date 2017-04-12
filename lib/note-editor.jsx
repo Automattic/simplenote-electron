@@ -24,7 +24,6 @@ export const NoteEditor = React.createClass( {
 		onRestoreNote: PropTypes.func.isRequired,
 		onShareNote: PropTypes.func.isRequired,
 		onDeleteNoteForever: PropTypes.func.isRequired,
-		onRevisions: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
 		onPrintNote: PropTypes.func
@@ -116,12 +115,11 @@ export const NoteEditor = React.createClass( {
 				/>
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar
-						note={note}
+						noteBucket={ this.props.noteBucket }
 						onTrashNote={this.props.onTrashNote}
 						onRestoreNote={this.props.onRestoreNote}
 						onShareNote={this.props.onShareNote}
 						onDeleteNoteForever={this.props.onDeleteNoteForever}
-						onRevisions={this.props.onRevisions}
 						setIsViewingRevisions={this.setIsViewingRevisions}
 						onCloseNote={this.props.onCloseNote}
 						onNoteInfo={this.props.onNoteInfo} />
