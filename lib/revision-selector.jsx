@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import moment from 'moment'
 import { orderBy } from 'lodash';
+import getActiveNote from './utils/get-active-note';
+import { selectRevision } from './state/revision/actions';
 
 const sortedRevisions = revisions =>
 	orderBy( revisions, 'data.modificationDate', 'asc' );
@@ -59,7 +62,17 @@ export const RevisionSelector = React.createClass( {
 			selection,
 		} = this.state;
 
-		this.props.onSelectRevision( revisions[ selection ] );
+		if ( revisions[ selection ] ) {
+			const {
+				note,
+				onCancelRevision,
+				onUpdateContent,
+			} = this.props;
+			const { data: { content } } = revisions[ selection ];
+
+			onUpdateContent( note, content );
+			onCancelRevision();
+		}
 		this.resetSelection();
 	},
 
@@ -131,4 +144,17 @@ RevisionSelector.propTypes = {
 	revisions: PropTypes.array.isRequired,
 };
 
-export default RevisionSelector;
+const mapStateToProps = ( { appState: state } ) => {
+	const note = getActiveNote( state );
+	return {
+		note,
+		revisions: state.revisions || [],
+	}
+};
+
+const mapDispatchToProps = dispatch => ( {
+	onCancelRevision: () => dispatch( selectRevision( null ) ),
+	onViewRevision: revision => dispatch( selectRevision( revision ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( RevisionSelector );
