@@ -6,7 +6,7 @@ import CrossIcon from './icons/cross';
 import { connect } from 'react-redux';
 import appState from './flux/app-state';
 import { setMarkdown } from './state/settings/actions';
-import filterNotes from './utils/filter-notes';
+import getActiveNote from './utils/get-active-note';
 
 export const NoteInfo = React.createClass( {
 
@@ -160,9 +160,7 @@ const {
 } = appState.actionCreators;
 
 const mapStateToProps = ( { appState: state } ) => {
-	const filteredNotes = filterNotes( state );
-	const noteIndex = Math.max( state.previousIndex, 0 );
-	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const note = getActiveNote( state );
 	return {
 		note,
 		isMarkdown: note.data.systemTags.includes( 'markdown' ),
