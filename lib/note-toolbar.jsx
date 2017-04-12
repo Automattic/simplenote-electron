@@ -24,7 +24,6 @@ export const NoteToolbar = React.createClass( {
 		onShareNote: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
-		setIsViewingRevisions: PropTypes.func.isRequired
 	},
 
 	showRevisions: function() {

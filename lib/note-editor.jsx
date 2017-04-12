@@ -8,13 +8,11 @@ import RevisionSelector from './revision-selector'
 import marked from 'marked'
 import { get, property } from 'lodash'
 import getActiveNote from './utils/get-active-note';
-import { selectRevision } from './state/revision/actions';
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
-		revisions: PropTypes.array,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
 		onSetEditorMode: PropTypes.func.isRequired,
@@ -40,33 +38,12 @@ export const NoteEditor = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { revision: null } );
-	},
-
-	getInitialState: function() {
-		return {
-			revision: null,
-			isViewingRevisions: false
-		}
-	},
-
 	componentDidUpdate: function() {
 		// Immediately print once `shouldPrint` has been set
 		if ( this.props.shouldPrint ) {
 			window.print();
 			this.props.onNotePrinted();
 		}
-	},
-
-	onViewRevision: function( revision ) {
-		this.setState( { revision: revision } );
-	},
-
-	onCancelRevision: function() {
-		// clear out the revision
-		this.setState( { revision: null } );
-		this.setIsViewingRevisions( false );
 	},
 
 	setEditorMode( event ) {
@@ -79,14 +56,10 @@ export const NoteEditor = React.createClass( {
 		this.props.onSetEditorMode( editorMode );
 	},
 
-	setIsViewingRevisions: function( isViewing ) {
-		this.setState( { isViewingRevisions: isViewing } );
-	},
-
 	render: function() {
 		let noteContent = '';
 		const { editorMode, note, selectedRevision, fontSize, shouldPrint } = this.props;
-		const revision = this.state.revision || note;
+		const revision = selectedRevision;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -120,7 +93,6 @@ export const NoteEditor = React.createClass( {
 						onRestoreNote={this.props.onRestoreNote}
 						onShareNote={this.props.onShareNote}
 						onDeleteNoteForever={this.props.onDeleteNoteForever}
-						setIsViewingRevisions={this.setIsViewingRevisions}
 						onCloseNote={this.props.onCloseNote}
 						onNoteInfo={this.props.onNoteInfo} />
 				</div>
@@ -194,8 +166,4 @@ const mapStateToProps = ( {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	onCancelRevision: () => dispatch( selectRevision( null ) ),
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( NoteEditor );
+export default connect( mapStateToProps )( NoteEditor );
