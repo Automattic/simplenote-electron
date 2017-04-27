@@ -8,6 +8,13 @@ A Simplenote [React](https://facebook.github.io/react/) client packaged in [Elec
 * A Simperium account. [Sign up here](https://simperium.com/signup/)
 * A Simperium Application ID and key. [Create a new app here](https://simperium.com/app/new/)
 
+## Installing pre-built Snap
+
+On [snap supported](https://snapcraft.io/docs/core/install) systems, install the pre-built snap from the store.
+
+    snap install simplenote --beta
+
+
 ## Running
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
