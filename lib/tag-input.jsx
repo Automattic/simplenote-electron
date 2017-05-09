@@ -134,6 +134,7 @@ export class TagInput extends Component {
 			tagNames,
 		} = this.props;
 
+		this.focusInput();
 		const suggestion = value.length && tagNames.find( startsWith( value ) );
 
 		return (
