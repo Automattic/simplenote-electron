@@ -65,7 +65,7 @@ export default React.createClass( {
 	},
 
 	hasSelection: function() {
-		return !! this.state.selectedTag && this.state.selectedTag.length;
+		return this.state.selectedTag && !! this.state.selectedTag.length;
 	},
 
 	deleteTag: function( tagName ) {
