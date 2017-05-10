@@ -128,13 +128,16 @@ export class TagInput extends Component {
 		invoke( event, 'stopPropagation' );
 	};
 
+	componentDidUpdate() {
+		this.focusInput();
+	}
+
 	render() {
 		const {
 			value,
 			tagNames,
 		} = this.props;
 
-		this.focusInput();
 		const suggestion = value.length && tagNames.find( startsWith( value ) );
 
 		return (
