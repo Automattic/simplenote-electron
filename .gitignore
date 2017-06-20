@@ -2,7 +2,6 @@ node_modules/**/*
 desktop-build/
 dist/
 release/
-/config.*
 *.pvk
 *.spc
 *.tgz
