@@ -118,12 +118,14 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		noteBucket: PropTypes.object.isRequired,
 		tagBucket: PropTypes.object.isRequired,
 		onAuthenticate: PropTypes.func.isRequired,
+		onCreateUser: PropTypes.func.isRequired,
 		onSignOut: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps: function() {
 		return {
 			onAuthenticate: () => {},
+			onCreateUser: () => {},
 			onSignOut: () => {}
 		};
 	},
@@ -419,6 +421,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 						authPending={ authIsPending }
 						isAuthenticated={ isAuthorized }
 						onAuthenticate={ this.props.onAuthenticate }
+						onCreateUser={ this.props.onCreateUser }
 						isMacApp={ isMacApp }
 					/>
 				}

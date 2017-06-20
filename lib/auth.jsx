@@ -16,6 +16,14 @@ export const Auth = React.createClass( {
 		isAuthenticated: PropTypes.bool,
 		isMacApp: PropTypes.bool,
 		onAuthenticate: PropTypes.func.isRequired,
+		onCreateUser: PropTypes.func.isRequired,
+	},
+
+	getInitialState() {
+		return {
+			isCreatingAccount: false,
+			passwordErrorMessage: null,
+		};
 	},
 
 	componentDidMount() {
@@ -26,7 +34,19 @@ export const Auth = React.createClass( {
 
 	render() {
 		const { isMacApp } = this.props;
+		const { isCreatingAccount, passwordErrorMessage } = this.state;
 		const submitClasses = classNames( 'button', 'button-primary', { pending: this.props.authPending } );
+
+		const signUpText = 'Sign up';
+		const logInText = 'Log in';
+		const buttonLabel = isCreatingAccount ? signUpText : logInText;
+		const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
+		const helpMessage = isCreatingAccount
+			? 'Already have an account?'
+			: 'Don\'t have an account?';
+		const errorMessage = isCreatingAccount
+			? 'Could not create account. Please try again.'
+			: 'Login failed. Please try again.';
 
 		return (
 			<div className="login">
@@ -60,30 +80,46 @@ export const Auth = React.createClass( {
 								/>
 							</span>
 						</label>
+						{ isCreatingAccount &&
+							<label className="login-field theme-color-border" htmlFor="login-field-password-confirm">
+								<span className="login-field-label">Confirm Password</span>
+								<span className="login-field-control">
+									<input
+										ref={ ref => this.passwordConfirmInput = ref }
+										id="login-field-password-confirm"
+										type="password"
+										onKeyDown={ this.onSignUp }
+									/>
+								</span>
+							</label>
+						}
 					</div>
 					{ this.props.hasInvalidCredentials &&
 						<p className="login-auth-message login-auth-failure">The credentials you entered don't match</p>
 					}
 					{ this.props.hasLoginError &&
-						<p className="login-auth-message login-auth-failure">Login failed. Please try again.</p>
+						<p className="login-auth-message login-auth-failure">{ errorMessage }</p>
+					}
+					{ passwordErrorMessage &&
+						<p className="login-auth-message login-auth-failure">{ passwordErrorMessage }</p>
 					}
 					<div className="login-actions">
 						<div
 							className={ submitClasses }
-							onClick={ this.onLogin }
+							onClick={ isCreatingAccount ? this.onSignUp : this.onLogin }
 							type="submit"
 						>
 							{ this.props.authPending
 								? <Spinner />
-								: 'Log in'
+								: buttonLabel
 							}
 						</div>
 						<p className="login-forgot">
 							<a href="https://app.simplenote.com/forgot/" target="_blank" onClick={this.onForgot}>Forgot your password?</a>
 						</p>
 						<p className="login-signup">
-							Don't have an account?
-							{' '}<a href="https://app.simplenote.com/signup/" target="_blank" onClick={this.onSignUp}>Sign up</a>
+							{ helpMessage }
+							{' '}<a href="#" onClick={this.toggleSignUp}>{ helpLinkLabel }</a>
 						</p>
 					</div>
 				</form>
@@ -113,9 +149,37 @@ export const Auth = React.createClass( {
 	},
 
 	onSignUp( event ) {
+		if ( event.type === 'keydown' && event.keyCode !== 13 ) {
+			return;
+		}
 		event.preventDefault();
-		window.open( event.currentTarget.href, null, 'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes' );
-	}
+
+		const username = get( this.usernameInput, 'value' );
+		const password = get( this.passwordInput, 'value' );
+		const passwordConfirm = get( this.passwordConfirmInput, 'value' );
+
+		if ( ! ( username && password && passwordConfirm ) ) {
+			return;
+		}
+
+		if ( password !== passwordConfirm ) {
+			this.setState( { passwordErrorMessage: 'The passwords don\'t match.' } );
+			return;
+		}
+
+		if ( password.length < 4 ) {
+			this.setState( { passwordErrorMessage: 'Passwords must contain at least 4 characters.' } );
+			return;
+		}
+
+		this.props.onCreateUser( username, password );
+		this.setState( { passwordErrorMessage: null } );
+	},
+
+	toggleSignUp( event ) {
+		event.preventDefault();
+		this.setState( { isCreatingAccount: ! this.state.isCreatingAccount } );
+	},
 
 } );
 
@@ -124,4 +188,4 @@ const mapStateToProps = state => ( {
 	hasLoginError: hasLoginError( state ),
 } );
 
-export default connect( mapStateToProps )( Auth );
+export default connect( mapStateToProps, null, null, { pure: false } )( Auth );
