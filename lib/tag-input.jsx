@@ -128,6 +128,10 @@ export class TagInput extends Component {
 		invoke( event, 'stopPropagation' );
 	};
 
+	componentDidUpdate() {
+		this.focusInput();
+	}
+
 	render() {
 		const {
 			value,
