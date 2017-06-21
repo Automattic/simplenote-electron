@@ -188,4 +188,4 @@ const mapStateToProps = state => ( {
 	hasLoginError: hasLoginError( state ),
 } );
 
-export default connect( mapStateToProps, null, null, { pure: false } )( Auth );
+export default connect( mapStateToProps )( Auth );
