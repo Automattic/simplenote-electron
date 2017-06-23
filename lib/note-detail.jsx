@@ -17,144 +17,179 @@ const renderToNode = (node, content) => {
   node.querySelectorAll('pre code').forEach(highlight.highlightBlock);
 };
 
-export default React.createClass({
-  propTypes: {
-    note: PropTypes.object,
-    previewingMarkdown: PropTypes.bool,
-    fontSize: PropTypes.number,
-    onChangeContent: PropTypes.func.isRequired,
-  },
+export default React.createClass( {
 
-  componentWillMount: function() {
-    this.queueNoteSave = debounce(this.saveNote, saveDelay);
-    document.addEventListener('copy', this.copyRenderedNote, false);
-  },
+	propTypes: {
+		note: PropTypes.object,
+		previewingMarkdown: PropTypes.bool,
+		fontSize: PropTypes.number,
+		onChangeContent: PropTypes.func.isRequired
+	},
 
-  componentDidMount: function() {
-    // Ensures note gets saved if user abruptly quits the app
-    window.addEventListener('beforeunload', this.queueNoteSave.flush);
-  },
+	componentWillMount: function() {
+		this.queueNoteSave = debounce( this.saveNote, saveDelay );
+		document.addEventListener( 'copy', this.copyRenderedNote, false );
+	},
 
-  saveEditorRef(ref) {
-    this.editor = ref;
-  },
+	componentDidMount: function() {
+		// Ensures note gets saved if user abruptly quits the app
+		window.addEventListener( 'beforeunload', this.queueNoteSave.flush );
+	},
 
-  isValidNote: function(note) {
-    return note && note.id;
-  },
+	saveEditorRef( ref ) {
+		this.editor = ref
+	},
 
-  componentWillReceiveProps: function() {
-    this.queueNoteSave.flush();
-  },
+	isValidNote: function( note ) {
+		return note && note.id;
+	},
 
-  componentDidUpdate: function(prevProps) {
-    const { note, previewingMarkdown } = this.props;
-    const content = get(note, 'data.content', '');
-    if (this.isValidNote(note) && content === '') {
-      // Let's focus the editor for new and empty notes
-      invoke(this, 'editor.focus');
-    }
+	componentWillReceiveProps: function() {
+		this.queueNoteSave.flush();
+	},
 
-    const prevContent = get(prevProps, 'note.data.content', '');
-    const nextContent = get(this.props, 'note.data.content', '');
+	componentDidUpdate: function( prevProps ) {
+		const { note, previewingMarkdown } = this.props;
+		const content = get( note, 'data.content', '' );
+		if ( this.isValidNote( note ) && content === '' ) {
+			// Let's focus the editor for new and empty notes
+			invoke( this, 'editor.focus' );
+		}
 
-    if (
-      (previewingMarkdown &&
-        (prevProps.note !== note || prevContent !== nextContent)) ||
-      (!prevProps.previewingMarkdown && this.props.previewingMarkdown)
-    ) {
-      this.updateMarkdown();
-    }
-  },
+		const prevContent = get( prevProps, 'note.data.content', '' );
+		const nextContent = get( this.props, 'note.data.content', '' );
 
-  componentWillUnmount: function() {
-    window.removeEventListener('beforeunload', this.queueNoteSave.flush);
-    document.removeEventListener('copy', this.copyRenderedNote, false);
-  },
+		if (
+			( previewingMarkdown && ( prevProps.note !== note || prevContent !== nextContent ) ) ||
+			( ! prevProps.previewingMarkdown && this.props.previewingMarkdown )
+		) {
+			this.updateMarkdown();
+		}
+	},
 
-  copyRenderedNote(event) {
-    // Only copy the rendered content if we're in the preview mode
-    if (!this.props.previewingMarkdown) {
-      return true;
-    }
+	componentWillUnmount: function() {
+		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
+		document.removeEventListener( 'copy', this.copyRenderedNote, false );
+	},
 
-    // Only copy the rendered content if nothing is selected
-    if (!document.getSelection().isCollapsed) {
-      return true;
-    }
+	copyRenderedNote( event ) {
+		// Only copy the rendered content if we're in the preview mode
+		if ( ! this.props.previewingMarkdown ) {
+			return true;
+		}
 
-    const node = document.createDocumentFragment();
-    const div = document.createElement('div');
-    renderToNode(div, this.props.note.data.content);
-    node.appendChild(div);
+		// Only copy the rendered content if nothing is selected
+		if ( ! document.getSelection().isCollapsed ) {
+			return true;
+		}
 
-    event.clipboardData.setData('text/plain', div.innerHTML);
-    event.preventDefault();
-  },
+		const node = document.createDocumentFragment();
+		const div = document.createElement( 'div' );
+		renderToNode( div, this.props.note.data.content );
+		node.appendChild( div );
 
-  onPreviewClick: function(event) {
-    // open markdown preview links in a new window
-    for (let node = event.target; node !== null; node = node.parentNode) {
-      if (node.tagName === 'A') {
-        event.preventDefault();
-        viewExternalUrl(node.href);
-        break;
-      }
-    }
-  },
+		event.clipboardData.setData( 'text/plain', div.innerHTML );
+		event.preventDefault();
+	},
 
-  saveNote: function(content) {
-    const { note } = this.props;
+	onPreviewClick: function( event ) {
+		// open markdown preview links in a new window
+		for ( let node = event.target; node !== null; node = node.parentNode ) {
+			if ( node.tagName === 'A' ) {
+				event.preventDefault();
+				viewExternalUrl( node.href );
+				break;
+			}
+		}
+	},
 
-    if (!this.isValidNote(note)) return;
+	saveNote: function( content ) {
+		const { note } = this.props;
 
-    this.props.onChangeContent(note, content);
-    analytics.tracks.recordEvent('editor_note_edited');
-  },
+		if ( ! this.isValidNote( note ) ) return;
 
-  storePreview(ref) {
-    this.previewNode = ref;
-  },
+		this.props.onChangeContent( note, content );
+		analytics.tracks.recordEvent( 'editor_note_edited' );
+	},
 
-  updateMarkdown() {
-    if (!this.previewNode) {
-      return;
-    }
+	toggleTodo( index ) {
+		const { note } = this.props;
+		const { content } = note.data;
+		const todoPattern = /(\s*- \[)(o|x|\s)(\]\s)/ig;
+		let i = -1;
 
-    renderToNode(this.previewNode, this.props.note.data.content);
-  },
+		const toggled = content.replace( todoPattern, ( match, prefix, indicator, rest ) => {
+			i++;
 
-  render: function() {
-    const { filter, fontSize, previewingMarkdown } = this.props;
+			if ( i < index || i > index ) {
+				return match;
+			}
 
-    const content = get(this.props, 'note.data.content', '');
-    const divStyle = { fontSize: `${fontSize}px` };
+			return ( indicator === 'x' || indicator === 'X' )
+				? `${ prefix } ${ rest }`
+				: `${ prefix }x${ rest }`;
+		} );
 
-    return (
-      <div className="note-detail">
-        {previewingMarkdown && (
-          <div
-            ref={this.storePreview}
-            className="note-detail-markdown theme-color-bg theme-color-fg"
-            onClick={this.onPreviewClick}
-            style={divStyle}
-          />
-        )}
+		this.saveNote( toggled );
+		this.updateMarkdown();
+	},
 
-        {!previewingMarkdown && (
-          <div
-            className="note-detail-textarea theme-color-bg theme-color-fg"
-            style={divStyle}
-          >
-            <NoteContentEditor
-              ref={this.saveEditorRef}
-              content={content}
-              filter={filter}
-              onChangeContent={this.queueNoteSave}
-            />
-          </div>
-        )}
-      </div>
-    );
-  },
-});
+	storePreview( ref ) {
+		this.previewNode = ref;
+	},
+
+	updateMarkdown() {
+		if ( ! this.previewNode ) {
+			return;
+		}
+
+		const node = this.previewNode;
+
+		node.innerHTML = markdownConverter.makeHtml( this.props.note.data.content );
+
+		const toggler = ( box, i ) => box.addEventListener( 'click', () => this.toggleTodo( i ), false );
+
+		node.querySelectorAll( '.task-list-item' ).forEach( toggler );
+		node.querySelectorAll( '.task-list-item p input[type="checkbox"]' ).forEach( toggler );
+
+		renderToNode( this.previewNode, this.props.note.data.content );
+	},
+
+	render: function() {
+		const {
+			filter,
+			fontSize,
+			previewingMarkdown,
+		} = this.props;
+
+		const content = get( this.props, 'note.data.content', '' );
+		const divStyle = { fontSize: `${ fontSize }px` };
+
+		return (
+			<div className="note-detail">
+				{ previewingMarkdown && (
+					<div
+						ref={ this.storePreview }
+						className="note-detail-markdown theme-color-bg theme-color-fg"
+						onClick={ this.onPreviewClick }
+						style={ divStyle }
+					/>
+				) }
+
+				{ ! previewingMarkdown && (
+					<div
+						className="note-detail-textarea theme-color-bg theme-color-fg"
+						style={ divStyle }
+					>
+						<NoteContentEditor
+							ref={ this.saveEditorRef }
+							content={ content }
+							filter={ filter }
+							onChangeContent={ this.queueNoteSave }
+						/>
+					</div>
+				) }
+			</div>
+		);
+	},
+} );
