@@ -11,6 +11,11 @@ const saveDelay = 2000;
 const markdownConverter = new showdown.Converter();
 markdownConverter.setFlavor( 'github' );
 
+const renderToNode = ( node, content ) => {
+	node.innerHTML = markdownConverter.makeHtml( content );
+	node.querySelectorAll( 'pre code' ).forEach( highlight.highlightBlock );
+};
+
 export default React.createClass( {
 
 	propTypes: {
@@ -22,6 +27,7 @@ export default React.createClass( {
 
 	componentWillMount: function() {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
+		document.addEventListener( 'copy', this.copyRenderedNote, false );
 	},
 
 	componentDidMount: function() {
@@ -62,11 +68,32 @@ export default React.createClass( {
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
+		document.removeEventListener( 'copy', this.copyRenderedNote, false );
+	},
+
+	copyRenderedNote( event ) {
+		// Only copy the rendered content if we're in the preview mode
+		if ( ! this.props.previewingMarkdown ) {
+			return true;
+		}
+
+		// Only copy the rendered content if nothing is selected
+		if ( ! document.getSelection().isCollapsed ) {
+			return true;
+		}
+
+		const node = document.createDocumentFragment();
+		const div = document.createElement( 'div' );
+		renderToNode( div, this.props.note.data.content );
+		node.appendChild( div );
+
+		event.clipboardData.setData( 'text/plain', div.innerHTML );
+		event.preventDefault();
 	},
 
 	onPreviewClick: function( event ) {
 		// open markdown preview links in a new window
-		for ( let node = event.target; node != null; node = node.parentNode ) {
+		for ( let node = event.target; node !== null; node = node.parentNode ) {
 			if ( node.tagName === 'A' ) {
 				event.preventDefault();
 				viewExternalUrl( node.href );
@@ -93,10 +120,7 @@ export default React.createClass( {
 			return;
 		}
 
-		const node = this.previewNode;
-
-		node.innerHTML = markdownConverter.makeHtml( this.props.note.data.content );
-		node.querySelectorAll( 'pre code' ).forEach( highlight.highlightBlock );
+		renderToNode( this.previewNode, this.props.note.data.content );
 	},
 
 	render: function() {
