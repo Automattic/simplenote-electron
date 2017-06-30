@@ -349,12 +349,13 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			appState: state,
 			authIsPending,
 			isAuthorized,
+			isSmallScreen,
 			noteBucket,
+			settings,
 			tagBucket,
 		} = this.props;
 		const electron = get( this.state, 'electron' );
 		const isMacApp = isElectronMac();
-		const { settings, isSmallScreen } = this.props;
 		const filteredNotes = filterNotes( state );
 
 		const noteIndex = Math.max( state.previousIndex, 0 );
