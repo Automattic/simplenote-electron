@@ -1,19 +1,24 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import marked from 'marked';
-import { get, debounce, invoke } from 'lodash';
+import { get, debounce, includes, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
+import appState from './flux/app-state';
+import getNote from './utils/get-note';
+
+const { updateNoteContent } = appState.actionCreators;
 
 const saveDelay = 2000;
 const highlighter = code => highlight.highlightAuto( code ).value;
 
-export default React.createClass( {
+export const NoteDetail = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
-		previewingMarkdown: PropTypes.bool,
+		isPreviewing: PropTypes.bool,
 		fontSize: PropTypes.number,
 		onChangeContent: PropTypes.func.isRequired
 	},
@@ -76,7 +81,7 @@ export default React.createClass( {
 		const {
 			filter,
 			fontSize,
-			previewingMarkdown,
+			isPreviewing,
 		} = this.props;
 
 		const content = get( this.props, 'note.data.content', '' );
@@ -84,7 +89,7 @@ export default React.createClass( {
 
 		return (
 			<div className="note-detail">
-				{ previewingMarkdown && (
+				{ isPreviewing && (
 					<div
 						className="note-detail-markdown theme-color-bg theme-color-fg"
 						dangerouslySetInnerHTML={ { __html: marked( content, { highlight: highlighter } ) } }
@@ -93,16 +98,16 @@ export default React.createClass( {
 					/>
 				) }
 
-				{ ! previewingMarkdown && (
+				{ ! isPreviewing && (
 					<div
 						className="note-detail-textarea theme-color-bg theme-color-fg"
 						style={ divStyle }
 					>
 						<NoteContentEditor
-							ref={ this.saveEditorRef }
 							content={ content }
 							filter={ filter }
 							onChangeContent={ this.queueNoteSave }
+							ref={ this.saveEditorRef }
 						/>
 					</div>
 				) }
@@ -110,3 +115,25 @@ export default React.createClass( {
 		);
 	},
 } );
+
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+	settings: { fontSize },
+} ) => {
+	const revision = selectedRevision || getNote( state );
+	const isMarkdown = includes( get( revision, 'data.systemTags', '' ), 'markdown' );
+	const isPreviewing = isMarkdown && 'markdown' === state.editorMode;
+	return {
+		filter: state.filter,
+		fontSize,
+		note: revision,
+		isPreviewing,
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
+	onChangeContent: ( note, content ) =>
+		dispatch( updateNoteContent( { noteBucket, note, content } ) ),
+} );
+export default connect( mapStateToProps, mapDispatchToProps )( NoteDetail );

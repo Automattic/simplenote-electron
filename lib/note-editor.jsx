@@ -6,31 +6,22 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import marked from 'marked'
-import { get, property } from 'lodash'
+import { get } from 'lodash'
+import appState from './flux/app-state';
+import getNote from './utils/get-note';
+import ModeBar from './mode-bar';
+import { selectRevision } from './state/revision/actions';
+
+const { setShouldPrintNote } = appState.actionCreators;
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
-		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
-		note: PropTypes.object,
-		revisions: PropTypes.array,
-		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
-		onSetEditorMode: PropTypes.func.isRequired,
-		onUpdateContent: PropTypes.func.isRequired,
-		onUpdateNoteTags: PropTypes.func.isRequired,
-		onTrashNote: PropTypes.func.isRequired,
-		onRestoreNote: PropTypes.func.isRequired,
-		onShareNote: PropTypes.func.isRequired,
-		onDeleteNoteForever: PropTypes.func.isRequired,
-		onRevisions: PropTypes.func.isRequired,
-		onCloseNote: PropTypes.func.isRequired,
-		onNoteInfo: PropTypes.func.isRequired,
 		onPrintNote: PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			editorMode: 'edit',
 			note: {
 				data: {
 					tags: []
@@ -39,15 +30,8 @@ export const NoteEditor = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { revision: null } );
-	},
-
-	getInitialState: function() {
-		return {
-			revision: null,
-			isViewingRevisions: false
-		}
+	componentWillMount: function() {
+		this.props.onCancelRevision();
 	},
 
 	componentDidUpdate: function() {
@@ -58,56 +42,21 @@ export const NoteEditor = React.createClass( {
 		}
 	},
 
-	onViewRevision: function( revision ) {
-		this.setState( { revision: revision } );
-	},
-
-	onSelectRevision: function( revision ) {
-		if ( ! revision ) {
-			return;
-		}
-
-		const { note, onUpdateContent } = this.props;
-		const { data: { content } } = revision;
-
-		onUpdateContent( note, content );
-		this.setIsViewingRevisions( false );
-	},
-
-	onCancelRevision: function() {
-		// clear out the revision
-		this.setState( { revision: null } );
-		this.setIsViewingRevisions( false );
-	},
-
-	setEditorMode( event ) {
-		const editorMode = get( event, 'target.dataset.editorMode' );
-
-		if ( ! editorMode ) {
-			return;
-		}
-
-		this.props.onSetEditorMode( editorMode );
-	},
-
-	setIsViewingRevisions: function( isViewing ) {
-		this.setState( { isViewingRevisions: isViewing } );
-	},
-
 	render: function() {
 		let noteContent = '';
-		const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
-		const revision = this.state.revision || note;
-		const isViewingRevisions = this.state.isViewingRevisions;
-		const tags = revision && revision.data && revision.data.tags || [];
-		const isTrashed = !!( note && note.data.deleted );
-
-		const markdownEnabled = revision &&
-			revision.data && revision.data.systemTags &&
-			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
+		const {
+			fontSize,
+			isTrashed,
+			markdownEnabled,
+			noteBucket,
+			revision,
+			selectedRevision,
+			shouldPrint,
+			tagBucket,
+		} = this.props;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: isViewingRevisions,
+			revisions: selectedRevision,
 			markdown: markdownEnabled
 		} );
 
@@ -122,32 +71,16 @@ export const NoteEditor = React.createClass( {
 
 		return (
 			<div className={classes}>
-				<RevisionSelector
-					revisions={revisions || []}
-					onViewRevision={this.onViewRevision}
-					onSelectRevision={this.onSelectRevision}
-					onCancelRevision={this.onCancelRevision} />
+				<RevisionSelector noteBucket={ noteBucket } />
 				<div className="note-editor-controls theme-color-border">
-					<NoteToolbar
-						note={note}
-						onTrashNote={this.props.onTrashNote}
-						onRestoreNote={this.props.onRestoreNote}
-						onShareNote={this.props.onShareNote}
-						onDeleteNoteForever={this.props.onDeleteNoteForever}
-						onRevisions={this.props.onRevisions}
-						setIsViewingRevisions={this.setIsViewingRevisions}
-						onCloseNote={this.props.onCloseNote}
-						onNoteInfo={this.props.onNoteInfo} />
+					<NoteToolbar noteBucket={ noteBucket } />
 				</div>
 				<div className="note-editor-content theme-color-border">
-					{!!markdownEnabled && this.renderModeBar()}
+					{ !! markdownEnabled &&
+						<ModeBar />
+					}
 					<div className="note-editor-detail">
-						<NoteDetail
-							filter={this.props.filter}
-							note={revision}
-							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-							onChangeContent={this.props.onUpdateContent}
-							fontSize={fontSize} />
+						<NoteDetail noteBucket={ noteBucket } />
 					</div>
 				</div>
 				{ shouldPrint &&
@@ -155,50 +88,34 @@ export const NoteEditor = React.createClass( {
 					dangerouslySetInnerHTML={ { __html: noteContent } } />
 				}
 				{ ! isTrashed &&
-					<TagField
-						allTags={ this.props.allTags.map( property( 'data.name' ) ) }
-						tags={tags}
-						onUpdateNoteTags={this.props.onUpdateNoteTags.bind( null, note ) } />
+					<TagField noteBucket={ noteBucket } tagBucket={ tagBucket } />
 				}
 			</div>
 		)
 	},
-
-	renderModeBar() {
-		const { editorMode } = this.props;
-
-		const isPreviewing = ( editorMode === 'markdown' );
-
-		return (
-			<div className="note-editor-mode-bar segmented-control">
-				<button type="button"
-					className={ classNames(
-						'button button-segmented-control button-compact',
-						{ active: ! isPreviewing },
-					) }
-					data-editor-mode="edit"
-					onClick={ this.setEditorMode }
-				>
-					Edit
-				</button>
-				<button type="button"
-					className={ classNames(
-						'button button-segmented-control button-compact',
-						{ active: isPreviewing },
-					) }
-					data-editor-mode="markdown"
-					onClick={ this.setEditorMode }
-				>
-					Preview
-				</button>
-			</div>
-		);
-	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
-	fontSize: settings.fontSize,
-	markdownEnabled: settings.markdownEnabled
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+	settings: { fontSize },
+} ) => {
+	const note = getNote( state );
+	const revision = selectedRevision || note;
+	return {
+		fontSize,
+		isTrashed: !! ( note && note.data.deleted ),
+		markdownEnabled: get( revision, 'data.systemTags', '' ).indexOf( 'markdown' ) !== -1,
+		revision,
+		selectedRevision,
+		shouldPrint: state.shouldPrint,
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	onCancelRevision: () => dispatch( selectRevision( null ) ),
+	onNotePrinted: () =>
+		dispatch( setShouldPrintNote( { shouldPrint: false } ) ),
 } );
 
-export default connect( mapStateToProps )( NoteEditor );
+export default connect( mapStateToProps, mapDispatchToProps )( NoteEditor );

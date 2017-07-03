@@ -1,16 +1,23 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux';
 import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
 import {
 	differenceBy,
+	get,
 	intersectionBy,
 	invoke,
+	property,
 	union,
 } from 'lodash';
+import appState from './flux/app-state';
+import getNote from './utils/get-note';
 
-export default React.createClass( {
+const { updateNoteTags } = appState.actionCreators;
+
+export const TagField = React.createClass( {
 
 	propTypes: {
 		unusedTags: PropTypes.arrayOf( PropTypes.string ),
@@ -48,6 +55,8 @@ export default React.createClass( {
 	addTag: function( tags ) {
 		const {
 			allTags,
+			onUpdateNoteTags,
+			note,
 			tags: existingTags,
 		} = this.props;
 
@@ -58,7 +67,7 @@ export default React.createClass( {
 			intersectionBy( allTags, newTags, s => s.toLocaleLowerCase() ), // use existing case if tag known
 			differenceBy( newTags, allTags, s => s.toLocaleLowerCase() ), // add completely new tags
 		);
-		this.props.onUpdateNoteTags( nextTagList );
+		onUpdateNoteTags( note, nextTagList );
 		this.storeTagInput( '' );
 		invoke( this, 'tagInput.focus' );
 		analytics.tracks.recordEvent( 'editor_tag_added' );
@@ -69,10 +78,10 @@ export default React.createClass( {
 	},
 
 	deleteTag: function( tagName ) {
-		const { onUpdateNoteTags, tags } = this.props;
+		const { onUpdateNoteTags, note, tags } = this.props;
 		const { selectedTag } = this.state;
 
-		onUpdateNoteTags( differenceBy( tags, [ tagName ], s => s.toLocaleLowerCase() ) );
+		onUpdateNoteTags( note, differenceBy( tags, [ tagName ], s => s.toLocaleLowerCase() ) );
 
 		if ( selectedTag === tagName ) {
 			this.setState( { selectedTag: '' } );
@@ -179,3 +188,23 @@ export default React.createClass( {
 	}
 
 } );
+
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+} ) => {
+	const note = getNote( state );
+	const revision = selectedRevision || note;
+	return {
+		allTags: state.tags.map( property( 'data.name' ) ),
+		note,
+		tags: get( revision, 'data.tags', [] ),
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+	onUpdateNoteTags: ( note, tags ) =>
+		dispatch( updateNoteTags( { noteBucket, tagBucket, note, tags } ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( TagField );

@@ -4,8 +4,32 @@ import InfoIcon from './icons/info'
 import RevisionsIcon from './icons/revisions'
 import TrashIcon from './icons/trash'
 import ShareIcon from './icons/share'
+import { connect } from 'react-redux';
+import appState from './flux/app-state';
+import { tracks } from './analytics'
+import filterNotes from './utils/filter-notes';
+import { selectRevision } from './state/revision/actions';
 
-export default React.createClass( {
+const {
+	closeNote,
+	deleteNoteForever,
+	noteRevisions,
+	restoreNote,
+	showDialog,
+	toggleNoteInfo,
+	trashNote,
+} = appState.actionCreators;
+const { recordEvent } = tracks;
+
+// gets the index of the note located before the currently selected one
+function getPreviousNoteIndex( note, filteredNotes ) {
+	const noteIndex = function( filteredNote ) {
+		return note.id === filteredNote.id;
+	};
+	return Math.max( filteredNotes.findIndex( noteIndex ) - 1, 0 );
+}
+
+export const NoteToolbar = React.createClass( {
 
 	propTypes: {
 		note: PropTypes.object,
@@ -16,11 +40,9 @@ export default React.createClass( {
 		onShareNote: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
-		setIsViewingRevisions: PropTypes.func.isRequired
 	},
 
 	showRevisions: function() {
-		this.props.setIsViewingRevisions( true );
 		this.props.onRevisions( this.props.note );
 	},
 
@@ -57,3 +79,40 @@ export default React.createClass( {
 	}
 
 } );
+
+const mapStateToProps = ( { appState: state } ) => {
+	const filteredNotes = filterNotes( state );
+	const noteIndex = Math.max( state.previousIndex, 0 );
+	const note = state.note ? state.note : filteredNotes[ noteIndex ];
+	const previousIndex = getPreviousNoteIndex( note, filteredNotes );
+	return { note, previousIndex };
+};
+
+const mapDispatchToProps = ( dispatch, { noteBucket, previousIndex } ) => ( {
+	onCloseNote: () =>
+		dispatch( closeNote() ),
+	onDeleteNoteForever: note =>
+		dispatch( deleteNoteForever( { noteBucket, note, previousIndex } ) ),
+	onNoteInfo: () =>
+		dispatch( toggleNoteInfo() ),
+	onRestoreNote: note => {
+		dispatch( restoreNote( { noteBucket, note, previousIndex } ) );
+		recordEvent( 'editor_note_restored' );
+	},
+	onRevisions: note => {
+		dispatch( noteRevisions( { noteBucket, note } ) );
+		dispatch( selectRevision( note ) );
+		recordEvent( 'editor_versions_accessed' );
+	},
+	onShareNote: note =>
+		dispatch( showDialog( {
+			dialog: { modal: true, type: 'Share' },
+			params: { note },
+		} ) ),
+	onTrashNote: note => {
+		dispatch( trashNote( { noteBucket, note, previousIndex } ) );
+		recordEvent( 'editor_note_deleted' );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( NoteToolbar );
