@@ -1,35 +1,47 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-// Simple wrapper that tracks small screen state
-export default function browserShell( Component ) {
-	return React.createClass( {
-		getInitialState: function() {
-			return {
-				windowWidth: 1024,
-				isSmallScreen: false
-			};
-		},
+/**
+ * Get window-related attributes
+ *
+ * There is no need for `this` here; `window` is global
+ *
+ * @returns {{windowWidth: Number, isSmallScreen: boolean}} window attributes
+ */
+const getState = () => {
+	const windowWidth = window.innerWidth;
 
-		componentDidMount: function() {
-			window.addEventListener( 'resize', this.updateWindowSize );
-		},
+	return {
+		windowWidth,
+		isSmallScreen: windowWidth <= 750, // Magic number here corresponds to $single-column value in variables.scss
+	}
+};
 
-		componentWillUnmount: function() {
-			window.removeEventListener( 'resize', this.updateWindowSize );
-		},
+/**
+ * Passes window-related attributes into child component
+ *
+ * Passes:
+ *   - viewport width (including scrollbar)
+ *   - whether width is considered small
+ *
+ * @param {Element} Wrapped React component dependent on window attributes
+ * @returns {Component} wrapped React component with window attributes as props
+ */
+export const browserShell = Wrapped => class extends Component {
+	state = getState();
 
-		updateWindowSize: function() {
-			const { innerWidth } = window;
+	componentDidMount() {
+		window.addEventListener( 'resize', this.updateWindowSize );
+	}
 
-			// Magic number here corresponds to $single-column value in variables.scss
-			this.setState( {
-				windowWidth: innerWidth,
-				isSmallScreen: innerWidth <= 750
-			} );
-		},
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.updateWindowSize );
+	}
 
-		render: function() {
-			return <Component { ...this.state } { ...this.props } />
-		}
-	} );
-}
+	updateWindowSize = () => this.setState( getState() );
+
+	render() {
+		return <Wrapped { ...this.state } { ...this.props } />
+	}
+};
+
+export default browserShell;
