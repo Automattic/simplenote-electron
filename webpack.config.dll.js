@@ -12,7 +12,6 @@ module.exports = {
 			'draft-js',
 			'highlight.js',
 			'lodash',
-			'marked',
 			'moment',
 			'promise',
 			'react',
@@ -23,6 +22,7 @@ module.exports = {
 			'redux-localstorage',
 			'redux-thunk',
 			'react-virtualized',
+			'showdown',
 			'simperium',
 			'sockjs-client'
 		]
