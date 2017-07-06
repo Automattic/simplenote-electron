@@ -1,13 +1,20 @@
 import React, { PropTypes } from 'react';
 import highlight from 'highlight.js';
-import marked from 'marked';
+import showdown from 'showdown';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
 import NoteContentEditor from './note-content-editor';
 
 const saveDelay = 2000;
-const highlighter = code => highlight.highlightAuto( code ).value;
+
+const markdownConverter = new showdown.Converter();
+markdownConverter.setFlavor( 'github' );
+
+const renderToNode = ( node, content ) => {
+	node.innerHTML = markdownConverter.makeHtml( content );
+	node.querySelectorAll( 'pre code' ).forEach( highlight.highlightBlock );
+};
 
 export default React.createClass( {
 
@@ -20,6 +27,7 @@ export default React.createClass( {
 
 	componentWillMount: function() {
 		this.queueNoteSave = debounce( this.saveNote, saveDelay );
+		document.addEventListener( 'copy', this.copyRenderedNote, false );
 	},
 
 	componentDidMount: function() {
@@ -39,22 +47,53 @@ export default React.createClass( {
 		this.queueNoteSave.flush();
 	},
 
-	componentDidUpdate: function() {
-		const { note } = this.props;
+	componentDidUpdate: function( prevProps ) {
+		const { note, previewingMarkdown } = this.props;
 		const content = get( note, 'data.content', '' );
 		if ( this.isValidNote( note ) && content === '' ) {
 			// Let's focus the editor for new and empty notes
 			invoke( this, 'editor.focus' );
 		}
+
+		const prevContent = get( prevProps, 'note.data.content', '' );
+		const nextContent = get( this.props, 'note.data.content', '' );
+
+		if (
+			( previewingMarkdown && ( prevProps.note !== note || prevContent !== nextContent ) ) ||
+			( ! prevProps.previewingMarkdown && this.props.previewingMarkdown )
+		) {
+			this.updateMarkdown();
+		}
 	},
 
 	componentWillUnmount: function() {
 		window.removeEventListener( 'beforeunload', this.queueNoteSave.flush );
+		document.removeEventListener( 'copy', this.copyRenderedNote, false );
+	},
+
+	copyRenderedNote( event ) {
+		// Only copy the rendered content if we're in the preview mode
+		if ( ! this.props.previewingMarkdown ) {
+			return true;
+		}
+
+		// Only copy the rendered content if nothing is selected
+		if ( ! document.getSelection().isCollapsed ) {
+			return true;
+		}
+
+		const node = document.createDocumentFragment();
+		const div = document.createElement( 'div' );
+		renderToNode( div, this.props.note.data.content );
+		node.appendChild( div );
+
+		event.clipboardData.setData( 'text/plain', div.innerHTML );
+		event.preventDefault();
 	},
 
 	onPreviewClick: function( event ) {
 		// open markdown preview links in a new window
-		for ( let node = event.target; node != null; node = node.parentNode ) {
+		for ( let node = event.target; node !== null; node = node.parentNode ) {
 			if ( node.tagName === 'A' ) {
 				event.preventDefault();
 				viewExternalUrl( node.href );
@@ -72,6 +111,18 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'editor_note_edited' );
 	},
 
+	storePreview( ref ) {
+		this.previewNode = ref;
+	},
+
+	updateMarkdown() {
+		if ( ! this.previewNode ) {
+			return;
+		}
+
+		renderToNode( this.previewNode, this.props.note.data.content );
+	},
+
 	render: function() {
 		const {
 			filter,
@@ -86,8 +137,8 @@ export default React.createClass( {
 			<div className="note-detail">
 				{ previewingMarkdown && (
 					<div
+						ref={ this.storePreview }
 						className="note-detail-markdown theme-color-bg theme-color-fg"
-						dangerouslySetInnerHTML={ { __html: marked( content, { highlight: highlighter } ) } }
 						onClick={ this.onPreviewClick }
 						style={ divStyle }
 					/>
