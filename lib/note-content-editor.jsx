@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { includes, noop } from 'lodash';
 
 import { LF_ONLY_NEWLINES } from './utils/export';
@@ -132,7 +132,7 @@ const outdentSelection = (content, { selectionStart, selectionEnd }) => {
   return [transformed, delta, delta];
 };
 
-export default class NoteContentEditor extends React.Component {
+export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
     onChangeContent: PropTypes.func.isRequired,
@@ -145,9 +145,11 @@ export default class NoteContentEditor extends React.Component {
     storeHasFocus: noop,
   };
 
-  state = {
-    content: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = { content: props.content };
+  }
 
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
