@@ -83,6 +83,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
 
+    openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
   };
@@ -93,7 +94,7 @@ const isElectron = (() => {
   const foundElectron = has(window, 'process.type');
 
   if (foundElectron) {
-    fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
+    fs = __non_webpack_require__('fs');
   }
 
   return () => foundElectron;
@@ -154,10 +155,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.onNotesIndex();
       this.onTagsIndex();
 
+      this.toggleShortcuts(true);
+
       analytics.tracks.recordEvent('application_opened');
     },
 
     componentWillUnmount: function() {
+      this.toggleShortcuts(false);
+
       ipc.removeListener('appCommand', this.onAppCommand);
     },
 
@@ -165,6 +170,23 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       if (this.props.settings !== prevProps.settings) {
         ipc.send('settingsUpdate', this.props.settings);
       }
+    },
+
+    handleShortcut(event) {
+      const { ctrlKey, key, metaKey } = event;
+
+      const cmdOrCtrl = ctrlKey || metaKey;
+
+      // open tag list
+      if (cmdOrCtrl && 'T' === key && !this.state.showNavigation) {
+        this.props.openTagList();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      return true;
     },
 
     onAppCommand: function(event, command) {
@@ -179,7 +201,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
             })
           )
           .then(blob => fs.writeFile(command.filename, blob, 'base64'))
-          .catch(console.log); // eslint-disable-line no-console
+          .catch(console.log);
       }
 
       const canRun = overEvery(
@@ -258,7 +280,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     },
 
     initializeElectron() {
-      const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+      const remote = __non_webpack_require__('electron').remote;
 
       this.setState({
         electron: {
@@ -345,6 +367,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         note,
       });
       analytics.tracks.recordEvent('editor_versions_accessed');
+    },
+
+    toggleShortcuts(doEnable) {
+      if (doEnable) {
+        window.addEventListener('keydown', this.handleShortcut, true);
+      } else {
+        window.removeEventListener('keydown', this.handleShortcut, true);
+      }
     },
 
     render: function() {
@@ -452,7 +482,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     renderDialog({ params, ...dialog }, key) {
       var DialogComponent = Dialogs[dialog.type];
 
-      if (DialogComponent === null) {
+      if (DialogComponent == null) {
         throw new Error('Unknown dialog type.');
       }
 
