@@ -6,10 +6,12 @@ import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
-import { differenceBy, intersectionBy, invoke, negate, union } from 'lodash';
+import { differenceBy, intersectionBy, invoke, negate, noop, union } from 'lodash';
 
 export default React.createClass({
   propTypes: {
+    storeFocusTagField: PropTypes.func,
+    storeHasFocus: PropTypes.func,
     unusedTags: PropTypes.arrayOf(PropTypes.string),
     usedTags: PropTypes.arrayOf(PropTypes.string),
     onUpdateNoteTags: PropTypes.func.isRequired,
@@ -17,6 +19,8 @@ export default React.createClass({
 
   getDefaultProps: function() {
     return {
+      storeFocusTagField: noop,
+      storeHasFocus: noop,
       tags: [],
     };
   },
@@ -29,6 +33,9 @@ export default React.createClass({
   },
 
   componentDidMount() {
+    this.props.storeFocusTagField(this.focusTagField);
+    this.props.storeHasFocus(this.hasFocus);
+
     document.addEventListener('click', this.unselect, true);
   },
 
@@ -94,6 +101,14 @@ export default React.createClass({
     this.setState({ showEmailTooltip: false });
   },
 
+  hasFocus() {
+    return this.inputHasFocus && this.inputHasFocus();
+  },
+
+  focusTagField() {
+    this.focusInput && this.focusInput();
+  },
+
   interceptKeys(e) {
     // only handle backspace
     if (8 !== e.which) {
@@ -136,9 +151,17 @@ export default React.createClass({
   onKeyDown: function(e) {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
-    }
+  },
 
     return this.interceptKeys(e);
+  },
+
+  storeFocusInput(f) {
+    this.focusInput = f;
+  },
+
+  storeHasFocus(f) {
+    this.inputHasFocus = f;
   },
 
   storeHiddenTag(r) {
@@ -202,6 +225,8 @@ export default React.createClass({
             value={tagInput}
             onChange={this.storeTagInput}
             onSelect={this.addTag}
+            storeFocusInput={this.storeFocusInput}
+            storeHasFocus={this.storeHasFocus}
             tagNames={differenceBy(allTags, tags, s => s.toLocaleLowerCase())}
           />
           <Overlay
