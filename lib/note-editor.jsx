@@ -87,6 +87,15 @@ export const NoteEditor = React.createClass({
       return false;
     }
 
+    // open note list - shift + [
+    if (cmdOrCtrl && '{' === key) {
+      this.props.onCloseNote();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
     // toggle between tag editor and note editor
     if (cmdOrCtrl && 't' === key && this.props.isEditorActive) {
       // prefer focusing the edit field first
