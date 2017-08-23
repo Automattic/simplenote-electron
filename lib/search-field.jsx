@@ -25,6 +25,7 @@ export class SearchField extends Component {
 		const { searchFocus, onSearchFocused } = this.props;
 
 		if ( searchFocus && this.inputField ) {
+			this.inputField.select();
 			this.inputField.focus();
 			onSearchFocused();
 		}
