@@ -1,12 +1,15 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux';
 import classNames from 'classnames'
+import showdown from 'showdown';
 import NoteDetail from './note-detail'
 import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
-import marked from 'marked'
 import { get, property } from 'lodash'
+
+const markdownConverter = new showdown.Converter();
+markdownConverter.setFlavor( 'github' );
 
 export const NoteEditor = React.createClass( {
 	propTypes: {
@@ -113,7 +116,7 @@ export const NoteEditor = React.createClass( {
 
 		if ( shouldPrint ) {
 			const content = get( revision, 'data.content', '' );
-			noteContent = markdownEnabled ? marked( content ) : content;
+			noteContent = markdownEnabled ? markdownConverter.makeHtml( content ) : content;
 		}
 
 		const printStyle = {
