@@ -99,7 +99,7 @@ export class TagInput extends Component {
 	onChange = ( { target: { textContent: value } } ) =>
 		value.endsWith( ',' ) && value.trim().length // commas should automatically insert non-zero tags
 			? this.props.onSelect( value.slice( 0, -1 ).trim() )
-			: this.props.onChange( value.trim() );
+			: this.props.onChange( value.trim(), this.focusInput );
 
 	removePastedFormatting = event => {
 		document.execCommand(
@@ -127,10 +127,6 @@ export class TagInput extends Component {
 		invoke( event, 'preventDefault' );
 		invoke( event, 'stopPropagation' );
 	};
-
-	componentDidUpdate() {
-		this.focusInput();
-	}
 
 	render() {
 		const {
