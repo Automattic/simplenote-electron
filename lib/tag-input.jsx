@@ -146,7 +146,7 @@ export class TagInput extends Component {
 					contentEditable="true"
 					onInput={ this.onChange }
 					onKeyDown={ this.interceptKeys }
-					placeholder="Enter a tag name…"
+					placeholder="Add a tag…"
 					suppressContentEditableWarning
 				>
 					{ value }
