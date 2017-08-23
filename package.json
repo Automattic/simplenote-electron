@@ -31,6 +31,7 @@
     "autoprefixer": "6.5.4",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
+    "babel-jest": "20.0.3",
     "babel-loader": "6.4.1",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "6.24.1",
@@ -81,6 +82,7 @@
     "sanitize-filename": "1.6.1",
     "serve-favicon": "2.4.3",
     "showdown": "1.7.2",
+    "showdown-xss-filter": "0.2.0",
     "simperium": "0.2.6"
   }
 }

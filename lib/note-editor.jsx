@@ -2,13 +2,14 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux';
 import classNames from 'classnames'
 import showdown from 'showdown';
+import xssFilter from 'showdown-xss-filter';
 import NoteDetail from './note-detail'
 import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import { get, property } from 'lodash'
 
-const markdownConverter = new showdown.Converter();
+const markdownConverter = new showdown.Converter( { extensions: [ xssFilter ] } );
 markdownConverter.setFlavor( 'github' );
 
 export const NoteEditor = React.createClass( {
