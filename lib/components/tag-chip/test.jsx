@@ -2,7 +2,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { mount, shallow } from 'enzyme';
 
-import TagChip from '../';
+import TagChip from './';
 
 describe( 'TagChip', () => {
 	it( 'should select tag when clicked', () => {
