@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import highlight from 'highlight.js';
 import showdown from 'showdown';
+import xssFilter from 'showdown-xss-filter';
 import { get, debounce, invoke } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
@@ -8,7 +9,7 @@ import NoteContentEditor from './note-content-editor';
 
 const saveDelay = 2000;
 
-const markdownConverter = new showdown.Converter();
+const markdownConverter = new showdown.Converter( { extensions: [ xssFilter ] } );
 markdownConverter.setFlavor( 'github' );
 
 const renderToNode = ( node, content ) => {
