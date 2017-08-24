@@ -7,6 +7,7 @@ import {
 } from 'draft-js';
 import { includes, invoke, noop } from 'lodash';
 
+import { filterHasText, searchPattern } from './utils/filter-notes';
 import { LF_ONLY_NEWLINES } from './utils/export';
 import matchingTextDecorator from './editor/matching-text-decorator';
 
@@ -152,7 +153,7 @@ export default class NoteContentEditor extends React.Component {
 	state = {
 		editorState: EditorState.createWithContent(
 			ContentState.createFromText( this.props.content, '\n' ),
-			matchingTextDecorator( this.props.filter ),
+			filterHasText( this.props.filter ) && matchingTextDecorator( searchPattern( this.props.filter ) ),
 		)
 	}
 
@@ -208,7 +209,7 @@ export default class NoteContentEditor extends React.Component {
 
 		let newEditorState = EditorState.createWithContent(
 			ContentState.createFromText( newContent, '\n' ),
-			matchingTextDecorator( nextFilter ),
+			filterHasText( nextFilter ) && matchingTextDecorator( searchPattern( nextFilter ) ),
 		)
 
 		// avoids weird caret position if content is changed
