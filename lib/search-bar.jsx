@@ -12,6 +12,7 @@ import { tracks } from './analytics';
 import NewNoteIcon from './icons/new-note';
 import SearchField from './search-field';
 import TagsIcon from './icons/tags';
+import { withoutTags } from './utils/filter-notes';
 
 const {
 	newNote,
@@ -34,7 +35,7 @@ export const SearchBar = ( {
 		<button
 			className="button button-borderless"
 			disabled={ showTrash }
-			onClick={ () => onNewNote( query ) }
+			onClick={ () => onNewNote( withoutTags( query ) ) }
 			title="New Note"
 		>
 			<NewNoteIcon />
