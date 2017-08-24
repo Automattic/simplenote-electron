@@ -24,7 +24,7 @@ var opts = {
 	author: config.author,
 	platform: builder.getPlatform( process.argv ),
 	arch: builder.getArch( process.argv ),
-	version: electronVersion,
+	electronVersion,
 	appVersion: config.version,
 	appSign: 'Developer ID Application: ' + config.author,
 	out: './release',
@@ -58,7 +58,8 @@ builder.beforeBuild( __dirname, opts, function( error ) {
 
 	packager( opts, function( err ) {
 		if ( err ) {
-			console.log( error );
+			console.log( 'Packager Error:' );
+			console.log( err );
 		} else {
 			builder.cleanUp( path.join( __dirname, 'release' ), opts );
 		}
