@@ -8,6 +8,7 @@ import TagField from './tag-field'
 import NoteToolbar from './note-toolbar'
 import RevisionSelector from './revision-selector'
 import { get, property } from 'lodash'
+import getActiveNote from './utils/get-active-note';
 
 const markdownConverter = new showdown.Converter( { extensions: [ xssFilter ] } );
 markdownConverter.setFlavor( 'github' );
@@ -16,7 +17,6 @@ export const NoteEditor = React.createClass( {
 	propTypes: {
 		editorMode: PropTypes.oneOf( [ 'edit', 'markdown' ] ),
 		note: PropTypes.object,
-		revisions: PropTypes.array,
 		fontSize: PropTypes.number,
 		shouldPrint: PropTypes.bool,
 		onSetEditorMode: PropTypes.func.isRequired,
@@ -26,7 +26,6 @@ export const NoteEditor = React.createClass( {
 		onRestoreNote: PropTypes.func.isRequired,
 		onShareNote: PropTypes.func.isRequired,
 		onDeleteNoteForever: PropTypes.func.isRequired,
-		onRevisions: PropTypes.func.isRequired,
 		onCloseNote: PropTypes.func.isRequired,
 		onNoteInfo: PropTypes.func.isRequired,
 		onPrintNote: PropTypes.func
@@ -43,45 +42,12 @@ export const NoteEditor = React.createClass( {
 		};
 	},
 
-	componentWillReceiveProps: function() {
-		this.setState( { revision: null } );
-	},
-
-	getInitialState: function() {
-		return {
-			revision: null,
-			isViewingRevisions: false
-		}
-	},
-
 	componentDidUpdate: function() {
 		// Immediately print once `shouldPrint` has been set
 		if ( this.props.shouldPrint ) {
 			window.print();
 			this.props.onNotePrinted();
 		}
-	},
-
-	onViewRevision: function( revision ) {
-		this.setState( { revision: revision } );
-	},
-
-	onSelectRevision: function( revision ) {
-		if ( ! revision ) {
-			return;
-		}
-
-		const { note, onUpdateContent } = this.props;
-		const { data: { content } } = revision;
-
-		onUpdateContent( note, content );
-		this.setIsViewingRevisions( false );
-	},
-
-	onCancelRevision: function() {
-		// clear out the revision
-		this.setState( { revision: null } );
-		this.setIsViewingRevisions( false );
 	},
 
 	setEditorMode( event ) {
@@ -94,15 +60,16 @@ export const NoteEditor = React.createClass( {
 		this.props.onSetEditorMode( editorMode );
 	},
 
-	setIsViewingRevisions: function( isViewing ) {
-		this.setState( { isViewingRevisions: isViewing } );
-	},
-
 	render: function() {
 		let noteContent = '';
-		const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
-		const revision = this.state.revision || note;
-		const isViewingRevisions = this.state.isViewingRevisions;
+		const {
+			editorMode,
+			note,
+			selectedRevision,
+			fontSize,
+			shouldPrint,
+		} = this.props;
+		const revision = selectedRevision || note;
 		const tags = revision && revision.data && revision.data.tags || [];
 		const isTrashed = !!( note && note.data.deleted );
 
@@ -111,7 +78,7 @@ export const NoteEditor = React.createClass( {
 			revision.data.systemTags.indexOf( 'markdown' ) !== -1;
 
 		const classes = classNames( 'note-editor', 'theme-color-bg', 'theme-color-fg', {
-			revisions: isViewingRevisions,
+			revisions: selectedRevision,
 			markdown: markdownEnabled
 		} );
 
@@ -127,19 +94,15 @@ export const NoteEditor = React.createClass( {
 		return (
 			<div className={classes}>
 				<RevisionSelector
-					revisions={revisions || []}
-					onViewRevision={this.onViewRevision}
-					onSelectRevision={this.onSelectRevision}
-					onCancelRevision={this.onCancelRevision} />
+					onUpdateContent={this.props.onUpdateContent}
+				/>
 				<div className="note-editor-controls theme-color-border">
 					<NoteToolbar
-						note={note}
+						noteBucket={ this.props.noteBucket }
 						onTrashNote={this.props.onTrashNote}
 						onRestoreNote={this.props.onRestoreNote}
 						onShareNote={this.props.onShareNote}
 						onDeleteNoteForever={this.props.onDeleteNoteForever}
-						onRevisions={this.props.onRevisions}
-						setIsViewingRevisions={this.setIsViewingRevisions}
 						onCloseNote={this.props.onCloseNote}
 						onNoteInfo={this.props.onNoteInfo} />
 				</div>
@@ -148,7 +111,6 @@ export const NoteEditor = React.createClass( {
 					<div className="note-editor-detail">
 						<NoteDetail
 							filter={this.props.filter}
-							note={revision}
 							previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
 							onChangeContent={this.props.onUpdateContent}
 							fontSize={fontSize} />
@@ -200,9 +162,18 @@ export const NoteEditor = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { settings } ) => ( {
-	fontSize: settings.fontSize,
-	markdownEnabled: settings.markdownEnabled
-} );
+const mapStateToProps = ( {
+	appState: state,
+	revision: { selectedRevision },
+	settings,
+} ) => {
+	const revision = selectedRevision || getActiveNote( state );
+	return {
+		fontSize: settings.fontSize,
+		markdownEnabled: settings.markdownEnabled,
+		note: revision,
+		selectedRevision,
+	};
+};
 
 export default connect( mapStateToProps )( NoteEditor );

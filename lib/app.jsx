@@ -336,14 +336,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		} );
 	},
 
-	onRevisions: function( note ) {
-		this.props.actions.noteRevisions( {
-			noteBucket: this.props.noteBucket,
-			note
-		} );
-		analytics.tracks.recordEvent( 'editor_versions_accessed' );
-	},
-
 	render: function() {
 		const {
 			appState: state,
@@ -396,11 +388,10 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								<NoteList noteBucket={ noteBucket } />
 							</div>
 							<NoteEditor
+								noteBucket={ noteBucket }
 								allTags={ state.tags }
 								editorMode={state.editorMode}
 								filter={state.filter}
-								note={selectedNote}
-								revisions={state.revisions}
 								onSetEditorMode={this.onSetEditorMode}
 								onUpdateContent={this.onUpdateContent}
 								onUpdateNoteTags={this.onUpdateNoteTags}
@@ -408,7 +399,6 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 								onRestoreNote={this.onRestoreNote}
 								onShareNote={this.onShareNote}
 								onDeleteNoteForever={this.onDeleteNoteForever}
-								onRevisions={this.onRevisions}
 								onCloseNote={() => this.props.actions.closeNote()}
 								onNoteInfo={() => this.props.actions.toggleNoteInfo()}
 								shouldPrint={state.shouldPrint}
