@@ -10,6 +10,7 @@ import {
 	authIsPending,
 	isAuthorized,
 } from './state/auth/selectors';
+import { isPaneVisible } from './state/ui/selectors';
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
@@ -64,6 +65,7 @@ const mapStateToProps = state => ( {
 	...state,
 	authIsPending: authIsPending( state ),
 	isAuthorized: isAuthorized( state ),
+	isTagDrawerVisible: isPaneVisible( state, 'tagDrawer' ),
 } )
 
 function mapDispatchToProps( dispatch, { noteBucket } ) {
@@ -350,6 +352,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 			authIsPending,
 			isAuthorized,
 			isSmallScreen,
+			isTagDrawerVisible,
 			noteBucket,
 			settings,
 			tagBucket,
@@ -368,7 +371,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 		const mainClasses = classNames( 'simplenote-app', {
 			'note-open': selectedNote,
 			'note-info-open': state.showNoteInfo,
-			'navigation-open': state.showNavigation,
+			'navigation-open': isTagDrawerVisible,
 			'is-electron': isElectron(),
 			'is-macos': isMacApp
 		} );
@@ -388,7 +391,7 @@ export const App = connect( mapStateToProps, mapDispatchToProps )( React.createC
 				}
 				{ isAuthorized ?
 						<div className={mainClasses}>
-							{ state.showNavigation &&
+							{ isTagDrawerVisible &&
 								<NavigationBar noteBucket={ noteBucket } tagBucket={ tagBucket } />
 							}
 							<div className="source-list theme-color-bg theme-color-fg">

@@ -5,6 +5,7 @@ import EditableList from './editable-list'
 import { get } from 'lodash'
 import appState from './flux/app-state';
 import { tracks } from './analytics'
+import { toggleTagDrawer } from './state/ui/actions';
 
 const {
 	editTags,
@@ -53,6 +54,7 @@ export class TagList extends Component {
 			event.preventDefault();
 			event.currentTarget.blur();
 			this.props.onSelectTag( tag );
+			this.props.hideTagDrawer();
 		}
 	};
 
@@ -89,6 +91,7 @@ const mapStateToProps = ( { appState: state } ) => ( {
 } );
 
 const mapDispatchToProps = ( dispatch, { noteBucket, tagBucket } ) => ( {
+	hideTagDrawer: () => dispatch( toggleTagDrawer( false ) ),
 	onEditTags: () => dispatch( editTags() ),
 	onRenameTag: ( tag, name ) => dispatch( renameTag( {
 		name,
