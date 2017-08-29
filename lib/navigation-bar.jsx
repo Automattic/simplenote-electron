@@ -7,12 +7,13 @@ import SettingsIcon from './icons/settings'
 import { viewExternalUrl } from './utils/url-utils'
 import classNames from 'classnames'
 import appState from './flux/app-state';
+import { toggleTagDrawer } from './state/ui/actions';
+import { isPaneVisible } from './state/ui/selectors';
 
 const {
 	selectAllNotes,
 	selectTrash,
 	showDialog,
-	toggleNavigation,
 } = appState.actionCreators;
 
 export const NavigationBar = React.createClass( {
@@ -29,15 +30,27 @@ export const NavigationBar = React.createClass( {
 	],
 
 	handleClickOutside: function() {
-		const { dialogs, onOutsideClick, showNavigation } = this.props;
+		const { dialogs, hideTagDrawer, isTagDrawerVisible } = this.props;
 
 		if ( dialogs.length > 0 ) {
 			return;
 		}
 
-		if ( showNavigation ) {
-			onOutsideClick();
+		if ( isTagDrawerVisible ) {
+			hideTagDrawer();
 		}
+	},
+
+	handleSelectAllNotes: function() {
+		const { hideTagDrawer, onSelectAllNotes } = this.props;
+		onSelectAllNotes();
+		hideTagDrawer();
+	},
+
+	handleSelectTrash: function() {
+		const { hideTagDrawer, onSelectTrash } = this.props;
+		onSelectTrash();
+		hideTagDrawer();
 	},
 
 	onHelpClicked: function() {
@@ -69,11 +82,11 @@ export const NavigationBar = React.createClass( {
 		return (
 			<div className="navigation theme-color-bg theme-color-fg theme-color-border">
 				<div className="navigation-folders">
-					<button type="button" className={allNotesClasses} onClick={this.props.onSelectAllNotes}>
+					<button type="button" className={allNotesClasses} onClick={this.handleSelectAllNotes}>
 						<span className="navigation-icon"><NotesIcon /></span>
 						All Notes
 					</button>
-					<button type="button" className={trashClasses} onClick={this.props.onSelectTrash}>
+					<button type="button" className={trashClasses} onClick={this.handleSelectTrash}>
 						<span className="navigation-icon"><TrashIcon /></span>
 						Trash
 					</button>
@@ -96,14 +109,15 @@ export const NavigationBar = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( { appState: state } ) => ( {
-	dialogs: state.dialogs,
-	selectedTag: state.tag,
-	showNavigation: state.showNavigation,
-	showTrash: state.showTrash,
+const mapStateToProps = state => ( {
+	dialogs: state.appState.dialogs,
+	isTagDrawerVisible: isPaneVisible( state, 'tagDrawer' ),
+	selectedTag: state.appState.tag,
+	showTrash: state.appState.showTrash,
 } );
 
 const mapDispatchToProps = ( dispatch ) => ( {
+	hideTagDrawer: () => dispatch( toggleTagDrawer( false ) ),
 	onAbout: () => dispatch( showDialog( {
 		dialog: {
 			type: 'About',
@@ -111,7 +125,6 @@ const mapDispatchToProps = ( dispatch ) => ( {
 			single: true
 		}
 	} ) ),
-	onOutsideClick: () => dispatch( toggleNavigation() ),
 	onSelectAllNotes: () => dispatch( selectAllNotes() ),
 	onSelectTrash: () => dispatch( selectTrash() ),
 	onSettings: () => dispatch( showDialog( {
