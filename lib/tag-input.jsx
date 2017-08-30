@@ -78,9 +78,7 @@ export class TagInput extends Component {
     selection.addRange(range);
   };
 
-  hasFocus = () => {
-    return document.activeElement === this.inputField;
-  };
+  hasFocus = () => document.activeElement === this.inputField;
 
   interceptKeys = event =>
     invoke(

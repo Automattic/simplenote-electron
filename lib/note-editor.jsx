@@ -87,8 +87,8 @@ export const NoteEditor = React.createClass({
       return false;
     }
 
-    // open note list - shift + [
-    if (cmdOrCtrl && '{' === key) {
+    // open note list - shift + n
+    if (cmdOrCtrl && 'N' === key) {
       this.props.onCloseNote();
 
       event.stopPropagation();
