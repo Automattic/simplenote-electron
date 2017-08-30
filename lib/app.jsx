@@ -2,14 +2,8 @@ import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import appState from './flux/app-state'
-import {
-	reset as resetAuth,
-	setAuthorized,
-} from './state/auth/actions';
-import {
-	authIsPending,
-	isAuthorized,
-} from './state/auth/selectors';
+import reduxActions from './state/actions';
+import selectors from './state/selectors';
 import browserShell from './browser-shell'
 import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index'
@@ -62,8 +56,8 @@ function getIpc() {
 
 const mapStateToProps = state => ( {
 	...state,
-	authIsPending: authIsPending( state ),
-	isAuthorized: isAuthorized( state ),
+	authIsPending: selectors.auth.authIsPending( state ),
+	isAuthorized: selectors.auth.isAuthorized( state ),
 } )
 
 function mapDispatchToProps( dispatch, { noteBucket } ) {
@@ -90,8 +84,8 @@ function mapDispatchToProps( dispatch, { noteBucket } ) {
 		setSortType: thenReloadNotes( settingsActions.setSortType ),
 		toggleSortOrder: thenReloadNotes( settingsActions.toggleSortOrder ),
 
-		resetAuth: () => dispatch( resetAuth() ),
-		setAuthorized: () => dispatch( setAuthorized() ),
+		resetAuth: () => dispatch( reduxActions.auth.reset() ),
+		setAuthorized: () => dispatch( reduxActions.auth.setAuthorized() ),
 	};
 }
 
