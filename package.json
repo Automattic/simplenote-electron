@@ -15,7 +15,6 @@
     "build:dll": "webpack --config ./webpack.config.dll.js",
     "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
     "lint": "eslint lib",
-    "version": "webpack --version",
     "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
   },
   "author": "",
@@ -48,7 +47,9 @@
     "electron-packager": "8.7.2",
     "enzyme": "2.9.1",
     "eslint": "4.5.0",
+    "eslint-config-prettier": "2.3.0",
     "eslint-loader": "1.9.0",
+    "eslint-plugin-prettier": "2.2.0",
     "eslint-plugin-react": "7.3.0",
     "html-webpack-plugin": "2.30.1",
     "jest-cli": "20.0.4",
