@@ -4,7 +4,8 @@ exports[`TagChip should not introduce visual regressions 1`] = `
 <div
   className="tag-chip"
   data-tag-name="spline"
-  onClick={[Function]}>
+  onClick={[Function]}
+>
   spline
 </div>
 `;
