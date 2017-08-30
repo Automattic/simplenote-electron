@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`TagChip should not introduce visual regressions 1`] = `
 <div
   className="tag-chip"
