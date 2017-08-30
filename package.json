@@ -20,8 +20,8 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": "8.4.0",
-    "npm": "5.3.0"
+    "node": "6.11.2",
+    "npm": "3.10.10"
   },
   "jest": {
     "rootDir": "lib"
