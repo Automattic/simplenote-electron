@@ -89,6 +89,7 @@
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",
     "react-addons-update": "15.6.0",
+    "react-overlays": "0.8.0",
     "react-redux": "5.0.6",
     "react-virtualized": "9.9.0",
     "redux": "3.7.2",
