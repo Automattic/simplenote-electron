@@ -6,7 +6,14 @@ import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
-import { differenceBy, intersectionBy, invoke, negate, noop, union } from 'lodash';
+import {
+  differenceBy,
+  intersectionBy,
+  invoke,
+  negate,
+  noop,
+  union,
+} from 'lodash';
 
 export default React.createClass({
   propTypes: {
@@ -151,7 +158,7 @@ export default React.createClass({
   onKeyDown: function(e) {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
-  },
+    }
 
     return this.interceptKeys(e);
   },

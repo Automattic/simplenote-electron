@@ -261,7 +261,7 @@ export default class NoteContentEditor extends React.Component {
     return (
       this.editor &&
       document.activeElement ===
-        get(ReactDOM.findDOMNode(this.editor), 'children[0].children[0]')
+        get(ReactDOM.findDOMNode(this.editor), 'children[0].children[0]') // eslint-disable-line react/no-find-dom-node
     );
   };
 
