@@ -1,153 +1,158 @@
-
 .theme-light {
-	background-color: $white;
-	color: $gray-darkest;
+  background-color: $white;
+  color: $gray-darkest;
 
-	.theme-color-bg {
-		background-color: $white;
-	}
-	.theme-color-bg-lighter {
-		background-color: lighten($gray, 30%);
-	}
-	.theme-color-fg {
-		color: $gray-darkest;
-	}
-	.theme-color-fg-dim {
-		color: darken($gray, 20%);
-	}
-	.theme-color-border {
-		border-color: lighten($gray, 30%);
-	}
+  .theme-color-bg {
+    background-color: $white;
+  }
+  .theme-color-bg-lighter {
+    background-color: lighten($gray, 30%);
+  }
+  .theme-color-fg {
+    color: $gray-darkest;
+  }
+  .theme-color-fg-dim {
+    color: darken($gray, 20%);
+  }
+  .theme-color-border {
+    border-color: lighten($gray, 30%);
+  }
 }
 
 .theme-dark {
-	background-color: $gray-darkest;
-	color: $gray;
+  background-color: $gray-darkest;
+  color: $gray;
 
-	.theme-color-bg {
-		background-color: $gray-darkest;
-	}
-	.theme-color-bg-lighter {
-		background-color: darken($gray, 20%);
-	}
-	.theme-color-fg {
-		color: lighten($gray, 30%);
-	}
-	.theme-color-fg-dim {
-		color: lighten($gray, 20%);
-	}
-	.theme-color-border {
-		border-color: darken($gray, 25%);
-	}
+  .theme-color-bg {
+    background-color: $gray-darkest;
+  }
+  .theme-color-bg-lighter {
+    background-color: darken($gray, 20%);
+  }
+  .theme-color-fg {
+    color: lighten($gray, 30%);
+  }
+  .theme-color-fg-dim {
+    color: lighten($gray, 20%);
+  }
+  .theme-color-border {
+    border-color: darken($gray, 25%);
+  }
 
-	.search-field {
-		border-color: darken($gray, 25%);
-	}
+  .search-field {
+    border-color: darken($gray, 25%);
+  }
 
-	::-webkit-scrollbar-thumb {
-		background-color: darken($gray, 20%);
-		border-color: $gray-darkest;
-	}
-	::-webkit-scrollbar-thumb:hover {
-		background-color: darken($gray, 10%);
-	}
-	::-webkit-scrollbar-thumb:active {
-		background-color: $gray;
-	}
+  ::-webkit-scrollbar-thumb {
+    background-color: darken($gray, 20%);
+    border-color: $gray-darkest;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: darken($gray, 10%);
+  }
+  ::-webkit-scrollbar-thumb:active {
+    background-color: $gray;
+  }
 
-	.button-borderless {
-		&[disabled], &:disabled {
-			svg[class^="icon-"] {
-				fill: darken($gray, 30%);
-			}
-		}
-	}
+  .button-borderless {
+    &[disabled],
+    &:disabled {
+      svg[class^='icon-'] {
+        fill: darken($gray, 30%);
+      }
+    }
+  }
 
-	input, textarea {
-		border-color: darken($gray, 25%);
-		color: $gray-lightest;
-		background-color: transparent;
-	}
+  input,
+  textarea {
+    border-color: darken($gray, 25%);
+    color: $gray-lightest;
+    background-color: transparent;
+  }
 
-	input::placeholder {
-		color: $gray;
-	}
+  input::placeholder {
+    color: $gray;
+  }
 
-	.transparent-input::placeholder {
-		color: darken($gray, 10%);
-	}
+  .transparent-input::placeholder {
+    color: darken($gray, 10%);
+  }
 
-	.checkbox-control-base {
-		border-color: darken($gray, 20%);
-	}
+  .checkbox-control-base {
+    border-color: darken($gray, 20%);
+  }
 
-	.tag-field input {
-		background: transparent;
+  .tag-field input {
+    background: transparent;
 
-		&::placeholder {
-			color: lighten($gray, 10%);
-		}
-	}
+    &::placeholder {
+      color: lighten($gray, 10%);
+    }
+  }
 
-	.dialogs-overlay {
-		background: rgba($gray-darkest, 0.75);
-	}
+  .dialogs-overlay {
+    background: rgba($gray-darkest, 0.75);
+  }
 
-	.note-list-item {
-		&:hover .note-list-item-pinner {
-			box-shadow: inset 0 0 0 2px darken($gray, 30%), inset 0 0 0 3px $gray-darkest;
+  .note-list-item {
+    &:hover .note-list-item-pinner {
+      box-shadow: inset 0 0 0 2px darken($gray, 30%),
+        inset 0 0 0 3px $gray-darkest;
 
-			&:hover {
-				background: darken($gray, 10%);
-			}
-		}
+      &:hover {
+        background: darken($gray, 10%);
+      }
+    }
 
-		&.note-list-item-pinned .note-list-item-pinner {
-			background: $white;
-			box-shadow: inset 0 0 0 2px darken($gray, 10%), inset 0 0 0 3px $gray-darkest;
+    &.note-list-item-pinned .note-list-item-pinner {
+      background: $white;
+      box-shadow: inset 0 0 0 2px darken($gray, 10%),
+        inset 0 0 0 3px $gray-darkest;
 
-			&:hover {
-				background: darken($gray, 30%);
-			}
-		}
+      &:hover {
+        background: darken($gray, 30%);
+      }
+    }
 
-		&.note-list-item-pinned.note-list-item-selected .note-list-item-pinner {
-			background: $blue;
-			box-shadow: inset 0 0 0 2px darken($blue, 10%), inset 0 0 0 3px $gray-darkest;
+    &.note-list-item-pinned.note-list-item-selected .note-list-item-pinner {
+      background: $blue;
+      box-shadow: inset 0 0 0 2px darken($blue, 10%),
+        inset 0 0 0 3px $gray-darkest;
 
-			&:hover {
-				background: lighten($blue, 10%);
-			}
-		}
-	}
+      &:hover {
+        background: lighten($blue, 10%);
+      }
+    }
+  }
 
-	.note-detail-markdown {
-		@import "../node_modules/highlight.js/styles/solarized-dark.css";
+  .note-detail-markdown {
+    @import '../node_modules/highlight.js/styles/solarized-dark.css';
 
-		hr {
-			border-color: darken($gray, 20%);
-		}
+    hr {
+      border-color: darken($gray, 20%);
+    }
 
-		blockquote {
-			border-color: darken($gray, 20%);
-		}
+    blockquote {
+      border-color: darken($gray, 20%);
+    }
 
-		code {
-			background: darken($gray, 30%);
-		}
-		pre {
-			border-color: darken($gray, 20%);
-		}
-		pre code {
-			color: $gray;
-			background: transparent;
-		}
-	}
+    code {
+      background: darken($gray, 30%);
+    }
+    pre {
+      border-color: darken($gray, 20%);
+    }
+    pre code {
+      color: $gray;
+      background: transparent;
+    }
+  }
 }
 
-.theme-light, .theme-dark {
-	.transparent-input {
-		color: inherit;
-		background-color: transparent;
-	}
+.theme-light,
+.theme-dark {
+  .transparent-input {
+    color: inherit;
+    background-color: transparent;
+  }
 }

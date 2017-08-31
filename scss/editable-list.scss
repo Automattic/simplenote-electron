@@ -1,120 +1,121 @@
 .editable-list {
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
-	margin: 0;
-	padding: 0;
-	list-style: none;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-	.editable-list-item {
-		display: flex;
-		flex: none;
-		padding: 0;
-		overflow: hidden;
-		white-space: nowrap;
-		-webkit-tap-highlight-color: transparent;
-		position: relative;
-		z-index: 10;
-		transition: $anim;
+  .editable-list-item {
+    display: flex;
+    flex: none;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 10;
+    transition: $anim;
 
-		svg {
-			vertical-align: middle;
-		}
+    svg {
+      vertical-align: middle;
+    }
 
-		.active {
-			color: $blue;
-		}
-	}
+    .active {
+      color: $blue;
+    }
+  }
 
-	&.editable-list-reordering .editable-list-item {
-		transition: none;
-		
-		* {
-			cursor: ns-resize;
-		}
-	}
+  &.editable-list-reordering .editable-list-item {
+    transition: none;
 
-	.editable-list-item-reordering {
-		z-index: 0;
-	}
+    * {
+      cursor: ns-resize;
+    }
+  }
 
-	.editable-list-item-left {
-		display: flex;
-		align-items: center;
-		flex: 1 0 auto;
-		transition: $anim;
-		transform: translateX(0);
-	}
+  .editable-list-item-reordering {
+    z-index: 0;
+  }
 
-	&.editable-list-removable .editable-list-item-left {
-		transform: translateX(-24px);
-	}
+  .editable-list-item-left {
+    display: flex;
+    align-items: center;
+    flex: 1 0 auto;
+    transition: $anim;
+    transform: translateX(0);
+  }
 
-	.editable-list-item-content {
-		display: flex;
-		flex: 1 1 auto;
-		align-items: center;
-	}
+  &.editable-list-removable .editable-list-item-left {
+    transform: translateX(-24px);
+  }
 
-	.editable-list-trash, .editable-list-reorder {
-		flex: none;
-		opacity: 0;
-		pointer-events: none;
-		transition: $anim;
+  .editable-list-item-content {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+  }
 
-		svg {
-			transition: $anim;
-		}
+  .editable-list-trash,
+  .editable-list-reorder {
+    flex: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: $anim;
 
-		&:focus {
-			outline: none;
-		}
-	}
+    svg {
+      transition: $anim;
+    }
 
-	.editable-list-trash {
-		width: 22px;
-		margin-right: 4px;
+    &:focus {
+      outline: none;
+    }
+  }
 
-		svg {
-			fill: $red;
-		}
+  .editable-list-trash {
+    width: 22px;
+    margin-right: 4px;
 
-		&:focus svg {
-			fill: darken($red, 20%);
-		}
-	}
+    svg {
+      fill: $red;
+    }
 
-	.editable-list-reorder {
-		display: flex;
-		align-items: center;
-		flex: none;
-		transform: translateX(24px);
-		
-		svg {
-			fill: $gray;
-		}
+    &:focus svg {
+      fill: darken($red, 20%);
+    }
+  }
 
-		&:focus svg {
-			fill: darken($gray, 20%);
-		}
-	}
+  .editable-list-reorder {
+    display: flex;
+    align-items: center;
+    flex: none;
+    transform: translateX(24px);
 
-	&.editable-list-editing {
-		.editable-list-item-left {
-			transform: translateX(-4px);
-		}
+    svg {
+      fill: $gray;
+    }
 
-		.editable-list-trash {
-			opacity: 1;
-			pointer-events: auto;
-		}
+    &:focus svg {
+      fill: darken($gray, 20%);
+    }
+  }
 
-		.editable-list-reorder {
-			opacity: 1;
-			pointer-events: auto;
-			transform: translateX(0);
-		}
-	}
+  &.editable-list-editing {
+    .editable-list-item-left {
+      transform: translateX(-4px);
+    }
+
+    .editable-list-trash {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .editable-list-reorder {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+  }
 }

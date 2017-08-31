@@ -13,9 +13,12 @@
     "build": "NODE_ENV=development npm run build:dll && npm run build:app",
     "build:app": "webpack --config ./webpack.config.js",
     "build:dll": "webpack --config ./webpack.config.dll.js",
-    "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
-    "lint": "eslint lib",
-    "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
+    "build:prod":
+      "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
+    "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
+    "lint": "eslint --ext .js --ext .jsx lib",
+    "start":
+      "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
   },
   "author": "",
   "license": "ISC",
@@ -23,11 +26,14 @@
     "node": "7.9.0",
     "npm": "4.2.0"
   },
-  "browserslist": [
-    "Chrome >= 58"
-  ],
+  "browserslist": ["Chrome >= 58"],
   "jest": {
     "rootDir": "lib"
+  },
+  "prettier": {
+    "bracketSpacing": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
   },
   "devDependencies": {
     "autoprefixer": "7.1.3",
@@ -49,6 +55,7 @@
     "eslint": "4.5.0",
     "eslint-config-prettier": "2.3.0",
     "eslint-loader": "1.9.0",
+    "eslint-plugin-jest": "20.0.3",
     "eslint-plugin-prettier": "2.2.0",
     "eslint-plugin-react": "7.3.0",
     "html-webpack-plugin": "2.30.1",

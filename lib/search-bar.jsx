@@ -14,47 +14,47 @@ import SearchField from './search-field';
 import TagsIcon from './icons/tags';
 import { withoutTags } from './utils/filter-notes';
 
-const {
-	newNote,
-	search,
-	toggleNavigation,
-} = appState.actionCreators;
+const { newNote, search, toggleNavigation } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-export const SearchBar = ( {
-	onNewNote,
-	onToggleNavigation,
-	query,
-	showTrash,
-} ) => (
-	<div className="search-bar theme-color-border">
-		<button className="button button-borderless" onClick={ onToggleNavigation } title="Tags">
-			<TagsIcon />
-		</button>
-		<SearchField />
-		<button
-			className="button button-borderless"
-			disabled={ showTrash }
-			onClick={ () => onNewNote( withoutTags( query ) ) }
-			title="New Note"
-		>
-			<NewNoteIcon />
-		</button>
-	</div>
+export const SearchBar = ({
+  onNewNote,
+  onToggleNavigation,
+  query,
+  showTrash,
+}) => (
+  <div className="search-bar theme-color-border">
+    <button
+      className="button button-borderless"
+      onClick={onToggleNavigation}
+      title="Tags"
+    >
+      <TagsIcon />
+    </button>
+    <SearchField />
+    <button
+      className="button button-borderless"
+      disabled={showTrash}
+      onClick={() => onNewNote(withoutTags(query))}
+      title="New Note"
+    >
+      <NewNoteIcon />
+    </button>
+  </div>
 );
 
-const mapStateToProps = ( { appState: state } ) => ( {
-	query: state.filter,
-	showTrash: state.showTrash,
-} );
+const mapStateToProps = ({ appState: state }) => ({
+  query: state.filter,
+  showTrash: state.showTrash,
+});
 
-const mapDispatchToProps = ( dispatch, { noteBucket } ) => ( {
-	onNewNote: content => {
-		dispatch( search( { filter: '' } ) );
-		dispatch( newNote( { noteBucket, content } ) );
-		recordEvent( 'list_note_created' );
-	},
-	onToggleNavigation: () => dispatch( toggleNavigation() ),
-} );
+const mapDispatchToProps = (dispatch, { noteBucket }) => ({
+  onNewNote: content => {
+    dispatch(search({ filter: '' }));
+    dispatch(newNote({ noteBucket, content }));
+    recordEvent('list_note_created');
+  },
+  onToggleNavigation: () => dispatch(toggleNavigation()),
+});
 
-export default connect( mapStateToProps, mapDispatchToProps )( SearchBar );
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

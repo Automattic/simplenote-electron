@@ -8,12 +8,12 @@ import React, { Component } from 'react';
  * @returns {{windowWidth: Number, isSmallScreen: boolean}} window attributes
  */
 const getState = () => {
-	const windowWidth = window.innerWidth;
+  const windowWidth = window.innerWidth;
 
-	return {
-		windowWidth,
-		isSmallScreen: windowWidth <= 750, // Magic number here corresponds to $single-column value in variables.scss
-	}
+  return {
+    windowWidth,
+    isSmallScreen: windowWidth <= 750, // Magic number here corresponds to $single-column value in variables.scss
+  };
 };
 
 /**
@@ -26,22 +26,23 @@ const getState = () => {
  * @param {Element} Wrapped React component dependent on window attributes
  * @returns {Component} wrapped React component with window attributes as props
  */
-export const browserShell = Wrapped => class extends Component {
-	state = getState();
+export const browserShell = Wrapped =>
+  class extends Component {
+    state = getState();
 
-	componentDidMount() {
-		window.addEventListener( 'resize', this.updateWindowSize );
-	}
+    componentDidMount() {
+      window.addEventListener('resize', this.updateWindowSize);
+    }
 
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.updateWindowSize );
-	}
+    componentWillUnmount() {
+      window.removeEventListener('resize', this.updateWindowSize);
+    }
 
-	updateWindowSize = () => this.setState( getState() );
+    updateWindowSize = () => this.setState(getState());
 
-	render() {
-		return <Wrapped { ...this.state } { ...this.props } />
-	}
-};
+    render() {
+      return <Wrapped {...this.state} {...this.props} />;
+    }
+  };
 
 export default browserShell;

@@ -1,8 +1,9 @@
 {
-	"forceUpdate": false,
-	"updater": {
-		"url": "https://app.simplenote.com/desktop/{platform}/version?compare={version}",
-		"delay": 2000,
-		"interval": 600000
-	}
+  "forceUpdate": false,
+  "updater": {
+    "url":
+      "https://app.simplenote.com/desktop/{platform}/version?compare={version}",
+    "delay": 2000,
+    "interval": 600000
+  }
 }
