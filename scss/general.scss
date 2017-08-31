@@ -1,148 +1,154 @@
 *,
 *:before,
 *:after {
-	cursor: default; // Make everything use default cursor
-	box-sizing: border-box;
+  cursor: default; // Make everything use default cursor
+  box-sizing: border-box;
 }
 
-a[href^="http://"],
-a[href^="https://"] {
-	cursor: pointer; // Make all web links use pointer cursor
+a[href^='http://'],
+a[href^='https://'] {
+  cursor: pointer; // Make all web links use pointer cursor
 }
 
-html, body {
-	height: 100%;
+html,
+body {
+  height: 100%;
 }
 
 body {
-	margin: 0;
-	font: 14px/1.5 $sans;
-	overflow: hidden;
-	-webkit-touch-callout: none;
+  margin: 0;
+  font: 14px/1.5 $sans;
+  overflow: hidden;
+  -webkit-touch-callout: none;
 }
 
-img, svg {
-	vertical-align: middle;
+img,
+svg {
+  vertical-align: middle;
 }
 
 a {
-	color: $blue;
+  color: $blue;
 }
 
 .app {
-	display: flex;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .simplenote-app {
-	display: flex;
-	position: relative;
-	width: 100%;
-	height: 100%;
-	transform: translateX(0px);
-	transition: transform 200ms ease-in-out;
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: translateX(0px);
+  transition: transform 200ms ease-in-out;
 
-	&.note-info-open {
-		transform: translateX(-$note-info-width);
-	}
+  &.note-info-open {
+    transform: translateX(-$note-info-width);
+  }
 
-	&.navigation-open {
-		transform: translateX($navigation-bar-width);
-	}
+  &.navigation-open {
+    transform: translateX($navigation-bar-width);
+  }
 
-	.note-editor {
-		flex: 1 1 auto;
-	}
+  .note-editor {
+    flex: 1 1 auto;
+  }
 
-	@media only screen and ( max-width: $single-column ) {
-		.note-editor {
-			position: absolute;
-			flex: none;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			opacity: 0;
-			z-index: -1;
-			transition: $anim-transition;
-		}
+  @media only screen and (max-width: $single-column) {
+    .note-editor {
+      position: absolute;
+      flex: none;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: -1;
+      transition: $anim-transition;
+    }
 
-		&.note-open .note-editor {
-			opacity: 1;
-		}
+    &.note-open .note-editor {
+      opacity: 1;
+    }
 
-		&.note-info-open {
-			.note-editor {
-				opacity: $fade-alpha;
-			}
-		}
+    &.note-info-open {
+      .note-editor {
+        opacity: $fade-alpha;
+      }
+    }
 
-		&.navigation-open {
-			.note-editor {
-				opacity: 0;
-			}
-		}
-	}
+    &.navigation-open {
+      .note-editor {
+        opacity: 0;
+      }
+    }
+  }
 }
 
 .panel-title {
-	margin: 0;
-	text-transform: uppercase;
-	font-size: 86%;
-	color: darken($gray, 20%);
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 86%;
+  color: darken($gray, 20%);
 }
 
 /* Fade content when toolbars are visible */
 .note-info-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
-	}
+  .note-editor,
+  .source-list {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+  }
 }
 
 .navigation-open {
-	.note-editor, .source-list {
-		opacity: $fade-alpha;
-		transition: $anim;
-		pointer-events: none;
-	}
+  .note-editor,
+  .source-list {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+  }
 }
 
 .is-macos {
-	.note-editor-controls {
-		box-sizing: border-box;
-		-webkit-app-region: drag;
-		padding: 40px 0 30px;
-	}
+  .note-editor-controls {
+    box-sizing: border-box;
+    -webkit-app-region: drag;
+    padding: 40px 0 30px;
+  }
 
-	.search-bar {
-		padding: 40px 15px 30px;
-		box-sizing: border-box;
-		-webkit-app-region: drag;
-	}
+  .search-bar {
+    padding: 40px 15px 30px;
+    box-sizing: border-box;
+    -webkit-app-region: drag;
+  }
 
-	.navigation, .note-info {
-		padding-top: 10px;
-	}
+  .navigation,
+  .note-info {
+    padding-top: 10px;
+  }
 
-	.button, .search-field {
-		-webkit-app-region: no-drag;
-	}
+  .button,
+  .search-field {
+    -webkit-app-region: no-drag;
+  }
 
-	.revision-selector {
-		-webkit-app-region: drag;
-	}
+  .revision-selector {
+    -webkit-app-region: drag;
+  }
 }
 
 .search-match {
-	background-color: $blue;
-	border-radius: 3px;
-	padding-left: 2px;
-	padding-right: 2px;
-	color: $white;
+  background-color: $blue;
+  border-radius: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
+  color: $white;
 }

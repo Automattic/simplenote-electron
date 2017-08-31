@@ -1,80 +1,79 @@
 .revision-selector {
-	background: $blue;
-	padding: 10px 20px 20px 20px;
-	color: $white;
-	width: calc(100% - 328px);
-	z-index: 1000;
-	position: absolute;
-	height: 114px;
-	top: -114px;
-	transition: all .3s ease-in-out;
-	
-	@media only screen and ( max-width: $single-column ) {
-		width: 100%;
-	}
+  background: $blue;
+  padding: 10px 20px 20px 20px;
+  color: $white;
+  width: calc(100% - 328px);
+  z-index: 1000;
+  position: absolute;
+  height: 114px;
+  top: -114px;
+  transition: all 0.3s ease-in-out;
 
+  @media only screen and (max-width: $single-column) {
+    width: 100%;
+  }
 
-	.revision-buttons {
-		display: flex;
-    	justify-content: center;
-	}
+  .revision-buttons {
+    display: flex;
+    justify-content: center;
+  }
 
-	.button-primary {
-		background: $white;
-		color: $blue;
-		border-color: $white;
-		
-		&:active {
-			background: lighten($blue, 30%);
-			border-color: lighten($blue, 30%);
-		}
-	}
-	
-	.button-secondary {
-		border-color: $white;
-		color: $white;
-		margin-right: 10px;
-		
-		&:active {
-			background: $white;
-			color: $blue;
-		}
-	}
+  .button-primary {
+    background: $white;
+    color: $blue;
+    border-color: $white;
 
-	.revision-slider {
-		display: flex;
-    	justify-content: center;
-    	margin-bottom: 20px;
-	}
+    &:active {
+      background: lighten($blue, 30%);
+      border-color: lighten($blue, 30%);
+    }
+  }
 
-	input[type="range"] {
-		width: 100%;
-		max-width: $max-content-width;
-	  	-webkit-appearance: none;
-	  	background: $white;
-	  	height: 2px;
-	  	border-radius: 5px;
-	  	outline: 0;
-	}
-	
-	input[type="range"]::-webkit-slider-thumb {
-	  	-webkit-appearance: none;
-	  	background: $white;
-	  	width: 17px;
-	  	height: 17px;
-	  	border-radius: 50%;
-	  	border: 2px solid $blue;
-	  	transition: .15s ease-in-out;
-	}
-	
-	input[type="range"]::-webkit-slider-thumb:active {
-		transform: scale(1.15);
-	}
+  .button-secondary {
+    border-color: $white;
+    color: $white;
+    margin-right: 10px;
 
-	.revision-date {
-		width: 100%;
-		color: $white;
-		text-align: center;
-		margin-bottom: 10px;
-	}
+    &:active {
+      background: $white;
+      color: $blue;
+    }
+  }
+
+  .revision-slider {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  input[type='range'] {
+    width: 100%;
+    max-width: $max-content-width;
+    -webkit-appearance: none;
+    background: $white;
+    height: 2px;
+    border-radius: 5px;
+    outline: 0;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: $white;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 2px solid $blue;
+    transition: 0.15s ease-in-out;
+  }
+
+  input[type='range']::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+  }
+
+  .revision-date {
+    width: 100%;
+    color: $white;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 }

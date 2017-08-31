@@ -1,48 +1,48 @@
 .note-detail-markdown {
-	@import "../node_modules/highlight.js/styles/solarized-light.css";
+  @import '../node_modules/highlight.js/styles/solarized-light.css';
 
-	user-select: auto;
+  user-select: auto;
 
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		line-height: 1.15;
-	}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.15;
+  }
 
-	h1 {
-		font-weight: $light;
-	}
-	h5,
-	h6 {
-		text-transform: uppercase;
-	}
+  h1 {
+    font-weight: $light;
+  }
+  h5,
+  h6 {
+    text-transform: uppercase;
+  }
 
-	hr {
-		border: 0;
-		border-top: 1px solid lighten($gray, 20%);
-	}
+  hr {
+    border: 0;
+    border-top: 1px solid lighten($gray, 20%);
+  }
 
-	blockquote {
-		font-style: italic;
-		border-left: 4px solid lighten($gray, 20%);
-		margin-left: 0;
-		padding-left: 1em;
-	}
+  blockquote {
+    font-style: italic;
+    border-left: 4px solid lighten($gray, 20%);
+    margin-left: 0;
+    padding-left: 1em;
+  }
 
-	code {
-		font-size: 85%;
-		background: $gray-lightest;
-	}
-	pre {
-		border: 1px solid lighten($gray, 20%);
-		padding: 1em;
-		border-radius: $border-radius;
-	}
-	pre code {
-		color: darken($gray, 10%);
-		background: transparent;
-	}
+  code {
+    font-size: 85%;
+    background: $gray-lightest;
+  }
+  pre {
+    border: 1px solid lighten($gray, 20%);
+    padding: 1em;
+    border-radius: $border-radius;
+  }
+  pre code {
+    color: darken($gray, 10%);
+    background: transparent;
+  }
 }

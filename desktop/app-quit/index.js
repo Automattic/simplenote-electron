@@ -6,24 +6,24 @@
 let quitter = false;
 
 function AppQuit() {
-	this.canQuit = false;
+  this.canQuit = false;
 }
 
 AppQuit.prototype.shouldQuitToBackground = function() {
-	if ( this.canQuit === false ) {
-		return true;
-	}
+  if (this.canQuit === false) {
+    return true;
+  }
 
-	this.canQuit = false;
-	return false;
+  this.canQuit = false;
+  return false;
 };
 
 AppQuit.prototype.allowQuit = function() {
-	this.canQuit = true;
+  this.canQuit = true;
 };
 
-if ( ! quitter ) {
-	quitter = new AppQuit();
+if (!quitter) {
+  quitter = new AppQuit();
 }
 
 module.exports = quitter;
