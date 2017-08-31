@@ -132,8 +132,8 @@ export default React.createClass({
             <div className="settings-group">
               <p>
                 Add an email address of another Simplenote user to share a note.
-                You'll both be able to edit and view the note. You can also add
-                the email as a tag.
+                You&apos;ll both be able to edit and view the note. You can also
+                add the email as a tag.
               </p>
               <div className="settings-items theme-color-border">
                 <form
