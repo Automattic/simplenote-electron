@@ -42,16 +42,14 @@ let fs = null;
 
 function getIpc() {
 	try {
-		ipc = __non_webpack_require__( 'electron' ).ipcRenderer;
+		return __non_webpack_require__( 'electron' ).ipcRenderer;
 	} catch ( e ) {
-		ipc = {
+		return {
 			on: noop,
 			removeListener: noop,
 			send: noop
 		};
 	}
-
-	return ipc;
 }
 
 const mapStateToProps = state => ( {

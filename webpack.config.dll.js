@@ -3,7 +3,7 @@ const webpack = require( 'webpack' );
 module.exports = {
 	context: process.cwd(),
 
-	devtool: '#source-map',
+	devtool: 'source-map',
 
 	entry: {
 		vendor: [
@@ -25,12 +25,6 @@ module.exports = {
 			'showdown',
 			'simperium',
 			'sockjs-client'
-		]
-	},
-
-	module: {
-		loaders: [
-			{ test: /\.json$/, loader: 'json-loader'},
 		]
 	},
 
