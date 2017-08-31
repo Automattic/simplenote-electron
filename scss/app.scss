@@ -1,36 +1,35 @@
-@import "variables";
+@import 'variables';
 
-@import "normalize";
+@import 'normalize';
 
-@import "inputs";
-@import "buttons";
-@import "selection";
-@import "scrollbar";
-@import "icons";
-@import "checkbox-control";
-@import "toggle-control";
-@import "spinner";
+@import 'inputs';
+@import 'buttons';
+@import 'selection';
+@import 'scrollbar';
+@import 'icons';
+@import 'checkbox-control';
+@import 'toggle-control';
+@import 'spinner';
 
-@import "general";
-@import "editable-list";
-@import "navigation-bar";
-@import "note-info";
-@import "tag-list";
-@import "tag-input";
-@import "note-list";
-@import "editor";
-@import "tag-editor";
-@import "search-field";
-@import "revisions";
-@import "dialogs";
+@import 'general';
+@import 'editable-list';
+@import 'navigation-bar';
+@import 'note-info';
+@import 'tag-list';
+@import 'tag-input';
+@import 'note-list';
+@import 'editor';
+@import 'tag-editor';
+@import 'search-field';
+@import 'revisions';
+@import 'dialogs';
 
 // Sections
-@import "login-signup";
-@import "about";
-@import "settings";
-@import "markdown-preview";
-@import "share";
+@import 'login-signup';
+@import 'about';
+@import 'settings';
+@import 'markdown-preview';
+@import 'share';
 
-@import "theme";
-@import "print";
-
+@import 'theme';
+@import 'print';
