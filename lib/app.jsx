@@ -96,7 +96,7 @@ const isElectron = (() => {
   const foundElectron = has(window, 'process.type');
 
   if (foundElectron) {
-    fs = __non_webpack_require__('fs');
+    fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
   }
 
   return () => foundElectron;
@@ -212,7 +212,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
             })
           )
           .then(blob => fs.writeFile(command.filename, blob, 'base64'))
-          .catch(console.log);
+          .catch(console.log); // eslint-disable-line no-console
       }
 
       const canRun = overEvery(
@@ -291,7 +291,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     },
 
     initializeElectron() {
-      const remote = __non_webpack_require__('electron').remote;
+      const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
 
       this.setState({
         electron: {
@@ -495,7 +495,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     renderDialog({ params, ...dialog }, key) {
       var DialogComponent = Dialogs[dialog.type];
 
-      if (DialogComponent == null) {
+      if (DialogComponent === null) {
         throw new Error('Unknown dialog type.');
       }
 
