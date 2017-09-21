@@ -83,8 +83,11 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
 
+    openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
+    setSearchFocus: () =>
+      dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
   };
 }
 
@@ -154,10 +157,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.onNotesIndex();
       this.onTagsIndex();
 
+      this.toggleShortcuts(true);
+
       analytics.tracks.recordEvent('application_opened');
     },
 
     componentWillUnmount: function() {
+      this.toggleShortcuts(false);
+
       ipc.removeListener('appCommand', this.onAppCommand);
     },
 
@@ -165,6 +172,32 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       if (this.props.settings !== prevProps.settings) {
         ipc.send('settingsUpdate', this.props.settings);
       }
+    },
+
+    handleShortcut(event) {
+      const { ctrlKey, key, metaKey } = event;
+
+      const cmdOrCtrl = ctrlKey || metaKey;
+
+      // open tag list
+      if (cmdOrCtrl && 'T' === key && !this.state.showNavigation) {
+        this.props.openTagList();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      // focus search field
+      if (cmdOrCtrl && 'F' === key) {
+        this.props.setSearchFocus();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      return true;
     },
 
     onAppCommand: function(event, command) {
@@ -347,6 +380,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       analytics.tracks.recordEvent('editor_versions_accessed');
     },
 
+    toggleShortcuts(doEnable) {
+      if (doEnable) {
+        window.addEventListener('keydown', this.handleShortcut, true);
+      } else {
+        window.removeEventListener('keydown', this.handleShortcut, true);
+      }
+    },
+
     render: function() {
       const {
         appState: state,
@@ -399,25 +440,27 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <SearchBar noteBucket={noteBucket} />
                 <NoteList noteBucket={noteBucket} />
               </div>
-              <NoteEditor
-                allTags={state.tags}
-                editorMode={state.editorMode}
-                filter={state.filter}
-                note={selectedNote}
-                revisions={state.revisions}
-                onSetEditorMode={this.onSetEditorMode}
-                onUpdateContent={this.onUpdateContent}
-                onUpdateNoteTags={this.onUpdateNoteTags}
-                onTrashNote={this.onTrashNote}
-                onRestoreNote={this.onRestoreNote}
-                onShareNote={this.onShareNote}
-                onDeleteNoteForever={this.onDeleteNoteForever}
-                onRevisions={this.onRevisions}
-                onCloseNote={() => this.props.actions.closeNote()}
-                onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-                shouldPrint={state.shouldPrint}
-                onNotePrinted={this.onNotePrinted}
-              />
+              {selectedNote && (
+                <NoteEditor
+                  allTags={state.tags}
+                  editorMode={state.editorMode}
+                  filter={state.filter}
+                  note={selectedNote}
+                  revisions={state.revisions}
+                  onSetEditorMode={this.onSetEditorMode}
+                  onUpdateContent={this.onUpdateContent}
+                  onUpdateNoteTags={this.onUpdateNoteTags}
+                  onTrashNote={this.onTrashNote}
+                  onRestoreNote={this.onRestoreNote}
+                  onShareNote={this.onShareNote}
+                  onDeleteNoteForever={this.onDeleteNoteForever}
+                  onRevisions={this.onRevisions}
+                  onCloseNote={() => this.props.actions.closeNote()}
+                  onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                  shouldPrint={state.shouldPrint}
+                  onNotePrinted={this.onNotePrinted}
+                />
+              )}
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
           ) : (

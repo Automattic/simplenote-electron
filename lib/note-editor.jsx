@@ -43,6 +43,10 @@ export const NoteEditor = React.createClass({
     };
   },
 
+  componentDidMount() {
+    this.toggleShortcuts(true);
+  },
+
   componentWillReceiveProps: function() {
     this.setState({ revision: null });
   },
@@ -60,6 +64,61 @@ export const NoteEditor = React.createClass({
       window.print();
       this.props.onNotePrinted();
     }
+  },
+
+  componentWillUnmount() {
+    this.toggleShortcuts(false);
+  },
+
+  handleShortcut(event) {
+    const { ctrlKey, key, metaKey } = event;
+
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    // toggle editor mode
+    if (cmdOrCtrl && 'P' === key && this.props.markdownEnabled) {
+      const prevEditorMode = this.props.editorMode;
+      const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
+
+      this.props.onSetEditorMode(nextEditorMode);
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    // open note list - shift + n
+    if (cmdOrCtrl && 'N' === key) {
+      this.props.onCloseNote();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    // toggle between tag editor and note editor
+    if (cmdOrCtrl && 't' === key && this.props.isEditorActive) {
+      // prefer focusing the edit field first
+      if (!this.editFieldHasFocus()) {
+        this.focusNoteEditor && this.focusNoteEditor();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      } else if (!this.tagFieldHasFocus()) {
+        this.focusTagField && this.focusTagField();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+  editFieldHasFocus() {
+    return this.editorHasFocus && this.editorHasFocus();
   },
 
   onViewRevision: function(revision) {
@@ -96,6 +155,34 @@ export const NoteEditor = React.createClass({
 
   setIsViewingRevisions: function(isViewing) {
     this.setState({ isViewingRevisions: isViewing });
+  },
+
+  storeEditorHasFocus(f) {
+    this.editorHasFocus = f;
+  },
+
+  storeFocusEditor(f) {
+    this.focusNoteEditor = f;
+  },
+
+  storeFocusTagField(f) {
+    this.focusTagField = f;
+  },
+
+  storeTagFieldHasFocus(f) {
+    this.tagFieldHasFocus = f;
+  },
+
+  tagFieldHasFocus() {
+    return this.tagFieldHasFocus && this.tagFieldHasFocus();
+  },
+
+  toggleShortcuts(doEnable) {
+    if (doEnable) {
+      window.addEventListener('keydown', this.handleShortcut, true);
+    } else {
+      window.removeEventListener('keydown', this.handleShortcut, true);
+    }
   },
 
   render: function() {
@@ -158,6 +245,8 @@ export const NoteEditor = React.createClass({
           {!!markdownEnabled && this.renderModeBar()}
           <div className="note-editor-detail">
             <NoteDetail
+              storeFocusEditor={this.storeFocusEditor}
+              storeHasFocus={this.storeEditorHasFocus}
               filter={this.props.filter}
               note={revision}
               previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
@@ -175,6 +264,8 @@ export const NoteEditor = React.createClass({
         )}
         {!isTrashed && (
           <TagField
+            storeFocusTagField={this.storeFocusTagField}
+            storeHasFocus={this.storeTagFieldHasFocus}
             allTags={this.props.allTags.map(property('data.name'))}
             note={this.props.note}
             tags={tags}
@@ -219,8 +310,9 @@ export const NoteEditor = React.createClass({
   },
 });
 
-const mapStateToProps = ({ settings }) => ({
+const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
+  isEditorActive: !state.showNavigation,
   markdownEnabled: settings.markdownEnabled,
 });
 
