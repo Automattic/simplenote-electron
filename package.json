@@ -100,5 +100,8 @@
     "showdown": "1.7.2",
     "showdown-xss-filter": "0.2.0",
     "simperium": "0.2.6"
+  },
+  "optionalDependencies": {
+    "appdmg": "0.4.5"
   }
 }
