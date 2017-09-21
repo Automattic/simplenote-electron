@@ -112,6 +112,31 @@ export default React.createClass({
     analytics.tracks.recordEvent('editor_note_edited');
   },
 
+  toggleTodo(index) {
+    const { note } = this.props;
+    const { content } = note.data;
+    const todoPattern = /(\s*- \[)(o|x|\s)(]\s)/gi;
+    let i = -1;
+
+    const toggled = content.replace(
+      todoPattern,
+      (match, prefix, indicator, rest) => {
+        i++;
+
+        if (i < index || i > index) {
+          return match;
+        }
+
+        return indicator === 'x' || indicator === 'X'
+          ? `${prefix} ${rest}`
+          : `${prefix}x${rest}`;
+      }
+    );
+
+    this.saveNote(toggled);
+    this.updateMarkdown();
+  },
+
   storePreview(ref) {
     this.previewNode = ref;
   },
@@ -120,6 +145,18 @@ export default React.createClass({
     if (!this.previewNode) {
       return;
     }
+
+    const node = this.previewNode;
+
+    node.innerHTML = markdownConverter.makeHtml(this.props.note.data.content);
+
+    const toggler = (box, i) =>
+      box.addEventListener('click', () => this.toggleTodo(i), false);
+
+    node.querySelectorAll('.task-list-item').forEach(toggler);
+    node
+      .querySelectorAll('.task-list-item p input[type="checkbox"]')
+      .forEach(toggler);
 
     renderToNode(this.previewNode, this.props.note.data.content);
   },

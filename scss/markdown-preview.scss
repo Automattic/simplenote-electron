@@ -36,11 +36,19 @@
     font-size: 85%;
     background: $gray-lightest;
   }
+
+  li {
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   pre {
     border: 1px solid lighten($gray, 20%);
     padding: 1em;
     border-radius: $border-radius;
   }
+
   pre code {
     color: darken($gray, 10%);
     background: transparent;
