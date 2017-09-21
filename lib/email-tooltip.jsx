@@ -7,10 +7,11 @@ export const EmailToolTip = ({ openShareDialog }) => (
   <div className="tag-email-tooltip">
     <div className="tag-email-tooltip__arrow" />
     <div className="tag-email-tooltip__inside">
-      Sharing notes is now accessed through the collaboration tab in the{' '}
+      Collaboration has moved. Press the Share icon in the toolbar to access
+      the&nbsp;
       <a href="#" onClick={openShareDialog}>
-        sharing page
-      </a>. You will find all email address tags in that list instead.
+        Collaborate screen
+      </a>.
     </div>
   </div>
 );
