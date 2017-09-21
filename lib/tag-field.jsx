@@ -1,9 +1,12 @@
 import React, { PropTypes } from 'react';
+import { Overlay } from 'react-overlays';
+import isEmailTag from './utils/is-email-tag';
+import EmailToolTip from './email-tooltip';
 import TagChip from './components/tag-chip';
 import TagInput from './tag-input';
 import classNames from 'classnames';
 import analytics from './analytics';
-import { differenceBy, intersectionBy, invoke, union } from 'lodash';
+import { differenceBy, intersectionBy, invoke, negate, union } from 'lodash';
 
 export default React.createClass({
   propTypes: {
@@ -47,6 +50,10 @@ export default React.createClass({
       .replace(/\s+/g, ',')
       .split(',');
 
+    if (newTags.some(isEmailTag)) {
+      this.showEmailTooltip();
+    }
+
     const nextTagList = union(
       existingTags, // tags already in note
       intersectionBy(allTags, newTags, s => s.toLocaleLowerCase()), // use existing case if tag known
@@ -83,22 +90,11 @@ export default React.createClass({
     }
   },
 
-  selectLastTag: function() {
-    this.setState({
-      selectedTag: this.props.tags.slice(-1).shift(),
-    });
+  hideEmailTooltip() {
+    this.setState({ showEmailTooltip: false });
   },
 
-  selectTag(event) {
-    const { target: { dataset: { tagName } } } = event;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.deleteTag(tagName);
-  },
-
-  onKeyDown: function(e) {
+  interceptKeys(e) {
     // only handle backspace
     if (8 !== e.which) {
       return;
@@ -114,6 +110,35 @@ export default React.createClass({
 
     this.selectLastTag();
     e.preventDefault();
+  },
+
+  selectLastTag: function() {
+    this.setState({
+      selectedTag: this.props.tags.slice(-1).shift(),
+    });
+  },
+
+  selectTag(event) {
+    const { target: { dataset: { tagName } } } = event;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.deleteTag(tagName);
+  },
+
+  showEmailTooltip() {
+    this.setState({ showEmailTooltip: true });
+
+    setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
+  },
+
+  onKeyDown: function(e) {
+    if (this.state.showEmailTooltip) {
+      this.hideEmailTooltip();
+    }
+
+    return this.interceptKeys(e);
   },
 
   storeHiddenTag(r) {
@@ -145,7 +170,7 @@ export default React.createClass({
 
   render: function() {
     const { allTags, tags } = this.props;
-    const { selectedTag, tagInput } = this.state;
+    const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
     return (
       <div className="tag-entry theme-color-border">
@@ -161,14 +186,16 @@ export default React.createClass({
             tabIndex="-1"
             ref={this.storeHiddenTag}
           />
-          {tags.map(tag => (
-            <TagChip
-              key={tag}
-              tag={tag}
-              selected={tag === selectedTag}
-              onSelect={this.selectTag}
-            />
-          ))}
+          {tags
+            .filter(negate(isEmailTag))
+            .map(tag => (
+              <TagChip
+                key={tag}
+                tag={tag}
+                selected={tag === selectedTag}
+                onSelect={this.selectTag}
+              />
+            ))}
           <TagInput
             allTags={allTags}
             inputRef={this.storeInputRef}
@@ -177,6 +204,17 @@ export default React.createClass({
             onSelect={this.addTag}
             tagNames={differenceBy(allTags, tags, s => s.toLocaleLowerCase())}
           />
+          <Overlay
+            container={this}
+            onHide={this.hideEmailTooltip}
+            placement="top"
+            rootClose={true}
+            shouldUpdatePosition={true}
+            show={showEmailTooltip}
+            target={this.tagInput}
+          >
+            <EmailToolTip note={this.props.note} />
+          </Overlay>
         </div>
       </div>
     );

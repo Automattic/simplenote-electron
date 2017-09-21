@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import createHash from 'create-hash/browser';
+import isEmailTag from '../utils/is-email-tag';
 import { includes } from 'lodash';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
@@ -79,7 +80,7 @@ export default React.createClass({
   collaborators() {
     const { note } = this.props.params;
     const tags = (note.data && note.data.tags) || [];
-    const collaborators = tags.filter(tag => tag.indexOf('@') !== -1);
+    const collaborators = tags.filter(isEmailTag);
 
     collaborators.reverse();
 
