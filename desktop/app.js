@@ -50,6 +50,7 @@ module.exports = function main() {
       icon: iconPath,
       autoHideMenuBar: true,
       titleBarStyle: 'hidden',
+      show: false,
     });
 
     // and load the index of the app.
@@ -82,6 +83,11 @@ module.exports = function main() {
       // in an array if your app supports multi windows, this is the time
       // when you should delete the corresponding element.
       mainWindow = null;
+    });
+
+    // wait until window is presentable
+    mainWindow.once('ready-to-show', function() {
+        mainWindow.show();
     });
   };
 
