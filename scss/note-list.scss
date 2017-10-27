@@ -179,4 +179,10 @@
   .note-list-item-excerpt {
     color: $gray;
   }
+
+  .note-list-item-created {
+    color: $gray;
+    text-align: right;
+    padding-right: 6px;
+  }
 }
