@@ -1,6 +1,11 @@
 {
-	"bundleId": "com.automattic.simplenote",
-	"name": "Simplenote",
-	"author": "Automattic, Inc.",
-	"copyright": "Copyright (C) Automattic, Inc."
+    "bundleId": "com.automattic.simplenote",
+    "name": "Simplenote",
+    "author": "Automattic, Inc.",
+    "copyright": "Copyright (C) Automattic, Inc.",
+    "license": "GPLv2",
+    "description": "Simplenote for Linux",
+    "vendor": "Automattic, Inc.",
+    "maintainer": "Simplenote Support <support@simplenote.com>",
+    "website": "https://simplenote.com/"
 }
