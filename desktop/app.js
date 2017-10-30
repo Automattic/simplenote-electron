@@ -86,9 +86,7 @@ module.exports = function main() {
     });
 
     // wait until window is presentable
-    mainWindow.once('ready-to-show', function() {
-        mainWindow.show();
-    });
+    mainWindow.once('ready-to-show', mainWindow.show);
   };
 
   const shouldQuit = app.makeSingleInstance(() => {
