@@ -1,0 +1,37 @@
+{
+  productName: "Simplenote",
+  directories: {
+    buildResources: "resources/",
+    output: "release"
+  },
+  files: [
+    "desktop/",
+    "dist/"
+  ],
+  linux: {
+    icon: "resources/images/",
+    target: [
+      "AppImage",
+      "deb",
+      "rpm",
+      "tar.gz"
+    ],
+    synopsis: "The simplest way to keep notes",
+    category: "Utility",
+    executableName: "simplenote",
+    desktop: {
+      Name: "Simplenote",
+      Comment: "Simplenote for Linux",
+      Type: "Application",
+      Icon: "simplenote",
+      StartupNotify: "true",
+      Categories: "Utility"
+    },
+    vendor: "Automattic, Inc.",
+    maintainer: "Automattic, Inc."
+  },
+  deb: {
+    depends: []
+  }
+}
+

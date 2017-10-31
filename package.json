@@ -1,32 +1,35 @@
 {
   "name": "simplenote",
-  "productName": "Simplenote",
-  "version": "1.1.0-rc1",
-  "description": "The Simplenote app running as an electron app.",
-  "main": "desktop/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Automattic/simplenote-electron.git"
+  "description": "Light, clean, and free. Simplenote is modern note taking app available for iOS, Android, Mac, Windows, Linux, and the web.",
+  "author": {
+    "name": "Automattic, Inc.",
+    "email": "support@simplenote.com"
   },
+  "license": "GPL-2.0",
+  "homepage": "https://simplenote.com",
+  "main": "desktop/index.js",
+  "version": "1.1.0-rc1",
   "scripts": {
     "test": "jest",
     "build": "NODE_ENV=development npm run build:dll && npm run build:app",
     "build:app": "webpack --config ./webpack.config.js",
     "build:dll": "webpack --config ./webpack.config.dll.js",
-    "build:prod":
-      "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
+    "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
     "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
     "lint": "eslint --ext .js --ext .jsx lib",
-    "start":
-      "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
+    "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Automattic/simplenote-electron.git"
+  },
   "engines": {
     "node": ">= 7.9.0",
     "npm": ">= 4.2.0"
   },
-  "browserslist": ["Chrome >= 58"],
+  "browserslist": [
+    "Chrome >= 58"
+  ],
   "jest": {
     "rootDir": "lib",
     "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
@@ -50,8 +53,8 @@
     "classnames": "2.2.5",
     "css-loader": "0.28.7",
     "electron": "1.7.5",
-    "electron-builder": "19.24.1",
-    "electron-packager": "8.7.2",
+    "electron-builder": "^19.43.0",
+    "electron-packager": "^9.1.0",
     "enzyme": "2.9.1",
     "eslint": "4.5.0",
     "eslint-config-prettier": "2.3.0",
