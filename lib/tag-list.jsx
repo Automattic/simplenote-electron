@@ -67,7 +67,13 @@ export class TagList extends Component {
             tabIndex="0"
             onClick={this.props.onEditTags}
           >
-            {this.props.editingTags ? 'Done' : 'Edit'}
+            {this.props.tags.length ? this.props.editingTags ? (
+              'Done'
+            ) : (
+              'Edit'
+            ) : (
+              ''
+            )}
           </button>
         </div>
         <EditableList
