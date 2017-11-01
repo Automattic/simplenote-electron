@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import appState from './flux/app-state';
 import { tracks } from './analytics';
 import filterNotes from './utils/filter-notes';
-import noteTitle from './utils/note-title';
+import noteTitle from './utils/note-utils';
 
 /**
  * Delay for preventing row height calculation thrashing
