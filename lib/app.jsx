@@ -250,6 +250,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       actions.authChanged();
 
       if (!client.isAuthorized()) {
+        actions.closeNote();
         return resetAuth();
       }
 
