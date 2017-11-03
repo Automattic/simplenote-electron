@@ -53,22 +53,13 @@ export class TagList extends Component {
     }
   };
 
-  renderEditTagsButton() {
-    if (this.props.tags.length) {
-      return (
-        <button
-          className="tag-list-edit-toggle button button-borderless"
-          tabIndex="0"
-          onClick={this.props.onEditTags}
-        >
-          {this.props.editingTags ? 'Done' : 'Edit'}
-        </button>
-      );
-    }
-    return null;
-  }
-
   render() {
+    const {
+      editingTags,
+      onEditTags,
+      tags,
+    } = this.props;
+    
     const classes = classNames('tag-list', {
       'tag-list-editing': this.props.editingTags,
     });
@@ -77,7 +68,15 @@ export class TagList extends Component {
       <div className={classes}>
         <div className="tag-list-title">
           <h2 className="panel-title theme-color-fg-dim">Tags</h2>
-          {this.renderEditTagsButton()}
+          {tags.length && (
+            <button
+              className="tag-list-edit-toggle button button-borderless"
+              tabIndex="0"
+              onClick={onEditTags}
+            >
+              {editingTags ? 'Done' : 'Edit'}
+            </button>
+          )}
         </div>
         <EditableList
           className="tag-list-items"
