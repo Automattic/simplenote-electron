@@ -54,12 +54,8 @@ export class TagList extends Component {
   };
 
   render() {
-    const {
-      editingTags,
-      onEditTags,
-      tags,
-    } = this.props;
-    
+    const { editingTags, onEditTags, tags } = this.props;
+
     const classes = classNames('tag-list', {
       'tag-list-editing': this.props.editingTags,
     });
