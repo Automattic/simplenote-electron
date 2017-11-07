@@ -1,8 +1,9 @@
 {
   "name": "simplenote",
   "productName": "Simplenote",
-  "version": "1.1.0-rc1",
-  "description": "The Simplenote app running as an electron app.",
+  "version": "1.1.0-rc2",
+  "description": "Simplenote for desktop.",
+  "author": "Automattic, Inc. (https://automattic.com)",
   "main": "desktop/index.js",
   "repository": {
     "type": "git",
@@ -20,7 +21,6 @@
     "start":
       "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
   },
-  "author": "",
   "license": "ISC",
   "engines": {
     "node": "7.9.0",
@@ -50,8 +50,8 @@
     "classnames": "2.2.5",
     "css-loader": "0.28.7",
     "electron": "1.7.5",
-    "electron-builder": "19.24.1",
-    "electron-packager": "8.7.2",
+    "electron-builder": "19.45.2",
+    "electron-packager": "9.1.0",
     "enzyme": "2.9.1",
     "eslint": "4.5.0",
     "eslint-config-prettier": "2.3.0",

@@ -56,7 +56,7 @@ package: build-if-changed
 	@cp -R $(THIS_DIR)/dist $(DESKTOP_BUILD_DIR)
 
 package-win32: win32
-	@$(PACKAGE_WIN32) ./release/Simplenote-win32-ia32 --platform=win --out=./release --config=./resources/build-config/win32.json
+	@$(PACKAGE_WIN32) ./release/Simplenote-win32-ia32 --platform=win --config=./resources/build-config/win32.json
 	@node $(THIS_DIR)/resources/build-scripts/rename-with-version-win.js
 	@node $(THIS_DIR)/resources/build-scripts/code-sign-win.js --spc=$(CERT_SPC) --pvk=$(CERT_PVK)
 
