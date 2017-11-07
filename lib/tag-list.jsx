@@ -64,7 +64,7 @@ export class TagList extends Component {
       <div className={classes}>
         <div className="tag-list-title">
           <h2 className="panel-title theme-color-fg-dim">Tags</h2>
-          {tags.length && (
+          {tags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"
               tabIndex="0"
