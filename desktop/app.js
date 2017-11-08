@@ -48,7 +48,6 @@ module.exports = function main() {
       minWidth: 370,
       minHeight: 520,
       icon: iconPath,
-      autoHideMenuBar: true,
       titleBarStyle: 'hidden',
       show: false,
     });
