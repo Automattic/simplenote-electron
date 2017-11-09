@@ -1,6 +1,9 @@
 {
-	"bundleId": "com.automattic.simplenote",
-	"name": "Simplenote",
-	"author": "Automattic, Inc.",
-	"copyright": "Copyright (C) Automattic, Inc."
+  "bundleId": "com.automattic.simplenote",
+  "name": "Simplenote",
+  "author": "Automattic, Inc.",
+  "copyright": "Copyright (C) Automattic, Inc.",
+  "directories": {
+    "output": "release"
+  }
 }
