@@ -76,6 +76,11 @@ module.exports = function main() {
 
     mainWindowState.manage(mainWindow);
 
+    mainWindow.webContents.on('new-window', function(event, linkUrl) {
+      event.preventDefault();
+      shell.openExternal(linkUrl);
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
       // Dereference the window object, usually you would store windows
