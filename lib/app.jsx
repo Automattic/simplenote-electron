@@ -441,27 +441,25 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <SearchBar noteBucket={noteBucket} />
                 <NoteList noteBucket={noteBucket} />
               </div>
-              {selectedNote && (
-                <NoteEditor
-                  allTags={state.tags}
-                  editorMode={state.editorMode}
-                  filter={state.filter}
-                  note={selectedNote}
-                  revisions={state.revisions}
-                  onSetEditorMode={this.onSetEditorMode}
-                  onUpdateContent={this.onUpdateContent}
-                  onUpdateNoteTags={this.onUpdateNoteTags}
-                  onTrashNote={this.onTrashNote}
-                  onRestoreNote={this.onRestoreNote}
-                  onShareNote={this.onShareNote}
-                  onDeleteNoteForever={this.onDeleteNoteForever}
-                  onRevisions={this.onRevisions}
-                  onCloseNote={() => this.props.actions.closeNote()}
-                  onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-                  shouldPrint={state.shouldPrint}
-                  onNotePrinted={this.onNotePrinted}
-                />
-              )}
+              <NoteEditor
+                allTags={state.tags}
+                editorMode={state.editorMode}
+                filter={state.filter}
+                note={selectedNote}
+                revisions={state.revisions}
+                onSetEditorMode={this.onSetEditorMode}
+                onUpdateContent={this.onUpdateContent}
+                onUpdateNoteTags={this.onUpdateNoteTags}
+                onTrashNote={this.onTrashNote}
+                onRestoreNote={this.onRestoreNote}
+                onShareNote={this.onShareNote}
+                onDeleteNoteForever={this.onDeleteNoteForever}
+                onRevisions={this.onRevisions}
+                onCloseNote={() => this.props.actions.closeNote()}
+                onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                shouldPrint={state.shouldPrint}
+                onNotePrinted={this.onNotePrinted}
+              />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
           ) : (

@@ -7,6 +7,7 @@ import NoteDetail from './note-detail';
 import TagField from './tag-field';
 import NoteToolbar from './note-toolbar';
 import RevisionSelector from './revision-selector';
+import SimplenoteCompactLogo from './icons/simplenote-compact';
 import { get, property } from 'lodash';
 
 const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
@@ -192,6 +193,7 @@ export const NoteEditor = React.createClass({
     const isViewingRevisions = this.state.isViewingRevisions;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
+    const hasNote = note.data.content !== undefined;
 
     const markdownEnabled =
       revision &&
@@ -222,12 +224,14 @@ export const NoteEditor = React.createClass({
 
     return (
       <div className={classes}>
-        <RevisionSelector
-          revisions={revisions || []}
-          onViewRevision={this.onViewRevision}
-          onSelectRevision={this.onSelectRevision}
-          onCancelRevision={this.onCancelRevision}
-        />
+        {hasNote && (
+          <RevisionSelector
+            revisions={revisions || []}
+            onViewRevision={this.onViewRevision}
+            onSelectRevision={this.onSelectRevision}
+            onCancelRevision={this.onCancelRevision}
+          />
+        )}
         <div className="note-editor-controls theme-color-border">
           <NoteToolbar
             note={note}
@@ -241,20 +245,28 @@ export const NoteEditor = React.createClass({
             onNoteInfo={this.props.onNoteInfo}
           />
         </div>
-        <div className="note-editor-content theme-color-border">
-          {!!markdownEnabled && this.renderModeBar()}
-          <div className="note-editor-detail">
-            <NoteDetail
-              storeFocusEditor={this.storeFocusEditor}
-              storeHasFocus={this.storeEditorHasFocus}
-              filter={this.props.filter}
-              note={revision}
-              previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-              onChangeContent={this.props.onUpdateContent}
-              fontSize={fontSize}
-            />
+        {hasNote ? (
+          <div className="note-editor-content theme-color-border">
+            {!!markdownEnabled && this.renderModeBar()}
+            <div className="note-editor-detail">
+              <NoteDetail
+                storeFocusEditor={this.storeFocusEditor}
+                storeHasFocus={this.storeEditorHasFocus}
+                filter={this.props.filter}
+                note={revision}
+                previewingMarkdown={
+                  markdownEnabled && editorMode === 'markdown'
+                }
+                onChangeContent={this.props.onUpdateContent}
+                fontSize={fontSize}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="note-editor-placeholder theme-color-border">
+            <SimplenoteCompactLogo />
+          </div>
+        )}
         {shouldPrint && (
           <div
             style={printStyle}
@@ -262,7 +274,8 @@ export const NoteEditor = React.createClass({
             dangerouslySetInnerHTML={{ __html: noteContent }}
           />
         )}
-        {!isTrashed && (
+        {!isTrashed &&
+        hasNote && (
           <TagField
             storeFocusTagField={this.storeFocusTagField}
             storeHasFocus={this.storeTagFieldHasFocus}

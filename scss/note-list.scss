@@ -84,6 +84,19 @@
   }
 }
 
+.note-list-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+
+  span {
+    color: $gray;
+    font-size: 1.3em;
+  }
+}
+
 .note-list-empty-trash {
   flex: none;
   padding: 10px 20px;
