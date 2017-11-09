@@ -1,6 +1,7 @@
 {
   "bundleId": "com.automattic.simplenote",
   "name": "Simplenote",
+  "productName": "Simplenote",
   "author": "Automattic, Inc.",
   "copyright": "Copyright (C) Automattic, Inc.",
   "directories": {
