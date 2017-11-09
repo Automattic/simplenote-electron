@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import showdown from 'showdown';
 import xssFilter from 'showdown-xss-filter';
@@ -17,10 +18,11 @@ const renderToNode = (node, content) => {
   node.querySelectorAll('pre code').forEach(highlight.highlightBlock);
 };
 
-export default React.createClass({
+export const NoteDetail = React.createClass({
   propTypes: {
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
+    filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -64,10 +66,11 @@ export default React.createClass({
   },
 
   componentDidUpdate: function(prevProps) {
-    const { note, previewingMarkdown } = this.props;
+    const { note, previewingMarkdown, filter } = this.props;
     const content = get(note, 'data.content', '');
-    if (this.isValidNote(note) && content === '') {
-      // Let's focus the editor for new and empty notes
+
+    // Focus the editor for a new, empty note when not searching
+    if (this.isValidNote(note) && content === '' && filter === '') {
       invoke(this, 'editor.focus');
     }
 
@@ -188,3 +191,9 @@ export default React.createClass({
     );
   },
 });
+
+const mapStateToProps = ({ appState: state }) => ({
+  filter: state.filter,
+});
+
+export default connect(mapStateToProps)(NoteDetail);
