@@ -76,7 +76,7 @@ module.exports = function main() {
 
     mainWindowState.manage(mainWindow);
 
-    mainWindow.webContents.on('new-window', function(event, linkUrl){
+    mainWindow.webContents.on('new-window', function(event, linkUrl) {
       event.preventDefault();
       shell.openExternal(linkUrl);
     });
