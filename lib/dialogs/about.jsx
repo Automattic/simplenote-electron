@@ -17,7 +17,8 @@ export default React.createClass({
   },
 
   render() {
-    var dialog = this.props.dialog;
+    const dialog = this.props.dialog;
+    const thisYear = new Date().getFullYear();
 
     return (
       <Dialog className="about" {...dialog} onDone={this.onDone}>
@@ -110,7 +111,7 @@ export default React.createClass({
               href="https://automattic.com/"
               rel="noopener noreferrer"
             >
-              &copy; 2016 Automattic, Inc.
+              &copy; {thisYear} Automattic, Inc.
             </a>
           </p>
         </div>
