@@ -5,9 +5,9 @@
   height: 100vh;
   border-left: 1px solid lighten($gray, 30%);
 
-  .placholder-note-toolbar {
+  .placeholder-note-toolbar {
     display: block;
-    height: 56px;
+    height: $toolbar-height;
     border-bottom: 1px solid lighten($gray, 30%);
   }
 

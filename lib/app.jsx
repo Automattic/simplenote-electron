@@ -473,7 +473,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               )}
               {!hasNotes && (
                 <div className="placeholder-note-detail theme-color-border">
-                  <div className="placholder-note-toolbar theme-color-border" />
+                  <div className="placeholder-note-toolbar theme-color-border" />
                   <div className="placeholder-note-editor">
                     <SimplenoteCompactLogo />
                   </div>
