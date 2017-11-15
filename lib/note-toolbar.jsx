@@ -32,7 +32,6 @@ export default React.createClass({
 
   renderNormal() {
     const { note } = this.props;
-    const hasNote = note.data.content !== undefined;
 
     return (
       <div className="note-toolbar">
@@ -52,7 +51,6 @@ export default React.createClass({
             title="History"
             className="button button-borderless"
             onClick={this.showRevisions}
-            disabled={!hasNote}
           >
             <RevisionsIcon />
           </button>
@@ -63,7 +61,6 @@ export default React.createClass({
             title="Share"
             className="button button-borderless"
             onClick={this.props.onShareNote.bind(null, note)}
-            disabled={!hasNote}
           >
             <ShareIcon />
           </button>
@@ -74,7 +71,6 @@ export default React.createClass({
             title="Trash"
             className="button button-borderless"
             onClick={this.props.onTrashNote.bind(null, note)}
-            disabled={!hasNote}
           >
             <TrashIcon />
           </button>
@@ -85,7 +81,6 @@ export default React.createClass({
             title="Info"
             className="button button-borderless"
             onClick={this.props.onNoteInfo}
-            disabled={!hasNote}
           >
             <InfoIcon />
           </button>

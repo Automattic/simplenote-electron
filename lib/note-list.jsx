@@ -390,7 +390,6 @@ const NoteList = React.createClass({
 
     const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
     const listItemsClasses = classNames('note-list-items', noteDisplay);
-    const hasNotes = notes.length > 0;
 
     const renderNoteRow = renderNote(notes, {
       filter,
@@ -403,38 +402,32 @@ const NoteList = React.createClass({
 
     return (
       <div className="note-list">
-        {hasNotes ? (
-          <div className={listItemsClasses}>
-            <AutoSizer>
-              {({ height, width }) => (
-                <List
-                  ref={this.refList}
-                  estimatedRowSize={
-                    ROW_HEIGHT_BASE +
-                    ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
-                  }
-                  height={height}
-                  noteDisplay={noteDisplay}
-                  notes={this.props.notes}
-                  rowCount={this.props.notes.length}
-                  rowHeight={
-                    'condensed' === noteDisplay ? (
-                      ROW_HEIGHT_BASE
-                    ) : (
-                      getRowHeight(this.props.notes, { noteDisplay, width })
-                    )
-                  }
-                  rowRenderer={renderNoteRow}
-                  width={width}
-                />
-              )}
-            </AutoSizer>
-          </div>
-        ) : (
-          <div className="note-list-placeholder">
-            <span>No Notes</span>
-          </div>
-        )}
+        <div className={listItemsClasses}>
+          <AutoSizer>
+            {({ height, width }) => (
+              <List
+                ref={this.refList}
+                estimatedRowSize={
+                  ROW_HEIGHT_BASE +
+                  ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
+                }
+                height={height}
+                noteDisplay={noteDisplay}
+                notes={this.props.notes}
+                rowCount={this.props.notes.length}
+                rowHeight={
+                  'condensed' === noteDisplay ? (
+                    ROW_HEIGHT_BASE
+                  ) : (
+                    getRowHeight(this.props.notes, { noteDisplay, width })
+                  )
+                }
+                rowRenderer={renderNoteRow}
+                width={width}
+              />
+            )}
+          </AutoSizer>
+        </div>
         {!!showTrash && (
           <div className="note-list-empty-trash theme-color-border">
             <button
