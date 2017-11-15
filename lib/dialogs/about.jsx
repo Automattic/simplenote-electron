@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import moment from 'moment';
 import SimplenoteLogo from '../icons/simplenote';
 import CrossIcon from '../icons/cross';
 import TopRightArrowIcon from '../icons/arrow-top-right';
@@ -19,7 +18,7 @@ export default React.createClass({
 
   render() {
     const dialog = this.props.dialog;
-    const thisYear = moment().year();
+    const thisYear = new Date().getFullYear();
 
     return (
       <Dialog className="about" {...dialog} onDone={this.onDone}>
