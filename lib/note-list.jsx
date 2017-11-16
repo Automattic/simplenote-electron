@@ -385,12 +385,13 @@ const NoteList = React.createClass({
       onEmptyTrash,
       noteDisplay,
       showTrash,
+      notes,
     } = this.props;
 
     const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
-    const renderNoteRow = renderNote(this.props.notes, {
+    const renderNoteRow = renderNote(notes, {
       filter,
       filterRegExp,
       noteDisplay,

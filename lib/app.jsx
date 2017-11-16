@@ -9,6 +9,7 @@ import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
+import SimplenoteCompactLogo from './icons/simplenote-compact';
 import NoteInfo from './note-info';
 import NoteList from './note-list';
 import NoteEditor from './note-editor';
@@ -402,6 +403,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const electron = get(this.state, 'electron');
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
+      const hasNotes = filteredNotes.length > 0;
 
       const noteIndex = Math.max(state.previousIndex, 0);
       const selectedNote =
@@ -439,9 +441,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               )}
               <div className="source-list theme-color-bg theme-color-fg">
                 <SearchBar noteBucket={noteBucket} />
-                <NoteList noteBucket={noteBucket} />
+                {hasNotes ? (
+                  <NoteList noteBucket={noteBucket} />
+                ) : (
+                  <div className="placeholder-note-list">
+                    <span>No Notes</span>
+                  </div>
+                )}
               </div>
-              {selectedNote && (
+              {selectedNote &&
+              hasNotes && (
                 <NoteEditor
                   allTags={state.tags}
                   editorMode={state.editorMode}
@@ -461,6 +470,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                   shouldPrint={state.shouldPrint}
                   onNotePrinted={this.onNotePrinted}
                 />
+              )}
+              {!hasNotes && (
+                <div className="placeholder-note-detail theme-color-border">
+                  <div className="placeholder-note-toolbar theme-color-border" />
+                  <div className="placeholder-note-editor">
+                    <SimplenoteCompactLogo />
+                  </div>
+                </div>
               )}
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
