@@ -242,7 +242,6 @@ export const NoteEditor = React.createClass({
           />
         </div>
         <div className="note-editor-content theme-color-border">
-          {!!markdownEnabled && this.renderModeBar()}
           <div className="note-editor-detail">
             <NoteDetail
               storeFocusEditor={this.storeFocusEditor}
@@ -251,6 +250,7 @@ export const NoteEditor = React.createClass({
               note={revision}
               previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
               onChangeContent={this.props.onUpdateContent}
+			  setEditorMode={this.props.onSetEditorMode}
               fontSize={fontSize}
             />
           </div>
@@ -272,39 +272,6 @@ export const NoteEditor = React.createClass({
             onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
           />
         )}
-      </div>
-    );
-  },
-
-  renderModeBar() {
-    const { editorMode } = this.props;
-
-    const isPreviewing = editorMode === 'markdown';
-
-    return (
-      <div className="note-editor-mode-bar segmented-control">
-        <button
-          type="button"
-          className={classNames(
-            'button button-segmented-control button-compact',
-            { active: !isPreviewing }
-          )}
-          data-editor-mode="edit"
-          onClick={this.setEditorMode}
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className={classNames(
-            'button button-segmented-control button-compact',
-            { active: isPreviewing }
-          )}
-          data-editor-mode="markdown"
-          onClick={this.setEditorMode}
-        >
-          Preview
-        </button>
       </div>
     );
   },
