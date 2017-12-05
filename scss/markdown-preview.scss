@@ -51,14 +51,14 @@
     display: block;
     width: 100%;
     tr:nth-child(2n) {
-      background-color: lighten($gray, 40%)
+      background-color: lighten($gray, 40%);
     }
     th, td {
       border: 1px solid lighten($gray, 20%);
       padding: 6px 13px;
     }
     th {
-      font-weight: 600
+      font-weight: 600;
     }
   }
 
