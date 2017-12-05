@@ -146,6 +146,14 @@
       color: $gray;
       background: transparent;
     }
+    table {
+      th, td {
+        border-color: darken($gray, 20%);
+      }
+      tr:nth-child(2n) {
+        background-color: darken($gray, 33%)
+      }
+    }
   }
 }
 
