@@ -90,6 +90,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    toggleMonospace: () => dispatch(settingsActions.toggleMonospace()),
   };
 }
 

@@ -155,7 +155,15 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
+    let noteContent = '';
+    const {
+      editorMode,
+      note,
+      revisions,
+      fontSize,
+      shouldPrint,
+      monospaceEnabled,
+    } = this.props;
     const revision = this.state.revision || note;
     const isViewingRevisions = this.state.isViewingRevisions;
     const tags = (revision && revision.data && revision.data.tags) || [];
@@ -174,6 +182,7 @@ export class NoteEditor extends Component {
       {
         revisions: isViewingRevisions,
         markdown: markdownEnabled,
+        monospace: monospaceEnabled,
       }
     );
 
@@ -255,6 +264,7 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
   isEditorActive: !state.showNavigation,
   markdownEnabled: settings.markdownEnabled,
+  monospaceEnabled: settings.monospaceEnabled,
 });
 
 export default connect(mapStateToProps)(NoteEditor);

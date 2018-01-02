@@ -50,14 +50,33 @@ var buildViewMenu = function(settings) {
     label: '&View',
     submenu: [
       {
-        label: '&Font Size',
+        label: '&Editor Font',
         submenu: [
           // For the oddity with "Command" vs "Cmd"
           // Cite: https://github.com/atom/electron/issues/1507
           ['&Bigger', 'CommandOrControl+=', 'increaseFontSize'],
           ['&Smaller', 'CommandOrControl+-', 'decreaseFontSize'],
           ['&Reset', 'CommandOrControl+0', 'resetFontSize'],
-        ].map(buildFontGroup),
+        ].map(buildFontGroup)
+          .concat([
+            {
+              type: 'separator',
+            },
+            {
+              label: '&Monospace font',
+              type: 'checkbox',
+              checked: settings.monospaceEnabled,
+              click: function(item, focusedWindow) {
+                if (!focusedWindow) {
+                  return;
+                }
+
+                focusedWindow.webContents.send('appCommand', {
+                  action: 'toggleMonospace',
+                });
+              },
+            },
+          ]),
       },
       {
         label: '&Sort Type',

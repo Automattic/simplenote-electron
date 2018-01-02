@@ -111,6 +111,7 @@ export class SettingsDialog extends Component {
       setNoteDisplay,
       setSortType,
       toggleSortOrder,
+      toggleMonospace,
     } = this.props;
 
     const {
@@ -119,6 +120,7 @@ export class SettingsDialog extends Component {
         noteDisplay,
         sortType,
         sortReversed: sortIsReversed,
+        monospaceEnabled,
         accountName,
       },
     } = this.props;
@@ -192,6 +194,16 @@ export class SettingsDialog extends Component {
               <Item title="Comfy" slug="comfy" />
               <Item title="Condensed" slug="condensed" />
               <Item title="Expanded" slug="expanded" />
+            </SettingsGroup>
+
+            <SettingsGroup
+              title="Editor"
+              slug="monospace"
+              activeSlug={monospaceEnabled ? 'monospace' : ''}
+              onChange={toggleMonospace}
+              renderer={ToggleGroup}
+            >
+              <Item title="Monospace font" slug="monospace" />
             </SettingsGroup>
 
             <SettingsGroup
