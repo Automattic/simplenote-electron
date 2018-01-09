@@ -27,9 +27,6 @@ $green: #4ab866;
 $black: #000; // use $gray-darkest instead
 $white: #fff;
 
-$sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
-  'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
-$monospace: 'Courier', 'Courier New', 'Monaco', monospace;
 $normal: 400;
 $bold: 600;
 $light: 300;
@@ -54,3 +51,32 @@ $z-index-dialogs: 1000;
 // Viewport widths for media queries
 $single-column: 750px;
 $medium: 900px;
+
+/* Configure custom monospace Font */
+@font-face {
+  font-family: "iA Writer Duospace";
+  src: url("fonts/iAWriterDuospace-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: "iA Writer Duospace";
+  src: url("fonts/iAWriterDuospace-Bold.woff") format('woff');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "iA Writer Duospace";
+  src: url("fonts/iAWriterDuospace-RegularItalic.woff") format('woff');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "iA Writer Duospace";
+  src: url("fonts/iAWriterDuospace-BoldItalic.woff") format('woff');
+  font-weight: bold;
+  font-style: italic;
+}
+
+$sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
+  'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+$monospace: 'iA Writer Duospace', 'Monaco', 'Courier New', 'Courier', monospace;

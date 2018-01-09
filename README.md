@@ -32,3 +32,6 @@ Please adhere to the same guidelines as found in [wp-calypso](https://github.com
 - [node-simperium](https://github.com/automattic/node-simperium) for Simperium syncing.
 - [ReactJS](https://facebook.github.io/react/) for UI.
 - [Electron](http://electron.atom.io) for wrapping the JavaScript application.
+
+## Acknowledgements
+This app utilizes the [iA Writer Duospace font](https://github.com/iaolo/iA-Fonts/tree/master/iA%20Writer%20Duospace) for the editor with the monospace option enabled.
