@@ -1,7 +1,7 @@
 {
   "name": "simplenote",
   "productName": "Simplenote",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Simplenote for desktop.",
   "author": "Automattic, Inc. (https://automattic.com)",
   "main": "desktop/index.js",
@@ -99,7 +99,7 @@
     "serve-favicon": "2.4.3",
     "showdown": "1.7.2",
     "showdown-xss-filter": "0.2.0",
-    "simperium": "0.2.8"
+    "simperium": "0.2.9"
   },
   "optionalDependencies": {
     "appdmg": "0.4.5"
