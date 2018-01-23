@@ -81,6 +81,11 @@ module.exports = function main() {
       shell.openExternal(linkUrl);
     });
 
+    // Disables navigation for app window drag and drop
+    mainWindow.webContents.on('will-navigate', function(event) {
+      event.preventDefault();
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
       // Dereference the window object, usually you would store windows
