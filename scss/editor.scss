@@ -23,10 +23,6 @@
   .note-editor-content {
     padding-top: 51px !important;
   }
-
-  .note-editor-mode-bar {
-    display: none !important;
-  }
 }
 
 .markdown {
@@ -113,19 +109,6 @@
   border-left: 1px solid lighten($gray, 30%);
   padding-top: 0;
   transition: all 0.3s ease-in-out;
-}
-
-.note-editor-mode-bar {
-  flex: none;
-  margin: 0 auto;
-  padding-top: 24px;
-  display: flex;
-  justify-content: center;
-  transition: all 0.3s ease-in-out;
-
-  .button-segmented-control {
-    width: 5.75em;
-  }
 }
 
 .note-editor-detail {
