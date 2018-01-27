@@ -28,6 +28,13 @@
   .settings-writing {
     padding-top: 48px;
   }
+
+  .settings-unsynced-warning {
+    h3 {
+      color: $red;
+      text-align: center;
+    }
+  }
 }
 
 .settings-group {

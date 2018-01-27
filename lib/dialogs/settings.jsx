@@ -15,6 +15,12 @@ export const SettingsDialog = React.createClass({
     onSignOut: PropTypes.func.isRequired,
   },
 
+  getInitialState() {
+    return {
+      shouldShowSyncWarning: false,
+    };
+  },
+
   onDone() {
     this.props.actions.closeDialog({ key: this.props.dialog.key });
   },
@@ -35,6 +41,42 @@ export const SettingsDialog = React.createClass({
     this.props.actions.loadNotes({
       noteBucket: this.props.noteBucket,
     });
+  },
+
+  // TODO: fix.
+  hasUnsyncedNotes: function() {
+    let foundUnsynced = false;
+
+    this.props.appState.notes.some(note => {
+      this.props.noteBucket.getVersion(note.id, (e, version) => {
+        if (e || version >= 0) {
+          foundUnsynced = true;
+        }
+      });
+
+      return foundUnsynced === true;
+    });
+
+    return foundUnsynced;
+  },
+
+  onSignOutRequested: function() {
+    const { shouldShowSyncWarning } = this.state;
+    console.log(shouldShowSyncWarning); // eslint-disable-line no-console
+    // If user clicks on log out button a second time, sign out
+    if (shouldShowSyncWarning) {
+      this.setState({ shouldShowSyncWarning: false });
+      //this.props.onSignOut();
+      return;
+    }
+
+    // Safety first! Check for unsynced notes.
+    if (this.hasUnsyncedNotes()) {
+      console.log('UNSYNCED!'); // eslint-disable-line no-console
+      this.setState({ shouldShowSyncWarning: true });
+    } else {
+      //this.props.onSignOut();
+    }
   },
 
   render() {
@@ -75,6 +117,8 @@ export const SettingsDialog = React.createClass({
       },
     } = this.props;
 
+    const { shouldShowSyncWarning } = this.state;
+
     switch (tabName) {
       case 'account':
         return (
@@ -91,11 +135,22 @@ export const SettingsDialog = React.createClass({
                 <button
                   type="button"
                   className="button button-primary"
-                  onClick={this.props.onSignOut}
+                  onClick={this.onSignOutRequested}
                 >
                   Log Out
                 </button>
               </li>
+              {shouldShowSyncWarning && (
+                <div className="settings-unsynced-warning">
+                  <h3>Unsynced Notes Detected</h3>
+                  <p>
+                    Logging out may delete notes that have not synced. Check
+                    your connection and perhaps export your notes to ensure you
+                    don&apos;t lose any content. Click &apos;Log Out&apos; again
+                    to proceed logging out.
+                  </p>
+                </div>
+              )}
               <li>
                 <button
                   type="button"
