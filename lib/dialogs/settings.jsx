@@ -74,7 +74,7 @@ export const SettingsDialog = React.createClass({
         title: 'Unsynced Notes Detected',
         message:
           'Logging out will delete any unsynced notes. You can verify your ' +
-          'synced notes by signing in to the Web App.',
+          'synced notes by logging in to the Web App.',
       },
       response => {
         if (response === 0) {
