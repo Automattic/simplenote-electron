@@ -13,12 +13,7 @@ export const SettingsDialog = React.createClass({
   propTypes: {
     actions: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
-  },
-
-  getInitialState() {
-    return {
-      shouldShowSyncWarning: false,
-    };
+    isElectron: PropTypes.bool.isRequired,
   },
 
   onDone() {
@@ -43,39 +38,65 @@ export const SettingsDialog = React.createClass({
     });
   },
 
-  // TODO: fix.
-  hasUnsyncedNotes: function() {
-    let foundUnsynced = false;
+  onSignOutRequested() {
+    // Safety first! Check for any unsynced notes before signing out.
+    // A note that hasn't synced has a version of 0
+    const { onSignOut } = this.props;
+    const { notes } = this.props.appState;
+    const { getVersion } = this.props.noteBucket;
+    const noteHasSynced = note =>
+      new Promise((resolve, reject) =>
+        getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
+      );
 
-    this.props.appState.notes.some(note => {
-      this.props.noteBucket.getVersion(note.id, (e, version) => {
-        if (e || version >= 0) {
-          foundUnsynced = true;
-        }
-      });
-
-      return foundUnsynced === true;
-    });
-
-    return foundUnsynced;
+    Promise.race(notes.map(noteHasSynced)).then(
+      () => onSignOut(), // All good, sign out now!
+      () => this.showUnsyncedWarning() // Show a warning to the user
+    );
   },
 
-  onSignOutRequested: function() {
-    const { shouldShowSyncWarning } = this.state;
-    console.log(shouldShowSyncWarning); // eslint-disable-line no-console
-    // If user clicks on log out button a second time, sign out
-    if (shouldShowSyncWarning) {
-      this.setState({ shouldShowSyncWarning: false });
-      //this.props.onSignOut();
-      return;
-    }
-
-    // Safety first! Check for unsynced notes.
-    if (this.hasUnsyncedNotes()) {
-      console.log('UNSYNCED!'); // eslint-disable-line no-console
-      this.setState({ shouldShowSyncWarning: true });
+  showUnsyncedWarning() {
+    const { isElectron } = this.props;
+    if (isElectron) {
+      this.showElectronWarningDialog();
     } else {
-      //this.props.onSignOut();
+      this.showWebWarningDialog();
+    }
+  },
+
+  showElectronWarningDialog() {
+    const { onSignOut } = this.props;
+    const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
+    dialog.showMessageBox(
+      {
+        type: 'warning',
+        buttons: ['Delete Notes', 'Cancel', 'Visit Web App'],
+        title: 'Unsynced Notes Detected',
+        message:
+          'Signing out will delete any unsynced notes. You can verify your ' +
+          'synced notes by signing in to the Web App.',
+      },
+      response => {
+        if (response === 0) {
+          onSignOut();
+        } else if (response === 2) {
+          viewExternalUrl('https://app.simplenote.com');
+        }
+      }
+    );
+  },
+
+  showWebWarningDialog() {
+    const { onSignOut } = this.props;
+    const shouldReallySignOut = confirm(
+      'Warning: Unsynced notes were detected.\n\n' +
+        'Logging out will delete any notes that have not synced. ' +
+        'Check your connection and visit app.simplenote.com to verify synced notes.' +
+        '\n\nClick OK to delete unsynced notes and Log Out.'
+    );
+
+    if (shouldReallySignOut) {
+      onSignOut();
     }
   },
 
@@ -117,8 +138,6 @@ export const SettingsDialog = React.createClass({
       },
     } = this.props;
 
-    const { shouldShowSyncWarning } = this.state;
-
     switch (tabName) {
       case 'account':
         return (
@@ -140,17 +159,6 @@ export const SettingsDialog = React.createClass({
                   Log Out
                 </button>
               </li>
-              {shouldShowSyncWarning && (
-                <div className="settings-unsynced-warning">
-                  <h3>Unsynced Notes Detected</h3>
-                  <p>
-                    Logging out may delete notes that have not synced. Check
-                    your connection and perhaps export your notes to ensure you
-                    don&apos;t lose any content. Click &apos;Log Out&apos; again
-                    to proceed logging out.
-                  </p>
-                </div>
-              )}
               <li>
                 <button
                   type="button"

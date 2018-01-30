@@ -517,7 +517,13 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         throw new Error('Unknown dialog type.');
       }
 
-      return <DialogComponent {...this.props} {...{ key, dialog, params }} />;
+      return (
+        <DialogComponent
+          isElectron={isElectron()}
+          {...this.props}
+          {...{ key, dialog, params }}
+        />
+      );
     },
   })
 );
