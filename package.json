@@ -49,7 +49,7 @@
     "babel-preset-react": "6.24.1",
     "classnames": "2.2.5",
     "css-loader": "0.28.7",
-    "electron": "1.7.5",
+    "electron": "1.7.11",
     "electron-builder": "19.45.2",
     "electron-packager": "9.1.0",
     "enzyme": "2.9.1",
