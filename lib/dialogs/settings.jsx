@@ -73,7 +73,7 @@ export const SettingsDialog = React.createClass({
         buttons: ['Delete Notes', 'Cancel', 'Visit Web App'],
         title: 'Unsynced Notes Detected',
         message:
-          'Signing out will delete any unsynced notes. You can verify your ' +
+          'Logging out will delete any unsynced notes. You can verify your ' +
           'synced notes by signing in to the Web App.',
       },
       response => {
