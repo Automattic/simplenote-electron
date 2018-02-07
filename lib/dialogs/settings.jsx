@@ -56,7 +56,7 @@ export const SettingsDialog = React.createClass({
           getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
         );
 
-      Promise.race(notes.map(noteHasSynced)).then(
+      Promise.all(notes.map(noteHasSynced)).then(
         () => onSignOut(), // All good, sign out now!
         () => this.showUnsyncedWarning() // Show a warning to the user
       );
