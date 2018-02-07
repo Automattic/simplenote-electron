@@ -44,25 +44,23 @@ export const SettingsDialog = React.createClass({
     const { notes } = this.props.appState;
     const { getVersion } = noteBucket;
 
-    if (
-      noteBucket.hasLocalChanges((error, hasChanges) => {
-        if (hasChanges) {
-          this.showUnsyncedWarning();
-          return;
-        }
+    noteBucket.hasLocalChanges((error, hasChanges) => {
+      if (hasChanges) {
+        this.showUnsyncedWarning();
+        return;
+      }
 
-        // Also check persisted store for any notes with version 0
-        const noteHasSynced = note =>
-          new Promise((resolve, reject) =>
-            getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
-          );
-
-        Promise.race(notes.map(noteHasSynced)).then(
-          () => onSignOut(), // All good, sign out now!
-          () => this.showUnsyncedWarning() // Show a warning to the user
+      // Also check persisted store for any notes with version 0
+      const noteHasSynced = note =>
+        new Promise((resolve, reject) =>
+          getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
         );
-      })
-    );
+
+      Promise.race(notes.map(noteHasSynced)).then(
+        () => onSignOut(), // All good, sign out now!
+        () => this.showUnsyncedWarning() // Show a warning to the user
+      );
+    });
   },
 
   showUnsyncedWarning() {
