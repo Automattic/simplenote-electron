@@ -40,18 +40,28 @@ export const SettingsDialog = React.createClass({
 
   onSignOutRequested() {
     // Safety first! Check for any unsynced notes before signing out.
-    // A note that hasn't synced has a version of 0
-    const { onSignOut } = this.props;
+    const { onSignOut, noteBucket } = this.props;
     const { notes } = this.props.appState;
-    const { getVersion } = this.props.noteBucket;
-    const noteHasSynced = note =>
-      new Promise((resolve, reject) =>
-        getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
-      );
+    const { getVersion } = noteBucket;
 
-    Promise.race(notes.map(noteHasSynced)).then(
-      () => onSignOut(), // All good, sign out now!
-      () => this.showUnsyncedWarning() // Show a warning to the user
+    if (
+      noteBucket.hasLocalChanges((error, hasChanges) => {
+        if (hasChanges) {
+          this.showUnsyncedWarning();
+          return;
+        }
+
+        // Also check persisted store for any notes with version 0
+        const noteHasSynced = note =>
+          new Promise((resolve, reject) =>
+            getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
+          );
+
+        Promise.race(notes.map(noteHasSynced)).then(
+          () => onSignOut(), // All good, sign out now!
+          () => this.showUnsyncedWarning() // Show a warning to the user
+        );
+      })
     );
   },
 
