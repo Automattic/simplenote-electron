@@ -13,6 +13,7 @@ export const SettingsDialog = React.createClass({
   propTypes: {
     actions: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
+    isElectron: PropTypes.bool.isRequired,
   },
 
   onDone() {
@@ -35,6 +36,72 @@ export const SettingsDialog = React.createClass({
     this.props.actions.loadNotes({
       noteBucket: this.props.noteBucket,
     });
+  },
+
+  onSignOutRequested() {
+    // Safety first! Check for any unsynced notes before signing out.
+    const { onSignOut, noteBucket } = this.props;
+    const { notes } = this.props.appState;
+    const { getVersion } = noteBucket;
+
+    noteBucket.hasLocalChanges((error, hasChanges) => {
+      if (hasChanges) {
+        this.showUnsyncedWarning();
+        return;
+      }
+
+      // Also check persisted store for any notes with version 0
+      const noteHasSynced = note =>
+        new Promise((resolve, reject) =>
+          getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
+        );
+
+      Promise.all(notes.map(noteHasSynced)).then(
+        () => onSignOut(), // All good, sign out now!
+        () => this.showUnsyncedWarning() // Show a warning to the user
+      );
+    });
+  },
+
+  showUnsyncedWarning() {
+    const { isElectron } = this.props;
+    isElectron ? this.showElectronWarningDialog() : this.showWebWarningDialog();
+  },
+
+  showElectronWarningDialog() {
+    const { onSignOut } = this.props;
+    const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
+    dialog.showMessageBox(
+      {
+        type: 'warning',
+        buttons: ['Delete Notes', 'Cancel', 'Visit Web App'],
+        title: 'Unsynced Notes Detected',
+        message:
+          'Logging out will delete any unsynced notes. You can verify your ' +
+          'synced notes by logging in to the Web App.',
+      },
+      response => {
+        if (response === 0) {
+          onSignOut();
+        } else if (response === 2) {
+          viewExternalUrl('https://app.simplenote.com');
+        }
+      }
+    );
+  },
+
+  showWebWarningDialog() {
+    const { onSignOut } = this.props;
+    const shouldReallySignOut = confirm(
+      'Warning: Unsynced notes were detected.\n\n' +
+        'Logging out will delete any notes that have not synced. ' +
+        'Check your connection and visit app.simplenote.com to verify synced notes.' +
+        '\n\nClick OK to delete unsynced notes and Log Out.'
+    );
+
+    if (shouldReallySignOut) {
+      onSignOut();
+    }
   },
 
   render() {
@@ -91,7 +158,7 @@ export const SettingsDialog = React.createClass({
                 <button
                   type="button"
                   className="button button-primary"
-                  onClick={this.props.onSignOut}
+                  onClick={this.onSignOutRequested}
                 >
                   Log Out
                 </button>
