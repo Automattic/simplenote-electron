@@ -67,11 +67,7 @@ export const SettingsDialog = React.createClass({
 
   showUnsyncedWarning() {
     const { isElectron } = this.props;
-    if (isElectron) {
-      this.showElectronWarningDialog();
-    } else {
-      this.showWebWarningDialog();
-    }
+    isElectron ? this.showElectronWarningDialog() : this.showWebWarningDialog();
   },
 
   showElectronWarningDialog() {
