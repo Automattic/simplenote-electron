@@ -143,16 +143,6 @@ export const NoteEditor = React.createClass({
     this.setIsViewingRevisions(false);
   },
 
-  setEditorMode(event) {
-    const editorMode = get(event, 'target.dataset.editorMode');
-
-    if (!editorMode) {
-      return;
-    }
-
-    this.props.onSetEditorMode(editorMode);
-  },
-
   setIsViewingRevisions: function(isViewing) {
     this.setState({ isViewingRevisions: isViewing });
   },
@@ -239,10 +229,12 @@ export const NoteEditor = React.createClass({
             setIsViewingRevisions={this.setIsViewingRevisions}
             onCloseNote={this.props.onCloseNote}
             onNoteInfo={this.props.onNoteInfo}
+            onSetEditorMode={this.props.onSetEditorMode}
+            editorMode={editorMode}
+            markdownEnabled={markdownEnabled}
           />
         </div>
         <div className="note-editor-content theme-color-border">
-          {!!markdownEnabled && this.renderModeBar()}
           <div className="note-editor-detail">
             <NoteDetail
               storeFocusEditor={this.storeFocusEditor}
@@ -272,39 +264,6 @@ export const NoteEditor = React.createClass({
             onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
           />
         )}
-      </div>
-    );
-  },
-
-  renderModeBar() {
-    const { editorMode } = this.props;
-
-    const isPreviewing = editorMode === 'markdown';
-
-    return (
-      <div className="note-editor-mode-bar segmented-control">
-        <button
-          type="button"
-          className={classNames(
-            'button button-segmented-control button-compact',
-            { active: !isPreviewing }
-          )}
-          data-editor-mode="edit"
-          onClick={this.setEditorMode}
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className={classNames(
-            'button button-segmented-control button-compact',
-            { active: isPreviewing }
-          )}
-          data-editor-mode="markdown"
-          onClick={this.setEditorMode}
-        >
-          Preview
-        </button>
       </div>
     );
   },
