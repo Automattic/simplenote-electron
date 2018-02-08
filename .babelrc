@@ -1,15 +1,14 @@
 {
   "env": {
-    "test": {
-      "presets": [ "es2015", "react" ]
-    }
+
   },
   "presets": [
-    [ "es2015", { "modules": false } ],
+    [ "env", { "targets": { "electron": "1.7" } } ],
     "react"
   ],
   "plugins": [
     "babel-plugin-transform-class-properties",
-    "babel-plugin-transform-object-rest-spread"
+    "babel-plugin-transform-object-rest-spread",
+    "babel-plugin-transform-async-to-generator"
   ]
 }
