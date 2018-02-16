@@ -7,6 +7,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  Tray
 } = require('electron');
 
 const path = require('path');
@@ -51,6 +52,19 @@ module.exports = function main() {
       titleBarStyle: 'hidden',
       show: false,
     });
+
+    // Tray
+    const tray = new Tray(iconPath)
+
+    tray.on('click', () => {
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    })
+    mainWindow.on('show', () => {
+      tray.setHighlightMode('always')
+    })
+    mainWindow.on('hide', () => {
+      tray.setHighlightMode('never')
+    })
 
     // and load the index of the app.
     if (typeof mainWindow.loadURL === 'function') {
