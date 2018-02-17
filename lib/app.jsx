@@ -450,27 +450,27 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 )}
               </div>
               {selectedNote &&
-              hasNotes && (
-                <NoteEditor
-                  allTags={state.tags}
-                  editorMode={state.editorMode}
-                  filter={state.filter}
-                  note={selectedNote}
-                  revisions={state.revisions}
-                  onSetEditorMode={this.onSetEditorMode}
-                  onUpdateContent={this.onUpdateContent}
-                  onUpdateNoteTags={this.onUpdateNoteTags}
-                  onTrashNote={this.onTrashNote}
-                  onRestoreNote={this.onRestoreNote}
-                  onShareNote={this.onShareNote}
-                  onDeleteNoteForever={this.onDeleteNoteForever}
-                  onRevisions={this.onRevisions}
-                  onCloseNote={() => this.props.actions.closeNote()}
-                  onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-                  shouldPrint={state.shouldPrint}
-                  onNotePrinted={this.onNotePrinted}
-                />
-              )}
+                hasNotes && (
+                  <NoteEditor
+                    allTags={state.tags}
+                    editorMode={state.editorMode}
+                    filter={state.filter}
+                    note={selectedNote}
+                    revisions={state.revisions}
+                    onSetEditorMode={this.onSetEditorMode}
+                    onUpdateContent={this.onUpdateContent}
+                    onUpdateNoteTags={this.onUpdateNoteTags}
+                    onTrashNote={this.onTrashNote}
+                    onRestoreNote={this.onRestoreNote}
+                    onShareNote={this.onShareNote}
+                    onDeleteNoteForever={this.onDeleteNoteForever}
+                    onRevisions={this.onRevisions}
+                    onCloseNote={() => this.props.actions.closeNote()}
+                    onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                    shouldPrint={state.shouldPrint}
+                    onNotePrinted={this.onNotePrinted}
+                  />
+                )}
               {!hasNotes && (
                 <div className="placeholder-note-detail theme-color-border">
                   <div className="placeholder-note-toolbar theme-color-border" />

@@ -248,15 +248,15 @@ export default class NoteContentEditor extends React.Component {
   };
 
   /**
-	 * This is highly-specific and coupled to the Draft-JS
-	 * interface but for now it's what we have to do to
-	 * determine if the editor is focused. Should we come
-	 * up with a better method to determine if the user is
-	 * currently working in the editor/editor area we can
-	 * replace this function with that method.
-	 *
-	 * @returns {boolean} whether the editor area is focused
-	 */
+   * This is highly-specific and coupled to the Draft-JS
+   * interface but for now it's what we have to do to
+   * determine if the editor is focused. Should we come
+   * up with a better method to determine if the user is
+   * currently working in the editor/editor area we can
+   * replace this function with that method.
+   *
+   * @returns {boolean} whether the editor area is focused
+   */
   hasFocus = () => {
     return (
       this.editor &&
