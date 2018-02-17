@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -7,26 +8,24 @@ import Spinner from './components/spinner';
 
 import { hasInvalidCredentials, hasLoginError } from './state/auth/selectors';
 
-export const Auth = React.createClass({
-  propTypes: {
+export class Auth extends Component {
+  static propTypes = {
     isAuthenticated: PropTypes.bool,
     isMacApp: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      isCreatingAccount: false,
-      passwordErrorMessage: null,
-    };
-  },
+  state = {
+    isCreatingAccount: false,
+    passwordErrorMessage: null,
+  };
 
   componentDidMount() {
     if (this.usernameInput) {
       this.usernameInput.focus();
     }
-  },
+  }
 
   render() {
     const { isMacApp } = this.props;
@@ -142,9 +141,9 @@ export const Auth = React.createClass({
         </form>
       </div>
     );
-  },
+  }
 
-  onLogin(event) {
+  onLogin = event => {
     if (event.type === 'keydown' && event.keyCode !== 13) {
       return;
     }
@@ -158,18 +157,18 @@ export const Auth = React.createClass({
     }
 
     this.props.onAuthenticate(username, password);
-  },
+  };
 
-  onForgot(event) {
+  onForgot = event => {
     event.preventDefault();
     window.open(
       event.currentTarget.href,
       null,
       'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes'
     );
-  },
+  };
 
-  onSignUp(event) {
+  onSignUp = event => {
     if (event.type === 'keydown' && event.keyCode !== 13) {
       return;
     }
@@ -197,13 +196,13 @@ export const Auth = React.createClass({
 
     this.props.onCreateUser(username, password);
     this.setState({ passwordErrorMessage: null });
-  },
+  };
 
-  toggleSignUp(event) {
+  toggleSignUp = event => {
     event.preventDefault();
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
-  },
-});
+  };
+}
 
 const mapStateToProps = state => ({
   hasInvalidCredentials: hasInvalidCredentials(state),

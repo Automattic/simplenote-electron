@@ -12,8 +12,8 @@
  * row height calculations should be double-checked
  * against performance regressions.
  */
-
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from './icons/feed';
 import classNames from 'classnames';
@@ -300,8 +300,8 @@ const renderNote = (
   );
 };
 
-const NoteList = React.createClass({
-  propTypes: {
+export class NoteList extends Component {
+  static propTypes = {
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
     onSelectNote: PropTypes.func.isRequired,
@@ -309,7 +309,7 @@ const NoteList = React.createClass({
     noteDisplay: PropTypes.string.isRequired,
     onEmptyTrash: PropTypes.any.isRequired,
     showTrash: PropTypes.bool,
-  },
+  };
 
   componentDidMount() {
     /**
@@ -324,7 +324,7 @@ const NoteList = React.createClass({
 
     this.toggleShortcuts(true);
     window.addEventListener('resize', this.recomputeHeights);
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (
@@ -333,15 +333,15 @@ const NoteList = React.createClass({
       nextProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
+  }
     }
-  },
 
   componentWillUnmount() {
     this.toggleShortcuts(false);
     window.removeEventListener('resize', this.recomputeHeights);
-  },
+  }
 
-  handleShortcut(event) {
+  handleShortcut = event => {
     const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
@@ -363,19 +363,17 @@ const NoteList = React.createClass({
     }
 
     return true;
-  },
+  };
 
-  refList(r) {
-    this.list = r;
-  },
+  refList = r => (this.list = r);
 
-  toggleShortcuts(doEnable) {
+  toggleShortcuts = doEnable => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
       window.removeEventListener('keydown', this.handleShortcut, true);
     }
-  },
+  };
 
   render() {
     const {
@@ -439,12 +437,10 @@ const NoteList = React.createClass({
         )}
       </div>
     );
-  },
+  }
 
-  onPinNote(note) {
-    this.props.onPinNote(note, !note.pinned);
-  },
-});
+  onPinNote = note => this.props.onPinNote(note, !note.pinned);
+}
 
 const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
 const { recordEvent } = tracks;

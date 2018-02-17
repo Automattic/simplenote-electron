@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import SimplenoteLogo from '../icons/simplenote';
 import CrossIcon from '../icons/cross';
 import TopRightArrowIcon from '../icons/arrow-top-right';
@@ -6,15 +7,13 @@ import Dialog from '../dialog';
 
 const appVersion = config.version; // eslint-disable-line no-undef
 
-export default React.createClass({
-  propTypes: {
+export class AboutDialog extends Component {
+  static propTypes = {
     actions: PropTypes.object.isRequired,
     dialog: PropTypes.object.isRequired,
-  },
+  };
 
-  onDone() {
-    this.props.actions.closeDialog({ key: this.props.dialog.key });
-  },
+  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   render() {
     const dialog = this.props.dialog;
@@ -125,5 +124,7 @@ export default React.createClass({
         </button>
       </Dialog>
     );
-  },
-});
+  }
+}
+
+export default AboutDialog;

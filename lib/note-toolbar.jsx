@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import BackIcon from './icons/back';
 import InfoIcon from './icons/info';
 import PreviewIcon from './icons/preview';
@@ -7,8 +8,8 @@ import RevisionsIcon from './icons/revisions';
 import TrashIcon from './icons/trash';
 import ShareIcon from './icons/share';
 
-export default React.createClass({
-  propTypes: {
+export class NoteToolbar extends Component {
+  static propTypes = {
     note: PropTypes.object,
     onTrashNote: PropTypes.func.isRequired,
     onRestoreNote: PropTypes.func.isRequired,
@@ -19,29 +20,29 @@ export default React.createClass({
     onNoteInfo: PropTypes.func.isRequired,
     setIsViewingRevisions: PropTypes.func.isRequired,
     onSetEditorMode: PropTypes.func.isRequired,
-    editorMode: PropTypes.string.isRequred,
-    markdownEnabled: PropTypes.bool.isRequred,
-  },
+    editorMode: PropTypes.string.isRequired,
+    markdownEnabled: PropTypes.bool.isRequired,
+  };
 
-  showRevisions: function() {
+  showRevisions = () => {
     this.props.setIsViewingRevisions(true);
     this.props.onRevisions(this.props.note);
-  },
+  };
 
   render() {
     const { note } = this.props;
     const isTrashed = !!(note && note.data.deleted);
 
     return isTrashed ? this.renderTrashed() : this.renderNormal();
-  },
+  }
 
-  setEditorMode() {
+  setEditorMode = () => {
     const { editorMode } = this.props;
 
     this.props.onSetEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
-  },
+  };
 
-  renderNormal() {
+  renderNormal = () => {
     const { note, editorMode, markdownEnabled } = this.props;
     const isPreviewing = editorMode === 'markdown';
 
@@ -111,9 +112,9 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
-  renderTrashed() {
+  renderTrashed = () => {
     const { note } = this.props;
 
     return (
@@ -138,5 +139,7 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  };
+}
+
+export default NoteToolbar;

@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { get, includes, invoke, noop } from 'lodash';
 
@@ -140,7 +141,7 @@ function continueList(editorState, listItemMatch) {
   );
 }
 
-export default class NoteContentEditor extends React.Component {
+export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
     onChangeContent: PropTypes.func.isRequired,

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import appState from './flux/app-state';
@@ -60,7 +61,7 @@ const mapStateToProps = state => ({
 });
 
 function mapDispatchToProps(dispatch, { noteBucket }) {
-  var actionCreators = Object.assign({}, appState.actionCreators);
+  const actionCreators = Object.assign({}, appState.actionCreators);
 
   const thenReloadNotes = action => a => {
     dispatch(action(a));
@@ -107,8 +108,8 @@ const isElectronMac = () =>
   matchesProperty('process.platform', 'darwin')(window);
 
 export const App = connect(mapStateToProps, mapDispatchToProps)(
-  React.createClass({
-    propTypes: {
+  class extends Component {
+    static propTypes = {
       actions: PropTypes.object.isRequired,
       appState: PropTypes.object.isRequired,
       settings: PropTypes.object.isRequired,
@@ -119,25 +120,23 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
-    },
+    };
 
-    getDefaultProps: function() {
-      return {
-        onAuthenticate: () => {},
-        onCreateUser: () => {},
-        onSignOut: () => {},
-      };
-    },
+    static defaultProps = {
+      onAuthenticate: () => {},
+      onCreateUser: () => {},
+      onSignOut: () => {},
+    };
 
-    componentWillMount: function() {
+    componentWillMount() {
       if (isElectron()) {
         this.initializeElectron();
       }
 
       this.onAuthChanged();
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
       ipc.on('appCommand', this.onAppCommand);
       ipc.send('settingsUpdate', this.props.settings);
 
@@ -161,21 +160,21 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.toggleShortcuts(true);
 
       analytics.tracks.recordEvent('application_opened');
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
       this.toggleShortcuts(false);
 
       ipc.removeListener('appCommand', this.onAppCommand);
-    },
+    }
 
     componentDidUpdate(prevProps) {
       if (this.props.settings !== prevProps.settings) {
         ipc.send('settingsUpdate', this.props.settings);
       }
-    },
+    }
 
-    handleShortcut(event) {
+    handleShortcut = event => {
       const { ctrlKey, key, metaKey } = event;
 
       const cmdOrCtrl = ctrlKey || metaKey;
@@ -199,9 +198,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       }
 
       return true;
-    },
+    };
 
-    onAppCommand: function(event, command) {
+    onAppCommand = (event, command) => {
       if ('exportZipArchive' === get(command, 'action')) {
         return exportNotes()
           .then(exportToZip)
@@ -237,9 +236,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           this.props.actions[command.action](command);
         }
       }
-    },
+    };
 
-    onAuthChanged() {
+    onAuthChanged = () => {
       const {
         actions,
         appState: { accountName },
@@ -257,25 +256,17 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       setAuthorized();
       analytics.initialize(accountName);
-    },
+    };
 
-    onNotePrinted: function() {
-      this.props.actions.setShouldPrintNote({
-        shouldPrint: false,
-      });
-    },
+    onNotePrinted = () =>
+      this.props.actions.setShouldPrintNote({ shouldPrint: false });
 
-    onNotesIndex: function() {
-      this.props.actions.loadNotes({
-        noteBucket: this.props.noteBucket,
-      });
-    },
+    onNotesIndex = () =>
+      this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
 
-    onNoteRemoved: function() {
-      this.onNotesIndex();
-    },
+    onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate: function(noteId, data, original, patch, isIndexing) {
+    onNoteUpdate = (noteId, data, original, patch, isIndexing) =>
       this.props.actions.noteUpdated({
         noteBucket: this.props.noteBucket,
         noteId,
@@ -284,15 +275,11 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         patch,
         isIndexing,
       });
-    },
 
-    onTagsIndex: function() {
-      this.props.actions.loadTags({
-        tagBucket: this.props.tagBucket,
-      });
-    },
+    onTagsIndex = () =>
+      this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
 
-    initializeElectron() {
+    initializeElectron = () => {
       const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
 
       this.setState({
@@ -301,30 +288,26 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           Menu: remote.Menu,
         },
       });
-    },
+    };
 
-    onSetEditorMode: function(mode) {
-      this.props.actions.setEditorMode({ mode });
-    },
+    onSetEditorMode = mode => this.props.actions.setEditorMode({ mode });
 
-    onUpdateContent: function(note, content) {
+    onUpdateContent = (note, content) =>
       this.props.actions.updateNoteContent({
         noteBucket: this.props.noteBucket,
         note,
         content,
       });
-    },
 
-    onUpdateNoteTags: function(note, tags) {
+    onUpdateNoteTags = (note, tags) =>
       this.props.actions.updateNoteTags({
         noteBucket: this.props.noteBucket,
         tagBucket: this.props.tagBucket,
         note,
         tags,
       });
-    },
 
-    onTrashNote: function(note) {
+    onTrashNote = note => {
       const previousIndex = this.getPreviousNoteIndex(note);
       this.props.actions.trashNote({
         noteBucket: this.props.noteBucket,
@@ -332,10 +315,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         previousIndex,
       });
       analytics.tracks.recordEvent('editor_note_deleted');
-    },
+    };
 
     // gets the index of the note located before the currently selected one
-    getPreviousNoteIndex: function(note) {
+    getPreviousNoteIndex = note => {
       const filteredNotes = filterNotes(this.props.appState);
 
       const noteIndex = function(filteredNote) {
@@ -343,9 +326,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       };
 
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
-    },
+    };
 
-    onRestoreNote: function(note) {
+    onRestoreNote = note => {
       const previousIndex = this.getPreviousNoteIndex(note);
       this.props.actions.restoreNote({
         noteBucket: this.props.noteBucket,
@@ -353,9 +336,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         previousIndex,
       });
       analytics.tracks.recordEvent('editor_note_restored');
-    },
+    };
 
-    onShareNote: function(note) {
+    onShareNote = note =>
       this.props.actions.showDialog({
         dialog: {
           type: 'Share',
@@ -363,34 +346,33 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         },
         params: { note },
       });
-    },
 
-    onDeleteNoteForever: function(note) {
+    onDeleteNoteForever = note => {
       const previousIndex = this.getPreviousNoteIndex(note);
       this.props.actions.deleteNoteForever({
         noteBucket: this.props.noteBucket,
         note,
         previousIndex,
       });
-    },
+    };
 
-    onRevisions: function(note) {
+    onRevisions = note => {
       this.props.actions.noteRevisions({
         noteBucket: this.props.noteBucket,
         note,
       });
       analytics.tracks.recordEvent('editor_versions_accessed');
-    },
+    };
 
-    toggleShortcuts(doEnable) {
+    toggleShortcuts = doEnable => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
       } else {
         window.removeEventListener('keydown', this.handleShortcut, true);
       }
-    },
+    };
 
-    render: function() {
+    render() {
       const {
         appState: state,
         authIsPending,
@@ -495,10 +477,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
         </div>
       );
-    },
+    }
 
-    renderDialogs() {
-      var { dialogs } = this.props.appState;
+    renderDialogs = () => {
+      const { dialogs } = this.props.appState;
 
       const makeDialog = (dialog, key) => [
         dialog.modal && (
@@ -508,10 +490,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       ];
 
       return flowRight(compact, concat, map)(dialogs, makeDialog);
-    },
+    };
 
-    renderDialog({ params, ...dialog }, key) {
-      var DialogComponent = Dialogs[dialog.type];
+    renderDialog = ({ params, ...dialog }, key) => {
+      const DialogComponent = Dialogs[dialog.type];
 
       if (DialogComponent === null) {
         throw new Error('Unknown dialog type.');
@@ -524,8 +506,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           {...{ key, dialog, params }}
         />
       );
-    },
-  })
+    };
+  }
 );
 
 export default browserShell(App);

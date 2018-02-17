@@ -1,29 +1,27 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Dialog from './dialog';
 
-export default React.createClass({
-  propTypes: {
+export class TabbedDialog extends Component {
+  static propTypes = {
     tabs: PropTypes.array.isRequired,
     renderTabName: PropTypes.func.isRequired,
     renderTabContent: PropTypes.func.isRequired,
-  },
+  };
 
   componentWillMount() {
     this.setState({
       currentTab: this.props.tabs[0],
     });
-  },
+  }
 
-  setCurrentTab(tab) {
-    this.setState({
-      currentTab: tab,
-    });
-  },
+  setCurrentTab = ({ target: { dataset: { tabName } } }) =>
+    this.setState({ currentTab: tabName });
 
   render() {
-    var { tabs, renderTabName, renderTabContent, ...dialog } = this.props;
-    var { currentTab } = this.state;
+    const { tabs, renderTabName, renderTabContent, ...dialog } = this.props;
+    const { currentTab } = this.state;
 
     return (
       <Dialog className="settings" {...dialog}>
@@ -36,7 +34,8 @@ export default React.createClass({
                   className={classNames('button button-borderless', {
                     'dialog-tab-active': tab === currentTab,
                   })}
-                  onClick={this.setCurrentTab.bind(this, tab)}
+                  data-tab-name={tab}
+                  onClick={this.setCurrentTab}
                 >
                   {renderTabName(tab)}
                 </button>
@@ -50,5 +49,7 @@ export default React.createClass({
         </div>
       </Dialog>
     );
-  },
-});
+  }
+}
+
+export default TabbedDialog;

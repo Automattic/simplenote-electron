@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { identity, invoke, noop } from 'lodash';
 
 const KEY_TAB = 9;

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import onClickOutside from 'react-onclickoutside';
 import TagList from './tag-list';
 import NotesIcon from './icons/notes';
 import TrashIcon from './icons/trash';
@@ -15,17 +16,14 @@ const {
   toggleNavigation,
 } = appState.actionCreators;
 
-export const NavigationBar = React.createClass({
-  getDefaultProps: function() {
-    return {
-      onSelectAllNotes: function() {},
-      onSelectTrash: function() {},
-    };
-  },
+export class NavigationBar extends Component {
+  static defaultProps = {
+    onSelectAllNotes: function() {},
+    onSelectTrash: function() {},
+  };
 
-  mixins: [require('react-onclickoutside')],
-
-  handleClickOutside: function() {
+  // Used by onClickOutside wrapper
+  handleClickOutside = () => {
     const { dialogs, onOutsideClick, showNavigation } = this.props;
 
     if (dialogs.length > 0) {
@@ -35,23 +33,21 @@ export const NavigationBar = React.createClass({
     if (showNavigation) {
       onOutsideClick();
     }
-  },
+  };
 
-  onHelpClicked: function() {
-    viewExternalUrl('http://simplenote.com/help');
-  },
+  onHelpClicked = () => viewExternalUrl('http://simplenote.com/help');
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
-  getNavigationItemClass: function(isTrashRow) {
+  getNavigationItemClass = isTrashRow => {
     const { showTrash, selectedTag } = this.props;
     const isItemSelected = isTrashRow === showTrash;
 
     return isItemSelected && !selectedTag
       ? 'navigation-folders-item-selected'
       : 'navigation-folders-item';
-  },
+  };
 
-  render: function() {
+  render() {
     const { noteBucket, tagBucket } = this.props;
     const classes = classNames('button', 'button-borderless', 'theme-color-fg');
     const allNotesClasses = classNames(
@@ -117,8 +113,8 @@ export const NavigationBar = React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}
 
 const mapStateToProps = ({ appState: state }) => ({
   dialogs: state.dialogs,
@@ -153,4 +149,6 @@ const mapDispatchToProps = dispatch => ({
     ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar);
+export default connect(mapStateToProps, mapDispatchToProps)(
+  onClickOutside(NavigationBar)
+);
