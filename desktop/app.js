@@ -59,6 +59,8 @@ module.exports = function main() {
     tray.on('click', () => {
       mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
+    // Visual effects for macos
+    // https://github.com/electron/electron/blob/master/docs/api/tray.md#traysethighlightmodemode-macos
     mainWindow.on('show', () => {
       tray.setHighlightMode('always')
     })
