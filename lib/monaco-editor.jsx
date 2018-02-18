@@ -34,10 +34,110 @@ export class Editor extends React.Component {
     }
   }
 
-  // `event` left in for reference - passes the diff of changes
-  // eslint-disable-next-line no-unused-vars
+  /*
+   * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.imodelcontentchangedevent.html
+   * event: {
+   *   changes: [
+   *     {
+   *       range: {
+   *         endColumn
+   *         endLineNumber
+   *         startColumn
+   *         startLineNumber
+   *       }
+   *       rangeLength
+   *       text
+   *     }
+   *   ],
+   *   eol: end of line character
+   *   isFlush: has model reset?
+   *   isRedoing
+   *   isUndoing
+   *   versionId
+   * }
+   */
   onChange = (value, event) => {
-    this.props.onChangeContent(value);
+    const that = this;
+    if (!this.monaco) {
+      return;
+    }
+
+    const autolist = () => {
+      // perform list auto-complete
+      if (event.isRedoing || event.isUndoing) {
+        return;
+      }
+
+      const change = event.changes.find(({ text }) =>
+        new RegExp(`^${event.eol}\\s*$`).test(text)
+      );
+
+      if (!change) {
+        return;
+      }
+
+      const lineNumber = change.range.startLineNumber;
+      if (
+        lineNumber === 0 ||
+        // the newline change starts and ends on one line
+        lineNumber !== change.range.endLineNumber
+      ) {
+        return;
+      }
+
+      const model = this.editor.getModel();
+      const prevLine = model.getLineContent(lineNumber);
+
+      const prevList = /^(\s+)([-+*])(\s+)/.exec(prevLine);
+      if (null === prevList) {
+        return;
+      }
+
+      const thisLine = model.getLineContent(lineNumber + 1);
+      if (!/^\s*$/.test(thisLine)) {
+        return;
+      }
+
+      const lineStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 1,
+      });
+
+      const nextStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 2,
+      });
+
+      const range = new this.monaco.Range(
+        lineNumber + 1,
+        0,
+        lineNumber + 1,
+        thisLine.length
+      );
+      const identifier = { major: 1, minor: 1 };
+      const text = prevList[0];
+      const op = { identifier, range, text, forceMoveMarkers: true };
+      this.editor.executeEdits('autolist', [op]);
+
+      // for some reason this wasn't updating
+      // the cursor position when executed immediately
+      // so we are running it on the next micro-task
+      Promise.resolve().then(() =>
+        this.editor.setPosition({
+          column: prevList[0].length + 1,
+          lineNumber: lineNumber + 1,
+        })
+      );
+
+      return (
+        value.slice(0, lineStart) +
+        prevList[0] +
+        event.eol +
+        value.slice(nextStart)
+      );
+    };
+
+    this.props.onChangeContent(autolist() || value);
   };
 
   resize = () => {
@@ -131,7 +231,7 @@ export class Editor extends React.Component {
   };
 
   render() {
-    const { content, markdownIsEnabled, theme } = this.props;
+    const { markdownIsEnabled, theme } = this.props;
     const { height, width } = this.state;
 
     return (
@@ -143,7 +243,7 @@ export class Editor extends React.Component {
           language={markdownIsEnabled ? 'markdown' : 'linkified'}
           onChange={this.onChange}
           theme={theme}
-          value={content}
+          defaultValue={this.props.content}
           options={{
             lineNumbers: false,
             fontFamily: variableWidth,
