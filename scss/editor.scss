@@ -148,6 +148,13 @@
   resize: none;
   -webkit-tap-highlight-color: transparent;
 
+  & textarea {
+    border: none;
+    box-shadow: none;
+    outline: none;
+    resize: none;
+  }
+
   &:focus {
     outline: none;
   }

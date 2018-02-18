@@ -1,146 +1,138 @@
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import { get, includes, invoke, noop } from 'lodash';
+import React, { Component, PropTypes } from 'react';
+import { includes, noop } from 'lodash';
 
-import { filterHasText, searchPattern } from './utils/filter-notes';
 import { LF_ONLY_NEWLINES } from './utils/export';
-import matchingTextDecorator from './editor/matching-text-decorator';
 
-function plainTextContent(editorState) {
-  return editorState.getCurrentContent().getPlainText('\n');
-}
-
-function getCurrentBlock(editorState) {
-  const key = editorState.getSelection().getFocusKey();
-  return editorState.getCurrentContent().getBlockForKey(key);
-}
-
-const isLonelyBullet = line => includes(['-', '*', '+'], line.trim());
-
-function indentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const offset = atStart ? 0 : selectionStart;
-
-  // add tab
-  const afterInsert = EditorState.push(
-    editorState,
-    Modifier.replaceText(
-      editorState.getCurrentContent(),
-      selection.isCollapsed()
-        ? selection.merge({
-            anchorOffset: offset,
-            focusOffset: offset,
-          })
-        : selection,
-      '\t'
-    ),
-    'insert-characters'
-  );
-
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterInsert,
-    afterInsert.getSelection().merge({
-      anchorOffset: selectionStart + 1, // +1 because 1 char was added
-      focusOffset: selectionStart + 1,
-    })
-  );
-}
-
-function outdentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const rangeStart = atStart ? 0 : selectionStart - 1;
-  const rangeEnd = atStart ? 1 : selectionStart;
-
-  const prevChar = line.slice(rangeStart, rangeEnd);
-  // there's no indentation to remove
-  if (prevChar !== '\t') {
-    return editorState;
+const addListBullet = (content, { selectionStart, selectionEnd }) => {
+  if (selectionStart !== selectionEnd) {
+    return content;
   }
 
-  // remove tab
-  const afterRemove = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      selection.merge({
-        anchorOffset: rangeStart,
-        focusOffset: rangeEnd,
-      })
-    ),
-    'remove-range'
-  );
+  if (selectionStart === 0) {
+    return content;
+  }
 
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterRemove,
-    selection.merge({
-      anchorOffset: selectionStart - 1, // -1 because 1 char was removed
-      focusOffset: selectionStart - 1,
-    })
-  );
-}
+  const prevNewline = content.lastIndexOf('\n', selectionStart - 1);
+  const lineStart = Math.max(0, prevNewline + 1);
 
-function finishList(editorState) {
-  // remove `- ` from the current line
-  const withoutBullet = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      editorState.getSelection().merge({
-        anchorOffset: 0,
-        focusOffset: getCurrentBlock(editorState).getLength(),
-      })
-    ),
-    'remove-range'
-  );
+  const linePrefix = content.slice(lineStart, selectionStart);
+  const trimmed = linePrefix.trim();
 
-  // move selection to the start of the line
-  return EditorState.forceSelection(
-    withoutBullet,
-    withoutBullet.getCurrentContent().getSelectionAfter()
-  );
-}
+  const nextNewline = content.indexOf('\n', selectionStart);
+  const lineEnd = nextNewline === -1 ? content.length : nextNewline;
 
-function continueList(editorState, listItemMatch) {
-  // create a new line
-  const withNewLine = EditorState.push(
-    editorState,
-    Modifier.splitBlock(
-      editorState.getCurrentContent(),
-      editorState.getSelection()
-    ),
-    'split-block'
-  );
+  if (selectionStart < lineEnd) {
+    return content;
+  }
 
-  // insert `- ` in the new line
-  const withBullet = EditorState.push(
-    withNewLine,
-    Modifier.insertText(
-      withNewLine.getCurrentContent(),
-      withNewLine.getCurrentContent().getSelectionAfter(),
-      listItemMatch[0]
-    ),
-    'insert-characters'
-  );
+  if (trimmed === '-' || trimmed === '+' || trimmed === '*') {
+    const before = content.slice(0, prevNewline);
+    const after = content.slice(selectionStart);
 
-  // move selection to the end of the new line
-  return EditorState.forceSelection(
-    withBullet,
-    withBullet.getCurrentContent().getSelectionAfter()
-  );
-}
+    return before + '\n\n' + after;
+  }
 
-export default class NoteContentEditor extends React.Component {
+  const bulletMatch = linePrefix.match(/^(\s*[-+*]\s)/);
+  if (selectionStart && bulletMatch) {
+    const [, /* full match */ bullet] = bulletMatch;
+    const before = content.slice(0, selectionStart);
+    const after = content.slice(selectionStart);
+
+    return before + '\n' + bullet + after;
+  }
+
+  return content;
+};
+
+const indentSelection = (content, { selectionStart, selectionEnd }) => {
+  if (selectionStart === 0) {
+    return ['\t' + content, 1, 1];
+  }
+
+  const startOffset =
+    selectionStart !== selectionEnd && content[selectionStart] === '\n'
+      ? selectionStart - 1
+      : selectionStart;
+
+  const prevNewline = content.lastIndexOf('\n', startOffset - 1);
+  if (prevNewline === -1) {
+    const before = content.slice(0, startOffset);
+    const after = content.slice(startOffset);
+
+    return [before + '\t' + after, 1, 1];
+  }
+
+  const linePrefix = content.slice(prevNewline, startOffset);
+
+  if (selectionStart === selectionEnd) {
+    const atStart = /^\s*(?:[-+*]\s*)?$/.test(linePrefix);
+
+    if (atStart) {
+      const before = content.slice(0, prevNewline + 1);
+      const after = content.slice(prevNewline + 1);
+
+      return [before + '\t' + after, 1, 1];
+    } else {
+      const before = content.slice(0, startOffset);
+      const after = content.slice(startOffset);
+
+      return [before + ' ' + after, 1, 1];
+    }
+  }
+
+  const nextNewline = content.indexOf('\n', selectionEnd);
+  const selection =
+    nextNewline === -1
+      ? content.slice(prevNewline + 1)
+      : content.slice(prevNewline + 1, nextNewline);
+
+  if (-1 === selection.indexOf('\n')) {
+    const before = content.slice(0, selectionStart);
+    const after = content.slice(selectionEnd);
+
+    return [before + ' ' + after, 1, 1 + selectionStart - selectionEnd];
+  }
+
+  const before = content.slice(0, prevNewline);
+  const after =
+    nextNewline === -1
+      ? content.slice(selectionEnd)
+      : content.slice(nextNewline);
+
+  const transformed =
+    before + '\n\t' + selection.replace(/\n/g, '\n\t') + after;
+  const delta = transformed.length - content.length;
+
+  return [transformed, delta, delta];
+};
+
+const outdentSelection = (content, { selectionStart, selectionEnd }) => {
+  const startOffset =
+    content[selectionStart] === '\n' ? selectionStart - 1 : selectionStart;
+
+  const prevNewline = content.lastIndexOf('\n', startOffset);
+  const lineStart = Math.max(0, prevNewline);
+  const firstChar = lineStart === 0 ? content[0] : content[lineStart + 1];
+
+  if (selectionStart === selectionEnd && '\t' !== firstChar) {
+    return [content, 0, 0];
+  }
+
+  const nextNewline = content.indexOf('\n', selectionEnd);
+  const lineEnd = nextNewline === -1 ? content.length : nextNewline;
+
+  const selection = content.slice(lineStart, lineEnd);
+  const before = content.slice(0, lineStart);
+  const after = content.slice(lineEnd);
+
+  const transformed =
+    before + selection.replace(/^\t/, '').replace(/\n\t/g, '\n') + after;
+  const delta = transformed.length - content.length;
+
+  return [transformed, delta, delta];
+};
+
+export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
     onChangeContent: PropTypes.func.isRequired,
@@ -153,22 +145,26 @@ export default class NoteContentEditor extends React.Component {
     storeHasFocus: noop,
   };
 
-  state = {
-    editorState: EditorState.createWithContent(
-      ContentState.createFromText(this.props.content, '\n'),
-      filterHasText(this.props.filter) &&
-        matchingTextDecorator(searchPattern(this.props.filter))
-    ),
-  };
+  constructor(props) {
+    super(props);
 
-  componentWillMount() {
-    document.addEventListener('copy', this.stripFormattingFromSelectedText);
-    document.addEventListener('cut', this.stripFormattingFromSelectedText);
+    this.state = { content: props.content };
   }
 
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
+
+    if (this.props.content) {
+      this.setState({ content: this.props.content });
+    }
+
+    document.addEventListener('copy', this.stripFormattingFromSelectedText);
+    document.addEventListener('cut', this.stripFormattingFromSelectedText);
+  }
+
+  componentWillReceiveProps({ content }) {
+    this.setState({ content });
   }
 
   componentWillUnmount() {
@@ -192,133 +188,91 @@ export default class NoteContentEditor extends React.Component {
         'text/html',
         selectedText.replace(/(?:\r\n|\r|\n)/g, '<br />')
       );
+
       event.preventDefault();
     }
   }
 
-  saveEditorRef = ref => {
-    this.editor = ref;
-  };
+  saveInput = ref => (this.input = ref);
 
-  handleEditorStateChange = editorState => {
-    if (editorState === this.state.editorState) {
-      return;
+  handleEnter = event => {
+    const content = this.state.content;
+    const { selectionStart, selectionEnd } = this.input;
+
+    const transformed = addListBullet(content, {
+      selectionStart,
+      selectionEnd,
+    });
+
+    if (transformed === content) {
+      return true;
     }
 
-    const nextContent = plainTextContent(editorState);
-    const prevContent = plainTextContent(this.state.editorState);
+    event.stopPropagation();
+    event.preventDefault();
+    this.setState({ content: transformed }, () => {
+      const delta = transformed.length - content.length;
+      const index = selectionStart + delta;
 
-    const announceChanges =
-      nextContent !== prevContent
-        ? () => this.props.onChangeContent(nextContent)
-        : noop;
-
-    this.setState({ editorState }, announceChanges);
+      this.input.setSelectionRange(index, index);
+    });
+    return false;
   };
 
-  componentWillReceiveProps({ content: newContent, filter: nextFilter }) {
-    const { filter: prevFilter } = this.props;
-    const { editorState: oldEditorState } = this.state;
+  handleTab = event => {
+    const content = this.state.content;
+    const { selectionStart, selectionEnd } = this.input;
 
-    if (
-      newContent === plainTextContent(oldEditorState) &&
-      nextFilter === prevFilter
-    ) {
-      return; // identical to rendered content
+    event.stopPropagation();
+    event.preventDefault();
+
+    const [transformed, deltaStart, deltaEnd] = event.shiftKey
+      ? outdentSelection(content, { selectionStart, selectionEnd })
+      : indentSelection(content, { selectionStart, selectionEnd });
+
+    if (transformed === content) {
+      this.setState({ content });
+      return false;
     }
 
-    let newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(newContent, '\n'),
-      filterHasText(nextFilter) &&
-        matchingTextDecorator(searchPattern(nextFilter))
+    this.setState({ content: transformed }, () =>
+      this.input.setSelectionRange(
+        selectionStart + deltaStart,
+        selectionEnd + deltaEnd
+      )
     );
 
-    // avoids weird caret position if content is changed
-    // while the editor had focus, see
-    // https://github.com/facebook/draft-js/issues/410#issuecomment-223408160
-    if (oldEditorState.getSelection().getHasFocus()) {
-      newEditorState = EditorState.moveFocusToEnd(newEditorState);
-    }
-
-    this.setState({ editorState: newEditorState });
-  }
-
-  focus = () => {
-    invoke(this, 'editor.focus');
+    return false;
   };
 
-  /**
-	 * This is highly-specific and coupled to the Draft-JS
-	 * interface but for now it's what we have to do to
-	 * determine if the editor is focused. Should we come
-	 * up with a better method to determine if the user is
-	 * currently working in the editor/editor area we can
-	 * replace this function with that method.
-	 *
-	 * @returns {boolean} whether the editor area is focused
-	 */
-  hasFocus = () => {
-    return (
-      this.editor &&
-      document.activeElement ===
-        get(ReactDOM.findDOMNode(this.editor), 'children[0].children[0]') // eslint-disable-line react/no-find-dom-node
-    );
+  handleKeyPress = event => {
+    const { keyCode } = event;
+
+    if (9 === keyCode) {
+      return this.handleTab(event);
+    }
+
+    if (13 === keyCode) {
+      return this.handleEnter(event);
+    }
+
+    return true;
   };
 
-  onTab = e => {
-    const { editorState } = this.state;
-
-    // prevent moving focus to next input
-    e.preventDefault();
-
-    if (!editorState.getSelection().isCollapsed() && e.shiftKey) {
-      return;
-    }
-
-    if (e.altKey || e.ctrlKey || e.metaKey) {
-      return;
-    }
-
-    this.handleEditorStateChange(
-      e.shiftKey
-        ? outdentCurrentBlock(editorState)
-        : indentCurrentBlock(editorState)
-    );
-  };
-
-  handleReturn = () => {
-    // matches lines that start with `- `, `* `, or `+ `
-    // preceded by 0 or more space characters
-    // i.e. a line prefixed by a list bullet
-    const listItemRe = /^[ \t\u2000-\u200a]*[-*+]\s/;
-
-    const { editorState } = this.state;
-    const line = getCurrentBlock(editorState).getText();
-
-    if (isLonelyBullet(line)) {
-      this.handleEditorStateChange(finishList(editorState));
-      return 'handled';
-    }
-
-    const listItemMatch = line.match(listItemRe);
-    if (listItemMatch) {
-      this.handleEditorStateChange(continueList(editorState, listItemMatch));
-      return 'handled';
-    }
-
-    return 'not-handled';
-  };
+  // problematic since we don't get the corresponding updates for three seconds
+  changeContent = ({ target: { value } }) => this.props.onChangeContent(value);
 
   render() {
     return (
-      <Editor
-        ref={this.saveEditorRef}
-        spellCheck
-        stripPastedStyles
-        onChange={this.handleEditorStateChange}
-        editorState={this.state.editorState}
-        onTab={this.onTab}
-        handleReturn={this.handleReturn}
+      <textarea
+        ref={this.saveInput}
+        style={{
+          height: '100%',
+          width: '100%',
+        }}
+        value={this.state.content}
+        onChange={this.changeContent}
+        onKeyDown={this.handleKeyPress}
       />
     );
   }

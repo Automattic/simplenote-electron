@@ -9,7 +9,6 @@ module.exports = {
     vendor: [
       'cookie',
       'create-hash',
-      'draft-js',
       'highlight.js',
       'lodash',
       'moment',
