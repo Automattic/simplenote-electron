@@ -54,18 +54,18 @@ module.exports = function main() {
     });
 
     // Tray
-    const tray = new Tray(iconPath)
+    const tray = new Tray(iconPath);
 
     tray.on('click', () => {
-      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     })
     // Visual effects for macos
     // https://github.com/electron/electron/blob/master/docs/api/tray.md#traysethighlightmodemode-macos
     mainWindow.on('show', () => {
-      tray.setHighlightMode('always')
+      tray.setHighlightMode('always');
     })
     mainWindow.on('hide', () => {
-      tray.setHighlightMode('never')
+      tray.setHighlightMode('never');
     })
 
     // and load the index of the app.
@@ -109,7 +109,15 @@ module.exports = function main() {
     });
 
     // wait until window is presentable
-    mainWindow.once('ready-to-show', mainWindow.show);
+    mainWindow.once('ready-to-show', function() {
+      // hide to tray on startup
+      if (process.argv.includes('--hide-to-tray')) {
+        mainWindow.hide();
+      }
+      else {
+        mainWindow.show();
+      }
+    });
   };
 
   const shouldQuit = app.makeSingleInstance(() => {
