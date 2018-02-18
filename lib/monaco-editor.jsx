@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
 import urlRegex from 'url-regex';
 
+import { getLastPatch } from './state/notes';
+
 const variableWidth =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif';
 
@@ -24,13 +26,50 @@ export class Editor extends React.Component {
     window.removeEventListener('resize', this.resize, false);
   }
 
-  componentDidUpdate({ markdownIsEnabled, theme }) {
+  componentDidUpdate({ content, markdownIsEnabled, theme }) {
     if (theme !== this.props.theme) {
       this.setTheme();
     }
 
     if (markdownIsEnabled !== this.props.markdownIsEnabled) {
       this.setLanguage();
+    }
+
+    if (content !== this.props.content) {
+      const model = this.editor.getModel();
+      const startOffset = model.getOffsetAt(this.editor.getPosition());
+      const shift = (this.props.lastPatch || [])
+        .reduce(
+          (sum, [op, offset, data]) =>
+            offset <= startOffset
+              ? op === '+' ? sum + data.length : sum - data
+              : sum,
+          0
+        );
+
+      this.disableUpdates = true;
+      model.applyEdits([
+        {
+          identifier: { major: 1, minor: 1 },
+          range: model.getFullModelRange(),
+          text: this.props.content,
+          forceMoveMarkers: true,
+        },
+      ]);
+      this.disableUpdates = false;
+
+      // The immediate Promise resolution didn't work here
+      // as it worked in `onChange` below - there are bigger
+      // concerns and it's probably async rendering. this
+      // probably just takes longer to update the editor
+      if (shift) {
+        setTimeout(() => {
+          const model = this.editor.getModel();
+          const start = model.getPositionAt(startOffset);
+          const end = model.modifyPosition(start, shift);
+          this.editor.setPosition(end);
+        }, 50);
+      }
     }
   }
 
@@ -57,8 +96,7 @@ export class Editor extends React.Component {
    * }
    */
   onChange = (value, event) => {
-    const that = this;
-    if (!this.monaco) {
+    if (!this.monaco || this.disableUpdates) {
       return;
     }
 
@@ -263,6 +301,7 @@ export class Editor extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  lastPatch: getLastPatch(state, state.appState.selectedNoteId),
   theme: state.settings.theme,
 });
 
