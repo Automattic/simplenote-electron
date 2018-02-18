@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
+import urlRegex from 'url-regex';
 
-const monospace = 'Menlo, Monaco, "Courier New", monospace';
 const variableWidth =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif';
 
@@ -30,7 +30,7 @@ export class Editor extends React.Component {
     }
 
     if (markdownIsEnabled !== this.props.markdownIsEnabled) {
-      this.setFont();
+      this.setLanguage();
     }
   }
 
@@ -63,15 +63,15 @@ export class Editor extends React.Component {
     );
   };
 
-  setFont = () => {
-    if (!this.editor) {
+  setLanguage = () => {
+    if (!this.monaco) {
       return;
     }
 
-    this.editor.updateOptions({
-      fontFamily: this.props.markdownIsEnabled ? monospace : variableWidth,
-      fontSize: this.props.markdownIsEnabled ? 12 : 14,
-    });
+    const { markdownIsEnabled } = this.props;
+    const language = markdownIsEnabled ? 'markdown' : 'linkified';
+
+    this.monaco.editor.setModelLanguage(this.editor.getModel(), language);
   };
 
   setTheme = () => {
@@ -80,12 +80,30 @@ export class Editor extends React.Component {
     }
 
     const { theme } = this.props;
-    const background = theme === 'dark' ? '2d3034' : 'ffffff';
+    const dark = theme === 'dark';
+    const background = dark ? '2d3034' : 'ffffff';
+    const gray = '899199';
 
     this.monaco.editor.defineTheme(theme, {
       base: theme === 'dark' ? 'vs-dark' : 'vs',
       inherit: true,
-      rules: [{ background }],
+      rules: [
+        { background },
+        { token: 'attribute.name.html.md', foreground: gray },
+        {
+          token: 'keyword.md',
+          foreground: dark ? 'dbdee0' : '2d3034',
+          fontStyle: 'bold',
+        },
+        { token: 'string.escape.md', foreground: gray },
+        { token: 'string.html.md', foreground: gray },
+        { token: 'string.link.linkified', foreground: '4895d9' },
+        { token: 'string.link.md', foreground: '4895d9' },
+        { token: 'string.md', foreground: gray },
+        { token: 'tag.md', foreground: gray },
+        { token: 'variable.md', foreground: gray },
+        { token: 'variable.source.md', foreground: gray },
+      ],
       colors: {
         'editor.background': `#${background}`,
       },
@@ -100,8 +118,14 @@ export class Editor extends React.Component {
     this.editor = editor;
     this.monaco = monaco;
 
+    monaco.languages.register({ id: 'linkified' });
+    monaco.languages.setMonarchTokensProvider('linkified', {
+      tokenizer: {
+        root: [[urlRegex({ strict: false }), 'string.link']],
+      },
+    });
+    this.setLanguage();
     this.setTheme();
-    this.setFont();
 
     editor.focus();
   };
@@ -116,17 +140,20 @@ export class Editor extends React.Component {
           editorDidMount={this.storeEditor}
           width={width}
           height={height}
-          language={markdownIsEnabled ? 'markdown' : 'text'}
+          language={markdownIsEnabled ? 'markdown' : 'linkified'}
           onChange={this.onChange}
           theme={theme}
           value={content}
           options={{
             lineNumbers: false,
-            fontFamily: markdownIsEnabled ? monospace : variableWidth,
-            fontSize: markdownIsEnabled ? 12 : 14,
+            fontFamily: variableWidth,
+            fontSize: 14,
             minimap: { enabled: false },
             renderLineHighlight: 'none',
             selectionHighlight: false,
+            scrollbar: {
+              useShadows: false,
+            },
             wordWrap: 'on',
           }}
         />

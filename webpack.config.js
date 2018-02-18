@@ -33,7 +33,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: /node_modules(?!\/url-regex)/,
         use: [
           {
             loader: 'babel-loader',

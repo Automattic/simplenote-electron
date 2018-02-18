@@ -160,6 +160,9 @@
 .note-detail-textarea {
   min-height: 100%;
   cursor: text;
+  overflow: hidden;
+  padding-left: 12px;
+  padding-right: 0;
 
   div,
   span {
