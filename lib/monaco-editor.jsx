@@ -283,15 +283,21 @@ export class Editor extends React.Component {
           theme={theme}
           defaultValue={this.props.content}
           options={{
-            lineNumbers: false,
+            automaticLayout: true,
+            contextmenu: false,
             fontFamily: variableWidth,
             fontSize: 14,
+            hideCursorInOverviewRuler: true,
             minimap: { enabled: false },
+            lineNumbers: false,
+            overviewRulerBorder: false,
             renderLineHighlight: 'none',
-            selectionHighlight: false,
             scrollbar: {
+              horizontal: 'hidden',
               useShadows: false,
+              verticalScrollbarSize: 6,
             },
+            selectionHighlight: false,
             wordWrap: 'on',
           }}
         />

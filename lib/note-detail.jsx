@@ -156,12 +156,7 @@ export const NoteDetail = React.createClass({
   },
 
   render: function() {
-    const {
-      filter,
-      fontSize,
-      markdownIsEnabled,
-      previewingMarkdown,
-    } = this.props;
+    const { fontSize, markdownIsEnabled, previewingMarkdown } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
