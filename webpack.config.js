@@ -1,7 +1,9 @@
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = require('./get-config');
+const path = require('path');
 const spawnSync = require('child_process').spawnSync;
 
 module.exports = {
@@ -31,7 +33,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: /node_modules(?!\/url-regex)/,
         use: [
           {
             loader: 'babel-loader',
@@ -77,5 +79,17 @@ module.exports = {
       ),
       config: JSON.stringify(config()),
     }),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(
+          __dirname,
+          'node_modules',
+          'monaco-editor',
+          'min',
+          'vs'
+        ),
+        to: 'vs',
+      },
+    ]),
   ],
 };

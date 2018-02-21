@@ -122,7 +122,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -138,8 +137,6 @@
 .note-print {
   width: 100%;
   height: 100%;
-  max-width: 780px;
-  padding: 24px 48px;
   border: none;
   line-height: 1.5em;
   font-size: 16px;
@@ -160,14 +157,37 @@
 .note-detail-textarea {
   min-height: 100%;
   cursor: text;
+  overflow: hidden;
 
   div,
   span {
     cursor: inherit;
   }
 
-  &::first-line {
-    font-size: 120%;
+  .monaco-editor {
+    .lines-content {
+      max-width: 780px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+    }
+
+    .slider {
+      border-radius: 10px;
+    }
+
+    // Adjust elements to account for editor top margin
+    .view-lines, .selectionHighlight, .cslr.selected-text, .cursor {
+      margin-top: 24px;
+    }
+
+    .bottom-left-radius, .top-left-radius .bottom-right-radius, .top-right-radius {
+      margin-top: 24px;
+    }
+
+    .cursor {
+      width: 1px !important;
+    }
   }
 }
 
