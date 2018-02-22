@@ -98,7 +98,7 @@
     "sanitize-filename": "1.6.1",
     "serve-favicon": "2.4.3",
     "showdown": "1.7.2",
-    "showdown-xss-filter": "0.2.0",
+    "showdown-xss-config": "~1.0.x",
     "simperium": "0.3.1"
   },
   "optionalDependencies": {

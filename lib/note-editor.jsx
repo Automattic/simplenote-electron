@@ -2,14 +2,28 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import showdown from 'showdown';
-import xssFilter from 'showdown-xss-filter';
+import xssfilter from 'showdown-xss-config';
 import NoteDetail from './note-detail';
 import TagField from './tag-field';
 import NoteToolbar from './note-toolbar';
 import RevisionSelector from './revision-selector';
 import { get, property } from 'lodash';
 
-const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
+// whitelist <input> (only checkbox type) and <li> tags
+const xssConfig = {
+  onTag(tag, html) {
+    if (tag === 'input') {
+      if (html.includes('type="checkbox"')) return html;
+    }
+    if (tag === 'li') {
+      return html;
+    }
+  },
+};
+
+const markdownConverter = new showdown.Converter({
+  extensions: [xssfilter(xssConfig)],
+});
 markdownConverter.setFlavor('github');
 
 export const NoteEditor = React.createClass({

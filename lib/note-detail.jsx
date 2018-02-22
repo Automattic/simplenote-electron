@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import showdown from 'showdown';
-import xssFilter from 'showdown-xss-filter';
+import xssfilter from 'showdown-xss-config';
 import { get, debounce, invoke, noop } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
@@ -10,7 +10,23 @@ import NoteContentEditor from './note-content-editor';
 
 const saveDelay = 2000;
 
-const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
+// whitelist <input> (only checkbox type) and <li> tags
+const xssConfig = {
+  onTag(tag, html) {
+    if (tag === 'input') {
+      if (html.includes('type="checkbox"')) return html;
+    }
+    if (tag === 'li') {
+      return html;
+    }
+  },
+};
+
+console.log(xssfilter); // eslint-disable-line no-console
+
+const markdownConverter = new showdown.Converter({
+  extensions: [xssfilter(xssConfig)],
+});
 markdownConverter.setFlavor('github');
 
 const renderToNode = (node, content) => {
