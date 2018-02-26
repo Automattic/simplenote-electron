@@ -23,6 +23,7 @@ import appState from './flux/app-state';
 import { tracks } from './analytics';
 import filterNotes from './utils/filter-notes';
 import noteTitle from './utils/note-title';
+import { formatTimestamp } from './utils/date-utils';
 
 /**
  * Delay for preventing row height calculation thrashing
@@ -51,6 +52,9 @@ const TYPING_DEBOUNCE_MAX = 1000;
 
 /** @type {Number} height of title + vertical padding in list rows */
 const ROW_HEIGHT_BASE = 24 + 18;
+
+/** @type {Number} height of row containing creation and modification date */
+const DATE_ROW_HEIGHT = 21;
 
 /** @type {Number} height of one row of preview text in list rows */
 const ROW_HEIGHT_LINE = 21;
@@ -157,6 +161,7 @@ const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
 const computeRowHeight = (width, noteDisplay, preview) => {
   const lines = Math.ceil(getTextWidth(preview, width - 24) / (width - 24));
   return (
+    DATE_ROW_HEIGHT +
     ROW_HEIGHT_BASE +
     ROW_HEIGHT_LINE * Math.min(maxPreviewLines[noteDisplay], lines)
   );
@@ -252,6 +257,7 @@ const renderNote = (
   const note = notes['undefined' === typeof index ? rowIndex : index];
   const { title, preview } = noteTitle(note);
   const isPublished = !isEmpty(note.data.publishURL);
+  const { modificationDate } = note.data;
   const showPublishIcon = isPublished && 'condensed' !== noteDisplay;
 
   const classes = classNames('note-list-item', {
@@ -295,6 +301,9 @@ const renderNote = (
             {matchify(previewSplits)}
           </div>
         )}
+        <div className="note-list-item-created">
+          Modified: {formatTimestamp(modificationDate)}
+        </div>
       </div>
     </div>
   );
@@ -409,7 +418,8 @@ const NoteList = React.createClass({
                 ref={this.refList}
                 estimatedRowSize={
                   ROW_HEIGHT_BASE +
-                  ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
+                  ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay] +
+                  DATE_ROW_HEIGHT
                 }
                 height={height}
                 noteDisplay={noteDisplay}
@@ -417,7 +427,7 @@ const NoteList = React.createClass({
                 rowCount={this.props.notes.length}
                 rowHeight={
                   'condensed' === noteDisplay ? (
-                    ROW_HEIGHT_BASE
+                    ROW_HEIGHT_BASE + DATE_ROW_HEIGHT
                   ) : (
                     getRowHeight(this.props.notes, { noteDisplay, width })
                   )
