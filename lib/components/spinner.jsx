@@ -36,14 +36,14 @@ Spinner = React.createClass({
   },
 
   /**
-	 * Returns whether the current browser supports CSS animations for SVG
-	 * elements. Specifically, this returns false for Internet Explorer
-	 * versions 11 and below.
-	 *
-	 * @see http://dev.modern.ie/platform/status/csstransitionsanimationsforsvgelements/
-	 * @return {Boolean} True if the browser supports CSS animations for SVG
-	 *                   elements, or false otherwise.
-	 */
+   * Returns whether the current browser supports CSS animations for SVG
+   * elements. Specifically, this returns false for Internet Explorer
+   * versions 11 and below.
+   *
+   * @see http://dev.modern.ie/platform/status/csstransitionsanimationsforsvgelements/
+   * @return {Boolean} True if the browser supports CSS animations for SVG
+   *                   elements, or false otherwise.
+   */
   isSVGCSSAnimationSupported: function() {
     const navigator = global.window ? global.window.navigator.userAgent : ''; // FIXME: replace with UA from server
     return !/(MSIE |Trident\/)/.test(navigator);
