@@ -48,8 +48,8 @@ module.exports = function main() {
       minWidth: 370,
       minHeight: 520,
       icon: iconPath,
-      autoHideMenuBar: true,
       titleBarStyle: 'hidden',
+      show: false,
     });
 
     // and load the index of the app.
@@ -76,6 +76,14 @@ module.exports = function main() {
 
     mainWindowState.manage(mainWindow);
 
+    mainWindow.webContents.on('new-window', function(event, linkUrl) {
+      event.preventDefault();
+      shell.openExternal(linkUrl);
+    });
+
+    // Disables navigation for app window drag and drop
+    mainWindow.webContents.on('will-navigate', event => event.preventDefault());
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
       // Dereference the window object, usually you would store windows
@@ -83,6 +91,9 @@ module.exports = function main() {
       // when you should delete the corresponding element.
       mainWindow = null;
     });
+
+    // wait until window is presentable
+    mainWindow.once('ready-to-show', mainWindow.show);
   };
 
   const shouldQuit = app.makeSingleInstance(() => {

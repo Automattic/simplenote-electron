@@ -49,8 +49,9 @@ export default React.createClass({
   },
 
   queryAllEnabledControls(parent) {
-    return (parent || this.refs.box)
-      .querySelectorAll('button:enabled, input:enabled, textarea:enabled');
+    return (parent || this.refs.box).querySelectorAll(
+      'button:enabled, input:enabled, textarea:enabled'
+    );
   },
 
   startListening() {
@@ -82,25 +83,25 @@ export default React.createClass({
           className="dialog-box theme-color-bg theme-color-fg theme-color-border"
         >
           {title &&
-          onDone && (
-            <div className="dialog-title-bar theme-color-border">
-              <div className="dialog-title-side" />
-              <h2 id={titleElementId} className="dialog-title-text">
-                {title}
-              </h2>
-              <div className="dialog-title-side">
-                {!!onDone && (
-                  <button
-                    type="button"
-                    className="button button-borderless"
-                    onClick={onDone}
-                  >
-                    Done
-                  </button>
-                )}
+            onDone && (
+              <div className="dialog-title-bar theme-color-border">
+                <div className="dialog-title-side" />
+                <h2 id={titleElementId} className="dialog-title-text">
+                  {title}
+                </h2>
+                <div className="dialog-title-side">
+                  {!!onDone && (
+                    <button
+                      type="button"
+                      className="button button-borderless"
+                      onClick={onDone}
+                    >
+                      Done
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div ref="content" className="dialog-content">
             {children}

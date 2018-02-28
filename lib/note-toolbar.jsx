@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import BackIcon from './icons/back';
 import InfoIcon from './icons/info';
+import PreviewIcon from './icons/preview';
+import PreviewStopIcon from './icons/preview-stop';
 import RevisionsIcon from './icons/revisions';
 import TrashIcon from './icons/trash';
 import ShareIcon from './icons/share';
@@ -16,6 +18,9 @@ export default React.createClass({
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
     setIsViewingRevisions: PropTypes.func.isRequired,
+    onSetEditorMode: PropTypes.func.isRequired,
+    editorMode: PropTypes.string.isRequred,
+    markdownEnabled: PropTypes.bool.isRequred,
   },
 
   showRevisions: function() {
@@ -30,8 +35,15 @@ export default React.createClass({
     return isTrashed ? this.renderTrashed() : this.renderNormal();
   },
 
+  setEditorMode() {
+    const { editorMode } = this.props;
+
+    this.props.onSetEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
+  },
+
   renderNormal() {
-    const { note } = this.props;
+    const { note, editorMode, markdownEnabled } = this.props;
+    const isPreviewing = editorMode === 'markdown';
 
     return (
       <div className="note-toolbar">
@@ -45,6 +57,18 @@ export default React.createClass({
             <BackIcon />
           </button>
         </div>
+        {markdownEnabled && (
+          <div className="note-toolbar-icon">
+            <button
+              type="button"
+              title="Preview"
+              className="button button-borderless"
+              onClick={this.setEditorMode}
+            >
+              {isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
+            </button>
+          </div>
+        )}
         <div className="note-toolbar-icon">
           <button
             type="button"

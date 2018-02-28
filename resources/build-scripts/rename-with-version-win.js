@@ -9,4 +9,4 @@ var fs = require( 'fs' );
  */
 var config = require( '../lib/config' );
 
-fs.renameSync( './release/' + config.name + ' Setup.exe', './release/' + config.name + '-' + config.version + '-Setup.exe' );
+fs.renameSync( './release/' + config.name + ' Setup ' + config.version + '.exe', './release/' + config.name + '-' + config.version + '-Setup.exe' );

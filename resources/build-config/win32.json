@@ -1,10 +1,15 @@
 {
-	"win": {
-		"title": "Simplenote",
-		"icon": "resources/images/simplenote.ico",
-		"nsiTemplate": "resources/build-config/nsi.tpl",
-		"verbosity": 2
-	},
-
-	"description": "Simplenote Installer"
+  "icon": "resources/images/simplenote.ico",
+  "directories": {
+    "output": "release"
+  },
+  "target": [
+    {
+      "target": "nsis",
+      "arch": ["ia32"]
+    }
+  ],
+  "nsis": {
+    "perMachine": true
+  }
 }

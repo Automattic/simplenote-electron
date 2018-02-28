@@ -290,11 +290,11 @@ const renderNote = (
           )}
         </div>
         {'condensed' !== noteDisplay &&
-        preview.trim() && (
-          <div className="note-list-item-excerpt">
-            {matchify(previewSplits)}
-          </div>
-        )}
+          preview.trim() && (
+            <div className="note-list-item-excerpt">
+              {matchify(previewSplits)}
+            </div>
+          )}
       </div>
     </div>
   );
@@ -313,9 +313,9 @@ const NoteList = React.createClass({
 
   componentDidMount() {
     /**
-		 * Prevents rapid changes from incurring major
-		 * performance hits due to row height computation
-		 */
+     * Prevents rapid changes from incurring major
+     * performance hits due to row height computation
+     */
     this.recomputeHeights = debounce(
       () => this.list && this.list.recomputeRowHeights(),
       TYPING_DEBOUNCE_DELAY,
@@ -385,12 +385,13 @@ const NoteList = React.createClass({
       onEmptyTrash,
       noteDisplay,
       showTrash,
+      notes,
     } = this.props;
 
     const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
-    const renderNoteRow = renderNote(this.props.notes, {
+    const renderNoteRow = renderNote(notes, {
       filter,
       filterRegExp,
       noteDisplay,
@@ -415,11 +416,9 @@ const NoteList = React.createClass({
                 notes={this.props.notes}
                 rowCount={this.props.notes.length}
                 rowHeight={
-                  'condensed' === noteDisplay ? (
-                    ROW_HEIGHT_BASE
-                  ) : (
-                    getRowHeight(this.props.notes, { noteDisplay, width })
-                  )
+                  'condensed' === noteDisplay
+                    ? ROW_HEIGHT_BASE
+                    : getRowHeight(this.props.notes, { noteDisplay, width })
                 }
                 rowRenderer={renderNoteRow}
                 width={width}
@@ -466,25 +465,25 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
   const prevNote = filteredNotes[prevNoteId];
 
   /**
-	 * Although not used directly in the React component this value
-	 * is used to bust the cache when editing a note and the number
-	 * of lines in the preview in the notes list needs to also update.
-	 *
-	 * React virtualized hides data in the DOM in a stateful way in
-	 * the way it has optimized the scrolling performance. This then
-	 * is missed when connect() decides whether or not to redraw the
-	 * component. Even with `{ pure: false }` set in `connect()` it
-	 * misses the updates and I think that is because they come in
-	 * asynchronously through events and not directly
-	 *
-	 * Therefore we have to calculate the height of the note here to
-	 * signal to `connect()` to redraw the component. This could also
-	 * happen in `areStatesEqual()` (option to `connect()`) but since
-	 * we're already grabbing the other data here we can skip a slight
-	 * amount of overhead by just passing it along here.
-	 *
-	 * @type {String} preview excerpt for the current note
-	 */
+   * Although not used directly in the React component this value
+   * is used to bust the cache when editing a note and the number
+   * of lines in the preview in the notes list needs to also update.
+   *
+   * React virtualized hides data in the DOM in a stateful way in
+   * the way it has optimized the scrolling performance. This then
+   * is missed when connect() decides whether or not to redraw the
+   * component. Even with `{ pure: false }` set in `connect()` it
+   * misses the updates and I think that is because they come in
+   * asynchronously through events and not directly
+   *
+   * Therefore we have to calculate the height of the note here to
+   * signal to `connect()` to redraw the component. This could also
+   * happen in `areStatesEqual()` (option to `connect()`) but since
+   * we're already grabbing the other data here we can skip a slight
+   * amount of overhead by just passing it along here.
+   *
+   * @type {String} preview excerpt for the current note
+   */
   const selectedNoteTitle = selectedNote && getNoteTitle(selectedNote);
 
   return {
