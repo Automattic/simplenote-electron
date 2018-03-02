@@ -10,12 +10,12 @@ Some builds require further packaging before they can be released:
 
 * `make package-win32` - Produces a signed `Setup.exe` install wizard
 * `make package-osx` - Produces a `DMG` file
-* `make package-linux` - Produces a `.deb` file
+* `make package-linux` - Produces a `.deb`, `.rpm` and `.AppImage` file
 
 
 # Requirements
 
-## Mac
+## Mac Package
 
 A Mac build requires the app to be signed. This prevents a security warning being issued when you run the app.
 
@@ -33,13 +33,14 @@ The Windows build doesn't get signed until the packaging stage
 
 ## Linux Package
 
-The Linux package is build using [FPM][1] which is a tool that makes it easy to build different package systems. To install FPM just run:
+The Linux package is build using [electron-builder][1] which is a tool that makes it easy to build different package systems.
+electron-builder should be installed by `npm install`.
 
-`gem install fpm`
+### Note for creating linux package on MacOS:
 
-FRM needs ruby and `gnu-tar`. You can install ruby using [RVM][2] and `gnu-tar` with:
+To create linux package on MacOS you need to install `rpm` package, installable from `brew`.
 
-`brew install gnu-tar`
+`brew install rpm`
 
-[1]: https://github.com/jordansissel/fpm
-[2]: https://rvm.io/rvm/install
+
+[1]: https://www.electron.build/
