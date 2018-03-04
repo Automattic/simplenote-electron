@@ -3,7 +3,7 @@
 
   },
   "presets": [
-    [ "env", { "targets": { "electron": "1.7" } } ],
+    [ "env", { "targets": { "electron": "1.7", "uglify": true } } ],
     "react"
   ],
   "plugins": [
