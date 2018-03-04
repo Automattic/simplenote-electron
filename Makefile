@@ -66,7 +66,7 @@ package-osx: osx
 	@node $(THIS_DIR)/resources/build-scripts/rename-with-version-osx.js
 
 package-linux: linux
-	@electron-builder --projectDir $(THIS_DIR) --linux --x64
+	@electron-builder --linux
 
 config-release: config install
 
