@@ -14,21 +14,21 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /lib\/.+\.jsx?$/,
-      //   exclude: /node_modules|lib\/simperium/,
-      //   enforce: 'pre',
-      //   use: [
-      //     {
-      //       loader: 'eslint-loader',
-      //       options: {
-      //         cache: true,
-      //         configFile: '.eslintrc',
-      //         quiet: true,
-      //       },
-      //     },
-      //   ],
-      // },
+      {
+        test: /lib\/.+\.jsx?$/,
+        exclude: /node_modules|lib\/simperium/,
+        enforce: 'pre',
+        use: [
+          {
+            loader: 'eslint-loader',
+            options: {
+              cache: true,
+              configFile: '.eslintrc',
+              quiet: true,
+            },
+          },
+        ],
+      },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
