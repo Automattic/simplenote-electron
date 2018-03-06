@@ -156,13 +156,19 @@ export const NoteDetail = React.createClass({
   },
 
   render: function() {
-    const { filter, fontSize, previewingMarkdown } = this.props;
+    const { filter, fontSize, previewingMarkdown, setEditorMode } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
 
     return (
-      <div className="note-detail">
+      <div
+        className="note-detail"
+        onFocus={() => setEditorMode('edit')}
+        onBlur={() => setEditorMode('markdown')}
+        onClick={() => setEditorMode('edit')}
+        onKeyDown={({ key }) => key === 'Escape' && setEditorMode('markdown')}
+      >
         {previewingMarkdown && (
           <div
             ref={this.storePreview}
