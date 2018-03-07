@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { isObject, pick } from 'lodash';
 
 const toTemplateItem = ({ type: { displayName }, props }) => {
@@ -14,34 +15,34 @@ const toTemplateItem = ({ type: { displayName }, props }) => {
   }
 };
 
-export const ContextMenu = React.createClass({
-  getInitialState() {
-    return {
+export class ContextMenu extends Component {
+  constructor(...args) {
+    super(...args);
+
+    this.state = {
       menu: this.buildMenu(this.props.children),
     };
-  },
+  }
 
   componentDidMount() {
     this.startListening();
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     this.updateMenu(nextProps);
-  },
+  }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     this.stopListening();
-  },
+  }
 
-  startListening() {
+  startListening = () =>
     window.addEventListener('contextmenu', this.triggerMenu);
-  },
 
-  stopListening() {
+  stopListening = () =>
     window.removeEventListener('contextmenu', this.triggerMenu);
-  },
 
-  triggerMenu(event) {
+  triggerMenu = event => {
     const { currentWindow } = this.props;
     const { menu } = this.state;
 
@@ -56,26 +57,26 @@ export const ContextMenu = React.createClass({
     }
 
     menu.popup(currentWindow);
-  },
+  };
 
-  buildMenu(children) {
+  buildMenu = children => {
     const { Menu } = this.props;
     const menuItems = React.Children.toArray(children);
     const template = menuItems.map(toTemplateItem).filter(isObject);
 
     return Menu.buildFromTemplate(template);
-  },
+  };
 
-  updateMenu({ children }) {
+  updateMenu = ({ children }) => {
     this.setState({
       menu: this.buildMenu(children),
     });
-  },
+  };
 
   render() {
     return null;
-  },
-});
+  }
+}
 
 export const MenuItem = () => null;
 MenuItem.displayName = 'MenuItem';

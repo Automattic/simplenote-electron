@@ -1,38 +1,35 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SmallCrossOutlineIcon from './icons/cross-outline-small';
 import ReorderIcon from './icons/reorder';
 
-export default React.createClass({
-  propTypes: {
+export class EditableList extends Component {
+  static propTypes = {
     editing: PropTypes.bool.isRequired,
     items: PropTypes.array.isRequired,
     renderItem: PropTypes.func.isRequired,
     getItemKey: PropTypes.func,
     onRemove: PropTypes.func,
     onReorder: PropTypes.func,
-  },
+  };
 
-  getDefaultProps: function() {
-    return {
-      getItemKey: item => item.id,
-    };
-  },
+  static defaultProps = {
+    getItemKey: item => item.id,
+  };
 
-  getInitialState() {
-    return {
-      items: [],
-      reorderedItems: [],
-      reorderingId: null,
-    };
-  },
+  state = {
+    items: [],
+    reorderedItems: [],
+    reorderingId: null,
+  };
 
   componentWillMount() {
     this.setState({
       items: this.props.items,
       reorderedItems: this.props.items.slice(),
     });
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.items !== this.state.items) {
@@ -43,31 +40,31 @@ export default React.createClass({
         reorderedItems: nextProps.items.slice(),
       });
     }
-  },
+  }
 
   componentWillUnmount() {
     this.unbindReorderingListeners();
-  },
+  }
 
-  bindReorderingListeners() {
+  bindReorderingListeners = () => {
     this.unbindReorderingListeners();
     window.addEventListener('mouseup', this.onReorderEnd);
     window.addEventListener('touchend', this.onReorderEnd);
     window.addEventListener('touchcancel', this.onReorderCancel);
     window.addEventListener('keydown', this.onKeyDown);
-  },
+  };
 
-  unbindReorderingListeners() {
+  unbindReorderingListeners = () => {
     window.removeEventListener('mouseup', this.onReorderEnd);
     window.removeEventListener('touchend', this.onReorderEnd);
     window.removeEventListener('touchcancel', this.onReorderCancel);
     window.removeEventListener('keydown', this.onKeyDown);
-  },
+  };
 
   render() {
-    var { editing, onRemove, onReorder } = this.props;
-    var { reorderedItems, reorderingId } = this.state;
-    var classes = classNames('editable-list', this.props.className, {
+    const { editing, onRemove, onReorder } = this.props;
+    const { reorderedItems, reorderingId } = this.state;
+    const classes = classNames('editable-list', this.props.className, {
       'editable-list-editing': this.props.editing,
       'editable-list-removable': onRemove,
       'editable-list-reorderable': onReorder,
@@ -77,7 +74,7 @@ export default React.createClass({
     return (
       <ul className={classes}>
         {reorderedItems.map(item => {
-          var itemId = this.props.getItemKey(item);
+          const itemId = this.props.getItemKey(item);
 
           return (
             <li
@@ -122,9 +119,9 @@ export default React.createClass({
         })}
       </ul>
     );
-  },
+  }
 
-  setReorderingElementRef(reorderingId, element) {
+  setReorderingElementRef = (reorderingId, element) => {
     if (reorderingId !== this.state.reorderingId) {
       return;
     }
@@ -137,9 +134,9 @@ export default React.createClass({
     this.reorderingElement = element;
     this.bindReorderingListeners();
     this.positionReorderingElement();
-  },
+  };
 
-  positionReorderingElement() {
+  positionReorderingElement = () => {
     if (!this.reorderingElement) {
       return;
     }
@@ -160,9 +157,9 @@ export default React.createClass({
     this.reorderingElement.style.transform = transform;
     this.reorderingElement.style.msTransform = transform;
     this.reorderingElement.style.webkitTransform = transform;
-  },
+  };
 
-  unsetReorderingElement() {
+  unsetReorderingElement = () => {
     this.unbindReorderingListeners();
 
     if (!this.reorderingElement) {
@@ -173,9 +170,9 @@ export default React.createClass({
     this.reorderingElement.style.msTransform = '';
     this.reorderingElement.style.webkitTransform = '';
     this.reorderingElement = null;
-  },
+  };
 
-  stopReordering(resetOrdering) {
+  stopReordering = resetOrdering => {
     this.unsetReorderingElement();
 
     if (resetOrdering) {
@@ -188,12 +185,12 @@ export default React.createClass({
         reorderingId: null,
       });
     }
-  },
+  };
 
-  reorderItemById(reorderingId, offset, targetReorderingId) {
-    var { getItemKey } = this.props;
-    var { reorderedItems } = this.state;
-    var reorderingIndex, targetIndex;
+  reorderItemById = (reorderingId, offset, targetReorderingId) => {
+    const { getItemKey } = this.props;
+    const { reorderedItems } = this.state;
+    let reorderingIndex, targetIndex;
 
     if (targetReorderingId === null) {
       targetReorderingId = reorderingId;
@@ -211,9 +208,9 @@ export default React.createClass({
     }
 
     return this.reorderItemByIndex(reorderingIndex, targetIndex + offset);
-  },
+  };
 
-  reorderItemByIndex(reorderingIndex, targetIndex) {
+  reorderItemByIndex = (reorderingIndex, targetIndex) => {
     if (reorderingIndex === targetIndex) {
       return;
     }
@@ -231,9 +228,9 @@ export default React.createClass({
     reorderedItems.splice(targetIndex, 0, ...spliced);
 
     this.setState({ reorderedItems });
-  },
+  };
 
-  onReorderStart(reorderingId, event) {
+  onReorderStart = (reorderingId, event) => {
     event.preventDefault();
     event.currentTarget.focus();
 
@@ -248,9 +245,9 @@ export default React.createClass({
 
     this.setState({ reorderingId });
     this.bindReorderingListeners();
-  },
+  };
 
-  onReorderMove(targetReorderingId, event) {
+  onReorderMove = (targetReorderingId, event) => {
     if (!this.reorderingElement || !this.props.editing) {
       return;
     }
@@ -272,19 +269,17 @@ export default React.createClass({
     }
 
     this.positionReorderingElement();
-  },
+  };
 
-  onReorderEnd(event) {
+  onReorderEnd = event => {
     event.preventDefault();
     this.stopReordering();
     this.props.onReorder(this.state.reorderedItems);
-  },
+  };
 
-  onReorderCancel() {
-    this.stopReordering(true);
-  },
+  onReorderCancel = () => this.stopReordering(true);
 
-  onReorderKeyDown(reorderingId, event) {
+  onReorderKeyDown = (reorderingId, event) => {
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.reorderItemById(reorderingId, -1);
@@ -292,14 +287,16 @@ export default React.createClass({
       event.preventDefault();
       this.reorderItemById(reorderingId, 1);
     }
-  },
+  };
 
-  onKeyDown(event) {
-    var keyCode = event.keyCode || event.which;
+  onKeyDown = event => {
+    const keyCode = event.keyCode || event.which;
 
     if (keyCode === 27) {
       event.preventDefault();
       this.onReorderCancel();
     }
-  },
-});
+  };
+}
+
+export default EditableList;

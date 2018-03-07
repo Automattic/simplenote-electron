@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Overlay } from 'react-overlays';
 import isEmailTag from './utils/is-email-tag';
 import EmailToolTip from './email-tooltip';
@@ -15,48 +16,44 @@ import {
   union,
 } from 'lodash';
 
-export default React.createClass({
-  propTypes: {
+export class TagField extends Component {
+  static propTypes = {
     storeFocusTagField: PropTypes.func,
     storeHasFocus: PropTypes.func,
     unusedTags: PropTypes.arrayOf(PropTypes.string),
     usedTags: PropTypes.arrayOf(PropTypes.string),
     onUpdateNoteTags: PropTypes.func.isRequired,
-  },
+  };
 
-  getDefaultProps: function() {
-    return {
-      storeFocusTagField: noop,
-      storeHasFocus: noop,
-      tags: [],
-    };
-  },
+  static defaultProps = {
+    storeFocusTagField: noop,
+    storeHasFocus: noop,
+    tags: [],
+  };
 
-  getInitialState: function() {
-    return {
-      selectedTag: '',
-      tagInput: '',
-    };
-  },
+  state = {
+    selectedTag: '',
+    tagInput: '',
+  };
 
   componentDidMount() {
     this.props.storeFocusTagField(this.focusTagField);
     this.props.storeHasFocus(this.hasFocus);
 
     document.addEventListener('click', this.unselect, true);
-  },
+  }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.unselect, true);
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     if (this.hasSelection()) {
       this.hiddenTag.focus();
     }
-  },
+  }
 
-  addTag: function(tags) {
+  addTag = tags => {
     const { allTags, tags: existingTags } = this.props;
 
     const newTags = tags
@@ -77,13 +74,12 @@ export default React.createClass({
     this.storeTagInput('');
     invoke(this, 'tagInput.focus');
     analytics.tracks.recordEvent('editor_tag_added');
-  },
+  };
 
-  hasSelection: function() {
-    return this.state.selectedTag && !!this.state.selectedTag.length;
-  },
+  hasSelection = () =>
+    this.state.selectedTag && !!this.state.selectedTag.length;
 
-  deleteTag: function(tagName) {
+  deleteTag = tagName => {
     const { onUpdateNoteTags, tags } = this.props;
     const { selectedTag } = this.state;
 
@@ -96,27 +92,21 @@ export default React.createClass({
     invoke(this, 'tagInput.focus');
 
     analytics.tracks.recordEvent('editor_tag_removed');
-  },
+  };
 
-  deleteSelection: function() {
+  deleteSelection = () => {
     if (this.hasSelection()) {
       this.deleteTag(this.state.selectedTag);
     }
-  },
+  };
 
-  hideEmailTooltip() {
-    this.setState({ showEmailTooltip: false });
-  },
+  hideEmailTooltip = () => this.setState({ showEmailTooltip: false });
 
-  hasFocus() {
-    return this.inputHasFocus && this.inputHasFocus();
-  },
+  hasFocus = () => this.inputHasFocus && this.inputHasFocus();
 
-  focusTagField() {
-    this.focusInput && this.focusInput();
-  },
+  focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys(e) {
+  interceptKeys = e => {
     // only handle backspace
     if (8 !== e.which) {
       return;
@@ -132,63 +122,46 @@ export default React.createClass({
 
     this.selectLastTag();
     e.preventDefault();
-  },
+  };
 
-  selectLastTag: function() {
-    this.setState({
-      selectedTag: this.props.tags.slice(-1).shift(),
-    });
-  },
+  selectLastTag = () =>
+    this.setState({ selectedTag: this.props.tags.slice(-1).shift() });
 
-  selectTag(event) {
+  selectTag = event => {
     const { target: { dataset: { tagName } } } = event;
 
     event.preventDefault();
     event.stopPropagation();
 
     this.deleteTag(tagName);
-  },
+  };
 
-  showEmailTooltip() {
+  showEmailTooltip = () => {
     this.setState({ showEmailTooltip: true });
 
     setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
-  },
+  };
 
-  onKeyDown: function(e) {
+  onKeyDown = e => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
     }
 
     return this.interceptKeys(e);
-  },
+  };
 
-  storeFocusInput(f) {
-    this.focusInput = f;
-  },
+  storeFocusInput = f => (this.focusInput = f);
 
-  storeHasFocus(f) {
-    this.inputHasFocus = f;
-  },
+  storeHasFocus = f => (this.inputHasFocus = f);
 
-  storeHiddenTag(r) {
-    this.hiddenTag = r;
-  },
+  storeHiddenTag = r => (this.hiddenTag = r);
 
-  storeInputRef(r) {
-    this.tagInput = r;
-  },
+  storeInputRef = r => (this.tagInput = r);
 
-  storeTagInput(value, callback) {
-    this.setState(
-      {
-        tagInput: value,
-      },
-      callback
-    );
-  },
+  storeTagInput = (value, callback) =>
+    this.setState({ tagInput: value }, callback);
 
-  unselect(event) {
+  unselect = event => {
     if (!this.state.selectedTag) {
       return;
     }
@@ -196,9 +169,9 @@ export default React.createClass({
     if (this.hiddenTag !== event.relatedTarget) {
       this.setState({ selectedTag: '' });
     }
-  },
+  };
 
-  render: function() {
+  render() {
     const { allTags, tags } = this.props;
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
@@ -250,5 +223,7 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}
+
+export default TagField;

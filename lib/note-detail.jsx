@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import showdown from 'showdown';
@@ -18,8 +19,8 @@ const renderToNode = (node, content) => {
   node.querySelectorAll('pre code').forEach(highlight.highlightBlock);
 };
 
-export const NoteDetail = React.createClass({
-  propTypes: {
+export class NoteDetail extends Component {
+  static propTypes = {
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
     filter: PropTypes.string.isRequired,
@@ -27,45 +28,37 @@ export const NoteDetail = React.createClass({
     onChangeContent: PropTypes.func.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      storeFocusEditor: noop,
-      storeHasFocus: noop,
-    };
-  },
+  static defaultProps = {
+    storeFocusEditor: noop,
+    storeHasFocus: noop,
+  };
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.queueNoteSave = debounce(this.saveNote, saveDelay);
     document.addEventListener('copy', this.copyRenderedNote, false);
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
 
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSave.flush);
-  },
+  }
 
-  focusEditor() {
-    this.focusContentEditor && this.focusContentEditor();
-  },
+  focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  saveEditorRef(ref) {
-    this.editor = ref;
-  },
+  saveEditorRef = ref => (this.editor = ref);
 
-  isValidNote: function(note) {
-    return note && note.id;
-  },
+  isValidNote = note => note && note.id;
 
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     this.queueNoteSave.flush();
-  },
+  }
 
-  componentDidUpdate: function(prevProps) {
+  componentDidUpdate(prevProps) {
     const { note, previewingMarkdown, filter } = this.props;
     const content = get(note, 'data.content', '');
 
@@ -84,14 +77,14 @@ export const NoteDetail = React.createClass({
     ) {
       this.updateMarkdown();
     }
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     window.removeEventListener('beforeunload', this.queueNoteSave.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
-  },
+  }
 
-  copyRenderedNote(event) {
+  copyRenderedNote = event => {
     // Only copy the rendered content if we're in the preview mode
     if (!this.props.previewingMarkdown) {
       return true;
@@ -109,13 +102,11 @@ export const NoteDetail = React.createClass({
 
     event.clipboardData.setData('text/plain', div.innerHTML);
     event.preventDefault();
-  },
+  };
 
-  hasFocus() {
-    return this.editorHasFocus && this.editorHasFocus();
-  },
+  hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onPreviewClick: function(event) {
+  onPreviewClick = event => {
     // open markdown preview links in a new window
     for (let node = event.target; node !== null; node = node.parentNode) {
       if (node.tagName === 'A') {
@@ -124,38 +115,32 @@ export const NoteDetail = React.createClass({
         break;
       }
     }
-  },
+  };
 
-  saveNote: function(content) {
+  saveNote = content => {
     const { note } = this.props;
 
     if (!this.isValidNote(note)) return;
 
     this.props.onChangeContent(note, content);
     analytics.tracks.recordEvent('editor_note_edited');
-  },
+  };
 
-  storeEditorHasFocus(f) {
-    this.editorHasFocus = f;
-  },
+  storeEditorHasFocus = f => (this.editorHasFocus = f);
 
-  storeFocusContentEditor(f) {
-    this.focusContentEditor = f;
-  },
+  storeFocusContentEditor = f => (this.focusContentEditor = f);
 
-  storePreview(ref) {
-    this.previewNode = ref;
-  },
+  storePreview = ref => (this.previewNode = ref);
 
-  updateMarkdown() {
+  updateMarkdown = () => {
     if (!this.previewNode) {
       return;
     }
 
     renderToNode(this.previewNode, this.props.note.data.content);
-  },
+  };
 
-  render: function() {
+  render() {
     const { filter, fontSize, previewingMarkdown } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
@@ -189,8 +174,8 @@ export const NoteDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 const mapStateToProps = ({ appState: state }) => ({
   filter: state.filter,

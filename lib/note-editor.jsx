@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import showdown from 'showdown';
@@ -12,8 +13,8 @@ import { get, property } from 'lodash';
 const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
 markdownConverter.setFlavor('github');
 
-export const NoteEditor = React.createClass({
-  propTypes: {
+export class NoteEditor extends Component {
+  static propTypes = {
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     note: PropTypes.object,
     revisions: PropTypes.array,
@@ -30,47 +31,43 @@ export const NoteEditor = React.createClass({
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
-  },
+  };
 
-  getDefaultProps: function() {
-    return {
-      editorMode: 'edit',
-      note: {
-        data: {
-          tags: [],
-        },
+  static defaultProps = {
+    editorMode: 'edit',
+    note: {
+      data: {
+        tags: [],
       },
-    };
-  },
+    },
+  };
 
   componentDidMount() {
     this.toggleShortcuts(true);
-  },
+  }
 
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     this.setState({ revision: null });
-  },
+  }
 
-  getInitialState: function() {
-    return {
-      revision: null,
-      isViewingRevisions: false,
-    };
-  },
+  state = {
+    revision: null,
+    isViewingRevisions: false,
+  };
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     // Immediately print once `shouldPrint` has been set
     if (this.props.shouldPrint) {
       window.print();
       this.props.onNotePrinted();
     }
-  },
+  }
 
   componentWillUnmount() {
     this.toggleShortcuts(false);
-  },
+  }
 
-  handleShortcut(event) {
+  handleShortcut = event => {
     const { ctrlKey, key, metaKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
@@ -115,17 +112,13 @@ export const NoteEditor = React.createClass({
     }
 
     return true;
-  },
+  };
 
-  editFieldHasFocus() {
-    return this.editorHasFocus && this.editorHasFocus();
-  },
+  editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onViewRevision: function(revision) {
-    this.setState({ revision: revision });
-  },
+  onViewRevision = revision => this.setState({ revision: revision });
 
-  onSelectRevision: function(revision) {
+  onSelectRevision = revision => {
     if (!revision) {
       return;
     }
@@ -135,47 +128,36 @@ export const NoteEditor = React.createClass({
 
     onUpdateContent(note, content);
     this.setIsViewingRevisions(false);
-  },
+  };
 
-  onCancelRevision: function() {
+  onCancelRevision = () => {
     // clear out the revision
     this.setState({ revision: null });
     this.setIsViewingRevisions(false);
-  },
+  };
 
-  setIsViewingRevisions: function(isViewing) {
+  setIsViewingRevisions = isViewing =>
     this.setState({ isViewingRevisions: isViewing });
-  },
 
-  storeEditorHasFocus(f) {
-    this.editorHasFocus = f;
-  },
+  storeEditorHasFocus = f => (this.editorHasFocus = f);
 
-  storeFocusEditor(f) {
-    this.focusNoteEditor = f;
-  },
+  storeFocusEditor = f => (this.focusNoteEditor = f);
 
-  storeFocusTagField(f) {
-    this.focusTagField = f;
-  },
+  storeFocusTagField = f => (this.focusTagField = f);
 
-  storeTagFieldHasFocus(f) {
-    this.tagFieldHasFocus = f;
-  },
+  storeTagFieldHasFocus = f => (this.tagFieldHasFocus = f);
 
-  tagFieldHasFocus() {
-    return this.tagFieldHasFocus && this.tagFieldHasFocus();
-  },
+  tagFieldHasFocus = () => this.tagFieldHasFocus && this.tagFieldHasFocus();
 
-  toggleShortcuts(doEnable) {
+  toggleShortcuts = doEnable => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
       window.removeEventListener('keydown', this.handleShortcut, true);
     }
-  },
+  };
 
-  render: function() {
+  render() {
     let noteContent = '';
     const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
     const revision = this.state.revision || note;
@@ -266,8 +248,8 @@ export const NoteEditor = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,

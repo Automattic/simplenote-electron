@@ -1,17 +1,18 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-export default React.createClass({
-  propTypes: {
+export class Dialog extends Component {
+  static propTypes = {
     title: PropTypes.string,
     onDone: PropTypes.func,
-  },
+  };
 
   componentDidMount() {
     this.previouslyActiveElement = document.activeElement;
-    this.focusFirstInput(this.refs.content);
+    this.focusFirstInput(this.content);
     this.startListening();
-  },
+  }
 
   componentWillUnmount() {
     this.stopListening();
@@ -19,52 +20,54 @@ export default React.createClass({
       this.previouslyActiveElement.focus();
       this.previouslyActiveElement = null;
     }
-  },
+  }
 
-  focusFirstInput(parent) {
-    var inputs = this.queryAllEnabledControls(parent);
-    var input = inputs[0];
-
-    if (input) {
-      input.focus();
-    }
-  },
-
-  focusLastInput(parent) {
-    var inputs = this.queryAllEnabledControls(parent);
-    var input = inputs[inputs.length - 1];
+  focusFirstInput = parent => {
+    const input = this.queryAllEnabledControls(parent)[0];
 
     if (input) {
       input.focus();
     }
-  },
+  };
 
-  interceptClick(event) {
+  focusFirstInputEvent = () => this.focusFirstInput;
+
+  focusLastInput = parent => {
+    const inputs = this.queryAllEnabledControls(parent);
+    const input = inputs[inputs.length - 1];
+
+    if (input) {
+      input.focus();
+    }
+  };
+
+  focusLastInputEvent = () => this.focusLastInput();
+
+  interceptClick = event => {
     if ('dialog' !== event.srcElement.getAttribute('role')) {
       return;
     }
 
     event.preventDefault();
     this.props.onDone();
-  },
+  };
 
-  queryAllEnabledControls(parent) {
-    return (parent || this.refs.box).querySelectorAll(
-      'button:enabled, input:enabled, textarea:enabled'
-    );
-  },
+  queryAllEnabledControls = parent =>
+    (parent || this.box)
+      .querySelectorAll('button:enabled, input:enabled, textarea:enabled');
 
-  startListening() {
-    window.addEventListener('click', this.interceptClick);
-  },
+  startListening = () => window.addEventListener('click', this.interceptClick);
 
-  stopListening() {
+  stopListening = () =>
     window.removeEventListener('click', this.interceptClick);
-  },
+
+  storeBox = ref => (this.box = ref);
+
+  storeContent = ref => (this.content = ref);
 
   render() {
-    var { className, title, children, onDone } = this.props;
-    var titleElementId = `dialog-title-${title}`;
+    const { className, title, children, onDone } = this.props;
+    const titleElementId = `dialog-title-${title}`;
 
     return (
       <div
@@ -75,11 +78,11 @@ export default React.createClass({
         <input
           type="text"
           className="focus-guard"
-          onFocus={() => this.focusLastInput()}
+          onFocus={this.focusLastInput}
         />
 
         <div
-          ref="box"
+          ref={this.storeBox}
           className="dialog-box theme-color-bg theme-color-fg theme-color-border"
         >
           {title &&
@@ -103,7 +106,7 @@ export default React.createClass({
               </div>
             )}
 
-          <div ref="content" className="dialog-content">
+          <div ref={this.storeContent} className="dialog-content">
             {children}
           </div>
         </div>
@@ -111,9 +114,11 @@ export default React.createClass({
         <input
           type="text"
           className="focus-guard"
-          onFocus={() => this.focusFirstInput()}
+          onFocus={this.focusFirstInputEvent}
         />
       </div>
     );
-  },
-});
+  }
+}
+
+export default Dialog;

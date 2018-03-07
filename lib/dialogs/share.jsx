@@ -1,35 +1,32 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
 import isEmailTag from '../utils/is-email-tag';
-import { includes } from 'lodash';
 import TabbedDialog from '../tabbed-dialog';
 import ToggleControl from '../controls/toggle';
-import { isEmpty } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 
 const shareTabs = ['collaborate', 'publish'];
 
-export default React.createClass({
-  propTypes: {
+export class ShareDialog extends Component {
+  static propTypes = {
     actions: PropTypes.object.isRequired,
     dialog: PropTypes.object.isRequired,
     params: PropTypes.shape({
       note: PropTypes.object.isRequired,
     }).isRequired,
-  },
+  };
 
-  onDone() {
-    this.props.actions.closeDialog({ key: this.props.dialog.key });
-  },
+  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
-  onTogglePublished(event) {
+  onTogglePublished = event =>
     this.props.actions.publishNote({
       noteBucket: this.props.noteBucket,
       note: this.props.params.note,
       publish: event.currentTarget.checked,
     });
-  },
 
-  copyPublishURL() {
+  copyPublishURL = () => {
     this.publishUrlElement.select();
 
     try {
@@ -39,13 +36,11 @@ export default React.createClass({
     }
 
     this.copyUrlElement.focus();
-  },
+  };
 
-  getPublishURL(url) {
-    return isEmpty(url) ? null : `http://simp.ly/p/${url}`;
-  },
+  getPublishURL = url => (isEmpty(url) ? null : `http://simp.ly/p/${url}`);
 
-  onAddCollaborator(event) {
+  onAddCollaborator = event => {
     const { note } = this.props.params;
     const tags = (note.data && note.data.tags) || [];
     const collaborator = this.collaboratorElement.value.trim();
@@ -61,9 +56,9 @@ export default React.createClass({
         tags: [...tags, collaborator],
       });
     }
-  },
+  };
 
-  onRemoveCollaborator(collaborator) {
+  onRemoveCollaborator = collaborator => {
     const { note } = this.props.params;
 
     let tags = (note.data && note.data.tags) || [];
@@ -75,9 +70,9 @@ export default React.createClass({
       note,
       tags,
     });
-  },
+  };
 
-  collaborators() {
+  collaborators = () => {
     const { note } = this.props.params;
     const tags = (note.data && note.data.tags) || [];
     const collaborators = tags.filter(isEmailTag);
@@ -85,9 +80,9 @@ export default React.createClass({
     collaborators.reverse();
 
     return collaborators;
-  },
+  };
 
-  gravatarURL(email) {
+  gravatarURL = email => {
     const hash = createHash('md5');
 
     hash.update(email.trim().toLowerCase());
@@ -97,10 +92,10 @@ export default React.createClass({
       .toLowerCase();
 
     return `https://secure.gravatar.com/avatar/${digest}.jpg?s=68`;
-  },
+  };
 
   render() {
-    var { dialog } = this.props;
+    const { dialog } = this.props;
 
     return (
       <TabbedDialog
@@ -113,13 +108,11 @@ export default React.createClass({
         {...dialog}
       />
     );
-  },
+  }
 
-  renderTabName(tabName) {
-    return tabName;
-  },
+  renderTabName = tabName => tabName;
 
-  renderTabContent(tabName) {
+  renderTabContent = tabName => {
     const { note } = this.props.params;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
@@ -242,5 +235,7 @@ export default React.createClass({
           </div>
         );
     }
-  },
-});
+  };
+}
+
+export default ShareDialog;

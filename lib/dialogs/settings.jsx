@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import TabbedDialog from '../tabbed-dialog';
 import { viewExternalUrl } from '../utils/url-utils';
 import TopRightArrowIcon from '../icons/arrow-top-right';
@@ -9,36 +10,18 @@ import SettingsGroup, { Item } from './settings-group';
 
 const settingTabs = ['account', 'display'];
 
-export const SettingsDialog = React.createClass({
-  propTypes: {
+export class SettingsDialog extends Component {
+  static propTypes = {
     actions: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
-  },
+  };
 
-  onDone() {
-    this.props.actions.closeDialog({ key: this.props.dialog.key });
-  },
+  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
-  onEditAccount() {
-    viewExternalUrl('https://app.simplenote.com/settings');
-  },
+  onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
-  onUpdateSortType(event) {
-    this.onUpdateSettingValue(event);
-    this.props.actions.loadNotes({
-      noteBucket: this.props.noteBucket,
-    });
-  },
-
-  onUpdateSortReversed(event) {
-    this.onUpdateSettingBool(event);
-    this.props.actions.loadNotes({
-      noteBucket: this.props.noteBucket,
-    });
-  },
-
-  onSignOutRequested() {
+  onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
     const { onSignOut, noteBucket } = this.props;
     const { notes } = this.props.appState;
@@ -61,14 +44,14 @@ export const SettingsDialog = React.createClass({
         () => this.showUnsyncedWarning() // Show a warning to the user
       );
     });
-  },
+  };
 
-  showUnsyncedWarning() {
+  showUnsyncedWarning = () => {
     const { isElectron } = this.props;
     isElectron ? this.showElectronWarningDialog() : this.showWebWarningDialog();
-  },
+  };
 
-  showElectronWarningDialog() {
+  showElectronWarningDialog = () => {
     const { onSignOut } = this.props;
     const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
     dialog.showMessageBox(
@@ -88,9 +71,9 @@ export const SettingsDialog = React.createClass({
         }
       }
     );
-  },
+  };
 
-  showWebWarningDialog() {
+  showWebWarningDialog = () => {
     const { onSignOut } = this.props;
     const shouldReallySignOut = confirm(
       'Warning: Unsynced notes were detected.\n\n' +
@@ -102,10 +85,10 @@ export const SettingsDialog = React.createClass({
     if (shouldReallySignOut) {
       onSignOut();
     }
-  },
+  };
 
   render() {
-    var dialog = this.props.dialog;
+    const { dialog } = this.props;
 
     return (
       <TabbedDialog
@@ -118,13 +101,11 @@ export const SettingsDialog = React.createClass({
         {...dialog}
       />
     );
-  },
+  }
 
-  renderTabName(tabName) {
-    return tabName;
-  },
+  renderTabName = tabName => tabName;
 
-  renderTabContent(tabName) {
+  renderTabContent = tabName => {
     const {
       activateTheme,
       setNoteDisplay,
@@ -226,7 +207,7 @@ export const SettingsDialog = React.createClass({
           </div>
         );
     }
-  },
-});
+  };
+}
 
 export default SettingsDialog;

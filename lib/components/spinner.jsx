@@ -1,39 +1,33 @@
 /** @ssr-ready **/
-
 /**
  * External dependencies
  */
-var React = require('react'),
-  classNames = require('classnames');
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Module variables
  */
-var Spinner;
+let instances = 0;
 
-Spinner = React.createClass({
-  propTypes: {
-    className: React.PropTypes.string,
-    size: React.PropTypes.number,
-    duration: React.PropTypes.number,
-  },
+export class Spinner extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    size: PropTypes.number,
+    duration: PropTypes.number,
+  };
 
-  statics: {
-    instances: 0,
-  },
-
-  getDefaultProps: function() {
-    return {
+  static defaultProps = {
       size: 20,
       duration: 3000,
     };
-  },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.setState({
-      instanceId: ++Spinner.instances,
+      instanceId: ++instances,
     });
-  },
+  }
 
   /**
    * Returns whether the current browser supports CSS animations for SVG
@@ -44,19 +38,18 @@ Spinner = React.createClass({
    * @return {Boolean} True if the browser supports CSS animations for SVG
    *                   elements, or false otherwise.
    */
-  isSVGCSSAnimationSupported: function() {
+  isSVGCSSAnimationSupported = () => {
     const navigator = global.window ? global.window.navigator.userAgent : ''; // FIXME: replace with UA from server
     return !/(MSIE |Trident\/)/.test(navigator);
-  },
+  };
 
-  getClassName: function() {
-    return classNames('spinner', this.props.className, {
+  getClassName = () =>
+    classNames('spinner', this.props.className, {
       'is-fallback': !this.isSVGCSSAnimationSupported(),
     });
-  },
 
-  renderFallback: function() {
-    var style = {
+  renderFallback = () => {
+    const style = {
       width: this.props.size,
       height: this.props.size,
     };
@@ -67,10 +60,10 @@ Spinner = React.createClass({
         <span className="spinner__progress is-right" />
       </div>
     );
-  },
+  };
 
-  render: function() {
-    var instanceId = parseInt(this.state.instanceId, 10);
+  render() {
+    const instanceId = parseInt(this.state.instanceId, 10);
 
     if (!this.isSVGCSSAnimationSupported()) {
       return this.renderFallback();
@@ -122,7 +115,7 @@ Spinner = React.createClass({
       </div>
     );
     /*eslint-enable react/no-danger*/
-  },
-});
+  }
+}
 
-module.exports = Spinner;
+export default Spinner;

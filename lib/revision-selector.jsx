@@ -1,19 +1,21 @@
-import React, { PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import onClickOutside from 'react-onclickoutside';
 import moment from 'moment';
 import { orderBy } from 'lodash';
 
 const sortedRevisions = revisions =>
   orderBy(revisions, 'data.modificationDate', 'asc');
 
-export const RevisionSelector = React.createClass({
-  mixins: [require('react-onclickoutside')],
+export class RevisionSelector extends Component {
+  constructor(...args) {
+    super(...args);
 
-  getInitialState() {
-    return {
+    this.state = {
       revisions: sortedRevisions(this.props.revisions),
       selection: Infinity,
     };
-  },
+  }
 
   componentWillReceiveProps({ revisions: nextRevisions }) {
     const { revisions: prevRevisions } = this.props;
@@ -25,7 +27,7 @@ export const RevisionSelector = React.createClass({
     this.setState({
       revisions: sortedRevisions(nextRevisions),
     });
-  },
+  }
 
   componentDidUpdate({ revisions: prevRevisions }) {
     const { revisions: nextRevisions } = this.props;
@@ -45,26 +47,20 @@ export const RevisionSelector = React.createClass({
       // really causing the problem.
       this.forceUpdate();
     }
-  },
+  }
 
-  handleClickOutside: function() {
-    this.onCancelRevision();
-  },
+  handleClickOutside = () => this.onCancelRevision();
 
-  onAcceptRevision: function() {
+  onAcceptRevision = () => {
     const { revisions, selection } = this.state;
 
     this.props.onSelectRevision(revisions[selection]);
     this.resetSelection();
-  },
+  };
 
-  resetSelection: function() {
-    this.setState({
-      selection: Infinity,
-    });
-  },
+  resetSelection = () => this.setState({ selection: Infinity });
 
-  onSelectRevision: function({ target: { value } }) {
+  onSelectRevision = ({ target: { value } }) => {
     const { revisions } = this.state;
 
     const selection = parseInt(value, 10);
@@ -74,14 +70,14 @@ export const RevisionSelector = React.createClass({
       selection,
     });
     this.props.onViewRevision(revision);
-  },
+  };
 
-  onCancelRevision: function() {
+  onCancelRevision = () => {
     this.props.onCancelRevision();
     this.resetSelection();
-  },
+  };
 
-  render: function() {
+  render() {
     const { revisions, selection: rawSelection } = this.state;
 
     const min = 0;
@@ -127,11 +123,11 @@ export const RevisionSelector = React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}
 
 RevisionSelector.propTypes = {
   revisions: PropTypes.array.isRequired,
 };
 
-export default RevisionSelector;
+export default onClickOutside(RevisionSelector);
