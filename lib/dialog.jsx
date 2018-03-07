@@ -53,8 +53,9 @@ export class Dialog extends Component {
   };
 
   queryAllEnabledControls = parent =>
-    (parent || this.box)
-      .querySelectorAll('button:enabled, input:enabled, textarea:enabled');
+    (parent || this.box).querySelectorAll(
+      'button:enabled, input:enabled, textarea:enabled'
+    );
 
   startListening = () => window.addEventListener('click', this.interceptClick);
 
