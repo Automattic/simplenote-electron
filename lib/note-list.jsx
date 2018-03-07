@@ -333,8 +333,8 @@ export class NoteList extends Component {
       nextProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
-  }
     }
+  }
 
   componentWillUnmount() {
     this.toggleShortcuts(false);

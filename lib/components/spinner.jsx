@@ -19,9 +19,9 @@ export class Spinner extends Component {
   };
 
   static defaultProps = {
-      size: 20,
-      duration: 3000,
-    };
+    size: 20,
+    duration: 3000,
+  };
 
   componentWillMount() {
     this.setState({
