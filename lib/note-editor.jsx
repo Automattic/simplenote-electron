@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import showdown from 'showdown';
-import xssFilter from 'showdown-xss-filter';
 import NoteDetail from './note-detail';
 import TagField from './tag-field';
 import NoteToolbar from './note-toolbar';
 import RevisionSelector from './revision-selector';
 import { get, property } from 'lodash';
+import filterXSS from 'xss';
 
-const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
+const markdownConverter = new showdown.Converter();
 markdownConverter.setFlavor('github');
 
 export class NoteEditor extends Component {
@@ -184,7 +184,7 @@ export class NoteEditor extends Component {
     if (shouldPrint) {
       const content = get(revision, 'data.content', '');
       noteContent = markdownEnabled
-        ? markdownConverter.makeHtml(content)
+        ? markdownConverter.makeHtml(filterXSS(content))
         : content;
     }
 
