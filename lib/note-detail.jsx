@@ -21,11 +21,13 @@ const renderToNode = (node, content) => {
 
 export class NoteDetail extends Component {
   static propTypes = {
-    note: PropTypes.object,
-    previewingMarkdown: PropTypes.bool,
+    dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
+    note: PropTypes.object,
+    previewingMarkdown: PropTypes.bool,
+    showNoteInfo: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
   };
@@ -85,8 +87,14 @@ export class NoteDetail extends Component {
   }
 
   copyRenderedNote = event => {
+    const { previewingMarkdown, showNoteInfo, dialogs } = this.props;
     // Only copy the rendered content if we're in the preview mode
-    if (!this.props.previewingMarkdown) {
+    if (!previewingMarkdown) {
+      return true;
+    }
+
+    // Only copy if not viewing the note info panel or a dialog
+    if (showNoteInfo || dialogs.length > 0) {
       return true;
     }
 
@@ -178,7 +186,9 @@ export class NoteDetail extends Component {
 }
 
 const mapStateToProps = ({ appState: state }) => ({
+  dialogs: state.dialogs,
   filter: state.filter,
+  showNoteInfo: state.showNoteInfo,
 });
 
 export default connect(mapStateToProps)(NoteDetail);
