@@ -37,6 +37,10 @@ function urlBuilder(version) {
 
 module.exports = function() {
   app.on('will-finish-launching', function() {
+    if (!config.updaterEnabled) {
+      return;
+    }
+    
     let url = urlBuilder(app.getVersion());
 
     if (platform.isOSX()) {

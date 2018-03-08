@@ -1,4 +1,5 @@
 {
+  "updaterEnabled": true,
   "forceUpdate": false,
   "updater": {
     "url":
