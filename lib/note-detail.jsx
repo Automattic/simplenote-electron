@@ -43,11 +43,16 @@ export class NoteDetail extends Component {
   }
 
   componentDidMount() {
+    const { previewingMarkdown } = this.props;
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
 
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSave.flush);
+
+    if (previewingMarkdown) {
+      this.updateMarkdown();
+    }
   }
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
