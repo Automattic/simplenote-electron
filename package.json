@@ -103,8 +103,8 @@
     "sanitize-filename": "1.6.1",
     "serve-favicon": "2.4.5",
     "showdown": "1.8.6",
-    "showdown-xss-filter": "0.2.0",
-    "simperium": "0.3.1"
+    "simperium": "0.3.1",
+    "valid-url": "1.0.9"
   },
   "optionalDependencies": {
     "appdmg": "0.5.2"
