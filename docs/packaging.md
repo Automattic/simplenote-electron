@@ -29,11 +29,11 @@ The Windows package requires installing a valid certificate, installing the `mak
 
 `brew install mono wine makensis`
 
-The Windows build doesn't get signed until the packaging stage
+The Windows build doesn't get signed until the packaging stage.
 
 ## Linux Package
 
-The Linux package is build using [electron-builder][1] which is a tool that makes it easy to build different package systems. electron-builder should be installed by `npm install`.
+The Linux package is built using [electron-builder][1] which is a tool that makes it easy to build different package systems. electron-builder should be installed by `npm install`.
 
 ### Note for creating Linux package on Linux
 
