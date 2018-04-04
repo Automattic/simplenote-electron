@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { get } from 'lodash';
 import SimplenoteLogo from './icons/simplenote';
 import Spinner from './components/spinner';
+import WordPressLogo from './icons/wordpress';
 
 import { hasInvalidCredentials, hasLoginError } from './state/auth/selectors';
 
@@ -51,6 +52,13 @@ export class Auth extends Component {
         <form className="login-form" onSubmit={this.onLogin}>
           <div className="login-logo">
             <SimplenoteLogo />
+          </div>
+          <div className="wpcom-connect">
+            <div className="button button-primary wpcom-connect-button">
+              <WordPressLogo />
+              Log in with WordPress.com
+            </div>
+            <div className="wpcom-connect-or">or:</div>
           </div>
           <div className="login-fields theme-color-border theme-color-fg">
             <label
