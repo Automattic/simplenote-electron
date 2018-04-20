@@ -387,9 +387,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
 
-      const noteIndex = Math.max(state.previousIndex, 0);
-      const selectedNote =
-        isSmallScreen || state.note ? state.note : filteredNotes[noteIndex];
+      const selectedNote = isSmallScreen || state.note;
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
         'touch-enabled': 'ontouchstart' in document.body,
