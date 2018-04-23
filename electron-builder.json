@@ -55,7 +55,7 @@
     "maintainer": "Automattic, Inc."
   },
   "deb": {
-    "depends": []
+    "depends": ["gconf2"]
   }
 }
 
