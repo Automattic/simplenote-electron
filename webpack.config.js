@@ -50,6 +50,10 @@ module.exports = {
           'sass-loader',
         ],
       },
+      {
+        test: /\.node$/,
+        use: 'node-loader',
+      },
     ],
   },
   resolve: {
