@@ -12,6 +12,8 @@ module.exports = {
     path: __dirname + '/dist',
     filename: 'app.js',
   },
+  target: 'electron-main',
+  externals: { spellchecker: 'commonjs spellchecker' },
   module: {
     rules: [
       {
@@ -57,7 +59,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.scss', '.css'],
+    extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.node'],
     modules: ['node_modules'],
   },
   plugins: [

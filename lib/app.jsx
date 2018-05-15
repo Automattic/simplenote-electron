@@ -286,9 +286,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const spellchecker = require('spellchecker');
 
       webFrame.setSpellCheckProvider(app.getLocale(), true, {
-        spellCheck(text) {
-          // TODO: Add suggestions to state and pass to `context-menu`?
-          // const suggestions = spellchecker.getCorrectionsForMisspelling(text);
+        spellCheck: text => {
           return !spellchecker.isMisspelled(text);
         },
       });
