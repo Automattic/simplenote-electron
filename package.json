@@ -56,7 +56,6 @@
     "electron": "1.8.4",
     "electron-builder": "20.2.0",
     "electron-packager": "9.1.0",
-    "electron-rebuild": "^1.7.3",
     "enzyme": "2.9.1",
     "eslint": "4.18.0",
     "eslint-config-prettier": "2.9.0",
