@@ -192,7 +192,6 @@ export class Auth extends Component {
 
     this.authWindow.loadURL(authUrl);
     this.authWindow.show();
-    this.authWindow.webContents.openDevTools();
   };
 
   setupAuthWindow = () => {
@@ -201,7 +200,7 @@ export class Auth extends Component {
     const protocol = remote.protocol;
     this.authWindow = new BrowserWindow({
       width: 640,
-      height: 480,
+      height: 640,
       show: false,
       'node-integration': false,
     });
