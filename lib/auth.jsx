@@ -2,19 +2,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import cryptoRandomString from 'crypto-random-string';
 import { get } from 'lodash';
+import getConfig from '../get-config';
 import SimplenoteLogo from './icons/simplenote';
 import Spinner from './components/spinner';
 import WordPressLogo from './icons/wordpress';
 
 import { hasInvalidCredentials, hasLoginError } from './state/auth/selectors';
+import { setWPToken } from './state/settings/actions';
 
 export class Auth extends Component {
   static propTypes = {
     isAuthenticated: PropTypes.bool,
     isMacApp: PropTypes.bool,
+    isElectron: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
+    authorizeUserWithToken: PropTypes.func.isRequired,
+    saveWPToken: PropTypes.func.isRequired,
   };
 
   state = {
@@ -29,7 +35,7 @@ export class Auth extends Component {
   }
 
   render() {
-    const { isMacApp } = this.props;
+    const { isMacApp, isElectron } = this.props;
     const { isCreatingAccount, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
@@ -53,13 +59,18 @@ export class Auth extends Component {
           <div className="login-logo">
             <SimplenoteLogo />
           </div>
-          <div className="wpcom-connect">
-            <div className="button button-primary wpcom-connect-button">
-              <WordPressLogo />
-              Log in with WordPress.com
+          {isElectron && (
+            <div className="wpcom-connect">
+              <div
+                className="button button-primary wpcom-connect-button"
+                onClick={this.onWPLogin}
+              >
+                <WordPressLogo />
+                Sign in with WordPress.com
+              </div>
+              <div className="wpcom-connect-or">or:</div>
             </div>
-            <div className="wpcom-connect-or">or:</div>
-          </div>
+          )}
           <div className="login-fields theme-color-border theme-color-fg">
             <label
               className="login-field theme-color-border"
@@ -167,6 +178,119 @@ export class Auth extends Component {
     this.props.onAuthenticate(username, password);
   };
 
+  onWPLogin = () => {
+    const config = getConfig();
+    this.setupAuthWindow();
+
+    const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
+    this.authState = `app-${cryptoRandomString(20)}`;
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
+      config.wpcc_client_id
+    }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${
+      this.authState
+    }`;
+
+    this.authWindow.loadURL(authUrl);
+    this.authWindow.show();
+    this.authWindow.webContents.openDevTools();
+  };
+
+  setupAuthWindow = () => {
+    const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+    const BrowserWindow = remote.BrowserWindow;
+    const protocol = remote.protocol;
+    this.authWindow = new BrowserWindow({
+      width: 640,
+      height: 480,
+      show: false,
+      'node-integration': false,
+    });
+
+    // Register simplenote:// protocol
+    protocol.registerHttpProtocol('simplenote', req => {
+      this.authWindow.loadURL(req.url);
+    });
+
+    this.authWindow.webContents.on('will-navigate', (event, url) =>
+      this.onBrowserNavigate(url)
+    );
+
+    this.authWindow.webContents.on(
+      'did-get-redirect-request',
+      (event, oldUrl, newUrl) => this.onBrowserNavigate(newUrl)
+    );
+  };
+
+  onBrowserNavigate = url => {
+    try {
+      const parsedUrl = new URL(url);
+      // Continue on if the url is not the simplenote protocol
+      if (parsedUrl.protocol !== 'simplenote:') {
+        return;
+      }
+
+      this.processUrl(parsedUrl);
+    } catch (error) {
+      return;
+    }
+  };
+
+  processUrl = url => {
+    const { authorizeUserWithToken, saveWPToken } = this.props;
+    const params = url.searchParams;
+
+    // Display an error message if authorization failed.
+    if (params.get('error')) {
+      const errorCode = params.get('code');
+      if (errorCode === '1') {
+        this.authError(
+          'Please activate your WordPress.com account via email and try again.'
+        );
+      } else {
+        this.authError('An error was encountered while signing in.');
+      }
+
+      return;
+    }
+
+    // Sanity check on params
+    if (!params.get('token') || !params.get('user') || !params.get('state')) {
+      this.closeAuthWindow();
+      return;
+    }
+
+    // Verify that the state strings match
+    const state = params.get('state');
+    if (state !== this.authState) {
+      return;
+    }
+
+    const userEmail = params.get('user');
+    const spToken = params.get('token');
+    authorizeUserWithToken(userEmail, spToken);
+
+    const wpToken = params.get('wp_token');
+    if (wpToken) {
+      saveWPToken(wpToken);
+    }
+
+    this.closeAuthWindow();
+  };
+
+  authError = errorMessage => {
+    this.closeAuthWindow();
+
+    this.setState({
+      passwordErrorMessage: errorMessage,
+    });
+  };
+
+  closeAuthWindow = () => {
+    if (this.authWindow) {
+      this.authWindow.close();
+    }
+  };
+
   onForgot = event => {
     event.preventDefault();
     window.open(
@@ -212,9 +336,13 @@ export class Auth extends Component {
   };
 }
 
+const mapDispatchToProps = dispatch => ({
+  saveWPToken: token => dispatch(setWPToken(token)),
+});
+
 const mapStateToProps = state => ({
   hasInvalidCredentials: hasInvalidCredentials(state),
   hasLoginError: hasLoginError(state),
 });
 
-export default connect(mapStateToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

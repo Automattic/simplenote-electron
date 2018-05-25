@@ -120,6 +120,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
+      authorizeUserWithToken: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -469,7 +470,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               isAuthenticated={isAuthorized}
               onAuthenticate={this.props.onAuthenticate}
               onCreateUser={this.props.onCreateUser}
+              authorizeUserWithToken={this.props.authorizeUserWithToken}
               isMacApp={isMacApp}
+              isElectron={isElectron()}
             />
           )}
           {this.props.appState.dialogs.length > 0 && (
