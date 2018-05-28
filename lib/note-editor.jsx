@@ -183,6 +183,11 @@ export class NoteEditor extends Component {
       fontSize: fontSize + 'px',
     };
 
+    const printAttrs = {
+      style: printStyle,
+      class: 'note-print note-detail-markdown',
+    };
+
     return (
       <div className={classes}>
         <RevisionSelector
@@ -220,15 +225,17 @@ export class NoteEditor extends Component {
             />
           </div>
         </div>
-        {shouldPrint && (
-          <div
-            style={printStyle}
-            className="note-print note-detail-markdown"
-            dangerouslySetInnerHTML={{
-              __html: markdownEnabled ? renderNoteToHtml(content) : content,
-            }}
-          />
-        )}
+        {shouldPrint &&
+          markdownEnabled && (
+            <div
+              {...printAttrs}
+              dangerouslySetInnerHTML={{
+                __html: renderNoteToHtml(content),
+              }}
+            />
+          )}
+        {shouldPrint &&
+          !markdownEnabled && <div {...printAttrs}>{content}</div>}
         {!isTrashed && (
           <TagField
             storeFocusTagField={this.storeFocusTagField}
