@@ -252,20 +252,21 @@ export class Auth extends Component {
       return;
     }
 
+    const userEmail = params.get('user');
+    const spToken = params.get('token');
+    const state = params.get('state');
+
     // Sanity check on params
-    if (!params.get('token') || !params.get('user') || !params.get('state')) {
+    if (!(spToken && userEmail && state)) {
       this.closeAuthWindow();
       return;
     }
 
     // Verify that the state strings match
-    const state = params.get('state');
     if (state !== this.authState) {
       return;
     }
 
-    const userEmail = params.get('user');
-    const spToken = params.get('token');
     authorizeUserWithToken(userEmail, spToken);
 
     const wpToken = params.get('wp_token');
