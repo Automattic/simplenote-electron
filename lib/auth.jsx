@@ -284,11 +284,7 @@ export class Auth extends Component {
     });
   };
 
-  closeAuthWindow = () => {
-    if (this.authWindow) {
-      this.authWindow.close();
-    }
-  };
+  closeAuthWindow = () => this.authWindow && this.authWindow.close();
 
   onForgot = event => {
     event.preventDefault();
