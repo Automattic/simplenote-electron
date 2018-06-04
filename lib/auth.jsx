@@ -222,34 +222,31 @@ export class Auth extends Component {
 
   onBrowserNavigate = url => {
     try {
-      const parsedUrl = new URL(url);
-      // Continue on if the url is not the simplenote protocol
-      if (parsedUrl.protocol !== 'simplenote:') {
-        return;
-      }
-
-      this.processUrl(parsedUrl);
+      this.authenticateWithUrl(new URL(url));
     } catch (error) {
-      return;
+      // Do nothing if Url was invalid
     }
   };
 
-  processUrl = url => {
+  authenticateWithUrl = url => {
+    // Bail out if the url is not the simplenote protocol
+    if (url.protocol !== 'simplenote:') {
+      return;
+    }
+
     const { authorizeUserWithToken, saveWPToken } = this.props;
     const params = url.searchParams;
 
     // Display an error message if authorization failed.
     if (params.get('error')) {
-      const errorCode = params.get('code');
-      if (errorCode === '1') {
-        this.authError(
-          'Please activate your WordPress.com account via email and try again.'
-        );
-      } else {
-        this.authError('An error was encountered while signing in.');
+      switch (params.get('code')) {
+        case '1':
+          return this.authError(
+            'Please activate your WordPress.com account via email and try again.'
+          );
+        default:
+          return this.authError('An error was encountered while signing in.');
       }
-
-      return;
     }
 
     const userEmail = params.get('user');
@@ -258,8 +255,7 @@ export class Auth extends Component {
 
     // Sanity check on params
     if (!(spToken && userEmail && state)) {
-      this.closeAuthWindow();
-      return;
+      return this.closeAuthWindow();
     }
 
     // Verify that the state strings match
