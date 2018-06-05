@@ -338,13 +338,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       analytics.tracks.recordEvent('editor_note_restored');
     };
 
-    onShareNote = note =>
+    onShareNote = () =>
       this.props.actions.showDialog({
         dialog: {
           type: 'Share',
           modal: true,
         },
-        params: { note },
       });
 
     onDeleteNoteForever = note => {
