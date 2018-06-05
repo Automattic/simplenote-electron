@@ -16,7 +16,7 @@ export const EmailToolTip = ({ openShareDialog }) => (
   </div>
 );
 
-const mapDispatchToProps = (dispatch, { note }) => ({
+const mapDispatchToProps = dispatch => ({
   openShareDialog: () =>
     dispatch(
       appState.actionCreators.showDialog({
@@ -24,7 +24,6 @@ const mapDispatchToProps = (dispatch, { note }) => ({
           type: 'Share',
           modal: true,
         },
-        params: { note },
       })
     ),
 });
