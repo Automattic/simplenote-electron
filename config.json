@@ -1,4 +1,6 @@
 {
   "app_id": "history-analyst-dad",
-  "app_key": "be606bcfa3db4377bf488900281aa1cc"
+  "app_key": "be606bcfa3db4377bf488900281aa1cc",
+  "wpcc_client_id": "0",
+  "wpcc_redirect_url": "https://simplenote.com"
 }

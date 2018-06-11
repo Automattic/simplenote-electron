@@ -12,19 +12,20 @@ export class ShareDialog extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     dialog: PropTypes.object.isRequired,
-    params: PropTypes.shape({
-      note: PropTypes.object.isRequired,
-    }).isRequired,
+    noteBucket: PropTypes.object.isRequired,
+    appState: PropTypes.object.isRequired,
+    tagBucket: PropTypes.object.isRequired,
   };
 
   onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
-  onTogglePublished = event =>
+  onTogglePublished = event => {
     this.props.actions.publishNote({
       noteBucket: this.props.noteBucket,
-      note: this.props.params.note,
+      note: this.props.appState.note,
       publish: event.currentTarget.checked,
     });
+  };
 
   copyPublishURL = () => {
     this.publishUrlElement.select();
@@ -41,7 +42,7 @@ export class ShareDialog extends Component {
   getPublishURL = url => (isEmpty(url) ? null : `http://simp.ly/p/${url}`);
 
   onAddCollaborator = event => {
-    const { note } = this.props.params;
+    const { note } = this.props.appState;
     const tags = (note.data && note.data.tags) || [];
     const collaborator = this.collaboratorElement.value.trim();
 
@@ -59,7 +60,7 @@ export class ShareDialog extends Component {
   };
 
   onRemoveCollaborator = collaborator => {
-    const { note } = this.props.params;
+    const { note } = this.props.appState;
 
     let tags = (note.data && note.data.tags) || [];
     tags = tags.filter(tag => tag !== collaborator);
@@ -73,7 +74,7 @@ export class ShareDialog extends Component {
   };
 
   collaborators = () => {
-    const { note } = this.props.params;
+    const { note } = this.props.appState;
     const tags = (note.data && note.data.tags) || [];
     const collaborators = tags.filter(isEmailTag);
 
@@ -113,7 +114,7 @@ export class ShareDialog extends Component {
   renderTabName = tabName => tabName;
 
   renderTabContent = tabName => {
-    const { note } = this.props.params;
+    const { note } = this.props.appState;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import TabbedDialog from '../tabbed-dialog';
 import { viewExternalUrl } from '../utils/url-utils';
@@ -8,6 +9,8 @@ import RadioGroup from './radio-settings-group';
 import ToggleGroup from './toggle-settings-group';
 import SettingsGroup, { Item } from './settings-group';
 
+import { setWPToken } from '../state/settings/actions';
+
 const settingTabs = ['account', 'display'];
 
 export class SettingsDialog extends Component {
@@ -15,6 +18,7 @@ export class SettingsDialog extends Component {
     actions: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
+    onSetWPToken: PropTypes.func.isRequired,
   };
 
   onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
@@ -23,7 +27,7 @@ export class SettingsDialog extends Component {
 
   onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
-    const { onSignOut, noteBucket } = this.props;
+    const { noteBucket } = this.props;
     const { notes } = this.props.appState;
     const { getVersion } = noteBucket;
 
@@ -40,10 +44,19 @@ export class SettingsDialog extends Component {
         );
 
       Promise.all(notes.map(noteHasSynced)).then(
-        () => onSignOut(), // All good, sign out now!
+        () => this.signOut(), // All good, sign out now!
         () => this.showUnsyncedWarning() // Show a warning to the user
       );
     });
+  };
+
+  signOut = () => {
+    const { onSignOut, onSetWPToken } = this.props;
+
+    // Reset the WordPress Token
+    onSetWPToken(null);
+
+    onSignOut();
   };
 
   showUnsyncedWarning = () => {
@@ -52,7 +65,6 @@ export class SettingsDialog extends Component {
   };
 
   showElectronWarningDialog = () => {
-    const { onSignOut } = this.props;
     const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
     dialog.showMessageBox(
       {
@@ -65,7 +77,7 @@ export class SettingsDialog extends Component {
       },
       response => {
         if (response === 0) {
-          onSignOut();
+          this.signOut();
         } else if (response === 2) {
           viewExternalUrl('https://app.simplenote.com');
         }
@@ -74,7 +86,6 @@ export class SettingsDialog extends Component {
   };
 
   showWebWarningDialog = () => {
-    const { onSignOut } = this.props;
     const shouldReallySignOut = confirm(
       'Warning: Unsynced notes were detected.\n\n' +
         'Logging out will delete any notes that have not synced. ' +
@@ -83,7 +94,7 @@ export class SettingsDialog extends Component {
     );
 
     if (shouldReallySignOut) {
-      onSignOut();
+      this.signOut();
     }
   };
 
@@ -210,4 +221,8 @@ export class SettingsDialog extends Component {
   };
 }
 
-export default SettingsDialog;
+const mapDispatchToProps = dispatch => ({
+  onSetWPToken: token => dispatch(setWPToken(token)),
+});
+
+export default connect(null, mapDispatchToProps)(SettingsDialog);

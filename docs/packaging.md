@@ -10,12 +10,12 @@ Some builds require further packaging before they can be released:
 
 * `make package-win32` - Produces a signed `Setup.exe` install wizard
 * `make package-osx` - Produces a `DMG` file
-* `make package-linux` - Produces a `.deb` file
+* `make package-linux` - Produces a `.deb`, `.rpm` and `.AppImage` file for `x86` and `x64` processors
 
 
 # Requirements
 
-## Mac
+## Mac Package
 
 A Mac build requires the app to be signed. This prevents a security warning being issued when you run the app.
 
@@ -29,17 +29,26 @@ The Windows package requires installing a valid certificate, installing the `mak
 
 `brew install mono wine makensis`
 
-The Windows build doesn't get signed until the packaging stage
+The Windows build doesn't get signed until the packaging stage.
 
 ## Linux Package
 
-The Linux package is build using [FPM][1] which is a tool that makes it easy to build different package systems. To install FPM just run:
+The Linux package is built using [electron-builder][1] which is a tool that makes it easy to build different package systems. electron-builder should be installed by `npm install`.
 
-`gem install fpm`
+### Note for creating Linux package on Linux
 
-FRM needs ruby and `gnu-tar`. You can install ruby using [RVM][2] and `gnu-tar` with:
+1. Creating all Linux packages requires tool for converting `.icns` file to `.png`. May be installed via `apt` by typing:
 
-`brew install gnu-tar`
+   `sudo apt install --no-install-recommends -y icnsutils `
 
-[1]: https://github.com/jordansissel/fpm
-[2]: https://rvm.io/rvm/install
+2. Creating `.rpm` package requires `rpm` package, installable from 'apt'.
+
+   `sudo apt install --no-install-recommends -y rpm`
+
+### Note for creating Linux package on MacOS:
+
+1. Creating Linux package on MacOS requires `rpm` package, installable from `brew`.
+
+   `brew install rpm`
+
+[1]: https://www.electron.build/

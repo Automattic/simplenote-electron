@@ -120,6 +120,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
+      authorizeUserWithToken: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -338,13 +339,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       analytics.tracks.recordEvent('editor_note_restored');
     };
 
-    onShareNote = note =>
+    onShareNote = () =>
       this.props.actions.showDialog({
         dialog: {
           type: 'Share',
           modal: true,
         },
-        params: { note },
       });
 
     onDeleteNoteForever = note => {
@@ -387,9 +387,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
 
-      const noteIndex = Math.max(state.previousIndex, 0);
-      const selectedNote =
-        isSmallScreen || state.note ? state.note : filteredNotes[noteIndex];
+      const selectedNote = isSmallScreen || state.note;
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
         'touch-enabled': 'ontouchstart' in document.body,
@@ -469,7 +467,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               isAuthenticated={isAuthorized}
               onAuthenticate={this.props.onAuthenticate}
               onCreateUser={this.props.onCreateUser}
+              authorizeUserWithToken={this.props.authorizeUserWithToken}
               isMacApp={isMacApp}
+              isElectron={isElectron()}
             />
           )}
           {this.props.appState.dialogs.length > 0 && (

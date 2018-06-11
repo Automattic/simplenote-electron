@@ -2,16 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import showdown from 'showdown';
-import xssFilter from 'showdown-xss-filter';
 import NoteDetail from './note-detail';
 import TagField from './tag-field';
 import NoteToolbar from './note-toolbar';
 import RevisionSelector from './revision-selector';
 import { get, property } from 'lodash';
 
-const markdownConverter = new showdown.Converter({ extensions: [xssFilter] });
-markdownConverter.setFlavor('github');
+import { renderNoteToHtml } from './utils/render-note-to-html';
 
 export class NoteEditor extends Component {
   static propTypes = {
@@ -158,7 +155,6 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    let noteContent = '';
     const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
     const revision = this.state.revision || note;
     const isViewingRevisions = this.state.isViewingRevisions;
@@ -181,15 +177,15 @@ export class NoteEditor extends Component {
       }
     );
 
-    if (shouldPrint) {
-      const content = get(revision, 'data.content', '');
-      noteContent = markdownEnabled
-        ? markdownConverter.makeHtml(content)
-        : content;
-    }
+    const content = get(revision, 'data.content', '');
 
     const printStyle = {
       fontSize: fontSize + 'px',
+    };
+
+    const printAttrs = {
+      style: printStyle,
+      class: 'note-print note-detail-markdown',
     };
 
     return (
@@ -229,13 +225,17 @@ export class NoteEditor extends Component {
             />
           </div>
         </div>
-        {shouldPrint && (
-          <div
-            style={printStyle}
-            className="note-print note-detail-markdown"
-            dangerouslySetInnerHTML={{ __html: noteContent }}
-          />
-        )}
+        {shouldPrint &&
+          markdownEnabled && (
+            <div
+              {...printAttrs}
+              dangerouslySetInnerHTML={{
+                __html: renderNoteToHtml(content),
+              }}
+            />
+          )}
+        {shouldPrint &&
+          !markdownEnabled && <div {...printAttrs}>{content}</div>}
         {!isTrashed && (
           <TagField
             storeFocusTagField={this.storeFocusTagField}

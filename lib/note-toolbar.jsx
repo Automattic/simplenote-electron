@@ -85,7 +85,7 @@ export class NoteToolbar extends Component {
             type="button"
             title="Share"
             className="button button-borderless"
-            onClick={this.props.onShareNote.bind(null, note)}
+            onClick={this.props.onShareNote.bind(null)}
           >
             <ShareIcon />
           </button>
