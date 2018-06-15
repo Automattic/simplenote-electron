@@ -247,7 +247,15 @@ const matchify = splits =>
  */
 const renderNote = (
   notes,
-  { filter, filterRegExp, noteDisplay, selectedNoteId, onSelectNote, onPinNote }
+  {
+    filter,
+    filterRegExp,
+    noteDisplay,
+    selectedNoteId,
+    onSelectNote,
+    onPinNote,
+    isSmallScreen,
+  }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
   const { title, preview } = noteTitle(note);
@@ -255,7 +263,7 @@ const renderNote = (
   const showPublishIcon = isPublished && 'condensed' !== noteDisplay;
 
   const classes = classNames('note-list-item', {
-    'note-list-item-selected': selectedNoteId === note.id,
+    'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
     'note-list-item-pinned': note.pinned,
     'published-note': isPublished,
   });
@@ -384,6 +392,7 @@ export class NoteList extends Component {
       noteDisplay,
       showTrash,
       notes,
+      isSmallScreen,
     } = this.props;
 
     const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
@@ -396,6 +405,7 @@ export class NoteList extends Component {
       onSelectNote,
       onPinNote: this.onPinNote,
       selectedNoteId,
+      isSmallScreen,
     });
 
     return (

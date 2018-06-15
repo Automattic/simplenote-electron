@@ -377,24 +377,26 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         appState: state,
         authIsPending,
         isAuthorized,
-        isSmallScreen,
         noteBucket,
         settings,
         tagBucket,
+        isSmallScreen,
       } = this.props;
       const electron = get(this.state, 'electron');
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
 
-      const selectedNote = isSmallScreen || state.note;
+      const selectedNote =
+        state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
         'touch-enabled': 'ontouchstart' in document.body,
       });
 
       const mainClasses = classNames('simplenote-app', {
-        'note-open': selectedNote,
+        'note-open':
+          (isSmallScreen && state.note) || (!isSmallScreen && selectedNote),
         'note-info-open': state.showNoteInfo,
         'navigation-open': state.showNavigation,
         'is-electron': isElectron(),
@@ -422,7 +424,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               <div className="source-list theme-color-bg theme-color-fg">
                 <SearchBar noteBucket={noteBucket} />
                 {hasNotes ? (
-                  <NoteList noteBucket={noteBucket} />
+                  <NoteList
+                    noteBucket={noteBucket}
+                    isSmallScreen={isSmallScreen}
+                  />
                 ) : (
                   <div className="placeholder-note-list">
                     <span>No Notes</span>
