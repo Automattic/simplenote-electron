@@ -395,7 +395,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
 
       const mainClasses = classNames('simplenote-app', {
-        'note-open': selectedNote,
+        'note-open':
+          (isSmallScreen && state.note) || (!isSmallScreen && selectedNote),
         'note-info-open': state.showNoteInfo,
         'navigation-open': state.showNavigation,
         'is-electron': isElectron(),
