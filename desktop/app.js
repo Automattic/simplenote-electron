@@ -7,6 +7,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  Tray
 } = require('electron');
 
 const path = require('path');
@@ -52,6 +53,21 @@ module.exports = function main() {
       show: false,
     });
 
+    // Tray
+    const tray = new Tray(iconPath);
+
+    tray.on('click', () => {
+      mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    })
+    // Visual effects for macos
+    // https://github.com/electron/electron/blob/master/docs/api/tray.md#traysethighlightmodemode-macos
+    mainWindow.on('show', () => {
+      tray.setHighlightMode('always');
+    })
+    mainWindow.on('hide', () => {
+      tray.setHighlightMode('never');
+    })
+
     // and load the index of the app.
     if (typeof mainWindow.loadURL === 'function') {
       mainWindow.loadURL(url);
@@ -93,7 +109,15 @@ module.exports = function main() {
     });
 
     // wait until window is presentable
-    mainWindow.once('ready-to-show', mainWindow.show);
+    mainWindow.once('ready-to-show', function() {
+      // hide to tray on startup
+      if (process.argv.includes('--hide-to-tray')) {
+        mainWindow.hide();
+      }
+      else {
+        mainWindow.show();
+      }
+    });
   };
 
   const shouldQuit = app.makeSingleInstance(() => {
