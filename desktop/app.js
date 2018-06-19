@@ -7,6 +7,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  session,
 } = require('electron');
 
 const path = require('path');
@@ -72,6 +73,24 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );
+    });
+
+    ipcMain.on('clearCookies', function() {
+      session.defaultSession.cookies.get({}, (error, cookies) => {
+        cookies.forEach(cookie => {
+          let cookieUrl = '';
+          cookieUrl += cookie.secure ? 'https://' : 'http://';
+          cookieUrl += cookie.domain.charAt(0) === '.' ? 'www' : '';
+          cookieUrl += cookie.domain;
+          cookieUrl += cookie.path;
+
+          session.defaultSession.cookies.remove(
+            cookieUrl,
+            cookie.name,
+            () => {} // Ignore callback
+          );
+        });
+      });
     });
 
     mainWindowState.manage(mainWindow);
