@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get } from 'lodash';
+import getConfig from '../get-config';
 import SimplenoteLogo from './icons/simplenote';
 import Spinner from './components/spinner';
 import WordPressLogo from './icons/wordpress';
@@ -181,7 +182,15 @@ export class Auth extends Component {
     ipcRenderer.on('wpAuthError', (event, payload) => {
       this.onAuthError(payload.message);
     });
-    ipcRenderer.send('startWPAuth');
+
+    const config = getConfig();
+    const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
+    const clientId = config.wpcc_client_id;
+
+    ipcRenderer.send('startWPAuth', {
+      redirectUrl,
+      clientId,
+    });
   };
 
   onAuthError = errorMessage => {

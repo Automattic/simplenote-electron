@@ -18,7 +18,6 @@ const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const buildViewMenu = require('./menus/view-menu');
 const cryptoRandomString = require('crypto-random-string');
-const getConfig = require('../get-config');
 const URL = require('url').URL;
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
@@ -78,8 +77,8 @@ module.exports = function main() {
       );
     });
 
-    ipcMain.on('startWPAuth', function() {
-      showAuthWindow();
+    ipcMain.on('startWPAuth', function(event, config) {
+      showAuthWindow(config);
     });
 
     mainWindowState.manage(mainWindow);
@@ -395,9 +394,13 @@ function createMenuTemplate(settings) {
   return menuTemplate;
 }
 
-function showAuthWindow() {
+function showAuthWindow(config) {
   // Limit to one auth window open at a time
   if (authWindow) {
+    return;
+  }
+
+  if (!config.redirectUrl || !config.clientId) {
     return;
   }
 
@@ -443,12 +446,12 @@ function showAuthWindow() {
     authWindow = null;
   });
 
-  const config = getConfig();
-  const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
   authState = `app-${cryptoRandomString(20)}`;
   const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
-    config.wpcc_client_id
-  }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${authState}`;
+    config.clientId
+  }&redirect_uri=${
+    config.redirectUrl
+  }&response_type=code&scope=global&state=${authState}`;
 
   authWindow.loadURL(authUrl);
   authWindow.show();
