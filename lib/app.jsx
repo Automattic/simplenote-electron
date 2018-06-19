@@ -18,6 +18,7 @@ import NavigationBar from './navigation-bar';
 import Auth from './auth';
 import analytics from './analytics';
 import classNames from 'classnames';
+import { setWPToken } from './state/settings/actions';
 import {
   compact,
   concat,
@@ -84,12 +85,12 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     ),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
-
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    saveWPToken: token => dispatch(setWPToken(token)),
   };
 }
 
@@ -121,6 +122,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onCreateUser: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
       authorizeUserWithToken: PropTypes.func.isRequired,
+      saveWPToken: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -214,6 +216,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )
           .then(blob => fs.writeFile(command.filename, blob, 'base64'))
           .catch(console.log); // eslint-disable-line no-console
+      }
+
+      if ('authorizeUserWithToken' === get(command, 'action')) {
+        if (command.wpToken) {
+          this.props.saveWPToken(command.wpToken);
+        }
+        return this.props.authorizeUserWithToken(
+          command.userEmail,
+          command.spToken
+        );
       }
 
       const canRun = overEvery(
