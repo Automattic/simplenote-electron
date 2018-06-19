@@ -1,5 +1,9 @@
 'use strict';
 
+let authState,
+  authWindow,
+  mainWindow = null;
+
 const {
   app,
   BrowserWindow,
@@ -7,21 +11,21 @@ const {
   ipcMain,
   shell,
   Menu,
+  protocol,
 } = require('electron');
 
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 const buildViewMenu = require('./menus/view-menu');
+const cryptoRandomString = require('crypto-random-string');
+const getConfig = require('../get-config');
+const URL = require('url').URL;
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
   require('./updater')();
   const url = 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
-
-  // Keep a global reference of the window object, if you don't, the window will
-  // be closed automatically when the JavaScript object is GCed.
-  var mainWindow = null;
 
   const activateWindow = function() {
     // Only allow a single window
@@ -36,7 +40,7 @@ module.exports = function main() {
     });
 
     // Create the browser window.
-    var iconPath = path.join(
+    const iconPath = path.join(
       __dirname,
       '../lib/icons/app-icon/icon_256x256.png'
     );
@@ -72,6 +76,10 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );
+    });
+
+    ipcMain.on('startWPAuth', function() {
+      showAuthWindow();
     });
 
     mainWindowState.manage(mainWindow);
@@ -385,4 +393,123 @@ function createMenuTemplate(settings) {
   }
 
   return menuTemplate;
+}
+
+function showAuthWindow() {
+  // Limit to one auth window open at a time
+  if (authWindow) {
+    return;
+  }
+
+  authWindow = new BrowserWindow({
+    width: 640,
+    height: 640,
+    show: false,
+    webPreferences: {
+      nodeIntegration: false,
+    },
+  });
+
+  // Register simplenote:// protocol
+  protocol.registerHttpProtocol('simplenote', req => {
+    authWindow && authWindow.loadURL(req.url);
+  });
+
+  // Disable drag and drop on the window
+  authWindow.webContents.executeJavaScript(
+    "document.addEventListener('dragover', event => event.preventDefault());"
+  );
+  authWindow.webContents.executeJavaScript(
+    "document.addEventListener('drop', event => event.preventDefault());"
+  );
+
+  authWindow.webContents.on('will-navigate', (event, url) => {
+    onBrowserNavigate(url);
+  });
+
+  authWindow.webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
+
+  authWindow.webContents.on(
+    'did-get-redirect-request',
+    (event, oldUrl, newUrl) => {
+      onBrowserNavigate(newUrl);
+    }
+  );
+
+  authWindow.on('closed', () => {
+    authWindow = null;
+  });
+
+  const config = getConfig();
+  const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
+  authState = `app-${cryptoRandomString(20)}`;
+  const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
+    config.wpcc_client_id
+  }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${authState}`;
+
+  authWindow.loadURL(authUrl);
+  authWindow.show();
+}
+
+function onBrowserNavigate(url) {
+  try {
+    authenticateWithUrl(new URL(url));
+  } catch (error) {
+    // Do nothing if the url is invalid
+  }
+}
+
+function authenticateWithUrl(url) {
+  // Bail out if the url is not the simplenote protocol
+  if (url.protocol !== 'simplenote:') {
+    return;
+  }
+
+  const params = url.searchParams;
+
+  // Display an error message if authorization failed.
+  if (params.get('error')) {
+    closeAuthWindow();
+    switch (params.get('code')) {
+      case '1':
+        return mainWindow.webContents.send('wpAuthError', {
+          message:
+            'Please activate your WordPress.com account via email and try again.',
+        });
+      default:
+        return mainWindow.webContents.send('wpAuthError', {
+          message: 'An error was encountered while signing in.',
+        });
+    }
+  }
+
+  const userEmail = params.get('user');
+  const spToken = params.get('token');
+  const state = params.get('state');
+
+  // Sanity check on params
+  if (!(spToken && userEmail && state)) {
+    return closeAuthWindow();
+  }
+
+  // Verify that the state strings match
+  if (state !== authState) {
+    return closeAuthWindow();
+  }
+  const wpToken = params.get('wp_token');
+  mainWindow.webContents.send('appCommand', {
+    action: 'authorizeUserWithToken',
+    userEmail,
+    spToken,
+    wpToken,
+  });
+
+  closeAuthWindow();
+}
+
+function closeAuthWindow() {
+  return authWindow && authWindow.close();
 }

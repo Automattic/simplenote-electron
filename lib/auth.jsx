@@ -2,15 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import cryptoRandomString from 'crypto-random-string';
 import { get } from 'lodash';
-import getConfig from '../get-config';
 import SimplenoteLogo from './icons/simplenote';
 import Spinner from './components/spinner';
 import WordPressLogo from './icons/wordpress';
 
 import { hasInvalidCredentials, hasLoginError } from './state/auth/selectors';
-import { setWPToken } from './state/settings/actions';
 
 export class Auth extends Component {
   static propTypes = {
@@ -179,109 +176,19 @@ export class Auth extends Component {
   };
 
   onWPLogin = () => {
-    const config = getConfig();
-    this.setupAuthWindow();
+    const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
 
-    const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
-    this.authState = `app-${cryptoRandomString(20)}`;
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
-      config.wpcc_client_id
-    }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${
-      this.authState
-    }`;
-
-    this.authWindow.loadURL(authUrl);
-    this.authWindow.show();
-  };
-
-  setupAuthWindow = () => {
-    const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
-    const BrowserWindow = remote.BrowserWindow;
-    const protocol = remote.protocol;
-    this.authWindow = new BrowserWindow({
-      width: 640,
-      height: 640,
-      show: false,
-      'node-integration': false,
+    ipcRenderer.on('wpAuthError', (event, payload) => {
+      this.onAuthError(payload.message);
     });
-
-    // Register simplenote:// protocol
-    protocol.registerHttpProtocol('simplenote', req => {
-      this.authWindow.loadURL(req.url);
-    });
-
-    this.authWindow.webContents.on('will-navigate', (event, url) =>
-      this.onBrowserNavigate(url)
-    );
-
-    this.authWindow.webContents.on(
-      'did-get-redirect-request',
-      (event, oldUrl, newUrl) => this.onBrowserNavigate(newUrl)
-    );
+    ipcRenderer.send('startWPAuth');
   };
 
-  onBrowserNavigate = url => {
-    try {
-      this.authenticateWithUrl(new URL(url));
-    } catch (error) {
-      // Do nothing if Url was invalid
-    }
-  };
-
-  authenticateWithUrl = url => {
-    // Bail out if the url is not the simplenote protocol
-    if (url.protocol !== 'simplenote:') {
-      return;
-    }
-
-    const { authorizeUserWithToken, saveWPToken } = this.props;
-    const params = url.searchParams;
-
-    // Display an error message if authorization failed.
-    if (params.get('error')) {
-      switch (params.get('code')) {
-        case '1':
-          return this.authError(
-            'Please activate your WordPress.com account via email and try again.'
-          );
-        default:
-          return this.authError('An error was encountered while signing in.');
-      }
-    }
-
-    const userEmail = params.get('user');
-    const spToken = params.get('token');
-    const state = params.get('state');
-
-    // Sanity check on params
-    if (!(spToken && userEmail && state)) {
-      return this.closeAuthWindow();
-    }
-
-    // Verify that the state strings match
-    if (state !== this.authState) {
-      return;
-    }
-
-    authorizeUserWithToken(userEmail, spToken);
-
-    const wpToken = params.get('wp_token');
-    if (wpToken) {
-      saveWPToken(wpToken);
-    }
-
-    this.closeAuthWindow();
-  };
-
-  authError = errorMessage => {
-    this.closeAuthWindow();
-
+  onAuthError = errorMessage => {
     this.setState({
       passwordErrorMessage: errorMessage,
     });
   };
-
-  closeAuthWindow = () => this.authWindow && this.authWindow.close();
 
   onForgot = event => {
     event.preventDefault();
@@ -328,13 +235,9 @@ export class Auth extends Component {
   };
 }
 
-const mapDispatchToProps = dispatch => ({
-  saveWPToken: token => dispatch(setWPToken(token)),
-});
-
 const mapStateToProps = state => ({
   hasInvalidCredentials: hasInvalidCredentials(state),
   hasLoginError: hasLoginError(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps)(Auth);
