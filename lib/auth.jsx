@@ -202,9 +202,7 @@ export class Auth extends Component {
       width: 640,
       height: 640,
       show: false,
-      webPreferences: {
-        nodeIntegration: false,
-      },
+      'node-integration': false,
     });
 
     // Register simplenote:// protocol

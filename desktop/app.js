@@ -122,18 +122,6 @@ module.exports = function main() {
     }
   });
 
-  app.on('browser-window-created', function(event, window) {
-    window.webContents.on('did-finish-load', () => {
-      // Disable drag and drop operations on the window
-      window.webContents.executeJavaScript(
-        "document.addEventListener('dragover', event => event.preventDefault());"
-      );
-      window.webContents.executeJavaScript(
-        "document.addEventListener('drop', event => event.preventDefault());"
-      );
-    });
-  });
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   app.on('ready', activateWindow);
