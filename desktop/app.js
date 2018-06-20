@@ -7,6 +7,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  session,
 } = require('electron');
 
 const path = require('path');
@@ -72,6 +73,27 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );
+    });
+
+    ipcMain.on('clearCookies', function() {
+      // Removes any cookies stored in the app. We're particularly interested in
+      // removing the WordPress.com cookies that may have been set during sign in.
+      session.defaultSession.cookies.get({}, (error, cookies) => {
+        cookies.forEach(cookie => {
+          // Reconstruct the url to pass to the cookies.remove function
+          let cookieUrl = '';
+          cookieUrl += cookie.secure ? 'https://' : 'http://';
+          cookieUrl += cookie.domain.charAt(0) === '.' ? 'www' : '';
+          cookieUrl += cookie.domain;
+          cookieUrl += cookie.path;
+
+          session.defaultSession.cookies.remove(
+            cookieUrl,
+            cookie.name,
+            () => {} // Ignore callback
+          );
+        });
+      });
     });
 
     mainWindowState.manage(mainWindow);
