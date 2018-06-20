@@ -76,8 +76,11 @@ module.exports = function main() {
     });
 
     ipcMain.on('clearCookies', function() {
+      // Removes any cookies stored in the app. We're particularly interested in
+      // removing the WordPress.com cookies that may have been set during sign in.
       session.defaultSession.cookies.get({}, (error, cookies) => {
         cookies.forEach(cookie => {
+          // Reconstruct the url to pass to the cookies.remove function
           let cookieUrl = '';
           cookieUrl += cookie.secure ? 'https://' : 'http://';
           cookieUrl += cookie.domain.charAt(0) === '.' ? 'www' : '';
