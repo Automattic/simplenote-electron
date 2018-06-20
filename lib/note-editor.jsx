@@ -232,7 +232,6 @@ export class NoteEditor extends Component {
               dangerouslySetInnerHTML={{
                 __html: renderNoteToHtml(content),
               }}
-              onClick={event => event.preventDefault()}
             />
           )}
         {shouldPrint &&
