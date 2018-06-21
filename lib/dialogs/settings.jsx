@@ -51,12 +51,17 @@ export class SettingsDialog extends Component {
   };
 
   signOut = () => {
-    const { onSignOut, onSetWPToken } = this.props;
+    const { onSignOut, onSetWPToken, isElectron } = this.props;
 
     // Reset the WordPress Token
     onSetWPToken(null);
 
     onSignOut();
+
+    if (isElectron) {
+      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
+      ipcRenderer.send('clearCookies');
+    }
   };
 
   showUnsyncedWarning = () => {

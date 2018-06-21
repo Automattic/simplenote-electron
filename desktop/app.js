@@ -7,6 +7,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  session,
 } = require('electron');
 
 const path = require('path');
@@ -74,6 +75,27 @@ module.exports = function main() {
       );
     });
 
+    ipcMain.on('clearCookies', function() {
+      // Removes any cookies stored in the app. We're particularly interested in
+      // removing the WordPress.com cookies that may have been set during sign in.
+      session.defaultSession.cookies.get({}, (error, cookies) => {
+        cookies.forEach(cookie => {
+          // Reconstruct the url to pass to the cookies.remove function
+          let cookieUrl = '';
+          cookieUrl += cookie.secure ? 'https://' : 'http://';
+          cookieUrl += cookie.domain.charAt(0) === '.' ? 'www' : '';
+          cookieUrl += cookie.domain;
+          cookieUrl += cookie.path;
+
+          session.defaultSession.cookies.remove(
+            cookieUrl,
+            cookie.name,
+            () => {} // Ignore callback
+          );
+        });
+      });
+    });
+
     mainWindowState.manage(mainWindow);
 
     mainWindow.webContents.on('new-window', function(event, linkUrl) {
@@ -120,6 +142,18 @@ module.exports = function main() {
     if (process.platform !== 'darwin') {
       app.quit();
     }
+  });
+
+  app.on('browser-window-created', function(event, window) {
+    window.webContents.on('did-finish-load', () => {
+      // Disable drag and drop operations on the window
+      window.webContents.executeJavaScript(
+        "document.addEventListener('dragover', event => event.preventDefault());"
+      );
+      window.webContents.executeJavaScript(
+        "document.addEventListener('drop', event => event.preventDefault());"
+      );
+    });
   });
 
   // This method will be called when Electron has finished
