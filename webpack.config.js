@@ -50,6 +50,10 @@ module.exports = {
           'sass-loader',
         ],
       },
+      {
+        test: /\.(woff)$/,
+        use: ['file-loader'],
+      },
     ],
   },
   resolve: {

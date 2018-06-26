@@ -171,6 +171,10 @@
   }
 }
 
+.monospace .note-detail-textarea {
+  font-family: $monospace;
+}
+
 .note-detail-markdown {
   overflow: visible;
   -webkit-overflow-scrolling: touch;
