@@ -32,7 +32,7 @@ export class AboutDialog extends Component {
           <li>
             <a
               target="_blank"
-              href="http://simplenote.com/blog/"
+              href="https://simplenote.com/blog/"
               rel="noopener noreferrer"
             >
               <span className="about-links-title">Blog</span>
@@ -54,11 +54,11 @@ export class AboutDialog extends Component {
           <li>
             <a
               target="_blank"
-              href="http://simplenote.com/"
+              href="https://simperium.com"
               rel="noopener noreferrer"
             >
-              <span className="about-links-title">Apps</span>
-              <br />simplenote.com
+              <span className="about-links-title">Simperium</span>
+              <br />Add data sync to your app
             </a>
             <TopRightArrowIcon />
           </li>
@@ -90,7 +90,7 @@ export class AboutDialog extends Component {
           <p>
             <a
               target="_blank"
-              href="http://simplenote.com/privacy/"
+              href="https://simplenote.com/privacy/"
               rel="noopener noreferrer"
             >
               Privacy Policy
@@ -98,7 +98,7 @@ export class AboutDialog extends Component {
             &nbsp;&bull;&nbsp;{' '}
             <a
               target="_blank"
-              href="http://simplenote.com/terms/"
+              href="https://simplenote.com/terms/"
               rel="noopener noreferrer"
             >
               Terms of Service
