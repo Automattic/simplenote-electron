@@ -259,8 +259,39 @@ function createMenuTemplate(settings) {
     ],
   };
 
-  // non-osx menu item adjustments
-  if (process.platform !== 'darwin') {
+  // linux menu item adjustments
+  if (process.platform === 'linux') {
+    // add about menu item to Help
+    helpMenu['submenu'].push({
+      type: 'separator',
+    });
+    helpMenu['submenu'].push(aboutMenuItem);
+    helpMenu['submenu'].push({
+      label: 'Help',
+      accelerator: 'F1',
+      click: function() {
+        shell.openExternal('http://simplenote.com/help');
+      },
+    });
+    // add exit and settings items to File
+    fileMenu['submenu'].push({
+      type: 'separator',
+    });
+    fileMenu['submenu'].push(settingsMenuItem);
+    fileMenu['submenu'].push({
+      type: 'separator',
+    });
+    fileMenu['submenu'].push({
+      label: 'E&xit',
+      accelerator: 'Ctrl+Q',
+      click: function() {
+        app.quit();
+      },
+    });
+  }
+
+  // windows menu item adjustments
+  if (process.platform === 'win32') {
     // add about menu item to Help
     helpMenu['submenu'].push({
       type: 'separator',
