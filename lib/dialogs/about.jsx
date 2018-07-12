@@ -54,17 +54,6 @@ export class AboutDialog extends Component {
           <li>
             <a
               target="_blank"
-              href="https://simplenote.com/"
-              rel="noopener noreferrer"
-            >
-              <span className="about-links-title">Apps</span>
-              <br />simplenote.com
-            </a>
-            <TopRightArrowIcon />
-          </li>
-          <li>
-            <a
-              target="_blank"
               href="https://simperium.com"
               rel="noopener noreferrer"
             >
