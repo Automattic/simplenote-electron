@@ -290,8 +290,8 @@ function createMenuTemplate(settings) {
     });
   }
 
-  // windows menu item adjustments
-  if (process.platform === 'win32') {
+  // non-osx and non-linux (eg:windows, freebsd, sunos) menu item adjustments
+  if (process.platform !='darwin' && process.platform !='linux') {
     // add about menu item to Help
     helpMenu['submenu'].push({
       type: 'separator',
