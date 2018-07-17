@@ -204,7 +204,7 @@ function createMenuTemplate(settings) {
       {
         label: 'Help && &Support',
         click: function() {
-          shell.openExternal('http://simplenote.com/help');
+          shell.openExternal('https://simplenote.com/help');
         },
       },
     ],
@@ -270,7 +270,7 @@ function createMenuTemplate(settings) {
       label: 'Help',
       accelerator: 'F1',
       click: function() {
-        shell.openExternal('http://simplenote.com/help');
+        shell.openExternal('https://simplenote.com/help');
       },
     });
     // add exit and settings items to File
@@ -291,7 +291,7 @@ function createMenuTemplate(settings) {
   }
 
   // non-osx and non-linux (eg:windows, freebsd, sunos) menu item adjustments
-  if (process.platform !='darwin' && process.platform !='linux') {
+  if (process.platform !== 'darwin' && process.platform !== 'linux') {
     // add about menu item to Help
     helpMenu['submenu'].push({
       type: 'separator',
