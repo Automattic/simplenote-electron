@@ -140,6 +140,15 @@ var buildViewMenu = function(settings) {
           }
         },
       },
+      {
+        label: 'T&oggle Menubar Visibility',
+        accelerator: 'Ctrl+Shift+M',
+        click(item, focusedWindow) {
+          focusedWindow.webContents.send('appCommand', {
+            action: 'toggleMenubarVisibility',
+          });
+        },
+      },
     ],
   };
 };

@@ -70,6 +70,8 @@ module.exports = function main() {
     Menu.setApplicationMenu(appMenu);
 
     ipcMain.on('settingsUpdate', function(event, settings) {
+      mainWindow.setMenuBarVisibility(settings.menubarVisible);
+
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );

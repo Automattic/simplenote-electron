@@ -79,6 +79,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleMenubarVisibility',
       ]),
       dispatch
     ),
@@ -386,6 +387,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
+
+      console.log('menubar: ', this.state.menubarVisible); // eslint-disable-line
 
       const selectedNote =
         state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
