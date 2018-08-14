@@ -123,7 +123,7 @@ export class TagInput extends Component {
 
   removePastedFormatting = event => {
     document.execCommand(
-      'insertHTML',
+      'insertText',
       false, // don't show default UI - see execCommand docs for explanation
       event.clipboardData.getData('text/plain')
     );
