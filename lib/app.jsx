@@ -282,6 +282,15 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     initializeElectron = () => {
       const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+      const webFrame = __non_webpack_require__('electron').webFrame; // eslint-disable-line no-undef
+      const app = remote.app; // eslint-disable-line no-undef
+      const spellchecker = require('spellchecker');
+
+      webFrame.setSpellCheckProvider(app.getLocale(), true, {
+        spellCheck: text => {
+          return !spellchecker.isMisspelled(text);
+        },
+      });
 
       this.setState({
         electron: {
