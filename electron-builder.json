@@ -2,6 +2,7 @@
   "productName": "Simplenote",
   "appId": "com.automattic.simplenote",
   "asar": "false",
+  "forceCodeSigning": true, 
   "directories": {
     "output": "release"
   },
