@@ -1,9 +1,9 @@
 environment:
   CSC_ENC_KEY: 
     secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
-  CSC_LINK: resources/certificates/win.p12
   CSC_KEY_PASSWORD:
     secure: LIl7Fkr/mxpbjj/eD4EDgA==
+  CSC_LINK: resources\certificates\win.p12
 
 image: Visual Studio 2017
 
@@ -12,7 +12,7 @@ install:
   - npm install
 
 before_build:
-  - ps: openssl aes-256-cbc -d -a -in resources/certificates/win.p12.enc -out resources/certificates/win.p12 -k "$env:CSC_ENC_KEY"
+  - ps: openssl aes-256-cbc -d -a -in resources\certificates\win.p12.enc -out $env:CSC_LINK -k "$env:CSC_ENC_KEY"
 
 build_script:
   - make package-win32
