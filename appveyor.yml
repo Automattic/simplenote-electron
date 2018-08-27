@@ -4,6 +4,7 @@ environment:
   CSC_KEY_PASSWORD:
     secure: LIl7Fkr/mxpbjj/eD4EDgA==
   CSC_LINK: .\resources\certificates\win.p12
+  DEBUG: electron-builder
 
 image: Visual Studio 2017
 
