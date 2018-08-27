@@ -3,7 +3,8 @@
   "appId": "com.automattic.simplenote",
   "asar": "false",
   "directories": {
-    "output": "release"
+    "output": "release",
+    "buildResources": "resources"
   },
   "files": [
     "desktop",
@@ -35,9 +36,20 @@
   "win": {
     "icon": "resources/images/simplenote.ico",
     "target": [{
-      "target": "nsis",
-      "arch": ["ia32"]
+      "target": [
+        "nsis",
+        "appx"
+      ],
+      "arch": [
+        "ia32",
+        "x64"
+      ]
     }]
+  },
+  "appx": {
+    "applicationId": "22490Automattic.Simplenote",
+    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
+    "": ""
   },
   "nsis": {
     "perMachine": true
