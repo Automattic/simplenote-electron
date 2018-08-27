@@ -22,4 +22,5 @@ build_script:
 
 artifacts:
   - path: release\*.exe
+  - path: release\*.appx
   - path: release\*.yml
