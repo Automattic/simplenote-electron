@@ -36,20 +36,19 @@
   "win": {
     "icon": "resources/images/simplenote.ico",
     "target": [{
-      "target": [
-        "nsis",
-        "appx"
-      ],
+      "target": "nsis",
       "arch": [
         "ia32",
         "x64"
       ]
+    },
+    {
+      "target": "appx"
     }]
   },
   "appx": {
     "applicationId": "22490Automattic.Simplenote",
-    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
-    "": ""
+    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306"
   },
   "nsis": {
     "perMachine": true
