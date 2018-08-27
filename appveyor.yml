@@ -9,6 +9,7 @@ image: Visual Studio 2017
 
 install:
   - ps: Install-Product node 10
+  - cinst make
   - npm install
 
 before_build:
