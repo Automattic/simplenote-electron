@@ -7,6 +7,8 @@ environment:
 
 image: Visual Studio 2017
 
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 # install:
 #   - ps: Install-Product node 10
 #   - npm install
@@ -18,10 +20,23 @@ build_script:
   # - make package-win32
   - cmd: echo test
 
-
 artifacts:
   - path: release\*.exe
   - path: release\*.yml
 
 on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - ECHO %APPVEYOR%
+  - ECHO %CI%
+  - ECHO %APPVEYOR_API_URL%
+  - ECHO %APPVEYOR_ACCOUNT_NAME%
+  - ECHO %APPVEYOR_PROJECT_ID%
+  - ECHO %APPVEYOR_PROJECT_NAME%
+  - ECHO %APPVEYOR_PROJECT_SLUG%
+  - ECHO %APPVEYOR_BUILD_FOLDER%
+  - ECHO %APPVEYOR_BUILD_ID%
+  - ECHO %APPVEYOR_BUILD_NUMBER%
+  - ECHO %APPVEYOR_BUILD_VERSION%
+  - ECHO %APPVEYOR_PULL_REQUEST_NUMBER%
+  - ECHO %APPVEYOR_PULL_REQUEST_TITLE%
+  - ECHO %CSC_LINK%
+
