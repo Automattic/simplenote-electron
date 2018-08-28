@@ -31,7 +31,7 @@ jobs:
                   openssl aes-256-cbc -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
       - *npm_restore_cache
       - run: npm ci
-      - run: make package-osx
+      - run: make build
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths
