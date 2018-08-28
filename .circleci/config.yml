@@ -22,7 +22,7 @@ references:
 jobs:
   build:
     macos:
-      xcode: 10
+      xcode: "10.0"
     shell: /bin/bash --login
     working_directory: /Users/distiller/simplenote
     steps:
