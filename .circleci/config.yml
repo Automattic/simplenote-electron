@@ -24,6 +24,11 @@ jobs:
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
+      - run:
+          name: Debugging
+          command: |
+                  sudo apt update
+                  sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxss-dev libx11-dev:i386
       - checkout
       - run:
           name: Decrypt assets
