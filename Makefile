@@ -1,3 +1,13 @@
+ifeq ($(OS),Windows_NT)
+	FILE_PATH_SEP := \
+	ENV_PATH_SEP := ;
+else
+	FILE_PATH_SEP := /
+	ENV_PATH_SEP := :
+endif
+
+/ = $(FILE_PATH_SEP)
+
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
@@ -23,12 +33,13 @@ SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/
 
 # check for config
 config:
-	@test -s $(THIS_DIR)/config.js || test -s $(THIS_DIR)/config.json || { echo "config.json not found. Required file, see docs"; exit 1; }
+	@test -s $(THIS_DIR)$/config.js || test -s $(THIS_DIR)$/config.json || { echo "config.json not found. Required file, see docs"; exit 1; }
 
 # Builds Calypso (desktop)
 build: install
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
-	@$(NPM) run build:prod
+	# @$(NPM) run build:prod
+	@NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
 
 build-if-not-exists:
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
