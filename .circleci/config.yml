@@ -51,7 +51,7 @@ jobs:
           command: |
                   sudo apt update
                   sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev
-      - run: npm ci
+      - run: npm install
       - *npm_save_cache
       - run: make package-linux
       - run:
@@ -75,7 +75,7 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/simplenote
       - *npm_restore_cache
-      - run: npm install
+      - run: npm ci
       - *npm_save_cache
       - run:
           name: Build Mac
