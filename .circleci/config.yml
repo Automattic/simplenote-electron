@@ -101,9 +101,9 @@ jobs:
     working_directory: simplenote
     steps:
       - attach_workspace:
-          at: simplenote
+          at: /tmp/simplenote
       - store_artifacts:
-          path: release
+          path: /tmp/simplenote/release
 
 
 workflows:
