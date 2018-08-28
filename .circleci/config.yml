@@ -75,7 +75,7 @@ jobs:
       - attach_workspace:
           at: /Users/distiller/simplenote
       - *npm_restore_cache
-      - run: npm ci
+      - run: npm install
       - *npm_save_cache
       - run:
           name: Build Mac
