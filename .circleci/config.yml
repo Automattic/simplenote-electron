@@ -28,7 +28,7 @@ jobs:
           name: Debugging
           command: |
                   sudo apt update
-                  sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxss-dev libx11-dev:i386
+                  sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev
       - checkout
       - run:
           name: Decrypt assets
