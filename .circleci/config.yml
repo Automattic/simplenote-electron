@@ -19,8 +19,8 @@ references:
 
 jobs:
   build:
-    macos:
-      xcode: "9.4.1"
+    docker:
+      - image: circleci/node:10.4.1
     shell: /bin/bash --login
     working_directory: /Users/distiller/simplenote
     steps:
@@ -38,7 +38,7 @@ jobs:
 
   linux:
     docker:
-      - image: electronuserland/builder:wine-mono
+      - image: circleci/node:10.4.1
     working_directory: /simplenote
     steps:
       - checkout
@@ -107,7 +107,7 @@ jobs:
 
 workflows:
   version: 2
-  wp-desktop:
+  simplenote:
     jobs:
       - build:
           filters:
