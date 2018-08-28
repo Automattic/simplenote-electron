@@ -1,9 +1,7 @@
 ifeq ($(OS),Windows_NT)
 	FILE_PATH_SEP := \
-	ENV_PATH_SEP := ;
 else
 	FILE_PATH_SEP := /
-	ENV_PATH_SEP := :
 endif
 
 / = $(FILE_PATH_SEP)
@@ -39,7 +37,7 @@ config:
 build: install
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
 	# @$(NPM) run build:prod
-	@NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
+	NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
 
 build-if-not-exists:
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
@@ -87,9 +85,9 @@ config-release: config install
 install: node_modules
 
 node_modules/%:
-	@$(NPM) install $(notdir $@)
+	@npm install $(notdir $@)
 
 node_modules: package.json
-	@$(NPM) prune
-	@$(NPM) install
+	@npm prune
+	@npm install
 	@touch node_modules
