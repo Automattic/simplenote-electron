@@ -1,7 +1,9 @@
 ifeq ($(OS),Windows_NT)
 	FILE_PATH_SEP := \
+# leave this line here. make is make... ¯\_(ツ)_/¯
 else
 	FILE_PATH_SEP := /
+# leave this line here. make is make... ¯\_(ツ)_/¯
 endif
 
 / = $(FILE_PATH_SEP)
@@ -30,8 +32,10 @@ SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # check for config
-config:
-	@test -s $(THIS_DIR)$/config.js || test -s $(THIS_DIR)$/config.json || { echo "config.json not found. Required file, see docs"; exit 1; }
+config.json:
+ifeq (,$(wildcard $(THIS_DIR)$/config.json))
+	$(error config.json not found. Required file, see docs)
+endif
 
 # Builds Calypso (desktop)
 build: install
@@ -39,7 +43,7 @@ build: install
 	# @$(NPM) run build:prod
 	NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
 
-build-if-not-exists:
+build-if-not-exists: config.json
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
 
 build-if-changed: build-if-not-exists
@@ -79,7 +83,7 @@ package-osx: build-if-changed
 package-linux: build-if-changed
 	@npx electron-builder --linux
 
-config-release: config install
+config-release: config.json install
 
 # NPM
 install: node_modules
