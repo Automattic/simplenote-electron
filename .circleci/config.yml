@@ -22,7 +22,7 @@ jobs:
     docker:
       - image: circleci/node:10.4.1
     shell: /bin/bash --login
-    working_directory: /Users/distiller/simplenote
+    working_directory: /simplenote
     steps:
       - checkout
       - run:
@@ -33,7 +33,7 @@ jobs:
       - run: npm ci
       - run: make package-osx
       - persist_to_workspace:
-          root: /Users/distiller/simplenote
+          root: /simplenote
           paths: *app_cache_paths
 
   linux:
