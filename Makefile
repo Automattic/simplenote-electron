@@ -55,19 +55,19 @@ package: build-if-changed
 # @cp -R $(THIS_DIR)/desktop $(DESKTOP_BUILD_DIR)
 # @cp -R $(THIS_DIR)/dist $(DESKTOP_BUILD_DIR)
 
-package-win32:
+package-win32: build-if-changed
 	@npx electron-builder --win
 # @$(PACKAGE_WIN32) ./release/Simplenote-win32-ia32 --win --ia32 --config=./resources/build-config/win32.json
 # @node $(THIS_DIR)/resources/build-scripts/rename-with-version-win.js
 # @node $(THIS_DIR)/resources/build-scripts/code-sign-win.js --spc=$(CERT_SPC) --pvk=$(CERT_PVK)
 
-package-osx:
+package-osx: build-if-changed
 	@npx electron-builder --mac
 # @node $(PACKAGE_DMG)
 # @ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 ./release/Simplenote-darwin-x64/Simplenote.app ./release/Simplenote.app.zip
 # @node $(THIS_DIR)/resources/build-scripts/rename-with-version-osx.js
 
-package-linux:
+package-linux: build-if-changed
 	@npx electron-builder --linux
 
 config-release: config install
