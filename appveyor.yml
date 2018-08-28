@@ -15,7 +15,6 @@ install:
 
 before_build:
   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k %CSC_ENC_KEY%
-  - ls .\resources\certificates\
 
 build_script:
   - make package-win32
