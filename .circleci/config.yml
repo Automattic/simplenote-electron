@@ -6,8 +6,6 @@ references:
       name: Restore npm cache
       keys:
         - v1-npm-{{ arch }}-{{ checksum "package-lock.json" }}
-        - v1-npm-{{ arch }}-{{ checksum "package-lock.json" }}
-        - v1-npm-{{ arch }}
   npm_save_cache: &npm_save_cache
     save_cache:
       name: Save npm cache
