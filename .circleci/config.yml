@@ -49,6 +49,8 @@ jobs:
       - run:
           name: Install linux dev dependencies
           command: |
+                  sudo apt-get update
+                  sudo apt-get -y install libxkbfile-dev libxkbfile-dev:i386 libxss-dev libx11-dev:i386
       - run: npm ci
       - *npm_save_cache
       - run: make package-linux
