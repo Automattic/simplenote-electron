@@ -22,7 +22,7 @@ jobs:
     docker:
       - image: circleci/node:10.4.1
     shell: /bin/bash --login
-    working_directory: /home/ubuntu/simplenote
+    working_directory: simplenote
     steps:
       - checkout
       - run:
@@ -33,7 +33,7 @@ jobs:
       - run: npm ci
       - run: make package-osx
       - persist_to_workspace:
-          root: /home/ubuntu/simplenote
+          root: simplenote
           paths: *app_cache_paths
 
   linux:
@@ -97,10 +97,10 @@ jobs:
   artifacts:
     docker:
       - image: buildpack-deps:trusty
-    working_directory: /home/ubuntu/simplenote
+    working_directory: simplenote
     steps:
       - attach_workspace:
-          at: /home/ubuntu/simplenote
+          at: simplenote
       - store_artifacts:
           path: release
 
