@@ -24,11 +24,6 @@ jobs:
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
-      - run:
-          name: Debugging
-          command: |
-                  sudo apt update
-                  sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev
       - checkout
       - run:
           name: Decrypt assets
@@ -54,8 +49,8 @@ jobs:
       - run:
           name: Install linux dev dependencies
           command: |
-                  sudo apt-get update
-                  sudo apt-get -y install libxkbfile-dev libxkbfile-dev:i386 libxss-dev libx11-dev:i386
+                  sudo apt update
+                  sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev
       - run: npm ci
       - *npm_save_cache
       - run: make package-linux
