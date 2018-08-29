@@ -8,13 +8,7 @@ var buildRadioGroup = function(activePredicate) {
       label: label,
       type: 'radio',
       checked: activePredicate(prop),
-      click: function(item, focusedWindow) {
-        if (!focusedWindow) {
-          return;
-        }
-
-        focusedWindow.webContents.send('appCommand', action);
-      },
+      click: appCommandSender(action),
     };
   };
 };
@@ -27,19 +21,21 @@ var buildFontGroup = function(item) {
   return {
     label: label,
     accelerator: accelerator,
-    click: function(item, focusedWindow) {
-      if (!focusedWindow) {
-        return;
-      }
-
-      focusedWindow.webContents.send('appCommand', { action: action });
-    },
+    click: appCommandSender({ action }),
   };
 };
 
 var equalTo = function(a) {
   return function(b) {
     return a === b;
+  };
+};
+
+const appCommandSender = arg => {
+  return (item, focusedWindow) => {
+    if (focusedWindow) {
+      focusedWindow.webContents.send('appCommand', arg);
+    }
   };
 };
 
@@ -112,19 +108,11 @@ var buildViewMenu = function(settings) {
               label: '&Reversed',
               type: 'checkbox',
               checked: settings.sortReversed,
-              click: function(item, focusedWindow) {
-                if (!focusedWindow) {
-                  return;
-                }
-
-                focusedWindow.webContents.send('appCommand', {
-                  action: 'toggleSortOrder',
-                });
-              },
+              click: appCommandSender({ action: 'toggleSortOrder' }),
             },
           ]),
       },
-            {
+      {
         label: '&Theme',
         submenu: [
           ['&Light', 'light', { action: 'activateTheme', theme: 'light' }],
