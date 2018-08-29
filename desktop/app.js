@@ -259,6 +259,23 @@ function createMenuTemplate(settings) {
     ],
   };
 
+  const windowMenu = {
+    label: '&Window',
+    role: 'window',
+    submenu: [
+      {
+        label: '&Minimize',
+        accelerator: 'CommandOrControl+M',
+        role: 'minimize',
+      },
+      {
+        label: '&Close',
+        accelerator: 'CommandOrControl+W',
+        role: 'close',
+      },
+    ],
+  };
+
   // linux menu item adjustments
   if (process.platform === 'linux') {
     // add about menu item to Help
@@ -370,22 +387,7 @@ function createMenuTemplate(settings) {
       ],
     },
     buildViewMenu(settings),
-    {
-      label: '&Window',
-      role: 'window',
-      submenu: [
-        {
-          label: '&Minimize',
-          accelerator: 'CommandOrControl+M',
-          role: 'minimize',
-        },
-        {
-          label: '&Close',
-          accelerator: 'CommandOrControl+W',
-          role: 'close',
-        },
-      ],
-    },
+    windowMenu,
     helpMenu,
   ];
 
@@ -437,8 +439,7 @@ function createMenuTemplate(settings) {
       ],
     });
 
-    // Window menu.
-    menuTemplate[3].submenu.push(
+    windowMenu.submenu.push(
       {
         type: 'separator',
       },
