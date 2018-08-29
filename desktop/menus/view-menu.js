@@ -13,18 +13,6 @@ var buildRadioGroup = function(activePredicate) {
   };
 };
 
-var buildFontGroup = function(item) {
-  var label = item[0],
-    accelerator = item[1],
-    action = item[2];
-
-  return {
-    label: label,
-    accelerator: accelerator,
-    click: appCommandSender({ action }),
-  };
-};
-
 var equalTo = function(a) {
   return function(b) {
     return a === b;
@@ -73,10 +61,22 @@ var buildViewMenu = function(settings) {
             submenu: [
               // For the oddity with "Command" vs "Cmd"
               // Cite: https://github.com/atom/electron/issues/1507
-              ['&Bigger', 'CommandOrControl+=', 'increaseFontSize'],
-              ['&Smaller', 'CommandOrControl+-', 'decreaseFontSize'],
-              ['&Reset', 'CommandOrControl+0', 'resetFontSize'],
-            ].map(buildFontGroup),
+              {
+                label: '&Bigger',
+                accelerator: 'CommandOrControl+=',
+                click: appCommandSender({ action: 'increaseFontSize' }),
+              },
+              {
+                label: '&Smaller',
+                accelerator: 'CommandOrControl+-',
+                click: appCommandSender({ action: 'decreaseFontSize' }),
+              },
+              {
+                label: '&Reset',
+                accelerator: 'CommandOrControl+0',
+                click: appCommandSender({ action: 'resetFontSize' }),
+              },
+            ],
           },
         ],
       },
