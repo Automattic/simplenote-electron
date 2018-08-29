@@ -16,6 +16,7 @@ references:
     - dist
     - desktop
     - resources
+    - config.json
 
 jobs:
   build:
