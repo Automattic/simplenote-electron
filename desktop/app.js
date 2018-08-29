@@ -22,7 +22,7 @@ module.exports = function main() {
 
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is GCed.
-  var mainWindow = null;
+  let mainWindow = null;
 
   const activateWindow = function() {
     // Only allow a single window
@@ -37,7 +37,7 @@ module.exports = function main() {
     });
 
     // Create the browser window.
-    var iconPath = path.join(
+    const iconPath = path.join(
       __dirname,
       '../lib/icons/app-icon/icon_256x256.png'
     );
@@ -198,7 +198,7 @@ function createMenuTemplate(settings) {
     },
   };
 
-  var helpMenu = {
+  const helpMenu = {
     label: '&Help',
     submenu: [
       {
@@ -210,7 +210,7 @@ function createMenuTemplate(settings) {
     ],
   };
 
-  var fileMenu = {
+  const fileMenu = {
     label: '&File',
     submenu: [
       {
@@ -332,7 +332,7 @@ function createMenuTemplate(settings) {
     });
   }
 
-  var menuTemplate = [
+  const menuTemplate = [
     fileMenu,
     {
       label: '&Edit',
