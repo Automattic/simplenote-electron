@@ -38,7 +38,7 @@ ifeq (,$(wildcard $(THIS_DIR)$/config.json))
 endif
 
 # Builds Calypso (desktop)
-build: install
+build:
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
 	# @$(NPM) run build:prod
 	NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
