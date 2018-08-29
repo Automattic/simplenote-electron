@@ -50,14 +50,39 @@ var buildViewMenu = function(settings) {
     label: '&View',
     submenu: [
       {
-        label: '&Font Size',
+        label: '&Note Display',
         submenu: [
-          // For the oddity with "Command" vs "Cmd"
-          // Cite: https://github.com/atom/electron/issues/1507
-          ['&Bigger', 'CommandOrControl+=', 'increaseFontSize'],
-          ['&Smaller', 'CommandOrControl+-', 'decreaseFontSize'],
-          ['&Reset', 'CommandOrControl+0', 'resetFontSize'],
-        ].map(buildFontGroup),
+          [
+            '&Comfy',
+            'comfy',
+            { action: 'setNoteDisplay', noteDisplay: 'comfy' },
+          ],
+          [
+            'C&ondensed',
+            'condensed',
+            { action: 'setNoteDisplay', noteDisplay: 'condensed' },
+          ],
+          [
+            '&Expanded',
+            'expanded',
+            { action: 'setNoteDisplay', noteDisplay: 'expanded' },
+          ],
+        ].map(buildRadioGroup(equalTo(settings.noteDisplay))),
+      },
+      {
+        label: 'Note &Editor',
+        submenu: [
+          {
+            label: '&Font Size',
+            submenu: [
+              // For the oddity with "Command" vs "Cmd"
+              // Cite: https://github.com/atom/electron/issues/1507
+              ['&Bigger', 'CommandOrControl+=', 'increaseFontSize'],
+              ['&Smaller', 'CommandOrControl+-', 'decreaseFontSize'],
+              ['&Reset', 'CommandOrControl+0', 'resetFontSize'],
+            ].map(buildFontGroup),
+          },
+        ],
       },
       {
         label: '&Sort Type',
@@ -99,32 +124,15 @@ var buildViewMenu = function(settings) {
             },
           ]),
       },
-      {
-        label: '&Note Display',
-        submenu: [
-          [
-            '&Comfy',
-            'comfy',
-            { action: 'setNoteDisplay', noteDisplay: 'comfy' },
-          ],
-          [
-            'C&ondensed',
-            'condensed',
-            { action: 'setNoteDisplay', noteDisplay: 'condensed' },
-          ],
-          [
-            '&Expanded',
-            'expanded',
-            { action: 'setNoteDisplay', noteDisplay: 'expanded' },
-          ],
-        ].map(buildRadioGroup(equalTo(settings.noteDisplay))),
-      },
-      {
+            {
         label: '&Theme',
         submenu: [
           ['&Light', 'light', { action: 'activateTheme', theme: 'light' }],
           ['&Dark', 'dark', { action: 'activateTheme', theme: 'dark' }],
         ].map(buildRadioGroup(equalTo(settings.theme))),
+      },
+      {
+        type: 'separator',
       },
       {
         label: 'T&oggle Full Screen',
