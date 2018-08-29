@@ -94,7 +94,6 @@
     "promise": "7.1.1",
     "prop-types": "15.6.0",
     "react": "16.2.0",
-    "react-addons-shallow-compare": "15.6.2",
     "react-addons-update": "15.6.2",
     "react-overlays": "0.8.3",
     "react-redux": "5.0.7",
