@@ -1,10 +1,12 @@
-# environment:
-#   CSC_ENC_KEY: 
-#     secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
-#   CSC_KEY_PASSWORD:
-#     secure: LIl7Fkr/mxpbjj/eD4EDgA==
-#   CSC_LINK: .\resources\certificates\win.p12
-#   DEBUG: electron-builder
+environment:
+  CSC_ENC_KEY: 
+    secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
+  CSC_KEY_PASSWORD:
+    secure: LIl7Fkr/mxpbjj/eD4EDgA==
+  CSC_LINK: .\resources\certificates\win.p12
+  DEBUG: electron-builder
+  FOO:
+    secure: +1u/EQQBX+O1kab6PEBR/w==
 
 image: Visual Studio 2017
 
@@ -14,6 +16,8 @@ image: Visual Studio 2017
 #   - npm ci
 
 before_build:
+  - echo %CSC_LINK%
+  - echo %FOO%
   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
   - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
 
