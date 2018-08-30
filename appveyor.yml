@@ -8,9 +8,6 @@ environment:
 
 image: Visual Studio 2017
 
-init:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
 # install:
 #   - ps: Install-Product node 10
 #   - cinst make
@@ -34,3 +31,7 @@ build_script:
 #   - '%APPDATA%\npm-cache'
 #   - C:\ProgramData\chocolatey\bin -> appveyor.yml
 #   - C:\ProgramData\chocolatey\lib -> appveyor.yml
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
