@@ -1,21 +1,16 @@
-var buildRadioGroup = function(activePredicate) {
-  return function(item) {
-    var label = item[0],
-      prop = item[1],
-      action = item[2];
+const buildRadioGroup = ({ action, propName, settings }) => {
+  return item => {
+    const { id, ...props } = item;
 
     return {
-      label: label,
       type: 'radio',
-      checked: activePredicate(prop),
-      click: appCommandSender(action),
+      checked: id === settings[propName],
+      click: appCommandSender({
+        action,
+        [propName]: id,
+      }),
+      ...props,
     };
-  };
-};
-
-var equalTo = function(a) {
-  return function(b) {
-    return a === b;
   };
 };
 
@@ -27,7 +22,7 @@ const appCommandSender = arg => {
   };
 };
 
-var buildViewMenu = function(settings) {
+const buildViewMenu = settings => {
   settings = settings || {};
 
   return {
@@ -36,22 +31,25 @@ var buildViewMenu = function(settings) {
       {
         label: '&Note Display',
         submenu: [
-          [
-            '&Comfy',
-            'comfy',
-            { action: 'setNoteDisplay', noteDisplay: 'comfy' },
-          ],
-          [
-            'C&ondensed',
-            'condensed',
-            { action: 'setNoteDisplay', noteDisplay: 'condensed' },
-          ],
-          [
-            '&Expanded',
-            'expanded',
-            { action: 'setNoteDisplay', noteDisplay: 'expanded' },
-          ],
-        ].map(buildRadioGroup(equalTo(settings.noteDisplay))),
+          {
+            label: '&Comfy',
+            id: 'comfy',
+          },
+          {
+            label: 'C&ondensed',
+            id: 'condensed',
+          },
+          {
+            label: '&Expanded',
+            id: 'expanded',
+          },
+        ].map(
+          buildRadioGroup({
+            action: 'setNoteDisplay',
+            propName: 'noteDisplay',
+            settings,
+          })
+        ),
       },
       {
         label: 'Note &Editor',
@@ -83,23 +81,26 @@ var buildViewMenu = function(settings) {
       {
         label: '&Sort Type',
         submenu: [
-          [
-            'Last &modified',
-            'modificationDate',
-            { action: 'setSortType', sortType: 'modificationDate' },
-          ],
-          [
-            'Last &created',
-            'creationDate',
-            { action: 'setSortType', sortType: 'creationDate' },
-          ],
-          [
-            '&Alphabetical',
-            'alphabetical',
-            { action: 'setSortType', sortType: 'alphabetical' },
-          ],
+          {
+            label: 'Last &modified',
+            id: 'modificationDate',
+          },
+          {
+            label: 'Last &created',
+            id: 'creationDate',
+          },
+          {
+            label: '&Alphabetical',
+            id: 'alphabetical',
+          },
         ]
-          .map(buildRadioGroup(equalTo(settings.sortType)))
+          .map(
+            buildRadioGroup({
+              action: 'setSortType',
+              propName: 'sortType',
+              settings,
+            })
+          )
           .concat([
             {
               type: 'separator',
@@ -115,9 +116,21 @@ var buildViewMenu = function(settings) {
       {
         label: '&Theme',
         submenu: [
-          ['&Light', 'light', { action: 'activateTheme', theme: 'light' }],
-          ['&Dark', 'dark', { action: 'activateTheme', theme: 'dark' }],
-        ].map(buildRadioGroup(equalTo(settings.theme))),
+          {
+            label: '&Light',
+            id: 'light',
+          },
+          {
+            label: '&Dark',
+            id: 'dark',
+          },
+        ].map(
+          buildRadioGroup({
+            action: 'activateTheme',
+            propName: 'theme',
+            settings,
+          })
+        ),
       },
       {
         type: 'separator',
