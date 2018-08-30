@@ -13,9 +13,9 @@ image: Visual Studio 2017
 #   - cinst make
 #   - npm ci
 
-# before_build:
-#   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k %CSC_ENC_KEY%
-#   - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k %CSC_ENC_KEY%
+before_build:
+  - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
+  - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
 
 build_script:
   # - make package-win32
@@ -33,5 +33,8 @@ build_script:
 #   - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+on_failure:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
