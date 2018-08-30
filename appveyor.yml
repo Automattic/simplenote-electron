@@ -8,25 +8,29 @@ environment:
 
 image: Visual Studio 2017
 
-install:
-  - ps: Install-Product node 10
-  - cinst make
-  - npm ci
+init:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-before_build:
-  - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k %CSC_ENC_KEY%
-  - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k %CSC_ENC_KEY%
+# install:
+#   - ps: Install-Product node 10
+#   - cinst make
+#   - npm ci
+
+# before_build:
+#   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k %CSC_ENC_KEY%
+#   - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k %CSC_ENC_KEY%
 
 build_script:
-  - make package-win32
+  # - make package-win32
+  echo simplenote
 
-artifacts:
-  - path: release\*.exe
-  - path: release\*.appx
-  - path: release\*.yml
+# artifacts:
+#   - path: release\*.exe
+#   - path: release\*.appx
+#   - path: release\*.yml
 
-cache:
-  - node_modules
-  - '%APPDATA%\npm-cache'
-  - C:\ProgramData\chocolatey\bin -> appveyor.yml
-  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+# cache:
+#   - node_modules
+#   - '%APPDATA%\npm-cache'
+#   - C:\ProgramData\chocolatey\bin -> appveyor.yml
+#   - C:\ProgramData\chocolatey\lib -> appveyor.yml
