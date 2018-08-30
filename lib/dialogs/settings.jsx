@@ -177,6 +177,18 @@ export class SettingsDialog extends Component {
         return (
           <div className="dialog-column settings-display">
             <SettingsGroup
+              title="Note display"
+              slug="noteDisplay"
+              activeSlug={noteDisplay}
+              onChange={setNoteDisplay}
+              renderer={RadioGroup}
+            >
+              <Item title="Comfy" slug="comfy" />
+              <Item title="Condensed" slug="condensed" />
+              <Item title="Expanded" slug="expanded" />
+            </SettingsGroup>
+
+            <SettingsGroup
               title="Sort type"
               slug="sortType"
               activeSlug={sortType}
@@ -196,18 +208,6 @@ export class SettingsDialog extends Component {
               renderer={ToggleGroup}
             >
               <Item title="Reversed" slug="reversed" />
-            </SettingsGroup>
-
-            <SettingsGroup
-              title="Note display"
-              slug="noteDisplay"
-              activeSlug={noteDisplay}
-              onChange={setNoteDisplay}
-              renderer={RadioGroup}
-            >
-              <Item title="Comfy" slug="comfy" />
-              <Item title="Condensed" slug="condensed" />
-              <Item title="Expanded" slug="expanded" />
             </SettingsGroup>
 
             <SettingsGroup
