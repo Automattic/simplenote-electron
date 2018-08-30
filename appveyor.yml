@@ -16,8 +16,6 @@ image: Visual Studio 2017
 #   - npm ci
 
 before_build:
-  - echo %CSC_LINK%
-  - echo %FOO%
   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
   - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
 
@@ -35,10 +33,3 @@ build_script:
 #   - '%APPDATA%\npm-cache'
 #   - C:\ProgramData\chocolatey\bin -> appveyor.yml
 #   - C:\ProgramData\chocolatey\lib -> appveyor.yml
-
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-on_failure:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
