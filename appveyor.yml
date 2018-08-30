@@ -1,10 +1,10 @@
-environment:
-  CSC_ENC_KEY: 
-    secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
-  CSC_KEY_PASSWORD:
-    secure: LIl7Fkr/mxpbjj/eD4EDgA==
-  CSC_LINK: .\resources\certificates\win.p12
-  DEBUG: electron-builder
+# environment:
+#   CSC_ENC_KEY: 
+#     secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
+#   CSC_KEY_PASSWORD:
+#     secure: LIl7Fkr/mxpbjj/eD4EDgA==
+#   CSC_LINK: .\resources\certificates\win.p12
+#   DEBUG: electron-builder
 
 image: Visual Studio 2017
 
