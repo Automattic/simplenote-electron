@@ -41,7 +41,7 @@ endif
 build:
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
 	# @$(NPM) run build:prod
-	NODE_ENV=production npx webpack -p --config .$/webpack.config.dll.js && npx webpack -p --config .$/webpack.config.js
+	NODE_ENV=production npx webpack -p --config webpack.config.dll.js && npx webpack -p --config webpack.config.js
 
 build-if-not-exists: config.json
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
