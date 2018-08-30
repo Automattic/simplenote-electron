@@ -54,6 +54,25 @@ const buildViewMenu = settings => {
               },
             ],
           },
+          {
+            label: '&Line Length',
+            submenu: [
+              {
+                label: '&Narrow',
+                id: 'narrow',
+              },
+              {
+                label: '&Full',
+                id: 'full',
+              },
+            ].map(
+              buildRadioGroup({
+                action: 'setLineLength',
+                propName: 'lineLength',
+                settings,
+              })
+            ),
+          },
         ],
       },
       {
