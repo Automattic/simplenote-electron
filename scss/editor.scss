@@ -157,6 +157,13 @@
   }
 }
 
+.is-line-length-full {
+  .note-detail-textarea,
+  .note-detail-markdown {
+    max-width: none;
+  }
+}
+
 .note-detail-textarea {
   min-height: 100%;
   cursor: text;

@@ -76,6 +76,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'decreaseFontSize',
         'increaseFontSize',
         'resetFontSize',
+        'setLineLength',
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
@@ -391,6 +392,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
+        'is-line-length-full': settings.lineLength === 'full',
         'touch-enabled': 'ontouchstart' in document.body,
       });
 
