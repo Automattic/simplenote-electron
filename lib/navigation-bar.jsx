@@ -17,6 +17,8 @@ const {
 } = appState.actionCreators;
 
 export class NavigationBar extends Component {
+  static displayName = 'NavigationBar';
+
   static defaultProps = {
     onSelectAllNotes: function() {},
     onSelectTrash: function() {},

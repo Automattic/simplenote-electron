@@ -57,4 +57,6 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onToggleNavigation: () => dispatch(toggleNavigation()),
 });
 
+SearchBar.displayName = 'SearchBar';
+
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

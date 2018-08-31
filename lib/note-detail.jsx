@@ -17,6 +17,8 @@ const renderToNode = (node, content) => {
 };
 
 export class NoteDetail extends Component {
+  static displayName = 'NoteDetail';
+
   static propTypes = {
     dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,

@@ -24,6 +24,9 @@ import { tracks } from './analytics';
 import filterNotes from './utils/filter-notes';
 import noteTitle from './utils/note-utils';
 
+AutoSizer.displayName = 'AutoSizer';
+List.displayName = 'List';
+
 /**
  * Delay for preventing row height calculation thrashing
  *
@@ -309,6 +312,8 @@ const renderNote = (
 };
 
 export class NoteList extends Component {
+  static displayName = 'NoteList';
+
   static propTypes = {
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,

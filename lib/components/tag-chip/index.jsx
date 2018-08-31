@@ -12,4 +12,6 @@ export const TagChip = ({ onSelect = noop, selected, tag: tagName }) => (
   </div>
 );
 
+TagChip.displayName = 'TagChip';
+
 export default TagChip;
