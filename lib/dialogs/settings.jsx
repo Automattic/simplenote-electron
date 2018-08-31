@@ -124,6 +124,7 @@ export class SettingsDialog extends Component {
   renderTabContent = tabName => {
     const {
       activateTheme,
+      setLineLength,
       setNoteDisplay,
       setSortType,
       toggleSortOrder,
@@ -132,6 +133,7 @@ export class SettingsDialog extends Component {
     const {
       settings: {
         theme: activeTheme,
+        lineLength,
         noteDisplay,
         sortType,
         sortReversed: sortIsReversed,
@@ -186,6 +188,17 @@ export class SettingsDialog extends Component {
               <Item title="Comfy" slug="comfy" />
               <Item title="Condensed" slug="condensed" />
               <Item title="Expanded" slug="expanded" />
+            </SettingsGroup>
+
+            <SettingsGroup
+              title="Line length"
+              slug="lineLength"
+              activeSlug={lineLength}
+              onChange={setLineLength}
+              renderer={RadioGroup}
+            >
+              <Item title="Narrow" slug="narrow" />
+              <Item title="Full" slug="full" />
             </SettingsGroup>
 
             <SettingsGroup
