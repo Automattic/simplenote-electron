@@ -6,7 +6,7 @@ import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
-import { ContextMenu, MenuItem, Separator } from './context-menu';
+// import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
@@ -37,6 +37,7 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 import SearchBar from './search-bar';
+// import '../spellchecker';
 
 // Electron-specific mocks
 let ipc = getIpc();
@@ -382,7 +383,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         tagBucket,
         isSmallScreen,
       } = this.props;
-      const electron = get(this.state, 'electron');
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
@@ -405,17 +405,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       return (
         <div className={appClasses}>
-          {isElectron() && (
-            <ContextMenu Menu={electron.Menu} window={electron.currentWindow}>
-              <MenuItem label="Undo" role="undo" />
-              <MenuItem label="Redo" role="redo" />
-              <Separator />
-              <MenuItem label="Cut" role="cut" />
-              <MenuItem label="Copy" role="copy" />
-              <MenuItem label="Paste" role="paste" />
-              <MenuItem label="Select All" role="selectall" />
-            </ContextMenu>
-          )}
           {isAuthorized ? (
             <div className={mainClasses}>
               {state.showNavigation && (
