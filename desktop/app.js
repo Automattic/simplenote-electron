@@ -51,6 +51,9 @@ module.exports = function main() {
       icon: iconPath,
       titleBarStyle: 'hidden',
       show: false,
+      webPreferences: {
+        preload: path.join(__dirname, './preload.js'),
+      },
     });
 
     // and load the index of the app.
