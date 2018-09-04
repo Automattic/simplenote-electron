@@ -42,6 +42,7 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "ajv": "6.5.3",
     "autoprefixer": "7.1.3",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
