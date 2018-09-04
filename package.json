@@ -54,7 +54,7 @@
     "babel-preset-react": "6.24.1",
     "classnames": "2.2.5",
     "css-loader": "0.28.9",
-    "electron": "1.8.4",
+    "electron": "2.0.8",
     "electron-builder": "^20.28.2",
     "electron-packager": "9.1.0",
     "enzyme": "3.5.0",
