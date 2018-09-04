@@ -33,7 +33,10 @@
     "Chrome >= 58"
   ],
   "jest": {
-    "rootDir": "lib",
+    "roots": [
+      "desktop",
+      "lib"
+    ],
     "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
   },
   "prettier": {
