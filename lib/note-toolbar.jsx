@@ -9,6 +9,8 @@ import TrashIcon from './icons/trash';
 import ShareIcon from './icons/share';
 
 export class NoteToolbar extends Component {
+  static displayName = 'NoteToolbar';
+
   static propTypes = {
     note: PropTypes.object,
     onTrashNote: PropTypes.func.isRequired,

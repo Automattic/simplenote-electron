@@ -5,6 +5,8 @@ import SmallCrossOutlineIcon from './icons/cross-outline-small';
 import ReorderIcon from './icons/reorder';
 
 export class EditableList extends Component {
+  static displayName = 'EditableList';
+
   static propTypes = {
     editing: PropTypes.bool.isRequired,
     items: PropTypes.array.isRequired,

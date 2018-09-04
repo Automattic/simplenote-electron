@@ -13,6 +13,8 @@ const startsWith = prefix => text =>
     .startsWith(prefix.trim().toLowerCase());
 
 export class TagInput extends Component {
+  static displayName = 'TagInput';
+
   static propTypes = {
     inputRef: PropTypes.func,
     onChange: PropTypes.func,

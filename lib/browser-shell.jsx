@@ -28,6 +28,8 @@ const getState = () => {
  */
 export const browserShell = Wrapped =>
   class extends Component {
+    static displayName = 'BrowserShell';
+
     state = getState();
 
     componentDidMount() {

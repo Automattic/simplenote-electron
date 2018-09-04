@@ -11,6 +11,8 @@ import { get, property } from 'lodash';
 import { renderNoteToHtml } from './utils/render-note-to-html';
 
 export class NoteEditor extends Component {
+  static displayName = 'NoteEditor';
+
   static propTypes = {
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     note: PropTypes.object,

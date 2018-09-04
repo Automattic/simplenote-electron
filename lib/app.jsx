@@ -109,6 +109,8 @@ const isElectronMac = () =>
 
 export const App = connect(mapStateToProps, mapDispatchToProps)(
   class extends Component {
+    static displayName = 'App';
+
     static propTypes = {
       actions: PropTypes.object.isRequired,
       appState: PropTypes.object.isRequired,
