@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
-import TagList from './tag-list';
-import NotesIcon from './icons/notes';
-import TrashIcon from './icons/trash';
-import SettingsIcon from './icons/settings';
-import { viewExternalUrl } from './utils/url-utils';
+import TagList from '../tag-list';
+import NotesIcon from '../icons/notes';
+import TrashIcon from '../icons/trash';
+import SettingsIcon from '../icons/settings';
+import { viewExternalUrl } from '../utils/url-utils';
 import classNames from 'classnames';
-import appState from './flux/app-state';
+import appState from '../flux/app-state';
 
 const {
   selectAllNotes,
