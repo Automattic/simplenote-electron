@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import { get, debounce, invoke, noop } from 'lodash';
-import analytics from './analytics';
-import { viewExternalUrl } from './utils/url-utils';
-import NoteContentEditor from './note-content-editor';
+import analytics from '../analytics';
+import { viewExternalUrl } from '../utils/url-utils';
+import NoteContentEditor from '../note-content-editor';
 
-import { renderNoteToHtml } from './utils/render-note-to-html';
+import { renderNoteToHtml } from '../utils/render-note-to-html';
 
 const saveDelay = 2000;
 
