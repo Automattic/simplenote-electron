@@ -30,7 +30,7 @@
     "npm": ">= 6.4.0"
   },
   "browserslist": [
-    "Chrome >= 58"
+    "electron >=2"
   ],
   "jest": {
     "roots": [
