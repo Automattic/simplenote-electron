@@ -1,11 +1,11 @@
+// Vendor
+@import 'normalize';
+@import '../node_modules/draft-js/dist/Draft.css';
+
 @import 'variables';
 @import 'general';
 @import 'scrollbar';
 @import 'components';
-
-// Vendor
-@import 'normalize';
-@import '../node_modules/draft-js/dist/Draft.css';
 
 @import 'inputs';
 @import 'buttons';

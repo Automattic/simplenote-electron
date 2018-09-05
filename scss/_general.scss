@@ -31,6 +31,12 @@ a {
   color: $blue;
 }
 
+b,
+strong,
+optgroup {
+  font-weight: $bold;
+}
+
 .app {
   display: flex;
   position: absolute;
