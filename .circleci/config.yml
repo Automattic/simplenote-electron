@@ -22,7 +22,7 @@ references:
       name: Install linux dev dependencies
       command: |
               sudo apt update
-              sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev build-essential libc6-dev libc6-dev-i386 gcc-4.8-multilib g++-4.8-multilib g++-multilib
+              sudo apt -y install libxkbfile-dev libxkbfile-dev libxss-dev libx11-dev build-essential libc6 libc6-dev libc6-dev-i386 libx32gcc-4.8-dev gcc-4.8-multilib g++-4.8-multilib g++-multilib
 
 jobs:
   build:
