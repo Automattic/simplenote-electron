@@ -25,20 +25,6 @@
   }
 }
 
-.tag-input {
-  flex: 1 0 auto;
-
-  input {
-    width: 100%;
-    height: 1.75em;
-    min-width: 140px;
-    outline: none;
-    font: 14px/1.5 $sans;
-    color: darken($gray, 20%);
-    background: transparent;
-  }
-}
-
 .tag-email-tooltip {
   position: absolute;
   bottom: 40px;
