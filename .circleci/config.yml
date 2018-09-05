@@ -32,7 +32,7 @@ jobs:
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
-      # - *install_linux_deps
+      - *install_linux_deps
       - checkout
       - run:
           name: Decrypt assets
@@ -55,7 +55,7 @@ jobs:
       - attach_workspace:
           at: ~/simplenote
       - *npm_restore_cache
-      # - *install_linux_deps
+      - *install_linux_deps
       - run: npm install
       - *npm_save_cache
       - run: make package-linux SKIP_BUILD=true
