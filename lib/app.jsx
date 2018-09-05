@@ -6,7 +6,6 @@ import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
-// import { ContextMenu, MenuItem, Separator } from './context-menu';
 import * as Dialogs from './dialogs/index';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
@@ -37,7 +36,6 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 import SearchBar from './search-bar';
-// import '../spellchecker';
 
 // Electron-specific mocks
 let ipc = getIpc();
