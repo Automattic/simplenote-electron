@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay } from 'react-overlays';
-import isEmailTag from './utils/is-email-tag';
-import EmailToolTip from './email-tooltip';
-import TagChip from './components/tag-chip';
-import TagInput from './tag-input';
+import isEmailTag from '../utils/is-email-tag';
+import EmailToolTip from '../email-tooltip';
+import TagChip from '../components/tag-chip';
+import TagInput from '../tag-input';
 import classNames from 'classnames';
-import analytics from './analytics';
+import analytics from '../analytics';
 import {
   differenceBy,
   intersectionBy,
