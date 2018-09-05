@@ -178,7 +178,7 @@ export class TagField extends Component {
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
     return (
-      <div className="tag-entry theme-color-border">
+      <div className="tag-field theme-color-border">
         <div
           className={classNames('tag-editor', {
             'has-selection': this.hasSelection(),
