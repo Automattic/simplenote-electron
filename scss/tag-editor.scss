@@ -25,38 +25,6 @@
   }
 }
 
-.tag-chip {
-  flex: none;
-  margin: 2px 12px 3px 0;
-  padding: 1px 14px 3px 14px;
-  border-radius: 14px;
-  line-height: 1.25em;
-  white-space: nowrap;
-  background: lighten($gray, 30%);
-  color: darken($gray, 20%);
-  text-decoration: none;
-  font-size: 14px;
-  -webkit-tap-highlight-color: transparent;
-
-  &.selected,
-  &:hover {
-    background: $gray;
-    color: $white;
-  }
-}
-
-.theme-dark {
-  .tag-chip {
-    background: darken($gray, 25%);
-    color: lighten($gray, 10%);
-
-    &.selected {
-      background: lighten($gray, 10%);
-      color: darken($gray, 30%);
-    }
-  }
-}
-
 .tag-input {
   flex: 1 0 auto;
 
