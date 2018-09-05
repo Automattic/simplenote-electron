@@ -61,6 +61,7 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
+              includePaths: [__dirname + '/lib'],
               sourceMap: true,
             },
           },
