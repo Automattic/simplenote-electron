@@ -31,6 +31,8 @@ SIMPLENOTE_JS := $(THIS_DIR)/dist/app.js
 SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .min. | wc -l`
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
+SKIP_BUILD = false
+
 # check for config
 config.json:
 ifeq (,$(wildcard $(THIS_DIR)$/config.json))
@@ -39,9 +41,11 @@ endif
 
 # Builds Calypso (desktop)
 build:
+ifeq ($(SKIP_BUILD),false)
+	@echo building...
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
-	# @$(NPM) run build:prod
 	NODE_ENV=production npx webpack -p --config webpack.config.dll.js && npx webpack -p --config webpack.config.js
+endif
 
 build-if-not-exists: config.json
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
