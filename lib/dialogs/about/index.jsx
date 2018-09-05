@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SimplenoteLogo from '../icons/simplenote';
-import CrossIcon from '../icons/cross';
-import TopRightArrowIcon from '../icons/arrow-top-right';
-import Dialog from '../dialog';
+import SimplenoteLogo from '../../icons/simplenote';
+import CrossIcon from '../../icons/cross';
+import TopRightArrowIcon from '../../icons/arrow-top-right';
+import Dialog from '../../dialog';
 
 const appVersion = config.version; // eslint-disable-line no-undef
 
