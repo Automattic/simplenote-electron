@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import appState from './flux/app-state';
+import appState from '../flux/app-state';
 
 export const EmailToolTip = ({ openShareDialog }) => (
   <div className="tag-email-tooltip">
