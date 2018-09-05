@@ -1,7 +1,10 @@
 @import 'variables';
+@import 'general';
 @import 'components';
 
+// Vendor
 @import 'normalize';
+@import '../node_modules/draft-js/dist/Draft.css';
 
 @import 'inputs';
 @import 'buttons';
@@ -12,7 +15,6 @@
 @import 'toggle-control';
 @import 'spinner';
 
-@import 'general';
 @import 'editable-list';
 @import 'navigation-bar';
 @import 'note-info';
@@ -36,4 +38,3 @@
 @import 'theme';
 @import 'print';
 
-@import '../node_modules/draft-js/dist/Draft.css';
