@@ -1,1 +1,1 @@
-require('./contextMenu');
+require('./context-menu');
