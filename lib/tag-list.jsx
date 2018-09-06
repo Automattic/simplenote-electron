@@ -17,6 +17,8 @@ const {
 const { recordEvent } = tracks;
 
 export class TagList extends Component {
+  static displayName = 'TagList';
+
   static propTypes = {
     onSelectTag: PropTypes.func.isRequired,
     onEditTags: PropTypes.func.isRequired,

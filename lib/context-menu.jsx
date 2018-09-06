@@ -56,7 +56,7 @@ export class ContextMenu extends Component {
       return;
     }
 
-    menu.popup(currentWindow);
+    menu.popup({ window: currentWindow });
   };
 
   buildMenu = children => {

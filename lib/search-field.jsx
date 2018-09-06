@@ -11,6 +11,8 @@ const { recordEvent } = tracks;
 const KEY_ESC = 27;
 
 export class SearchField extends Component {
+  static displayName = 'SearchField';
+
   static propTypes = {
     placeholder: PropTypes.string.isRequired,
     query: PropTypes.string.isRequired,
