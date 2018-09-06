@@ -42,6 +42,7 @@ export class TagList extends Component {
         onClick={this.onSelectTag.bind(this, tag)}
         value={tag.data.name}
         onChange={handleRenameTag}
+        spellCheck={false}
       />
     );
   };

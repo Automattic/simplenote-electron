@@ -54,6 +54,7 @@ export class SearchField extends Component {
           onChange={this.update}
           onKeyUp={this.interceptEsc}
           value={query}
+          spellCheck={false}
         />
         <div onClick={this.clearQuery}>
           <SmallCrossIcon />
