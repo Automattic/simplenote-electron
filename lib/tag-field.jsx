@@ -17,6 +17,8 @@ import {
 } from 'lodash';
 
 export class TagField extends Component {
+  static displayName = 'TagField';
+
   static propTypes = {
     storeFocusTagField: PropTypes.func,
     storeHasFocus: PropTypes.func,

@@ -16,6 +16,7 @@
     "build:app": "webpack --config ./webpack.config.js",
     "build:dll": "webpack --config ./webpack.config.dll.js",
     "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
+    "electron": "electron .",
     "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
     "lint": "eslint --ext .js --ext .jsx lib",
     "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
@@ -26,13 +27,16 @@
   },
   "engines": {
     "node": ">= 7.9.0",
-    "npm": ">= 4.2.0"
+    "npm": ">= 6.4.0"
   },
   "browserslist": [
-    "Chrome >= 58"
+    "electron >=2"
   ],
   "jest": {
-    "rootDir": "lib",
+    "roots": [
+      "desktop",
+      "lib"
+    ],
     "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
   },
   "prettier": {
@@ -41,22 +45,23 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@babel/core": "7.0.0",
+    "@babel/plugin-proposal-class-properties": "7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "7.0.0",
+    "@babel/preset-env": "7.0.0",
+    "@babel/preset-react": "7.0.0",
+    "ajv": "6.5.3",
     "autoprefixer": "7.1.3",
-    "babel-core": "6.26.0",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "7.2.3",
-    "babel-jest": "20.0.3",
-    "babel-loader": "7.1.4",
-    "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-preset-env": "1.6.1",
-    "babel-preset-es2015": "6.24.1",
-    "babel-preset-react": "6.24.1",
+    "babel-loader": "8.0.0",
     "classnames": "2.2.5",
     "css-loader": "0.28.9",
-    "electron": "1.8.4",
-    "electron-builder": "20.16.3",
+    "electron": "2.0.8",
+    "electron-builder": "20.28.2",
     "electron-packager": "9.1.0",
-    "enzyme": "2.9.1",
+    "enzyme": "3.5.0",
+    "enzyme-adapter-react-16.2": "1.1.0",
     "eslint": "4.18.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-loader": "2.0.0",
@@ -64,12 +69,11 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-react": "7.6.1",
     "html-webpack-plugin": "3.2.0",
-    "jest-cli": "22.3.0",
+    "jest": "23.5.0",
     "json-loader": "0.5.7",
-    "node-sass": "4.7.2",
+    "node-sass": "4.9.3",
     "postcss-loader": "2.1.0",
     "prettier": "1.10.2",
-    "react-addons-test-utils": "15.6.2",
     "react-dom": "16.2.0",
     "react-onclickoutside": "6.7.1",
     "react-test-renderer": "16.2.0",
@@ -94,7 +98,6 @@
     "promise": "7.1.1",
     "prop-types": "15.6.0",
     "react": "16.2.0",
-    "react-addons-shallow-compare": "15.6.2",
     "react-addons-update": "15.6.2",
     "react-overlays": "0.8.3",
     "react-redux": "5.0.7",

@@ -16,12 +16,10 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 
 ## Electron
 
-Install electron globally `npm install -g electron --save-dev`, then:
-
 1. Run `npm run build`
-2. Run `electron .`
+2. Run `npm run electron`
 
-You can also pass along the `--devtools` option after `electron .` to open the developer tools
+You can also pass along the `--devtools` option (`npm run electron -- --devtools`) to open the developer tools.
 
 ## Coding Guidelines
 

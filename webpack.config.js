@@ -6,7 +6,7 @@ const spawnSync = require('child_process').spawnSync;
 
 module.exports = {
   context: __dirname + '/lib',
-  devtool: 'sourcemap',
+  devtool: 'cheap-module-eval-source-map',
   entry: ['./boot'],
   output: {
     path: __dirname + '/dist',
@@ -45,9 +45,25 @@ module.exports = {
         test: /\.scss$/,
         use: [
           'style-loader',
-          'css-loader',
-          { loader: 'postcss-loader', options: { plugins: [autoprefixer()] } },
-          'sass-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [autoprefixer()],
+              sourceMap: true,
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
         ],
       },
     ],

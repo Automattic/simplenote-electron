@@ -15,7 +15,6 @@ module.exports = {
       'moment',
       'promise',
       'react',
-      'react-addons-shallow-compare',
       'react-addons-update',
       'react-redux',
       'redux',
