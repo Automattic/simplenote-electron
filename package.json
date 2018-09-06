@@ -33,6 +33,11 @@
     "electron >=2"
   ],
   "jest": {
+    "globals": {
+      "config": {
+        "appVersion": "foo"
+      }
+    },
     "roots": [
       "desktop",
       "lib"
