@@ -37,6 +37,7 @@
       "desktop",
       "lib"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>setup-tests.js",
     "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
   },
   "prettier": {

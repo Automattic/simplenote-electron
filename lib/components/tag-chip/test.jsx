@@ -1,13 +1,8 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16.2';
+import { mount, shallow } from 'enzyme';
 
 import TagChip from './';
-
-const { mount, shallow } = Enzyme;
-
-Enzyme.configure({ adapter: new Adapter() });
 
 describe('TagChip', () => {
   it('should select tag when clicked', () => {
