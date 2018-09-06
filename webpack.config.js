@@ -6,7 +6,7 @@ const spawnSync = require('child_process').spawnSync;
 
 module.exports = {
   context: __dirname + '/lib',
-  devtool: 'sourcemap',
+  devtool: 'cheap-module-eval-source-map',
   entry: ['./boot'],
   output: {
     path: __dirname + '/dist',
