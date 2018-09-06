@@ -215,7 +215,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               type: 'base64',
             })
           )
-          .then(blob => fs.writeFile(command.filename, blob, 'base64'))
+          .then(blob => fs.writeFile(command.filename, blob, 'base64', noop))
           .catch(console.log); // eslint-disable-line no-console
       }
 
