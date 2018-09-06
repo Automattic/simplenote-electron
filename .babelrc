@@ -1,15 +1,15 @@
 {
-  "env": {
-    "test": {
-      "presets": [ "es2015", "react" ]
-    }
-  },
   "presets": [
-    [ "es2015", { "modules": false } ],
-    "react"
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry"
+      }
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
-    "babel-plugin-transform-class-properties",
-    "babel-plugin-transform-object-rest-spread"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
   ]
 }
