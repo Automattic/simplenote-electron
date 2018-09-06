@@ -2,7 +2,7 @@ const { ContextMenuListener } = require('electron-spellchecker');
 
 // We are using a custom ContextMenuBuilder and SpellcheckHandler to become more flexible
 const ContextMenuBuilder = require('./ContextMenuBuilder');
-const SpellCheckHandler = require('./SpellCheckHandler');
+const SpellCheckHandler = require('./SpellcheckHandler');
 
 window.spellCheckHandler = new SpellCheckHandler(5);
 
