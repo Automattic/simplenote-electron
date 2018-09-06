@@ -33,6 +33,19 @@ SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/
 
 SKIP_BUILD = false
 
+.PHONY: start
+start: rebuild-deps
+	@npx electron .
+
+.PHONY: rebuild-deps
+rebuild-deps:
+	@npx electron-rebuild
+
+# TODO: move npm scripts to makefile
+.PHONY: dev
+dev:
+	@npm start
+
 # check for config
 config.json:
 ifeq (,$(wildcard $(THIS_DIR)$/config.json))
