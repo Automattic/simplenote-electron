@@ -2,16 +2,17 @@
 @import 'normalize';
 @import '../node_modules/draft-js/dist/Draft.css';
 
+// Internal
 @import 'variables';
 @import 'general';
 @import 'scrollbar';
 @import 'components';
 
+// TODO: Tie these styles to their own components
 @import 'inputs';
 @import 'buttons';
-
 @import 'placeholders';
 
+// TODO: Figure out a better way to manage these
 @import 'theme';
 @import 'print';
-
