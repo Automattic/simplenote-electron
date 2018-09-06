@@ -7,7 +7,6 @@ import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import { ContextMenu, MenuItem, Separator } from './context-menu';
-import * as Dialogs from './dialogs/index';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
 import SimplenoteCompactLogo from './icons/simplenote-compact';
@@ -16,17 +15,14 @@ import NoteList from './note-list';
 import NoteEditor from './note-editor';
 import NavigationBar from './navigation-bar';
 import Auth from './auth';
+import DialogRenderer from './dialog-renderer';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
-  compact,
-  concat,
-  flowRight,
   noop,
   get,
   has,
   isObject,
-  map,
   matchesProperty,
   overEvery,
   pick,
@@ -482,40 +478,15 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
             />
           )}
           {this.props.appState.dialogs.length > 0 && (
-            <div className="dialogs">{this.renderDialogs()}</div>
+            <DialogRenderer
+              appProps={this.props}
+              dialogs={this.props.appState.dialogs}
+              isElectron={isElectron()}
+            />
           )}
         </div>
       );
     }
-
-    renderDialogs = () => {
-      const { dialogs } = this.props.appState;
-
-      const makeDialog = (dialog, key) => [
-        dialog.modal && (
-          <div key="overlay" className="dialogs-overlay" onClick={null} />
-        ),
-        this.renderDialog(dialog, key),
-      ];
-
-      return flowRight(compact, concat, map)(dialogs, makeDialog);
-    };
-
-    renderDialog = ({ params, ...dialog }, key) => {
-      const DialogComponent = Dialogs[dialog.type];
-
-      if (DialogComponent === null) {
-        throw new Error('Unknown dialog type.');
-      }
-
-      return (
-        <DialogComponent
-          isElectron={isElectron()}
-          {...this.props}
-          {...{ key, dialog, params }}
-        />
-      );
-    };
   }
 );
 
