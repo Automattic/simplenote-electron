@@ -11,8 +11,8 @@
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
   "scripts": {
-    "start": "make dev",
-    "electron": "make start",
+    "dev": "make dev",
+    "start": "make start NODE_ENV=development",
     "test": "make test",
     "lint": "make lint",
     "format": "make format",
