@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as Dialogs from './dialogs/index';
 import { compact, concat, flowRight, map } from 'lodash';
 
@@ -39,6 +40,12 @@ export const DialogRenderer = props => {
   }
 
   return <div className="dialogs">{renderDialogs()}</div>;
+};
+
+DialogRenderer.propTypes = {
+  appProps: PropTypes.object.isRequired,
+  dialogs: PropTypes.array.isRequired,
+  isElectron: PropTypes.bool.isRequired,
 };
 
 export default DialogRenderer;
