@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as Dialogs from './dialogs/index';
+import * as Dialogs from '../dialogs';
 import { compact, concat, flowRight, map } from 'lodash';
 
 export const DialogRenderer = props => {
