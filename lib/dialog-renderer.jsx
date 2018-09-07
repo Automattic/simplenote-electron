@@ -34,6 +34,10 @@ export const DialogRenderer = props => {
     );
   };
 
+  if (props.dialogs.length === 0) {
+    return null;
+  }
+
   return <div className="dialogs">{renderDialogs()}</div>;
 };
 

@@ -477,13 +477,11 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               isElectron={isElectron()}
             />
           )}
-          {this.props.appState.dialogs.length > 0 && (
-            <DialogRenderer
-              appProps={this.props}
-              dialogs={this.props.appState.dialogs}
-              isElectron={isElectron()}
-            />
-          )}
+          <DialogRenderer
+            appProps={this.props}
+            dialogs={this.props.appState.dialogs}
+            isElectron={isElectron()}
+          />
         </div>
       );
     }
