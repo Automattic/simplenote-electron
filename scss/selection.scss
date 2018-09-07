@@ -1,8 +1,0 @@
-body {
-  user-select: none;
-}
-
-// Make sure inputs that are readonly (i.e. tag list) are not selectable
-input[readonly] {
-  user-select: none;
-}

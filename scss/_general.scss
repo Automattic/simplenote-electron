@@ -13,6 +13,7 @@ a[href^='https://'] {
 html,
 body {
   height: 100%;
+  user-select: none;
 }
 
 body {
@@ -29,6 +30,12 @@ svg {
 
 a {
   color: $blue;
+}
+
+b,
+strong,
+optgroup {
+  font-weight: $bold;
 }
 
 .app {

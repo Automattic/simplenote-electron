@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import SmallCrossOutlineIcon from './icons/cross-outline-small';
-import ReorderIcon from './icons/reorder';
+import SmallCrossOutlineIcon from '../icons/cross-outline-small';
+import ReorderIcon from '../icons/reorder';
 
 export class EditableList extends Component {
   static displayName = 'EditableList';

@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
-import ToggleControl from './controls/toggle';
+import ToggleControl from '../controls/toggle';
 import moment from 'moment';
-import CrossIcon from './icons/cross';
+import CrossIcon from '../icons/cross';
 import { connect } from 'react-redux';
-import appState from './flux/app-state';
-import { setMarkdown } from './state/settings/actions';
-import filterNotes from './utils/filter-notes';
+import appState from '../flux/app-state';
+import { setMarkdown } from '../state/settings/actions';
+import filterNotes from '../utils/filter-notes';
 
 export class NoteInfo extends Component {
   static propTypes = {

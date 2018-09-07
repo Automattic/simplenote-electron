@@ -15,14 +15,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AutoSizer, List } from 'react-virtualized';
-import PublishIcon from './icons/feed';
+import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
 import { debounce, escapeRegExp, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import appState from './flux/app-state';
-import { tracks } from './analytics';
-import filterNotes from './utils/filter-notes';
-import noteTitle from './utils/note-utils';
+import appState from '../flux/app-state';
+import { tracks } from '../analytics';
+import filterNotes from '../utils/filter-notes';
+import noteTitle from '../utils/note-utils';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';

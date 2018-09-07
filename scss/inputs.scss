@@ -9,6 +9,11 @@ textarea {
 
 input {
   -webkit-tap-highlight-color: transparent;
+
+  // Make sure inputs that are readonly (i.e. tag list) are not selectable
+  &[readonly] {
+    user-select: none;
+  }
 }
 
 .transparent-input {

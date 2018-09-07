@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import NoteDetail from './note-detail';
-import TagField from './tag-field';
-import NoteToolbar from './note-toolbar';
-import RevisionSelector from './revision-selector';
+import NoteDetail from '../note-detail';
+import TagField from '../tag-field';
+import NoteToolbar from '../note-toolbar';
+import RevisionSelector from '../revision-selector';
 import { get, property } from 'lodash';
 
-import { renderNoteToHtml } from './utils/render-note-to-html';
+import { renderNoteToHtml } from '../utils/render-note-to-html';
 
 export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
