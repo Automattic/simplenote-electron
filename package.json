@@ -89,7 +89,6 @@
     "crypto-random-string": "1.0.0",
     "draft-js": "0.10.5",
     "draft-js-simpledecorator": "1.0.2",
-    "electron-debug": "^2.0.0",
     "electron-spellchecker": "^1.1.2",
     "electron-window-state": "4.1.1",
     "highlight.js": "9.12.0",

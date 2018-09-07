@@ -12,7 +12,6 @@ const {
 
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
-require('electron-debug')();
 
 const buildViewMenu = require('./menus/view-menu');
 const { isDev } = require('./env');
