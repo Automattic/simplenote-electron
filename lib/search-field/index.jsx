@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import SmallCrossIcon from './icons/cross-small';
-import appState from './flux/app-state';
-import { tracks } from './analytics';
+import SmallCrossIcon from '../icons/cross-small';
+import appState from '../flux/app-state';
+import { tracks } from '../analytics';
 
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;

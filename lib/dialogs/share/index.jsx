@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
-import isEmailTag from '../utils/is-email-tag';
-import TabbedDialog from '../tabbed-dialog';
-import ToggleControl from '../controls/toggle';
+import isEmailTag from '../../utils/is-email-tag';
+import TabbedDialog from '../../tabbed-dialog';
+import ToggleControl from '../../controls/toggle';
 import { includes, isEmpty } from 'lodash';
 
 const shareTabs = ['collaborate', 'publish'];

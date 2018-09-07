@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import TabbedDialog from '../tabbed-dialog';
-import { viewExternalUrl } from '../utils/url-utils';
-import TopRightArrowIcon from '../icons/arrow-top-right';
+import TabbedDialog from '../../tabbed-dialog';
+import { viewExternalUrl } from '../../utils/url-utils';
+import TopRightArrowIcon from '../../icons/arrow-top-right';
 
-import RadioGroup from './radio-settings-group';
-import ToggleGroup from './toggle-settings-group';
-import SettingsGroup, { Item } from './settings-group';
+import RadioGroup from '../radio-settings-group';
+import ToggleGroup from '../toggle-settings-group';
+import SettingsGroup, { Item } from '../settings-group';
 
-import { setWPToken } from '../state/settings/actions';
+import { setWPToken } from '../../state/settings/actions';
 
 const settingTabs = ['account', 'display'];
 

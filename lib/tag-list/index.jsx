@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import EditableList from './editable-list';
+import EditableList from '../editable-list';
 import { get } from 'lodash';
-import appState from './flux/app-state';
-import { tracks } from './analytics';
+import appState from '../flux/app-state';
+import { tracks } from '../analytics';
 
 const {
   editTags,

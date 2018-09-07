@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import cryptoRandomString from 'crypto-random-string';
 import { get } from 'lodash';
-import getConfig from '../get-config';
-import SimplenoteLogo from './icons/simplenote';
-import Spinner from './components/spinner';
-import WordPressLogo from './icons/wordpress';
+import getConfig from '../../get-config';
+import SimplenoteLogo from '../icons/simplenote';
+import Spinner from '../components/spinner';
+import WordPressLogo from '../icons/wordpress';
 
-import { hasInvalidCredentials, hasLoginError } from './state/auth/selectors';
-import { setWPToken } from './state/settings/actions';
+import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
+import { setWPToken } from '../state/settings/actions';
 
 export class Auth extends Component {
   static propTypes = {

@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 module.exports = {
   context: __dirname + '/lib',
@@ -61,6 +62,7 @@ module.exports = {
           {
             loader: 'sass-loader',
             options: {
+              includePaths: [__dirname + '/lib'],
               sourceMap: true,
             },
           },
@@ -77,6 +79,7 @@ module.exports = {
       context: process.cwd(),
       manifest: require(process.cwd() + '/dist/vendor.json'),
     }),
+    new HardSourceWebpackPlugin(),
     new HtmlWebpackPlugin({
       'build-platform': process.platform,
       'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
