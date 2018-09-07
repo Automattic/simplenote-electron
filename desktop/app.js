@@ -21,7 +21,10 @@ require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
   require('./updater')();
-  const url = 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
+  const url =
+    isDev && process.env.DEV_SERVER
+      ? 'http://localhost:4000'
+      : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
 
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is GCed.
