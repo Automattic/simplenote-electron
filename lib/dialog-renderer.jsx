@@ -19,7 +19,8 @@ export const DialogRenderer = props => {
     return flowRight(compact, concat, map)(dialogs, makeDialog);
   };
 
-  const renderDialog = ({ params, ...dialog }, key) => {
+  const renderDialog = (dialog, key) => {
+    const { params, ...dialogProps } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
@@ -28,9 +29,9 @@ export const DialogRenderer = props => {
 
     return (
       <DialogComponent
-        isElectron={isElectron}
+        dialog={dialogProps}
         {...appProps}
-        {...{ key, dialog, params }}
+        {...{ key, params, isElectron }}
       />
     );
   };
