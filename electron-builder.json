@@ -11,15 +11,16 @@
   ],
   "mac": {
     "icon": "./resources/images/app-icon.icns",
-    "category": "public.app-category.social-networking"
+    "category": "public.app-category.social-networking",
+    "artifactName": "Simplenote-macOS-${version}.${ext}"
   },
   "dmg": {
     "title": "Simplenote Installer",
+    "artifactName": "Simplenote-macOS-${version}.${ext}",
     "icon": "./resources/images/dmg-icon.icns",
     "iconSize": 150,
     "background": "./resources/images/dmg-background.png",
-    "contents": [
-      {
+    "contents": [{
         "x": 480,
         "y": 240,
         "type": "link",
@@ -34,31 +35,35 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [{
-      "target": "nsis",
-      "arch": [
-        "ia32",
-        "x64"
-      ]
-    },
-    {
-      "target": "appx"
-    }]
+        "target": "nsis",
+        "arch": [
+          "ia32",
+          "x64"
+        ]
+      },
+      {
+        "target": "appx"
+      }
+    ]
   },
   "appx": {
     "applicationId": "Simplenote",
     "identityName": "22490Automattic.Simplenote",
     "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
     "publisherDisplayName": "Automattic",
-    "backgroundColor": "transparent"
+    "backgroundColor": "transparent",
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
   },
   "nsis": {
-    "perMachine": true
+    "perMachine": true,
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
   },
   "linux": {
     "icon": "resources/images/",
-    "target": [
-      {
+    "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
+    "target": [{
         "target": "AppImage",
         "arch": [
           "x64",
@@ -105,4 +110,3 @@
     "depends": ["gconf2"]
   }
 }
-
