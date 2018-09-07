@@ -13,7 +13,9 @@ const {
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 require('electron-debug')();
+
 const buildViewMenu = require('./menus/view-menu');
+const { isDev } = require('./env');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
@@ -64,7 +66,7 @@ module.exports = function main() {
       mainWindow.loadUrl(url);
     }
 
-    if (process.argv.includes('--devtools')) {
+    if (isDev || process.argv.includes('--devtools')) {
       mainWindow.openDevTools();
     }
 
