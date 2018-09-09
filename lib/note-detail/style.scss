@@ -1,3 +1,85 @@
+.note-detail-wrapper {
+  flex: 1 1 auto;
+  overflow: hidden;
+  position: relative;
+
+  .note-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+		div[data-contents] {
+			padding-bottom: 20px;
+		}
+  }
+}
+
+.note-detail-textarea,
+.note-detail-markdown,
+.note-print {
+  width: 100%;
+  height: 100%;
+  max-width: 780px;
+  padding: 24px;
+  border: none;
+  line-height: 1.5em;
+  font-size: 16px;
+  color: darken($gray, 20%);
+  background: $white;
+  resize: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.is-line-length-full {
+  .note-detail-textarea,
+  .note-detail-markdown {
+    max-width: none;
+  }
+}
+
+.note-detail-textarea {
+  min-height: 100%;
+  cursor: text;
+
+  div,
+  span {
+    cursor: inherit;
+  }
+
+  &::first-line {
+    font-size: 120%;
+  }
+}
+
+.note-detail-markdown {
+  overflow: visible;
+  -webkit-overflow-scrolling: touch;
+
+  p {
+    margin: 0 0 1.5em;
+  }
+
+  a {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 .note-detail-markdown {
   @import '../node_modules/highlight.js/styles/solarized-light.css';
 
@@ -61,5 +143,4 @@
       font-weight: 600;
     }
   }
-
 }

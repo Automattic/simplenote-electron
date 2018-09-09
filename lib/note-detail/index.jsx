@@ -6,6 +6,7 @@ import { get, debounce, invoke, noop } from 'lodash';
 import analytics from '../analytics';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
+import SimplenoteCompactLogo from '../icons/simplenote-compact';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
 
@@ -153,37 +154,47 @@ export class NoteDetail extends Component {
   };
 
   render() {
-    const { filter, fontSize, previewingMarkdown } = this.props;
+    const { note, filter, fontSize, previewingMarkdown } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
 
-    return (
-      <div className="note-detail">
-        {previewingMarkdown && (
-          <div
-            ref={this.storePreview}
-            className="note-detail-markdown theme-color-bg theme-color-fg"
-            onClick={this.onPreviewClick}
-            style={divStyle}
-          />
-        )}
+    if (!note) {
+      return (
+        <div className="placeholder-note-editor">
+          <SimplenoteCompactLogo />
+        </div>
+      );
+    }
 
-        {!previewingMarkdown && (
-          <div
-            className="note-detail-textarea theme-color-bg theme-color-fg"
-            style={divStyle}
-          >
-            <NoteContentEditor
-              ref={this.saveEditorRef}
-              storeFocusEditor={this.storeFocusContentEditor}
-              storeHasFocus={this.storeEditorHasFocus}
-              content={content}
-              filter={filter}
-              onChangeContent={this.queueNoteSave}
+    return (
+      <div className="note-detail-wrapper">
+        <div className="note-detail">
+          {previewingMarkdown && (
+            <div
+              ref={this.storePreview}
+              className="note-detail-markdown theme-color-bg theme-color-fg"
+              onClick={this.onPreviewClick}
+              style={divStyle}
             />
-          </div>
-        )}
+          )}
+
+          {!previewingMarkdown && (
+            <div
+              className="note-detail-textarea theme-color-bg theme-color-fg"
+              style={divStyle}
+            >
+              <NoteContentEditor
+                ref={this.saveEditorRef}
+                storeFocusEditor={this.storeFocusContentEditor}
+                storeHasFocus={this.storeEditorHasFocus}
+                content={content}
+                filter={filter}
+                onChangeContent={this.queueNoteSave}
+              />
+            </div>
+          )}
+        </div>
       </div>
     );
   }

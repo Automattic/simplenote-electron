@@ -176,6 +176,8 @@ export class NoteEditor extends Component {
       {
         revisions: isViewingRevisions,
         markdown: markdownEnabled,
+        'placeholder-note-detail': !note,
+        'theme-color-border': !note,
       }
     );
 
@@ -192,40 +194,38 @@ export class NoteEditor extends Component {
 
     return (
       <div className={classes}>
-        <RevisionSelector
-          revisions={revisions || []}
-          onViewRevision={this.onViewRevision}
-          onSelectRevision={this.onSelectRevision}
-          onCancelRevision={this.onCancelRevision}
-        />
-        <div className="note-editor-controls theme-color-border">
-          <NoteToolbar
-            note={note}
-            onTrashNote={this.props.onTrashNote}
-            onRestoreNote={this.props.onRestoreNote}
-            onShareNote={this.props.onShareNote}
-            onDeleteNoteForever={this.props.onDeleteNoteForever}
-            onRevisions={this.props.onRevisions}
-            setIsViewingRevisions={this.setIsViewingRevisions}
-            onCloseNote={this.props.onCloseNote}
-            onNoteInfo={this.props.onNoteInfo}
-            onSetEditorMode={this.props.onSetEditorMode}
-            editorMode={editorMode}
-            markdownEnabled={markdownEnabled}
+        {note && (
+          <RevisionSelector
+            revisions={revisions || []}
+            onViewRevision={this.onViewRevision}
+            onSelectRevision={this.onSelectRevision}
+            onCancelRevision={this.onCancelRevision}
           />
-        </div>
+        )}
+        <NoteToolbar
+          note={note}
+          onTrashNote={this.props.onTrashNote}
+          onRestoreNote={this.props.onRestoreNote}
+          onShareNote={this.props.onShareNote}
+          onDeleteNoteForever={this.props.onDeleteNoteForever}
+          onRevisions={this.props.onRevisions}
+          setIsViewingRevisions={this.setIsViewingRevisions}
+          onCloseNote={this.props.onCloseNote}
+          onNoteInfo={this.props.onNoteInfo}
+          onSetEditorMode={this.props.onSetEditorMode}
+          editorMode={editorMode}
+          markdownEnabled={markdownEnabled}
+        />
         <div className="note-editor-content theme-color-border">
-          <div className="note-editor-detail">
-            <NoteDetail
-              storeFocusEditor={this.storeFocusEditor}
-              storeHasFocus={this.storeEditorHasFocus}
-              filter={this.props.filter}
-              note={revision}
-              previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-              onChangeContent={this.props.onUpdateContent}
-              fontSize={fontSize}
-            />
-          </div>
+          <NoteDetail
+            storeFocusEditor={this.storeFocusEditor}
+            storeHasFocus={this.storeEditorHasFocus}
+            filter={this.props.filter}
+            note={revision}
+            previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
+            onChangeContent={this.props.onUpdateContent}
+            fontSize={fontSize}
+          />
         </div>
         {shouldPrint &&
           markdownEnabled && (
@@ -238,16 +238,17 @@ export class NoteEditor extends Component {
           )}
         {shouldPrint &&
           !markdownEnabled && <div {...printAttrs}>{content}</div>}
-        {!isTrashed && (
-          <TagField
-            storeFocusTagField={this.storeFocusTagField}
-            storeHasFocus={this.storeTagFieldHasFocus}
-            allTags={this.props.allTags.map(property('data.name'))}
-            note={this.props.note}
-            tags={tags}
-            onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
-          />
-        )}
+        {note &&
+          !isTrashed && (
+            <TagField
+              storeFocusTagField={this.storeFocusTagField}
+              storeHasFocus={this.storeTagFieldHasFocus}
+              allTags={this.props.allTags.map(property('data.name'))}
+              note={this.props.note}
+              tags={tags}
+              onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
+            />
+          )}
       </div>
     );
   }
