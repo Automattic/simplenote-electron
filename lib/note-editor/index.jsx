@@ -194,14 +194,12 @@ export class NoteEditor extends Component {
 
     return (
       <div className={classes}>
-        {note && (
-          <RevisionSelector
-            revisions={revisions || []}
-            onViewRevision={this.onViewRevision}
-            onSelectRevision={this.onSelectRevision}
-            onCancelRevision={this.onCancelRevision}
-          />
-        )}
+        <RevisionSelector
+          revisions={revisions || []}
+          onViewRevision={this.onViewRevision}
+          onSelectRevision={this.onSelectRevision}
+          onCancelRevision={this.onCancelRevision}
+        />
         <NoteToolbar
           note={note}
           onTrashNote={this.props.onTrashNote}
