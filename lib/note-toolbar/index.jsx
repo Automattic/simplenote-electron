@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import BackIcon from './icons/back';
-import InfoIcon from './icons/info';
-import PreviewIcon from './icons/preview';
-import PreviewStopIcon from './icons/preview-stop';
-import RevisionsIcon from './icons/revisions';
-import TrashIcon from './icons/trash';
-import ShareIcon from './icons/share';
+import BackIcon from '../icons/back';
+import InfoIcon from '../icons/info';
+import PreviewIcon from '../icons/preview';
+import PreviewStopIcon from '../icons/preview-stop';
+import RevisionsIcon from '../icons/revisions';
+import TrashIcon from '../icons/trash';
+import ShareIcon from '../icons/share';
 
 export class NoteToolbar extends Component {
   static displayName = 'NoteToolbar';
@@ -53,7 +53,7 @@ export class NoteToolbar extends Component {
     const isPreviewing = editorMode === 'markdown';
 
     return !note ? (
-      <div className="placeholder-note-toolbar theme-color-border" />
+      <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
       <div className="note-toolbar">
         <div className="note-toolbar-icon note-toolbar-back">
