@@ -9,22 +9,4 @@
     height: $toolbar-height;
     border-bottom: 1px solid lighten($gray, 30%);
   }
-
-  .placeholder-note-editor{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      flex: 1;
-
-      .logo {
-        width: 140px;
-        height: 140px;
-        opacity: 0.2;
-
-        path {
-          fill: $gray;
-        }
-      }
-  }
 }

@@ -161,7 +161,7 @@ export class NoteDetail extends Component {
 
     if (!note) {
       return (
-        <div className="placeholder-note-editor">
+        <div className="note-detail-placeholder">
           <SimplenoteCompactLogo />
         </div>
       );
