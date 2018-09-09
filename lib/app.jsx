@@ -423,16 +423,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               )}
               <div className="source-list theme-color-bg theme-color-fg">
                 <SearchBar noteBucket={noteBucket} />
-                {hasNotes ? (
-                  <NoteList
-                    noteBucket={noteBucket}
-                    isSmallScreen={isSmallScreen}
-                  />
-                ) : (
-                  <div className="placeholder-note-list">
-                    <span>No Notes</span>
-                  </div>
-                )}
+                <NoteList
+                  noteBucket={noteBucket}
+                  isSmallScreen={isSmallScreen}
+                />
               </div>
               {selectedNote &&
                 hasNotes && (

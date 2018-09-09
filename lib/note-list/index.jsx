@@ -413,6 +413,14 @@ export class NoteList extends Component {
       isSmallScreen,
     });
 
+    if (notes.length === 0) {
+      return (
+        <div className="placeholder-note-list">
+          <span>No Notes</span>
+        </div>
+      );
+    }
+
     return (
       <div className="note-list">
         <div className={listItemsClasses}>
