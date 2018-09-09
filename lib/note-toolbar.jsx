@@ -23,7 +23,7 @@ export class NoteToolbar extends Component {
     setIsViewingRevisions: PropTypes.func.isRequired,
     onSetEditorMode: PropTypes.func.isRequired,
     editorMode: PropTypes.string.isRequired,
-    markdownEnabled: PropTypes.bool.isRequired,
+    markdownEnabled: PropTypes.bool,
   };
 
   showRevisions = () => {
