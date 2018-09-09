@@ -29,16 +29,3 @@
       }
   }
 }
-
-.placeholder-note-list {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100vh;
-
-  span {
-    color: $gray;
-    font-size: 1.3em;
-  }
-}

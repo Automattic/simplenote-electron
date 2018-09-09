@@ -413,51 +413,51 @@ export class NoteList extends Component {
       isSmallScreen,
     });
 
-    if (notes.length === 0) {
-      return (
-        <div className="placeholder-note-list">
-          <span>No Notes</span>
-        </div>
-      );
-    }
+    const isEmptyList = notes.length === 0;
+
+    const emptyTrashButton = (
+      <div className="note-list-empty-trash theme-color-border">
+        <button
+          type="button"
+          className="button button-borderless button-danger"
+          onClick={onEmptyTrash}
+        >
+          Empty Trash
+        </button>
+      </div>
+    );
 
     return (
-      <div className="note-list">
-        <div className={listItemsClasses}>
-          <AutoSizer>
-            {({ height, width }) => (
-              <List
-                ref={this.refList}
-                estimatedRowSize={
-                  ROW_HEIGHT_BASE +
-                  ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
-                }
-                height={height}
-                noteDisplay={noteDisplay}
-                notes={this.props.notes}
-                rowCount={this.props.notes.length}
-                rowHeight={
-                  'condensed' === noteDisplay
-                    ? ROW_HEIGHT_BASE
-                    : getRowHeight(this.props.notes, { noteDisplay, width })
-                }
-                rowRenderer={renderNoteRow}
-                width={width}
-              />
-            )}
-          </AutoSizer>
-        </div>
-        {!!showTrash && (
-          <div className="note-list-empty-trash theme-color-border">
-            <button
-              type="button"
-              className="button button-borderless button-danger"
-              onClick={onEmptyTrash}
-            >
-              Empty Trash
-            </button>
+      <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
+        {isEmptyList ? (
+          <span className="note-list-placeholder">No Notes</span>
+        ) : (
+          <div className={listItemsClasses}>
+            <AutoSizer>
+              {({ height, width }) => (
+                <List
+                  ref={this.refList}
+                  estimatedRowSize={
+                    ROW_HEIGHT_BASE +
+                    ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
+                  }
+                  height={height}
+                  noteDisplay={noteDisplay}
+                  notes={this.props.notes}
+                  rowCount={this.props.notes.length}
+                  rowHeight={
+                    'condensed' === noteDisplay
+                      ? ROW_HEIGHT_BASE
+                      : getRowHeight(this.props.notes, { noteDisplay, width })
+                  }
+                  rowRenderer={renderNoteRow}
+                  width={width}
+                />
+              )}
+            </AutoSizer>
           </div>
         )}
+        {!!showTrash && emptyTrashButton}
       </div>
     );
   }

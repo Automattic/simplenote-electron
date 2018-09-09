@@ -71,6 +71,17 @@
     white-space: normal;
     max-height: 88px;
   }
+
+  &.is-empty {
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+}
+
+.note-list-placeholder {
+  color: $gray;
+  font-size: 1.3em;
 }
 
 .note-list-items {
