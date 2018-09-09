@@ -159,42 +159,40 @@ export class NoteDetail extends Component {
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
 
-    if (!note) {
-      return (
-        <div className="note-detail-placeholder">
-          <SimplenoteCompactLogo />
-        </div>
-      );
-    }
-
     return (
-      <div className="note-detail-wrapper">
-        <div className="note-detail">
-          {previewingMarkdown && (
-            <div
-              ref={this.storePreview}
-              className="note-detail-markdown theme-color-bg theme-color-fg"
-              onClick={this.onPreviewClick}
-              style={divStyle}
-            />
-          )}
-
-          {!previewingMarkdown && (
-            <div
-              className="note-detail-textarea theme-color-bg theme-color-fg"
-              style={divStyle}
-            >
-              <NoteContentEditor
-                ref={this.saveEditorRef}
-                storeFocusEditor={this.storeFocusContentEditor}
-                storeHasFocus={this.storeEditorHasFocus}
-                content={content}
-                filter={filter}
-                onChangeContent={this.queueNoteSave}
+      <div className="note-detail-wrapper theme-color-border">
+        {!note ? (
+          <div className="note-detail-placeholder">
+            <SimplenoteCompactLogo />
+          </div>
+        ) : (
+          <div className="note-detail">
+            {previewingMarkdown && (
+              <div
+                ref={this.storePreview}
+                className="note-detail-markdown theme-color-bg theme-color-fg"
+                onClick={this.onPreviewClick}
+                style={divStyle}
               />
-            </div>
-          )}
-        </div>
+            )}
+
+            {!previewingMarkdown && (
+              <div
+                className="note-detail-textarea theme-color-bg theme-color-fg"
+                style={divStyle}
+              >
+                <NoteContentEditor
+                  ref={this.saveEditorRef}
+                  storeFocusEditor={this.storeFocusContentEditor}
+                  storeHasFocus={this.storeEditorHasFocus}
+                  content={content}
+                  filter={filter}
+                  onChangeContent={this.queueNoteSave}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

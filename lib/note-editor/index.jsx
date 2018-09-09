@@ -216,17 +216,15 @@ export class NoteEditor extends Component {
           editorMode={editorMode}
           markdownEnabled={markdownEnabled}
         />
-        <div className="note-editor-content theme-color-border">
-          <NoteDetail
-            storeFocusEditor={this.storeFocusEditor}
-            storeHasFocus={this.storeEditorHasFocus}
-            filter={this.props.filter}
-            note={revision}
-            previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-            onChangeContent={this.props.onUpdateContent}
-            fontSize={fontSize}
-          />
-        </div>
+        <NoteDetail
+          storeFocusEditor={this.storeFocusEditor}
+          storeHasFocus={this.storeEditorHasFocus}
+          filter={this.props.filter}
+          note={revision}
+          previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
+          onChangeContent={this.props.onUpdateContent}
+          fontSize={fontSize}
+        />
         {shouldPrint &&
           markdownEnabled && (
             <div
