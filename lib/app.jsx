@@ -13,6 +13,7 @@ import NoteInfo from './note-info';
 import NoteList from './note-list';
 import NoteEditor from './note-editor';
 import NavigationBar from './navigation-bar';
+import AppLayout from './app-layout';
 import Auth from './auth';
 import DialogRenderer from './dialog-renderer';
 import analytics from './analytics';
@@ -420,31 +421,35 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               {state.showNavigation && (
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
-              <div className="source-list theme-color-bg theme-color-fg">
-                <SearchBar noteBucket={noteBucket} />
-                <NoteList
-                  noteBucket={noteBucket}
-                  isSmallScreen={isSmallScreen}
-                />
-              </div>
-              <NoteEditor
-                allTags={state.tags}
-                editorMode={state.editorMode}
-                filter={state.filter}
-                note={selectedNote}
-                revisions={state.revisions}
-                onSetEditorMode={this.onSetEditorMode}
-                onUpdateContent={this.onUpdateContent}
-                onUpdateNoteTags={this.onUpdateNoteTags}
-                onTrashNote={this.onTrashNote}
-                onRestoreNote={this.onRestoreNote}
-                onShareNote={this.onShareNote}
-                onDeleteNoteForever={this.onDeleteNoteForever}
-                onRevisions={this.onRevisions}
-                onCloseNote={() => this.props.actions.closeNote()}
-                onNoteInfo={() => this.props.actions.toggleNoteInfo()}
-                shouldPrint={state.shouldPrint}
-                onNotePrinted={this.onNotePrinted}
+              <AppLayout
+                searchBar={<SearchBar noteBucket={noteBucket} />}
+                noteList={
+                  <NoteList
+                    noteBucket={noteBucket}
+                    isSmallScreen={isSmallScreen}
+                  />
+                }
+                noteEditor={
+                  <NoteEditor
+                    allTags={state.tags}
+                    editorMode={state.editorMode}
+                    filter={state.filter}
+                    note={selectedNote}
+                    revisions={state.revisions}
+                    onSetEditorMode={this.onSetEditorMode}
+                    onUpdateContent={this.onUpdateContent}
+                    onUpdateNoteTags={this.onUpdateNoteTags}
+                    onTrashNote={this.onTrashNote}
+                    onRestoreNote={this.onRestoreNote}
+                    onShareNote={this.onShareNote}
+                    onDeleteNoteForever={this.onDeleteNoteForever}
+                    onRevisions={this.onRevisions}
+                    onCloseNote={() => this.props.actions.closeNote()}
+                    onNoteInfo={() => this.props.actions.toggleNoteInfo()}
+                    shouldPrint={state.shouldPrint}
+                    onNotePrinted={this.onNotePrinted}
+                  />
+                }
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
