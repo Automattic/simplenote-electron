@@ -176,8 +176,6 @@ export class NoteEditor extends Component {
       {
         revisions: isViewingRevisions,
         markdown: markdownEnabled,
-        'note-editor-placeholder': !note,
-        'theme-color-border': !note,
       }
     );
 
