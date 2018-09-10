@@ -108,7 +108,7 @@ optgroup {
 /* Fade content when toolbars are visible */
 .note-info-open {
   .note-editor,
-  .source-list {
+  .app-layout-source-list {
     opacity: $fade-alpha;
     transition: $anim;
     pointer-events: none;
@@ -117,7 +117,7 @@ optgroup {
 
 .navigation-open {
   .note-editor,
-  .source-list {
+  .app-layout-source-list {
     opacity: $fade-alpha;
     transition: $anim;
     pointer-events: none;
