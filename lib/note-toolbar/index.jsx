@@ -36,7 +36,7 @@ export class NoteToolbar extends Component {
     const isTrashed = !!(note && note.data.deleted);
 
     return (
-      <div className="note-editor-controls theme-color-border">
+      <div className="note-toolbar-wrapper theme-color-border">
         {isTrashed ? this.renderTrashed() : this.renderNormal()}
       </div>
     );

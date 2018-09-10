@@ -1,21 +1,16 @@
-.note-editor-controls {
+.note-toolbar-wrapper {
   display: flex;
   justify-content: flex-end;
+  flex: none;
   height: $toolbar-height;
-
-  .tag-editor {
-    flex: 1 1 auto;
-    border-left: 1px solid lighten($gray, 30%);
-  }
-
-  .note-toolbar {
-    flex: none;
-  }
+  border-bottom: 1px solid lighten($gray, 30%);
+  border-left: 1px solid lighten($gray, 30%);
 }
 
 .note-toolbar {
   display: flex;
   align-items: center;
+  flex: none;
   padding: 0 15px;
 
   @media only screen and (max-width: $single-column) {

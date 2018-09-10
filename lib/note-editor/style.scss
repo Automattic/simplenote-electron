@@ -3,12 +3,6 @@
   flex-direction: column;
   overflow: hidden;
   background: $white;
-
-  .note-editor-controls {
-    flex: none;
-    border-bottom: 1px solid lighten($gray, 30%);
-    border-left: 1px solid lighten($gray, 30%);
-  }
 }
 
 .note-editor-placeholder {
