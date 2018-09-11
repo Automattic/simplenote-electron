@@ -151,9 +151,17 @@ const buildViewMenu = settings => {
   };
 
   if (isDev) {
-    menu.submenu.push({
-      role: 'toggleDevTools',
-    });
+    menu.submenu.push(
+      {
+        type: 'separator',
+      },
+      {
+        role: 'toggleDevTools',
+      },
+      {
+        role: 'reload',
+      }
+    );
   }
 
   return menu;
