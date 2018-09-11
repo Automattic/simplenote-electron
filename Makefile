@@ -1,9 +1,9 @@
 ifeq ($(OS),Windows_NT)
 	FILE_PATH_SEP := \
-# leave this line here. make is make... ¯\_(ツ)_/¯
+	IS_WINDOWS := true
 else
 	FILE_PATH_SEP := /
-# leave this line here. make is make... ¯\_(ツ)_/¯
+	IS_WINDOWS := false
 endif
 
 / = $(FILE_PATH_SEP)
@@ -87,7 +87,7 @@ linux: config-release build-if-changed
 
 .PHONY: win32 
 win32: config-release build-if-changed
-	@npx electron-builder -w --dir
+	@npx electron-builder --win --dir
 
 
 # Build installers 
@@ -96,7 +96,11 @@ package: build-if-changed
 
 .PHONY: package-win32 
 package-win32: build-if-changed
+ifeq (IS_WINDOWS,true)
+	@npx electron-builder --win --config=./electron-builder-appx.json
+else
 	@npx electron-builder --win
+endif
 
 .PHONY: package-osx 
 package-osx: build-if-changed
