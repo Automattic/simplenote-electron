@@ -48,13 +48,8 @@ start: rebuild-deps
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
 
 .PHONY: dev
-dev: NODE_ENV = development
-dev: DEV_SERVER = true
 dev: 
-	@npx concurrently -k \
-	-n "Simplenote,Electron" \
-	"$(MAKE) dev-server NODE_ENV=$(NODE_ENV)" \
-	"wait-on http://$(HOST):$(PORT) && $(MAKE) start NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER)" \
+	@npx misty
 
 .PHONY: dev-server
 dev-server:
