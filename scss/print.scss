@@ -1,20 +1,20 @@
 @media print {
   html,
   body,
-  .app-layout-note-column {
+  .app-layout__note-column {
     overflow: visible;
     height: auto;
   }
 
   .app,
   .simplenote-app,
-  .app-layout-note-column {
+  .app-layout__note-column {
     display: block;
     height: auto;
   }
 
   .navigation,
-  .app-layout-source-column,
+  .app-layout__source-column,
   .revision-selector,
   .note-toolbar-wrapper,
   .note-detail-wrapper,

@@ -64,12 +64,12 @@ optgroup {
   }
 
   @media only screen and (max-width: $single-column) {
-    &.note-open .app-layout-note-column {
+    &.note-open .app-layout__note-column {
       opacity: 1;
     }
 
     &.navigation-open {
-      .app-layout-note-column {
+      .app-layout__note-column {
         opacity: 0;
       }
     }
@@ -84,8 +84,8 @@ optgroup {
 }
 
 .navigation-open {
-  .app-layout-note-column,
-  .app-layout-source-column {
+  .app-layout__note-column,
+  .app-layout__source-column {
     opacity: $fade-alpha;
     transition: $anim;
     pointer-events: none;

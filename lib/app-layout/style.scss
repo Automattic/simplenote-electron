@@ -3,14 +3,14 @@
   flex: 1 0 auto;
 
   // Fade content when toolbars are visible
-  &.note-info-open {
+  &.is-showing-note-info {
     opacity: $fade-alpha;
     transition: $anim;
     pointer-events: none;
   }
 }
 
-.app-layout-source-column {
+.app-layout__source-column {
   width: 328px;
   min-width: 328px;
   background: $white;
@@ -41,7 +41,7 @@
   }
 }
 
-.app-layout-note-column {
+.app-layout__note-column {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -57,7 +57,7 @@
     z-index: -1;
     transition: $anim-transition;
 
-    &.note-info-open {
+    &.is-showing-note-info {
       opacity: $fade-alpha;
     }
   }
