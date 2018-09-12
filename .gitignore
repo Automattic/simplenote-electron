@@ -1,6 +1,5 @@
 node_modules/**/*
 desktop-build/
-dist/
 release/
 *.pvk
 *.spc

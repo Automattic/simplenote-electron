@@ -12,10 +12,9 @@
   "homepage": "https://simplenote.com",
   "scripts": {
     "test": "jest",
-    "build": "NODE_ENV=development npm run build:dll && npm run build:app",
-    "build:app": "webpack --config ./webpack.config.js",
-    "build:dll": "webpack --config ./webpack.config.dll.js",
-    "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
+    "build": "NODE_ENV=production npm run build:dll && npm run build:app",
+    "build:app": "webpack --mode=production --config ./webpack.config.js",
+    "build:dll": "webpack --mode=production --config ./webpack.config.dll.js",
     "electron": "electron .",
     "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
     "lint": "eslint --ext .js --ext .jsx lib",
