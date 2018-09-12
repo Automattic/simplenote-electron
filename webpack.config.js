@@ -24,7 +24,7 @@ module.exports = {
             loader: 'eslint-loader',
             options: {
               cache: true,
-              configFile: '.eslintrc',
+              configFile: '.eslintrc.json',
               quiet: true,
             },
           },
