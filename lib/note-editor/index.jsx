@@ -22,7 +22,6 @@ export class NoteEditor extends Component {
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onShareNote: PropTypes.func.isRequired,
     onDeleteNoteForever: PropTypes.func.isRequired,
     onRevisions: PropTypes.func.isRequired,
     onCloseNote: PropTypes.func.isRequired,
@@ -169,7 +168,6 @@ export class NoteEditor extends Component {
           toolbar={
             <NoteToolbar
               note={note}
-              onShareNote={this.props.onShareNote}
               onDeleteNoteForever={this.props.onDeleteNoteForever}
               onRevisions={this.props.onRevisions}
               onCloseNote={this.props.onCloseNote}

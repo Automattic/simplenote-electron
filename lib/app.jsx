@@ -318,14 +318,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
     };
 
-    onShareNote = () =>
-      this.props.actions.showDialog({
-        dialog: {
-          type: 'Share',
-          modal: true,
-        },
-      });
-
     onDeleteNoteForever = note => {
       const previousIndex = this.getPreviousNoteIndex(note);
       this.props.actions.deleteNoteForever({
@@ -420,7 +412,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onShareNote={this.onShareNote}
                     onDeleteNoteForever={this.onDeleteNoteForever}
                     onRevisions={this.onRevisions}
                     onCloseNote={() => this.props.actions.closeNote()}
