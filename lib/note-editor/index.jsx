@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import appState from '../flux/app-state';
-import NoteToolbarContainer from '../note-toolbar-container';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
-import NoteToolbar from '../note-toolbar';
 import { get, property } from 'lodash';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
@@ -162,10 +160,6 @@ export class NoteEditor extends Component {
 
     return (
       <div className={classes}>
-        <NoteToolbarContainer
-          noteBucket={this.props.noteBucket}
-          toolbar={<NoteToolbar note={note} />}
-        />
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
