@@ -24,7 +24,6 @@ export class NoteEditor extends Component {
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
     revision: PropTypes.object,
   };
@@ -167,7 +166,6 @@ export class NoteEditor extends Component {
           toolbar={
             <NoteToolbar
               note={note}
-              onNoteInfo={this.props.onNoteInfo}
               onSetEditorMode={this.props.onSetEditorMode}
               editorMode={editorMode}
               markdownEnabled={markdownEnabled}

@@ -395,7 +395,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onNoteInfo={() => this.props.actions.toggleNoteInfo()}
                     shouldPrint={state.shouldPrint}
                     onNotePrinted={this.onNotePrinted}
                   />

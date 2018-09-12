@@ -21,7 +21,7 @@ export class NoteToolbar extends Component {
     onShowRevisions: PropTypes.func,
     onShareNote: PropTypes.func,
     onCloseNote: PropTypes.func,
-    onNoteInfo: PropTypes.func.isRequired,
+    onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
     onSetEditorMode: PropTypes.func.isRequired,
     editorMode: PropTypes.string.isRequired,
@@ -32,6 +32,7 @@ export class NoteToolbar extends Component {
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
+    onShowNoteInfo: noop,
     onShowRevisions: noop,
     onShareNote: noop,
     onTrashNote: noop,
@@ -125,7 +126,7 @@ export class NoteToolbar extends Component {
             type="button"
             title="Info"
             className="button button-borderless"
-            onClick={this.props.onNoteInfo}
+            onClick={this.props.onShowNoteInfo}
           >
             <InfoIcon />
           </button>
