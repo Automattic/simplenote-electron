@@ -21,11 +21,11 @@ export class NoteEditor extends Component {
     note: PropTypes.object,
     fontSize: PropTypes.number,
     shouldPrint: PropTypes.bool,
-    onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
     revision: PropTypes.object,
+    setEditorMode: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -63,7 +63,7 @@ export class NoteEditor extends Component {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
-      this.props.onSetEditorMode(nextEditorMode);
+      this.props.setEditorMode({ mode: nextEditorMode });
 
       event.stopPropagation();
       event.preventDefault();
@@ -166,7 +166,6 @@ export class NoteEditor extends Component {
           toolbar={
             <NoteToolbar
               note={note}
-              onSetEditorMode={this.props.onSetEditorMode}
               editorMode={editorMode}
               markdownEnabled={markdownEnabled}
             />
@@ -216,10 +215,11 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   revision: state.revision,
 });
 
-const { closeNote } = appState.actionCreators;
+const { closeNote, setEditorMode } = appState.actionCreators;
 
 const mapDispatchToProps = dispatch => ({
   closeNote: () => dispatch(closeNote()),
+  setEditorMode: args => dispatch(setEditorMode(args)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

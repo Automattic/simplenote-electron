@@ -290,8 +290,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
     };
 
-    onSetEditorMode = mode => this.props.actions.setEditorMode({ mode });
-
     onUpdateContent = (note, content) =>
       this.props.actions.updateNoteContent({
         noteBucket: this.props.noteBucket,
@@ -393,7 +391,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     allTags={state.tags}
                     editorMode={state.editorMode}
                     filter={state.filter}
-                    onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
                     shouldPrint={state.shouldPrint}
                     onNotePrinted={this.onNotePrinted}

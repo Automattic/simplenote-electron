@@ -23,7 +23,7 @@ export class NoteToolbar extends Component {
     onCloseNote: PropTypes.func,
     onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
-    onSetEditorMode: PropTypes.func.isRequired,
+    onSetEditorMode: PropTypes.func,
     editorMode: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool,
   };
@@ -32,6 +32,7 @@ export class NoteToolbar extends Component {
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
+    onSetEditorMode: noop,
     onShowNoteInfo: noop,
     onShowRevisions: noop,
     onShareNote: noop,
