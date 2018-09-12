@@ -307,16 +307,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         tags,
       });
 
-    onRestoreNote = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.restoreNote({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-      analytics.tracks.recordEvent('editor_note_restored');
-    };
-
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
       const filteredNotes = filterNotes(this.props.appState);
@@ -430,7 +420,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onRestoreNote={this.onRestoreNote}
                     onShareNote={this.onShareNote}
                     onDeleteNoteForever={this.onDeleteNoteForever}
                     onRevisions={this.onRevisions}
