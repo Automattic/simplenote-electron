@@ -18,7 +18,7 @@ export class NoteToolbar extends Component {
     onRestoreNote: PropTypes.func,
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
-    onRevisions: PropTypes.func.isRequired,
+    onShowRevisions: PropTypes.func,
     onShareNote: PropTypes.func,
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
@@ -31,6 +31,7 @@ export class NoteToolbar extends Component {
   static defaultProps = {
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
+    onShowRevisions: noop,
     onShareNote: noop,
     onTrashNote: noop,
     setIsViewingRevisions: noop,
@@ -38,7 +39,7 @@ export class NoteToolbar extends Component {
 
   showRevisions = () => {
     this.props.setIsViewingRevisions(true);
-    this.props.onRevisions(this.props.note);
+    this.props.onShowRevisions(this.props.note);
   };
 
   render() {

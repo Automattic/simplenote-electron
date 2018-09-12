@@ -318,14 +318,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
     };
 
-    onRevisions = note => {
-      this.props.actions.noteRevisions({
-        noteBucket: this.props.noteBucket,
-        note,
-      });
-      analytics.tracks.recordEvent('editor_versions_accessed');
-    };
-
     toggleShortcuts = doEnable => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
@@ -403,7 +395,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onRevisions={this.onRevisions}
                     onCloseNote={() => this.props.actions.closeNote()}
                     onNoteInfo={() => this.props.actions.toggleNoteInfo()}
                     shouldPrint={state.shouldPrint}
