@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import appState from '../flux/app-state';
 import NoteToolbarContainer from '../note-toolbar-container';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
@@ -14,6 +15,7 @@ export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
 
   static propTypes = {
+    closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     isViewingRevisions: PropTypes.bool.isRequired,
     note: PropTypes.object,
@@ -22,7 +24,6 @@ export class NoteEditor extends Component {
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
     revision: PropTypes.object,
@@ -72,7 +73,7 @@ export class NoteEditor extends Component {
 
     // open note list - shift + n
     if (cmdOrCtrl && 'N' === key) {
-      this.props.onCloseNote();
+      this.props.closeNote();
 
       event.stopPropagation();
       event.preventDefault();
@@ -166,7 +167,6 @@ export class NoteEditor extends Component {
           toolbar={
             <NoteToolbar
               note={note}
-              onCloseNote={this.props.onCloseNote}
               onNoteInfo={this.props.onNoteInfo}
               onSetEditorMode={this.props.onSetEditorMode}
               editorMode={editorMode}
@@ -218,4 +218,10 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   revision: state.revision,
 });
 
-export default connect(mapStateToProps)(NoteEditor);
+const { closeNote } = appState.actionCreators;
+
+const mapDispatchToProps = dispatch => ({
+  closeNote: () => dispatch(closeNote()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
