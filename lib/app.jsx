@@ -318,15 +318,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
     };
 
-    onDeleteNoteForever = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.deleteNoteForever({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-    };
-
     onRevisions = note => {
       this.props.actions.noteRevisions({
         noteBucket: this.props.noteBucket,
@@ -412,7 +403,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onDeleteNoteForever={this.onDeleteNoteForever}
                     onRevisions={this.onRevisions}
                     onCloseNote={() => this.props.actions.closeNote()}
                     onNoteInfo={() => this.props.actions.toggleNoteInfo()}
