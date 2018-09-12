@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import NoteToolbar from '../note-toolbar';
+import appState from '../flux/app-state';
 import { get, property } from 'lodash';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
@@ -14,8 +15,10 @@ export class NoteEditor extends Component {
 
   static propTypes = {
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
+    isViewingRevisions: PropTypes.bool.isRequired,
     note: PropTypes.object,
     fontSize: PropTypes.number,
+    setIsViewingRevisions: PropTypes.func.isRequired,
     shouldPrint: PropTypes.bool,
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
@@ -28,6 +31,7 @@ export class NoteEditor extends Component {
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
+    revision: PropTypes.object,
   };
 
   static defaultProps = {
@@ -42,15 +46,6 @@ export class NoteEditor extends Component {
   componentDidMount() {
     this.toggleShortcuts(true);
   }
-
-  componentWillReceiveProps() {
-    this.setState({ revision: null });
-  }
-
-  state = {
-    revision: null,
-    isViewingRevisions: false,
-  };
 
   componentDidUpdate() {
     // Immediately print once `shouldPrint` has been set
@@ -113,9 +108,6 @@ export class NoteEditor extends Component {
 
   editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  setIsViewingRevisions = isViewing =>
-    this.setState({ isViewingRevisions: isViewing });
-
   storeEditorHasFocus = f => (this.editorHasFocus = f);
 
   storeFocusEditor = f => (this.focusNoteEditor = f);
@@ -135,9 +127,14 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, fontSize, shouldPrint } = this.props;
-    const revision = this.state.revision || note;
-    const isViewingRevisions = this.state.isViewingRevisions;
+    const {
+      editorMode,
+      isViewingRevisions,
+      note,
+      fontSize,
+      shouldPrint,
+    } = this.props;
+    const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
 
@@ -177,7 +174,7 @@ export class NoteEditor extends Component {
           onShareNote={this.props.onShareNote}
           onDeleteNoteForever={this.props.onDeleteNoteForever}
           onRevisions={this.props.onRevisions}
-          setIsViewingRevisions={this.setIsViewingRevisions}
+          setIsViewingRevisions={this.props.setIsViewingRevisions}
           onCloseNote={this.props.onCloseNote}
           onNoteInfo={this.props.onNoteInfo}
           onSetEditorMode={this.props.onSetEditorMode}
@@ -223,7 +220,17 @@ export class NoteEditor extends Component {
 const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
   isEditorActive: !state.showNavigation,
+  isViewingRevisions: state.isViewingRevisions,
   markdownEnabled: settings.markdownEnabled,
+  revision: state.revision,
 });
 
-export default connect(mapStateToProps)(NoteEditor);
+const { setIsViewingRevisions } = appState.actionCreators;
+
+const mapDispatchToProps = dispatch => ({
+  setIsViewingRevisions: isViewingRevisions => {
+    dispatch(setIsViewingRevisions({ isViewingRevisions }));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
