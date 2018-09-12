@@ -1,3 +1,15 @@
+.app-layout {
+  display: flex;
+  flex: 1 0 auto;
+
+  // Fade content when toolbars are visible
+  &.note-info-open {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+  }
+}
+
 .app-layout-source-column {
   width: 328px;
   min-width: 328px;
@@ -44,5 +56,9 @@
     opacity: 0;
     z-index: -1;
     transition: $anim-transition;
+
+    &.note-info-open {
+      opacity: $fade-alpha;
+    }
   }
 }

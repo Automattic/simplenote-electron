@@ -375,6 +375,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
               <AppLayout
+                isNoteInfoOpen={state.showNoteInfo}
                 note={selectedNote}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
