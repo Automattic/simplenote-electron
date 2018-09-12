@@ -1,8 +1,7 @@
 .note-editor {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background: $white;
+  flex: 1 0 auto;
 }
 
 .revisions {

@@ -63,35 +63,19 @@ optgroup {
     transform: translateX($navigation-bar-width);
   }
 
-  .note-editor {
-    flex: 1 1 auto;
-  }
-
   @media only screen and (max-width: $single-column) {
-    .note-editor {
-      position: absolute;
-      flex: none;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      z-index: -1;
-      transition: $anim-transition;
-    }
-
-    &.note-open .note-editor {
+    &.note-open .app-layout-note-column {
       opacity: 1;
     }
 
     &.note-info-open {
-      .note-editor {
+      .app-layout-note-column {
         opacity: $fade-alpha;
       }
     }
 
     &.navigation-open {
-      .note-editor {
+      .app-layout-note-column {
         opacity: 0;
       }
     }
@@ -107,7 +91,7 @@ optgroup {
 
 /* Fade content when toolbars are visible */
 .note-info-open {
-  .note-editor,
+  .app-layout-note-column,
   .app-layout-source-column {
     opacity: $fade-alpha;
     transition: $anim;
@@ -116,7 +100,7 @@ optgroup {
 }
 
 .navigation-open {
-  .note-editor,
+  .app-layout-note-column,
   .app-layout-source-column {
     opacity: $fade-alpha;
     transition: $anim;

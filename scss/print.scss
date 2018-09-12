@@ -1,14 +1,14 @@
 @media print {
   html,
   body,
-  .note-editor {
+  .app-layout-note-column {
     overflow: visible;
     height: auto;
   }
 
   .app,
   .simplenote-app,
-  .simplenote-app .note-editor {
+  .app-layout-note-column {
     display: block;
     height: auto;
   }
