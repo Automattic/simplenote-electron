@@ -422,6 +422,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
               <AppLayout
+                note={selectedNote}
+                revisions={state.revisions}
+                onUpdateContent={this.onUpdateContent}
                 searchBar={<SearchBar noteBucket={noteBucket} />}
                 noteList={
                   <NoteList
@@ -434,10 +437,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     allTags={state.tags}
                     editorMode={state.editorMode}
                     filter={state.filter}
-                    note={selectedNote}
-                    revisions={state.revisions}
                     onSetEditorMode={this.onSetEditorMode}
-                    onUpdateContent={this.onUpdateContent}
                     onUpdateNoteTags={this.onUpdateNoteTags}
                     onTrashNote={this.onTrashNote}
                     onRestoreNote={this.onRestoreNote}

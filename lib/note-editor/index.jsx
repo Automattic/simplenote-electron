@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import NoteToolbar from '../note-toolbar';
-import RevisionSelector from '../revision-selector';
 import { get, property } from 'lodash';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
@@ -16,7 +15,6 @@ export class NoteEditor extends Component {
   static propTypes = {
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     note: PropTypes.object,
-    revisions: PropTypes.array,
     fontSize: PropTypes.number,
     shouldPrint: PropTypes.bool,
     onSetEditorMode: PropTypes.func.isRequired,
@@ -115,26 +113,6 @@ export class NoteEditor extends Component {
 
   editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onViewRevision = revision => this.setState({ revision: revision });
-
-  onSelectRevision = revision => {
-    if (!revision) {
-      return;
-    }
-
-    const { note, onUpdateContent } = this.props;
-    const { data: { content } } = revision;
-
-    onUpdateContent(note, content);
-    this.setIsViewingRevisions(false);
-  };
-
-  onCancelRevision = () => {
-    // clear out the revision
-    this.setState({ revision: null });
-    this.setIsViewingRevisions(false);
-  };
-
   setIsViewingRevisions = isViewing =>
     this.setState({ isViewingRevisions: isViewing });
 
@@ -157,7 +135,7 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
+    const { editorMode, note, fontSize, shouldPrint } = this.props;
     const revision = this.state.revision || note;
     const isViewingRevisions = this.state.isViewingRevisions;
     const tags = (revision && revision.data && revision.data.tags) || [];
@@ -192,12 +170,6 @@ export class NoteEditor extends Component {
 
     return (
       <div className={classes}>
-        <RevisionSelector
-          revisions={revisions || []}
-          onViewRevision={this.onViewRevision}
-          onSelectRevision={this.onSelectRevision}
-          onCancelRevision={this.onCancelRevision}
-        />
         <NoteToolbar
           note={note}
           onTrashNote={this.props.onTrashNote}
