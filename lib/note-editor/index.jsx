@@ -164,11 +164,7 @@ export class NoteEditor extends Component {
         <NoteToolbarContainer
           noteBucket={this.props.noteBucket}
           toolbar={
-            <NoteToolbar
-              note={note}
-              editorMode={editorMode}
-              markdownEnabled={markdownEnabled}
-            />
+            <NoteToolbar note={note} markdownEnabled={markdownEnabled} />
           }
         />
         <NoteDetail
@@ -209,6 +205,7 @@ export class NoteEditor extends Component {
 
 const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
+  editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
   isViewingRevisions: state.isViewingRevisions,
   markdownEnabled: settings.markdownEnabled,

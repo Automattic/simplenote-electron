@@ -389,7 +389,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 noteEditor={
                   <NoteEditor
                     allTags={state.tags}
-                    editorMode={state.editorMode}
                     filter={state.filter}
                     onUpdateNoteTags={this.onUpdateNoteTags}
                     shouldPrint={state.shouldPrint}

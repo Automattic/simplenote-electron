@@ -24,11 +24,12 @@ export class NoteToolbar extends Component {
     onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
     onSetEditorMode: PropTypes.func,
-    editorMode: PropTypes.string.isRequired,
+    editorMode: PropTypes.string,
     markdownEnabled: PropTypes.bool,
   };
 
   static defaultProps = {
+    editorMode: 'edit',
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
