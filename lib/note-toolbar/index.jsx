@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
+
 import BackIcon from '../icons/back';
 import InfoIcon from '../icons/info';
 import PreviewIcon from '../icons/preview';
@@ -13,7 +15,7 @@ export class NoteToolbar extends Component {
 
   static propTypes = {
     note: PropTypes.object,
-    onTrashNote: PropTypes.func.isRequired,
+    onTrashNote: PropTypes.func,
     onRestoreNote: PropTypes.func.isRequired,
     onDeleteNoteForever: PropTypes.func.isRequired,
     onRevisions: PropTypes.func.isRequired,
@@ -24,6 +26,10 @@ export class NoteToolbar extends Component {
     onSetEditorMode: PropTypes.func.isRequired,
     editorMode: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    onTrashNote: noop,
   };
 
   showRevisions = () => {

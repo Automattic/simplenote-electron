@@ -307,14 +307,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         tags,
       });
 
-    onTrashNote = note => {
+    onRestoreNote = note => {
       const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.trashNote({
+      this.props.actions.restoreNote({
         noteBucket: this.props.noteBucket,
         note,
         previousIndex,
       });
-      analytics.tracks.recordEvent('editor_note_deleted');
+      analytics.tracks.recordEvent('editor_note_restored');
     };
 
     // gets the index of the note located before the currently selected one
@@ -326,16 +326,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       };
 
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
-    };
-
-    onRestoreNote = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.restoreNote({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-      analytics.tracks.recordEvent('editor_note_restored');
     };
 
     onShareNote = () =>
@@ -423,6 +413,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               )}
               <AppLayout
                 note={selectedNote}
+                noteBucket={noteBucket}
                 revisions={state.revisions}
                 onUpdateContent={this.onUpdateContent}
                 searchBar={<SearchBar noteBucket={noteBucket} />}
@@ -439,7 +430,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     filter={state.filter}
                     onSetEditorMode={this.onSetEditorMode}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onTrashNote={this.onTrashNote}
                     onRestoreNote={this.onRestoreNote}
                     onShareNote={this.onShareNote}
                     onDeleteNoteForever={this.onDeleteNoteForever}

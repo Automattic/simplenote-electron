@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import NoteToolbarContainer from '../note-toolbar-container';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import NoteToolbar from '../note-toolbar';
@@ -23,7 +24,6 @@ export class NoteEditor extends Component {
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onTrashNote: PropTypes.func.isRequired,
     onRestoreNote: PropTypes.func.isRequired,
     onShareNote: PropTypes.func.isRequired,
     onDeleteNoteForever: PropTypes.func.isRequired,
@@ -167,19 +167,23 @@ export class NoteEditor extends Component {
 
     return (
       <div className={classes}>
-        <NoteToolbar
-          note={note}
-          onTrashNote={this.props.onTrashNote}
-          onRestoreNote={this.props.onRestoreNote}
-          onShareNote={this.props.onShareNote}
-          onDeleteNoteForever={this.props.onDeleteNoteForever}
-          onRevisions={this.props.onRevisions}
-          setIsViewingRevisions={this.props.setIsViewingRevisions}
-          onCloseNote={this.props.onCloseNote}
-          onNoteInfo={this.props.onNoteInfo}
-          onSetEditorMode={this.props.onSetEditorMode}
-          editorMode={editorMode}
-          markdownEnabled={markdownEnabled}
+        <NoteToolbarContainer
+          noteBucket={this.props.noteBucket}
+          toolbar={
+            <NoteToolbar
+              note={note}
+              onRestoreNote={this.props.onRestoreNote}
+              onShareNote={this.props.onShareNote}
+              onDeleteNoteForever={this.props.onDeleteNoteForever}
+              onRevisions={this.props.onRevisions}
+              setIsViewingRevisions={this.props.setIsViewingRevisions}
+              onCloseNote={this.props.onCloseNote}
+              onNoteInfo={this.props.onNoteInfo}
+              onSetEditorMode={this.props.onSetEditorMode}
+              editorMode={editorMode}
+              markdownEnabled={markdownEnabled}
+            />
+          }
         />
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
