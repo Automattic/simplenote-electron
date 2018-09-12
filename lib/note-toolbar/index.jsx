@@ -22,7 +22,7 @@ export class NoteToolbar extends Component {
     onShareNote: PropTypes.func.isRequired,
     onCloseNote: PropTypes.func.isRequired,
     onNoteInfo: PropTypes.func.isRequired,
-    setIsViewingRevisions: PropTypes.func.isRequired,
+    setIsViewingRevisions: PropTypes.func,
     onSetEditorMode: PropTypes.func.isRequired,
     editorMode: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool,
@@ -30,6 +30,7 @@ export class NoteToolbar extends Component {
 
   static defaultProps = {
     onTrashNote: noop,
+    setIsViewingRevisions: noop,
   };
 
   showRevisions = () => {

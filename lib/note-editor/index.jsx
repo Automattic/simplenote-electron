@@ -6,7 +6,6 @@ import NoteToolbarContainer from '../note-toolbar-container';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import NoteToolbar from '../note-toolbar';
-import appState from '../flux/app-state';
 import { get, property } from 'lodash';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
@@ -19,7 +18,6 @@ export class NoteEditor extends Component {
     isViewingRevisions: PropTypes.bool.isRequired,
     note: PropTypes.object,
     fontSize: PropTypes.number,
-    setIsViewingRevisions: PropTypes.func.isRequired,
     shouldPrint: PropTypes.bool,
     onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
@@ -176,7 +174,6 @@ export class NoteEditor extends Component {
               onShareNote={this.props.onShareNote}
               onDeleteNoteForever={this.props.onDeleteNoteForever}
               onRevisions={this.props.onRevisions}
-              setIsViewingRevisions={this.props.setIsViewingRevisions}
               onCloseNote={this.props.onCloseNote}
               onNoteInfo={this.props.onNoteInfo}
               onSetEditorMode={this.props.onSetEditorMode}
@@ -229,12 +226,4 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   revision: state.revision,
 });
 
-const { setIsViewingRevisions } = appState.actionCreators;
-
-const mapDispatchToProps = dispatch => ({
-  setIsViewingRevisions: isViewingRevisions => {
-    dispatch(setIsViewingRevisions({ isViewingRevisions }));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
+export default connect(mapStateToProps)(NoteEditor);
