@@ -7,6 +7,26 @@
     opacity: $fade-alpha;
     transition: $anim;
     pointer-events: none;
+
+    @media only screen and (max-width: $single-column) {
+      .app-layout__note-column {
+        opacity: $fade-alpha;
+      }
+    }
+  }
+
+  &.is-note-open {
+    @media only screen and (max-width: $single-column) {
+      .app-layout__source-column {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .app-layout__note-column {
+        opacity: 1;
+        z-index: auto;
+      }
+    }
   }
 }
 
@@ -33,11 +53,6 @@
     transition: $anim-transition;
     opacity: 1;
     pointer-events: auto;
-
-    .note-open & {
-      opacity: 0;
-      pointer-events: none;
-    }
   }
 }
 
@@ -56,9 +71,5 @@
     opacity: 0;
     z-index: -1;
     transition: $anim-transition;
-
-    &.is-showing-note-info {
-      opacity: $fade-alpha;
-    }
   }
 }

@@ -64,10 +64,6 @@ optgroup {
   }
 
   @media only screen and (max-width: $single-column) {
-    &.note-open .app-layout__note-column {
-      opacity: 1;
-    }
-
     &.navigation-open {
       .app-layout__note-column {
         opacity: 0;
