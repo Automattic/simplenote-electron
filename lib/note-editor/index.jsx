@@ -18,6 +18,7 @@ export class NoteEditor extends Component {
     closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     isViewingRevisions: PropTypes.bool.isRequired,
+    markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
     fontSize: PropTypes.number,
     shouldPrint: PropTypes.bool,
@@ -163,9 +164,7 @@ export class NoteEditor extends Component {
       <div className={classes}>
         <NoteToolbarContainer
           noteBucket={this.props.noteBucket}
-          toolbar={
-            <NoteToolbar note={note} markdownEnabled={markdownEnabled} />
-          }
+          toolbar={<NoteToolbar note={note} />}
         />
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
