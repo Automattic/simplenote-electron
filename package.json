@@ -18,7 +18,7 @@
     "electron": "electron .",
     "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
     "lint": "eslint --ext .js --ext .jsx lib",
-    "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
+    "start": "node ./webapp/index.js"
   },
   "repository": {
     "type": "git",
@@ -89,6 +89,7 @@
     "draft-js": "0.10.5",
     "draft-js-simpledecorator": "1.0.2",
     "electron-window-state": "4.1.1",
+    "express": "4.16.3",
     "highlight.js": "9.12.0",
     "isemail": "3.1.1",
     "jszip": "3.1.5",
