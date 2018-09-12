@@ -2,6 +2,18 @@
   display: flex;
   flex: 1 0 auto;
 
+  &.is-navigation-open {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+
+    @media only screen and (max-width: $single-column) {
+      .app-layout__note-column {
+        opacity: 0;
+      }
+    }
+  }
+
   // Fade content when toolbars are visible
   &.is-showing-note-info {
     opacity: $fade-alpha;
