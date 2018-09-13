@@ -133,6 +133,7 @@ export class NoteInfo extends Component {
                   ref={e => (this.publishUrlElement = e)}
                   className="note-info-detail note-info-link-text"
                   value={publishURL}
+                  spellCheck={false}
                 />
                 <button
                   ref={e => (this.copyUrlElement = e)}

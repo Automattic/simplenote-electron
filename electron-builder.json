@@ -63,7 +63,8 @@
   "linux": {
     "icon": "resources/images/",
     "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
-    "target": [{
+    "target": [
+      {
         "target": "AppImage",
         "arch": [
           "x64",
