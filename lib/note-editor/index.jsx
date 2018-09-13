@@ -143,7 +143,6 @@ export class NoteEditor extends Component {
       'theme-color-fg',
       {
         revisions: isViewingRevisions,
-        markdown: markdownEnabled,
       }
     );
 
