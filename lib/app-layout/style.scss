@@ -2,6 +2,12 @@
   display: flex;
   flex: 1 0 auto;
 
+  &.is-focus-mode {
+    .app-layout__source-column {
+      display: none;
+    }
+  }
+
   &.is-navigation-open {
     opacity: $fade-alpha;
     transition: $anim;
