@@ -188,7 +188,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       }
 
       // focus search field
-      if (cmdOrCtrl && 'F' === key) {
+      if (cmdOrCtrl && 'f' === key) {
         this.props.setSearchFocus();
 
         event.stopPropagation();
