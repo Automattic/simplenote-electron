@@ -1,9 +1,8 @@
 ifeq ($(OS),Windows_NT)
-	FILE_PATH_SEP := \
-# leave this line here. make is make... ¯\_(ツ)_/¯
+	FILE_PATH_SEP := \\
+	IS_WINDOWS := true
 else
 	FILE_PATH_SEP := /
-# leave this line here. make is make... ¯\_(ツ)_/¯
 endif
 
 / = $(FILE_PATH_SEP)
@@ -17,92 +16,104 @@ NPM_BIN = $(shell npm bin)
 RED=`tput setaf 1`
 RESET=`tput sgr0`
 
-START_APP := @$(NPM_BIN)/electron .
-ELECTRON_TEST := ELECTRON_PATH=$(NPM_BIN)/electron $(NPM_BIN)/electron-mocha
-CONFIG := $(THIS_DIR)/config.json
-DESKTOP_BUILD_DIR := $(THIS_DIR)/desktop-build
-BUILDER := $(THIS_DIR)/builder.js
-BUILD_CONFIG := $(THIS_DIR)/resources/build-scripts/build-config-file.js
-PACKAGE_DMG := $(THIS_DIR)/resources/build-scripts/package-dmg.js
-PACKAGE_WIN32 := @$(NPM_BIN)/electron-builder
-CERT_SPC := $(THIS_DIR)/resources/secrets/automattic-code.spc
-CERT_PVK := $(THIS_DIR)/resources/secrets/automattic-code.pvk
 SIMPLENOTE_JS := $(THIS_DIR)/dist/app.js
 SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .min. | wc -l`
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
+
+# Build configurations
+NODE_ENV = production
+# Defines if we should compile web app via `build` target
 SKIP_BUILD = false
 
+
+# Main targets
 .PHONY: start
 start: rebuild-deps
-	@npx electron .
+	@NODE_ENV=$(NODE_ENV) npx electron .
 
-.PHONY: rebuild-deps
-rebuild-deps:
-	@npx electron-rebuild
-
-# TODO: move npm scripts to makefile
 .PHONY: dev
+dev: NODE_ENV = development
 dev:
-	@npm start
+	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-# check for config
-config.json:
-ifeq (,$(wildcard $(THIS_DIR)$/config.json))
-	$(error config.json not found. Required file, see docs)
-endif
+	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline
 
-# Builds Calypso (desktop)
+.PHONY: test
+test: 
+	@npx jest
+
+
+# Build web app
+.PHONY: build
 build:
 ifeq ($(SKIP_BUILD),false)
-	@echo building...
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
-	NODE_ENV=production npx webpack -p --config webpack.config.dll.js && npx webpack -p --config webpack.config.js
+ifeq ($(NODE_ENV),production)
+	$(eval IS_PRODUCTION = true)
 endif
 
+	@$(MAKE) build-dll build-app IS_PRODUCTION=$(IS_PRODUCTION)
+endif
+
+
+# Build utils
+.PHONY: build-app
+build-app: 
+	@npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
+
+.PHONY: build-dll
+build-dll: 
+	@npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
+
+.PHONY: build-if-not-exists 
 build-if-not-exists: config.json
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
 
+.PHONY: build-if-changed 
 build-if-changed: build-if-not-exists
 	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
 
-# Build packages
-osx: config-release
-	@node $(BUILDER) darwin
 
-linux: config-release
-	@node $(BUILDER) linux
+# Build binaries only
+.PHONY: osx 
+osx: config-release build-if-changed
+	@npx electron-builder -m --dir
 
-win32: config-release
-	@node $(BUILDER) win32
+.PHONY: linux 
+linux: config-release build-if-changed
+	@npx electron-builder -l --dir
 
-# Packagers
+.PHONY: win32 
+win32: config-release build-if-changed
+	@npx electron-builder --win --dir
+
+
+# Build installers 
+.PHONY: package 
 package: build-if-changed
-# @rm -rf $(DESKTOP_BUILD_DIR)/node_modules $(DESKTOP_BUILD_DIR)/desktop $(DESKTOP_BUILD_DIR)/dist
-# @mkdir -p $(DESKTOP_BUILD_DIR)
-# @cp -rf $(THIS_DIR)/package.json $(DESKTOP_BUILD_DIR)
-# @cp -R $(THIS_DIR)/node_modules $(DESKTOP_BUILD_DIR)
-# @cp -R $(THIS_DIR)/desktop $(DESKTOP_BUILD_DIR)
-# @cp -R $(THIS_DIR)/dist $(DESKTOP_BUILD_DIR)
 
-package-win32: build-if-changed
+.PHONY: package-win32 
+package-win32:
+ifeq ($(IS_WINDOWS),true)
+	@echo Building .appx as well
+	@npx electron-builder --win --config=./electron-builder-appx.json
+else
+	@echo Skipping .appx as we are not on a Windows host
 	@npx electron-builder --win
-# @$(PACKAGE_WIN32) ./release/Simplenote-win32-ia32 --win --ia32 --config=./resources/build-config/win32.json
-# @node $(THIS_DIR)/resources/build-scripts/rename-with-version-win.js
-# @node $(THIS_DIR)/resources/build-scripts/code-sign-win.js --spc=$(CERT_SPC) --pvk=$(CERT_PVK)
+endif
 
+.PHONY: package-osx 
 package-osx: build-if-changed
 	@npx electron-builder --mac
-# @node $(PACKAGE_DMG)
-# @ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 ./release/Simplenote-darwin-x64/Simplenote.app ./release/Simplenote.app.zip
-# @node $(THIS_DIR)/resources/build-scripts/rename-with-version-osx.js
 
+.PHONY: package-linux
 package-linux: build-if-changed
 	@npx electron-builder --linux
 
-config-release: config.json install
 
 # NPM
+.PHONY: 
 install: node_modules
 
 node_modules/%:
@@ -112,3 +123,27 @@ node_modules: package.json
 	@npm prune
 	@npm install
 	@touch node_modules
+
+
+# Checks
+config.json:
+ifeq (,$(wildcard $(THIS_DIR)$/config.json))
+	$(error config.json not found. Required file, see docs)
+endif
+
+
+# Utils 
+.PHONY: config-release
+config-release: config.json install
+
+.PHONY: rebuild-deps
+rebuild-deps:
+	@npx electron-rebuild
+
+.PHONY: format
+format:
+	@npx prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}
+
+.PHONY: lint
+lint:
+	@npx eslint --ext .js --ext .jsx lib

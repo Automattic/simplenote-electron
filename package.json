@@ -11,15 +11,12 @@
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
   "scripts": {
-    "test": "jest",
-    "build": "NODE_ENV=development npm run build:dll && npm run build:app",
-    "build:app": "webpack --config ./webpack.config.js",
-    "build:dll": "webpack --config ./webpack.config.dll.js",
-    "build:prod": "NODE_ENV=production webpack -p --config ./webpack.config.dll.js && webpack -p --config ./webpack.config.js",
-    "electron": "electron .",
-    "format": "prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}",
-    "lint": "eslint --ext .js --ext .jsx lib",
-    "start": "NODE_ENV=hot npm run build && webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline"
+    "dev": "make dev",
+    "start": "make start NODE_ENV=development",
+    "test": "make test",
+    "lint": "make lint",
+    "format": "make format",
+    "build": "make build"
   },
   "repository": {
     "type": "git",

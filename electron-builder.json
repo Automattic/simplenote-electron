@@ -42,19 +42,8 @@
           "ia32",
           "x64"
         ]
-      },
-      {
-        "target": "appx"
       }
     ]
-  },
-  "appx": {
-    "applicationId": "Simplenote",
-    "identityName": "22490Automattic.Simplenote",
-    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
-    "publisherDisplayName": "Automattic",
-    "backgroundColor": "transparent",
-    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
   },
   "nsis": {
     "perMachine": true,
