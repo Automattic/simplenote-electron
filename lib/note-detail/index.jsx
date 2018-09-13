@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import { get, debounce, invoke, noop } from 'lodash';
+import classNames from 'classnames';
 import analytics from '../analytics';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
@@ -24,6 +25,7 @@ export class NoteDetail extends Component {
     dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
+    isViewingRevisions: PropTypes.bool.isRequired,
     onChangeContent: PropTypes.func.isRequired,
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
@@ -154,10 +156,20 @@ export class NoteDetail extends Component {
   };
 
   render() {
-    const { note, filter, fontSize, previewingMarkdown } = this.props;
+    const {
+      note,
+      filter,
+      fontSize,
+      isViewingRevisions,
+      previewingMarkdown,
+    } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
+
+    const mainClasses = classNames('note-detail', {
+      'is-viewing-revisions': isViewingRevisions,
+    });
 
     return (
       <div className="note-detail-wrapper theme-color-border">
@@ -166,7 +178,7 @@ export class NoteDetail extends Component {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className="note-detail">
+          <div className={mainClasses}>
             {previewingMarkdown && (
               <div
                 ref={this.storePreview}
@@ -201,6 +213,7 @@ export class NoteDetail extends Component {
 const mapStateToProps = ({ appState: state }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
+  isViewingRevisions: state.isViewingRevisions,
   showNoteInfo: state.showNoteInfo,
 });
 
