@@ -1,6 +1,6 @@
 # Simplenote for Electron
 
-![Screenshot](https://simplenoteblog.files.wordpress.com/2016/03/simplenote-linux.png)
+![Screenshot](https://en-blog.files.wordpress.com/2018/09/screenshot-1.png)
 
 A Simplenote [React](https://facebook.github.io/react/) client packaged in [Electron](http://electron.atom.io). Learn more about Simplenote at [Simplenote.com](https://simplenote.com).
 
