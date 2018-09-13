@@ -133,6 +133,16 @@ const buildViewMenu = settings => {
         type: 'separator',
       },
       {
+        label: 'Focus Mode',
+        accelerator: 'CommandOrControl+Shift+F',
+        type: 'checkbox',
+        checked: settings.focusModeEnabled,
+        click: appCommandSender({ action: 'toggleFocusMode' }),
+      },
+      {
+        type: 'separator',
+      },
+      {
         label: 'T&oggle Full Screen',
         accelerator: (function() {
           if (process.platform === 'darwin') {
