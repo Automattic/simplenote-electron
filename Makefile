@@ -1,9 +1,8 @@
 ifeq ($(OS),Windows_NT)
-	FILE_PATH_SEP := \
+	FILE_PATH_SEP := \\
 	IS_WINDOWS := true
 else
 	FILE_PATH_SEP := /
-	IS_WINDOWS := false
 endif
 
 / = $(FILE_PATH_SEP)
@@ -95,10 +94,12 @@ win32: config-release build-if-changed
 package: build-if-changed
 
 .PHONY: package-win32 
-package-win32: build-if-changed
-ifeq (IS_WINDOWS,true)
+package-win32:
+ifeq ($(IS_WINDOWS),true)
+	@echo Building .appx as well
 	@npx electron-builder --win --config=./electron-builder-appx.json
 else
+	@echo Skipping .appx as we are not on a Windows host
 	@npx electron-builder --win
 endif
 
