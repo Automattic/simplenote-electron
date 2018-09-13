@@ -76,6 +76,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleFocusMode',
       ]),
       dispatch
     ),
