@@ -2,7 +2,7 @@
 
 ![Screenshot](https://en-blog.files.wordpress.com/2018/09/screenshot-1.png)
 
-A Simplenote [React](https://facebook.github.io/react/) client packaged in [Electron](http://electron.atom.io). Learn more about Simplenote at [Simplenote.com](https://simplenote.com).
+A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https://electronjs.org/). Learn more about Simplenote at [Simplenote.com](https://simplenote.com).
 
 ## Running
 
@@ -27,6 +27,6 @@ Please adhere to the same guidelines as found in [wp-calypso](https://github.com
 
 ## Dependencies
 
-- [node-simperium](https://github.com/automattic/node-simperium) for Simperium syncing.
-- [ReactJS](https://facebook.github.io/react/) for UI.
-- [Electron](http://electron.atom.io) for wrapping the JavaScript application.
+- [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
+- [ReactJS](https://reactjs.org/) for UI.
+- [Electron](https://electronjs.org/) for wrapping the JavaScript application.
