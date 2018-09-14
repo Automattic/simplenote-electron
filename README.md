@@ -7,19 +7,18 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 ## Running
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
-2. `npm install` _or_ `docker-compose up install` (if Docker installed)
-3. `npm start` _or_ `docker-compose up dev` (if Docker installed)
-4. Open http://localhost:4000.
+2. `npm install`
+3. `npm run dev`
+4. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
 5. Sign up for a new account within the app. Use the account for **testing purposes only** as all note data will be periodically cleared out on the server.
 
 _Note: Simplenote API features such as sharing and publishing will not work with development builds._
 
-## Electron
+## Building
 
-1. Run `npm run build`
-2. Run `npm run electron`
-
-You can also pass along the `--devtools` option (`npm run electron -- --devtools`) to open the developer tools.
+- **`make package-osx`**
+- **`make package-win32`**
+- **`make package-linux`**
 
 ## Coding Guidelines
 
