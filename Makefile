@@ -26,19 +26,21 @@ SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/
 ##############
 
 # Node environment
-NODE_ENV = production
+NODE_ENV ?= production
 
 # Defines if we should compile web app via `build` target
-SKIP_BUILD = false
+SKIP_BUILD ?= false
 
 # Host for dev server
-HOST = 0.0.0.0
+HOST ?= 0.0.0.0
 
 # Port for dev server
-PORT = 4000
+PORT ?= 4000
+
+### TODO: changes for HOST and PORT aren't yet reflected in `desktop/app.js`
 
 # Access dev server or locally built web app files
-DEV_SERVER = false
+DEV_SERVER ?= false
 
 
 # Main targets
