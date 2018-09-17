@@ -51,51 +51,56 @@ export class NavigationBar extends Component {
 
   render() {
     const { noteBucket, tagBucket } = this.props;
-    const classes = classNames('button', 'button-borderless', 'theme-color-fg');
-    const allNotesClasses = classNames(
-      this.getNavigationItemClass(false),
-      classes
+    const buttonClasses = classNames(
+      'button',
+      'button-borderless',
+      'theme-color-fg'
     );
-    const trashClasses = classNames(this.getNavigationItemClass(true), classes);
 
     return (
       <div className="navigation theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-folders">
-          <button
-            type="button"
-            className={allNotesClasses}
-            onClick={this.props.onSelectAllNotes}
-          >
-            <span className="navigation-icon">
-              <NotesIcon />
-            </span>
-            All Notes
-          </button>
-          <button
-            type="button"
-            className={trashClasses}
-            onClick={this.props.onSelectTrash}
-          >
-            <span className="navigation-icon">
-              <TrashIcon />
-            </span>
-            Trash
-          </button>
+          <div className={this.getNavigationItemClass(false)}>
+            <button
+              type="button"
+              className={buttonClasses}
+              onClick={this.props.onSelectAllNotes}
+            >
+              <span className="navigation-icon">
+                <NotesIcon />
+              </span>
+              All Notes
+            </button>
+          </div>
+          <div className={this.getNavigationItemClass(true)}>
+            <button
+              type="button"
+              className={buttonClasses}
+              onClick={this.props.onSelectTrash}
+            >
+              <span className="navigation-icon">
+                <TrashIcon />
+              </span>
+              Trash
+            </button>
+          </div>
         </div>
         <div className="navigation-tags theme-color-border">
           <TagList noteBucket={noteBucket} tagBucket={tagBucket} />
         </div>
         <div className="navigation-tools theme-color-border">
-          <button
-            type="button"
-            className="navigation-tools-item button button-borderless theme-color-fg"
-            onClick={this.props.onSettings}
-          >
-            <span className="navigation-icon">
-              <SettingsIcon />
-            </span>
-            Settings
-          </button>
+          <div className="navigation-tools-item">
+            <button
+              type="button"
+              className={buttonClasses}
+              onClick={this.props.onSettings}
+            >
+              <span className="navigation-icon">
+                <SettingsIcon />
+              </span>
+              Settings
+            </button>
+          </div>
         </div>
         <div className="navigation-footer">
           <button
