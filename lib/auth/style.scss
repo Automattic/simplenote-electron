@@ -118,17 +118,29 @@
       font-weight: $bold;
     }
   }
+}
 
-  .wpcom-connect-or {
-    text-align: center;
-    margin: 20px 0;
+.login__or {
+  text-align: center;
+  margin: 20px 0 12px;
+}
+
+.login__btn-wpcom {
+  button {
+    color: $gray;
+    width: 100%;
   }
+}
 
-  .logo-wordpress {
-    fill: #FFFFFF;
+.login__btn-wpcom-icon {
+  svg {
     margin-right: 6px;
     width: 32px;
     height: 32px;
+
+    path {
+      fill: $blue;
+    }
   }
 }
 

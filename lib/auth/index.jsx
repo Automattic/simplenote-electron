@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -59,18 +59,6 @@ export class Auth extends Component {
           <div className="login-logo">
             <SimplenoteLogo />
           </div>
-          {isElectron && (
-            <div className="wpcom-connect">
-              <div
-                className="button button-primary wpcom-connect-button"
-                onClick={this.onWPLogin}
-              >
-                <WordPressLogo />
-                Sign in with WordPress.com
-              </div>
-              <div className="wpcom-connect-or">or:</div>
-            </div>
-          )}
           <div className="login-fields theme-color-border theme-color-fg">
             <label
               className="login-field theme-color-border"
@@ -160,6 +148,22 @@ export class Auth extends Component {
               </a>
             </p>
           </div>
+          {isElectron && (
+            <Fragment>
+              <div className="login__or">or:</div>
+              <div className="login__btn-wpcom">
+                <button
+                  className="button button-borderless"
+                  onClick={this.onWPLogin}
+                >
+                  <span className="login__btn-wpcom-icon">
+                    <WordPressLogo />
+                  </span>
+                  Log in with WordPress.com
+                </button>
+              </div>
+            </Fragment>
+          )}
         </form>
       </div>
     );
