@@ -109,17 +109,15 @@ export class Auth extends Component {
             )}
           </div>
           {this.props.hasInvalidCredentials && (
-            <p className="login__auth-message login__auth-failure">
+            <p className="login__auth-message is-error">
               The credentials you entered don&apos;t match
             </p>
           )}
           {this.props.hasLoginError && (
-            <p className="login__auth-message login__auth-failure">
-              {errorMessage}
-            </p>
+            <p className="login__auth-message is-error">{errorMessage}</p>
           )}
           {passwordErrorMessage && (
-            <p className="login__auth-message login__auth-failure">
+            <p className="login__auth-message is-error">
               {passwordErrorMessage}
             </p>
           )}
