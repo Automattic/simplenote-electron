@@ -22,7 +22,7 @@ module.exports = function main() {
   require('./updater')();
   const url =
     isDev && process.env.DEV_SERVER
-      ? 'http://localhost:4000'
+      ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
       : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
 
   // Keep a global reference of the window object, if you don't, the window will
