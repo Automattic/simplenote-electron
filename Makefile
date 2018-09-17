@@ -21,23 +21,42 @@ SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 
-# Build configurations
-NODE_ENV = production
+##############
+# SIMPLENOTE #
+##############
+
+# Node environment
+NODE_ENV ?= production
+
 # Defines if we should compile web app via `build` target
-SKIP_BUILD = false
+SKIP_BUILD ?= false
+
+# Host for dev server
+HOST ?= 0.0.0.0
+
+# Port for dev server
+PORT ?= 4000
+
+### TODO: changes for HOST and PORT aren't yet reflected in `desktop/app.js`
+
+# Access dev server or locally built web app files
+DEV_SERVER ?= false
 
 
 # Main targets
 .PHONY: start
 start: rebuild-deps
-	@NODE_ENV=$(NODE_ENV) npx electron .
+	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
 
 .PHONY: dev
-dev: NODE_ENV = development
-dev:
+dev: 
+	@npx misty
+
+.PHONY: dev-server
+dev-server:
 	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host 0.0.0.0 --port 4000 --hot --inline
+	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot --inline
 
 .PHONY: test
 test: 
@@ -49,22 +68,24 @@ test:
 build:
 ifeq ($(SKIP_BUILD),false)
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
+
+# IS_PRODUCTION is a helper var for the inline conditional in `build-app` and `build-dll`
 ifeq ($(NODE_ENV),production)
 	$(eval IS_PRODUCTION = true)
 endif
 
-	@$(MAKE) build-dll build-app IS_PRODUCTION=$(IS_PRODUCTION)
+	@$(MAKE) build-dll build-app NODE_ENV=$(NODE_ENV) IS_PRODUCTION=$(IS_PRODUCTION)
 endif
 
 
 # Build utils
 .PHONY: build-app
 build-app: 
-	@npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
 
 .PHONY: build-dll
 build-dll: 
-	@npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
 
 .PHONY: build-if-not-exists 
 build-if-not-exists: config.json
@@ -86,7 +107,7 @@ linux: config-release build-if-changed
 
 .PHONY: win32 
 win32: config-release build-if-changed
-	@npx electron-builder --win --dir
+	@npx electron-builder -w --dir
 
 
 # Build installers 

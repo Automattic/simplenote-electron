@@ -1,9 +1,10 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
+const { isDev } = require('../env');
 
 const buildViewMenu = settings => {
   settings = settings || {};
 
-  return {
+  const menu = {
     label: '&View',
     submenu: [
       {
@@ -148,6 +149,22 @@ const buildViewMenu = settings => {
       },
     ],
   };
+
+  if (isDev) {
+    menu.submenu.push(
+      {
+        type: 'separator',
+      },
+      {
+        role: 'toggleDevTools',
+      },
+      {
+        role: 'reload',
+      }
+    );
+  }
+
+  return menu;
 };
 
 module.exports = buildViewMenu;
