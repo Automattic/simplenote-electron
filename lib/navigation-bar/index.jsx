@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
+import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import { viewExternalUrl } from '../utils/url-utils';
-import classNames from 'classnames';
 import appState from '../flux/app-state';
 
 const {
@@ -40,67 +40,41 @@ export class NavigationBar extends Component {
   onHelpClicked = () => viewExternalUrl('http://simplenote.com/help');
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
-  getNavigationItemClass = isTrashRow => {
+  isSelected = ({ isTrashRow }) => {
     const { showTrash, selectedTag } = this.props;
     const isItemSelected = isTrashRow === showTrash;
 
-    return isItemSelected && !selectedTag
-      ? 'navigation-folders-item-selected'
-      : 'navigation-folders-item';
+    return isItemSelected && !selectedTag;
   };
 
   render() {
     const { noteBucket, tagBucket } = this.props;
-    const buttonClasses = classNames(
-      'button',
-      'button-borderless',
-      'theme-color-fg'
-    );
 
     return (
       <div className="navigation theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-folders">
-          <div className={this.getNavigationItemClass(false)}>
-            <button
-              type="button"
-              className={buttonClasses}
-              onClick={this.props.onSelectAllNotes}
-            >
-              <span className="navigation-icon">
-                <NotesIcon />
-              </span>
-              All Notes
-            </button>
-          </div>
-          <div className={this.getNavigationItemClass(true)}>
-            <button
-              type="button"
-              className={buttonClasses}
-              onClick={this.props.onSelectTrash}
-            >
-              <span className="navigation-icon">
-                <TrashIcon />
-              </span>
-              Trash
-            </button>
-          </div>
+          <NavigationBarItem
+            icon={<NotesIcon />}
+            isSelected={this.isSelected({ isTrashRow: false })}
+            label="All Notes"
+            onClick={this.props.onSelectAllNotes}
+          />
+          <NavigationBarItem
+            icon={<TrashIcon />}
+            isSelected={this.isSelected({ isTrashRow: true })}
+            label="Trash"
+            onClick={this.props.onSelectTrash}
+          />
         </div>
         <div className="navigation-tags theme-color-border">
           <TagList noteBucket={noteBucket} tagBucket={tagBucket} />
         </div>
         <div className="navigation-tools theme-color-border">
-          <div className="navigation-tools-item">
-            <button
-              type="button"
-              className={buttonClasses}
-              onClick={this.props.onSettings}
-            >
-              <span className="navigation-icon">
-                <SettingsIcon />
-              </span>
-              Settings
-            </button>
-          </div>
+          <NavigationBarItem
+            icon={<SettingsIcon />}
+            label="Settings"
+            onClick={this.props.onSettings}
+          />
         </div>
         <div className="navigation-footer">
           <button
