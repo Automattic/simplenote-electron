@@ -18,7 +18,11 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  transition: all 0.3s ease-in-out;
+  transition: all .3s ease-in-out;
+
+  &.is-viewing-revisions {
+    padding-top: 51px;
+  }
 
   div[data-contents] {
     padding-bottom: 20px;
@@ -35,7 +39,7 @@
   .logo {
     width: 140px;
     height: 140px;
-    opacity: 0.2;
+    opacity: .2;
 
     path {
       fill: $gray;
@@ -54,7 +58,7 @@
   height: 100%;
   max-width: 780px;
   padding: 24px;
-  border: none;
+  border: 0;
   line-height: 1.5em;
   font-size: 16px;
   color: darken($gray, 20%);
@@ -155,7 +159,7 @@
     background: transparent;
   }
   table {
-    border-collapse:collapse;
+    border-collapse: collapse;
     border-spacing: 0;
     display: block;
     width: 100%;
