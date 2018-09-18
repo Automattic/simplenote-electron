@@ -62,40 +62,6 @@ optgroup {
   &.navigation-open {
     transform: translateX($navigation-bar-width);
   }
-
-  .note-editor {
-    flex: 1 1 auto;
-  }
-
-  @media only screen and (max-width: $single-column) {
-    .note-editor {
-      position: absolute;
-      flex: none;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      z-index: -1;
-      transition: $anim-transition;
-    }
-
-    &.note-open .note-editor {
-      opacity: 1;
-    }
-
-    &.note-info-open {
-      .note-editor {
-        opacity: $fade-alpha;
-      }
-    }
-
-    &.navigation-open {
-      .note-editor {
-        opacity: 0;
-      }
-    }
-  }
 }
 
 .panel-title {
@@ -103,25 +69,6 @@ optgroup {
   text-transform: uppercase;
   font-size: 86%;
   color: darken($gray, 20%);
-}
-
-/* Fade content when toolbars are visible */
-.note-info-open {
-  .note-editor,
-  .app-layout-source-list {
-    opacity: $fade-alpha;
-    transition: $anim;
-    pointer-events: none;
-  }
-}
-
-.navigation-open {
-  .note-editor,
-  .app-layout-source-list {
-    opacity: $fade-alpha;
-    transition: $anim;
-    pointer-events: none;
-  }
 }
 
 .is-macos {

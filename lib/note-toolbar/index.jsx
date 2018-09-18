@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
+
 import BackIcon from '../icons/back';
 import InfoIcon from '../icons/info';
 import PreviewIcon from '../icons/preview';
@@ -13,22 +15,35 @@ export class NoteToolbar extends Component {
 
   static propTypes = {
     note: PropTypes.object,
-    onTrashNote: PropTypes.func.isRequired,
-    onRestoreNote: PropTypes.func.isRequired,
-    onDeleteNoteForever: PropTypes.func.isRequired,
-    onRevisions: PropTypes.func.isRequired,
-    onShareNote: PropTypes.func.isRequired,
-    onCloseNote: PropTypes.func.isRequired,
-    onNoteInfo: PropTypes.func.isRequired,
-    setIsViewingRevisions: PropTypes.func.isRequired,
-    onSetEditorMode: PropTypes.func.isRequired,
-    editorMode: PropTypes.string.isRequired,
+    onRestoreNote: PropTypes.func,
+    onTrashNote: PropTypes.func,
+    onDeleteNoteForever: PropTypes.func,
+    onShowRevisions: PropTypes.func,
+    onShareNote: PropTypes.func,
+    onCloseNote: PropTypes.func,
+    onShowNoteInfo: PropTypes.func,
+    setIsViewingRevisions: PropTypes.func,
+    onSetEditorMode: PropTypes.func,
+    editorMode: PropTypes.string,
     markdownEnabled: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    editorMode: 'edit',
+    onCloseNote: noop,
+    onDeleteNoteForever: noop,
+    onRestoreNote: noop,
+    onSetEditorMode: noop,
+    onShowNoteInfo: noop,
+    onShowRevisions: noop,
+    onShareNote: noop,
+    onTrashNote: noop,
+    setIsViewingRevisions: noop,
   };
 
   showRevisions = () => {
     this.props.setIsViewingRevisions(true);
-    this.props.onRevisions(this.props.note);
+    this.props.onShowRevisions(this.props.note);
   };
 
   render() {
@@ -113,7 +128,7 @@ export class NoteToolbar extends Component {
             type="button"
             title="Info"
             className="button button-borderless"
-            onClick={this.props.onNoteInfo}
+            onClick={this.props.onShowNoteInfo}
           >
             <InfoIcon />
           </button>
