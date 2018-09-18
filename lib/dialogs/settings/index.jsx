@@ -138,6 +138,7 @@ export class SettingsDialog extends Component {
         sortType,
         sortReversed: sortIsReversed,
         accountName,
+        shareAnalytics,
       },
     } = this.props;
 
@@ -156,19 +157,32 @@ export class SettingsDialog extends Component {
               <li>
                 <button
                   type="button"
-                  className="button button-primary"
-                  onClick={this.onSignOutRequested}
-                >
-                  Log Out
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
                   className="button button button-borderless"
                   onClick={this.onEditAccount}
                 >
                   Edit Account <TopRightArrowIcon />
+                </button>
+              </li>
+              <li>
+                <SettingsGroup
+                  title="Privacy"
+                  slug="shareAnalytics"
+                  activeSlug={shareAnalytics ? 'enabled' : ''}
+                  description="Help us improve Simplenote by sharing usage data with our analytics tool."
+                  onChange={toggleSortOrder}
+                  learnMoreURL="https://automattic.com/cookies"
+                  renderer={ToggleGroup}
+                >
+                  <Item title="Share analytics" slug="enabled" />
+                </SettingsGroup>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="button button-primary"
+                  onClick={this.onSignOutRequested}
+                >
+                  Log Out
                 </button>
               </li>
             </ul>
