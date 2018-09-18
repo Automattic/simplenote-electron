@@ -3,9 +3,7 @@
 /**
  * External Dependencies
  */
-const electron = require('electron');
-const app = electron.app;
-const dialog = electron.dialog;
+const { app } = require('electron');
 
 /**
  * Internal dependencies
@@ -18,13 +16,7 @@ const ManualUpdater = require('./manual-updater');
 let updater = false;
 
 function urlBuilder(version) {
-  let platformString = 'osx';
-
-  if (platform.isWindows()) {
-    platformString = 'windows';
-  } else if (platform.isLinux()) {
-    platformString = 'linux';
-  }
+  const platformString = 'linux';
 
   if (config.forceUpdate) {
     version = '0.0.1';
@@ -37,11 +29,11 @@ function urlBuilder(version) {
 
 module.exports = function() {
   app.on('will-finish-launching', function() {
-    let url = urlBuilder(app.getVersion());
-
-    if (platform.isOSX()) {
-      updater = new AutoUpdater(url);
+    // TODO:@adlk: `electron-updater` supports AppImage as well
+    if (platform.isOSX() || platform.isWindows()) {
+      updater = new AutoUpdater();
     } else {
+      const url = urlBuilder(app.getVersion());
       updater = new ManualUpdater(url);
     }
 
