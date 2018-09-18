@@ -106,12 +106,12 @@ const buildViewMenu = settings => {
         type: 'separator',
       },
       {
-        label: '&Zoom In',
+        label: 'Zoom &In',
         accelerator: 'CommandOrControl+Plus',
         click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
-        label: '&Zoom Out',
+        label: 'Zoom &Out',
         accelerator: 'CommandOrControl+-',
         click: appCommandSender({ action: 'decreaseFontSize' }),
       },
@@ -124,7 +124,7 @@ const buildViewMenu = settings => {
         type: 'separator',
       },
       {
-        label: 'T&oggle Full Screen',
+        label: 'Toggle &Full Screen',
         accelerator: (function() {
           if (process.platform === 'darwin') {
             return 'Ctrl+Command+F';
