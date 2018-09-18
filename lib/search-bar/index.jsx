@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import appState from './flux/app-state';
-import { tracks } from './analytics';
-import NewNoteIcon from './icons/new-note';
-import SearchField from './search-field';
-import TagsIcon from './icons/tags';
-import { withoutTags } from './utils/filter-notes';
+import appState from '../flux/app-state';
+import { tracks } from '../analytics';
+import NewNoteIcon from '../icons/new-note';
+import SearchField from '../search-field';
+import TagsIcon from '../icons/tags';
+import { withoutTags } from '../utils/filter-notes';
 
 const { newNote, search, toggleNavigation } = appState.actionCreators;
 const { recordEvent } = tracks;

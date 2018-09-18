@@ -1,13 +1,26 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import moment from 'moment';
 import { orderBy } from 'lodash';
+import classNames from 'classnames';
+import appState from '../flux/app-state';
 
 const sortedRevisions = revisions =>
   orderBy(revisions, 'data.modificationDate', 'asc');
 
 export class RevisionSelector extends Component {
+  static propTypes = {
+    isViewingRevisions: PropTypes.bool.isRequired,
+    note: PropTypes.object,
+    revisions: PropTypes.array.isRequired,
+    onUpdateContent: PropTypes.func.isRequired,
+    setRevision: PropTypes.func.isRequired,
+    resetIsViewingRevisions: PropTypes.func.isRequired,
+    cancelRevision: PropTypes.func.isRequired,
+  };
+
   constructor(...args) {
     super(...args);
 
@@ -52,9 +65,16 @@ export class RevisionSelector extends Component {
   handleClickOutside = () => this.onCancelRevision();
 
   onAcceptRevision = () => {
+    const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
     const { revisions, selection } = this.state;
+    const revision = revisions[selection];
 
-    this.props.onSelectRevision(revisions[selection]);
+    if (revision) {
+      const { data: { content } } = revision;
+
+      onUpdateContent(note, content);
+      resetIsViewingRevisions();
+    }
     this.resetSelection();
   };
 
@@ -69,15 +89,16 @@ export class RevisionSelector extends Component {
     this.setState({
       selection,
     });
-    this.props.onViewRevision(revision);
+    this.props.setRevision(revision);
   };
 
   onCancelRevision = () => {
-    this.props.onCancelRevision();
+    this.props.cancelRevision();
     this.resetSelection();
   };
 
   render() {
+    const { isViewingRevisions } = this.props;
     const { revisions, selection: rawSelection } = this.state;
 
     const min = 0;
@@ -94,8 +115,12 @@ export class RevisionSelector extends Component {
     const revisionButtonStyle =
       selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
 
+    const mainClasses = classNames('revision-selector', {
+      'is-visible': isViewingRevisions,
+    });
+
     return (
-      <div className="revision-selector">
+      <div className={mainClasses}>
         <div className="revision-date">{revisionDate}</div>
         <div className="revision-slider">
           <input
@@ -126,8 +151,23 @@ export class RevisionSelector extends Component {
   }
 }
 
-RevisionSelector.propTypes = {
-  revisions: PropTypes.array.isRequired,
-};
+const mapStateToProps = ({ appState: state }) => ({
+  isViewingRevisions: state.isViewingRevisions,
+});
 
-export default onClickOutside(RevisionSelector);
+const { setRevision, setIsViewingRevisions } = appState.actionCreators;
+
+const mapDispatchToProps = dispatch => ({
+  setRevision: revision => dispatch(setRevision({ revision })),
+  resetIsViewingRevisions: () => {
+    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
+  },
+  cancelRevision: () => {
+    dispatch(setRevision({ revision: null }));
+    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  onClickOutside(RevisionSelector)
+);
