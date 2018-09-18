@@ -16,47 +16,6 @@
   padding: 10px 0;
 }
 
-.navigation-folders-item,
-.navigation-tools-item,
-.navigation-folders-item-selected {
-  width: 100%;
-  line-height: 2em;
-  padding: 8px 20px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: left;
-
-  svg {
-    fill: $gray;
-  }
-}
-
-.navigation-folders-item-selected {
-  span {
-    color: $blue;
-  }
-
-  svg[class^='icon-'] {
-    fill: $blue;
-  }
-}
-
-.theme-light,
-.theme-dark {
-  .navigation-folders-item,
-  .navigation-tools-item {
-    &:active,
-    &.active {
-      color: $blue;
-
-      svg[class^='icon-'] {
-        fill: $blue;
-      }
-    }
-  }
-}
-
 .navigation-tags {
   display: flex;
   height: 100%;
@@ -103,17 +62,5 @@
 
   &:last-child {
     margin-right: 0;
-  }
-}
-
-.navigation-icon {
-  display: inline-block;
-  margin-right: 0.5em;
-  vertical-align: middle;
-
-  svg {
-    vertical-align: middle;
-    position: relative;
-    top: -0.2em;
   }
 }

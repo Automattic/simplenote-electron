@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
+import appState from '../flux/app-state';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
-import NoteToolbar from '../note-toolbar';
-import RevisionSelector from '../revision-selector';
 import { get, property } from 'lodash';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
@@ -14,22 +12,17 @@ export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
 
   static propTypes = {
+    closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
+    markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
-    revisions: PropTypes.array,
     fontSize: PropTypes.number,
     shouldPrint: PropTypes.bool,
-    onSetEditorMode: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onTrashNote: PropTypes.func.isRequired,
-    onRestoreNote: PropTypes.func.isRequired,
-    onShareNote: PropTypes.func.isRequired,
-    onDeleteNoteForever: PropTypes.func.isRequired,
-    onRevisions: PropTypes.func.isRequired,
-    onCloseNote: PropTypes.func.isRequired,
-    onNoteInfo: PropTypes.func.isRequired,
     onPrintNote: PropTypes.func,
+    revision: PropTypes.object,
+    setEditorMode: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -44,15 +37,6 @@ export class NoteEditor extends Component {
   componentDidMount() {
     this.toggleShortcuts(true);
   }
-
-  componentWillReceiveProps() {
-    this.setState({ revision: null });
-  }
-
-  state = {
-    revision: null,
-    isViewingRevisions: false,
-  };
 
   componentDidUpdate() {
     // Immediately print once `shouldPrint` has been set
@@ -76,7 +60,7 @@ export class NoteEditor extends Component {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
-      this.props.onSetEditorMode(nextEditorMode);
+      this.props.setEditorMode({ mode: nextEditorMode });
 
       event.stopPropagation();
       event.preventDefault();
@@ -85,7 +69,7 @@ export class NoteEditor extends Component {
 
     // open note list - shift + n
     if (cmdOrCtrl && 'N' === key) {
-      this.props.onCloseNote();
+      this.props.closeNote();
 
       event.stopPropagation();
       event.preventDefault();
@@ -115,29 +99,6 @@ export class NoteEditor extends Component {
 
   editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onViewRevision = revision => this.setState({ revision: revision });
-
-  onSelectRevision = revision => {
-    if (!revision) {
-      return;
-    }
-
-    const { note, onUpdateContent } = this.props;
-    const { data: { content } } = revision;
-
-    onUpdateContent(note, content);
-    this.setIsViewingRevisions(false);
-  };
-
-  onCancelRevision = () => {
-    // clear out the revision
-    this.setState({ revision: null });
-    this.setIsViewingRevisions(false);
-  };
-
-  setIsViewingRevisions = isViewing =>
-    this.setState({ isViewingRevisions: isViewing });
-
   storeEditorHasFocus = f => (this.editorHasFocus = f);
 
   storeFocusEditor = f => (this.focusNoteEditor = f);
@@ -157,9 +118,8 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, revisions, fontSize, shouldPrint } = this.props;
-    const revision = this.state.revision || note;
-    const isViewingRevisions = this.state.isViewingRevisions;
+    const { editorMode, note, fontSize, shouldPrint } = this.props;
+    const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
 
@@ -168,16 +128,6 @@ export class NoteEditor extends Component {
       revision.data &&
       revision.data.systemTags &&
       revision.data.systemTags.indexOf('markdown') !== -1;
-
-    const classes = classNames(
-      'note-editor',
-      'theme-color-bg',
-      'theme-color-fg',
-      {
-        revisions: isViewingRevisions,
-        markdown: markdownEnabled,
-      }
-    );
 
     const content = get(revision, 'data.content', '');
 
@@ -191,27 +141,7 @@ export class NoteEditor extends Component {
     };
 
     return (
-      <div className={classes}>
-        <RevisionSelector
-          revisions={revisions || []}
-          onViewRevision={this.onViewRevision}
-          onSelectRevision={this.onSelectRevision}
-          onCancelRevision={this.onCancelRevision}
-        />
-        <NoteToolbar
-          note={note}
-          onTrashNote={this.props.onTrashNote}
-          onRestoreNote={this.props.onRestoreNote}
-          onShareNote={this.props.onShareNote}
-          onDeleteNoteForever={this.props.onDeleteNoteForever}
-          onRevisions={this.props.onRevisions}
-          setIsViewingRevisions={this.setIsViewingRevisions}
-          onCloseNote={this.props.onCloseNote}
-          onNoteInfo={this.props.onNoteInfo}
-          onSetEditorMode={this.props.onSetEditorMode}
-          editorMode={editorMode}
-          markdownEnabled={markdownEnabled}
-        />
+      <div className="note-editor theme-color-bg theme-color-fg">
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
@@ -250,8 +180,17 @@ export class NoteEditor extends Component {
 
 const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
+  editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
   markdownEnabled: settings.markdownEnabled,
+  revision: state.revision,
 });
 
-export default connect(mapStateToProps)(NoteEditor);
+const { closeNote, setEditorMode } = appState.actionCreators;
+
+const mapDispatchToProps = dispatch => ({
+  closeNote: () => dispatch(closeNote()),
+  setEditorMode: args => dispatch(setEditorMode(args)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
