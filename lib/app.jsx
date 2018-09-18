@@ -8,11 +8,11 @@ import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
-import SimplenoteCompactLogo from './icons/simplenote-compact';
 import NoteInfo from './note-info';
 import NoteList from './note-list';
 import NoteEditor from './note-editor';
 import NavigationBar from './navigation-bar';
+import AppLayout from './app-layout';
 import Auth from './auth';
 import DialogRenderer from './dialog-renderer';
 import analytics from './analytics';
@@ -289,8 +289,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
     };
 
-    onSetEditorMode = mode => this.props.actions.setEditorMode({ mode });
-
     onUpdateContent = (note, content) =>
       this.props.actions.updateNoteContent({
         noteBucket: this.props.noteBucket,
@@ -306,16 +304,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         tags,
       });
 
-    onTrashNote = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.trashNote({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-      analytics.tracks.recordEvent('editor_note_deleted');
-    };
-
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
       const filteredNotes = filterNotes(this.props.appState);
@@ -325,41 +313,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       };
 
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
-    };
-
-    onRestoreNote = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.restoreNote({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-      analytics.tracks.recordEvent('editor_note_restored');
-    };
-
-    onShareNote = () =>
-      this.props.actions.showDialog({
-        dialog: {
-          type: 'Share',
-          modal: true,
-        },
-      });
-
-    onDeleteNoteForever = note => {
-      const previousIndex = this.getPreviousNoteIndex(note);
-      this.props.actions.deleteNoteForever({
-        noteBucket: this.props.noteBucket,
-        note,
-        previousIndex,
-      });
-    };
-
-    onRevisions = note => {
-      this.props.actions.noteRevisions({
-        noteBucket: this.props.noteBucket,
-        note,
-      });
-      analytics.tracks.recordEvent('editor_versions_accessed');
     };
 
     toggleShortcuts = doEnable => {
@@ -383,9 +336,11 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
-
       const selectedNote =
         state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
+      const isNoteOpen = Boolean(
+        (isSmallScreen && state.note) || (!isSmallScreen && selectedNote)
+      );
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
         'is-line-length-full': settings.lineLength === 'full',
@@ -393,8 +348,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
 
       const mainClasses = classNames('simplenote-app', {
-        'note-open':
-          (isSmallScreen && state.note) || (!isSmallScreen && selectedNote),
         'note-info-open': state.showNoteInfo,
         'navigation-open': state.showNavigation,
         'is-electron': isElectron(),
@@ -408,49 +361,31 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               {state.showNavigation && (
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
-              <div className="source-list theme-color-bg theme-color-fg">
-                <SearchBar noteBucket={noteBucket} />
-                {hasNotes ? (
+              <AppLayout
+                isNavigationOpen={state.showNavigation}
+                isNoteOpen={isNoteOpen}
+                isNoteInfoOpen={state.showNoteInfo}
+                note={selectedNote}
+                noteBucket={noteBucket}
+                revisions={state.revisions}
+                onUpdateContent={this.onUpdateContent}
+                searchBar={<SearchBar noteBucket={noteBucket} />}
+                noteList={
                   <NoteList
                     noteBucket={noteBucket}
                     isSmallScreen={isSmallScreen}
                   />
-                ) : (
-                  <div className="placeholder-note-list">
-                    <span>No Notes</span>
-                  </div>
-                )}
-              </div>
-              {selectedNote &&
-                hasNotes && (
+                }
+                noteEditor={
                   <NoteEditor
                     allTags={state.tags}
-                    editorMode={state.editorMode}
                     filter={state.filter}
-                    note={selectedNote}
-                    revisions={state.revisions}
-                    onSetEditorMode={this.onSetEditorMode}
-                    onUpdateContent={this.onUpdateContent}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    onTrashNote={this.onTrashNote}
-                    onRestoreNote={this.onRestoreNote}
-                    onShareNote={this.onShareNote}
-                    onDeleteNoteForever={this.onDeleteNoteForever}
-                    onRevisions={this.onRevisions}
-                    onCloseNote={() => this.props.actions.closeNote()}
-                    onNoteInfo={() => this.props.actions.toggleNoteInfo()}
                     shouldPrint={state.shouldPrint}
                     onNotePrinted={this.onNotePrinted}
                   />
-                )}
-              {!hasNotes && (
-                <div className="placeholder-note-detail theme-color-border">
-                  <div className="placeholder-note-toolbar theme-color-border" />
-                  <div className="placeholder-note-editor">
-                    <SimplenoteCompactLogo />
-                  </div>
-                </div>
-              )}
+                }
+              />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
           ) : (

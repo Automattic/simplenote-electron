@@ -1,3 +1,4 @@
+@import 'app-layout/style';
 @import 'auth/style';
 @import 'components/spinner/style';
 @import 'components/tag-chip/style';
@@ -10,10 +11,14 @@
 @import 'editable-list/style';
 @import 'icons/style';
 @import 'navigation-bar/style';
+@import 'navigation-bar/item/style';
+@import 'note-detail/style';
 @import 'note-editor/style';
 @import 'note-info/style';
 @import 'note-list/style';
+@import 'note-toolbar/style';
 @import 'revision-selector/style';
+@import 'search-bar/style';
 @import 'search-field/style';
 @import 'tag-email-tooltip/style';
 @import 'tag-field/style';

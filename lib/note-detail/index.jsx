@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import highlight from 'highlight.js';
 import { get, debounce, invoke, noop } from 'lodash';
+import classNames from 'classnames';
 import analytics from '../analytics';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
+import SimplenoteCompactLogo from '../icons/simplenote-compact';
 
 import { renderNoteToHtml } from '../utils/render-note-to-html';
 
@@ -23,6 +25,7 @@ export class NoteDetail extends Component {
     dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
+    isViewingRevisions: PropTypes.bool.isRequired,
     onChangeContent: PropTypes.func.isRequired,
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
@@ -153,35 +156,53 @@ export class NoteDetail extends Component {
   };
 
   render() {
-    const { filter, fontSize, previewingMarkdown } = this.props;
+    const {
+      note,
+      filter,
+      fontSize,
+      isViewingRevisions,
+      previewingMarkdown,
+    } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
 
-    return (
-      <div className="note-detail">
-        {previewingMarkdown && (
-          <div
-            ref={this.storePreview}
-            className="note-detail-markdown theme-color-bg theme-color-fg"
-            onClick={this.onPreviewClick}
-            style={divStyle}
-          />
-        )}
+    const mainClasses = classNames('note-detail', {
+      'is-viewing-revisions': isViewingRevisions,
+    });
 
-        {!previewingMarkdown && (
-          <div
-            className="note-detail-textarea theme-color-bg theme-color-fg"
-            style={divStyle}
-          >
-            <NoteContentEditor
-              ref={this.saveEditorRef}
-              storeFocusEditor={this.storeFocusContentEditor}
-              storeHasFocus={this.storeEditorHasFocus}
-              content={content}
-              filter={filter}
-              onChangeContent={this.queueNoteSave}
-            />
+    return (
+      <div className="note-detail-wrapper theme-color-border">
+        {!note ? (
+          <div className="note-detail-placeholder">
+            <SimplenoteCompactLogo />
+          </div>
+        ) : (
+          <div className={mainClasses}>
+            {previewingMarkdown && (
+              <div
+                ref={this.storePreview}
+                className="note-detail-markdown theme-color-bg theme-color-fg"
+                onClick={this.onPreviewClick}
+                style={divStyle}
+              />
+            )}
+
+            {!previewingMarkdown && (
+              <div
+                className="note-detail-textarea theme-color-bg theme-color-fg"
+                style={divStyle}
+              >
+                <NoteContentEditor
+                  ref={this.saveEditorRef}
+                  storeFocusEditor={this.storeFocusContentEditor}
+                  storeHasFocus={this.storeEditorHasFocus}
+                  content={content}
+                  filter={filter}
+                  onChangeContent={this.queueNoteSave}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -192,6 +213,7 @@ export class NoteDetail extends Component {
 const mapStateToProps = ({ appState: state }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
+  isViewingRevisions: state.isViewingRevisions,
   showNoteInfo: state.showNoteInfo,
 });
 
