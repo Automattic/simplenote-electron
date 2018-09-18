@@ -1,16 +1,5 @@
 .note-editor {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background: $white;
-}
-
-.revisions {
-  .revision-selector {
-    top: 0 !important;
-  }
-
-  .note-detail {
-    padding-top: 51px !important;
-  }
+  flex: 1 0 auto;
 }
