@@ -6,7 +6,7 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
-  .login-draggable-area {
+  .login__draggable-area {
     -webkit-app-region: drag;
     width: 100%;
     height: 40px;
@@ -15,13 +15,13 @@
     position: absolute;
   }
 
-  .login-form {
+  .login__form {
     max-width: 320px;
     margin: auto;
     padding: 10px;
   }
 
-  .login-logo {
+  .login__logo {
     margin-bottom: 50px;
     text-align: center;
 
@@ -31,12 +31,12 @@
     }
   }
 
-  .login-fields {
+  .login__fields {
     border: 1px solid lighten($gray, 25%);
     border-radius: $border-radius;
   }
 
-  .login-field {
+  .login__field {
     display: flex;
     align-items: center;
     padding: 1px;
@@ -46,7 +46,7 @@
       border-bottom: none;
     }
 
-    .login-field-label {
+    .login__field-label {
       flex: none;
       width: 7.5em;
       padding: 8px 12px;
@@ -56,7 +56,7 @@
       color: $gray;
     }
 
-    .login-field-control {
+    .login__field-control {
       flex: 1 1 auto;
     }
 
@@ -77,12 +77,12 @@
     }
   }
 
-  .login-auth-message {
+  .login__auth-message {
     opacity: 0;
     margin-top: 8px;
     margin-bottom: 0;
 
-    &.login-auth-failure {
+    &.is-error {
       color: $red;
       text-align: center;
       opacity: 1;
@@ -90,7 +90,7 @@
     }
   }
 
-  .login-actions {
+  .login__actions {
     margin-top: 22px;
     text-align: center;
     color: $gray;
@@ -104,35 +104,47 @@
     align-items: center;
   }
 
-  .login-forgot {
+  .login__forgot {
     a {
       color: inherit;
       text-decoration: none;
     }
   }
 
-  .login-signup {
+  .login__signup {
     margin-top: 1em;
 
     a {
       font-weight: $bold;
     }
   }
+}
 
-  .wpcom-connect-or {
-    text-align: center;
-    margin: 20px 0;
-  }
+.login__or {
+  text-align: center;
+  margin: 20px 0 12px;
+}
 
-  .logo-wordpress {
-    fill: #FFFFFF;
-    margin-right: 6px;
-    width: 32px;
-    height: 32px;
+.login__btn-wpcom {
+  button {
+    color: $gray;
+    width: 100%;
   }
 }
 
-.theme-dark .login-logo svg {
+.login__btn-wpcom-icon {
+  svg {
+    margin-right: 6px;
+    width: 32px;
+    height: 32px;
+
+    path {
+      fill: $blue;
+    }
+  }
+}
+
+.theme-dark .login__logo svg {
   border-radius: 0;
   border: none;
 }
