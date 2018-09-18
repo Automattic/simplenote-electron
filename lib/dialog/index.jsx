@@ -80,6 +80,7 @@ export class Dialog extends Component {
           type="text"
           className="focus-guard"
           onFocus={this.focusLastInput}
+          spellCheck={false}
         />
 
         <div
@@ -116,6 +117,7 @@ export class Dialog extends Component {
           type="text"
           className="focus-guard"
           onFocus={this.focusFirstInputEvent}
+          spellCheck={false}
         />
       </div>
     );

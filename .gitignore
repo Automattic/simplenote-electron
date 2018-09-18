@@ -3,6 +3,7 @@ desktop-build/
 dist/
 release/
 *.pvk
+*.p12
 *.spc
 *.tgz
 .idea

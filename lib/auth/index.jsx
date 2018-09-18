@@ -83,6 +83,7 @@ export class Auth extends Component {
                   id="login-field-username"
                   type="email"
                   onKeyDown={this.onLogin}
+                  spellCheck={false}
                 />
               </span>
             </label>
@@ -97,6 +98,7 @@ export class Auth extends Component {
                   id="login-field-password"
                   type="password"
                   onKeyDown={this.onLogin}
+                  spellCheck={false}
                 />
               </span>
             </label>
@@ -112,6 +114,7 @@ export class Auth extends Component {
                     id="login-field-password-confirm"
                     type="password"
                     onKeyDown={this.onSignUp}
+                    spellCheck={false}
                   />
                 </span>
               </label>

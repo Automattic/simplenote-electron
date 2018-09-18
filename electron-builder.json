@@ -1,15 +1,57 @@
 {
   "productName": "Simplenote",
+  "appId": "com.automattic.simplenote",
   "directories": {
-    "buildResources": "resources/",
-    "output": "release"
+    "output": "release",
+    "buildResources": "resources"
   },
   "files": [
-    "desktop/",
-    "dist/"
+    "desktop",
+    "dist"
   ],
+  "mac": {
+    "icon": "./resources/images/app-icon.icns",
+    "category": "public.app-category.social-networking",
+    "artifactName": "Simplenote-macOS-${version}.${ext}"
+  },
+  "dmg": {
+    "title": "Simplenote Installer",
+    "artifactName": "Simplenote-macOS-${version}.${ext}",
+    "icon": "./resources/images/dmg-icon.icns",
+    "iconSize": 150,
+    "background": "./resources/images/dmg-background.png",
+    "contents": [{
+        "x": 480,
+        "y": 240,
+        "type": "link",
+        "path": "/Applications"
+      },
+      {
+        "x": 130,
+        "y": 240,
+        "type": "file"
+      }
+    ]
+  },
+  "win": {
+    "icon": "resources/images/simplenote.ico",
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
+    "target": [{
+        "target": "nsis",
+        "arch": [
+          "ia32",
+          "x64"
+        ]
+      }
+    ]
+  },
+  "nsis": {
+    "perMachine": true,
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
+  },
   "linux": {
     "icon": "resources/images/",
+    "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
     "target": [
       {
         "target": "AppImage",
@@ -58,4 +100,3 @@
     "depends": ["gconf2"]
   }
 }
-

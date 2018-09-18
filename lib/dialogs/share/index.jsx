@@ -140,6 +140,7 @@ export class ShareDialog extends Component {
                     pattern="[^@]+@[^@]+"
                     className="settings-item-text-input transparent-input"
                     placeholder="email@example.com"
+                    spellCheck={false}
                   />
                   <div className="settings-item-control">
                     <button type="submit" className="button button-borderless">
@@ -216,6 +217,7 @@ export class ShareDialog extends Component {
                         isPublished ? 'Publishing note…' : 'Note not published'
                       }
                       value={publishURL}
+                      spellCheck={false}
                     />
                     <div className="settings-item-control">
                       <button
