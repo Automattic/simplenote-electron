@@ -1,7 +1,50 @@
-.app-layout-source-list {
+.app-layout {
+  display: flex;
+  flex: 1 0 auto;
+
+  &.is-navigation-open {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+
+    @media only screen and (max-width: $single-column) {
+      .app-layout__note-column {
+        opacity: 0;
+      }
+    }
+  }
+
+  // Fade content when toolbars are visible
+  &.is-showing-note-info {
+    opacity: $fade-alpha;
+    transition: $anim;
+    pointer-events: none;
+
+    @media only screen and (max-width: $single-column) {
+      .app-layout__note-column {
+        opacity: $fade-alpha;
+      }
+    }
+  }
+
+  &.is-note-open {
+    @media only screen and (max-width: $single-column) {
+      .app-layout__source-column {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .app-layout__note-column {
+        opacity: 1;
+        z-index: auto;
+      }
+    }
+  }
+}
+
+.app-layout__source-column {
   width: 328px;
   min-width: 328px;
-  background: $white;
   display: flex;
   flex-direction: column;
   transition: transform 200ms ease-in-out;
@@ -21,10 +64,23 @@
     transition: $anim-transition;
     opacity: 1;
     pointer-events: auto;
+  }
+}
 
-    .note-open & {
-      opacity: 0;
-      pointer-events: none;
-    }
+.app-layout__note-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+
+  @media only screen and (max-width: $single-column) {
+    position: absolute;
+    flex: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: -1;
+    transition: $anim-transition;
   }
 }

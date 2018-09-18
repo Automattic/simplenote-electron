@@ -338,9 +338,11 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       const isMacApp = isElectronMac();
       const filteredNotes = filterNotes(state);
       const hasNotes = filteredNotes.length > 0;
-
       const selectedNote =
         state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
+      const isNoteOpen = Boolean(
+        (isSmallScreen && state.note) || (!isSmallScreen && selectedNote)
+      );
 
       const appClasses = classNames('app', `theme-${settings.theme}`, {
         'is-line-length-full': settings.lineLength === 'full',
@@ -348,8 +350,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
 
       const mainClasses = classNames('simplenote-app', {
-        'note-open':
-          (isSmallScreen && state.note) || (!isSmallScreen && selectedNote),
         'note-info-open': state.showNoteInfo,
         'navigation-open': state.showNavigation,
         'is-electron': isElectron(),
@@ -375,6 +375,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
               <AppLayout
+                isNavigationOpen={state.showNavigation}
+                isNoteOpen={isNoteOpen}
+                isNoteInfoOpen={state.showNoteInfo}
                 note={selectedNote}
                 noteBucket={noteBucket}
                 revisions={state.revisions}

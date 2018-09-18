@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import moment from 'moment';
 import { orderBy } from 'lodash';
+import classNames from 'classnames';
 import appState from '../flux/app-state';
 
 const sortedRevisions = revisions =>
@@ -11,6 +12,7 @@ const sortedRevisions = revisions =>
 
 export class RevisionSelector extends Component {
   static propTypes = {
+    isViewingRevisions: PropTypes.bool.isRequired,
     note: PropTypes.object,
     revisions: PropTypes.array.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
@@ -96,6 +98,7 @@ export class RevisionSelector extends Component {
   };
 
   render() {
+    const { isViewingRevisions } = this.props;
     const { revisions, selection: rawSelection } = this.state;
 
     const min = 0;
@@ -112,8 +115,12 @@ export class RevisionSelector extends Component {
     const revisionButtonStyle =
       selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
 
+    const mainClasses = classNames('revision-selector', {
+      'is-visible': isViewingRevisions,
+    });
+
     return (
-      <div className="revision-selector">
+      <div className={mainClasses}>
         <div className="revision-date">{revisionDate}</div>
         <div className="revision-slider">
           <input
@@ -144,6 +151,10 @@ export class RevisionSelector extends Component {
   }
 }
 
+const mapStateToProps = ({ appState: state }) => ({
+  isViewingRevisions: state.isViewingRevisions,
+});
+
 const { setRevision, setIsViewingRevisions } = appState.actionCreators;
 
 const mapDispatchToProps = dispatch => ({
@@ -157,6 +168,6 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   onClickOutside(RevisionSelector)
 );

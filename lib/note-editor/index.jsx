@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import appState from '../flux/app-state';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
@@ -15,7 +14,6 @@ export class NoteEditor extends Component {
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
-    isViewingRevisions: PropTypes.bool.isRequired,
     markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
     fontSize: PropTypes.number,
@@ -120,13 +118,7 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const {
-      editorMode,
-      isViewingRevisions,
-      note,
-      fontSize,
-      shouldPrint,
-    } = this.props;
+    const { editorMode, note, fontSize, shouldPrint } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -136,16 +128,6 @@ export class NoteEditor extends Component {
       revision.data &&
       revision.data.systemTags &&
       revision.data.systemTags.indexOf('markdown') !== -1;
-
-    const classes = classNames(
-      'note-editor',
-      'theme-color-bg',
-      'theme-color-fg',
-      {
-        revisions: isViewingRevisions,
-        markdown: markdownEnabled,
-      }
-    );
 
     const content = get(revision, 'data.content', '');
 
@@ -159,7 +141,7 @@ export class NoteEditor extends Component {
     };
 
     return (
-      <div className={classes}>
+      <div className="note-editor theme-color-bg theme-color-fg">
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
@@ -200,7 +182,6 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
   editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
-  isViewingRevisions: state.isViewingRevisions,
   markdownEnabled: settings.markdownEnabled,
   revision: state.revision,
 });
