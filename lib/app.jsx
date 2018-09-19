@@ -158,11 +158,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.onNotesIndex();
       this.onTagsIndex();
-      this.onLoadPreferences();
+      this.onLoadPreferences(() =>
+        // Make sure that tracking starts only after preferences are loaded
+        analytics.tracks.recordEvent('application_opened')
+      );
 
       this.toggleShortcuts(true);
-
-      analytics.tracks.recordEvent('application_opened');
     }
 
     componentWillUnmount() {
@@ -279,8 +280,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isIndexing,
       });
 
-    onLoadPreferences = () =>
+    onLoadPreferences = callback =>
       this.props.actions.loadPreferences({
+        callback,
         preferencesBucket: this.props.preferencesBucket,
       });
 
