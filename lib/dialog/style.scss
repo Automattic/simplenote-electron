@@ -111,16 +111,16 @@
 }
 
 .dialog-actions {
-  margin: 36px 0 0;
+  margin: 1em 0 0;
   padding: 0;
   list-style: none;
 
-  li {
-    margin-top: 1.3em;
+  li + li {
+    margin-top: 1em;
+  }
 
-    &:first-child {
-      margin-top: 0;
-    }
+  li:last-child {
+    margin-top: 2.5em;
   }
 
   button {
