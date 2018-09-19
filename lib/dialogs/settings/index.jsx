@@ -17,20 +17,20 @@ const settingTabs = ['account', 'display'];
 export class SettingsDialog extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
+    appState: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     preferencesBucket: PropTypes.object.isRequired,
-    setShareAnalyticsPreference: PropTypes.func.isRequired,
+    toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
   onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
-  onSetShareAnalyticsPreference = event => {
-    this.props.setShareAnalyticsPreference({
-      enabled: event.target.checked,
+  onToggleShareAnalyticsPreference = () => {
+    this.props.toggleShareAnalyticsPreference({
       preferencesBucket: this.props.preferencesBucket,
     });
   };
@@ -180,7 +180,7 @@ export class SettingsDialog extends Component {
                   slug="shareAnalytics"
                   activeSlug={analyticsEnabled ? 'enabled' : ''}
                   description="Help us improve Simplenote by sharing usage data with our analytics tool."
-                  onChange={this.onSetShareAnalyticsPreference}
+                  onChange={this.onToggleShareAnalyticsPreference}
                   learnMoreURL="https://automattic.com/cookies"
                   renderer={ToggleGroup}
                 >
@@ -264,12 +264,12 @@ export class SettingsDialog extends Component {
   };
 }
 
-const { setShareAnalyticsPreference } = appState.actionCreators;
+const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps = dispatch => ({
   onSetWPToken: token => dispatch(setWPToken(token)),
-  setShareAnalyticsPreference: args => {
-    dispatch(setShareAnalyticsPreference(args));
+  toggleShareAnalyticsPreference: args => {
+    dispatch(toggleShareAnalyticsPreference(args));
   },
 });
 

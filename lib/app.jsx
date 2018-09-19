@@ -114,6 +114,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       client: PropTypes.object.isRequired,
       noteBucket: PropTypes.object.isRequired,
+      preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
@@ -144,9 +145,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', this.onNoteUpdate)
         .on('remove', this.onNoteRemoved);
 
-      this.props.preferencesBucket
-        .on('index', this.onPreferencesIndex)
-        .on('update', this.onPreferencesUpdate);
+      this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
         .on('index', this.onTagsIndex)
@@ -159,7 +158,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.onNotesIndex();
       this.onTagsIndex();
-      this.onPreferencesIndex();
+      this.onLoadPreferences();
 
       this.toggleShortcuts(true);
 
@@ -280,18 +279,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isIndexing,
       });
 
-    onPreferencesIndex = () =>
+    onLoadPreferences = () =>
       this.props.actions.loadPreferences({
         preferencesBucket: this.props.preferencesBucket,
       });
-
-    onPreferencesUpdate = (id, data) => {
-      this.props.actions.setPreference({
-        id,
-        data,
-        preferencesBucket: this.props.preferencesBucket,
-      });
-    };
 
     onTagsIndex = () =>
       this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
