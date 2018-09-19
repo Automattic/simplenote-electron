@@ -159,6 +159,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.onNotesIndex();
       this.onTagsIndex();
+      this.onPreferencesIndex();
 
       this.toggleShortcuts(true);
 

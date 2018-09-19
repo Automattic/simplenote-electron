@@ -141,7 +141,6 @@ export class SettingsDialog extends Component {
     } = this.props;
 
     const {
-      preferences: { analyticsEnabled = true },
       settings: {
         theme: activeTheme,
         lineLength,
@@ -151,6 +150,8 @@ export class SettingsDialog extends Component {
         accountName,
       },
     } = this.props;
+
+    const { analyticsEnabled } = this.props.appState.preferences;
 
     switch (tabName) {
       case 'account':
