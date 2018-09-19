@@ -20,7 +20,7 @@ export class SettingsDialog extends Component {
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
-    preferenceBucket: PropTypes.object.isRequired,
+    preferencesBucket: PropTypes.object.isRequired,
     setShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
@@ -31,7 +31,7 @@ export class SettingsDialog extends Component {
   onSetShareAnalyticsPreference = event => {
     this.props.setShareAnalyticsPreference({
       enabled: event.target.checked,
-      preferenceBucket: this.props.preferenceBucket,
+      preferencesBucket: this.props.preferencesBucket,
     });
   };
 

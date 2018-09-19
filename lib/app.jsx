@@ -144,7 +144,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', this.onNoteUpdate)
         .on('remove', this.onNoteRemoved);
 
-      this.props.preferenceBucket
+      this.props.preferencesBucket
         .on('index', this.onPreferencesIndex)
         .on('update', this.onPreferencesUpdate);
 
@@ -281,14 +281,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onPreferencesIndex = () =>
       this.props.actions.loadPreferences({
-        preferenceBucket: this.props.preferenceBucket,
+        preferencesBucket: this.props.preferencesBucket,
       });
 
     onPreferencesUpdate = (id, data) => {
       this.props.actions.setPreference({
         id,
         data,
-        preferenceBucket: this.props.preferenceBucket,
+        preferencesBucket: this.props.preferencesBucket,
       });
     };
 
@@ -342,7 +342,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     loadPreferences = () => {
       this.props.actions.loadPreferences({
-        preferenceBucket: this.props.preferenceBucket,
+        preferencesBucket: this.props.preferencesBucket,
       });
     };
 
