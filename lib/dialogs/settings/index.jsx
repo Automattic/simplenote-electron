@@ -9,6 +9,7 @@ import RadioGroup from '../radio-settings-group';
 import ToggleGroup from '../toggle-settings-group';
 import SettingsGroup, { Item } from '../settings-group';
 
+import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
 const settingTabs = ['account', 'display'];
@@ -19,11 +20,20 @@ export class SettingsDialog extends Component {
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
+    preferenceBucket: PropTypes.object.isRequired,
+    setShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
   onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
+
+  onSetShareAnalyticsPreference = event => {
+    this.props.setShareAnalyticsPreference({
+      enabled: event.target.checked,
+      preferenceBucket: this.props.preferenceBucket,
+    });
+  };
 
   onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
@@ -131,6 +141,7 @@ export class SettingsDialog extends Component {
     } = this.props;
 
     const {
+      preferences: { analyticsEnabled = true },
       settings: {
         theme: activeTheme,
         lineLength,
@@ -138,7 +149,6 @@ export class SettingsDialog extends Component {
         sortType,
         sortReversed: sortIsReversed,
         accountName,
-        shareAnalytics,
       },
     } = this.props;
 
@@ -167,9 +177,9 @@ export class SettingsDialog extends Component {
                 <SettingsGroup
                   title="Privacy"
                   slug="shareAnalytics"
-                  activeSlug={shareAnalytics ? 'enabled' : ''}
+                  activeSlug={analyticsEnabled ? 'enabled' : ''}
                   description="Help us improve Simplenote by sharing usage data with our analytics tool."
-                  onChange={toggleSortOrder}
+                  onChange={this.onSetShareAnalyticsPreference}
                   learnMoreURL="https://automattic.com/cookies"
                   renderer={ToggleGroup}
                 >
@@ -253,8 +263,13 @@ export class SettingsDialog extends Component {
   };
 }
 
+const { setShareAnalyticsPreference } = appState.actionCreators;
+
 const mapDispatchToProps = dispatch => ({
   onSetWPToken: token => dispatch(setWPToken(token)),
+  setShareAnalyticsPreference: args => {
+    dispatch(setShareAnalyticsPreference(args));
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SettingsDialog);

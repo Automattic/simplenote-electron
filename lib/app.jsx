@@ -144,6 +144,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', this.onNoteUpdate)
         .on('remove', this.onNoteRemoved);
 
+      this.props.preferenceBucket
+        .on('index', this.onPreferencesIndex)
+        .on('update', this.onPreferencesUpdate);
+
       this.props.tagBucket
         .on('index', this.onTagsIndex)
         .on('update', this.onTagsIndex)
@@ -275,6 +279,19 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isIndexing,
       });
 
+    onPreferencesIndex = () =>
+      this.props.actions.loadPreferences({
+        preferenceBucket: this.props.preferenceBucket,
+      });
+
+    onPreferencesUpdate = (id, data) => {
+      this.props.actions.setPreference({
+        id,
+        data,
+        preferenceBucket: this.props.preferenceBucket,
+      });
+    };
+
     onTagsIndex = () =>
       this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
 
@@ -321,6 +338,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       } else {
         window.removeEventListener('keydown', this.handleShortcut, true);
       }
+    };
+
+    loadPreferences = () => {
+      this.props.actions.loadPreferences({
+        preferenceBucket: this.props.preferenceBucket,
+      });
     };
 
     render() {
