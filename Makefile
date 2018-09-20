@@ -56,7 +56,7 @@ dev:
 dev-server:
 	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --mode=development --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
+	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
 
 .PHONY: test
 test: 
@@ -80,12 +80,12 @@ endif
 
 # Build utils
 .PHONY: build-app
-build-app:
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p --mode=production) --config ./webpack.config.js
+build-app: 
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
 
 .PHONY: build-dll
-build-dll:
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p --mode=production) --config ./webpack.config.dll.js
+build-dll: 
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
 
 .PHONY: build-if-not-exists 
 build-if-not-exists: config.json
