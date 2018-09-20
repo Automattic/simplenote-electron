@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 
-module.exports = (env, argv) => {
-  const isDevMode = argv.mode === 'development';
+module.exports = () => {
+  const isDevMode = process.env.NODE_ENV === 'development';
 
   return {
     context: process.cwd(),

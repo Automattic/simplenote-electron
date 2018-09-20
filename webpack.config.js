@@ -5,11 +5,12 @@ const config = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-module.exports = (env, argv) => {
-  const isDevMode = argv.mode === 'development';
+module.exports = () => {
+  const isDevMode = process.env.NODE_ENV === 'development';
 
   return {
     context: __dirname + '/lib',
+    mode: isDevMode ? 'development' : 'production',
     devtool: isDevMode && 'cheap-module-eval-source-map',
     devServer: { inline: true },
     entry: ['./boot'],
