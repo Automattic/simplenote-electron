@@ -8,6 +8,7 @@ const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 module.exports = {
   context: __dirname + '/lib',
   devtool: 'cheap-module-eval-source-map',
+  devServer: { inline: true },
   entry: ['./boot'],
   output: {
     path: __dirname + '/dist',
