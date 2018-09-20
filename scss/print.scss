@@ -1,24 +1,24 @@
 @media print {
   html,
   body,
-  .note-editor {
+  .app-layout__note-column {
     overflow: visible;
     height: auto;
   }
 
   .app,
   .simplenote-app,
-  .simplenote-app .note-editor {
+  .app-layout__note-column {
     display: block;
     height: auto;
   }
 
   .navigation,
-  .source-list,
+  .app-layout__source-column,
   .revision-selector,
-  .note-editor-controls,
-  .note-editor-detail,
-  .note-editor-detail .note-detail,
+  .note-toolbar-wrapper,
+  .note-detail-wrapper,
+  .note-detail-wrapper .note-detail,
   .note-info,
   .tag-field {
     display: none;

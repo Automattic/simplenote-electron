@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -54,33 +54,21 @@ export class Auth extends Component {
 
     return (
       <div className="login">
-        {isMacApp && <div className="login-draggable-area" />}
-        <form className="login-form" onSubmit={this.onLogin}>
-          <div className="login-logo">
+        {isMacApp && <div className="login__draggable-area" />}
+        <form className="login__form" onSubmit={this.onLogin}>
+          <div className="login__logo">
             <SimplenoteLogo />
           </div>
-          {isElectron && (
-            <div className="wpcom-connect">
-              <div
-                className="button button-primary wpcom-connect-button"
-                onClick={this.onWPLogin}
-              >
-                <WordPressLogo />
-                Sign in with WordPress.com
-              </div>
-              <div className="wpcom-connect-or">or:</div>
-            </div>
-          )}
-          <div className="login-fields theme-color-border theme-color-fg">
+          <div className="login__fields theme-color-border theme-color-fg">
             <label
-              className="login-field theme-color-border"
-              htmlFor="login-field-username"
+              className="login__field theme-color-border"
+              htmlFor="login__field-username"
             >
-              <span className="login-field-label">Email</span>
-              <span className="login-field-control">
+              <span className="login__field-label">Email</span>
+              <span className="login__field-control">
                 <input
                   ref={ref => (this.usernameInput = ref)}
-                  id="login-field-username"
+                  id="login__field-username"
                   type="email"
                   onKeyDown={this.onLogin}
                   spellCheck={false}
@@ -88,14 +76,14 @@ export class Auth extends Component {
               </span>
             </label>
             <label
-              className="login-field theme-color-border"
-              htmlFor="login-field-password"
+              className="login__field theme-color-border"
+              htmlFor="login__field-password"
             >
-              <span className="login-field-label">Password</span>
-              <span className="login-field-control">
+              <span className="login__field-label">Password</span>
+              <span className="login__field-control">
                 <input
                   ref={ref => (this.passwordInput = ref)}
-                  id="login-field-password"
+                  id="login__field-password"
                   type="password"
                   onKeyDown={this.onLogin}
                   spellCheck={false}
@@ -104,14 +92,14 @@ export class Auth extends Component {
             </label>
             {isCreatingAccount && (
               <label
-                className="login-field theme-color-border"
-                htmlFor="login-field-password-confirm"
+                className="login__field theme-color-border"
+                htmlFor="login__field-password-confirm"
               >
-                <span className="login-field-label">Confirm Password</span>
-                <span className="login-field-control">
+                <span className="login__field-label">Confirm Password</span>
+                <span className="login__field-control">
                   <input
                     ref={ref => (this.passwordConfirmInput = ref)}
-                    id="login-field-password-confirm"
+                    id="login__field-password-confirm"
                     type="password"
                     onKeyDown={this.onSignUp}
                     spellCheck={false}
@@ -121,21 +109,19 @@ export class Auth extends Component {
             )}
           </div>
           {this.props.hasInvalidCredentials && (
-            <p className="login-auth-message login-auth-failure">
+            <p className="login__auth-message is-error">
               The credentials you entered don&apos;t match
             </p>
           )}
           {this.props.hasLoginError && (
-            <p className="login-auth-message login-auth-failure">
-              {errorMessage}
-            </p>
+            <p className="login__auth-message is-error">{errorMessage}</p>
           )}
           {passwordErrorMessage && (
-            <p className="login-auth-message login-auth-failure">
+            <p className="login__auth-message is-error">
               {passwordErrorMessage}
             </p>
           )}
-          <div className="login-actions">
+          <div className="login__actions">
             <div
               className={submitClasses}
               onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
@@ -143,7 +129,7 @@ export class Auth extends Component {
             >
               {this.props.authPending ? <Spinner /> : buttonLabel}
             </div>
-            <p className="login-forgot">
+            <p className="login__forgot">
               <a
                 href="https://app.simplenote.com/forgot/"
                 target="_blank"
@@ -153,13 +139,29 @@ export class Auth extends Component {
                 Forgot your password?
               </a>
             </p>
-            <p className="login-signup">
+            <p className="login__signup">
               {helpMessage}{' '}
               <a href="#" onClick={this.toggleSignUp}>
                 {helpLinkLabel}
               </a>
             </p>
           </div>
+          {isElectron && (
+            <Fragment>
+              <div className="login__or">or:</div>
+              <div className="login__btn-wpcom">
+                <button
+                  className="button button-borderless"
+                  onClick={this.onWPLogin}
+                >
+                  <span className="login__btn-wpcom-icon">
+                    <WordPressLogo />
+                  </span>
+                  Log in with WordPress.com
+                </button>
+              </div>
+            </Fragment>
+          )}
         </form>
       </div>
     );
