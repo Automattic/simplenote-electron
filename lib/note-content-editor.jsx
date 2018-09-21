@@ -145,6 +145,7 @@ export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
     onChangeContent: PropTypes.func.isRequired,
+    spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
   };
@@ -314,7 +315,7 @@ export default class NoteContentEditor extends Component {
     return (
       <Editor
         ref={this.saveEditorRef}
-        spellCheck
+        spellCheck={this.props.spellCheckEnabled}
         stripPastedStyles
         onChange={this.handleEditorStateChange}
         editorState={this.state.editorState}
