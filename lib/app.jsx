@@ -75,6 +75,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleFocusMode',
       ]),
       dispatch
     ),
@@ -188,7 +189,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       }
 
       // focus search field
-      if (cmdOrCtrl && 'F' === key) {
+      if (cmdOrCtrl && 'f' === key) {
         this.props.setSearchFocus();
 
         event.stopPropagation();
@@ -362,6 +363,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
               )}
               <AppLayout
+                isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
                 isNoteOpen={isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
