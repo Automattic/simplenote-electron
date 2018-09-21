@@ -8,6 +8,7 @@ const util = require('util');
 const { dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const sanitizeHtml = require('sanitize-html');
+const TurndownService = require('turndown');
 
 const config = require('../../config');
 
@@ -57,12 +58,15 @@ AutoUpdater.prototype.onDownloaded = function(info) {
 };
 
 AutoUpdater.prototype.formatGithubReleaseNotes = function(releaseNotes) {
-  return sanitizeHtml(releaseNotes, {
-    allowedTags: ['br', 'li'],
+  const turndownService = new TurndownService();
+
+  let sanitizedHtml = releaseNotes;
+  sanitizedHtml = sanitizeHtml(releaseNotes, {
+    allowedTags: ['p', 'ul', 'ol', 'li'],
     allowedAttributes: [],
-  })
-    .replace(/<br \/>/g, '\n')
-    .replace(/<li>(.*)<\/li>/g, '- $1');
+  }).replace(/\(@(.*)\)/g, ''); // remove user mentions
+
+  return turndownService.turndown(sanitizedHtml);
 };
 
 module.exports = AutoUpdater;

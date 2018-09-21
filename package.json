@@ -118,6 +118,7 @@
     "sanitize-html": "^1.19.0",
     "showdown": "1.8.6",
     "simperium": "0.3.1",
+    "turndown": "^5.0.1",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {
