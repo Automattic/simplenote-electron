@@ -11,7 +11,8 @@ module.exports = () => {
   return {
     context: __dirname + '/lib',
     mode: isDevMode ? 'development' : 'production',
-    devtool: isDevMode && 'cheap-module-eval-source-map',
+    devtool:
+      process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
     devServer: { inline: true },
     entry: ['./boot'],
     output: {

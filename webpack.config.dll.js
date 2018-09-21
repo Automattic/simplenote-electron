@@ -6,7 +6,8 @@ module.exports = () => {
   return {
     context: process.cwd(),
     mode: isDevMode ? 'development' : 'production',
-    devtool: isDevMode && 'cheap-module-eval-source-map',
+    devtool:
+      process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
 
     entry: {
       vendor: [
