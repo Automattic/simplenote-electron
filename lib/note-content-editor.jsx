@@ -163,6 +163,8 @@ export default class NoteContentEditor extends Component {
     ),
   };
 
+  editorKey = 0;
+
   componentWillMount() {
     document.addEventListener('copy', this.stripFormattingFromSelectedText);
     document.addEventListener('cut', this.stripFormattingFromSelectedText);
@@ -171,6 +173,17 @@ export default class NoteContentEditor extends Component {
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
+  }
+
+  componentDidUpdate(prevProps) {
+    // To immediately reflect the changes to the spell check setting,
+    // we must remount the Editor and force update. The remount is
+    // done by changing the `key` prop on the Editor.
+    // https://stackoverflow.com/questions/35792275/
+    if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
+      this.editorKey += 1;
+      this.forceUpdate();
+    }
   }
 
   componentWillUnmount() {
@@ -314,6 +327,7 @@ export default class NoteContentEditor extends Component {
   render() {
     return (
       <Editor
+        key={this.editorKey}
         ref={this.saveEditorRef}
         spellCheck={this.props.spellCheckEnabled}
         stripPastedStyles
