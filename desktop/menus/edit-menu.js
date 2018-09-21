@@ -1,3 +1,5 @@
+const { appCommandSender } = require('./utils');
+
 const editMenu = {
   label: '&Edit',
   submenu: [
@@ -40,13 +42,7 @@ const editMenu = {
     {
       label: 'Search &Notes',
       accelerator: 'CommandOrControl+F',
-      click(item, focusedWindow) {
-        if (focusedWindow) {
-          focusedWindow.webContents.send('appCommand', {
-            action: 'setSearchFocus',
-          });
-        }
-      },
+      click: appCommandSender({ action: 'setSearchFocus' }),
     },
   ],
 };
