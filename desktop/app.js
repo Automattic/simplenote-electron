@@ -14,7 +14,7 @@ const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 
 const buildViewMenu = require('./menus/view-menu');
-const editMenu = require('./menus/edit-menu');
+const buildEditMenu = require('./menus/edit-menu');
 const { isDev } = require('./env');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
@@ -343,7 +343,7 @@ function createMenuTemplate(settings) {
 
   const menuTemplate = [
     fileMenu,
-    editMenu,
+    buildEditMenu(settings),
     buildViewMenu(settings),
     windowMenu,
     helpMenu,
