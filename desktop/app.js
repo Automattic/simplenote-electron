@@ -14,6 +14,7 @@ const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 
 const buildViewMenu = require('./menus/view-menu');
+const buildEditMenu = require('./menus/edit-menu');
 const { isDev } = require('./env');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
@@ -342,58 +343,7 @@ function createMenuTemplate(settings) {
 
   const menuTemplate = [
     fileMenu,
-    {
-      label: '&Edit',
-      submenu: [
-        {
-          label: '&Undo',
-          accelerator: 'CommandOrControl+Z',
-          role: 'undo',
-        },
-        {
-          label: '&Redo',
-          accelerator: 'Shift+CommandOrControl+Z',
-          role: 'redo',
-        },
-        {
-          type: 'separator',
-        },
-        {
-          label: '&Cut',
-          accelerator: 'CommandOrControl+X',
-          role: 'cut',
-        },
-        {
-          label: 'C&opy',
-          accelerator: 'CommandOrControl+C',
-          role: 'copy',
-        },
-        {
-          label: '&Paste',
-          accelerator: 'CommandOrControl+V',
-          role: 'paste',
-        },
-        {
-          label: '&Select All',
-          accelerator: 'CommandOrControl+A',
-          role: 'selectall',
-        },
-        {
-          type: 'separator',
-        },
-        {
-          label: 'Search &Notes',
-          accelerator: 'CommandOrControl+F',
-          click(item, focusedWindow) {
-            if (focusedWindow) {
-              focusedWindow.webContents.send('appCommand', {
-                action: 'setSearchFocus',
-              });
-            }
-          },
-        },
-      ],
-    },
+    buildEditMenu(settings),
     buildViewMenu(settings),
     windowMenu,
     helpMenu,
