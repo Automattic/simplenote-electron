@@ -116,6 +116,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       client: PropTypes.object.isRequired,
       noteBucket: PropTypes.object.isRequired,
+      preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
@@ -146,6 +147,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', this.onNoteUpdate)
         .on('remove', this.onNoteRemoved);
 
+      this.props.preferencesBucket.on('update', this.onLoadPreferences);
+
       this.props.tagBucket
         .on('index', this.onTagsIndex)
         .on('update', this.onTagsIndex)
@@ -157,10 +160,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.onNotesIndex();
       this.onTagsIndex();
+      this.onLoadPreferences(() =>
+        // Make sure that tracking starts only after preferences are loaded
+        analytics.tracks.recordEvent('application_opened')
+      );
 
       this.toggleShortcuts(true);
-
-      analytics.tracks.recordEvent('application_opened');
     }
 
     componentWillUnmount() {
@@ -277,6 +282,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isIndexing,
       });
 
+    onLoadPreferences = callback =>
+      this.props.actions.loadPreferences({
+        callback,
+        preferencesBucket: this.props.preferencesBucket,
+      });
+
     onTagsIndex = () =>
       this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
 
@@ -323,6 +334,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       } else {
         window.removeEventListener('keydown', this.handleShortcut, true);
       }
+    };
+
+    loadPreferences = () => {
+      this.props.actions.loadPreferences({
+        preferencesBucket: this.props.preferencesBucket,
+      });
     };
 
     render() {
