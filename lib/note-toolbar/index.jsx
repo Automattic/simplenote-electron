@@ -10,6 +10,7 @@ import PreviewStopIcon from '../icons/preview-stop';
 import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
+import SidebarIcon from '../icons/sidebar';
 
 export class NoteToolbar extends Component {
   static displayName = 'NoteToolbar';
@@ -24,6 +25,7 @@ export class NoteToolbar extends Component {
     onCloseNote: PropTypes.func,
     onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
+    toggleFocusMode: PropTypes.func.isRequired,
     onSetEditorMode: PropTypes.func,
     editorMode: PropTypes.string,
     markdownEnabled: PropTypes.bool,
@@ -72,49 +74,60 @@ export class NoteToolbar extends Component {
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
       <div className="note-toolbar">
-        <div className="note-toolbar__button note-toolbar-back">
-          <IconButton
-            icon={<BackIcon />}
-            onClick={this.props.onCloseNote}
-            title="Back"
-          />
-        </div>
-        {markdownEnabled && (
+        <div className="note-toolbar__column-left">
           <div className="note-toolbar__button">
             <IconButton
-              icon={isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
-              onClick={this.setEditorMode}
-              title="Preview"
+              icon={<SidebarIcon />}
+              onClick={this.props.toggleFocusMode}
+              title="Toggle Sidebar"
             />
           </div>
-        )}
-        <div className="note-toolbar__button">
-          <IconButton
-            icon={<RevisionsIcon />}
-            onClick={this.showRevisions}
-            title="History"
-          />
         </div>
-        <div className="note-toolbar__button">
-          <IconButton
-            icon={<ShareIcon />}
-            onClick={this.props.onShareNote.bind(null)}
-            title="Share"
-          />
-        </div>
-        <div className="note-toolbar__button">
-          <IconButton
-            icon={<TrashIcon />}
-            onClick={this.props.onTrashNote.bind(null, note)}
-            title="Trash"
-          />
-        </div>
-        <div className="note-toolbar__button">
-          <IconButton
-            icon={<InfoIcon />}
-            onClick={this.props.onShowNoteInfo}
-            title="Info"
-          />
+        <div className="note-toolbar__column-right">
+          <div className="note-toolbar__button note-toolbar-back">
+            <IconButton
+              icon={<BackIcon />}
+              onClick={this.props.onCloseNote}
+              title="Back"
+            />
+          </div>
+          {markdownEnabled && (
+            <div className="note-toolbar__button">
+              <IconButton
+                icon={isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
+                onClick={this.setEditorMode}
+                title="Preview"
+              />
+            </div>
+          )}
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<RevisionsIcon />}
+              onClick={this.showRevisions}
+              title="History"
+            />
+          </div>
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<ShareIcon />}
+              onClick={this.props.onShareNote.bind(null)}
+              title="Share"
+            />
+          </div>
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<TrashIcon />}
+              onClick={this.props.onTrashNote.bind(null, note)}
+              title="Trash"
+            />
+          </div>
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<InfoIcon />}
+              onClick={this.props.onShowNoteInfo}
+              title="Info"
+            />
+          </div>
         </div>
       </div>
     );
