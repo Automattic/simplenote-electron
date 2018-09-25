@@ -18,25 +18,13 @@
     justify-content: space-between;
   }
 
-  .note-toolbar-icon,
-  .note-toolbar-text {
+  .note-toolbar__button {
     flex: none;
     margin-right: 14px;
     text-align: center;
 
     &:last-child {
       margin-right: 0;
-    }
-  }
-
-  .note-toolbar-icon {
-    width: 32px;
-    height: 32px;
-
-    button {
-      width: 100%;
-      height: 100%;
-      padding: 0;
     }
   }
 
@@ -55,7 +43,7 @@
   padding: 10px 16px;
   justify-content: flex-end;
 
-  .note-toolbar-text {
+  .note-toolbar__button {
     margin: 0 0 0 16px;
   }
 
