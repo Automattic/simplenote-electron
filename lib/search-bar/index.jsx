@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  */
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
+import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
 import TagsIcon from '../icons/tags';
@@ -24,22 +25,14 @@ export const SearchBar = ({
   showTrash,
 }) => (
   <div className="search-bar theme-color-border">
-    <button
-      className="button button-borderless"
-      onClick={onToggleNavigation}
-      title="Tags"
-    >
-      <TagsIcon />
-    </button>
+    <IconButton icon={<TagsIcon />} onClick={onToggleNavigation} title="Tags" />
     <SearchField />
-    <button
-      className="button button-borderless"
+    <IconButton
       disabled={showTrash}
+      icon={<NewNoteIcon />}
       onClick={() => onNewNote(withoutTags(query))}
       title="New Note"
-    >
-      <NewNoteIcon />
-    </button>
+    />
   </div>
 );
 
