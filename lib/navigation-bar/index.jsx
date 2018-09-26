@@ -10,7 +10,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 
 const {
-  selectAllNotes,
+  showAllNotes,
   selectTrash,
   showDialog,
   toggleNavigation,
@@ -20,7 +20,7 @@ export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
   static defaultProps = {
-    onSelectAllNotes: function() {},
+    onShowAllNotes: function() {},
     onSelectTrash: function() {},
   };
 
@@ -57,7 +57,7 @@ export class NavigationBar extends Component {
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
             label="All Notes"
-            onClick={this.props.onSelectAllNotes}
+            onClick={this.props.onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
@@ -116,7 +116,7 @@ const mapDispatchToProps = dispatch => ({
       })
     ),
   onOutsideClick: () => dispatch(toggleNavigation()),
-  onSelectAllNotes: () => dispatch(selectAllNotes()),
+  onShowAllNotes: () => dispatch(showAllNotes()),
   onSelectTrash: () => dispatch(selectTrash()),
   onSettings: () =>
     dispatch(
