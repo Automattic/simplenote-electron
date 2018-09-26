@@ -10,7 +10,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 
 const {
-  showAllNotes,
+  showAllNotesAndSelectFirst,
   selectTrash,
   showDialog,
   toggleNavigation,
@@ -116,7 +116,7 @@ const mapDispatchToProps = dispatch => ({
       })
     ),
   onOutsideClick: () => dispatch(toggleNavigation()),
-  onShowAllNotes: () => dispatch(showAllNotes()),
+  onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
   onSelectTrash: () => dispatch(selectTrash()),
   onSettings: () =>
     dispatch(
