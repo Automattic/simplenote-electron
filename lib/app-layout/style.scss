@@ -7,7 +7,6 @@
       overflow: hidden;
       opacity: $fade-alpha;
       width: 0;
-      transition: width .2s ease-in-out, opacity .2s ease-in-out;
     }
   }
 
@@ -38,7 +37,7 @@
 
   &.is-note-open {
     .app-layout__source-column {
-      transition: opacity .2s ease-in-out;
+      transition: width .2s ease-in-out, opacity .2s ease-in-out;
     }
 
     @media only screen and (max-width: $single-column) {
