@@ -20,8 +20,11 @@ export class TagField extends Component {
   static displayName = 'TagField';
 
   static propTypes = {
+    allTags: PropTypes.array.isRequired,
+    note: PropTypes.object.isRequired,
     storeFocusTagField: PropTypes.func,
     storeHasFocus: PropTypes.func,
+    tags: PropTypes.array.isRequired,
     unusedTags: PropTypes.arrayOf(PropTypes.string),
     usedTags: PropTypes.arrayOf(PropTypes.string),
     onUpdateNoteTags: PropTypes.func.isRequired,
