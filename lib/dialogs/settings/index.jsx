@@ -9,6 +9,7 @@ import RadioGroup from '../radio-settings-group';
 import ToggleGroup from '../toggle-settings-group';
 import SettingsGroup, { Item } from '../settings-group';
 
+import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
 const settingTabs = ['account', 'display'];
@@ -16,14 +17,23 @@ const settingTabs = ['account', 'display'];
 export class SettingsDialog extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
+    appState: PropTypes.object.isRequired,
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
+    preferencesBucket: PropTypes.object.isRequired,
+    toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
   onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
+
+  onToggleShareAnalyticsPreference = () => {
+    this.props.toggleShareAnalyticsPreference({
+      preferencesBucket: this.props.preferencesBucket,
+    });
+  };
 
   onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
@@ -141,6 +151,8 @@ export class SettingsDialog extends Component {
       },
     } = this.props;
 
+    const { analyticsEnabled } = this.props.appState.preferences;
+
     switch (tabName) {
       case 'account':
         return (
@@ -156,19 +168,32 @@ export class SettingsDialog extends Component {
               <li>
                 <button
                   type="button"
-                  className="button button-primary"
-                  onClick={this.onSignOutRequested}
-                >
-                  Log Out
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
                   className="button button button-borderless"
                   onClick={this.onEditAccount}
                 >
                   Edit Account <TopRightArrowIcon />
+                </button>
+              </li>
+              <li>
+                <SettingsGroup
+                  title="Privacy"
+                  slug="shareAnalytics"
+                  activeSlug={analyticsEnabled ? 'enabled' : ''}
+                  description="Help us improve Simplenote by sharing usage data with our analytics tool."
+                  onChange={this.onToggleShareAnalyticsPreference}
+                  learnMoreURL="https://automattic.com/cookies"
+                  renderer={ToggleGroup}
+                >
+                  <Item title="Share analytics" slug="enabled" />
+                </SettingsGroup>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="button button-primary"
+                  onClick={this.onSignOutRequested}
+                >
+                  Log Out
                 </button>
               </li>
             </ul>
@@ -239,8 +264,13 @@ export class SettingsDialog extends Component {
   };
 }
 
+const { toggleShareAnalyticsPreference } = appState.actionCreators;
+
 const mapDispatchToProps = dispatch => ({
   onSetWPToken: token => dispatch(setWPToken(token)),
+  toggleShareAnalyticsPreference: args => {
+    dispatch(toggleShareAnalyticsPreference(args));
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SettingsDialog);

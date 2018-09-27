@@ -24,6 +24,7 @@
   "plugins": ["eslint-plugin-react", "jest", "prettier"],
   "rules": {
     "eqeqeq": ["error", "always"],
+    "no-console": "warn",
     "no-lonely-if": "error",
     "no-shadow": "warn",
     "no-spaced-func": "error",

@@ -30,6 +30,7 @@ export class NoteDetail extends Component {
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
     showNoteInfo: PropTypes.bool.isRequired,
+    spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
   };
@@ -162,6 +163,7 @@ export class NoteDetail extends Component {
       fontSize,
       isViewingRevisions,
       previewingMarkdown,
+      spellCheckEnabled,
     } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
@@ -195,6 +197,7 @@ export class NoteDetail extends Component {
               >
                 <NoteContentEditor
                   ref={this.saveEditorRef}
+                  spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
                   content={content}
@@ -210,11 +213,12 @@ export class NoteDetail extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps = ({ appState: state, settings }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
   isViewingRevisions: state.isViewingRevisions,
   showNoteInfo: state.showNoteInfo,
+  spellCheckEnabled: settings.spellCheckEnabled,
 });
 
 export default connect(mapStateToProps)(NoteDetail);
