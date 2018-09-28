@@ -4,7 +4,10 @@
 
   &.is-focus-mode.is-note-open {
     .app-layout__source-column {
-      display: none;
+      overflow: hidden;
+      opacity: $fade-alpha;
+      width: 0;
+      transition: width .2s ease-in-out, opacity .2s ease-in-out;
     }
   }
 
@@ -34,6 +37,10 @@
   }
 
   &.is-note-open {
+    .app-layout__source-column {
+      transition: opacity .2s ease-in-out;
+    }
+
     @media only screen and (max-width: $single-column) {
       .app-layout__source-column {
         opacity: 0;
@@ -50,14 +57,12 @@
 
 .app-layout__source-column {
   width: 328px;
-  min-width: 328px;
   display: flex;
   flex-direction: column;
   transition: transform 200ms ease-in-out;
 
   @media only screen and (max-width: $medium) {
     width: 300px;
-    min-width: 300px;
   }
 
   @media only screen and (max-width: $single-column) {
