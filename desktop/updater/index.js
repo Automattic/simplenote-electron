@@ -15,26 +15,23 @@ const ManualUpdater = require('./manual-updater');
 
 let updater = false;
 
-function urlBuilder(version) {
-  const platformString = 'linux';
-
-  if (config.forceUpdate) {
-    version = '0.0.1';
-  }
-
-  return config.updater.url
-    .replace('{platform}', platformString)
-    .replace('{version}', version);
-}
-
 module.exports = function() {
   app.on('will-finish-launching', function() {
-    // TODO:@adlk: `electron-updater` supports AppImage as well
-    if (platform.isOSX() || platform.isWindows()) {
-      updater = new AutoUpdater();
+    if (platform.isOSX() || platform.isWindows() || process.env.APPIMAGE) {
+      updater = new AutoUpdater({
+        changelogUrl: config.updater.changelogUrl,
+      });
     } else {
-      const url = urlBuilder(app.getVersion());
-      updater = new ManualUpdater(url);
+      updater = new ManualUpdater({
+        downloadUrl: config.updater.url,
+        apiUrl: config.updater.apiUrl,
+        changelogUrl: config.updater.changelogUrl,
+        options: {
+          dialogMessage:
+            '{name} {newVersion} is now available — you have {currentVersion}. Would you like to download it now?',
+          confirmLabel: 'Download',
+        },
+      });
     }
 
     // Start one straight away
