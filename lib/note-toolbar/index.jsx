@@ -42,6 +42,7 @@ export class NoteToolbar extends Component {
     onShareNote: noop,
     onTrashNote: noop,
     setIsViewingRevisions: noop,
+    toggleFocusMode: noop,
   };
 
   showRevisions = () => {
