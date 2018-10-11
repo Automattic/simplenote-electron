@@ -183,7 +183,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     handleShortcut = event => {
       const { ctrlKey, key, metaKey } = event;
 
-      const cmdOrCtrl = ctrlKey || metaKey;
+      // Is either cmd or ctrl pressed? (But not both)
+      const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
       // open tag list
       if (cmdOrCtrl && 'T' === key && !this.state.showNavigation) {
