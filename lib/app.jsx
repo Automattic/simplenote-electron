@@ -263,6 +263,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       setAuthorized();
       analytics.initialize(accountName);
+      this.onLoadPreferences();
     };
 
     onNotePrinted = () =>
