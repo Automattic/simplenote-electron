@@ -123,6 +123,8 @@ module.exports = function main() {
       mainWindow = null;
     });
 
+    if (mainWindow.isFullScreen()) mainWindow.setFullScreen(false);
+
     // wait until window is presentable
     mainWindow.once('ready-to-show', mainWindow.show);
   };
