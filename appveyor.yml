@@ -1,11 +1,11 @@
 environment:
   CSC_ENC_KEY: 
-    secure: qjH2ZaCgr2sQSdAsBKT7n+o7jSBUHo5j8vyUFarUIKt55MvPVIgBave3kY7SO2Kmk/KS8+T4PA7Y5OmJBaV8NyqijCoMByDcP9pehu5rkdA=
+    secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
   CSC_KEY_PASSWORD:
-    secure: LIl7Fkr/mxpbjj/eD4EDgA==
+    secure: Sz53shy7P4kPzBKa9shHTw==
   CSC_LINK: .\resources\certificates\win.p12
   GH_TOKEN:
-    secure: 9sXk2TIAMx817wesBs0aUJE4l37eTOzUKh6EKNvsfd+1X4FeKUeIRtbqy00SgGNA
+    secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
 
 image: Visual Studio 2017
 
