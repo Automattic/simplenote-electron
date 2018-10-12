@@ -191,7 +191,7 @@ function createMenuTemplate(settings) {
   };
 
   const settingsMenuItem = {
-    label: 'P&references',
+    label: 'P&references ...',
     accelerator: 'CommandOrControl+,',
     click: function(item, focusedWindow) {
       if (focusedWindow) {
@@ -235,7 +235,7 @@ function createMenuTemplate(settings) {
         type: 'separator',
       },
       {
-        label: '&Export Notes',
+        label: '&Export Notes ...',
         accelerator: 'CommandOrControl+Shift+E',
         click(item, focusedWindow) {
           if (focusedWindow) {
@@ -255,7 +255,7 @@ function createMenuTemplate(settings) {
         },
       },
       {
-        label: '&Print',
+        label: '&Print ...',
         accelerator: 'CommandOrControl+P',
         click(item, focusedWindow) {
           if (focusedWindow) {
@@ -308,7 +308,7 @@ function createMenuTemplate(settings) {
       type: 'separator',
     });
     fileMenu['submenu'].push({
-      label: 'E&xit',
+      label: 'Q&uit',
       accelerator: 'Ctrl+Q',
       click: function() {
         app.quit();
@@ -349,6 +349,10 @@ function createMenuTemplate(settings) {
     helpMenu,
   ];
 
+  if (process.platform === 'linux') {
+    menuTemplate.splice(menuTemplate.indexOf(windowMenu), 1);
+  }
+
   if (process.platform === 'darwin') {
     // Add the 'Simplenote' menu for os x
     menuTemplate.unshift({
@@ -388,7 +392,7 @@ function createMenuTemplate(settings) {
           type: 'separator',
         },
         {
-          label: 'Quit',
+          label: 'Quit' + name,
           accelerator: 'CommandOrControl+Q',
           click: function() {
             app.quit();

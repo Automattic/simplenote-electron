@@ -13,7 +13,8 @@ const buildEditMenu = settings => {
       },
       {
         label: '&Redo',
-        accelerator: 'Shift+CommandOrControl+Z',
+        // accelerator: 'Shift+CommandOrControl+Z',
+        accelerator: 'CommandOrControl+Y',
         role: 'redo',
       },
       {
@@ -43,7 +44,7 @@ const buildEditMenu = settings => {
         type: 'separator',
       },
       {
-        label: 'Search &Notes',
+        label: 'Search &Notes ...',
         accelerator: 'CommandOrControl+F',
         click: appCommandSender({ action: 'setSearchFocus' }),
       },
