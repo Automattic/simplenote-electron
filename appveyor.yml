@@ -8,6 +8,7 @@ environment:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
   APPVEYOR_RDP_PASSWORD:
     secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
+  DEBUG: electron-builder
 
 image: Visual Studio 2017
 
