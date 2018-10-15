@@ -6,6 +6,8 @@ environment:
   CSC_LINK: .\resources\certificates\win.p12
   GH_TOKEN:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
+  APPVEYOR_RDP_PASSWORD:
+    secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
 
 image: Visual Studio 2017
 
@@ -32,3 +34,6 @@ cache:
   - '%APPDATA%\npm-cache'
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
+
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
