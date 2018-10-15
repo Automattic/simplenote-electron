@@ -12,8 +12,8 @@ environment:
 image: Visual Studio 2017
 
 configuration:
+  - Default
   - AppX
-  - Win32
 
 install:
   - ps: Install-Product node 10
@@ -27,7 +27,7 @@ for:
   -
     matrix:
       only:
-        - configuration: Win32
+        - configuration: Default
           CSC_LINK: .\resources\certificates\win.p12
     build_script:
       - npx electron-builder --win
