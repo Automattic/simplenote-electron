@@ -3,7 +3,6 @@ environment:
     secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
-  CSC_LINK: .\resources\certificates\win.p12
   GH_TOKEN:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
   APPVEYOR_RDP_PASSWORD:
@@ -11,6 +10,25 @@ environment:
   DEBUG: electron-builder
 
 image: Visual Studio 2017
+
+configuration:
+  - AppX
+  - Win32
+
+for:
+  -
+    matrix:
+      only:
+        - configuration: Win32
+          CSC_LINK: .\resources\certificates\win.p12
+    build_script:
+      - npx electron-builder --win
+  -
+    matrix:
+      only:
+        - configuration: AppX
+    build_script:
+      - npx electron-builder --win --config=./electron-builder-appx.json
 
 install:
   - ps: Install-Product node 10
@@ -23,7 +41,6 @@ before_build:
 
 build_script:
   - make build
-  - make package-win32
 
 artifacts:
   - path: release\*.exe
