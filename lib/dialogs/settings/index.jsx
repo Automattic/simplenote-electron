@@ -39,7 +39,6 @@ export class SettingsDialog extends Component {
     // Safety first! Check for any unsynced notes before signing out.
     const { noteBucket } = this.props;
     const { notes } = this.props.appState;
-    const { getVersion } = noteBucket;
 
     noteBucket.hasLocalChanges((error, hasChanges) => {
       if (hasChanges) {
