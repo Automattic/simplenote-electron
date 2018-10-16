@@ -14,7 +14,7 @@ install:
   - cinst make
   - npm install
 
-build_script:
+before_build:
 - cmd: >-
     if "%CSC_ENC_KEY%"=="" (
         openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
