@@ -11,7 +11,7 @@ const {
   editTags,
   renameTag,
   reorderTags,
-  selectTag,
+  selectTagAndSelectFirstNote,
   trashTag,
 } = appState.actionCreators;
 const { recordEvent } = tracks;
@@ -117,7 +117,7 @@ const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
       })
     ),
   onSelectTag: tag => {
-    dispatch(selectTag({ tag }));
+    dispatch(selectTagAndSelectFirstNote({ tag }));
     recordEvent('list_tag_viewed');
   },
   onTrashTag: tag => {
