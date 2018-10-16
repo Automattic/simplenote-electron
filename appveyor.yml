@@ -15,13 +15,17 @@ install:
   - npm install
 
 before_build:
-- ps: >-
-    if ($env:CSC_ENC_KEY) {
-      openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "$env:CSC_ENC_KEY"
-      openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
-    }
+  - ps: >-
+      if ($env:CSC_ENC_KEY) {
+        openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "$env:CSC_ENC_KEY"
+        openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
+      }
 
 build_script:
+  - ps: >-
+      if (-not $env:CSC_ENC_KEY) {
+        Remove-Item env:CSC_LINK
+      }
   - make build
   - make package-win32
 
