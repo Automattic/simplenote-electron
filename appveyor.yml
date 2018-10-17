@@ -1,6 +1,7 @@
 environment:
   CSC_ENC_KEY: 
-    secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
+    # secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
+    secure: wTsJKe1a/gIpmgVVfCHDFw==
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
   CSC_LINK: .\resources\certificates\win.p12
@@ -15,6 +16,7 @@ install:
   - npm install
 
 before_build:
+  - ps: echo $env:CSC_ENC_KEY
   - ps: >-
       if ($env:CSC_ENC_KEY -ne "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
         openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "$env:CSC_ENC_KEY"
@@ -22,6 +24,7 @@ before_build:
       }
 
 build_script:
+  - ps: echo $env:CSC_ENC_KEY
   - ps: >-
       if ($env:CSC_ENC_KEY -eq "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
         Remove-Item env:CSC_LINK
