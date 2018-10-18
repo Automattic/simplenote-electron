@@ -128,7 +128,7 @@ const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
         tagBucket,
       })
     );
-    recordEvent('list_trash_viewed');
+    recordEvent('list_tag_deleted');
   },
 });
 
