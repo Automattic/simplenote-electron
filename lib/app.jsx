@@ -347,7 +347,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onStartImport = () => {
       //importNotes(jsonExport, this.props.noteBucket);
-      importEvernotes(this.props.noteBucket);
+      importEvernotes(this.props.noteBucket, this.props.tagBucket, 'Evernote');
     };
 
     render() {
