@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "1.2.2",
+  "version": "1.2.1",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -115,7 +115,7 @@
     "redux-thunk": "2.2.0",
     "sanitize-filename": "1.6.1",
     "showdown": "1.8.6",
-    "simperium": "0.3.1",
+    "simperium": "0.3.2",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {

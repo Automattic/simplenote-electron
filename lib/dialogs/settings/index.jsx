@@ -39,7 +39,6 @@ export class SettingsDialog extends Component {
     // Safety first! Check for any unsynced notes before signing out.
     const { noteBucket } = this.props;
     const { notes } = this.props.appState;
-    const { getVersion } = noteBucket;
 
     noteBucket.hasLocalChanges((error, hasChanges) => {
       if (hasChanges) {
@@ -50,7 +49,10 @@ export class SettingsDialog extends Component {
       // Also check persisted store for any notes with version 0
       const noteHasSynced = note =>
         new Promise((resolve, reject) =>
-          getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
+          noteBucket.getVersion(
+            note.id,
+            (e, v) => (e || v === 0 ? reject() : resolve())
+          )
         );
 
       Promise.all(notes.map(noteHasSynced)).then(
