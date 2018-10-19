@@ -94,7 +94,7 @@
       "Categories": "Utility"
     },
     "vendor": "Automattic, Inc.",
-    "maintainer": "Automattic, Inc."
+    "maintainer": "Automattic, Inc. <support@simplenote.com>"
   },
   "deb": {
     "depends": ["gconf2"]
