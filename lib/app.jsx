@@ -347,7 +347,11 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onStartImport = () => {
       //importNotes(jsonExport, this.props.noteBucket);
-      importEvernotes(this.props.noteBucket, this.props.tagBucket, 'Evernote');
+      importEvernotes(
+        '/Users/dan/git/simplenote-electron/dist/real-notes.enex',
+        this.props.noteBucket,
+        this.props.tagBucket
+      );
     };
 
     render() {
