@@ -99,6 +99,7 @@ module.exports = () => {
       new webpack.DefinePlugin({
         config: JSON.stringify(config()),
       }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ],
   };
 };
