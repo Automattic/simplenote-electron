@@ -23,7 +23,7 @@ module.exports = function() {
       });
     } else {
       updater = new ManualUpdater({
-        downloadUrl: config.updater.url,
+        downloadUrl: config.updater.downloadUrl,
         apiUrl: config.updater.apiUrl,
         changelogUrl: config.updater.changelogUrl,
         options: {

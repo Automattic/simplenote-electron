@@ -1,6 +1,6 @@
 {
   "updater": {
-    "downloadUrl": "https://github.com/adlk/simplenote-test/releases/latest",
+    "downloadUrl": "https://github.com/Automattic/simplenote-electron/releases/latest",
     "changelogUrl": "https://github.com/Automattic/simplenote-electron/blob/master/changelog.md",
     "apiUrl": "https://api.github.com/repos/automattic/simplenote-electron/releases/latest",
     "delay": 2000,
