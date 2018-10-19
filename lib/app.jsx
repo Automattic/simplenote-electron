@@ -8,7 +8,6 @@ import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
-import importEvernotes from './utils/import/evernote';
 import NoteInfo from './note-info';
 import NoteList from './note-list';
 import NoteEditor from './note-editor';
@@ -345,15 +344,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       });
     };
 
-    onStartImport = () => {
-      //importNotes(jsonExport, this.props.noteBucket);
-      importEvernotes(
-        '/Users/dan/git/simplenote-electron/dist/real-notes.enex',
-        this.props.noteBucket,
-        this.props.tagBucket
-      );
-    };
-
     render() {
       const {
         appState: state,
@@ -436,7 +426,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
           />
-          <div onClick={this.onStartImport}>Click me to import!</div>
         </div>
       );
     }
