@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
+import { includes, isEmpty } from 'lodash';
+
+import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
 import TabbedDialog from '../../tabbed-dialog';
 import ToggleControl from '../../controls/toggle';
-import { includes, isEmpty } from 'lodash';
 
 const shareTabs = ['collaborate', 'publish'];
 
@@ -56,6 +58,7 @@ export class ShareDialog extends Component {
         note,
         tags: [...tags, collaborator],
       });
+      analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
@@ -71,6 +74,7 @@ export class ShareDialog extends Component {
       note,
       tags,
     });
+    analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
