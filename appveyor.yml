@@ -27,8 +27,10 @@ build_script:
   - ps: echo $env:CSC_ENC_KEY
   - ps: >-
       if ($env:CSC_ENC_KEY -eq "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
+        echo hello
         Remove-Item env:CSC_LINK
       }
+  - echo $env:CSC_LINK
   - make build
   - make package-win32
 
