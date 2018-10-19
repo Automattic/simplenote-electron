@@ -81,10 +81,6 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
-      new webpack.DllReferencePlugin({
-        context: process.cwd(),
-        manifest: require(process.cwd() + '/dist/vendor.json'),
-      }),
       new HardSourceWebpackPlugin(),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,

@@ -69,12 +69,12 @@ build:
 ifeq ($(SKIP_BUILD),false)
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
 
-# IS_PRODUCTION is a helper var for the inline conditional in `build-app` and `build-dll`
+# IS_PRODUCTION is a helper var for the inline conditional in `build-app`
 ifeq ($(NODE_ENV),production)
 	$(eval IS_PRODUCTION = true)
 endif
 
-	@$(MAKE) build-dll build-app NODE_ENV=$(NODE_ENV) IS_PRODUCTION=$(IS_PRODUCTION)
+	@$(MAKE) build-app NODE_ENV=$(NODE_ENV) IS_PRODUCTION=$(IS_PRODUCTION)
 endif
 
 
@@ -82,10 +82,6 @@ endif
 .PHONY: build-app
 build-app: 
 	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
-
-.PHONY: build-dll
-build-dll: 
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
 
 .PHONY: build-if-not-exists 
 build-if-not-exists: config.json
