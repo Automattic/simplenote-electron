@@ -42,7 +42,8 @@ PORT ?= 4000
 # Access dev server or locally built web app files
 DEV_SERVER ?= false
 
-# Port for dev server
+# electron-builder publish option
+# options: always|onTag|onTagOrDraft|never
 PUBLISH ?= onTag
 
 
