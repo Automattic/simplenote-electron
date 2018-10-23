@@ -7,7 +7,6 @@ environment:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
   APPVEYOR_RDP_PASSWORD:
     secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
-  CSC_LINK: .\resources\certificates\win.p12
   # DEBUG: electron-builder
 
 image: Visual Studio 2017
@@ -22,10 +21,6 @@ install:
   - cinst make
   - npm install
 
-before_build:
-  - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
-  - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
-
 build_script:
   - make build
 
@@ -34,14 +29,18 @@ for:
     matrix:
       only:
         - configuration: Default
-    build_script:
-      - npx electron-builder --win
+        - configuration: AppX-Testing
+    environment:
+      CSC_LINK: .\resources\certificates\win.p12
+    before_build:
+      - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
+      - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
   -
     matrix:
       only:
-        - configuration: AppX-WindowsStore
-    environment:
-      CSC_LINK: ""
+        - configuration: Default
+    build_script:
+      - npx electron-builder --win
   -
     matrix:
       only:
