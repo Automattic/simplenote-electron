@@ -30,6 +30,7 @@ export class Dialog extends Component {
                 {!!onDone && (
                   <button
                     type="button"
+                    aria-label="Close dialog"
                     className="button button-borderless"
                     onClick={onDone}
                   >

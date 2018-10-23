@@ -117,6 +117,7 @@ export class AboutDialog extends Component {
 
           <button
             type="button"
+            aria-label="Close dialog"
             className="about-done button button-borderless"
             onClick={requestClose}
           >
