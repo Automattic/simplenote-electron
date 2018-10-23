@@ -12,7 +12,6 @@ export class Dialog extends Component {
 
   render() {
     const { className, title, children, onDone } = this.props;
-    const titleElementId = `dialog-title-${title}`;
 
     return (
       <div
@@ -25,9 +24,7 @@ export class Dialog extends Component {
           onDone && (
             <div className="dialog-title-bar theme-color-border">
               <div className="dialog-title-side" />
-              <h2 id={titleElementId} className="dialog-title-text">
-                {title}
-              </h2>
+              <h2 className="dialog-title-text">{title}</h2>
               <div className="dialog-title-side">
                 {!!onDone && (
                   <button
