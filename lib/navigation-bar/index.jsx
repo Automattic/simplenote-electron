@@ -8,6 +8,7 @@ import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
+import DialogTypes from '../dialogs/types';
 
 const {
   showAllNotesAndSelectFirst,
@@ -105,25 +106,11 @@ const mapStateToProps = ({ appState: state }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onAbout: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'About',
-        },
-      })
-    ),
+  onAbout: () => dispatch(showDialog({ dialog: DialogTypes.ABOUT })),
   onOutsideClick: () => dispatch(toggleNavigation()),
   onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
   onSelectTrash: () => dispatch(selectTrash()),
-  onSettings: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'Settings',
-        },
-      })
-    ),
+  onSettings: () => dispatch(showDialog({ dialog: DialogTypes.SETTINGS })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(
