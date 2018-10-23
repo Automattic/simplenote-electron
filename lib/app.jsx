@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -33,8 +32,6 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 import SearchBar from './search-bar';
-
-Modal.setAppElement('#root');
 
 // Electron-specific mocks
 let ipc = getIpc();
