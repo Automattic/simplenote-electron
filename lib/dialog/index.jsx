@@ -6,12 +6,13 @@ export class Dialog extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
+    hideTitleBar: PropTypes.bool,
     title: PropTypes.string,
     onDone: PropTypes.func.isRequired,
   };
 
   render() {
-    const { className, title, children, onDone } = this.props;
+    const { className, hideTitleBar, title, children, onDone } = this.props;
 
     return (
       <div
@@ -20,7 +21,7 @@ export class Dialog extends Component {
           'dialog--box theme-color-bg theme-color-fg theme-color-border'
         )}
       >
-        {title &&
+        {!hideTitleBar &&
           onDone && (
             <div className="dialog-title-bar theme-color-border">
               <div className="dialog-title-side" />

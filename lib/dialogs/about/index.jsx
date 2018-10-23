@@ -20,7 +20,7 @@ export class AboutDialog extends Component {
 
     return (
       <div className="about">
-        <Dialog {...dialog} onDone={requestClose}>
+        <Dialog hideTitleBar onDone={requestClose} title={dialog.title}>
           <div className="about-top">
             <SimplenoteLogo />
 
