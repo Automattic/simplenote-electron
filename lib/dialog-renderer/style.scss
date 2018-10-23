@@ -10,6 +10,12 @@
   background: rgba($white, .75);
 }
 
+.theme-dark {
+  .dialog-renderer--overlay {
+    background: rgba($gray-darkest, .75);
+  }
+}
+
 .dialog-renderer--content {
   &:focus {
     outline: 0;
