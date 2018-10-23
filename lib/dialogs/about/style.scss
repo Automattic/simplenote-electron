@@ -2,8 +2,11 @@
   .dialog--box {
     position: relative;
     max-width: 472px;
-    background: $blue;
-    color: white;
+
+    // For overriding theme settings.
+    // TODO: Improve theme management so this isn't necessary
+    background: $blue !important;
+    color: $white !important;
   }
 
   .dialog-content {
