@@ -111,7 +111,6 @@ const mapDispatchToProps = dispatch => ({
         dialog: {
           type: 'About',
           modal: true,
-          single: true,
         },
       })
     ),
@@ -124,7 +123,6 @@ const mapDispatchToProps = dispatch => ({
         dialog: {
           type: 'Settings',
           modal: true,
-          single: true,
         },
       })
     ),
