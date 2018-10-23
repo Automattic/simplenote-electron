@@ -10,17 +10,12 @@ export class Dialog extends Component {
     onDone: PropTypes.func.isRequired,
   };
 
-  storeBox = ref => (this.box = ref);
-
-  storeContent = ref => (this.content = ref);
-
   render() {
     const { className, title, children, onDone } = this.props;
     const titleElementId = `dialog-title-${title}`;
 
     return (
       <div
-        ref={this.storeBox}
         className={classNames(
           className,
           'dialog--box theme-color-bg theme-color-fg theme-color-border'
@@ -47,9 +42,7 @@ export class Dialog extends Component {
             </div>
           )}
 
-        <div ref={this.storeContent} className="dialog-content">
-          {children}
-        </div>
+        <div className="dialog-content">{children}</div>
       </div>
     );
   }
