@@ -182,8 +182,6 @@ function createMenuTemplate(settings) {
           action: 'showDialog',
           dialog: {
             type: 'About',
-            modal: true,
-            single: true,
           },
         });
       }
@@ -199,8 +197,6 @@ function createMenuTemplate(settings) {
           action: 'showDialog',
           dialog: {
             type: 'Settings',
-            modal: true,
-            single: true,
           },
         });
       }

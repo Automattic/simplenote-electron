@@ -22,7 +22,6 @@ const mapDispatchToProps = dispatch => ({
       appState.actionCreators.showDialog({
         dialog: {
           type: 'Share',
-          modal: true,
         },
       })
     ),
