@@ -9,7 +9,7 @@ export const DialogRenderer = props => {
   const { appProps, themeClass, closeDialog, dialogs, isElectron } = props;
 
   const renderDialog = dialog => {
-    const { key, params, ...dialogProps } = dialog;
+    const { key, ...dialogProps } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
@@ -30,8 +30,8 @@ export const DialogRenderer = props => {
         <DialogComponent
           dialog={dialogProps}
           requestClose={closeThisDialog}
+          isElectron={isElectron}
           {...appProps}
-          {...{ params, isElectron }}
         />
       </ReactModal>
     );
