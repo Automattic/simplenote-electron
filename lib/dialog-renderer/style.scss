@@ -9,3 +9,9 @@
   align-items: center;
   background: rgba($white, .75);
 }
+
+.dialog-renderer--content {
+  &:focus {
+    outline: 0;
+  }
+}
