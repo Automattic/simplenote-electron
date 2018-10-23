@@ -1,37 +1,5 @@
-.dialogs {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: $z-index-dialogs;
-}
-
-.dialogs-overlay {
-  content: ' ';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba($white, 0.75);
-}
-
-.dialog {
-  display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.dialog-box {
-  flex: 1 1 auto;
-  margin: auto;
+.dialog--box {
+  width: calc(100vw - 2rem);
   background: white;
   border-radius: $border-radius;
   border: 1px solid lighten($gray, 30%);
@@ -39,7 +7,7 @@
 }
 
 .theme-dark {
-  .dialog-box {
+  .dialog--box {
     box-shadow: 0 2px 4px 0 rgba(darken($gray, 45%), 0.5);
   }
 }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -32,6 +33,8 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 import SearchBar from './search-bar';
+
+Modal.setAppElement('#root');
 
 // Electron-specific mocks
 let ipc = getIpc();
@@ -369,7 +372,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       } = this.props;
       const isMacApp = isElectronMac();
 
-      const appClasses = classNames('app', `theme-${settings.theme}`, {
+      const themeClass = `theme-${settings.theme}`;
+
+      const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
         'touch-enabled': 'ontouchstart' in document.body,
       });
@@ -431,6 +436,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
+            themeClass={themeClass}
+            closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
           />

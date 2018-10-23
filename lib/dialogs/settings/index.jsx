@@ -22,10 +22,9 @@ export class SettingsDialog extends Component {
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     preferencesBucket: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
@@ -116,14 +115,14 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Settings"
         tabs={settingTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}

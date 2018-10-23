@@ -1,50 +1,48 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import ReactModal from 'react-modal';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import * as Dialogs from '../dialogs';
-import { compact, concat, flowRight, map } from 'lodash';
 
 export const DialogRenderer = props => {
-  const { appProps, isElectron } = props;
+  const { appProps, themeClass, closeDialog, dialogs, isElectron } = props;
 
-  const renderDialogs = () => {
-    const { dialogs } = props;
-
-    const makeDialog = (dialog, key) => [
-      dialog.modal && (
-        <div key="overlay" className="dialogs-overlay" onClick={null} />
-      ),
-      renderDialog(dialog, key),
-    ];
-
-    return flowRight(compact, concat, map)(dialogs, makeDialog);
-  };
-
-  const renderDialog = (dialog, key) => {
-    const { params, ...dialogProps } = dialog;
+  const renderDialog = dialog => {
+    const { key, params, ...dialogProps } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
       throw new Error('Unknown dialog type.');
     }
 
+    const closeThisDialog = () => closeDialog({ key });
+
     return (
-      <DialogComponent
-        dialog={dialogProps}
-        {...appProps}
-        {...{ key, params, isElectron }}
-      />
+      <ReactModal
+        key={key}
+        className={classNames(themeClass, 'dialog-renderer--content')}
+        isOpen
+        onRequestClose={closeThisDialog}
+        overlayClassName="dialog-renderer--overlay"
+      >
+        <DialogComponent
+          dialog={dialogProps}
+          requestClose={closeThisDialog}
+          {...appProps}
+          {...{ params, isElectron }}
+        />
+      </ReactModal>
     );
   };
 
-  if (props.dialogs.length === 0) {
-    return null;
-  }
-
-  return <div className="dialogs">{renderDialogs()}</div>;
+  return <Fragment>{dialogs.map(renderDialog)}</Fragment>;
 };
 
 DialogRenderer.propTypes = {
   appProps: PropTypes.object.isRequired,
+  themeClass: PropTypes.string,
+  closeDialog: PropTypes.func.isRequired,
   dialogs: PropTypes.array.isRequired,
   isElectron: PropTypes.bool.isRequired,
 };
