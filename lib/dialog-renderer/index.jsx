@@ -9,7 +9,7 @@ export const DialogRenderer = props => {
   const { appProps, themeClass, closeDialog, dialogs, isElectron } = props;
 
   const renderDialog = dialog => {
-    const { key, ...dialogProps } = dialog;
+    const { key, title, ...dialogProps } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
@@ -22,6 +22,7 @@ export const DialogRenderer = props => {
       <ReactModal
         key={key}
         className="dialog-renderer--content"
+        contentLabel={title}
         isOpen
         onRequestClose={closeThisDialog}
         overlayClassName="dialog-renderer--overlay"
