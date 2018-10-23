@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import ReactModal from 'react-modal';
+import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -19,7 +19,7 @@ export const DialogRenderer = props => {
     const closeThisDialog = () => closeDialog({ key });
 
     return (
-      <ReactModal
+      <Modal
         key={key}
         className="dialog-renderer--content"
         contentLabel={title}
@@ -34,7 +34,7 @@ export const DialogRenderer = props => {
           isElectron={isElectron}
           {...appProps}
         />
-      </ReactModal>
+      </Modal>
     );
   };
 
