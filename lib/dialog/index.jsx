@@ -18,7 +18,7 @@ export class Dialog extends Component {
       <div
         className={classNames(
           className,
-          'dialog--box theme-color-bg theme-color-fg theme-color-border'
+          'dialog theme-color-bg theme-color-fg theme-color-border'
         )}
       >
         {!hideTitleBar &&

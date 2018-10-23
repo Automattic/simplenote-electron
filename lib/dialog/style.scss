@@ -1,4 +1,4 @@
-.dialog--box {
+.dialog {
   width: calc(100vw - 2rem);
   background: white;
   border-radius: $border-radius;
@@ -7,7 +7,7 @@
 }
 
 .theme-dark {
-  .dialog--box {
+  .dialog {
     box-shadow: 0 2px 4px 0 rgba(darken($gray, 45%), 0.5);
   }
 }
