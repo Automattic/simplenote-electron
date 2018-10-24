@@ -16,10 +16,9 @@ export class ShareDialog extends Component {
     dialog: PropTypes.object.isRequired,
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onTogglePublished = event => {
     this.props.actions.publishNote({
@@ -100,14 +99,14 @@ export class ShareDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Share"
         tabs={shareTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}
