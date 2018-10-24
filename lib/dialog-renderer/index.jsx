@@ -21,12 +21,12 @@ export const DialogRenderer = props => {
     return (
       <Modal
         key={key}
-        className="dialog-renderer--content"
+        className="dialog-renderer__content"
         contentLabel={title}
         isOpen
         onRequestClose={closeThisDialog}
-        overlayClassName="dialog-renderer--overlay"
-        portalClassName={classNames('dialog-renderer--portal', themeClass)}
+        overlayClassName="dialog-renderer__overlay"
+        portalClassName={classNames('dialog-renderer__portal', themeClass)}
       >
         <DialogComponent
           dialog={dialogProps}

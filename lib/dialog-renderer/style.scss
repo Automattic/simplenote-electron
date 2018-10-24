@@ -1,4 +1,4 @@
-.dialog-renderer--overlay {
+.dialog-renderer__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,12 +11,12 @@
 }
 
 .theme-dark {
-  .dialog-renderer--overlay {
+  .dialog-renderer__overlay {
     background: rgba($gray-darkest, .75);
   }
 }
 
-.dialog-renderer--content {
+.dialog-renderer__content {
   &:focus {
     outline: 0;
   }
