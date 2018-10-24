@@ -180,15 +180,20 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     }
 
     componentDidUpdate(prevProps) {
-      const { settings, isSmallScreen, appState: state } = this.props;
+      const { settings, isSmallScreen, appState } = this.props;
 
       if (settings !== prevProps.settings) {
         ipc.send('settingsUpdate', settings);
       }
 
+      // If note has just been loaded
+      if (prevProps.appState.note === undefined && appState.note) {
+        this.setState({ isNoteOpen: true });
+      }
+
       if (isSmallScreen !== prevProps.isSmallScreen) {
         this.setState({
-          isNoteOpen: Boolean(!isSmallScreen && state.note),
+          isNoteOpen: Boolean(!isSmallScreen && appState.note),
         });
       }
     }
