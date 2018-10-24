@@ -21,9 +21,6 @@ install:
   - cinst make
   - npm install
 
-build_script:
-  - make build
-
 for:
   # default build / .exe / signed
   - matrix:
@@ -33,6 +30,7 @@ for:
       - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
     build_script:
+      - make build
       - npx electron-builder --win
 
   # Windows Store build / .appx / unsigned
@@ -42,6 +40,7 @@ for:
     environment:
       CSC_LINK: ""
     build_script:
+      - make build
       - npx electron-builder --win --config=./electron-builder-appx.json
 
   # Windows Store test build / .appx / signed
@@ -52,6 +51,7 @@ for:
       - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
     build_script:
+      - make build
       - npx electron-builder --win --config=./electron-builder-appx.json
 
 artifacts:
