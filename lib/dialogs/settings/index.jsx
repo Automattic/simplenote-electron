@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import TabbedDialog from '../../tabbed-dialog';
 import { viewExternalUrl } from '../../utils/url-utils';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
+import PanelTitle from '../../components/panel-title';
 
 import RadioGroup from '../radio-settings-group';
 import ToggleGroup from '../toggle-settings-group';
@@ -158,7 +159,7 @@ export class SettingsDialog extends Component {
       case 'account':
         return (
           <div className="dialog-column settings-account">
-            <h3 className="panel-title theme-color-fg-dim">Account</h3>
+            <PanelTitle headingLevel="3">Account</PanelTitle>
             <div className="settings-items theme-color-border">
               <div className="settings-item theme-color-border">
                 <span className="settings-account-name">{accountName}</span>

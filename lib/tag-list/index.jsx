@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import appState from '../flux/app-state';
@@ -67,7 +68,7 @@ export class TagList extends Component {
     return (
       <div className={classes}>
         <div className="tag-list-title">
-          <h2 className="panel-title theme-color-fg-dim">Tags</h2>
+          <PanelTitle headingLevel="2">Tags</PanelTitle>
           {tags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"
