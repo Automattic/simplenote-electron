@@ -1,4 +1,6 @@
 .dialog {
+  display: flex;
+  flex-direction: column;
   width: calc(100vw - 2rem);
   background: white;
   border-radius: $border-radius;
@@ -33,6 +35,12 @@
   margin: 15px 0;
   text-align: center;
   font-size: 1em;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
 }
 
 .dialog-tabs {
