@@ -24,7 +24,7 @@ class SourceImporter extends React.Component {
 
     return (
       <Fragment>
-        <PanelTitle headingLevel="3">Import file</PanelTitle>
+        <PanelTitle headingLevel="3">Import file{multiple && 's'}</PanelTitle>
         <ImporterDropzone
           acceptedTypes={acceptedTypes}
           multiple={multiple}
