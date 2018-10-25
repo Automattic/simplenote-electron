@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
 import Dropzone from 'react-dropzone';
+import FileIcon from '../../../icons/file';
 import UploadIcon from '../../../icons/upload';
 
 class ImporterDropzone extends React.Component {
@@ -12,6 +14,7 @@ class ImporterDropzone extends React.Component {
   };
 
   state = {
+    acceptedFile: undefined,
     errorMessage: undefined,
   };
 
@@ -19,8 +22,16 @@ class ImporterDropzone extends React.Component {
     if (acceptedFiles.length === 0) {
       this.handleReject(rejectedFiles);
     } else {
-      this.props.onAccept(acceptedFiles);
+      this.handleAccept(acceptedFiles);
     }
+  };
+
+  handleAccept = acceptedFiles => {
+    const fileCount = acceptedFiles.length;
+    const label = fileCount > 1 ? `${fileCount} files` : acceptedFiles[0].name;
+
+    this.setState({ acceptedFile: label });
+    this.props.onAccept(acceptedFiles);
   };
 
   handleReject = rejectedFiles => {
@@ -29,7 +40,10 @@ class ImporterDropzone extends React.Component {
     if (!this.props.multiple && rejectedFiles.length > 1) {
       errorMessage = 'Choose a single file';
     }
-    this.setState({ errorMessage: errorMessage });
+    this.setState({
+      acceptedFile: undefined,
+      errorMessage: errorMessage,
+    });
     this.errorTimer = window.setTimeout(() => {
       this.setState({ errorMessage: undefined });
     }, 2500);
@@ -41,19 +55,39 @@ class ImporterDropzone extends React.Component {
 
   render() {
     const { acceptedTypes, multiple = false } = this.props;
-    const { errorMessage } = this.state;
+    const { acceptedFile, errorMessage } = this.state;
+
+    const text = errorMessage
+      ? errorMessage
+      : 'Drag a file, or click to choose';
+
+    const DropzonePlaceholder = () => (
+      <Fragment>
+        <UploadIcon />
+        {text}
+      </Fragment>
+    );
+
+    const FileWithIcon = () => (
+      <Fragment>
+        <FileIcon />
+        <span className="importer-dropzone__filename">{acceptedFile}</span>
+      </Fragment>
+    );
 
     return (
       <Dropzone
         accept={acceptedTypes}
         activeClassName="is-active"
-        className="importer-dropzone theme-color-border"
+        className={classnames(
+          { 'is-accepted': acceptedFile },
+          'importer-dropzone theme-color-border'
+        )}
         disablePreview
         multiple={multiple}
         onDrop={this.onDrop}
       >
-        <UploadIcon />
-        {errorMessage ? errorMessage : 'Drag a file, or click to choose'}
+        {acceptedFile ? <FileWithIcon /> : <DropzonePlaceholder />}
       </Dropzone>
     );
   }
