@@ -255,6 +255,7 @@ const renderNote = (
     filterRegExp,
     noteDisplay,
     selectedNoteId,
+    onNoteOpened,
     onSelectNote,
     onPinNote,
     isSmallScreen,
@@ -280,6 +281,11 @@ const renderNote = (
       ? splitWith(filterRegExp, filter.length, preview)
       : [{ type: 'text', text: preview }];
 
+  const selectNote = () => {
+    onSelectNote(note.id);
+    onNoteOpened();
+  };
+
   return (
     <div key={key} style={style} className={classes}>
       <div
@@ -290,7 +296,7 @@ const renderNote = (
       <div
         className="note-list-item-text theme-color-border"
         tabIndex="0"
-        onClick={onSelectNote.bind(null, note.id)}
+        onClick={selectNote}
       >
         <div className="note-list-item-title">
           <span>{matchify(titleSplits)}</span>
@@ -315,8 +321,10 @@ export class NoteList extends Component {
   static displayName = 'NoteList';
 
   static propTypes = {
+    isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
+    onNoteOpened: PropTypes.func.isRequired,
     onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
     noteDisplay: PropTypes.string.isRequired,
@@ -392,6 +400,7 @@ export class NoteList extends Component {
     const {
       filter,
       selectedNoteId,
+      onNoteOpened,
       onSelectNote,
       onEmptyTrash,
       noteDisplay,
@@ -407,6 +416,7 @@ export class NoteList extends Component {
       filter,
       filterRegExp,
       noteDisplay,
+      onNoteOpened,
       onSelectNote,
       onPinNote: this.onPinNote,
       selectedNoteId,

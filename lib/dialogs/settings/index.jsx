@@ -22,10 +22,9 @@ export class SettingsDialog extends Component {
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     preferencesBucket: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
@@ -39,7 +38,6 @@ export class SettingsDialog extends Component {
     // Safety first! Check for any unsynced notes before signing out.
     const { noteBucket } = this.props;
     const { notes } = this.props.appState;
-    const { getVersion } = noteBucket;
 
     noteBucket.hasLocalChanges((error, hasChanges) => {
       if (hasChanges) {
@@ -50,7 +48,10 @@ export class SettingsDialog extends Component {
       // Also check persisted store for any notes with version 0
       const noteHasSynced = note =>
         new Promise((resolve, reject) =>
-          getVersion(note.id, (e, v) => (e || v === 0 ? reject() : resolve()))
+          noteBucket.getVersion(
+            note.id,
+            (e, v) => (e || v === 0 ? reject() : resolve())
+          )
         );
 
       Promise.all(notes.map(noteHasSynced)).then(
@@ -114,14 +115,14 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Settings"
         tabs={settingTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}

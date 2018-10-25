@@ -12,7 +12,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 4. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
 5. Sign up for a new account within the app. Use the account for **testing purposes only** as all note data will be periodically cleared out on the server.
 
-_Note: Simplenote API features such as sharing and publishing will not work with development builds._
+_Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces._
 
 ## Building
 
@@ -29,3 +29,12 @@ Please adhere to the same guidelines as found in [wp-calypso](https://github.com
 - [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
 - [ReactJS](https://reactjs.org/) for UI.
 - [Electron](https://electronjs.org/) for wrapping the JavaScript application.
+
+## Simplenote for Other Platforms
+[simplenote-electron](https://github.com/Automattic/simplenote-electron) is the official Simplenote desktop app for Windows and Linux.
+
+For other platforms, see:
+
+- [simplenote-macos](https://github.com/Automattic/simplenote-macos)
+- [simplenote-ios](https://github.com/Automattic/simplenote-ios)
+- [simplenote-android](https://github.com/Automattic/simplenote-android)

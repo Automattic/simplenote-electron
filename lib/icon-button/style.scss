@@ -1,0 +1,19 @@
+.icon-button {
+  width: 32px;
+  height: 32px;
+  color: $blue;
+
+  svg {
+    transition: $anim-fast;
+  }
+
+  &:disabled {
+    opacity: .4;
+  }
+
+  &:active:not(:disabled) {
+    svg {
+      fill: darken($blue, 20%);
+    }
+  }
+}

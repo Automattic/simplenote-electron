@@ -1,7 +1,12 @@
 .about {
-  .dialog-box {
+  .dialog {
     position: relative;
     max-width: 472px;
+
+    // For overriding theme settings.
+    // TODO: Improve theme management so this isn't necessary
+    background: $blue !important;
+    color: $white !important;
   }
 
   .dialog-content {
@@ -11,14 +16,6 @@
   a {
     color: white;
     text-decoration: none;
-  }
-}
-
-.theme-light,
-.theme-dark {
-  .about .dialog-box {
-    background: $blue;
-    color: white;
   }
 }
 

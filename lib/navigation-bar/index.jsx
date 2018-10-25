@@ -8,9 +8,10 @@ import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
+import DialogTypes from '../dialogs/types';
 
 const {
-  selectAllNotes,
+  showAllNotesAndSelectFirst,
   selectTrash,
   showDialog,
   toggleNavigation,
@@ -20,7 +21,7 @@ export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
   static defaultProps = {
-    onSelectAllNotes: function() {},
+    onShowAllNotes: function() {},
     onSelectTrash: function() {},
   };
 
@@ -57,7 +58,7 @@ export class NavigationBar extends Component {
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
             label="All Notes"
-            onClick={this.props.onSelectAllNotes}
+            onClick={this.props.onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
@@ -105,29 +106,11 @@ const mapStateToProps = ({ appState: state }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onAbout: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'About',
-          modal: true,
-          single: true,
-        },
-      })
-    ),
+  onAbout: () => dispatch(showDialog({ dialog: DialogTypes.ABOUT })),
   onOutsideClick: () => dispatch(toggleNavigation()),
-  onSelectAllNotes: () => dispatch(selectAllNotes()),
+  onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
   onSelectTrash: () => dispatch(selectTrash()),
-  onSettings: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'Settings',
-          modal: true,
-          single: true,
-        },
-      })
-    ),
+  onSettings: () => dispatch(showDialog({ dialog: DialogTypes.SETTINGS })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(

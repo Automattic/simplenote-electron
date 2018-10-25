@@ -2,6 +2,8 @@
 Thanks for contributing to Simplenote! Pick a clear title ("Note editor: emojis not displaying correctly") and proceed.
 
 Please review the FAQs before submitting an issue: https://github.com/Automattic/simplenote-electron/labels/FAQ
+
+Mac users: Does your Simplenote app have a file size of less than 50 MB? Then you are using simplenote-macos, not simplenote-electron. Please post your issue here: https://github.com/Automattic/simplenote-macos
 -->
 
 #### Steps to reproduce
@@ -15,6 +17,11 @@ Please review the FAQs before submitting an issue: https://github.com/Automattic
 
 #### What happened instead
 
+
+#### Simplenote version
+<!-- 
+Here's the version number of our latest release: https://github.com/Automattic/simplenote-electron/releases/latest
+-->
 
 #### OS version
 

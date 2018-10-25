@@ -42,6 +42,10 @@ PORT ?= 4000
 # Access dev server or locally built web app files
 DEV_SERVER ?= false
 
+# electron-builder publish option
+# options: always|onTag|onTagOrDraft|never
+PUBLISH ?= onTag
+
 
 # Main targets
 .PHONY: start
@@ -118,19 +122,19 @@ package: build-if-changed
 package-win32:
 ifeq ($(IS_WINDOWS),true)
 	@echo Building .appx as well
-	@npx electron-builder --win --config=./electron-builder-appx.json
+	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 else
 	@echo Skipping .appx as we are not on a Windows host
-	@npx electron-builder --win
+	@npx electron-builder --win -p $(PUBLISH)
 endif
 
 .PHONY: package-osx 
 package-osx: build-if-changed
-	@npx electron-builder --mac
+	@npx electron-builder --mac -p $(PUBLISH)
 
 .PHONY: package-linux
 package-linux: build-if-changed
-	@npx electron-builder --linux
+	@npx electron-builder --linux -p $(PUBLISH)
 
 
 # NPM

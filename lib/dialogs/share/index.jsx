@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
+import { includes, isEmpty } from 'lodash';
+
+import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
 import TabbedDialog from '../../tabbed-dialog';
 import ToggleControl from '../../controls/toggle';
-import { includes, isEmpty } from 'lodash';
 
 const shareTabs = ['collaborate', 'publish'];
 
@@ -14,10 +16,9 @@ export class ShareDialog extends Component {
     dialog: PropTypes.object.isRequired,
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onTogglePublished = event => {
     this.props.actions.publishNote({
@@ -56,6 +57,7 @@ export class ShareDialog extends Component {
         note,
         tags: [...tags, collaborator],
       });
+      analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
@@ -71,6 +73,7 @@ export class ShareDialog extends Component {
       note,
       tags,
     });
+    analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
@@ -96,14 +99,14 @@ export class ShareDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Share"
         tabs={shareTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}
@@ -126,8 +129,7 @@ export class ShareDialog extends Component {
             <div className="settings-group">
               <p>
                 Add an email address of another Simplenote user to share a note.
-                You&apos;ll both be able to edit and view the note. You can also
-                add the email as a tag.
+                You&apos;ll both be able to edit and view the note.
               </p>
               <div className="settings-items theme-color-border">
                 <form

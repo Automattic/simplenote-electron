@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "1.1.7",
+  "version": "1.2.1",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -110,6 +110,7 @@
     "prop-types": "15.6.0",
     "react": "16.2.0",
     "react-addons-update": "15.6.2",
+    "react-modal": "3.6.1",
     "react-overlays": "0.8.3",
     "react-redux": "5.0.7",
     "react-virtualized": "9.18.5",
@@ -119,7 +120,7 @@
     "sanitize-filename": "1.6.1",
     "semver": "^5.5.1",
     "showdown": "1.8.6",
-    "simperium": "0.3.1",
+    "simperium": "0.3.2",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {

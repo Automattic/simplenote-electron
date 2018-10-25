@@ -9,43 +9,43 @@
 
 .note-toolbar {
   display: flex;
-  align-items: center;
-  flex: none;
+  justify-content: space-between;
+  width: 100%;
   padding: 0 15px;
+}
 
-  @media only screen and (max-width: $single-column) {
+.note-toolbar__column-left,
+.note-toolbar__column-right {
+  display: flex;
+  align-items: center;
+}
+
+@media only screen and (max-width: $single-column) {
+  .note-toolbar__column-left {
+    display: none;
+  }
+
+  .note-toolbar__column-right {
     width: 100%;
     justify-content: space-between;
   }
+}
 
-  .note-toolbar-icon,
-  .note-toolbar-text {
-    flex: none;
-    margin-right: 14px;
-    text-align: center;
+.note-toolbar__button {
+  flex: none;
+  margin-right: 14px;
+  text-align: center;
 
-    &:last-child {
-      margin-right: 0;
-    }
+  &:last-child {
+    margin-right: 0;
   }
+}
 
-  .note-toolbar-icon {
-    width: 32px;
-    height: 32px;
+.note-toolbar-back {
+  display: none;
 
-    button {
-      width: 100%;
-      height: 100%;
-      padding: 0;
-    }
-  }
-
-  .note-toolbar-back {
-    display: none;
-
-    @media only screen and (max-width: $single-column) {
-      display: flex;
-    }
+  @media only screen and (max-width: $single-column) {
+    display: flex;
   }
 }
 
@@ -55,7 +55,7 @@
   padding: 10px 16px;
   justify-content: flex-end;
 
-  .note-toolbar-text {
+  .note-toolbar__button {
     margin: 0 0 0 16px;
   }
 
