@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
+import SourceImporter from './source-importer';
 
 class ImportDialog extends React.Component {
   static propTypes = {
@@ -21,8 +22,7 @@ class ImportDialog extends React.Component {
     const { title } = this.props.dialog;
     const { selectedSource } = this.state;
 
-    const selectSource = source =>
-      this.setState({ selectedSource: source.slug });
+    const selectSource = source => this.setState({ selectedSource: source });
 
     return (
       <Dialog className="import" onDone={requestClose} title={title}>
@@ -30,6 +30,7 @@ class ImportDialog extends React.Component {
           {!selectedSource && (
             <ImportSourceSelector selectSource={selectSource} />
           )}
+          {selectedSource && <SourceImporter source={selectedSource} />}
         </div>
       </Dialog>
     );

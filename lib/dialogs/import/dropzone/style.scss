@@ -1,0 +1,14 @@
+.importer-dropzone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  border-width: 2px;
+  border-style: dashed;
+  background: lighten($gray, 40%);
+
+  &.is-active {
+    background: lighten($gray, 38%);
+  }
+}
