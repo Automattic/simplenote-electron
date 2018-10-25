@@ -9,7 +9,6 @@ class ImporterDropzone extends React.Component {
     acceptedTypes: PropTypes.string,
     multiple: PropTypes.bool,
     onAccept: PropTypes.func.isRequired,
-    useFilePath: PropTypes.bool,
   };
 
   state = {
@@ -41,7 +40,7 @@ class ImporterDropzone extends React.Component {
   }
 
   render() {
-    const { acceptedTypes, multiple = false, useFilePath = false } = this.props;
+    const { acceptedTypes, multiple = false } = this.props;
     const { errorMessage } = this.state;
 
     return (
@@ -49,7 +48,7 @@ class ImporterDropzone extends React.Component {
         accept={acceptedTypes}
         activeClassName="is-active"
         className="importer-dropzone theme-color-border"
-        disablePreview={useFilePath}
+        disablePreview
         multiple={multiple}
         onDrop={this.onDrop}
       >
