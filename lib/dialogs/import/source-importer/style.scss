@@ -1,0 +1,27 @@
+.source-importer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
+.source-importer-executor {
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  flex: 1 0 auto;
+}
+
+.source-importer-executor__options {
+  flex: 1 0 auto;
+  padding-top: 2em;
+}
+
+.source-importer-executor__checkbox {
+  margin-right: 6px;
+}
+
+.source-importer-executor__button {
+  button {
+    width: 100%;
+  }
+}
