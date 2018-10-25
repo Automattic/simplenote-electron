@@ -7,8 +7,28 @@
   border-width: 2px;
   border-style: dashed;
   background: lighten($gray, 40%);
+  transition: padding .2s ease-out, background .2s ease-out;
 
   &.is-active {
     background: lighten($gray, 38%);
   }
+
+  &.is-accepted {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 14px 18px;
+    border-width: 1px;
+    border-style: solid;
+    background: transparent;
+
+    svg {
+      margin-right: 8px;
+    }
+  }
+}
+
+.importer-dropzone__filename {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
