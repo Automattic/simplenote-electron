@@ -110,6 +110,7 @@
     "prop-types": "15.6.0",
     "react": "16.2.0",
     "react-addons-update": "15.6.2",
+    "react-dropzone": "6.2.4",
     "react-modal": "3.6.1",
     "react-overlays": "0.8.3",
     "react-redux": "5.0.7",
