@@ -7,27 +7,41 @@ import UploadIcon from '../../../icons/upload';
 class ImporterDropzone extends React.Component {
   static propTypes = {
     acceptedTypes: PropTypes.string,
+    multiple: PropTypes.bool,
     onAccept: PropTypes.func.isRequired,
+    useFilePath: PropTypes.bool,
   };
 
   state = {
     errorMessage: undefined,
   };
 
-  onDropAccepted = files => {
-    // `path` is only available in Electron
-    this.props.onAccept(files[0].path);
+  onDrop = (acceptedFiles, rejectedFiles) => {
+    if (acceptedFiles.length === 0) {
+      this.handleReject(rejectedFiles);
+    } else {
+      this.props.onAccept(acceptedFiles);
+    }
   };
 
-  onDropRejected = () => {
-    this.setState({ errorMessage: 'File type is incorrect' });
-    window.setTimeout(() => {
+  handleReject = rejectedFiles => {
+    let errorMessage = 'File type is incorrect';
+
+    if (!this.props.multiple && rejectedFiles.length > 1) {
+      errorMessage = 'Choose a single file';
+    }
+    this.setState({ errorMessage: errorMessage });
+    this.errorTimer = window.setTimeout(() => {
       this.setState({ errorMessage: undefined });
-    }, 3000);
+    }, 2500);
   };
+
+  componentWillUnmount() {
+    window.clearTimeout(this.errorTimer);
+  }
 
   render() {
-    const { acceptedTypes } = this.props;
+    const { acceptedTypes, multiple = false, useFilePath = false } = this.props;
     const { errorMessage } = this.state;
 
     return (
@@ -35,10 +49,9 @@ class ImporterDropzone extends React.Component {
         accept={acceptedTypes}
         activeClassName="is-active"
         className="importer-dropzone theme-color-border"
-        disablePreview
-        onDropAccepted={this.onDropAccepted}
-        onDropRejected={this.onDropRejected}
-        multiple={false}
+        disablePreview={useFilePath}
+        multiple={multiple}
+        onDrop={this.onDrop}
       >
         <UploadIcon />
         {errorMessage ? errorMessage : 'Drag a file, or click to choose'}
