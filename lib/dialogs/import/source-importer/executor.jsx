@@ -6,6 +6,7 @@ import ImportProgress from './progress';
 
 class ImportExecutor extends React.Component {
   static propTypes = {
+    endValue: PropTypes.number,
     hint: PropTypes.string,
     locked: PropTypes.bool.isRequired,
     startImport: PropTypes.func.isRequired,
@@ -16,7 +17,7 @@ class ImportExecutor extends React.Component {
   };
 
   render() {
-    const { hint, locked, startImport } = this.props;
+    const { endValue, hint, locked, startImport } = this.props;
     const { setMarkdown } = this.state;
 
     return (
@@ -35,7 +36,7 @@ class ImportExecutor extends React.Component {
           </label>
           {hint && <p className="theme-color-fg-dim">{hint}</p>}
         </section>
-        <ImportProgress currentValue={3} isDone={false} />
+        <ImportProgress currentValue={3} endValue={endValue} isDone={false} />
         <div className="source-importer-executor__button">
           <button
             className="button button-primary"

@@ -51,6 +51,9 @@ class SourceImporter extends React.Component {
           shouldMount={hasAcceptedFile}
         >
           <ImportExecutor
+            endValue={
+              multiple && hasAcceptedFile ? acceptedFiles.length : undefined
+            }
             hint={optionsHint}
             locked={locked}
             startImport={() => console.log(acceptedFiles)}
