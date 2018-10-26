@@ -9,3 +9,14 @@
     outline: 0;
   }
 }
+
+@mixin react-transition-fade-in {
+  &-enter {
+    opacity: 0;
+  }
+
+  &-enter-done {
+    opacity: 1;
+    transition: opacity .2s ease-out;
+  }
+}
