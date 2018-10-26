@@ -10,12 +10,19 @@ import TestImporter from './utils/test-importer';
 
 class ImportExecutor extends React.Component {
   static propTypes = {
+    buckets: PropTypes.shape({
+      noteBucket: PropTypes.object.isRequired,
+      tagBucket: PropTypes.object.isRequired,
+    }),
     endValue: PropTypes.number,
     files: PropTypes.array,
-    hint: PropTypes.string,
     locked: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onStart: PropTypes.func.isRequired,
+    source: PropTypes.shape({
+      optionsHint: PropTypes.string,
+      slug: PropTypes.string.isRequired,
+    }),
   };
 
   state = {
@@ -25,8 +32,22 @@ class ImportExecutor extends React.Component {
     setMarkdown: false,
   };
 
+  getImporterFor = slug => {
+    switch (slug) {
+      case 'evernote':
+        return TestImporter;
+      case 'simplenote':
+        return TestImporter;
+      case 'plaintext':
+        return TestImporter;
+      default:
+        throw new Error('Unrecognized importer slug "${slug}"');
+    }
+  };
+
   initImporter = () => {
-    const testImporter = new TestImporter();
+    const Importer = this.getImporterFor(this.props.source.slug);
+    const testImporter = new Importer(this.props.buckets);
     const updateProgress = throttle(arg => {
       this.setState({ importedFileCount: arg });
     }, 20);
@@ -50,14 +71,18 @@ class ImportExecutor extends React.Component {
   };
 
   startImport = () => {
-    const importer = this.initImporter();
     this.setState({ shouldShowProgress: true });
     this.props.onStart();
-    importer.import(this.props.files);
+
+    const importer = this.initImporter();
+    importer.import(this.props.files, {
+      markdown: this.state.setMarkdown,
+    });
   };
 
   render() {
-    const { endValue, hint, locked, onClose } = this.props;
+    const { endValue, locked, onClose } = this.props;
+    const { optionsHint: hint } = this.props.source;
     const {
       importedFileCount,
       shouldShowProgress,
