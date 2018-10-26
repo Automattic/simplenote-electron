@@ -11,15 +11,5 @@
 }
 
 .import__source-importer {
-  display: none;
-
-  &-enter {
-    display: block;
-    opacity: 0;
-  }
-
-  &-enter-done {
-    opacity: 1;
-    transition: opacity .2s ease-out;
-  }
+  @include react-transition-fade-in;
 }
