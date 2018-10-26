@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import PanelTitle from '../../../components/panel-title';
+import ImportProgress from './progress';
 
 class ImportExecutor extends React.Component {
   static propTypes = {
@@ -32,6 +33,7 @@ class ImportExecutor extends React.Component {
           </label>
           {hint && <p className="theme-color-fg-dim">{hint}</p>}
         </section>
+        <ImportProgress currentValue={3} isDone={false} />
         <div className="source-importer-executor__button">
           <button
             className="button button-primary"
