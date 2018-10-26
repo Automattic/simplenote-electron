@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import PanelTitle from '../../../components/panel-title';
 import ImporterDropzone from '../dropzone';
-import TransitionFadeIn from '../../../components/transition-fade-in';
+import TransitionFadeInOut from '../../../components/transition-fade-in-out';
 import ImportExecutor from './executor';
 
 class SourceImporter extends React.Component {
@@ -38,16 +38,20 @@ class SourceImporter extends React.Component {
           acceptedTypes={acceptedTypes}
           multiple={multiple}
           onAccept={files => this.setState({ acceptedFiles: files })}
+          onReset={() => this.setState({ acceptedFiles: undefined })}
         />
         {!hasAcceptedFile && (
           <p className="theme-color-fg-dim">{instructions}</p>
         )}
-        <TransitionFadeIn shouldMount={hasAcceptedFile}>
+        <TransitionFadeInOut
+          wrapperClassName="source-importer__executor-wrapper"
+          shouldMount={hasAcceptedFile}
+        >
           <ImportExecutor
             hint={optionsHint}
             startImport={() => console.log(acceptedFiles)}
           />
-        </TransitionFadeIn>
+        </TransitionFadeInOut>
       </div>
     );
   }

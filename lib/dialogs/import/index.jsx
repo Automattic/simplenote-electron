@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
-import TransitionFadeIn from '../../components/transition-fade-in';
+import TransitionFadeInOut from '../../components/transition-fade-in-out';
 import SourceImporter from './source-importer';
 
 class ImportDialog extends React.Component {
@@ -32,9 +32,12 @@ class ImportDialog extends React.Component {
           {!sourceIsSelected && (
             <ImportSourceSelector selectSource={selectSource} />
           )}
-          <TransitionFadeIn shouldMount={sourceIsSelected}>
+          <TransitionFadeInOut
+            wrapperClassName="import__source-importer-wrapper"
+            shouldMount={sourceIsSelected}
+          >
             <SourceImporter source={selectedSource} />
-          </TransitionFadeIn>
+          </TransitionFadeInOut>
         </div>
       </Dialog>
     );
