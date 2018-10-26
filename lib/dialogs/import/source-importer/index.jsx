@@ -9,6 +9,8 @@ import ImportExecutor from './executor';
 class SourceImporter extends React.Component {
   static propTypes = {
     locked: PropTypes.bool,
+    onClose: PropTypes.func.isRequired,
+    onStart: PropTypes.func.isRequired,
     source: PropTypes.shape({
       acceptedTypes: PropTypes.string,
       instructions: PropTypes.string,
@@ -22,7 +24,7 @@ class SourceImporter extends React.Component {
   };
 
   render() {
-    const { locked = false } = this.props;
+    const { onClose, onStart, locked = false } = this.props;
     const {
       acceptedTypes,
       instructions,
@@ -54,9 +56,11 @@ class SourceImporter extends React.Component {
             endValue={
               multiple && hasAcceptedFile ? acceptedFiles.length : undefined
             }
+            files={acceptedFiles}
             hint={optionsHint}
             locked={locked}
-            startImport={() => console.log(acceptedFiles)}
+            onClose={onClose}
+            onStart={onStart}
           />
         </TransitionFadeInOut>
       </div>
