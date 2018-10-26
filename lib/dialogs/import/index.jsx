@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
+import TransitionFadeIn from '../../components/transition-fade-in';
 import SourceImporter from './source-importer';
 
 class ImportDialog extends React.Component {
@@ -32,17 +32,9 @@ class ImportDialog extends React.Component {
           {!sourceIsSelected && (
             <ImportSourceSelector selectSource={selectSource} />
           )}
-          <CSSTransition
-            in={sourceIsSelected}
-            classNames="import__source-importer"
-            mountOnEnter
-            timeout={200}
-            unmountOnExit
-          >
-            <div>
-              <SourceImporter source={selectedSource} />
-            </div>
-          </CSSTransition>
+          <TransitionFadeIn shouldMount={sourceIsSelected}>
+            <SourceImporter source={selectedSource} />
+          </TransitionFadeIn>
         </div>
       </Dialog>
     );
