@@ -6,7 +6,14 @@ import classNames from 'classnames';
 import * as Dialogs from '../dialogs';
 
 export const DialogRenderer = props => {
-  const { appProps, themeClass, closeDialog, dialogs, isElectron } = props;
+  const {
+    appProps,
+    buckets,
+    themeClass,
+    closeDialog,
+    dialogs,
+    isElectron,
+  } = props;
 
   const renderDialog = dialog => {
     const { key, title } = dialog;
@@ -29,6 +36,7 @@ export const DialogRenderer = props => {
         portalClassName={classNames('dialog-renderer__portal', themeClass)}
       >
         <DialogComponent
+          buckets={buckets}
           dialog={dialog}
           requestClose={closeThisDialog}
           isElectron={isElectron}
@@ -43,6 +51,7 @@ export const DialogRenderer = props => {
 
 DialogRenderer.propTypes = {
   appProps: PropTypes.object.isRequired,
+  buckets: PropTypes.object,
   themeClass: PropTypes.string,
   closeDialog: PropTypes.func.isRequired,
   dialogs: PropTypes.array.isRequired,

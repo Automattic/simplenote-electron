@@ -8,6 +8,7 @@ import SourceImporter from './source-importer';
 
 class ImportDialog extends React.Component {
   static propTypes = {
+    buckets: PropTypes.object,
     requestClose: PropTypes.func.isRequired,
     dialog: PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -20,7 +21,7 @@ class ImportDialog extends React.Component {
   };
 
   render() {
-    const { requestClose } = this.props;
+    const { buckets, requestClose } = this.props;
     const { title } = this.props.dialog;
     const { importStarted, selectedSource } = this.state;
 
@@ -46,6 +47,7 @@ class ImportDialog extends React.Component {
             shouldMount={sourceIsSelected}
           >
             <SourceImporter
+              buckets={buckets}
               locked={importStarted}
               onClose={requestClose}
               onStart={() => this.setState({ importStarted: true })}

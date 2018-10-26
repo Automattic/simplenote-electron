@@ -8,6 +8,7 @@ import ImportExecutor from './executor';
 
 class SourceImporter extends React.Component {
   static propTypes = {
+    buckets: PropTypes.object,
     locked: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
     onStart: PropTypes.func.isRequired,
@@ -15,7 +16,6 @@ class SourceImporter extends React.Component {
       acceptedTypes: PropTypes.string,
       instructions: PropTypes.string,
       multiple: PropTypes.bool,
-      optionsHint: PropTypes.string,
     }),
   };
 
@@ -24,13 +24,8 @@ class SourceImporter extends React.Component {
   };
 
   render() {
-    const { onClose, onStart, locked = false } = this.props;
-    const {
-      acceptedTypes,
-      instructions,
-      multiple = false,
-      optionsHint,
-    } = this.props.source;
+    const { buckets, onClose, onStart, locked = false, source } = this.props;
+    const { acceptedTypes, instructions, multiple = false } = this.props.source;
     const { acceptedFiles } = this.state;
 
     const hasAcceptedFile = Boolean(acceptedFiles);
@@ -53,14 +48,15 @@ class SourceImporter extends React.Component {
           shouldMount={hasAcceptedFile}
         >
           <ImportExecutor
+            buckets={buckets}
             endValue={
               multiple && hasAcceptedFile ? acceptedFiles.length : undefined
             }
             files={acceptedFiles}
-            hint={optionsHint}
             locked={locked}
             onClose={onClose}
             onStart={onStart}
+            source={source}
           />
         </TransitionFadeInOut>
       </div>
