@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import PanelTitle from '../../../components/panel-title';
 import ImporterDropzone from '../dropzone';
+import TransitionFadeIn from '../../../components/transition-fade-in';
 import ImportExecutor from './executor';
 
 class SourceImporter extends React.Component {
@@ -28,6 +29,8 @@ class SourceImporter extends React.Component {
     } = this.props.source;
     const { acceptedFiles } = this.state;
 
+    const hasAcceptedFile = Boolean(acceptedFiles);
+
     return (
       <div className="source-importer">
         <PanelTitle headingLevel="3">Import file{multiple && 's'}</PanelTitle>
@@ -36,14 +39,15 @@ class SourceImporter extends React.Component {
           multiple={multiple}
           onAccept={files => this.setState({ acceptedFiles: files })}
         />
-        {acceptedFiles ? (
+        {!hasAcceptedFile && (
+          <p className="theme-color-fg-dim">{instructions}</p>
+        )}
+        <TransitionFadeIn shouldMount={hasAcceptedFile}>
           <ImportExecutor
             hint={optionsHint}
             startImport={() => console.log(acceptedFiles)}
           />
-        ) : (
-          <p className="theme-color-fg-dim">{instructions}</p>
-        )}
+        </TransitionFadeIn>
       </div>
     );
   }
