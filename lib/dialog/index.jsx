@@ -6,13 +6,21 @@ export class Dialog extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
+    closeBtnLabel: PropTypes.string,
     hideTitleBar: PropTypes.bool,
     title: PropTypes.string,
     onDone: PropTypes.func.isRequired,
   };
 
   render() {
-    const { className, hideTitleBar, title, children, onDone } = this.props;
+    const {
+      className,
+      closeBtnLabel = 'Done',
+      hideTitleBar,
+      title,
+      children,
+      onDone,
+    } = this.props;
 
     return (
       <div
@@ -34,7 +42,7 @@ export class Dialog extends Component {
                     className="button button-borderless"
                     onClick={onDone}
                   >
-                    Done
+                    {closeBtnLabel}
                   </button>
                 )}
               </div>

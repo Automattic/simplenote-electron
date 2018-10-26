@@ -27,7 +27,12 @@ class ImportDialog extends React.Component {
     const sourceIsSelected = Boolean(selectedSource);
 
     return (
-      <Dialog className="import" onDone={requestClose} title={title}>
+      <Dialog
+        className="import"
+        closeBtnLabel="Cancel"
+        onDone={requestClose}
+        title={title}
+      >
         <div className="import__inner">
           {!sourceIsSelected && (
             <ImportSourceSelector selectSource={selectSource} />
