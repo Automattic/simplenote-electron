@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 const ImportProgressText = props => {
   const { currentValue, isDone } = props;
 
+  const unit = currentValue === 1 ? 'note' : 'notes';
+
   const text = isDone
-    ? `Done! ${currentValue} notes imported.`
-    : `${currentValue} notes imported...`;
+    ? `Done! ${currentValue} ${unit} imported.`
+    : `${currentValue} ${unit} imported...`;
 
   return (
     <p role="status" aria-live="polite">
