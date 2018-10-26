@@ -7,6 +7,7 @@ import ImportProgress from './progress';
 class ImportExecutor extends React.Component {
   static propTypes = {
     hint: PropTypes.string,
+    locked: PropTypes.bool.isRequired,
     startImport: PropTypes.func.isRequired,
   };
 
@@ -15,7 +16,7 @@ class ImportExecutor extends React.Component {
   };
 
   render() {
-    const { hint, startImport } = this.props;
+    const { hint, locked, startImport } = this.props;
     const { setMarkdown } = this.state;
 
     return (
@@ -27,6 +28,7 @@ class ImportExecutor extends React.Component {
               type="checkbox"
               checked={setMarkdown}
               className="source-importer-executor__checkbox"
+              disabled={locked}
               onChange={() => this.setState({ setMarkdown: !setMarkdown })}
             />
             Enable Markdown on all notes

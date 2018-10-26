@@ -8,6 +8,7 @@ import ImportExecutor from './executor';
 
 class SourceImporter extends React.Component {
   static propTypes = {
+    locked: PropTypes.bool,
     source: PropTypes.shape({
       acceptedTypes: PropTypes.string,
       instructions: PropTypes.string,
@@ -21,6 +22,7 @@ class SourceImporter extends React.Component {
   };
 
   render() {
+    const { locked = false } = this.props;
     const {
       acceptedTypes,
       instructions,
@@ -36,6 +38,7 @@ class SourceImporter extends React.Component {
         <PanelTitle headingLevel="3">Import file{multiple && 's'}</PanelTitle>
         <ImporterDropzone
           acceptedTypes={acceptedTypes}
+          locked={locked}
           multiple={multiple}
           onAccept={files => this.setState({ acceptedFiles: files })}
           onReset={() => this.setState({ acceptedFiles: undefined })}
@@ -49,6 +52,7 @@ class SourceImporter extends React.Component {
         >
           <ImportExecutor
             hint={optionsHint}
+            locked={locked}
             startImport={() => console.log(acceptedFiles)}
           />
         </TransitionFadeInOut>

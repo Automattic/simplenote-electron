@@ -15,13 +15,17 @@ class ImportDialog extends React.Component {
   };
 
   state = {
+    importInProgress: false,
     selectedSource: undefined,
   };
 
   render() {
+    window.setTimeout(() => {
+      this.setState({ importInProgress: true });
+    }, 6000);
     const { requestClose } = this.props;
     const { title } = this.props.dialog;
-    const { selectedSource } = this.state;
+    const { importInProgress, selectedSource } = this.state;
 
     const selectSource = source => this.setState({ selectedSource: source });
     const sourceIsSelected = Boolean(selectedSource);
@@ -30,18 +34,21 @@ class ImportDialog extends React.Component {
       <Dialog
         className="import"
         closeBtnLabel="Cancel"
-        onDone={requestClose}
+        onDone={importInProgress ? undefined : requestClose}
         title={title}
       >
         <div className="import__inner">
           {!sourceIsSelected && (
-            <ImportSourceSelector selectSource={selectSource} />
+            <ImportSourceSelector
+              locked={importInProgress}
+              selectSource={selectSource}
+            />
           )}
           <TransitionFadeInOut
             wrapperClassName="import__source-importer-wrapper"
             shouldMount={sourceIsSelected}
           >
-            <SourceImporter source={selectedSource} />
+            <SourceImporter locked={importInProgress} source={selectedSource} />
           </TransitionFadeInOut>
         </div>
       </Dialog>

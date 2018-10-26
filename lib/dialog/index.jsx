@@ -9,7 +9,7 @@ export class Dialog extends Component {
     closeBtnLabel: PropTypes.string,
     hideTitleBar: PropTypes.bool,
     title: PropTypes.string,
-    onDone: PropTypes.func.isRequired,
+    onDone: PropTypes.func,
   };
 
   render() {
@@ -29,25 +29,24 @@ export class Dialog extends Component {
           'dialog theme-color-bg theme-color-fg theme-color-border'
         )}
       >
-        {!hideTitleBar &&
-          onDone && (
-            <div className="dialog-title-bar theme-color-border">
-              <div className="dialog-title-side" />
-              <h2 className="dialog-title-text">{title}</h2>
-              <div className="dialog-title-side">
-                {!!onDone && (
-                  <button
-                    type="button"
-                    aria-label="Close dialog"
-                    className="button button-borderless"
-                    onClick={onDone}
-                  >
-                    {closeBtnLabel}
-                  </button>
-                )}
-              </div>
+        {!hideTitleBar && (
+          <div className="dialog-title-bar theme-color-border">
+            <div className="dialog-title-side" />
+            <h2 className="dialog-title-text">{title}</h2>
+            <div className="dialog-title-side">
+              {!!onDone && (
+                <button
+                  type="button"
+                  aria-label="Close dialog"
+                  className="button button-borderless"
+                  onClick={onDone}
+                >
+                  {closeBtnLabel}
+                </button>
+              )}
             </div>
-          )}
+          </div>
+        )}
 
         <div className="dialog-content">{children}</div>
       </div>

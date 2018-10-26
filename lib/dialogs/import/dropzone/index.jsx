@@ -9,6 +9,7 @@ import UploadIcon from '../../../icons/upload';
 class ImporterDropzone extends React.Component {
   static propTypes = {
     acceptedTypes: PropTypes.string,
+    locked: PropTypes.bool.isRequired,
     multiple: PropTypes.bool,
     onAccept: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
@@ -57,7 +58,7 @@ class ImporterDropzone extends React.Component {
   }
 
   render() {
-    const { acceptedTypes, multiple = false } = this.props;
+    const { acceptedTypes, locked, multiple = false } = this.props;
     const { acceptedFile, errorMessage } = this.state;
 
     const text = errorMessage
@@ -86,6 +87,7 @@ class ImporterDropzone extends React.Component {
           { 'is-accepted': acceptedFile },
           'importer-dropzone theme-color-border'
         )}
+        disabled={locked}
         disablePreview
         multiple={multiple}
         onDrop={this.onDrop}
