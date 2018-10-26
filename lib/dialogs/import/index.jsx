@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { CSSTransition } from 'react-transition-group';
+import { isEmpty } from 'lodash';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
@@ -14,7 +16,7 @@ class ImportDialog extends React.Component {
   };
 
   state = {
-    selectedSource: undefined,
+    selectedSource: {},
   };
 
   render() {
@@ -23,14 +25,24 @@ class ImportDialog extends React.Component {
     const { selectedSource } = this.state;
 
     const selectSource = source => this.setState({ selectedSource: source });
+    const sourceIsSelected = !isEmpty(selectedSource);
 
     return (
       <Dialog className="import" onDone={requestClose} title={title}>
         <div className="import__inner">
-          {!selectedSource && (
+          {!sourceIsSelected && (
             <ImportSourceSelector selectSource={selectSource} />
           )}
-          {selectedSource && <SourceImporter source={selectedSource} />}
+          <CSSTransition
+            in={sourceIsSelected}
+            classNames="import__source-importer"
+            timeout={200}
+            unmountOnExit
+          >
+            <div>
+              <SourceImporter source={selectedSource} />
+            </div>
+          </CSSTransition>
         </div>
       </Dialog>
     );
