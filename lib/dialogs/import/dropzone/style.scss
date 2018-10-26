@@ -9,8 +9,12 @@
   background: lighten($gray, 40%);
   transition: padding .2s ease-out, background .2s ease-out;
 
+  @at-root .theme-dark & {
+    background: darken($gray, 35%);
+  }
+
   &.is-active {
-    background: lighten($gray, 38%);
+    opacity: .75;
   }
 
   &.is-accepted {
