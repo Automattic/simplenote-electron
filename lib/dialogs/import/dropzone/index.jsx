@@ -11,6 +11,7 @@ class ImporterDropzone extends React.Component {
     acceptedTypes: PropTypes.string,
     multiple: PropTypes.bool,
     onAccept: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
   };
 
   state = {
@@ -47,6 +48,8 @@ class ImporterDropzone extends React.Component {
     this.errorTimer = window.setTimeout(() => {
       this.setState({ errorMessage: undefined });
     }, 2500);
+
+    this.props.onReset();
   };
 
   componentWillUnmount() {

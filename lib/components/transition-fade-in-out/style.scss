@@ -1,0 +1,4 @@
+.transition-fade-in-out {
+  @include react-transition-fade-in;
+  @include react-transition-fade-out;
+}

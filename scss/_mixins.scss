@@ -8,3 +8,14 @@
     transition: opacity .2s ease-out;
   }
 }
+
+@mixin react-transition-fade-out {
+  &-exit {
+    opacity: 1;
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transition: opacity .2s ease-out;
+  }
+}
