@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { throttle } from 'lodash';
 
-import PanelTitle from '../../../components/panel-title';
-import TransitionFadeInOut from '../../../components/transition-fade-in-out';
-import ImportProgress from './progress';
+import PanelTitle from '../../../../components/panel-title';
+import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
+import ImportProgress from '../progress';
 
-import EvernoteImporter from '../../../utils/import/evernote';
-import TextFileImporter from '../../../utils/import/text-files';
+import EvernoteImporter from '../../../../utils/import/evernote';
+import TextFileImporter from '../../../../utils/import/text-files';
 
 const importers = {
   evernote: EvernoteImporter,
