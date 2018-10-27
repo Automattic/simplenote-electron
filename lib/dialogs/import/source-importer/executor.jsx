@@ -6,7 +6,13 @@ import PanelTitle from '../../../components/panel-title';
 import TransitionFadeInOut from '../../../components/transition-fade-in-out';
 import ImportProgress from './progress';
 
-import TestImporter from './utils/test-importer';
+import EvernoteImporter from '../../../utils/import/evernote';
+import TextFileImporter from '../../../utils/import/text-files';
+
+const importers = {
+  evernote: EvernoteImporter,
+  plaintext: TextFileImporter,
+};
 
 class ImportExecutor extends React.Component {
   static propTypes = {
@@ -34,24 +40,16 @@ class ImportExecutor extends React.Component {
     shouldShowProgress: false,
   };
 
-  getImporterFor = slug => {
-    switch (slug) {
-      case 'evernote':
-        return TestImporter;
-      case 'simplenote':
-        return TestImporter;
-      case 'plaintext':
-        return TestImporter;
-      default:
-        throw new Error('Unrecognized importer slug "${slug}"');
-    }
-  };
-
   initImporter = () => {
-    const Importer = this.getImporterFor(this.props.source.slug);
+    const Importer = importers[this.props.source.slug];
+
+    if (!Importer) {
+      throw new Error('Unrecognized importer slug "${slug}"');
+    }
+
     const thisImporter = new Importer({
       ...this.props.buckets,
-      options: { markdown: this.state.setMarkdown },
+      options: { isMarkdown: this.state.setMarkdown },
     });
     const updateProgress = throttle(arg => {
       this.setState({ importedNoteCount: arg });
