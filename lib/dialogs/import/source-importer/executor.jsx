@@ -26,6 +26,7 @@ class ImportExecutor extends React.Component {
   };
 
   state = {
+    errorMessage: undefined,
     finalNoteCount: undefined,
     importedNoteCount: 0,
     isDone: false,
@@ -68,7 +69,13 @@ class ImportExecutor extends React.Component {
           });
           break;
         case 'error':
-          console.log(arg);
+          this.setState({
+            errorMessage: arg,
+            shouldShowProgress: false,
+          });
+          window.setTimeout(() => {
+            this.setState({ isDone: true });
+          }, 200);
           break;
         default:
           console.log(`Unrecognized status event type "${type}"`);
@@ -89,6 +96,7 @@ class ImportExecutor extends React.Component {
     const { endValue, locked, onClose } = this.props;
     const { optionsHint: hint } = this.props.source;
     const {
+      errorMessage,
       finalNoteCount,
       importedNoteCount,
       isDone,
@@ -112,6 +120,11 @@ class ImportExecutor extends React.Component {
           </label>
           {hint && <p className="theme-color-fg-dim">{hint}</p>}
         </section>
+        <TransitionFadeInOut shouldMount={Boolean(errorMessage)}>
+          <div role="alert" className="source-importer-executor__error">
+            {errorMessage}
+          </div>
+        </TransitionFadeInOut>
         <TransitionFadeInOut shouldMount={shouldShowProgress}>
           <ImportProgress
             currentValue={isDone ? finalNoteCount : importedNoteCount}
