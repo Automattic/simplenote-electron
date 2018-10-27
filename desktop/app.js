@@ -229,7 +229,18 @@ function createMenuTemplate(settings) {
         type: 'separator',
       },
       {
-        label: '&Export Notes',
+        label: '&Import…',
+        click: function(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('appCommand', {
+              action: 'showDialog',
+              dialog: DialogTypes.IMPORT,
+            });
+          }
+        },
+      },
+      {
+        label: '&Export…',
         accelerator: 'CommandOrControl+Shift+E',
         click(item, focusedWindow) {
           if (focusedWindow) {
@@ -247,6 +258,9 @@ function createMenuTemplate(settings) {
             );
           }
         },
+      },
+      {
+        type: 'separator',
       },
       {
         label: '&Print',
