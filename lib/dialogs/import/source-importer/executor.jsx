@@ -26,10 +26,11 @@ class ImportExecutor extends React.Component {
   };
 
   state = {
-    importedFileCount: 0,
-    shouldShowProgress: false,
+    finalNoteCount: undefined,
+    importedNoteCount: 0,
     isDone: false,
     setMarkdown: false,
+    shouldShowProgress: false,
   };
 
   getImporterFor = slug => {
@@ -47,18 +48,24 @@ class ImportExecutor extends React.Component {
 
   initImporter = () => {
     const Importer = this.getImporterFor(this.props.source.slug);
-    const testImporter = new Importer(this.props.buckets);
+    const thisImporter = new Importer({
+      ...this.props.buckets,
+      options: { markdown: this.state.setMarkdown },
+    });
     const updateProgress = throttle(arg => {
-      this.setState({ importedFileCount: arg });
+      this.setState({ importedNoteCount: arg });
     }, 20);
 
-    testImporter.on('status', (type, arg) => {
+    thisImporter.on('status', (type, arg) => {
       switch (type) {
         case 'progress':
           updateProgress(arg);
           break;
         case 'complete':
-          this.setState({ isDone: true });
+          this.setState({
+            finalNoteCount: arg,
+            isDone: true,
+          });
           break;
         case 'error':
           console.log(arg);
@@ -67,7 +74,7 @@ class ImportExecutor extends React.Component {
           console.log(`Unrecognized status event type "${type}"`);
       }
     });
-    return testImporter;
+    return thisImporter;
   };
 
   startImport = () => {
@@ -75,19 +82,18 @@ class ImportExecutor extends React.Component {
     this.props.onStart();
 
     const importer = this.initImporter();
-    importer.import(this.props.files, {
-      markdown: this.state.setMarkdown,
-    });
+    importer.importNotes(this.props.files);
   };
 
   render() {
     const { endValue, locked, onClose } = this.props;
     const { optionsHint: hint } = this.props.source;
     const {
-      importedFileCount,
-      shouldShowProgress,
+      finalNoteCount,
+      importedNoteCount,
       isDone,
       setMarkdown,
+      shouldShowProgress,
     } = this.state;
 
     return (
@@ -108,7 +114,7 @@ class ImportExecutor extends React.Component {
         </section>
         <TransitionFadeInOut shouldMount={shouldShowProgress}>
           <ImportProgress
-            currentValue={importedFileCount}
+            currentValue={isDone ? finalNoteCount : importedNoteCount}
             endValue={endValue}
             isDone={isDone}
           />
