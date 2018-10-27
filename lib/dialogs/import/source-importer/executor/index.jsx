@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { throttle } from 'lodash';
 
+import analytics from '../../../../analytics';
+
 import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
 import ImportProgress from '../progress';
@@ -41,7 +43,8 @@ class ImportExecutor extends React.Component {
   };
 
   initImporter = () => {
-    const Importer = importers[this.props.source.slug];
+    const { slug: sourceSlug } = this.props.source;
+    const Importer = importers[sourceSlug];
 
     if (!Importer) {
       throw new Error('Unrecognized importer slug "${slug}"');
@@ -64,6 +67,9 @@ class ImportExecutor extends React.Component {
           this.setState({
             finalNoteCount: arg,
             isDone: true,
+          });
+          analytics.tracks.recordEvent('importer_import_completed', {
+            source: sourceSlug,
           });
           break;
         case 'error':
