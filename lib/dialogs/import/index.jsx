@@ -9,10 +9,11 @@ import SourceImporter from './source-importer';
 class ImportDialog extends React.Component {
   static propTypes = {
     buckets: PropTypes.object,
-    requestClose: PropTypes.func.isRequired,
     dialog: PropTypes.shape({
       title: PropTypes.string.isRequired,
     }),
+    isElectron: PropTypes.bool.isRequired,
+    requestClose: PropTypes.func.isRequired,
   };
 
   state = {
@@ -21,7 +22,7 @@ class ImportDialog extends React.Component {
   };
 
   render() {
-    const { buckets, requestClose } = this.props;
+    const { buckets, isElectron, requestClose } = this.props;
     const { title } = this.props.dialog;
     const { importStarted, selectedSource } = this.state;
 
@@ -38,6 +39,7 @@ class ImportDialog extends React.Component {
         <div className="import__inner">
           {!sourceIsSelected && (
             <ImportSourceSelector
+              isElectron={isElectron}
               locked={importStarted}
               selectSource={selectSource}
             />
