@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+a {
+  @extend %smart-focus-outline;
+}
+
 a[href^='http://'],
 a[href^='https://'] {
   cursor: pointer; // Make all web links use pointer cursor
