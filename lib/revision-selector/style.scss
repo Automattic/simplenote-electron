@@ -20,6 +20,14 @@
   .revision-buttons {
     display: flex;
     justify-content: center;
+
+    button {
+      @extend %smart-focus-outline;
+
+      &:focus {
+        outline-color: lighten($blue, 20%);
+      }
+    }
   }
 
   .button-primary {
@@ -51,13 +59,18 @@
   }
 
   input[type='range'] {
+    @extend %smart-focus-outline;
+
     width: 100%;
     max-width: $max-content-width;
     -webkit-appearance: none;
     background: $white;
     height: 2px;
     border-radius: 5px;
-    outline: 0;
+
+    &:focus {
+      outline-color: lighten($blue, 20%);
+    }
   }
 
   input[type='range']::-webkit-slider-thumb {
