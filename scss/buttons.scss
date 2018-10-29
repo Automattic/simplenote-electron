@@ -1,8 +1,9 @@
 // Resets button styles
 button {
+  @extend %smart-focus-outline;
+
   background: transparent;
   border: none;
-  outline: 0;
   padding: 0;
   cursor: default;
   font-size: 14px;
@@ -17,7 +18,6 @@ button {
   white-space: nowrap;
   text-overflow: ellipsis;
   margin: 0;
-  outline: 0;
   overflow: hidden;
   text-decoration: none;
   vertical-align: top;
