@@ -42,6 +42,7 @@ jobs:
       - *npm_restore_cache
       - run: npm ci
       - run: make build
+      - run: make test
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths
