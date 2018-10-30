@@ -1,5 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const { app, dialog, shell } = require('electron');
+const platform = require('../platform');
 
 class Updater extends EventEmitter {
   constructor(changelogUrl, options) {
@@ -48,7 +49,11 @@ class Updater extends EventEmitter {
 
   notify() {
     const updateDialogOptions = {
-      buttons: [this.confirmLabel, 'Cancel', 'Release notes'],
+      buttons: [
+        this.sanitizeButtonLabel(this.confirmLabel),
+        'Cancel',
+        'Release notes',
+      ],
       title: 'Update Available',
       message: this.expandMacros(this.dialogTitle),
       detail: this.expandMacros(this.dialogMessage),
@@ -95,6 +100,14 @@ class Updater extends EventEmitter {
     }
 
     return text;
+  }
+
+  sanitizeButtonLabel(value) {
+    if (platform.isWindows()) {
+      return value.replace('&', '&&');
+    }
+
+    return value;
   }
 }
 
