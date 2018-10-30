@@ -98,6 +98,7 @@
     "draft-js-simpledecorator": "1.0.2",
     "electron-spellchecker": "^1.1.2",
     "electron-window-state": "4.1.1",
+    "focus-visible": "^4.1.5",
     "highlight.js": "9.12.0",
     "isemail": "3.1.1",
     "jszip": "3.1.5",

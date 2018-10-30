@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
