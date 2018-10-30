@@ -9,11 +9,13 @@ import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
 import ImportProgress from '../progress';
 
 import EvernoteImporter from '../../../../utils/import/evernote';
+import SimplenoteImporter from '../../../../utils/import/simplenote';
 import TextFileImporter from '../../../../utils/import/text-files';
 
 const importers = {
   evernote: EvernoteImporter,
   plaintext: TextFileImporter,
+  simplenote: SimplenoteImporter,
 };
 
 class ImportExecutor extends React.Component {
