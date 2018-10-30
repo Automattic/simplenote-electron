@@ -70,6 +70,7 @@ class ImportExecutor extends React.Component {
           });
           analytics.tracks.recordEvent('importer_import_completed', {
             source: sourceSlug,
+            noteCount: arg,
           });
           break;
         case 'error':
