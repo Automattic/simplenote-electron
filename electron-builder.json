@@ -7,7 +7,8 @@
   },
   "files": [
     "desktop",
-    "dist"
+    "dist",
+    "shared"
   ],
   "mac": {
     "icon": "./resources/images/app-icon.icns",
