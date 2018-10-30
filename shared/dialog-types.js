@@ -8,7 +8,7 @@ const DialogTypes = {
   },
   IMPORT: {
     type: 'Import',
-    title: 'Import',
+    title: 'Import Notes',
   },
   SETTINGS: {
     type: 'Settings',

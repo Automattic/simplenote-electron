@@ -229,7 +229,7 @@ function createMenuTemplate(settings) {
         type: 'separator',
       },
       {
-        label: '&Import…',
+        label: '&Import Notes…',
         click: function(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.webContents.send('appCommand', {
@@ -240,7 +240,7 @@ function createMenuTemplate(settings) {
         },
       },
       {
-        label: '&Export…',
+        label: '&Export Notes…',
         accelerator: 'CommandOrControl+Shift+E',
         click(item, focusedWindow) {
           if (focusedWindow) {
