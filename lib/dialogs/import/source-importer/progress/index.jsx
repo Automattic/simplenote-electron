@@ -9,7 +9,7 @@ const ImportProgress = ({ currentValue, endValue, isDone }) => {
     <section>
       <ImportProgressBar
         currentValue={currentValue}
-        endValue={endValue}
+        endValue={isDone ? currentValue : endValue}
         isDone={isDone}
       />
       <ImportProgressText currentValue={currentValue} isDone={isDone} />
