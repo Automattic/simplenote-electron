@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import Dropzone from 'react-dropzone';
+import GridiconUpload from 'gridicons/dist/cloud-upload';
+import GridiconWarn from 'gridicons/dist/notice-outline';
 import FileIcon from '../../../icons/file';
-import UploadIcon from '../../../icons/upload';
 
 class ImporterDropzone extends React.Component {
   static propTypes = {
@@ -67,7 +68,7 @@ class ImporterDropzone extends React.Component {
 
     const DropzonePlaceholder = () => (
       <Fragment>
-        <UploadIcon />
+        {errorMessage ? <GridiconWarn /> : <GridiconUpload />}
         {text}
       </Fragment>
     );
