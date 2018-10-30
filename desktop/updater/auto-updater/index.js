@@ -18,6 +18,8 @@ class AutoUpdater extends Updater {
     autoUpdater.on('error', this.onError.bind(this));
     autoUpdater.on('update-not-available', this.onNotAvailable.bind(this));
     autoUpdater.on('update-downloaded', this.onDownloaded.bind(this));
+
+    autoUpdater.autoInstallOnAppQuit = false;
   }
 
   ping() {
