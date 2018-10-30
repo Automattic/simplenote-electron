@@ -17,7 +17,7 @@ const buildViewMenu = require('./menus/view-menu');
 const buildEditMenu = require('./menus/edit-menu');
 const { isDev } = require('./env');
 
-const DialogTypes = require('../lib/dialogs/types');
+const DialogTypes = require('../shared/dialog-types');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 

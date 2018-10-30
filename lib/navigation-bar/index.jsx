@@ -8,7 +8,7 @@ import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
-import DialogTypes from '../dialogs/types';
+import DialogTypes from '../../shared/dialog-types';
 
 const {
   showAllNotesAndSelectFirst,
