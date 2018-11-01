@@ -18,6 +18,7 @@ module.exports = () => {
     output: {
       path: __dirname + '/dist',
       filename: 'app.js',
+      chunkFilename: '[name].js',
     },
     module: {
       rules: [
