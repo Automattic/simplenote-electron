@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
+
+import analytics from '../analytics';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
@@ -8,9 +11,10 @@ import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
+import DialogTypes from '../../shared/dialog-types';
 
 const {
-  selectAllNotes,
+  showAllNotesAndSelectFirst,
   selectTrash,
   showDialog,
   toggleNavigation,
@@ -19,9 +23,12 @@ const {
 export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
+  static propTypes = {
+    selectTrash: PropTypes.func.isRequired,
+  };
+
   static defaultProps = {
-    onSelectAllNotes: function() {},
-    onSelectTrash: function() {},
+    onShowAllNotes: function() {},
   };
 
   // Used by onClickOutside wrapper
@@ -38,6 +45,11 @@ export class NavigationBar extends Component {
   };
 
   onHelpClicked = () => viewExternalUrl('http://simplenote.com/help');
+
+  onSelectTrash = () => {
+    this.props.selectTrash();
+    analytics.tracks.recordEvent('list_trash_viewed');
+  };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
   isSelected = ({ isTrashRow }) => {
@@ -57,13 +69,13 @@ export class NavigationBar extends Component {
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
             label="All Notes"
-            onClick={this.props.onSelectAllNotes}
+            onClick={this.props.onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
             isSelected={this.isSelected({ isTrashRow: true })}
             label="Trash"
-            onClick={this.props.onSelectTrash}
+            onClick={this.onSelectTrash}
           />
         </div>
         <div className="navigation-tags theme-color-border">
@@ -105,29 +117,11 @@ const mapStateToProps = ({ appState: state }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onAbout: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'About',
-          modal: true,
-          single: true,
-        },
-      })
-    ),
+  onAbout: () => dispatch(showDialog({ dialog: DialogTypes.ABOUT })),
   onOutsideClick: () => dispatch(toggleNavigation()),
-  onSelectAllNotes: () => dispatch(selectAllNotes()),
-  onSelectTrash: () => dispatch(selectTrash()),
-  onSettings: () =>
-    dispatch(
-      showDialog({
-        dialog: {
-          type: 'Settings',
-          modal: true,
-          single: true,
-        },
-      })
-    ),
+  onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
+  onSettings: () => dispatch(showDialog({ dialog: DialogTypes.SETTINGS })),
+  selectTrash: () => dispatch(selectTrash()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(

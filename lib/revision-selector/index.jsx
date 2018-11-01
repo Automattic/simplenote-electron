@@ -132,19 +132,19 @@ export class RevisionSelector extends Component {
           />
         </div>
         <div className="revision-buttons">
-          <div
+          <button
             className="button button-secondary button-compact"
             onClick={this.onCancelRevision}
           >
             Cancel
-          </div>
-          <div
+          </button>
+          <button
             style={revisionButtonStyle}
             className="button button-primary button-compact"
             onClick={this.onAcceptRevision}
           >
             Restore Note
-          </div>
+          </button>
         </div>
       </div>
     );

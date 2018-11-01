@@ -1,8 +1,8 @@
 # Simplenote Import
 
-This is the core importer for Simplenote. It expects a JSON object of notes in the same format as the `import` module. It is aggressive about only allowing certain properties, and converts dates into timestamps where appropriate. Importing specific export files (Such as Evernote .enex) should use a separate conversion script and then pass the resulting JSON object to `importNotes()`.
+This is the core importer for Simplenote. It expects an object of notes in the same format as the `import` module. It is aggressive about only allowing certain properties, and converts dates into timestamps where appropriate. Importing specific export files (Such as Evernote .enex) should use a separate conversion script and then pass the resulting object to `importNotes()`.
 
-Example JSON with allowed properties:
+Example object with allowed properties:
 
 ```
 {

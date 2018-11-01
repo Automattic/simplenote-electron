@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import highlight from 'highlight.js';
 import { get, debounce, invoke, noop } from 'lodash';
 import classNames from 'classnames';
+
 import analytics from '../analytics';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
-
-import { renderNoteToHtml } from '../utils/render-note-to-html';
+import renderToNode from './render-to-node';
 
 const saveDelay = 2000;
-
-const renderToNode = (node, content) => {
-  node.innerHTML = renderNoteToHtml(content);
-  node.querySelectorAll('pre code').forEach(highlight.highlightBlock);
-};
 
 export class NoteDetail extends Component {
   static displayName = 'NoteDetail';
