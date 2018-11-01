@@ -68,13 +68,6 @@ optgroup {
   }
 }
 
-.panel-title {
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 86%;
-  color: darken($gray, 20%);
-}
-
 .is-macos {
   .note-toolbar-wrapper {
     box-sizing: border-box;

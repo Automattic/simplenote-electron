@@ -9,7 +9,7 @@ export const DialogRenderer = props => {
   const { appProps, themeClass, closeDialog, dialogs, isElectron } = props;
 
   const renderDialog = dialog => {
-    const { key, title, ...dialogProps } = dialog;
+    const { key, title } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
@@ -29,7 +29,7 @@ export const DialogRenderer = props => {
         portalClassName={classNames('dialog-renderer__portal', themeClass)}
       >
         <DialogComponent
-          dialog={dialogProps}
+          dialog={dialog}
           requestClose={closeThisDialog}
           isElectron={isElectron}
           {...appProps}

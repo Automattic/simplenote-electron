@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
+import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
 import moment from 'moment';
 import CrossIcon from '../icons/cross';
@@ -49,7 +50,7 @@ export class NoteInfo extends Component {
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
         <div className="note-info-panel note-info-stats theme-color-border">
           <div className="note-info-header">
-            <h2 className="panel-title theme-color-fg-dim">Info</h2>
+            <PanelTitle headingLevel="2">Info</PanelTitle>
             <button
               type="button"
               className="about-done button button-borderless"
