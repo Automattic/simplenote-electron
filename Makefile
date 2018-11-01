@@ -42,6 +42,10 @@ PORT ?= 4000
 # Access dev server or locally built web app files
 DEV_SERVER ?= false
 
+# electron-builder publish option
+# options: always|onTag|onTagOrDraft|never
+PUBLISH ?= onTag
+
 
 # Main targets
 .PHONY: start
@@ -69,12 +73,12 @@ build:
 ifeq ($(SKIP_BUILD),false)
 	@echo "Building Simplenote Desktop on branch $(RED)$(SIMPLENOTE_BRANCH)$(RESET)"
 
-# IS_PRODUCTION is a helper var for the inline conditional in `build-app` and `build-dll`
+# IS_PRODUCTION is a helper var for the inline conditional in `build-app`
 ifeq ($(NODE_ENV),production)
 	$(eval IS_PRODUCTION = true)
 endif
 
-	@$(MAKE) build-dll build-app NODE_ENV=$(NODE_ENV) IS_PRODUCTION=$(IS_PRODUCTION)
+	@$(MAKE) build-app NODE_ENV=$(NODE_ENV) IS_PRODUCTION=$(IS_PRODUCTION)
 endif
 
 
@@ -82,10 +86,6 @@ endif
 .PHONY: build-app
 build-app: 
 	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
-
-.PHONY: build-dll
-build-dll: 
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.dll.js
 
 .PHONY: build-if-not-exists 
 build-if-not-exists: config.json
@@ -118,19 +118,19 @@ package: build-if-changed
 package-win32:
 ifeq ($(IS_WINDOWS),true)
 	@echo Building .appx as well
-	@npx electron-builder --win --config=./electron-builder-appx.json
+	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 else
 	@echo Skipping .appx as we are not on a Windows host
-	@npx electron-builder --win
+	@npx electron-builder --win -p $(PUBLISH)
 endif
 
 .PHONY: package-osx 
 package-osx: build-if-changed
-	@npx electron-builder --mac
+	@npx electron-builder --mac -p $(PUBLISH)
 
 .PHONY: package-linux
 package-linux: build-if-changed
-	@npx electron-builder --linux
+	@npx electron-builder --linux -p $(PUBLISH)
 
 
 # NPM

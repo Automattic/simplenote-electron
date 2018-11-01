@@ -7,7 +7,8 @@
   },
   "files": [
     "desktop",
-    "dist"
+    "dist",
+    "shared"
   ],
   "mac": {
     "icon": "./resources/images/app-icon.icns",
@@ -94,7 +95,7 @@
       "Categories": "Utility"
     },
     "vendor": "Automattic, Inc.",
-    "maintainer": "Automattic, Inc."
+    "maintainer": "Automattic, Inc. <support@simplenote.com>"
   },
   "deb": {
     "depends": ["gconf2"]

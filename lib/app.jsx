@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
@@ -115,6 +116,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       settings: PropTypes.object.isRequired,
 
       client: PropTypes.object.isRequired,
+      isSmallScreen: PropTypes.bool.isRequired,
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
@@ -128,6 +130,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onAuthenticate: () => {},
       onCreateUser: () => {},
       onSignOut: () => {},
+    };
+
+    state = {
+      isNoteOpen: false,
     };
 
     componentWillMount() {
@@ -175,8 +181,21 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     }
 
     componentDidUpdate(prevProps) {
-      if (this.props.settings !== prevProps.settings) {
-        ipc.send('settingsUpdate', this.props.settings);
+      const { settings, isSmallScreen, appState } = this.props;
+
+      if (settings !== prevProps.settings) {
+        ipc.send('settingsUpdate', settings);
+      }
+
+      // If note has just been loaded
+      if (prevProps.appState.note === undefined && appState.note) {
+        this.setState({ isNoteOpen: true });
+      }
+
+      if (isSmallScreen !== prevProps.isSmallScreen) {
+        this.setState({
+          isNoteOpen: Boolean(!isSmallScreen && appState.note),
+        });
       }
     }
 
@@ -274,14 +293,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, original, patch, isIndexing) =>
+    onNoteUpdate = (noteId, data, remoteUpdateInfo) =>
       this.props.actions.noteUpdated({
         noteBucket: this.props.noteBucket,
         noteId,
         data,
-        original,
-        patch,
-        isIndexing,
+        remoteUpdateInfo,
       });
 
     onLoadPreferences = callback =>
@@ -355,15 +372,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isSmallScreen,
       } = this.props;
       const isMacApp = isElectronMac();
-      const filteredNotes = filterNotes(state);
-      const hasNotes = filteredNotes.length > 0;
-      const selectedNote =
-        state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
-      const isNoteOpen = Boolean(
-        (isSmallScreen && state.note) || (!isSmallScreen && selectedNote)
-      );
 
-      const appClasses = classNames('app', `theme-${settings.theme}`, {
+      const themeClass = `theme-${settings.theme}`;
+
+      const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
         'touch-enabled': 'ontouchstart' in document.body,
       });
@@ -385,17 +397,19 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
-                isNoteOpen={isNoteOpen}
+                isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
-                note={selectedNote}
+                note={state.note}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
+                onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onUpdateContent={this.onUpdateContent}
                 searchBar={<SearchBar noteBucket={noteBucket} />}
                 noteList={
                   <NoteList
                     noteBucket={noteBucket}
                     isSmallScreen={isSmallScreen}
+                    onNoteOpened={() => this.setState({ isNoteOpen: true })}
                   />
                 }
                 noteEditor={
@@ -423,6 +437,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
+            themeClass={themeClass}
+            closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
           />

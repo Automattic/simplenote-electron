@@ -122,13 +122,13 @@ export class Auth extends Component {
             </p>
           )}
           <div className="login__actions">
-            <div
+            <button
               className={submitClasses}
               onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
               type="submit"
             >
               {this.props.authPending ? <Spinner /> : buttonLabel}
-            </div>
+            </button>
             <p className="login__forgot">
               <a
                 href="https://app.simplenote.com/forgot/"

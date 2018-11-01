@@ -18,6 +18,7 @@ module.exports = () => {
     output: {
       path: __dirname + '/dist',
       filename: 'app.js',
+      chunkFilename: '[name].js',
     },
     module: {
       rules: [
@@ -81,10 +82,6 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
-      new webpack.DllReferencePlugin({
-        context: process.cwd(),
-        manifest: require(process.cwd() + '/dist/vendor.json'),
-      }),
       new HardSourceWebpackPlugin(),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,
@@ -99,6 +96,7 @@ module.exports = () => {
       new webpack.DefinePlugin({
         config: JSON.stringify(config()),
       }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ],
   };
 };
