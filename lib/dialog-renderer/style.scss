@@ -1,0 +1,23 @@
+.dialog-renderer__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba($white, .75);
+}
+
+.theme-dark {
+  .dialog-renderer__overlay {
+    background: rgba($gray-darkest, .75);
+  }
+}
+
+.dialog-renderer__content {
+  &:focus {
+    outline: 0;
+  }
+}

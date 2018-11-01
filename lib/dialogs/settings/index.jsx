@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import TabbedDialog from '../../tabbed-dialog';
 import { viewExternalUrl } from '../../utils/url-utils';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
+import PanelTitle from '../../components/panel-title';
 
 import RadioGroup from '../radio-settings-group';
 import ToggleGroup from '../toggle-settings-group';
@@ -22,10 +23,9 @@ export class SettingsDialog extends Component {
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     preferencesBucket: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
@@ -116,14 +116,14 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Settings"
         tabs={settingTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}
@@ -159,7 +159,7 @@ export class SettingsDialog extends Component {
       case 'account':
         return (
           <div className="dialog-column settings-account">
-            <h3 className="panel-title theme-color-fg-dim">Account</h3>
+            <PanelTitle headingLevel="3">Account</PanelTitle>
             <div className="settings-items theme-color-border">
               <div className="settings-item theme-color-border">
                 <span className="settings-account-name">{accountName}</span>

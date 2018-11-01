@@ -22,11 +22,6 @@
 
   .icon-cross-small {
     transition: $anim-transition;
-    opacity: 0;
     fill: $gray;
-  }
-
-  &.has-query .icon-cross-small {
-    opacity: 1;
   }
 }
