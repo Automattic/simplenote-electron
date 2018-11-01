@@ -14,6 +14,10 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
   vertical-align: middle;
   overflow: hidden;
 
+  &:focus-within {
+    outline: $focus-outline;
+  }
+
   input {
     position: absolute;
     top: 0;
@@ -26,7 +30,6 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
     padding: 0;
     opacity: 0;
     border: none;
-    outline: none;
     background: none;
     appearance: none;
   }

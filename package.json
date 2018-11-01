@@ -52,6 +52,7 @@
     "@babel/core": "7.0.0",
     "@babel/plugin-proposal-class-properties": "7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "7.0.0",
     "@babel/preset-env": "7.0.0",
     "@babel/preset-react": "7.0.0",
     "ajv": "6.5.3",
@@ -98,6 +99,7 @@
     "draft-js-simpledecorator": "1.0.2",
     "electron-spellchecker": "^1.1.2",
     "electron-window-state": "4.1.1",
+    "focus-visible": "^4.1.5",
     "highlight.js": "9.12.0",
     "isemail": "3.1.1",
     "jszip": "3.1.5",
@@ -107,6 +109,7 @@
     "prop-types": "15.6.0",
     "react": "16.2.0",
     "react-addons-update": "15.6.2",
+    "react-modal": "3.6.1",
     "react-overlays": "0.8.3",
     "react-redux": "5.0.7",
     "react-virtualized": "9.18.5",
@@ -115,7 +118,7 @@
     "redux-thunk": "2.2.0",
     "sanitize-filename": "1.6.1",
     "showdown": "1.8.6",
-    "simperium": "0.3.1",
+    "simperium": "0.3.3",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {
