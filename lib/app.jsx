@@ -293,14 +293,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, original, patch, isIndexing) =>
+    onNoteUpdate = (noteId, data, remoteUpdateInfo) =>
       this.props.actions.noteUpdated({
         noteBucket: this.props.noteBucket,
         noteId,
         data,
-        original,
-        patch,
-        isIndexing,
+        remoteUpdateInfo,
       });
 
     onLoadPreferences = callback =>

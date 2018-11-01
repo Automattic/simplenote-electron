@@ -118,7 +118,7 @@
     "redux-thunk": "2.2.0",
     "sanitize-filename": "1.6.1",
     "showdown": "1.8.6",
-    "simperium": "0.3.2",
+    "simperium": "0.3.3",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {
