@@ -20,6 +20,14 @@
   align-items: center;
 }
 
+.note-toolbar-trashed .note-toolbar__column-left {
+  display: none;
+
+  @media only screen and (max-width: $single-column) {
+    display: flex;
+  }
+}
+
 @media only screen and (max-width: $single-column) {
   .note-toolbar__column-left {
     display: none;
