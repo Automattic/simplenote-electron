@@ -1,0 +1,15 @@
+.import {
+  max-width: 24em;
+  height: 30rem;
+}
+
+.import__inner,
+.import__source-importer-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
+.import__inner {
+  padding: 28px;
+}
