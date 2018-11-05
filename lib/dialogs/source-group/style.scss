@@ -1,0 +1,34 @@
+.source-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.source-group__item {
+  display: flex;
+  height: 3em;
+  margin: 0;
+  border-width: 1px;
+  border-style: solid;
+
+  & + & {
+    border-top-width: 0;
+  }
+
+  button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 18px;
+    text-align: left;
+
+    &::after {
+      content: '→';
+      display: block;
+      width: 1em;
+      height: 1em;
+      line-height: 1;
+    }
+  }
+}

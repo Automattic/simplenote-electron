@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
+import { includes, isEmpty } from 'lodash';
+
+import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
 import TabbedDialog from '../../tabbed-dialog';
+import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
-import { includes, isEmpty } from 'lodash';
 
 const shareTabs = ['collaborate', 'publish'];
 
@@ -14,10 +17,9 @@ export class ShareDialog extends Component {
     dialog: PropTypes.object.isRequired,
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
+    requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
   };
-
-  onDone = () => this.props.actions.closeDialog({ key: this.props.dialog.key });
 
   onTogglePublished = event => {
     this.props.actions.publishNote({
@@ -56,6 +58,7 @@ export class ShareDialog extends Component {
         note,
         tags: [...tags, collaborator],
       });
+      analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
@@ -71,6 +74,7 @@ export class ShareDialog extends Component {
       note,
       tags,
     });
+    analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
@@ -96,14 +100,14 @@ export class ShareDialog extends Component {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, requestClose } = this.props;
 
     return (
       <TabbedDialog
         className="settings"
         title="Share"
         tabs={shareTabs}
-        onDone={this.onDone}
+        onDone={requestClose}
         renderTabName={this.renderTabName}
         renderTabContent={this.renderTabContent}
         {...dialog}
@@ -150,7 +154,9 @@ export class ShareDialog extends Component {
               </div>
             </div>
             <div className="settings-group">
-              <h3 className="panel-title theme-color-border">Collaborators</h3>
+              <div className="share-collaborators-heading theme-color-border">
+                <PanelTitle headingLevel="3">Collaborators</PanelTitle>
+              </div>
               <ul className="share-collaborators">
                 {this.collaborators().map(collaborator => (
                   <li key={collaborator} className="share-collaborator">
@@ -206,7 +212,7 @@ export class ShareDialog extends Component {
             </div>
             {isPublished && (
               <div className="settings-group">
-                <h3 className="panel-title">Public link</h3>
+                <PanelTitle headingLevel="3">Public link</PanelTitle>
                 <div className="settings-items theme-color-border">
                   <div className="settings-item theme-color-border">
                     <input

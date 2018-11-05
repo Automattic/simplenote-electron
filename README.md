@@ -29,3 +29,12 @@ Please adhere to the same guidelines as found in [wp-calypso](https://github.com
 - [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
 - [ReactJS](https://reactjs.org/) for UI.
 - [Electron](https://electronjs.org/) for wrapping the JavaScript application.
+
+## Simplenote for Other Platforms
+[simplenote-electron](https://github.com/Automattic/simplenote-electron) is the official Simplenote desktop app for Windows and Linux.
+
+For other platforms, see:
+
+- [simplenote-macos](https://github.com/Automattic/simplenote-macos)
+- [simplenote-ios](https://github.com/Automattic/simplenote-ios)
+- [simplenote-android](https://github.com/Automattic/simplenote-android)

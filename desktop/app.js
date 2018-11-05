@@ -17,6 +17,8 @@ const buildViewMenu = require('./menus/view-menu');
 const buildEditMenu = require('./menus/edit-menu');
 const { isDev } = require('./env');
 
+const DialogTypes = require('../shared/dialog-types');
+
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
@@ -180,11 +182,7 @@ function createMenuTemplate(settings) {
       if (focusedWindow) {
         focusedWindow.webContents.send('appCommand', {
           action: 'showDialog',
-          dialog: {
-            type: 'About',
-            modal: true,
-            single: true,
-          },
+          dialog: DialogTypes.ABOUT,
         });
       }
     },
@@ -197,11 +195,7 @@ function createMenuTemplate(settings) {
       if (focusedWindow) {
         focusedWindow.webContents.send('appCommand', {
           action: 'showDialog',
-          dialog: {
-            type: 'Settings',
-            modal: true,
-            single: true,
-          },
+          dialog: DialogTypes.SETTINGS,
         });
       }
     },
@@ -235,7 +229,18 @@ function createMenuTemplate(settings) {
         type: 'separator',
       },
       {
-        label: '&Export Notes',
+        label: '&Import Notes…',
+        click: function(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('appCommand', {
+              action: 'showDialog',
+              dialog: DialogTypes.IMPORT,
+            });
+          }
+        },
+      },
+      {
+        label: '&Export Notes…',
         accelerator: 'CommandOrControl+Shift+E',
         click(item, focusedWindow) {
           if (focusedWindow) {
@@ -253,6 +258,9 @@ function createMenuTemplate(settings) {
             );
           }
         },
+      },
+      {
+        type: 'separator',
       },
       {
         label: '&Print',
