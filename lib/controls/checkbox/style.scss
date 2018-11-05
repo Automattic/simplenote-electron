@@ -8,6 +8,10 @@
   vertical-align: middle;
   overflow: hidden;
 
+  &:focus-within {
+    outline: $focus-outline;
+  }
+
   input {
     position: absolute;
     top: 0;

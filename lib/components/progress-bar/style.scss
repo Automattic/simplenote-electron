@@ -1,0 +1,12 @@
+.progress-bar {
+  @at-root .theme-light & {
+    background-color: lighten($gray, 30%);
+  }
+  @at-root .theme-dark & {
+    background-color: darken($gray, 30%);
+  }
+}
+
+.progress-bar__bar {
+  background-color: $gray !important;
+}

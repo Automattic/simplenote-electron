@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+a {
+  @extend %smart-focus-outline;
+}
+
 a[href^='http://'],
 a[href^='https://'] {
   cursor: pointer; // Make all web links use pointer cursor
@@ -64,13 +68,6 @@ optgroup {
   }
 }
 
-.panel-title {
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 86%;
-  color: darken($gray, 20%);
-}
-
 .is-macos {
   .note-toolbar-wrapper {
     box-sizing: border-box;
@@ -102,6 +99,10 @@ optgroup {
   .revision-selector {
     -webkit-app-region: drag;
   }
+}
+
+.gridicon {
+  fill: currentColor;
 }
 
 .search-match {

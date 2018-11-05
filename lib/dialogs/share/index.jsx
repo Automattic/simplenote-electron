@@ -6,6 +6,7 @@ import { includes, isEmpty } from 'lodash';
 import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
 import TabbedDialog from '../../tabbed-dialog';
+import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
 
 const shareTabs = ['collaborate', 'publish'];
@@ -153,7 +154,9 @@ export class ShareDialog extends Component {
               </div>
             </div>
             <div className="settings-group">
-              <h3 className="panel-title theme-color-border">Collaborators</h3>
+              <div className="share-collaborators-heading theme-color-border">
+                <PanelTitle headingLevel="3">Collaborators</PanelTitle>
+              </div>
               <ul className="share-collaborators">
                 {this.collaborators().map(collaborator => (
                   <li key={collaborator} className="share-collaborator">
@@ -209,7 +212,7 @@ export class ShareDialog extends Component {
             </div>
             {isPublished && (
               <div className="settings-group">
-                <h3 className="panel-title">Public link</h3>
+                <PanelTitle headingLevel="3">Public link</PanelTitle>
                 <div className="settings-items theme-color-border">
                   <div className="settings-item theme-color-border">
                     <input

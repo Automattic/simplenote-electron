@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
@@ -292,14 +293,12 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, original, patch, isIndexing) =>
+    onNoteUpdate = (noteId, data, remoteUpdateInfo) =>
       this.props.actions.noteUpdated({
         noteBucket: this.props.noteBucket,
         noteId,
         data,
-        original,
-        patch,
-        isIndexing,
+        remoteUpdateInfo,
       });
 
     onLoadPreferences = callback =>
@@ -438,6 +437,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
+            buckets={{ noteBucket, tagBucket }}
             themeClass={themeClass}
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}

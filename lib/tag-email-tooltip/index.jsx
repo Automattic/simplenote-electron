@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import appState from '../flux/app-state';
-import DialogTypes from '../dialogs/types';
+import DialogTypes from '../../shared/dialog-types';
 
 export const EmailToolTip = ({ openShareDialog }) => (
   <div className="tag-email-tooltip">
