@@ -19,6 +19,7 @@ import DialogRenderer from './dialog-renderer';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
+  debounce,
   noop,
   get,
   has,
@@ -150,14 +151,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
+        .on('update', debounce(this.onNoteUpdate, 200))
         .on('remove', this.onNoteRemoved);
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
         .on('index', this.onTagsIndex)
-        .on('update', this.onTagsIndex)
+        .on('update', debounce(this.onTagsIndex, 200))
         .on('remove', this.onTagsIndex);
 
       this.props.client
