@@ -20,11 +20,18 @@
   align-items: center;
 }
 
-.note-toolbar-trashed .note-toolbar__column-left {
-  display: none;
+.note-toolbar-trashed {
+  .note-toolbar__column-left {
+    display: none;
 
+    @media only screen and (max-width: $single-column) {
+      display: flex;
+    }
+  }
   @media only screen and (max-width: $single-column) {
-    display: flex;
+    .note-toolbar__column-right {
+      justify-content: flex-end;
+    }
   }
 }
 
@@ -62,6 +69,7 @@
   align-items: center;
   padding: 10px 16px;
   justify-content: flex-end;
+  width: 100%;
 
   .note-toolbar__button {
     margin: 0 0 0 16px;
