@@ -151,7 +151,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
-        .on('update', debounce(this.onNoteUpdate, 200))
+        .on('update', debounce(this.onNoteUpdate, 200, { maxWait: 1000 }))
         .on('remove', this.onNoteRemoved);
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
