@@ -9,6 +9,11 @@
   background: lighten($gray, 40%);
   transition: padding .2s ease-out, background .2s ease-out;
 
+  &:focus-within {
+    overflow: hidden;
+    outline: $focus-outline;
+  }
+
   @at-root .theme-dark & {
     background: darken($gray, 35%);
   }
