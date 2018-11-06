@@ -16,6 +16,7 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
 import DialogRenderer from './dialog-renderer';
+import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
@@ -163,7 +164,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.client
         .on('authorized', this.onAuthChanged)
-        .on('unauthorized', this.onAuthChanged);
+        .on('unauthorized', this.onAuthChanged)
+        .on('message', this.syncActivityHooks)
+        .on('send', this.syncActivityHooks);
 
       this.onNotesIndex();
       this.onTagsIndex();
@@ -346,6 +349,18 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       };
 
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
+    };
+
+    syncActivityHooks = data => {
+      activityHooks(data, {
+        onIdle: () => {
+          nudgeUnsynced({
+            client: this.props.client,
+            noteBucket: this.props.noteBucket,
+            notes: this.props.appState.notes,
+          });
+        },
+      });
     };
 
     toggleShortcuts = doEnable => {
