@@ -1,6 +1,6 @@
 const EventEmitter = require('events').EventEmitter;
 const { app, dialog, shell } = require('electron');
-const platform = require('../platform');
+const platform = require('../../platform');
 
 class Updater extends EventEmitter {
   constructor(changelogUrl, options) {
