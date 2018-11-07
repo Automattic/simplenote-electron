@@ -16,9 +16,11 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
 import DialogRenderer from './dialog-renderer';
+import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
+  debounce,
   noop,
   get,
   has,
@@ -150,19 +152,21 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
+        .on('update', debounce(this.onNoteUpdate, 200, { maxWait: 1000 }))
         .on('remove', this.onNoteRemoved);
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
         .on('index', this.onTagsIndex)
-        .on('update', this.onTagsIndex)
+        .on('update', debounce(this.onTagsIndex, 200))
         .on('remove', this.onTagsIndex);
 
       this.props.client
         .on('authorized', this.onAuthChanged)
-        .on('unauthorized', this.onAuthChanged);
+        .on('unauthorized', this.onAuthChanged)
+        .on('message', this.syncActivityHooks)
+        .on('send', this.syncActivityHooks);
 
       this.onNotesIndex();
       this.onTagsIndex();
@@ -345,6 +349,18 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       };
 
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
+    };
+
+    syncActivityHooks = data => {
+      activityHooks(data, {
+        onIdle: () => {
+          nudgeUnsynced({
+            client: this.props.client,
+            noteBucket: this.props.noteBucket,
+            notes: this.props.appState.notes,
+          });
+        },
+      });
     };
 
     toggleShortcuts = doEnable => {

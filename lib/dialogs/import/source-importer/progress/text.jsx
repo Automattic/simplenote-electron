@@ -5,10 +5,15 @@ const ImportProgressText = props => {
   const { currentValue, isDone } = props;
 
   const unit = currentValue === 1 ? 'note' : 'notes';
+  let text;
 
-  const text = isDone
-    ? `Done! ${currentValue} ${unit} imported.`
-    : `${currentValue} ${unit} imported...`;
+  if (isDone) {
+    text = `Done! ${currentValue} ${unit} imported.`;
+  } else {
+    text = currentValue
+      ? `${currentValue} ${unit} imported...`
+      : 'Importing...';
+  }
 
   return (
     <p role="status" aria-live="polite">
