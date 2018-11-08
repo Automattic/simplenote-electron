@@ -131,8 +131,5 @@
     "showdown": "1.8.6",
     "simperium": "0.3.3",
     "valid-url": "1.0.9"
-  },
-  "optionalDependencies": {
-    "appdmg": "0.5.2"
   }
 }
