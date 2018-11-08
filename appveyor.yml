@@ -12,7 +12,7 @@ image: Visual Studio 2017
 install:
   - ps: Install-Product node 10
   - cinst make
-  - npm install
+  - npm ci
 
 before_build:
   - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"

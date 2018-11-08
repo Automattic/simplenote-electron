@@ -57,7 +57,7 @@ jobs:
           at: ~/simplenote
       - *npm_restore_cache
       - *install_linux_deps
-      - run: npm install
+      - run: npm ci
       - *npm_save_cache
       - run: make package-linux SKIP_BUILD=true
       - run:
