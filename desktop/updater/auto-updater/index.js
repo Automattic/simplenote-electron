@@ -12,7 +12,7 @@ const Updater = require('../lib/Updater');
 const AppQuit = require('../../app-quit');
 
 class AutoUpdater extends Updater {
-  constructor(changelogUrl, options = {}) {
+  constructor({ changelogUrl, options = {} }) {
     super(changelogUrl, options);
 
     autoUpdater.on('error', this.onError.bind(this));
