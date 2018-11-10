@@ -1,4 +1,5 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
+const platform = require('../platform');
 const { isDev } = require('../env');
 
 const buildViewMenu = settings => {
@@ -136,12 +137,7 @@ const buildViewMenu = settings => {
       },
       {
         label: 'Toggle &Full Screen',
-        accelerator: (function() {
-          if (process.platform === 'darwin') {
-            return 'Ctrl+Command+F';
-          }
-          return 'F11';
-        })(),
+        accelerator: platform.isOSX() ? 'Ctrl+Command+F' : 'F11',
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
