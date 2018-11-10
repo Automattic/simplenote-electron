@@ -24,7 +24,7 @@ function createMenuTemplate(settings) {
     buildViewMenu(settings),
     platform.isOSX() ? windowMenu : null,
     helpMenu,
-  ];
+  ].filter(menu => menu !== null);
 }
 
 module.exports = createMenuTemplate;
