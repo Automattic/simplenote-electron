@@ -42,7 +42,7 @@ const submenu = [
   },
   { type: 'separator' },
   {
-    label: '&Print',
+    label: '&Print…',
     accelerator: 'CommandOrControl+P',
     click: appCommandSender({ action: 'setShouldPrintNote' }),
   },

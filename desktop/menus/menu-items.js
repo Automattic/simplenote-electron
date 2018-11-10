@@ -12,7 +12,7 @@ const about = {
 };
 
 const preferences = {
-  label: 'P&references',
+  label: 'P&references…',
   accelerator: 'CommandOrControl+,',
   click: appCommandSender({
     action: 'showDialog',
