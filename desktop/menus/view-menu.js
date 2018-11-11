@@ -109,7 +109,7 @@ const buildViewMenu = settings => {
       },
       {
         label: 'Zoom &In',
-        accelerator: 'CommandOrControl+Plus',
+        accelerator: 'CommandOrControl+=',
         click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
