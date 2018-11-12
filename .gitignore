@@ -8,3 +8,4 @@ release/
 *.tgz
 .idea
 .DS_Store
+dev-app-update.yml

@@ -1,8 +1,8 @@
 {
-  "forceUpdate": false,
   "updater": {
-    "url":
-      "https://app.simplenote.com/desktop/{platform}/version?compare={version}",
+    "downloadUrl": "https://github.com/Automattic/simplenote-electron/releases/latest",
+    "changelogUrl": "https://github.com/Automattic/simplenote-electron/blob/master/CHANGELOG.md",
+    "apiUrl": "https://api.github.com/repos/automattic/simplenote-electron/releases/latest",
     "delay": 2000,
     "interval": 600000
   }
