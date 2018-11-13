@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
-import { get, property } from 'lodash';
-
-import { renderNoteToHtml } from '../utils/render-note-to-html';
+import { property } from 'lodash';
 
 export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
@@ -118,7 +116,7 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, fontSize, shouldPrint } = this.props;
+    const { editorMode, note, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -128,17 +126,6 @@ export class NoteEditor extends Component {
       revision.data &&
       revision.data.systemTags &&
       revision.data.systemTags.indexOf('markdown') !== -1;
-
-    const content = get(revision, 'data.content', '');
-
-    const printStyle = {
-      fontSize: fontSize + 'px',
-    };
-
-    const printAttrs = {
-      style: printStyle,
-      class: 'note-print note-detail-markdown',
-    };
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
@@ -151,17 +138,6 @@ export class NoteEditor extends Component {
           onChangeContent={this.props.onUpdateContent}
           fontSize={fontSize}
         />
-        {shouldPrint &&
-          markdownEnabled && (
-            <div
-              {...printAttrs}
-              dangerouslySetInnerHTML={{
-                __html: renderNoteToHtml(content),
-              }}
-            />
-          )}
-        {shouldPrint &&
-          !markdownEnabled && <div {...printAttrs}>{content}</div>}
         {note &&
           !isTrashed && (
             <TagField
