@@ -1,35 +1,26 @@
 @media print {
-  html,
-  body,
-  .app-layout__note-column {
-    overflow: visible;
-    height: auto;
+  .app-layout__source-column {
+    display: none;
+    border-left: 0;
   }
 
-  .app,
-  .simplenote-app,
-  .app-layout__note-column {
-    display: block;
-    height: auto;
-  }
-
-  .navigation,
-  .app-layout__source-column,
-  .revision-selector,
-  .note-toolbar-wrapper,
-  .note-detail-wrapper,
-  .note-detail-wrapper .note-detail,
-  .note-info,
-  .tag-field {
+  .tag-field,
+  .note-toolbar-wrapper {
     display: none;
   }
-}
 
-.note-print {
-  display: block;
-  max-width: 100%;
-  width: 100%;
-  padding: 5%;
-  color: $black;
-  overflow: visible;
+  .note-detail-wrapper {
+    overflow: visible;
+    border: 0;
+  }
+
+  .note-detail {
+    overflow: visible;
+  }
+
+  [class^="note-detail-"] {
+    max-width: 100%;
+    width: 100%;
+    color: $black;
+  }
 }
