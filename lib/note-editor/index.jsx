@@ -18,7 +18,6 @@ export class NoteEditor extends Component {
     shouldPrint: PropTypes.bool,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
-    onPrintNote: PropTypes.func,
     revision: PropTypes.object,
     setEditorMode: PropTypes.func.isRequired,
   };
@@ -34,14 +33,6 @@ export class NoteEditor extends Component {
 
   componentDidMount() {
     this.toggleShortcuts(true);
-  }
-
-  componentDidUpdate() {
-    // Immediately print once `shouldPrint` has been set
-    if (this.props.shouldPrint) {
-      window.print();
-      this.props.onNotePrinted();
-    }
   }
 
   componentWillUnmount() {

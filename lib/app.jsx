@@ -289,9 +289,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.onLoadPreferences();
     };
 
-    onNotePrinted = () =>
-      this.props.actions.setShouldPrintNote({ shouldPrint: false });
-
     onNotesIndex = () =>
       this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
 
@@ -433,8 +430,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     allTags={state.tags}
                     filter={state.filter}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    shouldPrint={state.shouldPrint}
-                    onNotePrinted={this.onNotePrinted}
                   />
                 }
               />
