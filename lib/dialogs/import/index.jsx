@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
 import TransitionFadeInOut from '../../components/transition-fade-in-out';
-import SourceImporter from './source-importer';
+
+const SourceImporter = React.lazy(() =>
+  import(/*
+    webpackChunkName: 'source-importer',
+    webpackPrefetch: true,
+  */ './source-importer')
+);
 
 class ImportDialog extends React.Component {
   static propTypes = {
@@ -48,13 +54,15 @@ class ImportDialog extends React.Component {
             wrapperClassName="import__source-importer-wrapper"
             shouldMount={sourceIsSelected}
           >
-            <SourceImporter
-              buckets={buckets}
-              locked={importStarted}
-              onClose={requestClose}
-              onStart={() => this.setState({ importStarted: true })}
-              source={selectedSource}
-            />
+            <Suspense fallback={<p>Loading</p>}>
+              <SourceImporter
+                buckets={buckets}
+                locked={importStarted}
+                onClose={requestClose}
+                onStart={() => this.setState({ importStarted: true })}
+                source={selectedSource}
+              />
+            </Suspense>
           </TransitionFadeInOut>
         </div>
       </Dialog>
