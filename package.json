@@ -61,6 +61,7 @@
     "babel-eslint": "7.2.3",
     "babel-loader": "8.0.0",
     "babel-plugin-dynamic-import-node": "2.2.0",
+    "babel-plugin-lodash": "3.3.4",
     "classnames": "2.2.5",
     "concurrently": "^4.0.1",
     "css-loader": "0.28.9",
