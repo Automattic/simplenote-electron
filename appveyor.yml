@@ -55,7 +55,7 @@ for:
     build_script:
       - make build
       - make test
-      - npx electron-builder --win --config=./electron-builder-appx.json
+      - npx electron-builder --win --config=./electron-builder-appx.json -p never
 
 artifacts:
   - path: release\*.exe
