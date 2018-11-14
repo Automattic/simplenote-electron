@@ -9,6 +9,16 @@ const submenu = [
     accelerator: platform.isLinux() ? 'F1' : null,
     click: () => shell.openExternal('https://simplenote.com/help'),
   },
+  { type: 'separator' },
+  {
+    label: 'Advanced',
+    submenu: [
+      {
+        label: 'Debugging Console',
+        role: 'toggleDevTools',
+      },
+    ],
+  },
 ];
 
 const defaultSubmenuAdditions = [{ type: 'separator' }, menuItems.about];

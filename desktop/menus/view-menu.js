@@ -1,6 +1,5 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
 const platform = require('../platform');
-const { isDev } = require('../env');
 
 const buildViewMenu = settings => {
   settings = settings || {};
@@ -146,20 +145,6 @@ const buildViewMenu = settings => {
       },
     ],
   };
-
-  if (isDev) {
-    menu.submenu.push(
-      {
-        type: 'separator',
-      },
-      {
-        role: 'toggleDevTools',
-      },
-      {
-        role: 'reload',
-      }
-    );
-  }
 
   return menu;
 };
