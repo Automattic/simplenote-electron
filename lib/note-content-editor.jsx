@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { get, includes, invoke, noop } from 'lodash';
@@ -144,6 +143,7 @@ function continueList(editorState, listItemMatch) {
 export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
+    filter: PropTypes.string.isRequired,
     onChangeContent: PropTypes.func.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -263,21 +263,12 @@ export default class NoteContentEditor extends Component {
   };
 
   /**
-   * This is highly-specific and coupled to the Draft-JS
-   * interface but for now it's what we have to do to
-   * determine if the editor is focused. Should we come
-   * up with a better method to determine if the user is
-   * currently working in the editor/editor area we can
-   * replace this function with that method.
+   * Determine whether the Draft-JS editor is focused.
    *
    * @returns {boolean} whether the editor area is focused
    */
   hasFocus = () => {
-    return (
-      this.editor &&
-      document.activeElement ===
-        get(ReactDOM.findDOMNode(this.editor), 'children[0].children[0]') // eslint-disable-line react/no-find-dom-node
-    );
+    return document.activeElement === get(this.editor, 'editor');
   };
 
   onTab = e => {
