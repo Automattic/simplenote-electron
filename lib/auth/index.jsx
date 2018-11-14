@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from './crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
