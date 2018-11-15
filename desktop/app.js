@@ -210,6 +210,18 @@ function createMenuTemplate(settings) {
           shell.openExternal('https://simplenote.com/help');
         },
       },
+      {
+        type: 'separator',
+      },
+      {
+        label: 'Advanced',
+        submenu: [
+          {
+            label: 'Debugging Console',
+            role: 'toggleDevTools',
+          },
+        ],
+      },
     ],
   };
 
