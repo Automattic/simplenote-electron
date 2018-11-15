@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
-import moment from 'moment';
+import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import appState from '../flux/app-state';
@@ -108,9 +108,10 @@ export class RevisionSelector extends Component {
     const revisionDate =
       !revisions.length || selection === max
         ? 'Latest'
-        : moment
-            .unix(revisions[selection].data.modificationDate)
-            .format('MMM D, YYYY h:mm a');
+        : format(
+            revisions[selection].data.modificationDate * 1000,
+            'MMM D, YYYY h:mm a'
+          );
 
     const revisionButtonStyle =
       selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};

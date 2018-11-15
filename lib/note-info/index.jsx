@@ -4,7 +4,7 @@ import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
-import moment from 'moment';
+import format from 'date-fns/format';
 import CrossIcon from '../icons/cross';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
@@ -160,7 +160,7 @@ export class NoteInfo extends Component {
 }
 
 function formatTimestamp(unixTime) {
-  return moment.unix(unixTime).format('MMM D, YYYY h:mm a');
+  return format(unixTime * 1000, 'MMM D, YYYY h:mm a');
 }
 
 // https://github.com/RadLikeWhoa/Countable
