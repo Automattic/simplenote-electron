@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
-import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import { property } from 'lodash';
+
+const NoteDetail = React.lazy(() =>
+  import(/* webpackChunkName: 'note-detail' */ '../note-detail')
+);
 
 export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
@@ -122,15 +125,17 @@ export class NoteEditor extends Component {
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
-        <NoteDetail
-          storeFocusEditor={this.storeFocusEditor}
-          storeHasFocus={this.storeEditorHasFocus}
-          filter={this.props.filter}
-          note={revision}
-          previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
-          onChangeContent={this.props.onUpdateContent}
-          fontSize={fontSize}
-        />
+        <Suspense fallback={<p>Loading</p>}>
+          <NoteDetail
+            storeFocusEditor={this.storeFocusEditor}
+            storeHasFocus={this.storeEditorHasFocus}
+            filter={this.props.filter}
+            note={revision}
+            previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
+            onChangeContent={this.props.onUpdateContent}
+            fontSize={fontSize}
+          />
+        </Suspense>
         {note &&
           !isTrashed && (
             <TagField

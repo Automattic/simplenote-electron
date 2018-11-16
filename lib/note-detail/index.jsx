@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, invoke, noop } from 'lodash';
@@ -7,12 +7,9 @@ import classNames from 'classnames';
 import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
+import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
-
-const NoteContentEditor = React.lazy(() =>
-  import(/* webpackChunkName: 'note-content-editor' */ '../note-content-editor')
-);
 
 const saveDelay = 2000;
 
@@ -207,17 +204,15 @@ export class NoteDetail extends Component {
                 className="note-detail-textarea theme-color-bg theme-color-fg"
                 style={divStyle}
               >
-                <Suspense fallback={<p>Loading</p>}>
-                  <NoteContentEditor
-                    ref={this.saveEditorRef}
-                    spellCheckEnabled={spellCheckEnabled}
-                    storeFocusEditor={this.storeFocusContentEditor}
-                    storeHasFocus={this.storeEditorHasFocus}
-                    content={content}
-                    filter={filter}
-                    onChangeContent={this.queueNoteSave}
-                  />
-                </Suspense>
+                <NoteContentEditor
+                  ref={this.saveEditorRef}
+                  spellCheckEnabled={spellCheckEnabled}
+                  storeFocusEditor={this.storeFocusContentEditor}
+                  storeHasFocus={this.storeEditorHasFocus}
+                  content={content}
+                  filter={filter}
+                  onChangeContent={this.queueNoteSave}
+                />
               </div>
             )}
           </div>
