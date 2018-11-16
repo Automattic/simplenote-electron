@@ -287,6 +287,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       setAuthorized();
       analytics.initialize(accountName);
       this.onLoadPreferences();
+
+      // 'Kick' the app to ensure content is loaded after signing in
+      this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
+      this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
     };
 
     onNotePrinted = () =>
