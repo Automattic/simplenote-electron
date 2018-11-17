@@ -10,11 +10,11 @@ const buildViewMenu = settings => {
         label: '&Sort Type',
         submenu: [
           {
-            label: 'Last &modified',
+            label: 'Date &modified',
             id: 'modificationDate',
           },
           {
-            label: 'Last &created',
+            label: 'Date &created',
             id: 'creationDate',
           },
           {
