@@ -1,0 +1,1 @@
+<!-- Don’t worry if the AppVeyor check fails. We are in the process of setting this up and it is currently not working for forked PRs. Just make sure that `npm test` passes on your local machine. Thank you!  -->
