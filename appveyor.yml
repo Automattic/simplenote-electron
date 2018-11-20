@@ -19,7 +19,7 @@ before_build:
   - ps: >-
       if ($env:CSC_ENC_KEY -ne "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
         echo debugging
-        openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out $env:CSC_LINK% -k "$env:CSC_ENC_KEY"
+        openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out $env:CSC_LINK -k "$env:CSC_ENC_KEY"
         openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
       }
 
