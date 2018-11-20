@@ -168,8 +168,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('message', this.syncActivityHooks)
         .on('send', this.syncActivityHooks);
 
-      this.onNotesIndex();
-      this.onTagsIndex();
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
         analytics.tracks.recordEvent('application_opened')
@@ -287,6 +285,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       setAuthorized();
       analytics.initialize(accountName);
       this.onLoadPreferences();
+
+      // 'Kick' the app to ensure content is loaded after signing in
+      this.onNotesIndex();
+      this.onTagsIndex();
     };
 
     onNotePrinted = () =>
