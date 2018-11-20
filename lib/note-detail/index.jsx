@@ -5,6 +5,7 @@ import { get, debounce, invoke, noop } from 'lodash';
 import classNames from 'classnames';
 
 import analytics from '../analytics';
+import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
@@ -21,8 +22,10 @@ export class NoteDetail extends Component {
     fontSize: PropTypes.number,
     isViewingRevisions: PropTypes.bool.isRequired,
     onChangeContent: PropTypes.func.isRequired,
+    onNotePrinted: PropTypes.func.isRequired,
     note: PropTypes.object,
     previewingMarkdown: PropTypes.bool,
+    shouldPrint: PropTypes.bool.isRequired,
     showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -63,8 +66,20 @@ export class NoteDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, previewingMarkdown, filter } = this.props;
+    const {
+      filter,
+      note,
+      onNotePrinted,
+      previewingMarkdown,
+      shouldPrint,
+    } = this.props;
     const content = get(note, 'data.content', '');
+
+    // Immediately print once `shouldPrint` has been set
+    if (shouldPrint) {
+      window.print();
+      onNotePrinted();
+    }
 
     // Focus the editor for a new, empty note when not searching
     if (this.isValidNote(note) && content === '' && filter === '') {
@@ -211,8 +226,15 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
   isViewingRevisions: state.isViewingRevisions,
+  shouldPrint: state.shouldPrint,
   showNoteInfo: state.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-export default connect(mapStateToProps)(NoteDetail);
+const { setShouldPrintNote } = appState.actionCreators;
+
+const mapDispatchToProps = dispatch => ({
+  onNotePrinted: () => dispatch(setShouldPrintNote({ shouldPrint: false })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);
