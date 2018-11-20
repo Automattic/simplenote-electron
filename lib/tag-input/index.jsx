@@ -33,6 +33,10 @@ export class TagInput extends Component {
     storeHasFocus: noop,
   };
 
+  state = {
+    isComposing: false,
+  };
+
   componentDidMount() {
     this.props.storeFocusInput(this.focusInput);
     this.props.storeHasFocus(this.hasFocus);
@@ -118,10 +122,21 @@ export class TagInput extends Component {
     event.stopPropagation();
   };
 
-  onChange = ({ target: { textContent: value } }) =>
+  onChange = ({ target: { textContent: value } }) => {
+    if (this.state.isComposing) {
+      return;
+    }
+
     value.endsWith(',') && value.trim().length // commas should automatically insert non-zero tags
       ? this.props.onSelect(value.slice(0, -1).trim())
       : this.props.onChange(value.trim(), this.focusInput);
+  };
+
+  onCompositionEnd = () => {
+    this.setState({ isComposing: false }, () =>
+      this.onChange({ target: { textContent: this.inputField.textContent } })
+    );
+  };
 
   removePastedFormatting = event => {
     document.execCommand(
@@ -167,6 +182,8 @@ export class TagInput extends Component {
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
+          onCompositionStart={() => this.setState({ isComposing: true })}
+          onCompositionEnd={this.onCompositionEnd}
           onInput={this.onChange}
           onKeyDown={this.interceptKeys}
           placeholder="Add a tag…"
