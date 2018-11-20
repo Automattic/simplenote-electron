@@ -13,6 +13,8 @@ const {
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 
+const platform = require('./platform');
+
 const buildViewMenu = require('./menus/view-menu');
 const buildEditMenu = require('./menus/edit-menu');
 const { isDev } = require('./env');
@@ -116,6 +118,15 @@ module.exports = function main() {
 
     // Disables navigation for app window drag and drop
     mainWindow.webContents.on('will-navigate', event => event.preventDefault());
+
+    // Fullscreen should be disabled on launch
+    if (platform.isOSX()) {
+      mainWindow.on('close', () => {
+        mainWindow.setFullScreen(false);
+      });
+    } else {
+      mainWindow.setFullScreen(false);
+    }
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
