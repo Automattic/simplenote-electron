@@ -3,68 +3,75 @@
 /**
  * External Dependencies
  */
-const EventEmitter = require('events').EventEmitter;
-const util = require('util');
-const electron = require( 'electron' );
-const https = require( 'https' );
+const { app, shell } = require('electron');
+const fetch = require('electron-fetch').default;
+const yaml = require('js-yaml');
+const semver = require('semver');
 
-const dialog = electron.dialog;
-const shell = electron.shell;
+/**
+ * Internal dependencies
+ */
+const Updater = require('../lib/Updater');
 
-function ManualUpdater( url ) {
-	this.hasPrompted = false;
-	this.url = url;
+class ManualUpdater extends Updater {
+  constructor({ apiUrl, downloadUrl, changelogUrl, options = {} }) {
+    super(changelogUrl, options);
+
+    this.apiUrl = apiUrl;
+    this.downloadUrl = downloadUrl;
+  }
+
+  async ping() {
+    const options = {
+      headers: {
+        'User-Agent': `Simplenote/${app.getVersion()}`,
+      },
+    };
+
+    try {
+      const releaseResp = await fetch(this.apiUrl, options);
+
+      if (releaseResp.status !== 200) {
+        return;
+      }
+
+      const releaseBody = await releaseResp.json();
+
+      const releaseAsset = releaseBody.assets.find(
+        release => release.name === 'latest.yml'
+      );
+      if (releaseAsset) {
+        const configResp = await fetch(
+          releaseAsset.browser_download_url,
+          options
+        );
+
+        if (configResp.status !== 200) {
+          return;
+        }
+
+        const configBody = await configResp.text();
+        const releaseConfig = yaml.safeLoad(configBody);
+
+        if (semver.lt(app.getVersion(), releaseConfig.version)) {
+          console.log(
+            'New update is available, prompting user to update to',
+            releaseConfig.version
+          );
+          this.setVersion(releaseConfig.version);
+          this.notify();
+        } else {
+          return;
+        }
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  onConfirm() {
+    shell.openExternal(this.downloadUrl);
+  }
 }
-
-util.inherits( ManualUpdater, EventEmitter );
-
-ManualUpdater.prototype.ping = function() {
-	https.get( this.url, response => {
-		let body = '';
-
-		if ( response.statusCode !== 200 ) {
-			this.emit( 'end' );
-		}
-
-		response.on( 'data', chunk => body += chunk );
-		response.on( 'end', () => {
-			if ( body ) {
-				try {
-					let update = JSON.parse( body );
-					this.onAvailable( update );
-				} catch ( e ) {
-					this.emit( 'end' );
-					console.log( e.message );
-				}
-			}
-		} );
-	} ).on( 'error', error => {
-		this.emit( 'end' );
-		console.log( error.message );
-	} );
-};
-
-ManualUpdater.prototype.onAvailable = function( update ) {
-	const updateDialogOptions = {
-		buttons: [ 'Download', 'Cancel' ],
-		title: 'Update Available',
-		message: update.name,
-		detail: update.notes + '\n\nYou will need to download and install the new version manually.'
-	};
-
-	if ( ! this.hasPrompted ) {
-		this.hasPrompted = true;
-
-		dialog.showMessageBox( updateDialogOptions, button => {
-			this.hasPrompted = false;
-
-			if ( button === 0 ) {
-				shell.openExternal( update.url );
-			}
-
-			this.emit( 'end' );
-		} );
-	}
-};
 
 module.exports = ManualUpdater;

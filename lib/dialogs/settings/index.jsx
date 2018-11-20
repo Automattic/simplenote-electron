@@ -235,8 +235,8 @@ export class SettingsDialog extends Component {
               onChange={setSortType}
               renderer={RadioGroup}
             >
-              <Item title="Last modified" slug="modificationDate" />
-              <Item title="Last created" slug="creationDate" />
+              <Item title="Date modified" slug="modificationDate" />
+              <Item title="Date created" slug="creationDate" />
               <Item title="Alphabetical" slug="alphabetical" />
             </SettingsGroup>
 

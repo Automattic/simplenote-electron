@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "1.2.1",
+  "version": "1.3.0-beta.1",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -69,8 +69,8 @@
     "electron-builder": "20.28.2",
     "electron-packager": "9.1.0",
     "electron-rebuild": "^1.8.2",
-    "enzyme": "3.5.0",
-    "enzyme-adapter-react-16.2": "1.1.0",
+    "enzyme": "3.7.0",
+    "enzyme-adapter-react-16": "1.6.0",
     "eslint": "4.18.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-loader": "2.0.0",
@@ -83,7 +83,6 @@
     "node-sass": "4.9.3",
     "postcss-loader": "2.1.0",
     "prettier": "1.10.2",
-    "react-dom": "16.2.0",
     "react-onclickoutside": "6.7.1",
     "react-test-renderer": "16.2.0",
     "sass-loader": "6.0.6",
@@ -91,7 +90,7 @@
     "wait-on": "^3.0.1",
     "webpack": "4.5.0",
     "webpack-cli": "2.0.14",
-    "webpack-dev-server": "3.1.3"
+    "webpack-dev-server": "3.1.10"
   },
   "dependencies": {
     "@material-ui/core": "3.3.1",
@@ -100,19 +99,23 @@
     "crypto-random-string": "1.0.0",
     "draft-js": "0.10.5",
     "draft-js-simpledecorator": "1.0.2",
+    "electron-fetch": "^1.2.1",
     "electron-spellchecker": "^1.1.2",
+    "electron-updater": "^3.1.6",
     "electron-window-state": "4.1.1",
     "focus-visible": "^4.1.5",
     "gridicons": "^3.1.1",
     "highlight.js": "9.12.0",
     "isemail": "3.1.1",
+    "js-yaml": "^3.12.0",
     "jszip": "3.1.5",
     "lodash": "4.17.5",
     "moment": "2.20.1",
     "promise": "7.1.1",
     "prop-types": "15.6.0",
-    "react": "16.2.0",
+    "react": "16.6.3",
     "react-addons-update": "15.6.2",
+    "react-dom": "16.6.3",
     "react-dropzone": "6.2.4",
     "react-modal": "3.6.1",
     "react-overlays": "0.8.3",
@@ -122,13 +125,13 @@
     "redux": "3.7.2",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "2.2.0",
+    "remove-markdown": "^0.3.0",
     "sanitize-filename": "1.6.1",
     "sax": "1.2.4",
+    "semver": "^5.5.1",
     "showdown": "1.8.6",
     "simperium": "0.3.3",
+    "turndown": "5.0.1",
     "valid-url": "1.0.9"
-  },
-  "optionalDependencies": {
-    "appdmg": "0.5.2"
   }
 }

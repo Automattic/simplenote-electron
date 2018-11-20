@@ -41,7 +41,7 @@ export class ShareDialog extends Component {
     this.copyUrlElement.focus();
   };
 
-  getPublishURL = url => (isEmpty(url) ? null : `http://simp.ly/p/${url}`);
+  getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
 
   onAddCollaborator = event => {
     const { note } = this.props.appState;

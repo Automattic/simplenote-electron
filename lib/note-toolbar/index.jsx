@@ -139,23 +139,32 @@ export class NoteToolbar extends Component {
 
     return (
       <div className="note-toolbar-trashed">
-        <div className="note-toolbar__button">
-          <button
-            type="button"
-            className="button button-compact button-danger"
-            onClick={this.props.onDeleteNoteForever.bind(null, note)}
-          >
-            Delete Forever
-          </button>
+        <div className="note-toolbar__column-left">
+          <IconButton
+            icon={<BackIcon />}
+            onClick={this.props.onCloseNote}
+            title="Back"
+          />
         </div>
-        <div className="note-toolbar__button">
-          <button
-            type="button"
-            className="button button-primary button-compact"
-            onClick={this.props.onRestoreNote.bind(null, note)}
-          >
-            Restore Note
-          </button>
+        <div className="note-toolbar__column-right">
+          <div className="note-toolbar__button">
+            <button
+              type="button"
+              className="button button-compact button-danger"
+              onClick={this.props.onDeleteNoteForever.bind(null, note)}
+            >
+              Delete Forever
+            </button>
+          </div>
+          <div className="note-toolbar__button">
+            <button
+              type="button"
+              className="button button-primary button-compact"
+              onClick={this.props.onRestoreNote.bind(null, note)}
+            >
+              Restore Note
+            </button>
+          </div>
         </div>
       </div>
     );

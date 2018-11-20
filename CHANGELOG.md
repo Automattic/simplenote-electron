@@ -14,6 +14,7 @@
 - Add `markdown` property to the JSON file of exported notes [#938](https://github.com/Automattic/simplenote-electron/pull/938)
 - Improve keyboard support for modal dialogs [#950](https://github.com/Automattic/simplenote-electron/pull/950)
 - Show focus outlines on buttons and other controls when navigating with a keyboard [#962](https://github.com/Automattic/simplenote-electron/pull/962)
+- Strip Markdown in note list excerpts (with the exception of ordered and unordered lists) [#996](https://github.com/Automattic/simplenote-electron/pull/996) [@ksdme](https://github.com/ksdme)
 
 ### Fixes
 
@@ -23,6 +24,9 @@
 - Fix the Sidebar toggle button not working immediately after launch [#945](https://github.com/Automattic/simplenote-electron/pull/945)
 - Make the Revisions selector full-width when in Focus Mode [#960](https://github.com/Automattic/simplenote-electron/pull/960) [@clayreimann](https://github.com/clayreimann)
 - Fix issues with some buttons that were not friendly to screen readers [#961](https://github.com/Automattic/simplenote-electron/pull/961)
+- Add a Back button for trashed notes in single-column view [#984](https://github.com/Automattic/simplenote-electron/pull/984) [@vadimnicolai](https://github.com/vadimnicolai)
+- Fix line spacing when printing a Markdown note [#992](https://github.com/Automattic/simplenote-electron/pull/992) [@vadimnicolai](https://github.com/vadimnicolai)
+- Fix margin on Publish icons in the note list [#997](https://github.com/Automattic/simplenote-electron/pull/997) [@vadimnicolai](https://github.com/vadimnicolai)
 - Various security and under-the-hood improvements.
 
 ## [v1.2.1](https://github.com/Automattic/simplenote-electron/releases/tag/v1.2.1) (2018-10-16)
