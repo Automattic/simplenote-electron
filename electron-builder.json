@@ -48,7 +48,8 @@
   },
   "nsis": {
     "perMachine": true,
-    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
+    "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
+    "deleteAppDataOnUninstall": true
   },
   "linux": {
     "icon": "resources/images/",
