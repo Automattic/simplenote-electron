@@ -22,7 +22,7 @@ before_build:
   - ps: echo 'testvar is -> "'$env:TESTVAR'"'
   - ps: echo 'CSC_LINK is -> "'$env:CSC_LINK'"'
   - ps: >-
-      if ($env:CSC_ENC_KEY -ne "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
+      if ($env:CSC_ENC_KEY -ne "") {
         echo "Secret is not encrypted";
       }
   - ps: ls .\resources\certificates\ 
@@ -30,7 +30,7 @@ before_build:
 build_script:
   - ps: echo $env:TESTVAR
   - ps: >-
-      if ($env:CSC_ENC_KEY -eq "ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=") {
+      if ($env:CSC_ENC_KEY -eq "") {
         echo "Remove CSC_LINK";
         Remove-Item env:CSC_LINK;
       }
