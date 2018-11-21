@@ -33,7 +33,6 @@ import {
 import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
-import SearchBar from './search-bar';
 
 // Electron-specific mocks
 let ipc = getIpc();
@@ -420,11 +419,8 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
-                searchBar={<SearchBar noteBucket={noteBucket} />}
                 noteEditor={
                   <NoteEditor
-                    allTags={state.tags}
-                    filter={state.filter}
                     onUpdateNoteTags={this.onUpdateNoteTags}
                   />
                 }
