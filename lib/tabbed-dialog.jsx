@@ -5,6 +5,7 @@ import Dialog from './dialog';
 
 export class TabbedDialog extends Component {
   static propTypes = {
+    className: PropTypes.string,
     tabs: PropTypes.array.isRequired,
     renderTabName: PropTypes.func.isRequired,
     renderTabContent: PropTypes.func.isRequired,
@@ -20,11 +21,17 @@ export class TabbedDialog extends Component {
     this.setState({ currentTab: tabName });
 
   render() {
-    const { tabs, renderTabName, renderTabContent, ...dialog } = this.props;
+    const {
+      className,
+      tabs,
+      renderTabName,
+      renderTabContent,
+      ...dialog
+    } = this.props;
     const { currentTab } = this.state;
 
     return (
-      <Dialog className="settings" {...dialog}>
+      <Dialog className={className} {...dialog}>
         <nav className="dialog-tabs theme-color-border">
           <ul>
             {tabs.map((tab, key) => (

@@ -3,32 +3,88 @@ environment:
     secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
-  CSC_LINK: .\resources\certificates\win.p12
   GH_TOKEN:
     secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
+  APPVEYOR_RDP_PASSWORD:
+    secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
+  CSC_LINK: .\resources\certificates\win.p12
 
 image: Visual Studio 2017
+
+configuration:
+  - Default
+  - AppX-WindowsStore
+  - AppX-Testing
 
 install:
   - ps: Install-Product node 10
   - cinst make
-  - npm install
+  - npm ci
 
-before_build:
-  - ps: >-
-      if ($env:CSC_ENC_KEY) {
-        echo "Decrypting certificates"
-        openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out $env:CSC_LINK -k "$env:CSC_ENC_KEY"
-        openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
-      }
-build_script:
-  - ps: >-
-      if (!$env:CSC_ENC_KEY) {
-        echo "Removing CSC_LINK to skip code signing"
-        Remove-Item env:CSC_LINK
-      }
-  - make build
-  - make package-win32
+for:
+  # default build / .exe / signed
+  - matrix:
+      only:
+        - configuration: Default
+    before_build: 
+      - ps: >-
+          if ($env:CSC_ENC_KEY) {
+            echo "Decrypting certificates"
+            openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out $env:CSC_LINK -k "$env:CSC_ENC_KEY"
+            openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
+          }
+    build_script:
+      - make build
+      - make test
+      - ps: >-
+        if (!$env:CSC_ENC_KEY) {
+          echo "Removing CSC_LINK to skip code signing"
+          Remove-Item env:CSC_LINK
+        } else {
+          echo "Building app artifacts"
+          npx electron-builder --win
+        }
+
+  # Windows Store build / .appx / unsigned
+  - matrix:
+      only:
+        - configuration: AppX-WindowsStore
+    environment:
+      CSC_LINK: ""
+    build_script:
+      - make build
+      - make test
+      - ps: >-
+        if (!$env:CSC_ENC_KEY) {
+          echo "Removing CSC_LINK to skip code signing"
+          Remove-Item env:CSC_LINK
+        } else {
+          echo "Building app artifacts"
+          npx electron-builder --win --config=./electron-builder-appx.json
+        }
+
+  # Windows Store test build / .appx / signed
+  - matrix:
+      only:
+        - configuration: AppX-Testing
+    before_build: 
+      - ps: >-
+          if ($env:CSC_ENC_KEY) {
+            echo "Decrypting certificates"
+            openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out $env:CSC_LINK -k "$env:CSC_ENC_KEY"
+            openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "$env:CSC_ENC_KEY"
+          }
+    build_script:
+      - make build
+      - make test
+      - ps: >-
+        if (!$env:CSC_ENC_KEY) {
+          echo "Removing CSC_LINK to skip code signing"
+          Remove-Item env:CSC_LINK
+        } else {
+          echo "Building app artifacts"
+          npx electron-builder --win --config=./electron-builder-appx.json -p never
+        }
 
 artifacts:
   - path: release\*.exe
@@ -40,3 +96,7 @@ cache:
   - '%APPDATA%\npm-cache'
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
+
+# RDP Debug mode
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

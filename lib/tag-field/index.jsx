@@ -91,10 +91,10 @@ export class TagField extends Component {
     onUpdateNoteTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' });
+      this.setState({ selectedTag: '' }, () => {
+        invoke(this, 'tagInput.focus');
+      });
     }
-
-    invoke(this, 'tagInput.focus');
 
     analytics.tracks.recordEvent('editor_tag_removed');
   };

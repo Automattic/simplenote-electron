@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import PanelTitle from '../components/panel-title';
 import { viewExternalUrl } from '../utils/url-utils';
 
 export const Item = () => null;
@@ -28,7 +29,7 @@ export const SettingsGroup = ({
 
   return (
     <div className="settings-group">
-      <h3 className="panel-title theme-color-fg-dim">{groupTitle}</h3>
+      <PanelTitle headingLevel="3">{groupTitle}</PanelTitle>
       <div className="settings-items theme-color-border">
         {React.Children.map(children, ({ props: { slug, title } }) => (
           <label

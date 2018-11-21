@@ -1,5 +1,4 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
-const { isDev } = require('../env');
 
 const buildViewMenu = settings => {
   settings = settings || {};
@@ -11,11 +10,11 @@ const buildViewMenu = settings => {
         label: '&Sort Type',
         submenu: [
           {
-            label: 'Last &modified',
+            label: 'Date &modified',
             id: 'modificationDate',
           },
           {
-            label: 'Last &created',
+            label: 'Date &created',
             id: 'creationDate',
           },
           {
@@ -150,20 +149,6 @@ const buildViewMenu = settings => {
       },
     ],
   };
-
-  if (isDev) {
-    menu.submenu.push(
-      {
-        type: 'separator',
-      },
-      {
-        role: 'toggleDevTools',
-      },
-      {
-        role: 'reload',
-      }
-    );
-  }
 
   return menu;
 };

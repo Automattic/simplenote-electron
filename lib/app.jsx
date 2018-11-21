@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
@@ -15,9 +16,11 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
 import DialogRenderer from './dialog-renderer';
+import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
+  debounce,
   noop,
   get,
   has,
@@ -115,6 +118,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       settings: PropTypes.object.isRequired,
 
       client: PropTypes.object.isRequired,
+      isSmallScreen: PropTypes.bool.isRequired,
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
@@ -128,6 +132,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       onAuthenticate: () => {},
       onCreateUser: () => {},
       onSignOut: () => {},
+    };
+
+    state = {
+      isNoteOpen: false,
     };
 
     componentWillMount() {
@@ -144,22 +152,22 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
+        .on('update', debounce(this.onNoteUpdate, 200, { maxWait: 1000 }))
         .on('remove', this.onNoteRemoved);
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
         .on('index', this.onTagsIndex)
-        .on('update', this.onTagsIndex)
+        .on('update', debounce(this.onTagsIndex, 200))
         .on('remove', this.onTagsIndex);
 
       this.props.client
         .on('authorized', this.onAuthChanged)
-        .on('unauthorized', this.onAuthChanged);
+        .on('unauthorized', this.onAuthChanged)
+        .on('message', this.syncActivityHooks)
+        .on('send', this.syncActivityHooks);
 
-      this.onNotesIndex();
-      this.onTagsIndex();
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
         analytics.tracks.recordEvent('application_opened')
@@ -175,8 +183,21 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     }
 
     componentDidUpdate(prevProps) {
-      if (this.props.settings !== prevProps.settings) {
-        ipc.send('settingsUpdate', this.props.settings);
+      const { settings, isSmallScreen, appState } = this.props;
+
+      if (settings !== prevProps.settings) {
+        ipc.send('settingsUpdate', settings);
+      }
+
+      // If note has just been loaded
+      if (prevProps.appState.note === undefined && appState.note) {
+        this.setState({ isNoteOpen: true });
+      }
+
+      if (isSmallScreen !== prevProps.isSmallScreen) {
+        this.setState({
+          isNoteOpen: Boolean(!isSmallScreen && appState.note),
+        });
       }
     }
 
@@ -264,24 +285,23 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       setAuthorized();
       analytics.initialize(accountName);
       this.onLoadPreferences();
-    };
 
-    onNotePrinted = () =>
-      this.props.actions.setShouldPrintNote({ shouldPrint: false });
+      // 'Kick' the app to ensure content is loaded after signing in
+      this.onNotesIndex();
+      this.onTagsIndex();
+    };
 
     onNotesIndex = () =>
       this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, original, patch, isIndexing) =>
+    onNoteUpdate = (noteId, data, remoteUpdateInfo) =>
       this.props.actions.noteUpdated({
         noteBucket: this.props.noteBucket,
         noteId,
         data,
-        original,
-        patch,
-        isIndexing,
+        remoteUpdateInfo,
       });
 
     onLoadPreferences = callback =>
@@ -330,6 +350,18 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
     };
 
+    syncActivityHooks = data => {
+      activityHooks(data, {
+        onIdle: () => {
+          nudgeUnsynced({
+            client: this.props.client,
+            noteBucket: this.props.noteBucket,
+            notes: this.props.appState.notes,
+          });
+        },
+      });
+    };
+
     toggleShortcuts = doEnable => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
@@ -355,15 +387,10 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isSmallScreen,
       } = this.props;
       const isMacApp = isElectronMac();
-      const filteredNotes = filterNotes(state);
-      const hasNotes = filteredNotes.length > 0;
-      const selectedNote =
-        state.note || (!isSmallScreen && hasNotes ? filteredNotes[0] : null);
-      const isNoteOpen = Boolean(
-        (isSmallScreen && state.note) || (!isSmallScreen && selectedNote)
-      );
 
-      const appClasses = classNames('app', `theme-${settings.theme}`, {
+      const themeClass = `theme-${settings.theme}`;
+
+      const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
         'touch-enabled': 'ontouchstart' in document.body,
       });
@@ -385,17 +412,19 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
-                isNoteOpen={isNoteOpen}
+                isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
-                note={selectedNote}
+                note={state.note}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
+                onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onUpdateContent={this.onUpdateContent}
                 searchBar={<SearchBar noteBucket={noteBucket} />}
                 noteList={
                   <NoteList
                     noteBucket={noteBucket}
                     isSmallScreen={isSmallScreen}
+                    onNoteOpened={() => this.setState({ isNoteOpen: true })}
                   />
                 }
                 noteEditor={
@@ -403,8 +432,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                     allTags={state.tags}
                     filter={state.filter}
                     onUpdateNoteTags={this.onUpdateNoteTags}
-                    shouldPrint={state.shouldPrint}
-                    onNotePrinted={this.onNotePrinted}
                   />
                 }
               />
@@ -423,6 +450,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
+            buckets={{ noteBucket, tagBucket }}
+            themeClass={themeClass}
+            closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
           />

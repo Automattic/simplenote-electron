@@ -3,9 +3,7 @@
 /**
  * External Dependencies
  */
-const electron = require('electron');
-const app = electron.app;
-const dialog = electron.dialog;
+const { app } = require('electron');
 
 /**
  * Internal dependencies
@@ -17,32 +15,23 @@ const ManualUpdater = require('./manual-updater');
 
 let updater = false;
 
-function urlBuilder(version) {
-  let platformString = 'osx';
-
-  if (platform.isWindows()) {
-    platformString = 'windows';
-  } else if (platform.isLinux()) {
-    platformString = 'linux';
-  }
-
-  if (config.forceUpdate) {
-    version = '0.0.1';
-  }
-
-  return config.updater.url
-    .replace('{platform}', platformString)
-    .replace('{version}', version);
-}
-
 module.exports = function() {
   app.on('will-finish-launching', function() {
-    let url = urlBuilder(app.getVersion());
-
-    if (platform.isOSX()) {
-      updater = new AutoUpdater(url);
+    if (platform.isOSX() || platform.isWindows() || process.env.APPIMAGE) {
+      updater = new AutoUpdater({
+        changelogUrl: config.updater.changelogUrl,
+      });
     } else {
-      updater = new ManualUpdater(url);
+      updater = new ManualUpdater({
+        downloadUrl: config.updater.downloadUrl,
+        apiUrl: config.updater.apiUrl,
+        changelogUrl: config.updater.changelogUrl,
+        options: {
+          dialogMessage:
+            '{name} {newVersion} is now available — you have {currentVersion}. Would you like to download it now?',
+          confirmLabel: 'Download',
+        },
+      });
     }
 
     // Start one straight away

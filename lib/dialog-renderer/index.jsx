@@ -1,50 +1,59 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import Modal from 'react-modal';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import * as Dialogs from '../dialogs';
-import { compact, concat, flowRight, map } from 'lodash';
 
 export const DialogRenderer = props => {
-  const { appProps, isElectron } = props;
+  const {
+    appProps,
+    buckets,
+    themeClass,
+    closeDialog,
+    dialogs,
+    isElectron,
+  } = props;
 
-  const renderDialogs = () => {
-    const { dialogs } = props;
-
-    const makeDialog = (dialog, key) => [
-      dialog.modal && (
-        <div key="overlay" className="dialogs-overlay" onClick={null} />
-      ),
-      renderDialog(dialog, key),
-    ];
-
-    return flowRight(compact, concat, map)(dialogs, makeDialog);
-  };
-
-  const renderDialog = (dialog, key) => {
-    const { params, ...dialogProps } = dialog;
+  const renderDialog = dialog => {
+    const { key, title } = dialog;
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
       throw new Error('Unknown dialog type.');
     }
 
+    const closeThisDialog = () => closeDialog({ key });
+
     return (
-      <DialogComponent
-        dialog={dialogProps}
-        {...appProps}
-        {...{ key, params, isElectron }}
-      />
+      <Modal
+        key={key}
+        className="dialog-renderer__content"
+        contentLabel={title}
+        isOpen
+        onRequestClose={closeThisDialog}
+        overlayClassName="dialog-renderer__overlay"
+        portalClassName={classNames('dialog-renderer__portal', themeClass)}
+      >
+        <DialogComponent
+          buckets={buckets}
+          dialog={dialog}
+          requestClose={closeThisDialog}
+          isElectron={isElectron}
+          {...appProps}
+        />
+      </Modal>
     );
   };
 
-  if (props.dialogs.length === 0) {
-    return null;
-  }
-
-  return <div className="dialogs">{renderDialogs()}</div>;
+  return <Fragment>{dialogs.map(renderDialog)}</Fragment>;
 };
 
 DialogRenderer.propTypes = {
   appProps: PropTypes.object.isRequired,
+  buckets: PropTypes.object,
+  themeClass: PropTypes.string,
+  closeDialog: PropTypes.func.isRequired,
   dialogs: PropTypes.array.isRequired,
   isElectron: PropTypes.bool.isRequired,
 };

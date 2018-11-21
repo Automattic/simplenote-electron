@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
@@ -42,13 +41,10 @@ export class SearchField extends Component {
 
   render() {
     const { placeholder, query } = this.props;
-
-    const classes = classNames('search-field', {
-      'has-query': query && query.length > 0,
-    });
+    const hasQuery = query && query.length > 0;
 
     return (
-      <div className={classes}>
+      <div className="search-field">
         <input
           ref={this.storeInput}
           type="text"
@@ -58,9 +54,13 @@ export class SearchField extends Component {
           value={query}
           spellCheck={false}
         />
-        <div onClick={this.clearQuery}>
+        <button
+          aria-label="Clear search"
+          hidden={!hasQuery}
+          onClick={this.clearQuery}
+        >
           <SmallCrossIcon />
-        </div>
+        </button>
       </div>
     );
   }
