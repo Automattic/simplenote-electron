@@ -22,15 +22,15 @@ before_build:
   - ps: echo 'testvar is -> "'$env:TESTVAR'"'
   - ps: echo 'CSC_LINK is -> "'$env:CSC_LINK'"'
   - ps: >-
-      if ($env:CSC_ENC_KEY -ne "") {
-        echo "Secret is not encrypted";
+      if ($env:CSC_ENC_KEY) {
+        echo "Secret has been decrypted";
       }
   - ps: ls .\resources\certificates\ 
 
 build_script:
   - ps: echo $env:TESTVAR
   - ps: >-
-      if ($env:CSC_ENC_KEY -eq "") {
+      if (!$env:CSC_ENC_KEY) {
         echo "Remove CSC_LINK";
         Remove-Item env:CSC_LINK;
       }
