@@ -37,13 +37,13 @@ for:
       - make build
       - make test
       - ps: >-
-        if (!$env:CSC_ENC_KEY) {
-          echo "Removing CSC_LINK to skip code signing"
-          Remove-Item env:CSC_LINK
-        } else {
-          echo "Building app artifacts"
-          npx electron-builder --win
-        }
+          if (!$env:CSC_ENC_KEY) {
+            echo "Removing CSC_LINK to skip code signing"
+            Remove-Item env:CSC_LINK
+          } else {
+            echo "Building app artifacts"
+            npx electron-builder --win
+          }
 
   # Windows Store build / .appx / unsigned
   - matrix:
@@ -55,13 +55,13 @@ for:
       - make build
       - make test
       - ps: >-
-        if (!$env:CSC_ENC_KEY) {
-          echo "Removing CSC_LINK to skip code signing"
-          Remove-Item env:CSC_LINK
-        } else {
-          echo "Building app artifacts"
-          npx electron-builder --win --config=./electron-builder-appx.json
-        }
+          if (!$env:CSC_ENC_KEY) {
+            echo "Removing CSC_LINK to skip code signing"
+            Remove-Item env:CSC_LINK
+          } else {
+            echo "Building app artifacts"
+            npx electron-builder --win --config=./electron-builder-appx.json
+          }
 
   # Windows Store test build / .appx / signed
   - matrix:
@@ -78,13 +78,13 @@ for:
       - make build
       - make test
       - ps: >-
-        if (!$env:CSC_ENC_KEY) {
-          echo "Removing CSC_LINK to skip code signing"
-          Remove-Item env:CSC_LINK
-        } else {
-          echo "Building app artifacts"
-          npx electron-builder --win --config=./electron-builder-appx.json -p never
-        }
+          if (!$env:CSC_ENC_KEY) {
+            echo "Removing CSC_LINK to skip code signing"
+            Remove-Item env:CSC_LINK
+          } else {
+            echo "Building app artifacts"
+            npx electron-builder --win --config=./electron-builder-appx.json -p never
+          }
 
 artifacts:
   - path: release\*.exe
