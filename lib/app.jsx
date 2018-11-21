@@ -10,7 +10,6 @@ import browserShell from './browser-shell';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info';
-import NoteEditor from './note-editor';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
@@ -419,11 +418,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
-                noteEditor={
-                  <NoteEditor
-                    onUpdateNoteTags={this.onUpdateNoteTags}
-                  />
-                }
+                onUpdateNoteTags={this.onUpdateNoteTags}
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
