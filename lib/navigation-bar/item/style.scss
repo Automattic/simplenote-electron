@@ -6,16 +6,18 @@
   white-space: nowrap;
   text-align: left;
 
-  svg {
-    fill: $gray;
-  }
-
   &.is-selected {
-    color: $blue;
+    .button {
+      color: $blue;
+    }
 
     svg[class^='icon-'] {
       fill: $blue;
     }
+  }
+
+  .button-borderless:active {
+    color: darken($blue, 20%);
   }
 }
 
