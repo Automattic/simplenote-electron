@@ -127,7 +127,11 @@ export class Auth extends Component {
               onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
               type="submit"
             >
-              {this.props.authPending ? <Spinner /> : buttonLabel}
+              {this.props.authPending ? (
+                <Spinner isWhite={true} size={20} thickness={5} />
+              ) : (
+                buttonLabel
+              )}
             </button>
             <p className="login__forgot">
               <a
