@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SmallCrossOutlineIcon from '../icons/cross-outline-small';
@@ -64,7 +65,7 @@ export class EditableList extends Component {
   };
 
   render() {
-    const { editing, onRemove, onReorder } = this.props;
+    const { editing, onRemove, onReorder, sortTagsAlpha } = this.props;
     const { reorderedItems, reorderingId } = this.state;
     const classes = classNames('editable-list', this.props.className, {
       'editable-list-editing': this.props.editing,
@@ -104,18 +105,19 @@ export class EditableList extends Component {
                 </span>
               </span>
 
-              {onReorder && (
-                <span
-                  className="editable-list-reorder"
-                  tabIndex={editing ? '0' : '-1'}
-                  onDragStart={e => e.preventDefault()}
-                  onMouseDown={this.onReorderStart.bind(this, itemId)}
-                  onTouchStart={this.onReorderStart.bind(this, itemId)}
-                  onKeyDown={this.onReorderKeyDown.bind(this, itemId)}
-                >
-                  <ReorderIcon />
-                </span>
-              )}
+              {onReorder &&
+                !sortTagsAlpha && (
+                  <span
+                    className="editable-list-reorder"
+                    tabIndex={editing ? '0' : '-1'}
+                    onDragStart={e => e.preventDefault()}
+                    onMouseDown={this.onReorderStart.bind(this, itemId)}
+                    onTouchStart={this.onReorderStart.bind(this, itemId)}
+                    onKeyDown={this.onReorderKeyDown.bind(this, itemId)}
+                  >
+                    <ReorderIcon />
+                  </span>
+                )}
             </li>
           );
         })}
@@ -301,4 +303,8 @@ export class EditableList extends Component {
   };
 }
 
-export default EditableList;
+const mapStateToProps = ({ settings: { sortTagsAlpha } }) => ({
+  sortTagsAlpha,
+});
+
+export default connect(mapStateToProps)(EditableList);

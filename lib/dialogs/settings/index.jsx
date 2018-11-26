@@ -140,6 +140,7 @@ export class SettingsDialog extends Component {
       setNoteDisplay,
       setSortType,
       toggleSortOrder,
+      toggleSortTagsAlpha,
     } = this.props;
 
     const {
@@ -149,6 +150,7 @@ export class SettingsDialog extends Component {
         noteDisplay,
         sortType,
         sortReversed: sortIsReversed,
+        sortTagsAlpha,
         accountName,
       },
     } = this.props;
@@ -248,6 +250,16 @@ export class SettingsDialog extends Component {
               renderer={ToggleGroup}
             >
               <Item title="Reversed" slug="reversed" />
+            </SettingsGroup>
+
+            <SettingsGroup
+              title="Tags"
+              slug="sortTagsAlpha"
+              activeSlug={sortTagsAlpha ? 'alpha' : ''}
+              onChange={toggleSortTagsAlpha}
+              renderer={ToggleGroup}
+            >
+              <Item title="Sort Alphabetically" slug="alpha" />
             </SettingsGroup>
 
             <SettingsGroup

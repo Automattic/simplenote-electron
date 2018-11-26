@@ -84,7 +84,18 @@ const buildViewMenu = settings => {
         ),
       },
       {
-        label: '&Theme',
+        label: '&Tags',
+        submenu: [
+          {
+            label: '&Sort Alphabetically',
+            type: 'checkbox',
+            checked: settings.sortTagsAlpha,
+            click: appCommandSender({ action: 'toggleSortTagsAlpha' }),
+          },
+        ],
+      },
+      {
+        label: 'T&heme',
         submenu: [
           {
             label: '&Light',

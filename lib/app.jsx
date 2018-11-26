@@ -58,12 +58,17 @@ const mapStateToProps = state => ({
   isAuthorized: selectors.auth.isAuthorized(state),
 });
 
-function mapDispatchToProps(dispatch, { noteBucket }) {
+function mapDispatchToProps(dispatch, { noteBucket, tagBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
   const thenReloadNotes = action => a => {
     dispatch(action(a));
     dispatch(actionCreators.loadNotes({ noteBucket }));
+  };
+
+  const thenReloadTags = action => a => {
+    dispatch(action(a));
+    dispatch(actionCreators.loadTags({ tagBucket }));
   };
 
   return {
@@ -85,6 +90,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     ),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
+    toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
 
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
