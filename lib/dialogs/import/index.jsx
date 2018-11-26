@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
 import TransitionFadeInOut from '../../components/transition-fade-in-out';
+import TransitionDelayEnter from '../../components/transition-delay-enter';
+import Spinner from '../../components/spinner';
 
 const SourceImporter = React.lazy(() =>
   import(/*
@@ -35,6 +37,14 @@ class ImportDialog extends React.Component {
     const selectSource = source => this.setState({ selectedSource: source });
     const sourceIsSelected = Boolean(selectedSource);
 
+    const placeholder = (
+      <TransitionDelayEnter delay={1000}>
+        <div className="import__placeholder">
+          <Spinner size={60} />
+        </div>
+      </TransitionDelayEnter>
+    );
+
     return (
       <Dialog
         className="import"
@@ -54,7 +64,7 @@ class ImportDialog extends React.Component {
             wrapperClassName="import__source-importer-wrapper"
             shouldMount={sourceIsSelected}
           >
-            <Suspense fallback={<p>Loading</p>}>
+            <Suspense fallback={placeholder}>
               <SourceImporter
                 buckets={buckets}
                 locked={importStarted}

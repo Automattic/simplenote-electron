@@ -13,3 +13,10 @@
 .import__inner {
   padding: 28px;
 }
+
+.import__placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 0 auto;
+}
