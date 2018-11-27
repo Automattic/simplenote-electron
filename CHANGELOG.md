@@ -1,10 +1,10 @@
 # Changelog
 
-## v1.3.0
+## [v1.3.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.0) (2018-11-28)
 
 ### New features
 
-- Importers for Evernote (.enex) exports, Simplenote (.json) exports, and plain text files [#922](https://github.com/Automattic/simplenote-electron/pull/922) [#940](https://github.com/Automattic/simplenote-electron/pull/940) [#952](https://github.com/Automattic/simplenote-electron/pull/952) [#957](https://github.com/Automattic/simplenote-electron/pull/957) [#975](https://github.com/Automattic/simplenote-electron/pull/975)
+- Importers for Evernote (.enex) exports, Simplenote (.json) exports, and plain text files [#922](https://github.com/Automattic/simplenote-electron/pull/922) [#940](https://github.com/Automattic/simplenote-electron/pull/940) [#952](https://github.com/Automattic/simplenote-electron/pull/952) [#957](https://github.com/Automattic/simplenote-electron/pull/957) [#975](https://github.com/Automattic/simplenote-electron/pull/975) [#1033](https://github.com/Automattic/simplenote-electron/pull/1033)
 
 ### Enhancements
 
