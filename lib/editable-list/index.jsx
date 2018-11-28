@@ -12,6 +12,7 @@ export class EditableList extends Component {
     editing: PropTypes.bool.isRequired,
     items: PropTypes.array.isRequired,
     renderItem: PropTypes.func.isRequired,
+    sortTagsAlpha: PropTypes.bool.isRequired,
     getItemKey: PropTypes.func,
     onRemove: PropTypes.func,
     onReorder: PropTypes.func,
