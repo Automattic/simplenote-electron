@@ -8,12 +8,10 @@ const buildEditMenu = settings => {
     submenu: [
       {
         label: '&Undo',
-        accelerator: 'CommandOrControl+Z',
         role: 'undo',
       },
       {
         label: '&Redo',
-        accelerator: 'Shift+CommandOrControl+Z',
         role: 'redo',
       },
       {
@@ -21,29 +19,25 @@ const buildEditMenu = settings => {
       },
       {
         label: '&Cut',
-        accelerator: 'CommandOrControl+X',
         role: 'cut',
       },
       {
         label: 'C&opy',
-        accelerator: 'CommandOrControl+C',
         role: 'copy',
       },
       {
         label: '&Paste',
-        accelerator: 'CommandOrControl+V',
         role: 'paste',
       },
       {
         label: '&Select All',
-        accelerator: 'CommandOrControl+A',
         role: 'selectall',
       },
       {
         type: 'separator',
       },
       {
-        label: 'Search &Notes',
+        label: 'Search &Notes…',
         accelerator: 'CommandOrControl+F',
         click: appCommandSender({ action: 'setSearchFocus' }),
       },
