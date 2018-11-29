@@ -55,6 +55,39 @@
   }
 }
 
+.app-layout__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex: 1 0 auto;
+
+  .logo {
+    width: 200px;
+    height: 200px;
+    animation: pulse 2s infinite ease-in-out;
+
+    path {
+      fill: lighten($gray, 25%);
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.85;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
 .app-layout__source-column {
   width: 328px;
   display: flex;

@@ -2,20 +2,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
-import NoteDetail from '../note-detail';
 import TagField from '../tag-field';
 import { property } from 'lodash';
+import NoteDetail from '../note-detail';
 
 export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
 
   static propTypes = {
+    allTags: PropTypes.array.isRequired,
     closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
+    isEditorActive: PropTypes.bool.isRequired,
+    filter: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
     fontSize: PropTypes.number,
-    shouldPrint: PropTypes.bool,
     onUpdateContent: PropTypes.func.isRequired,
     onUpdateNoteTags: PropTypes.func.isRequired,
     revision: PropTypes.object,
@@ -146,6 +148,8 @@ export class NoteEditor extends Component {
 }
 
 const mapStateToProps = ({ appState: state, settings }) => ({
+  allTags: state.tags,
+  filter: state.filter,
   fontSize: settings.fontSize,
   editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,

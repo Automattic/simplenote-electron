@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
@@ -50,9 +51,9 @@ module.exports = () => {
           ],
         },
         {
-          test: /\.scss$/,
+          test: /\.(sa|sc|c)ss$/,
           use: [
-            'style-loader',
+            isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
               options: {
@@ -92,6 +93,10 @@ module.exports = () => {
         'node-version': process.version,
         template: 'index.ejs',
         title: 'Simplenote',
+      }),
+      new MiniCssExtractPlugin({
+        filename: isDevMode ? '[name].css' : '[name].[hash].css',
+        chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
       }),
       new webpack.DefinePlugin({
         config: JSON.stringify(config()),

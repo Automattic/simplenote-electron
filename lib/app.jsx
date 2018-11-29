@@ -10,8 +10,6 @@ import browserShell from './browser-shell';
 import exportNotes from './utils/export';
 import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info';
-import NoteList from './note-list';
-import NoteEditor from './note-editor';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
@@ -34,7 +32,6 @@ import {
 import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
-import SearchBar from './search-bar';
 
 // Electron-specific mocks
 let ipc = getIpc();
@@ -414,26 +411,14 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 isNavigationOpen={state.showNavigation}
                 isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
+                isSmallScreen={isSmallScreen}
                 note={state.note}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
+                onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
-                searchBar={<SearchBar noteBucket={noteBucket} />}
-                noteList={
-                  <NoteList
-                    noteBucket={noteBucket}
-                    isSmallScreen={isSmallScreen}
-                    onNoteOpened={() => this.setState({ isNoteOpen: true })}
-                  />
-                }
-                noteEditor={
-                  <NoteEditor
-                    allTags={state.tags}
-                    filter={state.filter}
-                    onUpdateNoteTags={this.onUpdateNoteTags}
-                  />
-                }
+                onUpdateNoteTags={this.onUpdateNoteTags}
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>

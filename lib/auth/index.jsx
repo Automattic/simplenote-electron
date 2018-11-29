@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from './crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
@@ -127,7 +127,11 @@ export class Auth extends Component {
               onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
               type="submit"
             >
-              {this.props.authPending ? <Spinner /> : buttonLabel}
+              {this.props.authPending ? (
+                <Spinner isWhite={true} size={20} thickness={5} />
+              ) : (
+                buttonLabel
+              )}
             </button>
             <p className="login__forgot">
               <a
