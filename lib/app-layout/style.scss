@@ -112,6 +112,7 @@
 }
 
 .app-layout__note-column {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
