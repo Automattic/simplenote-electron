@@ -40,6 +40,15 @@ export class TagInput extends Component {
   componentDidMount() {
     this.props.storeFocusInput(this.focusInput);
     this.props.storeHasFocus(this.hasFocus);
+
+    // Necessary for IE11 support, because contenteditable elements
+    // do not fire input or change events in IE11.
+    this.inputObserver = new MutationObserver(this.onInputMutation);
+    this.inputObserver.observe(this.inputField, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
   }
 
   componentWillUnmount() {
@@ -50,6 +59,7 @@ export class TagInput extends Component {
       this.removePastedFormatting,
       false
     );
+    this.inputObserver.disconnect();
   }
 
   completeSuggestion = (andThen = identity) => {
@@ -122,7 +132,14 @@ export class TagInput extends Component {
     event.stopPropagation();
   };
 
-  onChange = ({ target: { textContent: value } }) => {
+  onInputMutation = mutationList => {
+    mutationList.forEach(mutation => {
+      const value = mutation.target.data || '';
+      this.onInput(value);
+    });
+  };
+
+  onInput = value => {
     if (this.state.isComposing) {
       return;
     }
@@ -132,10 +149,9 @@ export class TagInput extends Component {
       : this.props.onChange(value.trim(), this.focusInput);
   };
 
-  onCompositionEnd = () => {
-    this.setState({ isComposing: false }, () =>
-      this.onChange({ target: { textContent: this.inputField.textContent } })
-    );
+  onCompositionEnd = e => {
+    const value = e.target.textContent;
+    this.setState({ isComposing: false }, () => this.onInput(value));
   };
 
   removePastedFormatting = event => {
@@ -175,10 +191,11 @@ export class TagInput extends Component {
     const { value, tagNames } = this.props;
 
     const suggestion = value.length && tagNames.find(startsWith(value));
+    const shouldShowPlaceholder = value === '' && !this.state.isComposing;
 
     return (
       <div className="tag-input" onClick={this.focusInput}>
-        {value === '' && (
+        {shouldShowPlaceholder && (
           <span aria-hidden className="tag-input__placeholder">
             Add a tag…
           </span>
@@ -190,7 +207,6 @@ export class TagInput extends Component {
           contentEditable="true"
           onCompositionStart={() => this.setState({ isComposing: true })}
           onCompositionEnd={this.onCompositionEnd}
-          onInput={this.onChange}
           onKeyDown={this.interceptKeys}
           spellCheck={false}
           suppressContentEditableWarning
