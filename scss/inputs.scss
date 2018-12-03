@@ -14,6 +14,10 @@ input {
     color: $gray;
   }
 
+  &::-ms-clear {
+    display: none;
+  }
+
   // Make sure inputs that are readonly (i.e. tag list) are not selectable
   &[readonly] {
     user-select: none;
