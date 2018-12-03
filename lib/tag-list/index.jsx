@@ -81,8 +81,8 @@ export class TagList extends Component {
         </div>
         <EditableList
           className="tag-list-items"
-          items={this.props.tags}
-          editing={this.props.editingTags}
+          items={tags}
+          editing={editingTags}
           renderItem={this.renderItem}
           onRemove={this.props.onTrashTag}
           onReorder={this.props.onReorderTags}
