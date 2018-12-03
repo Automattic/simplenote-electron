@@ -178,7 +178,13 @@ export class TagInput extends Component {
 
     return (
       <div className="tag-input" onClick={this.focusInput}>
+        {value === '' && (
+          <span aria-hidden className="tag-input__placeholder">
+            Add a tag…
+          </span>
+        )}
         <div
+          aria-label="Add a tag…"
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
@@ -186,7 +192,6 @@ export class TagInput extends Component {
           onCompositionEnd={this.onCompositionEnd}
           onInput={this.onChange}
           onKeyDown={this.interceptKeys}
-          placeholder="Add a tag…"
           spellCheck={false}
           suppressContentEditableWarning
         >

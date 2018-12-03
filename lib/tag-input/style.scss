@@ -15,12 +15,15 @@
   }
 }
 
+.tag-input__placeholder {
+  position: absolute;
+  display: block;
+  color: lighten($gray, 10%);
+  background: transparent;
+}
+
 .tag-input__entry {
-  &:empty:before {
-    content: attr(placeholder);
-    display: block;
-    color: lighten($gray, 10%);
-  }
+  min-width: 1px;
 
   & b,
   & strong {
