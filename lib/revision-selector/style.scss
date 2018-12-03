@@ -63,28 +63,81 @@
 
     width: 100%;
     max-width: $max-content-width;
-    -webkit-appearance: none;
-    background: $white;
-    height: 2px;
-    border-radius: 5px;
+    padding: 0; // IE11
+    appearance: none;
 
     &:focus {
       outline-color: lighten($blue, 20%);
     }
-  }
 
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    background: $white;
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
-    border: 2px solid $blue;
-    transition: 0.15s ease-in-out;
-  }
+    // Track
+    &::-webkit-slider-runnable-track {
+      display: flex;
+      align-items: center;
+      height: 2px;
+      background: $white;
+      border-radius: 5px;
+    }
+    &::-moz-range-track {
+      height: 2px;
+      background: $white;
+      border-radius: 5px;
+    }
+    &::-ms-track {
+      height: 3px;
+      border-color: $blue;
+      border-width: 6px 0;
+      color: transparent;
+    }
+    &::-ms-fill-lower {
+      background: $white;
+    }
+    &::-ms-fill-upper {
+      background: $white;
+    }
 
-  input[type='range']::-webkit-slider-thumb:active {
-    transform: scale(1.15);
+    // Thumb
+    &::-webkit-slider-thumb {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      border: 2px solid $blue;
+      appearance: none;
+      background: $white;
+      transition: 0.15s ease-in-out;
+
+      &:active {
+        transform: scale(1.15);
+      }
+    }
+    &::-moz-range-thumb {
+      border-radius: 50%;
+      border: 2px solid $blue;
+      appearance: none;
+      background: $white;
+      transition: 0.15s ease-in-out;
+
+      &:active {
+        transform: scale(1.15);
+      }
+    }
+    &::-ms-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid $blue;
+      appearance: none;
+      background: $white;
+      transition: 0.15s ease-in-out;
+
+      &:active {
+        transform: scale(1.15);
+      }
+    }
+
+    &::-ms-tooltip {
+      display: none;
+    }
   }
 
   .revision-date {
