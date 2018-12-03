@@ -13,6 +13,7 @@ import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
+import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
@@ -115,6 +116,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       settings: PropTypes.object.isRequired,
 
       client: PropTypes.object.isRequired,
+      isDevConfig: PropTypes.bool.isRequired,
       isSmallScreen: PropTypes.bool.isRequired,
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
@@ -378,6 +380,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         appState: state,
         authIsPending,
         isAuthorized,
+        isDevConfig,
         noteBucket,
         settings,
         tagBucket,
@@ -401,6 +404,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       return (
         <div className={appClasses}>
+          {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
               {state.showNavigation && (
