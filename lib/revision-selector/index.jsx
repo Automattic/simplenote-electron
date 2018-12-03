@@ -5,6 +5,7 @@ import onClickOutside from 'react-onclickoutside';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import classNames from 'classnames';
+import Slider from '../components/slider';
 import appState from '../flux/app-state';
 
 const sortedRevisions = revisions =>
@@ -124,8 +125,7 @@ export class RevisionSelector extends Component {
       <div className={mainClasses}>
         <div className="revision-date">{revisionDate}</div>
         <div className="revision-slider">
-          <input
-            type="range"
+          <Slider
             min={min}
             max={max}
             value={selection}
