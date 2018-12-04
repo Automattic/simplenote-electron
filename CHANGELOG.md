@@ -1,5 +1,29 @@
 # Changelog
 
+## [v1.3.2](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.2) (2018-12-05)
+
+### Enhancements
+- Add support for sorting the tags list [#1042](https://github.com/Automattic/simplenote-electron/pull/1042)
+
+### Fixes
+- Add `:focus` outline to dropzone [#989](https://github.com/Automattic/simplenote-electron/pull/989)
+- Fix tag entry in Chinese, Japanese, and Korean [#999](https://github.com/Automattic/simplenote-electron/pull/999)
+- Make tag entry and removal smoother [#1000](https://github.com/Automattic/simplenote-electron/pull/1000)
+- Fix padding for trash toolbar in Mac Electron [#1005](https://github.com/Automattic/simplenote-electron/pull/1005)
+- Fix password change handling [#1022](https://github.com/Automattic/simplenote-electron/pull/1022)
+- Simplify printing [#1013](https://github.com/Automattic/simplenote-electron/pull/1013)
+- Fix incorrect menu labels in note sorting options [#1023](https://github.com/Automattic/simplenote-electron/pull/1023) [@tonytettinger](https://github.com/tonytettinger)
+- Never launch in fullscreen mode [#1002](https://github.com/Automattic/simplenote-electron/pull/1002)
+- Fix button styles in the tag drawer [#1031](https://github.com/Automattic/simplenote-electron/pull/1031)
+- Fix app description [#1030](https://github.com/Automattic/simplenote-electron/pull/1030)
+- Fix errors in app menus [#1004](https://github.com/Automattic/simplenote-electron/pull/1004)
+- Delete AppData on uninstall (Windows) [#1029](https://github.com/Automattic/simplenote-electron/pull/1029)
+- Fix app icon in Windows Store build [#1065](https://github.com/Automattic/simplenote-electron/pull/1065)
+
+## v1.3.1
+
+This release is only intended for distribution in the Windows Store. It fixes a login issue that only affected the build available there.
+
 ## [v1.3.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.0) (2018-11-28)
 
 ### New features
