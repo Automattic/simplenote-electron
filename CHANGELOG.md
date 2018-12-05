@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.3.3](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.3) (2018-12-06)
+
+### Fixes
+
+- Prevent unnecessary server calls when logged out [#1067](https://github.com/Automattic/simplenote-electron/pull/1067) [#1068](https://github.com/Automattic/simplenote-electron/pull/1068) [#1071](https://github.com/Automattic/simplenote-electron/pull/1071)
+
 ## [v1.3.2](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.2) (2018-12-05)
 
 ### Enhancements
