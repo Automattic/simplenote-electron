@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, invoke, noop } from 'lodash';
+import { get, identity, invoke, noop } from 'lodash';
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
@@ -156,11 +156,15 @@ export class TagInput extends Component {
   };
 
   removePastedFormatting = event => {
-    document.execCommand(
-      'insertText',
-      false, // don't show default UI - see execCommand docs for explanation
-      event.clipboardData.getData('text/plain')
-    );
+    let clipboardText;
+
+    if (get(event, 'clipboardData.getData')) {
+      clipboardText = event.clipboardData.getData('text/plain');
+    } else if (get(window, 'clipboardData.getData')) {
+      clipboardText = window.clipboardData.getData('Text'); // IE11
+    }
+
+    this.onInput(clipboardText);
 
     event.preventDefault();
     event.stopPropagation();
