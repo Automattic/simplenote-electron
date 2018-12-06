@@ -353,11 +353,11 @@ export class NoteList extends Component {
     window.addEventListener('resize', this.recomputeHeights);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     if (
-      nextProps.noteDisplay !== this.props.noteDisplay ||
-      nextProps.notes !== this.props.notes ||
-      nextProps.selectedNoteContent !== this.props.selectedNoteContent
+      prevProps.noteDisplay !== this.props.noteDisplay ||
+      prevProps.notes !== this.props.notes ||
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
     }
