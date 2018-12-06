@@ -10,6 +10,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
+import stripFormattingFromSelectedText from './strip-formatting-from-selected-text';
 
 const saveDelay = 2000;
 
@@ -202,6 +203,8 @@ export class NoteDetail extends Component {
             {!previewingMarkdown && (
               <div
                 className="note-detail-textarea theme-color-bg theme-color-fg"
+                onCopy={stripFormattingFromSelectedText}
+                onCut={stripFormattingFromSelectedText}
                 style={divStyle}
               >
                 <NoteContentEditor

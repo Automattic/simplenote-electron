@@ -4,7 +4,6 @@ import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { get, includes, invoke, noop } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
-import { LF_ONLY_NEWLINES } from './utils/export/export-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
 
 function plainTextContent(editorState) {
@@ -181,20 +180,6 @@ export default class NoteContentEditor extends Component {
     }
   }
 
-  stripFormattingFromSelectedText(event) {
-    const selectedText = window.getSelection().toString();
-    // Replace \n with \r\n to keep line breaks on Windows
-    event.clipboardData.setData(
-      'text/plain',
-      selectedText.replace(LF_ONLY_NEWLINES, '\r\n')
-    );
-    event.clipboardData.setData(
-      'text/html',
-      selectedText.replace(/(?:\r\n|\r|\n)/g, '<br />')
-    );
-    event.preventDefault();
-  }
-
   saveEditorRef = ref => {
     this.editor = ref;
   };
@@ -301,23 +286,16 @@ export default class NoteContentEditor extends Component {
 
   render() {
     return (
-      <div
-        onCopy={this.stripFormattingFromSelectedText}
-        onCut={this.stripFormattingFromSelectedText}
-      >
-        <Editor
-          key={this.editorKey}
-          ref={this.saveEditorRef}
-          spellCheck={this.props.spellCheckEnabled}
-          stripPastedStyles
-          onChange={this.handleEditorStateChange}
-          onCopy={this.stripFormattingFromSelectedText}
-          onCut={this.stripFormattingFromSelectedText}
-          editorState={this.state.editorState}
-          onTab={this.onTab}
-          handleReturn={this.handleReturn}
-        />
-      </div>
+      <Editor
+        key={this.editorKey}
+        ref={this.saveEditorRef}
+        spellCheck={this.props.spellCheckEnabled}
+        stripPastedStyles
+        onChange={this.handleEditorStateChange}
+        editorState={this.state.editorState}
+        onTab={this.onTab}
+        handleReturn={this.handleReturn}
+      />
     );
   }
 }
