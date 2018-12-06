@@ -94,28 +94,35 @@ const noteCache = new Map();
  * Caches based on note id and note content
  *
  * @param {Function} f sets the value of the cache
- * @returns {String} note preview excerpt
+ * @returns {Object} note title and preview excerpt
  */
-const noteTitleCache = f => note => {
+const noteTitleAndPreviewCache = f => note => {
   const cached = noteCache.get(note.id);
 
   if ('undefined' === typeof cached || note.data.content !== cached[0]) {
     noteCache.set(note.id, [note.data.content, f(note)]);
   }
 
-  return cached ? cached[1] : noteCache.get(note.id)[1];
+  const source = cached || noteCache.get(note.id);
+
+  return {
+    title: source[1].title,
+    preview: source[1].preview,
+  };
 };
 
 /**
- * Gets the note preview excerpt
+ * Gets the note title and preview excerpt
  *
  * This is cached by the note id and content
  *
  * @function
  * @param {Object} note note object
- * @returns {String} note preview excerpt
+ * @returns {Object} note title and preview excerpt
  */
-const getNoteTitle = noteTitleCache(note => noteTitle(note).preview);
+const getNoteTitleAndPreview = noteTitleAndPreviewCache(note =>
+  noteTitle(note)
+);
 
 /**
  * Caches based on note id, width, note display format, and note preview excerpt
@@ -125,7 +132,7 @@ const getNoteTitle = noteTitleCache(note => noteTitle(note).preview);
  */
 const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
   const note = notes[index];
-  const preview = getNoteTitle(note);
+  const { preview } = getNoteTitleAndPreview(note);
 
   const key = notes[index].id;
   const cached = previewCache.get(key);
@@ -262,7 +269,7 @@ const renderNote = (
   }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
-  const { title, preview } = noteTitle(note);
+  const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
   const showPublishIcon = isPublished && 'condensed' !== noteDisplay;
 
@@ -515,7 +522,8 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
    *
    * @type {String} preview excerpt for the current note
    */
-  const selectedNoteTitle = selectedNote && getNoteTitle(selectedNote);
+  const selectedNoteTitle =
+    selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
   return {
     filter: state.filter,
