@@ -97,17 +97,16 @@ const noteCache = new Map();
  * @returns {Object} note title and preview excerpt
  */
 const noteTitleAndPreviewCache = f => note => {
-  const cached = noteCache.get(note.id);
+  let cached = noteCache.get(note.id);
 
   if ('undefined' === typeof cached || note.data.content !== cached[0]) {
     noteCache.set(note.id, [note.data.content, f(note)]);
+    cached = noteCache.get(note.id);
   }
 
-  const source = cached || noteCache.get(note.id);
-
   return {
-    title: source[1].title,
-    preview: source[1].preview,
+    title: cached[1].title,
+    preview: cached[1].preview,
   };
 };
 
