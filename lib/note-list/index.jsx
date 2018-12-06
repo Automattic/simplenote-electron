@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import filterNotes from '../utils/filter-notes';
-import noteTitle from '../utils/note-utils';
+import getNoteTitleAndPreview from './get-note-title-and-preview';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -86,42 +86,6 @@ function getTextWidth(text, width) {
 
 /** @type {Map} stores a cache of computed row heights to prevent re-rendering the canvas calculation */
 const previewCache = new Map();
-
-/** @type {Map} stores a cache of computed note preview excerpts to prevent re-truncating note content */
-const noteCache = new Map();
-
-/**
- * Caches based on note id and note content
- *
- * @param {Function} f sets the value of the cache
- * @returns {Object} note title and preview excerpt
- */
-const noteTitleAndPreviewCache = f => note => {
-  let cached = noteCache.get(note.id);
-
-  if ('undefined' === typeof cached || note.data.content !== cached[0]) {
-    noteCache.set(note.id, [note.data.content, f(note)]);
-    cached = noteCache.get(note.id);
-  }
-
-  return {
-    title: cached[1].title,
-    preview: cached[1].preview,
-  };
-};
-
-/**
- * Gets the note title and preview excerpt
- *
- * This is cached by the note id and content
- *
- * @function
- * @param {Object} note note object
- * @returns {Object} note title and preview excerpt
- */
-const getNoteTitleAndPreview = noteTitleAndPreviewCache(note =>
-  noteTitle(note)
-);
 
 /**
  * Caches based on note id, width, note display format, and note preview excerpt
