@@ -165,11 +165,6 @@ export default class NoteContentEditor extends Component {
 
   editorKey = 0;
 
-  componentWillMount() {
-    document.addEventListener('copy', this.stripFormattingFromSelectedText);
-    document.addEventListener('cut', this.stripFormattingFromSelectedText);
-  }
-
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
@@ -186,29 +181,18 @@ export default class NoteContentEditor extends Component {
     }
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('copy', this.stripFormattingFromSelectedText);
-    document.removeEventListener('cut', this.stripFormattingFromSelectedText);
-  }
-
   stripFormattingFromSelectedText(event) {
-    if (
-      event.path.filter(elem =>
-        includes(elem.className, 'note-detail-textarea')
-      ).length
-    ) {
-      const selectedText = window.getSelection().toString();
-      // Replace \n with \r\n to keep line breaks on Windows
-      event.clipboardData.setData(
-        'text/plain',
-        selectedText.replace(LF_ONLY_NEWLINES, '\r\n')
-      );
-      event.clipboardData.setData(
-        'text/html',
-        selectedText.replace(/(?:\r\n|\r|\n)/g, '<br />')
-      );
-      event.preventDefault();
-    }
+    const selectedText = window.getSelection().toString();
+    // Replace \n with \r\n to keep line breaks on Windows
+    event.clipboardData.setData(
+      'text/plain',
+      selectedText.replace(LF_ONLY_NEWLINES, '\r\n')
+    );
+    event.clipboardData.setData(
+      'text/html',
+      selectedText.replace(/(?:\r\n|\r|\n)/g, '<br />')
+    );
+    event.preventDefault();
   }
 
   saveEditorRef = ref => {
@@ -317,16 +301,23 @@ export default class NoteContentEditor extends Component {
 
   render() {
     return (
-      <Editor
-        key={this.editorKey}
-        ref={this.saveEditorRef}
-        spellCheck={this.props.spellCheckEnabled}
-        stripPastedStyles
-        onChange={this.handleEditorStateChange}
-        editorState={this.state.editorState}
-        onTab={this.onTab}
-        handleReturn={this.handleReturn}
-      />
+      <div
+        onCopy={this.stripFormattingFromSelectedText}
+        onCut={this.stripFormattingFromSelectedText}
+      >
+        <Editor
+          key={this.editorKey}
+          ref={this.saveEditorRef}
+          spellCheck={this.props.spellCheckEnabled}
+          stripPastedStyles
+          onChange={this.handleEditorStateChange}
+          onCopy={this.stripFormattingFromSelectedText}
+          onCut={this.stripFormattingFromSelectedText}
+          editorState={this.state.editorState}
+          onTab={this.onTab}
+          handleReturn={this.handleReturn}
+        />
+      </div>
     );
   }
 }
