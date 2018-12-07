@@ -134,8 +134,12 @@ export class TagInput extends Component {
 
   onInputMutation = mutationList => {
     mutationList.forEach(mutation => {
-      const value =
-        get(mutation, 'target.data') || get(mutation, 'target.innerText') || '';
+      let value = get(mutation, 'target.data', '');
+
+      if (mutation.type === 'childList' && mutation.addedNodes.length) {
+        value = get(mutation, 'target.innerText', '');
+      }
+
       this.onInput(value);
     });
   };
