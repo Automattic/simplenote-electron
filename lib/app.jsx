@@ -7,7 +7,7 @@ import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
-import exportNotes from './utils/export';
+import exportNotes from './utils/export/export-notes';
 import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
