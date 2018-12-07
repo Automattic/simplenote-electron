@@ -1,6 +1,3 @@
-const { app, dialog } = require('electron');
-const path = require('path');
-
 const DialogTypes = require('../../shared/dialog-types');
 const menuItems = require('./menu-items');
 const platform = require('../platform');
@@ -23,22 +20,10 @@ const submenu = [
   {
     label: '&Export Notes…',
     accelerator: 'CommandOrControl+Shift+E',
-    click(item, focusedWindow) {
-      if (focusedWindow) {
-        dialog.showSaveDialog(
-          focusedWindow,
-          {
-            title: 'Save export as .zip archive',
-            defaultPath: path.join(app.getPath('desktop'), 'notes.zip'),
-          },
-          filename =>
-            focusedWindow.webContents.send('appCommand', {
-              action: 'exportZipArchive',
-              filename,
-            })
-        );
-      }
-    },
+    click: appCommandSender({
+      action: 'exportZipArchive',
+      filename: 'notes.zip',
+    }),
   },
   { type: 'separator' },
   {
