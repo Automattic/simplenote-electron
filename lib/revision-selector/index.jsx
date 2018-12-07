@@ -16,6 +16,7 @@ export class RevisionSelector extends Component {
     note: PropTypes.object,
     revisions: PropTypes.array.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
+    onUpdateNoteTags: PropTypes.func.isRequired,
     setRevision: PropTypes.func.isRequired,
     resetIsViewingRevisions: PropTypes.func.isRequired,
     cancelRevision: PropTypes.func.isRequired,
@@ -65,14 +66,20 @@ export class RevisionSelector extends Component {
   handleClickOutside = () => this.onCancelRevision();
 
   onAcceptRevision = () => {
-    const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
+    const {
+      note,
+      onUpdateContent,
+      onUpdateNoteTags,
+      resetIsViewingRevisions,
+    } = this.props;
     const { revisions, selection } = this.state;
     const revision = revisions[selection];
 
     if (revision) {
-      const { data: { content } } = revision;
+      const { data: { content, tags } } = revision;
 
       onUpdateContent(note, content);
+      onUpdateNoteTags(note, tags);
       resetIsViewingRevisions();
     }
     this.resetSelection();
