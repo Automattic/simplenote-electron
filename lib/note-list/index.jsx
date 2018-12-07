@@ -485,7 +485,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
    *
    * @type {String} preview excerpt for the current note
    */
-  const selectedNoteTitle =
+  const selectedNotePreview =
     selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
   return {
@@ -494,7 +494,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     noteDisplay,
     notes: filteredNotes,
     prevNote,
-    selectedNoteTitle,
+    selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash: state.showTrash,
