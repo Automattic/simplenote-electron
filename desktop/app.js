@@ -12,14 +12,19 @@ const {
 const path = require('path');
 const windowStateKeeper = require('electron-window-state');
 
+const config = require('./config');
 const createMenuTemplate = require('./menus');
 const platform = require('./platform');
+const updater = require('./updater');
 const { isDev } = require('./env');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
-  require('./updater')();
+  app.on('will-finish-launching', function() {
+    setTimeout(updater.ping.bind(updater), config.updater.delay);
+  });
+
   const url =
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
