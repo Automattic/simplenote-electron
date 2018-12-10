@@ -1,6 +1,7 @@
 const { app } = require('electron');
 
 const { appCommandSender } = require('./utils');
+const updater = require('../updater');
 const DialogTypes = require('../../shared/dialog-types');
 
 const about = {
@@ -9,6 +10,11 @@ const about = {
     action: 'showDialog',
     dialog: DialogTypes.ABOUT,
   }),
+};
+
+const checkForUpdates = {
+  label: '&Check for Updates…',
+  click: updater.ping.bind(updater),
 };
 
 const preferences = {
@@ -22,5 +28,6 @@ const preferences = {
 
 module.exports = {
   about,
+  checkForUpdates,
   preferences,
 };

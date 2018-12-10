@@ -21,7 +21,11 @@ const submenu = [
   },
 ];
 
-const defaultSubmenuAdditions = [{ type: 'separator' }, menuItems.about];
+const defaultSubmenuAdditions = [
+  { type: 'separator' },
+  menuItems.checkForUpdates,
+  menuItems.about,
+];
 
 const helpMenu = {
   label: '&Help',
