@@ -14,7 +14,7 @@ const about = {
 
 const checkForUpdates = {
   label: '&Check for Updates…',
-  click: updater.ping.bind(updater),
+  click: updater.pingAndShowProgress.bind(updater),
 };
 
 const preferences = {
