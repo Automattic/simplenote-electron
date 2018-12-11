@@ -71,25 +71,29 @@ class AutoUpdater extends Updater {
       }, 500); // Allow time for preDownloadProgressBar to close
     };
 
+    const initProgressBar = totalBytes => {
+      progressBar = new ProgressBar({
+        indeterminate: false,
+        title,
+        text: 'Downloading…',
+        maxValue: totalBytes,
+        browserWindow,
+        style,
+      });
+      totalSizeString = prettyBytes(totalBytes);
+      progressBar.on('progress', value => {
+        progressBar.detail =
+          prettyBytes(value) + ` of ${totalSizeString} downloaded…`;
+      });
+      progressBar.on('aborted', () =>
+        autoUpdater.removeListener('download-progress', progressUpdater)
+      );
+    };
+
     const progressUpdater = progress => {
       if (!progressBar) {
         preDownloadProgressBar.setCompleted();
-        progressBar = new ProgressBar({
-          indeterminate: false,
-          title,
-          text: 'Downloading…',
-          maxValue: progress.total,
-          browserWindow,
-          style,
-        });
-        totalSizeString = prettyBytes(progress.total);
-        progressBar.on('progress', value => {
-          progressBar.detail =
-            prettyBytes(value) + ` of ${totalSizeString} downloaded…`;
-        });
-        progressBar.on('aborted', () =>
-          autoUpdater.removeListener('download-progress', progressUpdater)
-        );
+        initProgressBar(progress.total);
       }
       progressBar.value = progress.transferred;
     };
