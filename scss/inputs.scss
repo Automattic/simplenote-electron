@@ -10,6 +10,14 @@ textarea {
 input {
   -webkit-tap-highlight-color: transparent;
 
+  &::placeholder {
+    color: $gray;
+  }
+
+  &::-ms-clear {
+    display: none;
+  }
+
   // Make sure inputs that are readonly (i.e. tag list) are not selectable
   &[readonly] {
     user-select: none;
@@ -19,8 +27,4 @@ input {
 .transparent-input {
   color: inherit;
   background-color: transparent;
-
-  &::placeholder {
-    color: $gray;
-  }
 }

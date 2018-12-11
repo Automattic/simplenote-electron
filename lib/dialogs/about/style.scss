@@ -40,6 +40,7 @@
 }
 
 .about-links {
+  width: 100%; // IE11
   max-width: 315px;
   margin: 0 auto;
   padding: 0;

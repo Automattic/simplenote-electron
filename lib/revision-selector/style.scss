@@ -2,11 +2,12 @@
   background: $blue;
   padding: 10px 20px 20px 20px;
   color: $white;
-  width: calc(100% - 328px);
   z-index: 1000;
   position: absolute;
   height: 114px;
+  left: 0;
   top: -114px;
+  right: 0;
   transition: all 0.3s ease-in-out;
 
   &.is-visible {
@@ -58,34 +59,6 @@
     margin-bottom: 20px;
   }
 
-  input[type='range'] {
-    @extend %smart-focus-outline;
-
-    width: 100%;
-    max-width: $max-content-width;
-    -webkit-appearance: none;
-    background: $white;
-    height: 2px;
-    border-radius: 5px;
-
-    &:focus {
-      outline-color: lighten($blue, 20%);
-    }
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    background: $white;
-    width: 17px;
-    height: 17px;
-    border-radius: 50%;
-    border: 2px solid $blue;
-    transition: 0.15s ease-in-out;
-  }
-
-  input[type='range']::-webkit-slider-thumb:active {
-    transform: scale(1.15);
-  }
 
   .revision-date {
     width: 100%;
