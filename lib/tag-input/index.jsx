@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, invoke, noop } from 'lodash';
+import { get, identity, invoke, noop } from 'lodash';
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
@@ -40,6 +40,15 @@ export class TagInput extends Component {
   componentDidMount() {
     this.props.storeFocusInput(this.focusInput);
     this.props.storeHasFocus(this.hasFocus);
+
+    // Necessary for IE11 support, because contenteditable elements
+    // do not fire input or change events in IE11.
+    this.inputObserver = new MutationObserver(this.onInputMutation);
+    this.inputObserver.observe(this.inputField, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
   }
 
   componentWillUnmount() {
@@ -50,6 +59,7 @@ export class TagInput extends Component {
       this.removePastedFormatting,
       false
     );
+    this.inputObserver.disconnect();
   }
 
   completeSuggestion = (andThen = identity) => {
@@ -122,7 +132,19 @@ export class TagInput extends Component {
     event.stopPropagation();
   };
 
-  onChange = ({ target: { textContent: value } }) => {
+  onInputMutation = mutationList => {
+    mutationList.forEach(mutation => {
+      let value = get(mutation, 'target.data', '');
+
+      if (mutation.type === 'childList' && mutation.addedNodes.length) {
+        value = get(mutation, 'target.innerText', '');
+      }
+
+      this.onInput(value);
+    });
+  };
+
+  onInput = value => {
     if (this.state.isComposing) {
       return;
     }
@@ -132,18 +154,21 @@ export class TagInput extends Component {
       : this.props.onChange(value.trim(), this.focusInput);
   };
 
-  onCompositionEnd = () => {
-    this.setState({ isComposing: false }, () =>
-      this.onChange({ target: { textContent: this.inputField.textContent } })
-    );
+  onCompositionEnd = e => {
+    const value = e.target.textContent;
+    this.setState({ isComposing: false }, () => this.onInput(value));
   };
 
   removePastedFormatting = event => {
-    document.execCommand(
-      'insertText',
-      false, // don't show default UI - see execCommand docs for explanation
-      event.clipboardData.getData('text/plain')
-    );
+    let clipboardText;
+
+    if (get(event, 'clipboardData.getData')) {
+      clipboardText = event.clipboardData.getData('text/plain');
+    } else if (get(window, 'clipboardData.getData')) {
+      clipboardText = window.clipboardData.getData('Text'); // IE11
+    }
+
+    this.onInput(clipboardText);
 
     event.preventDefault();
     event.stopPropagation();
@@ -175,18 +200,23 @@ export class TagInput extends Component {
     const { value, tagNames } = this.props;
 
     const suggestion = value.length && tagNames.find(startsWith(value));
+    const shouldShowPlaceholder = value === '' && !this.state.isComposing;
 
     return (
       <div className="tag-input" onClick={this.focusInput}>
+        {shouldShowPlaceholder && (
+          <span aria-hidden className="tag-input__placeholder">
+            Add a tag…
+          </span>
+        )}
         <div
+          aria-label="Add a tag…"
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
           onCompositionStart={() => this.setState({ isComposing: true })}
           onCompositionEnd={this.onCompositionEnd}
-          onInput={this.onChange}
           onKeyDown={this.interceptKeys}
-          placeholder="Add a tag…"
           spellCheck={false}
           suppressContentEditableWarning
         >
