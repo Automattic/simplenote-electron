@@ -96,9 +96,12 @@ class AutoUpdater extends Updater {
 
     autoUpdater.on('update-not-available', notifyNoUpdate);
     autoUpdater.on('download-progress', progressUpdater);
-    autoUpdater.on('update-downloaded', () =>
-      autoUpdater.removeListener('download-progress', progressUpdater)
-    );
+    autoUpdater.on('update-downloaded', () => {
+      if (preDownloadProgressBar) {
+        preDownloadProgressBar.setCompleted();
+      }
+      autoUpdater.removeListener('download-progress', progressUpdater);
+    });
 
     autoUpdater.checkForUpdates();
   }
