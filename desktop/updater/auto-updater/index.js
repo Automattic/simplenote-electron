@@ -37,7 +37,7 @@ class AutoUpdater extends Updater {
   // For user-initiated checks.
   // Will check and download, displaying progress dialogs.
   pingAndShowProgress() {
-    let progressBar, totalSizeString;
+    let progressBar;
     const title = 'Update Simplenote';
     const style = {
       bar: {
@@ -78,10 +78,9 @@ class AutoUpdater extends Updater {
         browserWindow: { closable: true },
         style,
       });
-      totalSizeString = prettyBytes(totalBytes);
       progressBar.on('progress', value => {
         progressBar.detail =
-          prettyBytes(value) + ` of ${totalSizeString} downloaded…`;
+          prettyBytes(value) + ` of ${prettyBytes(totalBytes)} downloaded…`;
       });
       progressBar.on('aborted', () =>
         autoUpdater.removeListener('download-progress', progressUpdater)
