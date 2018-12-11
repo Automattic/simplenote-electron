@@ -68,7 +68,7 @@ class AutoUpdater extends Updater {
           detail: `Simplenote ${app.getVersion()} is currently the newest version available.`,
         });
         autoUpdater.removeListener('update-not-available', notifyNoUpdate);
-      }, 500);
+      }, 500); // Allow time for preDownloadProgressBar to close
     };
 
     const progressUpdater = progress => {
