@@ -23,7 +23,7 @@
 }
 
 .tag-input__entry {
-  min-width: 1px;
+  min-width: 1px; // Needed for the caret to be visible in Safari
 
   & b,
   & strong {
