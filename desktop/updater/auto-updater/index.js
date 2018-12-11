@@ -83,11 +83,11 @@ class AutoUpdater extends Updater {
           prettyBytes(value) + ` of ${prettyBytes(totalBytes)} downloaded…`;
       });
       progressBar.on('aborted', () =>
-        autoUpdater.removeListener('download-progress', progressUpdater)
+        autoUpdater.removeListener('download-progress', updateProgress)
       );
     };
 
-    const progressUpdater = progress => {
+    const updateProgress = progress => {
       if (!progressBar) {
         preDownloadProgressBar.setCompleted();
         initProgressBar(progress.total);
@@ -96,12 +96,12 @@ class AutoUpdater extends Updater {
     };
 
     autoUpdater.on('update-not-available', notifyNoUpdate);
-    autoUpdater.on('download-progress', progressUpdater);
+    autoUpdater.on('download-progress', updateProgress);
     autoUpdater.on('update-downloaded', () => {
       if (preDownloadProgressBar) {
         preDownloadProgressBar.setCompleted();
       }
-      autoUpdater.removeListener('download-progress', progressUpdater);
+      autoUpdater.removeListener('download-progress', updateProgress);
     });
 
     autoUpdater.checkForUpdates();
