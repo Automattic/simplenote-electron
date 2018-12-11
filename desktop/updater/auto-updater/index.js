@@ -39,7 +39,6 @@ class AutoUpdater extends Updater {
   pingAndShowProgress() {
     let progressBar, totalSizeString;
     const title = 'Update Simplenote';
-    const browserWindow = { closable: true };
     const style = {
       bar: {
         height: '8px',
@@ -56,7 +55,6 @@ class AutoUpdater extends Updater {
     const preDownloadProgressBar = new ProgressBar({
       title,
       text: 'Checking for Updates…',
-      browserWindow,
       style,
     });
 
@@ -77,7 +75,7 @@ class AutoUpdater extends Updater {
         title,
         text: 'Downloading…',
         maxValue: totalBytes,
-        browserWindow,
+        browserWindow: { closable: true },
         style,
       });
       totalSizeString = prettyBytes(totalBytes);
