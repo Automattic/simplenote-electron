@@ -4,7 +4,7 @@ import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { get, includes, invoke, noop } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
-import { LF_ONLY_NEWLINES } from './utils/export';
+import { LF_ONLY_NEWLINES } from './utils/export/export-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
 
 function plainTextContent(editorState) {

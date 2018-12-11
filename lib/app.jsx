@@ -7,14 +7,13 @@ import appState from './flux/app-state';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
-import exportNotes from './utils/export';
-import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
+import exportZipArchive from './utils/export';
 import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
@@ -36,7 +35,6 @@ import filterNotes from './utils/filter-notes';
 
 // Electron-specific mocks
 let ipc = getIpc();
-let fs = null;
 
 function getIpc() {
   try {
@@ -101,10 +99,6 @@ function mapDispatchToProps(dispatch, { noteBucket, tagBucket }) {
 const isElectron = (() => {
   // https://github.com/atom/electron/issues/2288
   const foundElectron = has(window, 'process.type');
-
-  if (foundElectron) {
-    fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
-  }
 
   return () => foundElectron;
 })();
@@ -235,17 +229,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onAppCommand = (event, command) => {
       if ('exportZipArchive' === get(command, 'action')) {
-        return exportNotes()
-          .then(exportToZip)
-          .then(zip =>
-            zip.generateAsync({
-              compression: 'DEFLATE',
-              platform: get(window, 'process.platform', 'DOS'),
-              type: 'base64',
-            })
-          )
-          .then(blob => fs.writeFile(command.filename, blob, 'base64', noop))
-          .catch(console.log); // eslint-disable-line no-console
+        exportZipArchive(command.filename);
       }
 
       const canRun = overEvery(
