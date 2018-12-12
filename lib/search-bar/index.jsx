@@ -12,7 +12,7 @@ import { tracks } from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
-import TagsIcon from '../icons/tags';
+import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
 
 const { newNote, search, toggleNavigation } = appState.actionCreators;
@@ -25,7 +25,7 @@ export const SearchBar = ({
   showTrash,
 }) => (
   <div className="search-bar theme-color-border">
-    <IconButton icon={<TagsIcon />} onClick={onToggleNavigation} title="Tags" />
+    <IconButton icon={<MenuIcon />} onClick={onToggleNavigation} title="Menu" />
     <SearchField />
     <IconButton
       disabled={showTrash}
