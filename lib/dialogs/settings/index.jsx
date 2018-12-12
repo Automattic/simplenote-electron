@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
 import TabbedDialog from '../../tabbed-dialog';
 import { viewExternalUrl } from '../../utils/url-utils';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
@@ -117,23 +118,6 @@ export class SettingsDialog extends Component {
 
   render() {
     const { dialog, requestClose } = this.props;
-
-    return (
-      <TabbedDialog
-        className="settings"
-        title="Settings"
-        tabs={settingTabs}
-        onDone={requestClose}
-        renderTabName={this.renderTabName}
-        renderTabContent={this.renderTabContent}
-        {...dialog}
-      />
-    );
-  }
-
-  renderTabName = tabName => tabName;
-
-  renderTabContent = tabName => {
     const {
       activateTheme,
       setLineLength,
@@ -157,125 +141,126 @@ export class SettingsDialog extends Component {
 
     const { analyticsEnabled } = this.props.appState.preferences;
 
-    switch (tabName) {
-      case 'account':
-        return (
-          <div className="dialog-column settings-account">
-            <PanelTitle headingLevel="3">Account</PanelTitle>
-            <div className="settings-items theme-color-border">
-              <div className="settings-item theme-color-border">
-                <span className="settings-account-name">{accountName}</span>
-              </div>
+    return (
+      <TabbedDialog
+        className="settings"
+        title="Settings"
+        tabNames={settingTabs}
+        onDone={requestClose}
+        {...dialog}
+      >
+        <div className="dialog-column settings-account">
+          <PanelTitle headingLevel="3">Account</PanelTitle>
+          <div className="settings-items theme-color-border">
+            <div className="settings-item theme-color-border">
+              <span className="settings-account-name">{accountName}</span>
             </div>
-
-            <ul className="dialog-actions">
-              <li>
-                <button
-                  type="button"
-                  className="button button button-borderless"
-                  onClick={this.onEditAccount}
-                >
-                  Edit Account <TopRightArrowIcon />
-                </button>
-              </li>
-              <li>
-                <SettingsGroup
-                  title="Privacy"
-                  slug="shareAnalytics"
-                  activeSlug={analyticsEnabled ? 'enabled' : ''}
-                  description="Help us improve Simplenote by sharing usage data with our analytics tool."
-                  onChange={this.onToggleShareAnalyticsPreference}
-                  learnMoreURL="https://automattic.com/cookies"
-                  renderer={ToggleGroup}
-                >
-                  <Item title="Share analytics" slug="enabled" />
-                </SettingsGroup>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  className="button button-primary"
-                  onClick={this.onSignOutRequested}
-                >
-                  Log Out
-                </button>
-              </li>
-            </ul>
           </div>
-        );
 
-      case 'display':
-        return (
-          <div className="dialog-column settings-display">
-            <SettingsGroup
-              title="Note display"
-              slug="noteDisplay"
-              activeSlug={noteDisplay}
-              onChange={setNoteDisplay}
-              renderer={RadioGroup}
-            >
-              <Item title="Comfy" slug="comfy" />
-              <Item title="Condensed" slug="condensed" />
-              <Item title="Expanded" slug="expanded" />
-            </SettingsGroup>
+          <ul className="dialog-actions">
+            <li>
+              <button
+                type="button"
+                className="button button button-borderless"
+                onClick={this.onEditAccount}
+              >
+                Edit Account <TopRightArrowIcon />
+              </button>
+            </li>
+            <li>
+              <SettingsGroup
+                title="Privacy"
+                slug="shareAnalytics"
+                activeSlug={analyticsEnabled ? 'enabled' : ''}
+                description="Help us improve Simplenote by sharing usage data with our analytics tool."
+                onChange={this.onToggleShareAnalyticsPreference}
+                learnMoreURL="https://automattic.com/cookies"
+                renderer={ToggleGroup}
+              >
+                <Item title="Share analytics" slug="enabled" />
+              </SettingsGroup>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={this.onSignOutRequested}
+              >
+                Log Out
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div className="dialog-column settings-display">
+          <SettingsGroup
+            title="Note display"
+            slug="noteDisplay"
+            activeSlug={noteDisplay}
+            onChange={setNoteDisplay}
+            renderer={RadioGroup}
+          >
+            <Item title="Comfy" slug="comfy" />
+            <Item title="Condensed" slug="condensed" />
+            <Item title="Expanded" slug="expanded" />
+          </SettingsGroup>
 
-            <SettingsGroup
-              title="Line length"
-              slug="lineLength"
-              activeSlug={lineLength}
-              onChange={setLineLength}
-              renderer={RadioGroup}
-            >
-              <Item title="Narrow" slug="narrow" />
-              <Item title="Full" slug="full" />
-            </SettingsGroup>
+          <SettingsGroup
+            title="Line length"
+            slug="lineLength"
+            activeSlug={lineLength}
+            onChange={setLineLength}
+            renderer={RadioGroup}
+          >
+            <Item title="Narrow" slug="narrow" />
+            <Item title="Full" slug="full" />
+          </SettingsGroup>
 
-            <SettingsGroup
-              title="Sort type"
-              slug="sortType"
-              activeSlug={sortType}
-              onChange={setSortType}
-              renderer={RadioGroup}
-            >
-              <Item title="Date modified" slug="modificationDate" />
-              <Item title="Date created" slug="creationDate" />
-              <Item title="Alphabetical" slug="alphabetical" />
-            </SettingsGroup>
+          <SettingsGroup
+            title="Sort type"
+            slug="sortType"
+            activeSlug={sortType}
+            onChange={setSortType}
+            renderer={RadioGroup}
+          >
+            <Item title="Date modified" slug="modificationDate" />
+            <Item title="Date created" slug="creationDate" />
+            <Item title="Alphabetical" slug="alphabetical" />
+          </SettingsGroup>
 
-            <SettingsGroup
-              title="Sort order"
-              slug="sortOrder"
-              activeSlug={sortIsReversed ? 'reversed' : ''}
-              onChange={toggleSortOrder}
-              renderer={ToggleGroup}
-            >
-              <Item title="Reversed" slug="reversed" />
-            </SettingsGroup>
+          <SettingsGroup
+            title="Sort order"
+            slug="sortOrder"
+            activeSlug={sortIsReversed ? 'reversed' : ''}
+            onChange={toggleSortOrder}
+            renderer={ToggleGroup}
+          >
+            <Item title="Reversed" slug="reversed" />
+          </SettingsGroup>
 
-            <SettingsGroup
-              title="Tags"
-              slug="sortTagsAlpha"
-              activeSlug={sortTagsAlpha ? 'alpha' : ''}
-              onChange={toggleSortTagsAlpha}
-              renderer={ToggleGroup}
-            >
-              <Item title="Sort Alphabetically" slug="alpha" />
-            </SettingsGroup>
+          <SettingsGroup
+            title="Tags"
+            slug="sortTagsAlpha"
+            activeSlug={sortTagsAlpha ? 'alpha' : ''}
+            onChange={toggleSortTagsAlpha}
+            renderer={ToggleGroup}
+          >
+            <Item title="Sort Alphabetically" slug="alpha" />
+          </SettingsGroup>
 
-            <SettingsGroup
-              title="Theme"
-              slug="theme"
-              activeSlug={activeTheme}
-              onChange={activateTheme}
-              renderer={RadioGroup}
-            >
-              <Item title="Light" slug="light" />
-              <Item title="Dark" slug="dark" />
-            </SettingsGroup>
-          </div>
-        );
-    }
-  };
+          <SettingsGroup
+            title="Theme"
+            slug="theme"
+            activeSlug={activeTheme}
+            onChange={activateTheme}
+            renderer={RadioGroup}
+          >
+            <Item title="Light" slug="light" />
+            <Item title="Dark" slug="dark" />
+          </SettingsGroup>
+        </div>
+      </TabbedDialog>
+    );
+  }
 }
 
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
