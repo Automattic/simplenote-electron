@@ -6,9 +6,7 @@ import TabbedDialog from '../../tabbed-dialog';
 import { viewExternalUrl } from '../../utils/url-utils';
 
 import AccountPanel from './panels/account';
-import RadioGroup from '../radio-settings-group';
-import ToggleGroup from '../toggle-settings-group';
-import SettingsGroup, { Item } from '../settings-group';
+import DisplayPanel from './panels/display';
 
 import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
@@ -24,6 +22,7 @@ export class SettingsDialog extends Component {
     onSetWPToken: PropTypes.func.isRequired,
     preferencesBucket: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
+    settings: PropTypes.object.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
@@ -114,28 +113,7 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { dialog, requestClose } = this.props;
-    const {
-      activateTheme,
-      setLineLength,
-      setNoteDisplay,
-      setSortType,
-      toggleSortOrder,
-      toggleSortTagsAlpha,
-    } = this.props;
-
-    const {
-      settings: {
-        theme: activeTheme,
-        lineLength,
-        noteDisplay,
-        sortType,
-        sortReversed: sortIsReversed,
-        sortTagsAlpha,
-        accountName,
-      },
-    } = this.props;
-
+    const { dialog, requestClose, settings } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
@@ -148,7 +126,7 @@ export class SettingsDialog extends Component {
       >
         <div className="dialog-column">
           <AccountPanel
-            accountName={accountName}
+            accountName={settings.accountName}
             analyticsEnabled={analyticsEnabled}
             requestSignOut={this.onSignOutRequested}
             toggleShareAnalyticsPreference={
@@ -156,72 +134,8 @@ export class SettingsDialog extends Component {
             }
           />
         </div>
-        <div className="dialog-column settings-display">
-          <SettingsGroup
-            title="Note display"
-            slug="noteDisplay"
-            activeSlug={noteDisplay}
-            onChange={setNoteDisplay}
-            renderer={RadioGroup}
-          >
-            <Item title="Comfy" slug="comfy" />
-            <Item title="Condensed" slug="condensed" />
-            <Item title="Expanded" slug="expanded" />
-          </SettingsGroup>
-
-          <SettingsGroup
-            title="Line length"
-            slug="lineLength"
-            activeSlug={lineLength}
-            onChange={setLineLength}
-            renderer={RadioGroup}
-          >
-            <Item title="Narrow" slug="narrow" />
-            <Item title="Full" slug="full" />
-          </SettingsGroup>
-
-          <SettingsGroup
-            title="Sort type"
-            slug="sortType"
-            activeSlug={sortType}
-            onChange={setSortType}
-            renderer={RadioGroup}
-          >
-            <Item title="Date modified" slug="modificationDate" />
-            <Item title="Date created" slug="creationDate" />
-            <Item title="Alphabetical" slug="alphabetical" />
-          </SettingsGroup>
-
-          <SettingsGroup
-            title="Sort order"
-            slug="sortOrder"
-            activeSlug={sortIsReversed ? 'reversed' : ''}
-            onChange={toggleSortOrder}
-            renderer={ToggleGroup}
-          >
-            <Item title="Reversed" slug="reversed" />
-          </SettingsGroup>
-
-          <SettingsGroup
-            title="Tags"
-            slug="sortTagsAlpha"
-            activeSlug={sortTagsAlpha ? 'alpha' : ''}
-            onChange={toggleSortTagsAlpha}
-            renderer={ToggleGroup}
-          >
-            <Item title="Sort Alphabetically" slug="alpha" />
-          </SettingsGroup>
-
-          <SettingsGroup
-            title="Theme"
-            slug="theme"
-            activeSlug={activeTheme}
-            onChange={activateTheme}
-            renderer={RadioGroup}
-          >
-            <Item title="Light" slug="light" />
-            <Item title="Dark" slug="dark" />
-          </SettingsGroup>
+        <div className="dialog-column">
+          <DisplayPanel />
         </div>
       </TabbedDialog>
     );
