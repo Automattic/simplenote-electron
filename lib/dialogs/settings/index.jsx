@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 
 import TabbedDialog from '../../tabbed-dialog';
 import { viewExternalUrl } from '../../utils/url-utils';
-import TopRightArrowIcon from '../../icons/arrow-top-right';
-import PanelTitle from '../../components/panel-title';
 
+import AccountPanel from './panels/account';
 import RadioGroup from '../radio-settings-group';
 import ToggleGroup from '../toggle-settings-group';
 import SettingsGroup, { Item } from '../settings-group';
@@ -27,8 +26,6 @@ export class SettingsDialog extends Component {
     requestClose: PropTypes.func.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
-
-  onEditAccount = () => viewExternalUrl('https://app.simplenote.com/settings');
 
   onToggleShareAnalyticsPreference = () => {
     this.props.toggleShareAnalyticsPreference({
@@ -149,47 +146,15 @@ export class SettingsDialog extends Component {
         onDone={requestClose}
         {...dialog}
       >
-        <div className="dialog-column settings-account">
-          <PanelTitle headingLevel="3">Account</PanelTitle>
-          <div className="settings-items theme-color-border">
-            <div className="settings-item theme-color-border">
-              <span className="settings-account-name">{accountName}</span>
-            </div>
-          </div>
-
-          <ul className="dialog-actions">
-            <li>
-              <button
-                type="button"
-                className="button button button-borderless"
-                onClick={this.onEditAccount}
-              >
-                Edit Account <TopRightArrowIcon />
-              </button>
-            </li>
-            <li>
-              <SettingsGroup
-                title="Privacy"
-                slug="shareAnalytics"
-                activeSlug={analyticsEnabled ? 'enabled' : ''}
-                description="Help us improve Simplenote by sharing usage data with our analytics tool."
-                onChange={this.onToggleShareAnalyticsPreference}
-                learnMoreURL="https://automattic.com/cookies"
-                renderer={ToggleGroup}
-              >
-                <Item title="Share analytics" slug="enabled" />
-              </SettingsGroup>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="button button-primary"
-                onClick={this.onSignOutRequested}
-              >
-                Log Out
-              </button>
-            </li>
-          </ul>
+        <div className="dialog-column">
+          <AccountPanel
+            accountName={accountName}
+            analyticsEnabled={analyticsEnabled}
+            requestSignOut={this.onSignOutRequested}
+            toggleShareAnalyticsPreference={
+              this.onToggleShareAnalyticsPreference
+            }
+          />
         </div>
         <div className="dialog-column settings-display">
           <SettingsGroup
