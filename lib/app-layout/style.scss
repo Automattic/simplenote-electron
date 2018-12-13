@@ -1,6 +1,7 @@
 .app-layout {
   display: flex;
   flex: 1 0 auto;
+  width: 100%;
 
   &.is-focus-mode.is-note-open {
     .app-layout__source-column {

@@ -9,9 +9,9 @@
   flex: 1 1 auto;
   line-height: 1.75em;
   white-space: nowrap;
-  overflow: visible;
-  max-height: 120px;
-	padding: 8px 12px;
+  overflow: auto;
+  max-height: calc(2.5 * 1.75em + 16px); // about 2.5 rows
+  padding: 8px 12px;
 
   &:focus {
     outline: none;
