@@ -3,18 +3,14 @@
 /**
  * External Dependencies
  */
-const { app, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
-const ProgressBar = require('electron-progressbar');
-const prettyBytes = require('pretty-bytes');
 
 /**
  * Internal dependencies
  */
 const Updater = require('../lib/Updater');
 const AppQuit = require('../../app-quit');
-
-const progressBarBlue = '#4895d9';
+const setupProgressUpdates = require('./setup-progress-updates');
 
 class AutoUpdater extends Updater {
   constructor({ changelogUrl, options = {} }) {
@@ -37,73 +33,7 @@ class AutoUpdater extends Updater {
   // For user-initiated checks.
   // Will check and download, displaying progress dialogs.
   pingAndShowProgress() {
-    let progressBar;
-    const title = 'Update Simplenote';
-    const style = {
-      bar: {
-        height: '8px',
-        'border-radius': '0',
-        'box-shadow': 'none',
-      },
-      value: {
-        'background-color': progressBarBlue,
-        'border-radius': '0',
-        'box-shadow': 'none',
-      },
-    };
-
-    const preDownloadProgressBar = new ProgressBar({
-      title,
-      text: 'Checking for Updates…',
-      style,
-    });
-
-    const notifyNoUpdate = () => {
-      preDownloadProgressBar.setCompleted();
-      setTimeout(() => {
-        dialog.showMessageBox({
-          message: 'You’re up to date!',
-          detail: `Simplenote ${app.getVersion()} is currently the newest version available.`,
-        });
-        autoUpdater.removeListener('update-not-available', notifyNoUpdate);
-      }, 500); // Allow time for preDownloadProgressBar to close
-    };
-
-    const initProgressBar = totalBytes => {
-      progressBar = new ProgressBar({
-        indeterminate: false,
-        title,
-        text: 'Downloading…',
-        maxValue: totalBytes,
-        browserWindow: { closable: true },
-        style,
-      });
-      progressBar.on('progress', value => {
-        progressBar.detail =
-          prettyBytes(value) + ` of ${prettyBytes(totalBytes)} downloaded…`;
-      });
-      progressBar.on('aborted', () =>
-        autoUpdater.removeListener('download-progress', updateProgress)
-      );
-    };
-
-    const updateProgress = progress => {
-      if (!progressBar) {
-        preDownloadProgressBar.setCompleted();
-        initProgressBar(progress.total);
-      }
-      progressBar.value = progress.transferred;
-    };
-
-    autoUpdater.on('update-not-available', notifyNoUpdate);
-    autoUpdater.on('download-progress', updateProgress);
-    autoUpdater.on('update-downloaded', () => {
-      if (preDownloadProgressBar) {
-        preDownloadProgressBar.setCompleted();
-      }
-      autoUpdater.removeListener('download-progress', updateProgress);
-    });
-
+    setupProgressUpdates(autoUpdater);
     autoUpdater.checkForUpdates();
   }
 
