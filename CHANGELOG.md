@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.3.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.4) (2018-12-18)
+
+### Fixes
+
+- Prevent a performance issue that can occur when there is a lot of whitespace in a Markdown note [#1078](https://github.com/Automattic/simplenote-electron/pull/1078) [#1088](https://github.com/Automattic/simplenote-electron/pull/1088)
+- Restore tags correctly when restoring a revision [#1085](https://github.com/Automattic/simplenote-electron/pull/1085)
+- Ensure that the note selected on launch is updated [#1093](https://github.com/Automattic/simplenote-electron/pull/1093)
+- Improve tag field styles to accommodate notes with many tags [#1084](https://github.com/Automattic/simplenote-electron/pull/1084)
+- Ensure that offline changes are synced to the server once the app is back online, even if the app was quit before syncing [#1098](https://github.com/Automattic/simplenote-electron/pull/1098) [#1103](https://github.com/Automattic/simplenote-electron/pull/1103)
+- Add rate limiter to Importer to prevent overloading the server [#1101](https://github.com/Automattic/simplenote-electron/pull/1101)
+
 ## [v1.3.3](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.3) (2018-12-06)
 
 ### Fixes
