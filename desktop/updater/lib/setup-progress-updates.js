@@ -7,7 +7,7 @@ const progressBarBlue = '#4895d9';
 /**
  * Set up progress bar dialogs, and add/remove listeners on the updater.
  */
-const setupProgressUpdates = updater => {
+const setupProgressUpdates = ({ updater, willAutoDownload }) => {
   let progressBar;
   const title = 'Update Simplenote';
   const style = {
@@ -67,6 +67,14 @@ const setupProgressUpdates = updater => {
   };
 
   updater.on('update-not-available', notifyNoUpdate);
+  updater.on('update-available', () => {
+    if (!willAutoDownload) {
+      preDownloadProgressBar.setCompleted();
+
+      // Allow time for preDownloadProgressBar to close
+      setTimeout(() => updater.notify(), 500);
+    }
+  });
   updater.on('download-progress', updateProgress);
   updater.on('update-downloaded', () => {
     if (preDownloadProgressBar) {

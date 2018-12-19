@@ -10,7 +10,7 @@ const { autoUpdater } = require('electron-updater');
  */
 const Updater = require('../lib/Updater');
 const AppQuit = require('../../app-quit');
-const setupProgressUpdates = require('./setup-progress-updates');
+const setupProgressUpdates = require('../lib/setup-progress-updates');
 
 class AutoUpdater extends Updater {
   constructor({ changelogUrl, options = {} }) {
@@ -33,7 +33,7 @@ class AutoUpdater extends Updater {
   // For user-initiated checks.
   // Will check and download, displaying progress dialogs.
   pingAndShowProgress() {
-    setupProgressUpdates(autoUpdater);
+    setupProgressUpdates({ updater: autoUpdater, willAutoDownload: true });
     autoUpdater.checkForUpdates();
   }
 
