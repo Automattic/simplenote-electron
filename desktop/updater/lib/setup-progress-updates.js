@@ -35,6 +35,7 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
       dialog.showMessageBox({
         message: 'You’re up to date!',
         detail: `Simplenote ${app.getVersion()} is currently the newest version available.`,
+        buttons: ['OK'], // needs to be set explicitly for Linux
       });
       updater.removeListener('update-not-available', notifyNoUpdate);
     }, 500); // Allow time for preDownloadProgressBar to close
