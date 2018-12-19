@@ -101,149 +101,130 @@ export class ShareDialog extends Component {
 
   render() {
     const { dialog, requestClose } = this.props;
-
-    return (
-      <TabbedDialog
-        className="settings"
-        title="Share"
-        tabs={shareTabs}
-        onDone={requestClose}
-        renderTabName={this.renderTabName}
-        renderTabContent={this.renderTabContent}
-        {...dialog}
-      />
-    );
-  }
-
-  renderTabName = tabName => tabName;
-
-  renderTabContent = tabName => {
     const { note } = this.props.appState;
+
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
-    switch (tabName) {
-      case 'collaborate':
-        return (
-          <div className="dialog-column share-collaborate">
+    return (
+      <TabbedDialog
+        className="settings"
+        title={dialog.title}
+        tabNames={shareTabs}
+        onDone={requestClose}
+      >
+        <div className="dialog-column share-collaborate">
+          <div className="settings-group">
+            <p>
+              Add an email address of another Simplenote user to share a note.
+              You&apos;ll both be able to edit and view the note.
+            </p>
+            <div className="settings-items theme-color-border">
+              <form
+                className="settings-item theme-color-border"
+                onSubmit={this.onAddCollaborator}
+              >
+                <input
+                  ref={e => (this.collaboratorElement = e)}
+                  type="email"
+                  pattern="[^@]+@[^@]+"
+                  className="settings-item-text-input transparent-input"
+                  placeholder="email@example.com"
+                  spellCheck={false}
+                />
+                <div className="settings-item-control">
+                  <button type="submit" className="button button-borderless">
+                    Add Email
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div className="settings-group">
+            <div className="share-collaborators-heading theme-color-border">
+              <PanelTitle headingLevel="3">Collaborators</PanelTitle>
+            </div>
+            <ul className="share-collaborators">
+              {this.collaborators().map(collaborator => (
+                <li key={collaborator} className="share-collaborator">
+                  <span className="share-collaborator-photo">
+                    <img
+                      src={this.gravatarURL(collaborator)}
+                      width="34"
+                      height="34"
+                    />
+                  </span>
+                  <span className="share-collaborator-name">
+                    {collaborator}
+                  </span>
+                  <button
+                    className="share-collaborator-remove button button-borderless button-danger"
+                    onClick={this.onRemoveCollaborator.bind(this, collaborator)}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="dialog-column share-publish">
+          <div className="settings-group">
+            <div className="settings-items theme-color-border">
+              <label
+                htmlFor="settings-field-public"
+                className="settings-item theme-color-border"
+              >
+                <div className="settings-item-label">Make public link</div>
+                <div className="settings-item-control">
+                  <ToggleControl
+                    id="settings-field-public"
+                    onChange={this.onTogglePublished}
+                    checked={isPublished}
+                  />
+                </div>
+              </label>
+            </div>
+            <p>
+              Ready to share your note with the world? Anyone with the public
+              link will be able to view the latest version.
+            </p>
+          </div>
+          {isPublished && (
             <div className="settings-group">
-              <p>
-                Add an email address of another Simplenote user to share a note.
-                You&apos;ll both be able to edit and view the note.
-              </p>
+              <PanelTitle headingLevel="3">Public link</PanelTitle>
               <div className="settings-items theme-color-border">
-                <form
-                  className="settings-item theme-color-border"
-                  onSubmit={this.onAddCollaborator}
-                >
+                <div className="settings-item theme-color-border">
                   <input
-                    ref={e => (this.collaboratorElement = e)}
-                    type="email"
-                    pattern="[^@]+@[^@]+"
+                    ref={e => (this.publishUrlElement = e)}
                     className="settings-item-text-input transparent-input"
-                    placeholder="email@example.com"
+                    placeholder={
+                      isPublished ? 'Publishing note…' : 'Note not published'
+                    }
+                    value={publishURL}
                     spellCheck={false}
                   />
                   <div className="settings-item-control">
-                    <button type="submit" className="button button-borderless">
-                      Add Email
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div className="settings-group">
-              <div className="share-collaborators-heading theme-color-border">
-                <PanelTitle headingLevel="3">Collaborators</PanelTitle>
-              </div>
-              <ul className="share-collaborators">
-                {this.collaborators().map(collaborator => (
-                  <li key={collaborator} className="share-collaborator">
-                    <span className="share-collaborator-photo">
-                      <img
-                        src={this.gravatarURL(collaborator)}
-                        width="34"
-                        height="34"
-                      />
-                    </span>
-                    <span className="share-collaborator-name">
-                      {collaborator}
-                    </span>
                     <button
-                      className="share-collaborator-remove button button-borderless button-danger"
-                      onClick={this.onRemoveCollaborator.bind(
-                        this,
-                        collaborator
-                      )}
+                      ref={e => (this.copyUrlElement = e)}
+                      disabled={!publishURL}
+                      type="button"
+                      className="button button-borderless"
+                      onClick={this.copyPublishURL}
                     >
-                      Remove
+                      Copy
                     </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        );
-
-      case 'publish':
-        return (
-          <div className="dialog-column share-publish">
-            <div className="settings-group">
-              <div className="settings-items theme-color-border">
-                <label
-                  htmlFor="settings-field-public"
-                  className="settings-item theme-color-border"
-                >
-                  <div className="settings-item-label">Make public link</div>
-                  <div className="settings-item-control">
-                    <ToggleControl
-                      id="settings-field-public"
-                      onChange={this.onTogglePublished}
-                      checked={isPublished}
-                    />
-                  </div>
-                </label>
-              </div>
-              <p>
-                Ready to share your note with the world? Anyone with the public
-                link will be able to view the latest version.
-              </p>
-            </div>
-            {isPublished && (
-              <div className="settings-group">
-                <PanelTitle headingLevel="3">Public link</PanelTitle>
-                <div className="settings-items theme-color-border">
-                  <div className="settings-item theme-color-border">
-                    <input
-                      ref={e => (this.publishUrlElement = e)}
-                      className="settings-item-text-input transparent-input"
-                      placeholder={
-                        isPublished ? 'Publishing note…' : 'Note not published'
-                      }
-                      value={publishURL}
-                      spellCheck={false}
-                    />
-                    <div className="settings-item-control">
-                      <button
-                        ref={e => (this.copyUrlElement = e)}
-                        disabled={!publishURL}
-                        type="button"
-                        className="button button-borderless"
-                        onClick={this.copyPublishURL}
-                      >
-                        Copy
-                      </button>
-                    </div>
                   </div>
                 </div>
-                {publishURL && <p>Note published!</p>}
               </div>
-            )}
-          </div>
-        );
-    }
-  };
+              {publishURL && <p>Note published!</p>}
+            </div>
+          )}
+        </div>
+      </TabbedDialog>
+    );
+  }
 }
 
 export default ShareDialog;
