@@ -17,10 +17,15 @@ export class SettingsDialog extends Component {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
+    buckets: PropTypes.shape({
+      noteBucket: PropTypes.object.isRequired,
+      preferencesBucket: PropTypes.object.isRequired,
+      tagBucket: PropTypes.object.isRequired,
+    }),
+    dialog: PropTypes.shape({ title: PropTypes.string.isRequired }),
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
-    preferencesBucket: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
@@ -28,13 +33,13 @@ export class SettingsDialog extends Component {
 
   onToggleShareAnalyticsPreference = () => {
     this.props.toggleShareAnalyticsPreference({
-      preferencesBucket: this.props.preferencesBucket,
+      preferencesBucket: this.props.buckets.preferencesBucket,
     });
   };
 
   onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
-    const { noteBucket } = this.props;
+    const { noteBucket } = this.props.buckets;
     const { notes } = this.props.appState;
 
     noteBucket.hasLocalChanges((error, hasChanges) => {
@@ -113,16 +118,15 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { dialog, requestClose, settings } = this.props;
+    const { buckets, dialog, requestClose, settings } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
       <TabbedDialog
         className="settings"
-        title="Settings"
+        title={dialog.title}
         tabNames={settingTabs}
         onDone={requestClose}
-        {...dialog}
       >
         <div className="dialog-column">
           <AccountPanel
@@ -135,7 +139,7 @@ export class SettingsDialog extends Component {
           />
         </div>
         <div className="dialog-column">
-          <DisplayPanel />
+          <DisplayPanel buckets={buckets} />
         </div>
       </TabbedDialog>
     );

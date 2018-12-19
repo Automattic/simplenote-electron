@@ -7,18 +7,27 @@ import RadioGroup from '../../radio-settings-group';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 
+import appState from '../../../flux/app-state';
 import * as settingsActions from '../../../state/settings/actions';
 
 const DisplayPanel = props => {
   const {
     actions,
     activeTheme,
+    buckets: { noteBucket, tagBucket },
     lineLength,
+    loadNotes,
+    loadTags,
     noteDisplay,
     sortIsReversed,
     sortTagsAlpha,
     sortType,
   } = props;
+
+  const withCallback = ({ action, callback }) => arg => {
+    action(arg);
+    callback();
+  };
 
   return (
     <div className="dialog-column settings-display">
@@ -49,7 +58,10 @@ const DisplayPanel = props => {
         title="Sort type"
         slug="sortType"
         activeSlug={sortType}
-        onChange={actions.setSortType}
+        onChange={withCallback({
+          action: actions.setSortType,
+          callback: () => loadNotes(noteBucket),
+        })}
         renderer={RadioGroup}
       >
         <Item title="Date modified" slug="modificationDate" />
@@ -61,7 +73,10 @@ const DisplayPanel = props => {
         title="Sort order"
         slug="sortOrder"
         activeSlug={sortIsReversed ? 'reversed' : ''}
-        onChange={actions.toggleSortOrder}
+        onChange={withCallback({
+          action: actions.toggleSortOrder,
+          callback: () => loadNotes(noteBucket),
+        })}
         renderer={ToggleGroup}
       >
         <Item title="Reversed" slug="reversed" />
@@ -71,7 +86,10 @@ const DisplayPanel = props => {
         title="Tags"
         slug="sortTagsAlpha"
         activeSlug={sortTagsAlpha ? 'alpha' : ''}
-        onChange={actions.toggleSortTagsAlpha}
+        onChange={withCallback({
+          action: actions.toggleSortTagsAlpha,
+          callback: () => loadTags(tagBucket),
+        })}
         renderer={ToggleGroup}
       >
         <Item title="Sort Alphabetically" slug="alpha" />
@@ -94,7 +112,13 @@ const DisplayPanel = props => {
 DisplayPanel.propTypes = {
   actions: PropTypes.object.isRequired,
   activeTheme: PropTypes.string.isRequired,
+  buckets: PropTypes.shape({
+    noteBucket: PropTypes.object.isRequired,
+    tagBucket: PropTypes.object.isRequired,
+  }),
   lineLength: PropTypes.string.isRequired,
+  loadNotes: PropTypes.func.isRequired,
+  loadTags: PropTypes.func.isRequired,
   noteDisplay: PropTypes.string.isRequired,
   sortIsReversed: PropTypes.bool.isRequired,
   sortTagsAlpha: PropTypes.bool.isRequired,
@@ -112,8 +136,13 @@ const mapStateToProps = ({ settings }) => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(settingsActions, dispatch),
-});
+const mapDispatchToProps = dispatch => {
+  const { loadNotes, loadTags } = appState.actionCreators;
+  return {
+    actions: bindActionCreators(settingsActions, dispatch),
+    loadNotes: noteBucket => dispatch(loadNotes({ noteBucket })),
+    loadTags: tagBucket => dispatch(loadTags({ tagBucket })),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayPanel);
