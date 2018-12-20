@@ -30,14 +30,29 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
   });
 
   const notifyNoUpdate = () => {
+    updater.removeListener('update-not-available', notifyNoUpdate);
+    closeProgressAndShowMessage({
+      message: 'You’re up to date!',
+      detail: `Simplenote ${app.getVersion()} is currently the newest version available.`,
+    });
+  };
+
+  const notifyError = () => {
+    updater.removeListener('error', notifyError);
+    closeProgressAndShowMessage({
+      message: 'Something went wrong!',
+      detail: `Please try again later.`,
+    });
+  };
+
+  const closeProgressAndShowMessage = ({ message, detail }) => {
     preDownloadProgressBar.setCompleted();
     setTimeout(() => {
       dialog.showMessageBox({
-        message: 'You’re up to date!',
-        detail: `Simplenote ${app.getVersion()} is currently the newest version available.`,
+        message,
+        detail,
         buttons: ['OK'], // needs to be set explicitly for Linux
       });
-      updater.removeListener('update-not-available', notifyNoUpdate);
     }, 500); // Allow time for preDownloadProgressBar to close
   };
 
@@ -67,6 +82,7 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
     progressBar.value = progress.transferred;
   };
 
+  updater.on('error', notifyError);
   updater.on('update-not-available', notifyNoUpdate);
   updater.on('update-available', () => {
     if (!willAutoDownload) {

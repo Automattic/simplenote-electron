@@ -40,6 +40,8 @@ class ManualUpdater extends Updater {
       const releaseResp = await fetch(this.apiUrl, options);
 
       if (releaseResp.status !== 200) {
+        this.emit('error');
+        console.log(releaseResp);
         return;
       }
 
@@ -55,6 +57,8 @@ class ManualUpdater extends Updater {
         );
 
         if (configResp.status !== 200) {
+          this.emit('error');
+          console.log(configResp);
           return;
         }
 
@@ -74,6 +78,7 @@ class ManualUpdater extends Updater {
         }
       }
     } catch (err) {
+      this.emit('error');
       console.log(err.message);
     }
   }
