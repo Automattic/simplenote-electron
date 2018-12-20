@@ -7,11 +7,12 @@ import { viewExternalUrl } from '../../utils/url-utils';
 
 import AccountPanel from './panels/account';
 import DisplayPanel from './panels/display';
+import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
-const settingTabs = ['account', 'display'];
+const settingTabs = ['account', 'display', 'tools'];
 
 export class SettingsDialog extends Component {
   static propTypes = {
@@ -140,6 +141,9 @@ export class SettingsDialog extends Component {
         </div>
         <div className="dialog-column">
           <DisplayPanel buckets={buckets} />
+        </div>
+        <div className="dialog-column">
+          <ToolsPanel />
         </div>
       </TabbedDialog>
     );
