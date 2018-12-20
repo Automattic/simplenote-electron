@@ -22,7 +22,6 @@ const submenu = [
     accelerator: 'CommandOrControl+Shift+E',
     click: appCommandSender({
       action: 'exportZipArchive',
-      filename: 'notes.zip',
     }),
   },
   { type: 'separator' },

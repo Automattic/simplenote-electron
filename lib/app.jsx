@@ -230,7 +230,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onAppCommand = (event, command) => {
       if ('exportZipArchive' === get(command, 'action')) {
-        exportZipArchive(command.filename);
+        exportZipArchive();
       }
 
       const canRun = overEvery(
