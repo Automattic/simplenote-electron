@@ -1,6 +1,6 @@
 const DialogTypes = require('../../shared/dialog-types');
 const menuItems = require('./menu-items');
-const platform = require('../platform');
+const platform = require('../detect/platform');
 const { appCommandSender } = require('./utils');
 
 const submenu = [

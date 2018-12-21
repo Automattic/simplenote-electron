@@ -5,7 +5,7 @@ jest.mock('../menu-items', () => ({
   checkForUpdates: 'checkForUpdates',
 }));
 
-jest.mock('../../platform', () => ({
+jest.mock('../../detect/platform', () => ({
   isLinux: jest.fn().mockReturnValue(false),
   isOSX: jest.fn().mockReturnValue(false),
   isWindows: jest.fn().mockReturnValue(true),
