@@ -40,6 +40,7 @@ for:
         - configuration: AppX-WindowsStore
     before_build:
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
+    skip_non_tags: true
     environment:
       CSC_LINK: ""
     build_script:
