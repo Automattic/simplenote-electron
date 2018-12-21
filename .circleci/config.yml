@@ -118,18 +118,24 @@ workflows:
     jobs:
       - build:
           filters:
+            branches:
+              ignore: webapp
             tags:
               only: /.*/
       - linux:
           requires:
           - build
           filters:
+            branches:
+              ignore: webapp
             tags:
               only: /.*/
       - mac:
           requires:
           - build
           filters:
+            branches:
+              ignore: webapp
             tags:
               only: /.*/
       - artifacts:
@@ -137,5 +143,7 @@ workflows:
             - linux
             - mac
           filters:
+            branches:
+              ignore: webapp
             tags:
               only: /.*/
