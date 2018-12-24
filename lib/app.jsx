@@ -373,6 +373,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         isAuthorized,
         isDevConfig,
         noteBucket,
+        preferencesBucket,
         settings,
         tagBucket,
         isSmallScreen,
@@ -430,7 +431,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
-            buckets={{ noteBucket, tagBucket }}
+            buckets={{ noteBucket, preferencesBucket, tagBucket }}
             themeClass={themeClass}
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
