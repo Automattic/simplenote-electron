@@ -1,18 +1,6 @@
 .settings {
   max-width: 630px;
 
-  .dialog-tab-content {
-    height: 30.5em;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-
-    // On small screens, the tab bar uses up too much space so it should
-    // move out of the way while scrolling.
-    @media only screen and (max-width: 720px) and (max-height: 640px) {
-      height: auto;
-    }
-  }
-
   .settings-account-name {
     font-size: 115%;
     text-align: center;
