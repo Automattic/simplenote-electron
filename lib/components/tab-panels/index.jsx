@@ -13,8 +13,8 @@ export class TabPanels extends Component {
     const { children, tabNames } = this.props;
 
     return (
-      <Tabs selectedTabClassName="dialog-tab-active">
-        <TabList className="dialog-tabs theme-color-border">
+      <Tabs selectedTabClassName="is-active">
+        <TabList className="tab-panels__tab-list theme-color-border">
           {tabNames.map((tabName, key) => (
             <Tab className="button button-borderless" key={key}>
               {tabName}
@@ -22,10 +22,10 @@ export class TabPanels extends Component {
           ))}
         </TabList>
 
-        <div className="dialog-tab-content">
+        <div className="tab-panels__panel">
           {children.map((tabPanel, key) => (
             <TabPanel key={key}>
-              <div className="dialog-column">{tabPanel}</div>
+              <div className="tab-panels__column">{tabPanel}</div>
             </TabPanel>
           ))}
         </div>

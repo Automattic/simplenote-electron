@@ -1,4 +1,4 @@
-.dialog-tabs {
+.tab-panels__tab-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -15,21 +15,15 @@
     color: darken($gray, 10%);
     text-transform: capitalize;
     border-radius: 0;
-  }
 
-  .dialog-tab-active {
-    color: $blue;
-    border-bottom-color: $blue;
+    &.is-active {
+      color: $blue;
+      border-bottom-color: $blue;
+    }
   }
 }
 
-.dialog-column {
-  max-width: 374px;
-  margin: 0 auto;
-  padding: 36px 10px 50px;
-}
-
-.dialog-tab-content {
+.tab-panels__panel {
   height: 30.5em;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -39,5 +33,11 @@
   @media only screen and (max-width: 720px) and (max-height: 640px) {
     height: auto;
   }
+}
+
+.tab-panels__column {
+  max-width: 374px;
+  margin: 0 auto;
+  padding: 36px 10px 50px;
 }
 
