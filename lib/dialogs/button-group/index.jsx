@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const SourceGroup = props => {
+const ButtonGroup = props => {
   const { items, onClickItem } = props;
 
   return (
-    <ul className="source-group">
+    <ul className="button-group">
       {items.map(item => (
-        <li key={item.slug} className="source-group__item theme-color-border">
+        <li key={item.slug} className="button-group__item theme-color-border">
           <button type="button" onClick={() => onClickItem(item)}>
             {item.name}
           </button>
@@ -17,9 +17,9 @@ const SourceGroup = props => {
   );
 };
 
-SourceGroup.propTypes = {
+ButtonGroup.propTypes = {
   items: PropTypes.array.isRequired,
   onClickItem: PropTypes.func.isRequired,
 };
 
-export default SourceGroup;
+export default ButtonGroup;

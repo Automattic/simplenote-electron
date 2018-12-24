@@ -1,0 +1,43 @@
+.tab-panels__tab-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid lighten($gray, 30%);
+  list-style: none;
+
+  li {
+    margin: 0 0.5em;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    padding: 0.75em 0.75em;
+    color: darken($gray, 10%);
+    text-transform: capitalize;
+    border-radius: 0;
+
+    &.is-active {
+      color: $blue;
+      border-bottom-color: $blue;
+    }
+  }
+}
+
+.tab-panels__panel {
+  height: 30.5em;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+
+  // On small screens, the tab bar uses up too much space so it should
+  // move out of the way while scrolling.
+  @media only screen and (max-width: 720px) and (max-height: 640px) {
+    height: auto;
+  }
+}
+
+.tab-panels__column {
+  max-width: 374px;
+  margin: 0 auto;
+  padding: 36px 10px 50px;
+}
+

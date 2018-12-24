@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ const DisplayPanel = props => {
   };
 
   return (
-    <div className="dialog-column settings-display">
+    <Fragment>
       <SettingsGroup
         title="Note display"
         slug="noteDisplay"
@@ -105,7 +105,7 @@ const DisplayPanel = props => {
         <Item title="Light" slug="light" />
         <Item title="Dark" slug="dark" />
       </SettingsGroup>
-    </div>
+    </Fragment>
   );
 };
 

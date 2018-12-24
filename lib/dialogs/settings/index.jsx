@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import TabbedDialog from '../../tabbed-dialog';
+import Dialog from '../../dialog';
+import TabPanels from '../../components/tab-panels';
 import { viewExternalUrl } from '../../utils/url-utils';
 
 import AccountPanel from './panels/account';
 import DisplayPanel from './panels/display';
+import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
-const settingTabs = ['account', 'display'];
+const settingTabs = ['account', 'display', 'tools'];
 
 export class SettingsDialog extends Component {
   static propTypes = {
@@ -122,13 +124,8 @@ export class SettingsDialog extends Component {
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
-      <TabbedDialog
-        className="settings"
-        title={dialog.title}
-        tabNames={settingTabs}
-        onDone={requestClose}
-      >
-        <div className="dialog-column">
+      <Dialog className="settings" title={dialog.title} onDone={requestClose}>
+        <TabPanels tabNames={settingTabs}>
           <AccountPanel
             accountName={settings.accountName}
             analyticsEnabled={analyticsEnabled}
@@ -137,11 +134,10 @@ export class SettingsDialog extends Component {
               this.onToggleShareAnalyticsPreference
             }
           />
-        </div>
-        <div className="dialog-column">
           <DisplayPanel buckets={buckets} />
-        </div>
-      </TabbedDialog>
+          <ToolsPanel />
+        </TabPanels>
+      </Dialog>
     );
   }
 }
