@@ -319,12 +319,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         content,
       });
 
-    onUpdateNoteTags = (note, tags) =>
-      this.props.actions.updateNoteTags({
-        note,
-        tags,
-      });
-
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
       const filteredNotes = filterNotes(this.props.appState);
@@ -410,7 +404,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
-                onUpdateNoteTags={this.onUpdateNoteTags}
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>

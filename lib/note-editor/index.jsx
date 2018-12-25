@@ -19,7 +19,6 @@ export class NoteEditor extends Component {
     note: PropTypes.object,
     fontSize: PropTypes.number,
     onUpdateContent: PropTypes.func.isRequired,
-    onUpdateNoteTags: PropTypes.func.isRequired,
     revision: PropTypes.object,
     setEditorMode: PropTypes.func.isRequired,
   };
@@ -139,7 +138,6 @@ export class NoteEditor extends Component {
               allTags={this.props.allTags.map(property('data.name'))}
               note={this.props.note}
               tags={tags}
-              onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
             />
           )}
       </div>
