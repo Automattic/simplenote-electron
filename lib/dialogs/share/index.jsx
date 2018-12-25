@@ -54,8 +54,6 @@ export class ShareDialog extends Component {
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1) {
       this.props.actions.updateNoteTags({
-        noteBucket: this.props.noteBucket,
-        tagBucket: this.props.tagBucket,
         note,
         tags: [...tags, collaborator],
       });
@@ -70,8 +68,6 @@ export class ShareDialog extends Component {
     tags = tags.filter(tag => tag !== collaborator);
 
     this.props.actions.updateNoteTags({
-      noteBucket: this.props.noteBucket,
-      tagBucket: this.props.tagBucket,
       note,
       tags,
     });

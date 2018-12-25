@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
+import { loadTags } from './state/domain/tags';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
@@ -54,7 +55,7 @@ const mapStateToProps = state => ({
   isAuthorized: selectors.auth.isAuthorized(state),
 });
 
-function mapDispatchToProps(dispatch, { noteBucket, tagBucket }) {
+function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
   const thenReloadNotes = action => a => {
@@ -64,7 +65,7 @@ function mapDispatchToProps(dispatch, { noteBucket, tagBucket }) {
 
   const thenReloadTags = action => a => {
     dispatch(action(a));
-    dispatch(actionCreators.loadTags({ tagBucket }));
+    loadTags();
   };
 
   return {
@@ -158,9 +159,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
-        .on('index', this.onTagsIndex)
-        .on('update', debounce(this.onTagsIndex, 200))
-        .on('remove', this.onTagsIndex);
+        .on('index', loadTags)
+        .on('update', debounce(loadTags, 200))
+        .on('remove', loadTags);
 
       this.props.client
         .on('authorized', this.onAuthChanged)
@@ -278,7 +279,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       // 'Kick' the app to ensure content is loaded after signing in
       this.onNotesIndex();
-      this.onTagsIndex();
+      loadTags();
     };
 
     onNotesIndex = () =>
@@ -300,9 +301,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         preferencesBucket: this.props.preferencesBucket,
       });
 
-    onTagsIndex = () =>
-      this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
-
     initializeElectron = () => {
       const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
 
@@ -323,8 +321,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onUpdateNoteTags = (note, tags) =>
       this.props.actions.updateNoteTags({
-        noteBucket: this.props.noteBucket,
-        tagBucket: this.props.tagBucket,
         note,
         tags,
       });
