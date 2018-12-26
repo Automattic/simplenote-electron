@@ -6,12 +6,12 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import appState from '../flux/app-state';
+import { reorderTags } from '../state/domain/tags';
 import { tracks } from '../analytics';
 
 const {
   editTags,
   renameTag,
-  reorderTags,
   selectTagAndSelectFirstNote,
   trashTag,
 } = appState.actionCreators;
@@ -25,7 +25,7 @@ export class TagList extends Component {
     onEditTags: PropTypes.func.isRequired,
     onRenameTag: PropTypes.func.isRequired,
     onTrashTag: PropTypes.func.isRequired,
-    onReorderTags: PropTypes.func.isRequired,
+    reorderTags: PropTypes.func.isRequired,
     tags: PropTypes.array.isRequired,
   };
 
@@ -49,6 +49,8 @@ export class TagList extends Component {
       />
     );
   };
+
+  onReorderTags = tags => this.props.reorderTags({ tags });
 
   onSelectTag = (tag, event) => {
     if (!this.props.editingTags) {
@@ -85,7 +87,7 @@ export class TagList extends Component {
           editing={editingTags}
           renderItem={this.renderItem}
           onRemove={this.props.onTrashTag}
-          onReorder={this.props.onReorderTags}
+          onReorder={this.onReorderTags}
           selectedTag={this.props.selectedTag}
         />
       </div>
@@ -110,13 +112,6 @@ const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
         tagBucket,
       })
     ),
-  onReorderTags: tags =>
-    dispatch(
-      reorderTags({
-        tags,
-        tagBucket,
-      })
-    ),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
     recordEvent('list_tag_viewed');
@@ -131,6 +126,7 @@ const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
     );
     recordEvent('list_tag_deleted');
   },
+  reorderTags: arg => dispatch(reorderTags(arg)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagList);
