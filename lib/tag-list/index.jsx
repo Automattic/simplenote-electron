@@ -6,14 +6,10 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import appState from '../flux/app-state';
-import { renameTag, reorderTags } from '../state/domain/tags';
+import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { tracks } from '../analytics';
 
-const {
-  editTags,
-  selectTagAndSelectFirstNote,
-  trashTag,
-} = appState.actionCreators;
+const { editTags, selectTagAndSelectFirstNote } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 export class TagList extends Component {
@@ -22,10 +18,10 @@ export class TagList extends Component {
   static propTypes = {
     onSelectTag: PropTypes.func.isRequired,
     onEditTags: PropTypes.func.isRequired,
-    onTrashTag: PropTypes.func.isRequired,
     renameTag: PropTypes.func.isRequired,
     reorderTags: PropTypes.func.isRequired,
     tags: PropTypes.array.isRequired,
+    trashTag: PropTypes.func.isRequired,
   };
 
   renderItem = tag => {
@@ -60,6 +56,11 @@ export class TagList extends Component {
     }
   };
 
+  onTrashTag = tag => {
+    this.props.trashTag({ tag });
+    recordEvent('list_tag_deleted');
+  };
+
   render() {
     const { editingTags, onEditTags, tags } = this.props;
 
@@ -86,7 +87,7 @@ export class TagList extends Component {
           items={tags}
           editing={editingTags}
           renderItem={this.renderItem}
-          onRemove={this.props.onTrashTag}
+          onRemove={this.onTrashTag}
           onReorder={this.onReorderTags}
           selectedTag={this.props.selectedTag}
         />
@@ -101,24 +102,15 @@ const mapStateToProps = ({ appState: state }) => ({
   tags: state.tags,
 });
 
-const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
+const mapDispatchToProps = dispatch => ({
   onEditTags: () => dispatch(editTags()),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
     recordEvent('list_tag_viewed');
   },
-  onTrashTag: tag => {
-    dispatch(
-      trashTag({
-        noteBucket,
-        tag,
-        tagBucket,
-      })
-    );
-    recordEvent('list_tag_deleted');
-  },
   renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),
+  trashTag: arg => dispatch(trashTag(arg)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagList);
