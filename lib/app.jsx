@@ -65,7 +65,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
 
   const thenReloadTags = action => a => {
     dispatch(action(a));
-    loadTags();
+    dispatch(loadTags());
   };
 
   return {
@@ -85,6 +85,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       ]),
       dispatch
     ),
+    loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
@@ -119,6 +120,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       client: PropTypes.object.isRequired,
       isDevConfig: PropTypes.bool.isRequired,
       isSmallScreen: PropTypes.bool.isRequired,
+      loadTags: PropTypes.func.isRequired,
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
@@ -159,9 +161,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
-        .on('index', loadTags)
-        .on('update', debounce(loadTags, 200))
-        .on('remove', loadTags);
+        .on('index', this.props.loadTags)
+        .on('update', debounce(this.props.loadTags, 200))
+        .on('remove', this.props.loadTags);
 
       this.props.client
         .on('authorized', this.onAuthChanged)
@@ -279,7 +281,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       // 'Kick' the app to ensure content is loaded after signing in
       this.onNotesIndex();
-      loadTags();
+      this.props.loadTags();
     };
 
     onNotesIndex = () =>

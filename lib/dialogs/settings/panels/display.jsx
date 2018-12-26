@@ -9,15 +9,15 @@ import ToggleGroup from '../../toggle-settings-group';
 
 import appState from '../../../flux/app-state';
 import * as settingsActions from '../../../state/settings/actions';
+import { loadTags } from '../../../state/domain/tags';
 
 const DisplayPanel = props => {
   const {
     actions,
     activeTheme,
-    buckets: { noteBucket, tagBucket },
+    buckets: { noteBucket },
     lineLength,
     loadNotes,
-    loadTags,
     noteDisplay,
     sortIsReversed,
     sortTagsAlpha,
@@ -88,7 +88,7 @@ const DisplayPanel = props => {
         activeSlug={sortTagsAlpha ? 'alpha' : ''}
         onChange={withCallback({
           action: actions.toggleSortTagsAlpha,
-          callback: () => loadTags(tagBucket),
+          callback: props.loadTags,
         })}
         renderer={ToggleGroup}
       >
@@ -114,7 +114,6 @@ DisplayPanel.propTypes = {
   activeTheme: PropTypes.string.isRequired,
   buckets: PropTypes.shape({
     noteBucket: PropTypes.object.isRequired,
-    tagBucket: PropTypes.object.isRequired,
   }),
   lineLength: PropTypes.string.isRequired,
   loadNotes: PropTypes.func.isRequired,
@@ -137,11 +136,11 @@ const mapStateToProps = ({ settings }) => {
 };
 
 const mapDispatchToProps = dispatch => {
-  const { loadNotes, loadTags } = appState.actionCreators;
+  const { loadNotes } = appState.actionCreators;
   return {
     actions: bindActionCreators(settingsActions, dispatch),
     loadNotes: noteBucket => dispatch(loadNotes({ noteBucket })),
-    loadTags: tagBucket => dispatch(loadTags({ tagBucket })),
+    loadTags: () => dispatch(loadTags()),
   };
 };
 
