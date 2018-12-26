@@ -51,6 +51,10 @@
     background: none;
     appearance: none;
 
+    &.is-selected {
+      color: $blue;
+    }
+
     &:focus {
       outline: none;
     }

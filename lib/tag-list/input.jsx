@@ -20,7 +20,7 @@ export class TagListInput extends Component {
     const { editable, isSelected, onClick, onDone } = this.props;
     const { value } = this.state;
     const classes = classNames('tag-list-input', 'theme-color-fg', {
-      active: isSelected,
+      'is-selected': isSelected,
     });
 
     return (
