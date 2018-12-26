@@ -6,12 +6,11 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import appState from '../flux/app-state';
-import { reorderTags } from '../state/domain/tags';
+import { renameTag, reorderTags } from '../state/domain/tags';
 import { tracks } from '../analytics';
 
 const {
   editTags,
-  renameTag,
   selectTagAndSelectFirstNote,
   trashTag,
 } = appState.actionCreators;
@@ -23,20 +22,21 @@ export class TagList extends Component {
   static propTypes = {
     onSelectTag: PropTypes.func.isRequired,
     onEditTags: PropTypes.func.isRequired,
-    onRenameTag: PropTypes.func.isRequired,
     onTrashTag: PropTypes.func.isRequired,
+    renameTag: PropTypes.func.isRequired,
     reorderTags: PropTypes.func.isRequired,
     tags: PropTypes.array.isRequired,
   };
 
   renderItem = tag => {
-    const { onRenameTag, selectedTag } = this.props;
+    const { selectedTag } = this.props;
     const isSelected = tag.data.name === get(selectedTag, 'data.name', '');
     const classes = classNames('tag-list-input', 'theme-color-fg', {
       active: isSelected,
     });
 
-    const handleRenameTag = ({ target: { value } }) => onRenameTag(tag, value);
+    const handleRenameTag = ({ target: { value } }) =>
+      this.props.renameTag({ tag, name: value });
 
     return (
       <input
@@ -103,15 +103,6 @@ const mapStateToProps = ({ appState: state }) => ({
 
 const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
   onEditTags: () => dispatch(editTags()),
-  onRenameTag: (tag, name) =>
-    dispatch(
-      renameTag({
-        name,
-        noteBucket,
-        tag,
-        tagBucket,
-      })
-    ),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
     recordEvent('list_tag_viewed');
@@ -126,6 +117,7 @@ const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
     );
     recordEvent('list_tag_deleted');
   },
+  renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),
 });
 
