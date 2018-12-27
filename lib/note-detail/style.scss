@@ -139,6 +139,10 @@
     border-top: 1px solid lighten($gray, 20%);
   }
 
+  a {
+    cursor: pointer;
+  }
+
   blockquote {
     font-style: italic;
     border-left: 4px solid lighten($gray, 20%);
