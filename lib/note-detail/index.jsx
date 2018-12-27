@@ -132,11 +132,18 @@ export class NoteDetail extends Component {
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
   onPreviewClick = event => {
-    // open markdown preview links in a new window
     for (let node = event.target; node !== null; node = node.parentNode) {
+      // open markdown preview links in a new window
       if (node.tagName === 'A') {
         event.preventDefault();
         viewExternalUrl(node.href);
+        break;
+      }
+      // handle task list items
+      if (node.className === 'task-list-item') {
+        event.preventDefault();
+        // TODO
+        console.log('task list item clicked');
         break;
       }
     }
