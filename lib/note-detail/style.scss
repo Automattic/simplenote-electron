@@ -146,6 +146,20 @@
     padding-left: 1em;
   }
 
+  $ul-padding-left: 1.4em;
+
+  ul {
+    padding-left: $ul-padding-left;
+  }
+
+  .task-list-item {
+    margin-left: -#{$ul-padding-left};
+
+    input {
+      margin-right: 4px;
+    }
+  }
+
   code {
     font-size: 85%;
     background: $gray-lightest;
