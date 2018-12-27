@@ -114,7 +114,7 @@
 .note-detail-markdown {
   @import '../node_modules/highlight.js/styles/solarized-light.css';
 
-  user-select: auto;
+  user-select: text;
 
   h1,
   h2,
