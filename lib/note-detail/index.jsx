@@ -10,7 +10,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
-import toggleTaskInNote from './toggle-task-in-note';
+import toggleTask from './toggle-task';
 
 const saveDelay = 2000;
 
@@ -146,9 +146,9 @@ export class NoteDetail extends Component {
       if (node.className === 'task-list-item') {
         event.preventDefault();
         const { note, noteBucket, updateNoteContent } = this.props;
-        toggleTaskInNote({
+        toggleTask({
           taskNode: node,
-          note,
+          text: note.data.content,
         })
           .then(newNoteContent => {
             updateNoteContent({ noteBucket, note, content: newNoteContent });
