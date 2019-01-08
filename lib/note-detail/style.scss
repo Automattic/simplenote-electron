@@ -152,9 +152,12 @@
     padding-left: $ul-padding-left;
   }
 
-  .task-list-item {
+  // Remove unneeded margin on root-level tasklist items
+  & > ul > .task-list-item {
     margin-left: -#{$ul-padding-left};
+  }
 
+  .task-list-item {
     // It's good to have immediate CSS feedback on click since
     // there will be a slight delay until the checkbox actually toggles
     &:active {
