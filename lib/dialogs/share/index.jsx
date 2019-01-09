@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
 import { includes, isEmpty } from 'lodash';
 
 import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
+import { updateNoteTags } from '../../state/domain/notes';
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
@@ -20,6 +22,7 @@ export class ShareDialog extends Component {
     appState: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
+    updateNoteTags: PropTypes.func.isRequired,
   };
 
   onTogglePublished = event => {
@@ -53,9 +56,7 @@ export class ShareDialog extends Component {
     this.collaboratorElement.value = '';
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1) {
-      this.props.actions.updateNoteTags({
-        noteBucket: this.props.noteBucket,
-        tagBucket: this.props.tagBucket,
+      this.props.updateNoteTags({
         note,
         tags: [...tags, collaborator],
       });
@@ -69,12 +70,7 @@ export class ShareDialog extends Component {
     let tags = (note.data && note.data.tags) || [];
     tags = tags.filter(tag => tag !== collaborator);
 
-    this.props.actions.updateNoteTags({
-      noteBucket: this.props.noteBucket,
-      tagBucket: this.props.tagBucket,
-      note,
-      tags,
-    });
+    this.props.updateNoteTags({ note, tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
@@ -229,4 +225,4 @@ export class ShareDialog extends Component {
   }
 }
 
-export default ShareDialog;
+export default connect(null, { updateNoteTags })(ShareDialog);

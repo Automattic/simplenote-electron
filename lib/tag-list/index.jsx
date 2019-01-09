@@ -6,15 +6,10 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import appState from '../flux/app-state';
+import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { tracks } from '../analytics';
 
-const {
-  editTags,
-  renameTag,
-  reorderTags,
-  selectTagAndSelectFirstNote,
-  trashTag,
-} = appState.actionCreators;
+const { editTags, selectTagAndSelectFirstNote } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 export class TagList extends Component {
@@ -23,20 +18,21 @@ export class TagList extends Component {
   static propTypes = {
     onSelectTag: PropTypes.func.isRequired,
     onEditTags: PropTypes.func.isRequired,
-    onRenameTag: PropTypes.func.isRequired,
-    onTrashTag: PropTypes.func.isRequired,
-    onReorderTags: PropTypes.func.isRequired,
+    renameTag: PropTypes.func.isRequired,
+    reorderTags: PropTypes.func.isRequired,
     tags: PropTypes.array.isRequired,
+    trashTag: PropTypes.func.isRequired,
   };
 
   renderItem = tag => {
-    const { onRenameTag, selectedTag } = this.props;
+    const { selectedTag } = this.props;
     const isSelected = tag.data.name === get(selectedTag, 'data.name', '');
     const classes = classNames('tag-list-input', 'theme-color-fg', {
       active: isSelected,
     });
 
-    const handleRenameTag = ({ target: { value } }) => onRenameTag(tag, value);
+    const handleRenameTag = ({ target: { value } }) =>
+      this.props.renameTag({ tag, name: value });
 
     return (
       <input
@@ -50,12 +46,19 @@ export class TagList extends Component {
     );
   };
 
+  onReorderTags = tags => this.props.reorderTags({ tags });
+
   onSelectTag = (tag, event) => {
     if (!this.props.editingTags) {
       event.preventDefault();
       event.currentTarget.blur();
       this.props.onSelectTag(tag);
     }
+  };
+
+  onTrashTag = tag => {
+    this.props.trashTag({ tag });
+    recordEvent('list_tag_deleted');
   };
 
   render() {
@@ -84,8 +87,8 @@ export class TagList extends Component {
           items={tags}
           editing={editingTags}
           renderItem={this.renderItem}
-          onRemove={this.props.onTrashTag}
-          onReorder={this.props.onReorderTags}
+          onRemove={this.onTrashTag}
+          onReorder={this.onReorderTags}
           selectedTag={this.props.selectedTag}
         />
       </div>
@@ -99,38 +102,15 @@ const mapStateToProps = ({ appState: state }) => ({
   tags: state.tags,
 });
 
-const mapDispatchToProps = (dispatch, { noteBucket, tagBucket }) => ({
+const mapDispatchToProps = dispatch => ({
   onEditTags: () => dispatch(editTags()),
-  onRenameTag: (tag, name) =>
-    dispatch(
-      renameTag({
-        name,
-        noteBucket,
-        tag,
-        tagBucket,
-      })
-    ),
-  onReorderTags: tags =>
-    dispatch(
-      reorderTags({
-        tags,
-        tagBucket,
-      })
-    ),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
     recordEvent('list_tag_viewed');
   },
-  onTrashTag: tag => {
-    dispatch(
-      trashTag({
-        noteBucket,
-        tag,
-        tagBucket,
-      })
-    );
-    recordEvent('list_tag_deleted');
-  },
+  renameTag: arg => dispatch(renameTag(arg)),
+  reorderTags: arg => dispatch(reorderTags(arg)),
+  trashTag: arg => dispatch(trashTag(arg)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagList);

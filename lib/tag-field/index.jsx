@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Overlay } from 'react-overlays';
 import isEmailTag from '../utils/is-email-tag';
+import { updateNoteTags } from '../state/domain/notes';
 import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
@@ -26,8 +28,8 @@ export class TagField extends Component {
     storeHasFocus: PropTypes.func,
     tags: PropTypes.array.isRequired,
     unusedTags: PropTypes.arrayOf(PropTypes.string),
+    updateNoteTags: PropTypes.func.isRequired,
     usedTags: PropTypes.arrayOf(PropTypes.string),
-    onUpdateNoteTags: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -75,7 +77,7 @@ export class TagField extends Component {
       intersectionBy(allTags, newTags, s => s.toLocaleLowerCase()), // use existing case if tag known
       differenceBy(newTags, allTags, s => s.toLocaleLowerCase()) // add completely new tags
     );
-    this.props.onUpdateNoteTags(nextTagList);
+    this.updateTags(nextTagList);
     this.storeTagInput('');
     invoke(this, 'tagInput.focus');
     analytics.tracks.recordEvent('editor_tag_added');
@@ -85,10 +87,10 @@ export class TagField extends Component {
     this.state.selectedTag && !!this.state.selectedTag.length;
 
   deleteTag = tagName => {
-    const { onUpdateNoteTags, tags } = this.props;
+    const { tags } = this.props;
     const { selectedTag } = this.state;
 
-    onUpdateNoteTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
+    this.updateTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
 
     if (selectedTag === tagName) {
       this.setState({ selectedTag: '' }, () => {
@@ -128,6 +130,9 @@ export class TagField extends Component {
     this.selectLastTag();
     e.preventDefault();
   };
+
+  updateTags = tags =>
+    this.props.updateNoteTags({ note: this.props.note, tags });
 
   selectLastTag = () =>
     this.setState({ selectedTag: this.props.tags.slice(-1).shift() });
@@ -231,4 +236,4 @@ export class TagField extends Component {
   }
 }
 
-export default TagField;
+export default connect(null, { updateNoteTags })(TagField);

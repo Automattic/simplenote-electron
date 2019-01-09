@@ -7,6 +7,7 @@ import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import Slider from '../components/slider';
 import appState from '../flux/app-state';
+import { updateNoteTags } from '../state/domain/notes';
 
 const sortedRevisions = revisions =>
   orderBy(revisions, 'data.modificationDate', 'asc');
@@ -17,10 +18,10 @@ export class RevisionSelector extends Component {
     note: PropTypes.object,
     revisions: PropTypes.array.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
-    onUpdateNoteTags: PropTypes.func.isRequired,
     setRevision: PropTypes.func.isRequired,
     resetIsViewingRevisions: PropTypes.func.isRequired,
     cancelRevision: PropTypes.func.isRequired,
+    updateNoteTags: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -67,12 +68,7 @@ export class RevisionSelector extends Component {
   handleClickOutside = () => this.onCancelRevision();
 
   onAcceptRevision = () => {
-    const {
-      note,
-      onUpdateContent,
-      onUpdateNoteTags,
-      resetIsViewingRevisions,
-    } = this.props;
+    const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
     const { revisions, selection } = this.state;
     const revision = revisions[selection];
 
@@ -80,7 +76,7 @@ export class RevisionSelector extends Component {
       const { data: { content, tags } } = revision;
 
       onUpdateContent(note, content);
-      onUpdateNoteTags(note, tags);
+      this.props.updateNoteTags({ note, tags });
       resetIsViewingRevisions();
     }
     this.resetSelection();
@@ -174,6 +170,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setRevision({ revision: null }));
     dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
   },
+  updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -22,7 +22,6 @@ export class SettingsDialog extends Component {
     buckets: PropTypes.shape({
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
-      tagBucket: PropTypes.object.isRequired,
     }),
     dialog: PropTypes.shape({ title: PropTypes.string.isRequired }),
     onSignOut: PropTypes.func.isRequired,
