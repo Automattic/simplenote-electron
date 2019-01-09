@@ -150,6 +150,32 @@
     padding-left: 1em;
   }
 
+  $ul-padding-left: 1.4em;
+
+  ul {
+    padding-left: $ul-padding-left;
+  }
+
+  // Remove unneeded margin on root-level tasklist items
+  & > ul > .task-list-item {
+    margin-left: -#{$ul-padding-left};
+  }
+
+  .task-list-item {
+    // It's good to have immediate CSS feedback on click since
+    // there will be a slight delay until the checkbox actually toggles
+    &:active {
+      input {
+        transform: scale(.9);
+      }
+    }
+
+    input {
+      margin-right: 4px;
+      height: 1em;
+    }
+  }
+
   code {
     font-size: 85%;
     background: $gray-lightest;
