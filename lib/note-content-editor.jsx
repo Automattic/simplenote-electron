@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import { get, includes, invoke, noop } from 'lodash';
+import { get, includes, invoke, noop, once } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
@@ -284,6 +284,14 @@ export default class NoteContentEditor extends Component {
     return 'not-handled';
   };
 
+  // Call the designated focus() on the component when DOM node is focused
+  // programmatically, like when the focus is restored from a closing modal.
+  addFocusRedirector = once(() => {
+    document.activeElement.addEventListener('focus', () => {
+      this.editor.focus();
+    });
+  });
+
   render() {
     return (
       <Editor
@@ -293,6 +301,7 @@ export default class NoteContentEditor extends Component {
         stripPastedStyles
         onChange={this.handleEditorStateChange}
         editorState={this.state.editorState}
+        onFocus={this.addFocusRedirector}
         onTab={this.onTab}
         handleReturn={this.handleReturn}
       />
