@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import { get, includes, invoke, noop } from 'lodash';
+import { compact, get, includes, invoke, noop } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
+import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
+import checkboxDecorator from './editor/checkbox-decorator';
 
 function plainTextContent(editorState) {
   return editorState.getCurrentContent().getPlainText('\n');
@@ -139,6 +141,18 @@ function continueList(editorState, listItemMatch) {
   );
 }
 
+function createNewEditorState(text, filter) {
+  return EditorState.createWithContent(
+    ContentState.createFromText(text, '\n'),
+    new MultiDecorator(
+      compact([
+        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+        checkboxDecorator,
+      ])
+    )
+  );
+}
+
 export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
@@ -155,11 +169,7 @@ export default class NoteContentEditor extends Component {
   };
 
   state = {
-    editorState: EditorState.createWithContent(
-      ContentState.createFromText(this.props.content, '\n'),
-      filterHasText(this.props.filter) &&
-        matchingTextDecorator(searchPattern(this.props.filter))
-    ),
+    editorState: createNewEditorState(this.props.content, this.props.filter),
   };
 
   editorKey = 0;
@@ -211,11 +221,7 @@ export default class NoteContentEditor extends Component {
       return; // identical to rendered content
     }
 
-    let newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(newContent, '\n'),
-      filterHasText(nextFilter) &&
-        matchingTextDecorator(searchPattern(nextFilter))
-    );
+    let newEditorState = createNewEditorState(newContent, nextFilter);
 
     // avoids weird caret position if content is changed
     // while the editor had focus, see
