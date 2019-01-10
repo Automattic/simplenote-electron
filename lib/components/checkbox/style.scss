@@ -1,5 +1,13 @@
 .checkbox {
   line-height: 1;
+
+  &[aria-checked="true"] {
+    opacity: .7;
+  }
+
+  &[aria-checked="false"] {
+    opacity: .4;
+  }
 }
 
 .checkbox__icon {
