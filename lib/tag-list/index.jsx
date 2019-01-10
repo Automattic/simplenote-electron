@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
+import TagListInput from './input';
 import appState from '../flux/app-state';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { tracks } from '../analytics';
@@ -16,32 +17,30 @@ export class TagList extends Component {
   static displayName = 'TagList';
 
   static propTypes = {
+    editingTags: PropTypes.bool.isRequired,
     onSelectTag: PropTypes.func.isRequired,
     onEditTags: PropTypes.func.isRequired,
     renameTag: PropTypes.func.isRequired,
     reorderTags: PropTypes.func.isRequired,
+    selectedTag: PropTypes.object,
     tags: PropTypes.array.isRequired,
     trashTag: PropTypes.func.isRequired,
   };
 
   renderItem = tag => {
-    const { selectedTag } = this.props;
+    const { editingTags, selectedTag } = this.props;
     const isSelected = tag.data.name === get(selectedTag, 'data.name', '');
-    const classes = classNames('tag-list-input', 'theme-color-fg', {
-      active: isSelected,
-    });
 
     const handleRenameTag = ({ target: { value } }) =>
       this.props.renameTag({ tag, name: value });
 
     return (
-      <input
-        className={classes}
-        readOnly={!this.props.editingTags}
+      <TagListInput
+        editable={editingTags}
+        isSelected={isSelected}
         onClick={this.onSelectTag.bind(this, tag)}
+        onDone={handleRenameTag}
         value={tag.data.name}
-        onChange={handleRenameTag}
-        spellCheck={false}
       />
     );
   };
@@ -89,7 +88,6 @@ export class TagList extends Component {
           renderItem={this.renderItem}
           onRemove={this.onTrashTag}
           onReorder={this.onReorderTags}
-          selectedTag={this.props.selectedTag}
         />
       </div>
     );
@@ -98,8 +96,8 @@ export class TagList extends Component {
 
 const mapStateToProps = ({ appState: state }) => ({
   editingTags: state.editingTags,
-  selectedTag: state.tag,
   tags: state.tags,
+  selectedTag: state.tag,
 });
 
 const mapDispatchToProps = dispatch => ({
