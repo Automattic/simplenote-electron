@@ -7,6 +7,7 @@ import { filterHasText, searchPattern } from './utils/filter-notes';
 import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
+import { taskRegex } from './note-detail/toggle-task/constants';
 
 function plainTextContent(editorState) {
   return editorState.getCurrentContent().getPlainText('\n');
@@ -17,7 +18,8 @@ function getCurrentBlock(editorState) {
   return editorState.getCurrentContent().getBlockForKey(key);
 }
 
-const isLonelyBullet = line => includes(['-', '*', '+'], line.trim());
+const isLonelyBullet = line =>
+  includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
 
 function indentCurrentBlock(editorState) {
   const selection = editorState.getSelection();
@@ -112,7 +114,7 @@ function finishList(editorState) {
   );
 }
 
-function continueList(editorState, listItemMatch) {
+function continueList(editorState, itemPrefix) {
   // create a new line
   const withNewLine = EditorState.push(
     editorState,
@@ -129,7 +131,7 @@ function continueList(editorState, listItemMatch) {
     Modifier.insertText(
       withNewLine.getCurrentContent(),
       withNewLine.getCurrentContent().getSelectionAfter(),
-      listItemMatch[0]
+      itemPrefix
     ),
     'insert-characters'
   );
@@ -297,8 +299,14 @@ export default class NoteContentEditor extends Component {
     }
 
     const listItemMatch = line.match(listItemRe);
-    if (listItemMatch) {
-      this.handleEditorStateChange(continueList(editorState, listItemMatch));
+    const taskItemMatch = line.match(taskRegex);
+
+    if (taskItemMatch) {
+      const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
+      this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
+      return 'handled';
+    } else if (listItemMatch) {
+      this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
       return 'handled';
     }
 
