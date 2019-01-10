@@ -234,7 +234,6 @@ const renderNote = (
   const note = notes['undefined' === typeof index ? rowIndex : index];
   const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
-  const showPublishIcon = isPublished && 'condensed' !== noteDisplay;
 
   const classes = classNames('note-list-item', {
     'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
@@ -270,7 +269,7 @@ const renderNote = (
       >
         <div className="note-list-item-title">
           <span>{matchify(titleSplits)}</span>
-          {showPublishIcon && (
+          {isPublished && (
             <div className="note-list-item-published-icon">
               <PublishIcon />
             </div>

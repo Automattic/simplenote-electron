@@ -113,7 +113,7 @@
   }
 
   .note-list-item-published-icon {
-    margin-left: auto;
+    margin-left: 4px;
     margin-right: 10px;
 
     & svg {
@@ -125,6 +125,7 @@
 
   .note-list-item-title {
     display: flex;
+    justify-content: space-between;
     font-size: 16px;
 
     & span {
