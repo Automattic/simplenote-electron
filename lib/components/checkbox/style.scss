@@ -1,8 +1,5 @@
 .checkbox {
-  position: relative;
-  display: inline-block;
   line-height: 1;
-  vertical-align: baseline;
 }
 
 .checkbox__icon {
@@ -14,10 +11,4 @@
     width: 1.3em;
     height: 1.3em;
   }
-}
-
-.checkbox__input {
-  position: absolute;
-  left: 0;
-  opacity: 0;
 }

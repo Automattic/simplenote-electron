@@ -5,18 +5,19 @@ import CheckmarkIcon from '../../icons/checkmark';
 import CircleIcon from '../../icons/circle';
 
 const Checkbox = ({ checked = false, onChange }) => {
+  // A custom checkbox with an ARIA role is used here to work around a bug in
+  // DraftJS, where using a hidden <input type="checkbox"> will trigger a error.
   return (
-    <div className="checkbox">
-      <div className="checkbox__icon" aria-hidden="true">
+    <span
+      className="checkbox"
+      role="checkbox"
+      aria-checked={checked}
+      onClick={onChange}
+    >
+      <span className="checkbox__icon" aria-hidden="true">
         {checked ? <CheckmarkIcon /> : <CircleIcon />}
-      </div>
-      <input
-        checked={checked}
-        className="checkbox__input"
-        onChange={onChange}
-        type="checkbox"
-      />
-    </div>
+      </span>
+    </span>
   );
 };
 
