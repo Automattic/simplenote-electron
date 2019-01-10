@@ -141,18 +141,6 @@ function continueList(editorState, listItemMatch) {
   );
 }
 
-function createNewEditorState(text, filter) {
-  return EditorState.createWithContent(
-    ContentState.createFromText(text, '\n'),
-    new MultiDecorator(
-      compact([
-        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
-        checkboxDecorator,
-      ])
-    )
-  );
-}
-
 export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
@@ -168,8 +156,35 @@ export default class NoteContentEditor extends Component {
     storeHasFocus: noop,
   };
 
+  replaceRangeWithText = (rangeToReplace, newText) => {
+    const { editorState } = this.state;
+    const newContentState = Modifier.replaceText(
+      editorState.getCurrentContent(),
+      rangeToReplace,
+      newText
+    );
+    this.handleEditorStateChange(
+      EditorState.push(editorState, newContentState, 'replace-text')
+    );
+  };
+
+  createNewEditorState = (text, filter) => {
+    return EditorState.createWithContent(
+      ContentState.createFromText(text, '\n'),
+      new MultiDecorator(
+        compact([
+          filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+          checkboxDecorator(this.replaceRangeWithText),
+        ])
+      )
+    );
+  };
+
   state = {
-    editorState: createNewEditorState(this.props.content, this.props.filter),
+    editorState: this.createNewEditorState(
+      this.props.content,
+      this.props.filter
+    ),
   };
 
   editorKey = 0;
@@ -221,7 +236,7 @@ export default class NoteContentEditor extends Component {
       return; // identical to rendered content
     }
 
-    let newEditorState = createNewEditorState(newContent, nextFilter);
+    let newEditorState = this.createNewEditorState(newContent, nextFilter);
 
     // avoids weird caret position if content is changed
     // while the editor had focus, see
