@@ -3,20 +3,12 @@ import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
+import { getCurrentBlock, plainTextContent } from './editor/utils';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
 import { taskRegex } from './note-detail/toggle-task/constants';
-
-function plainTextContent(editorState) {
-  return editorState.getCurrentContent().getPlainText('\n');
-}
-
-function getCurrentBlock(editorState) {
-  const key = editorState.getSelection().getFocusKey();
-  return editorState.getCurrentContent().getBlockForKey(key);
-}
 
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
