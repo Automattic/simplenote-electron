@@ -293,6 +293,9 @@ export default class NoteContentEditor extends Component {
     const { editorState } = this.state;
     const line = getCurrentBlock(editorState).getText();
 
+    const { anchorOffset, focusOffset } = editorState.getSelection();
+    const atBeginningOfLine = anchorOffset === 0 && focusOffset === 0;
+
     if (isLonelyBullet(line)) {
       this.handleEditorStateChange(finishList(editorState));
       return 'handled';
@@ -305,7 +308,7 @@ export default class NoteContentEditor extends Component {
       const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
       this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
       return 'handled';
-    } else if (listItemMatch) {
+    } else if (listItemMatch && !atBeginningOfLine) {
       this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
       return 'handled';
     }
