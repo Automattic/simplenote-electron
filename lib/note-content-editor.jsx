@@ -8,6 +8,7 @@ import { filterHasText, searchPattern } from './utils/filter-notes';
 import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
+import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
 
 const isLonelyBullet = line =>
@@ -188,21 +189,6 @@ export default class NoteContentEditor extends Component {
     this.props.storeHasFocus(this.hasFocus);
   }
 
-  componentDidUpdate(prevProps) {
-    // To immediately reflect the changes to the spell check setting,
-    // we must remount the Editor and force update. The remount is
-    // done by changing the `key` prop on the Editor.
-    // https://stackoverflow.com/questions/35792275/
-    if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
-      this.editorKey += 1;
-      this.forceUpdate();
-    }
-  }
-
-  saveEditorRef = ref => {
-    this.editor = ref;
-  };
-
   handleEditorStateChange = editorState => {
     if (editorState === this.state.editorState) {
       return;
@@ -217,6 +203,31 @@ export default class NoteContentEditor extends Component {
         : noop;
 
     this.setState({ editorState }, announceChanges);
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    // To immediately reflect the changes to the spell check setting,
+    // we must remount the Editor and force update. The remount is
+    // done by changing the `key` prop on the Editor.
+    // https://stackoverflow.com/questions/35792275/
+    if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
+      this.editorKey += 1;
+      this.forceUpdate();
+    }
+
+    const { editorState } = this.state;
+    const { editorState: prevEditorState } = prevState;
+
+    if (shouldRemoveCheckbox(editorState, prevEditorState)) {
+      const newContentState = removeCheckbox(editorState, prevEditorState);
+      this.handleEditorStateChange(
+        EditorState.push(editorState, newContentState, 'remove-range')
+      );
+    }
+  }
+
+  saveEditorRef = ref => {
+    this.editor = ref;
   };
 
   componentWillReceiveProps({ content: newContent, filter: nextFilter }) {
