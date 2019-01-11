@@ -190,22 +190,35 @@ export default class NoteContentEditor extends Component {
   }
 
   handleEditorStateChange = editorState => {
-    if (editorState === this.state.editorState) {
+    const { editorState: prevEditorState } = this.state;
+
+    if (editorState === prevEditorState) {
       return;
     }
 
-    const nextContent = plainTextContent(editorState);
-    const prevContent = plainTextContent(this.state.editorState);
+    let newEditorState = editorState;
+
+    if (shouldRemoveCheckbox(editorState, prevEditorState)) {
+      const newContentState = removeCheckbox(editorState, prevEditorState);
+      newEditorState = EditorState.push(
+        editorState,
+        newContentState,
+        'remove-range'
+      );
+    }
+
+    const nextContent = plainTextContent(newEditorState);
+    const prevContent = plainTextContent(prevEditorState);
 
     const announceChanges =
       nextContent !== prevContent
         ? () => this.props.onChangeContent(nextContent)
         : noop;
 
-    this.setState({ editorState }, announceChanges);
+    this.setState({ editorState: newEditorState }, announceChanges);
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
     // done by changing the `key` prop on the Editor.
@@ -213,16 +226,6 @@ export default class NoteContentEditor extends Component {
     if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
       this.editorKey += 1;
       this.forceUpdate();
-    }
-
-    const { editorState } = this.state;
-    const { editorState: prevEditorState } = prevState;
-
-    if (shouldRemoveCheckbox(editorState, prevEditorState)) {
-      const newContentState = removeCheckbox(editorState, prevEditorState);
-      this.handleEditorStateChange(
-        EditorState.push(editorState, newContentState, 'remove-range')
-      );
     }
   }
 
