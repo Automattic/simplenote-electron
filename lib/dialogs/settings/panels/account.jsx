@@ -6,6 +6,7 @@ import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 import TopRightArrowIcon from '../../../icons/arrow-top-right';
 
+import getConfig from '../../../../get-config';
 import { viewExternalUrl } from '../../../utils/url-utils';
 
 const AccountPanel = props => {
@@ -16,8 +17,10 @@ const AccountPanel = props => {
     toggleShareAnalyticsPreference,
   } = props;
 
-  const onEditAccount = () =>
-    viewExternalUrl('https://app.simplenote.com/settings');
+  const onEditAccount = () => {
+    const source = getConfig().is_app_engine ? 'react' : 'electron';
+    viewExternalUrl(`https://app.simplenote.com/settings?from=${source}`);
+  };
 
   return (
     <div className="settings-account">
