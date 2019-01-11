@@ -10,6 +10,10 @@
       width: 0;
       transition: width .2s ease-in-out, opacity .2s ease-in-out;
     }
+    .theme-color-border {
+      border-left-width: 0px;
+      transition: border-left-width .2s;
+    }
   }
 
   &.is-navigation-open {
