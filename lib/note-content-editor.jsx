@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
-import { getCurrentBlock, plainTextContent } from './editor/utils';
+import {
+  getCurrentBlock,
+  getSelectedText,
+  plainTextContent,
+} from './editor/utils';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
@@ -331,18 +335,33 @@ export default class NoteContentEditor extends Component {
     return 'not-handled';
   };
 
+  /**
+   * Copy the raw text as determined by the DraftJS SelectionState.
+   *
+   * By not relying on the browser's interpretation of the contenteditable
+   * selection, this allows for the clipboard data to more accurately reflect
+   * the internal plain text data.
+   */
+  copyPlainText = event => {
+    const textToCopy = getSelectedText(this.state.editorState);
+    event.clipboardData.setData('text/plain', textToCopy);
+    event.preventDefault();
+  };
+
   render() {
     return (
-      <Editor
-        key={this.editorKey}
-        ref={this.saveEditorRef}
-        spellCheck={this.props.spellCheckEnabled}
-        stripPastedStyles
-        onChange={this.handleEditorStateChange}
-        editorState={this.state.editorState}
-        onTab={this.onTab}
-        handleReturn={this.handleReturn}
-      />
+      <div onCopy={this.copyPlainText} onCut={this.copyPlainText}>
+        <Editor
+          key={this.editorKey}
+          ref={this.saveEditorRef}
+          spellCheck={this.props.spellCheckEnabled}
+          stripPastedStyles
+          onChange={this.handleEditorStateChange}
+          editorState={this.state.editorState}
+          onTab={this.onTab}
+          handleReturn={this.handleReturn}
+        />
+      </div>
     );
   }
 }
