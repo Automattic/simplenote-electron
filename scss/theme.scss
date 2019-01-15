@@ -138,6 +138,10 @@
     .note-list-item-excerpt {
       color: lighten($gray, 9.9%);
     }
+
+    &.note-list-item-selected .note-list-item-excerpt {
+      color: $blue;
+    }
   }
 
   .note-detail-markdown {
