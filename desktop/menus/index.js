@@ -1,4 +1,4 @@
-const platform = require('../platform');
+const platform = require('../detect/platform');
 
 const macAppMenu = require('./mac-app-menu');
 const fileMenu = require('./file-menu');

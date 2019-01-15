@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-const platform = require('../platform');
+const platform = require('../detect/platform');
 const config = require('../config');
 const AutoUpdater = require('./auto-updater');
 const ManualUpdater = require('./manual-updater');

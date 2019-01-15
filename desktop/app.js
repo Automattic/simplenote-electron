@@ -14,7 +14,7 @@ const windowStateKeeper = require('electron-window-state');
 
 const config = require('./config');
 const createMenuTemplate = require('./menus');
-const platform = require('./platform');
+const platform = require('./detect/platform');
 const updater = require('./updater');
 const { isDev } = require('./env');
 

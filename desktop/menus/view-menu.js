@@ -1,5 +1,5 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
-const platform = require('../platform');
+const platform = require('../detect/platform');
 
 const buildViewMenu = settings => {
   settings = settings || {};
