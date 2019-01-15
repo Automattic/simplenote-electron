@@ -293,8 +293,13 @@ export default class NoteContentEditor extends Component {
     const { editorState } = this.state;
     const line = getCurrentBlock(editorState).getText();
 
-    const { anchorOffset, focusOffset } = editorState.getSelection();
-    const atBeginningOfLine = anchorOffset === 0 && focusOffset === 0;
+    const firstCharIndex = line.search(/\S/);
+    const caretIsCollapsedAt = index => {
+      const { anchorOffset, focusOffset } = editorState.getSelection();
+      return anchorOffset === index && focusOffset === index;
+    };
+    const atBeginningOfLine =
+      caretIsCollapsedAt(0) || caretIsCollapsedAt(firstCharIndex);
 
     if (isLonelyBullet(line)) {
       this.handleEditorStateChange(finishList(editorState));
