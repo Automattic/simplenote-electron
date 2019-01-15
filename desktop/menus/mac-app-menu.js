@@ -6,6 +6,7 @@ const macAppMenu = {
   label: app.getName(),
   submenu: [
     menuItems.about,
+    menuItems.checkForUpdates,
     { type: 'separator' },
     menuItems.preferences,
     { type: 'separator' },
