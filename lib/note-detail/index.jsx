@@ -200,7 +200,7 @@ export class NoteDetail extends Component {
     });
 
     return (
-      <div className="note-detail-wrapper theme-color-border">
+      <div className="note-detail-wrapper">
         {!note ? (
           <div className="note-detail-placeholder">
             <SimplenoteCompactLogo />
