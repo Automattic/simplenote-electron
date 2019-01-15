@@ -301,7 +301,11 @@ export default class NoteContentEditor extends Component {
     const atBeginningOfLine =
       caretIsCollapsedAt(0) || caretIsCollapsedAt(firstCharIndex);
 
-    if (isLonelyBullet(line) && !atBeginningOfLine) {
+    if (atBeginningOfLine) {
+      return 'not-handled';
+    }
+
+    if (isLonelyBullet(line)) {
       this.handleEditorStateChange(finishList(editorState));
       return 'handled';
     }
@@ -313,7 +317,7 @@ export default class NoteContentEditor extends Component {
       const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
       this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
       return 'handled';
-    } else if (listItemMatch && !atBeginningOfLine) {
+    } else if (listItemMatch) {
       this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
       return 'handled';
     }
