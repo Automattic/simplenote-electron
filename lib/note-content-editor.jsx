@@ -301,7 +301,7 @@ export default class NoteContentEditor extends Component {
     const atBeginningOfLine =
       caretIsCollapsedAt(0) || caretIsCollapsedAt(firstCharIndex);
 
-    if (isLonelyBullet(line)) {
+    if (isLonelyBullet(line) && !atBeginningOfLine) {
       this.handleEditorStateChange(finishList(editorState));
       return 'handled';
     }
