@@ -92,7 +92,7 @@
     color: lighten($gray, 45%);
   }
 
-  .dialog-tabs button {
+  .tab-panels__tab-list li {
     color: lighten($gray, 10%);
 
     &.dialog-tab-active {
