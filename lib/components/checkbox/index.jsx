@@ -13,6 +13,7 @@ const Checkbox = ({ checked = false, onChange }) => {
       role="checkbox"
       aria-checked={checked}
       onClick={onChange}
+      tabIndex="0"
     >
       <span className="checkbox__icon" aria-hidden="true">
         {checked ? <CheckmarkIcon /> : <CircleIcon />}
