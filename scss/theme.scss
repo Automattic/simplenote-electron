@@ -15,7 +15,10 @@
     color: darken($gray, 20%);
   }
   .theme-color-border {
-    border-color: lighten($gray, 30%);
+    border-color: lighten($gray, 40%);
+  }
+  .search-field {
+    border-color: lighten($gray, 40%);
   }
 }
 
@@ -30,17 +33,17 @@
     background-color: darken($gray, 20%);
   }
   .theme-color-fg {
-    color: lighten($gray, 30%);
+    color: lighten($gray, 45%);
   }
   .theme-color-fg-dim {
-    color: lighten($gray, 20%);
+    color: lighten($gray, 9.9%);
   }
   .theme-color-border {
-    border-color: darken($gray, 25%);
+    border-color: darken($gray, 30%);
   }
 
   .search-field {
-    border-color: darken($gray, 25%);
+    border-color: darken($gray, 30%);
   }
 
   ::-webkit-scrollbar-thumb {
@@ -85,6 +88,18 @@
     }
   }
 
+  .settings-group p {
+    color: lighten($gray, 45%);
+  }
+
+  .tab-panels__tab-list li {
+    color: lighten($gray, 10%);
+
+    &.is-active {
+      color: $blue;
+    }
+  }
+
   .note-list-item {
     &:hover .note-list-item-pinner {
       box-shadow: inset 0 0 0 2px darken($gray, 30%),
@@ -113,6 +128,14 @@
       &:hover {
         background: lighten($blue, 10%);
       }
+    }
+
+    .note-list-item-excerpt {
+      color: lighten($gray, 9.9%);
+    }
+
+    &.note-list-item-selected .note-list-item-excerpt {
+      color: $blue;
     }
   }
 

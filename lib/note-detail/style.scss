@@ -176,7 +176,6 @@
   }
 
   code {
-    font-size: 85%;
     background: $gray-lightest;
   }
 
@@ -184,6 +183,7 @@
     border: 1px solid lighten($gray, 20%);
     padding: 1em;
     border-radius: $border-radius;
+    font-size: 85%;
   }
 
   pre code {
