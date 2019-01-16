@@ -1,6 +1,7 @@
 .app-layout {
   display: flex;
   flex: 1 0 auto;
+  width: 100%;
 
   &.is-focus-mode.is-note-open {
     .app-layout__source-column {
@@ -8,6 +9,10 @@
       opacity: $fade-alpha;
       width: 0;
       transition: width .2s ease-in-out, opacity .2s ease-in-out;
+    }
+    .app-layout__note-column {
+      border-left-width: 0px;
+      transition: border-left-width .2s;
     }
   }
 
@@ -112,9 +117,11 @@
 }
 
 .app-layout__note-column {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+  border-left: 1px solid;
 
   @media only screen and (max-width: $single-column) {
     position: absolute;

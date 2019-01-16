@@ -43,43 +43,6 @@
   flex: 1 0 auto;
 }
 
-.dialog-tabs {
-  border-bottom: 1px solid lighten($gray, 30%);
-
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    margin: 0 0.5em;
-  }
-
-  button {
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
-    padding: 0.75em 0.75em;
-    color: darken($gray, 10%);
-    text-transform: capitalize;
-    border-radius: 0;
-  }
-
-  .dialog-tab-active {
-    color: $blue;
-    border-bottom-color: $blue;
-  }
-}
-
-.dialog-column {
-  max-width: 374px;
-  margin: 0 auto;
-  padding: 36px 10px 50px;
-}
-
 .dialog-actions {
   margin: 1em 0 0;
   padding: 0;

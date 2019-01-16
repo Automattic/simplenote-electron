@@ -10,6 +10,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
+import toggleTask from './toggle-task';
 
 const saveDelay = 2000;
 
@@ -24,12 +25,14 @@ export class NoteDetail extends Component {
     onChangeContent: PropTypes.func.isRequired,
     onNotePrinted: PropTypes.func.isRequired,
     note: PropTypes.object,
+    noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
     shouldPrint: PropTypes.bool.isRequired,
     showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
+    updateNoteContent: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -132,11 +135,25 @@ export class NoteDetail extends Component {
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
   onPreviewClick = event => {
-    // open markdown preview links in a new window
     for (let node = event.target; node !== null; node = node.parentNode) {
+      // open markdown preview links in a new window
       if (node.tagName === 'A') {
         event.preventDefault();
         viewExternalUrl(node.href);
+        break;
+      }
+      // handle task list items
+      if (node.className === 'task-list-item') {
+        event.preventDefault();
+        const { note, noteBucket, updateNoteContent } = this.props;
+        toggleTask({
+          taskNode: node,
+          text: note.data.content,
+        })
+          .then(newNoteContent => {
+            updateNoteContent({ noteBucket, note, content: newNoteContent });
+          })
+          .catch(console.log);
         break;
       }
     }
@@ -183,7 +200,7 @@ export class NoteDetail extends Component {
     });
 
     return (
-      <div className="note-detail-wrapper theme-color-border">
+      <div className="note-detail-wrapper">
         {!note ? (
           <div className="note-detail-placeholder">
             <SimplenoteCompactLogo />
@@ -194,6 +211,7 @@ export class NoteDetail extends Component {
               <div
                 ref={this.storePreview}
                 className="note-detail-markdown theme-color-bg theme-color-fg"
+                data-markdown-root
                 onClick={this.onPreviewClick}
                 style={divStyle}
               />
@@ -231,10 +249,11 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-const { setShouldPrintNote } = appState.actionCreators;
+const { setShouldPrintNote, updateNoteContent } = appState.actionCreators;
 
-const mapDispatchToProps = dispatch => ({
-  onNotePrinted: () => dispatch(setShouldPrintNote({ shouldPrint: false })),
-});
+const mapDispatchToProps = {
+  onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
+  updateNoteContent,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);

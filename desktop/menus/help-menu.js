@@ -1,7 +1,8 @@
 const { shell } = require('electron');
 
 const menuItems = require('./menu-items');
-const platform = require('../platform');
+const platform = require('../detect/platform');
+const build = require('../detect/build');
 
 const submenu = [
   {
@@ -21,7 +22,11 @@ const submenu = [
   },
 ];
 
-const defaultSubmenuAdditions = [{ type: 'separator' }, menuItems.about];
+const defaultSubmenuAdditions = [
+  { type: 'separator' },
+  ...(build.isWindowsStore() ? [] : [menuItems.checkForUpdates]),
+  menuItems.about,
+];
 
 const helpMenu = {
   label: '&Help',

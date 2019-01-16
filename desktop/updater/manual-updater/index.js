@@ -12,6 +12,7 @@ const semver = require('semver');
  * Internal dependencies
  */
 const Updater = require('../lib/Updater');
+const setupProgressUpdates = require('../lib/setup-progress-updates');
 
 class ManualUpdater extends Updater {
   constructor({ apiUrl, downloadUrl, changelogUrl, options = {} }) {
@@ -19,6 +20,13 @@ class ManualUpdater extends Updater {
 
     this.apiUrl = apiUrl;
     this.downloadUrl = downloadUrl;
+  }
+
+  // For user-initiated checks.
+  // Will check and display a progress dialog.
+  pingAndShowProgress() {
+    setupProgressUpdates({ updater: this, willAutoDownload: false });
+    this.ping();
   }
 
   async ping() {
@@ -32,6 +40,8 @@ class ManualUpdater extends Updater {
       const releaseResp = await fetch(this.apiUrl, options);
 
       if (releaseResp.status !== 200) {
+        this.emit('error');
+        console.log(releaseResp);
         return;
       }
 
@@ -47,6 +57,8 @@ class ManualUpdater extends Updater {
         );
 
         if (configResp.status !== 200) {
+          this.emit('error');
+          console.log(configResp);
           return;
         }
 
@@ -59,12 +71,14 @@ class ManualUpdater extends Updater {
             releaseConfig.version
           );
           this.setVersion(releaseConfig.version);
-          this.notify();
+          this.emit('update-available');
         } else {
+          this.emit('update-not-available');
           return;
         }
       }
     } catch (err) {
+      this.emit('error');
       console.log(err.message);
     }
   }

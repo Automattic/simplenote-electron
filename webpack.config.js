@@ -1,13 +1,14 @@
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const config = require('./get-config');
+const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
+  const config = getConfig();
 
   return {
     context: __dirname + '/lib',
@@ -20,6 +21,9 @@ module.exports = () => {
       path: __dirname + '/dist',
       filename: 'app.js',
       chunkFilename: '[name].js',
+      ...(config.is_app_engine && {
+        publicPath: config.web_app_url + '/',
+      }),
     },
     module: {
       rules: [
@@ -40,13 +44,9 @@ module.exports = () => {
         },
         {
           test: /\.jsx?$/,
-          exclude: /node_modules/,
           use: [
             {
               loader: 'babel-loader',
-              options: {
-                cacheDirectory: true,
-              },
             },
           ],
         },
@@ -99,7 +99,7 @@ module.exports = () => {
         chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
       }),
       new webpack.DefinePlugin({
-        config: JSON.stringify(config()),
+        config: JSON.stringify(config),
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     ],

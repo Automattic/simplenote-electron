@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import filterNotes from '../utils/filter-notes';
-import noteTitle from '../utils/note-utils';
+import getNoteTitleAndPreview from './get-note-title-and-preview';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -87,36 +87,6 @@ function getTextWidth(text, width) {
 /** @type {Map} stores a cache of computed row heights to prevent re-rendering the canvas calculation */
 const previewCache = new Map();
 
-/** @type {Map} stores a cache of computed note preview excerpts to prevent re-truncating note content */
-const noteCache = new Map();
-
-/**
- * Caches based on note id and note content
- *
- * @param {Function} f sets the value of the cache
- * @returns {String} note preview excerpt
- */
-const noteTitleCache = f => note => {
-  const cached = noteCache.get(note.id);
-
-  if ('undefined' === typeof cached || note.data.content !== cached[0]) {
-    noteCache.set(note.id, [note.data.content, f(note)]);
-  }
-
-  return cached ? cached[1] : noteCache.get(note.id)[1];
-};
-
-/**
- * Gets the note preview excerpt
- *
- * This is cached by the note id and content
- *
- * @function
- * @param {Object} note note object
- * @returns {String} note preview excerpt
- */
-const getNoteTitle = noteTitleCache(note => noteTitle(note).preview);
-
 /**
  * Caches based on note id, width, note display format, and note preview excerpt
  *
@@ -125,7 +95,7 @@ const getNoteTitle = noteTitleCache(note => noteTitle(note).preview);
  */
 const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
   const note = notes[index];
-  const preview = getNoteTitle(note);
+  const { preview } = getNoteTitleAndPreview(note);
 
   const key = notes[index].id;
   const cached = previewCache.get(key);
@@ -262,9 +232,8 @@ const renderNote = (
   }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
-  const { title, preview } = noteTitle(note);
+  const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
-  const showPublishIcon = isPublished && 'condensed' !== noteDisplay;
 
   const classes = classNames('note-list-item', {
     'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
@@ -300,7 +269,7 @@ const renderNote = (
       >
         <div className="note-list-item-title">
           <span>{matchify(titleSplits)}</span>
-          {showPublishIcon && (
+          {isPublished && (
             <div className="note-list-item-published-icon">
               <PublishIcon />
             </div>
@@ -347,11 +316,11 @@ export class NoteList extends Component {
     window.addEventListener('resize', this.recomputeHeights);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     if (
-      nextProps.noteDisplay !== this.props.noteDisplay ||
-      nextProps.notes !== this.props.notes ||
-      nextProps.selectedNoteContent !== this.props.selectedNoteContent
+      prevProps.noteDisplay !== this.props.noteDisplay ||
+      prevProps.notes !== this.props.notes ||
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
     }
@@ -515,7 +484,8 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
    *
    * @type {String} preview excerpt for the current note
    */
-  const selectedNoteTitle = selectedNote && getNoteTitle(selectedNote);
+  const selectedNotePreview =
+    selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
   return {
     filter: state.filter,
@@ -523,7 +493,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     noteDisplay,
     notes: filteredNotes,
     prevNote,
-    selectedNoteTitle,
+    selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash: state.showTrash,

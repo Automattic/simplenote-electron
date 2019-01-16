@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import createHash from 'create-hash/browser';
 import { includes, isEmpty } from 'lodash';
 
 import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
-import TabbedDialog from '../../tabbed-dialog';
+import { updateNoteTags } from '../../state/domain/notes';
+import Dialog from '../../dialog';
+import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
 
@@ -19,6 +22,7 @@ export class ShareDialog extends Component {
     appState: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
+    updateNoteTags: PropTypes.func.isRequired,
   };
 
   onTogglePublished = event => {
@@ -52,9 +56,7 @@ export class ShareDialog extends Component {
     this.collaboratorElement.value = '';
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1) {
-      this.props.actions.updateNoteTags({
-        noteBucket: this.props.noteBucket,
-        tagBucket: this.props.tagBucket,
+      this.props.updateNoteTags({
         note,
         tags: [...tags, collaborator],
       });
@@ -68,12 +70,7 @@ export class ShareDialog extends Component {
     let tags = (note.data && note.data.tags) || [];
     tags = tags.filter(tag => tag !== collaborator);
 
-    this.props.actions.updateNoteTags({
-      noteBucket: this.props.noteBucket,
-      tagBucket: this.props.tagBucket,
-      note,
-      tags,
-    });
+    this.props.updateNoteTags({ note, tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
@@ -101,32 +98,16 @@ export class ShareDialog extends Component {
 
   render() {
     const { dialog, requestClose } = this.props;
-
-    return (
-      <TabbedDialog
-        className="settings"
-        title="Share"
-        tabs={shareTabs}
-        onDone={requestClose}
-        renderTabName={this.renderTabName}
-        renderTabContent={this.renderTabContent}
-        {...dialog}
-      />
-    );
-  }
-
-  renderTabName = tabName => tabName;
-
-  renderTabContent = tabName => {
     const { note } = this.props.appState;
+
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
-    switch (tabName) {
-      case 'collaborate':
-        return (
-          <div className="dialog-column share-collaborate">
+    return (
+      <Dialog className="settings" title={dialog.title} onDone={requestClose}>
+        <TabPanels tabNames={shareTabs}>
+          <div>
             <div className="settings-group">
               <p>
                 Add an email address of another Simplenote user to share a note.
@@ -184,11 +165,8 @@ export class ShareDialog extends Component {
               </ul>
             </div>
           </div>
-        );
 
-      case 'publish':
-        return (
-          <div className="dialog-column share-publish">
+          <div>
             <div className="settings-group">
               <div className="settings-items theme-color-border">
                 <label
@@ -241,9 +219,10 @@ export class ShareDialog extends Component {
               </div>
             )}
           </div>
-        );
-    }
-  };
+        </TabPanels>
+      </Dialog>
+    );
+  }
 }
 
-export default ShareDialog;
+export default connect(null, { updateNoteTags })(ShareDialog);

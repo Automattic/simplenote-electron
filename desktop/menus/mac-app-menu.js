@@ -1,11 +1,13 @@
 const { app } = require('electron');
 
 const menuItems = require('./menu-items');
+const build = require('../detect/build');
 
 const macAppMenu = {
   label: app.getName(),
   submenu: [
     menuItems.about,
+    ...(build.isMAS() ? [] : [menuItems.checkForUpdates]),
     { type: 'separator' },
     menuItems.preferences,
     { type: 'separator' },

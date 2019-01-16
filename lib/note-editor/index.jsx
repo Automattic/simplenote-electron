@@ -17,9 +17,9 @@ export class NoteEditor extends Component {
     filter: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
+    noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onUpdateContent: PropTypes.func.isRequired,
-    onUpdateNoteTags: PropTypes.func.isRequired,
     revision: PropTypes.object,
     setEditorMode: PropTypes.func.isRequired,
   };
@@ -109,7 +109,7 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, fontSize } = this.props;
+    const { editorMode, note, noteBucket, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -127,6 +127,7 @@ export class NoteEditor extends Component {
           storeHasFocus={this.storeEditorHasFocus}
           filter={this.props.filter}
           note={revision}
+          noteBucket={noteBucket}
           previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
           onChangeContent={this.props.onUpdateContent}
           fontSize={fontSize}
@@ -139,7 +140,6 @@ export class NoteEditor extends Component {
               allTags={this.props.allTags.map(property('data.name'))}
               note={this.props.note}
               tags={tags}
-              onUpdateNoteTags={this.props.onUpdateNoteTags.bind(null, note)}
             />
           )}
       </div>

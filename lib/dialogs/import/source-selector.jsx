@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { reject } from 'lodash';
 
 import PanelTitle from '../../components/panel-title';
-import SourceGroup from '../source-group';
+import ButtonGroup from '../button-group';
 
 import sources from './sources';
 
@@ -11,7 +11,7 @@ const ImportSourceSelector = ({ isElectron, selectSource }) => {
   return (
     <Fragment>
       <PanelTitle headingLevel="3">Import from</PanelTitle>
-      <SourceGroup
+      <ButtonGroup
         items={
           isElectron ? sources : reject(sources, item => item.electronOnly)
         }

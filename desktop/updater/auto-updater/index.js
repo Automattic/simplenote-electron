@@ -10,6 +10,7 @@ const { autoUpdater } = require('electron-updater');
  */
 const Updater = require('../lib/Updater');
 const AppQuit = require('../../app-quit');
+const setupProgressUpdates = require('../lib/setup-progress-updates');
 
 class AutoUpdater extends Updater {
   constructor({ changelogUrl, options = {} }) {
@@ -22,7 +23,17 @@ class AutoUpdater extends Updater {
     autoUpdater.autoInstallOnAppQuit = false;
   }
 
+  // For non-user-initiated checks.
+  // Check and download in the background, and only notify the user if
+  // an update exists and has completed downloading.
   ping() {
+    autoUpdater.checkForUpdates();
+  }
+
+  // For user-initiated checks.
+  // Will check and download, displaying progress dialogs.
+  pingAndShowProgress() {
+    setupProgressUpdates({ updater: autoUpdater, willAutoDownload: true });
     autoUpdater.checkForUpdates();
   }
 

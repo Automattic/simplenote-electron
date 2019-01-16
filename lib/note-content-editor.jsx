@@ -4,7 +4,6 @@ import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { get, includes, invoke, noop } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
-import { LF_ONLY_NEWLINES } from './utils/export';
 import matchingTextDecorator from './editor/matching-text-decorator';
 
 function plainTextContent(editorState) {
@@ -165,11 +164,6 @@ export default class NoteContentEditor extends Component {
 
   editorKey = 0;
 
-  componentWillMount() {
-    document.addEventListener('copy', this.stripFormattingFromSelectedText);
-    document.addEventListener('cut', this.stripFormattingFromSelectedText);
-  }
-
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
@@ -183,31 +177,6 @@ export default class NoteContentEditor extends Component {
     if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
       this.editorKey += 1;
       this.forceUpdate();
-    }
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('copy', this.stripFormattingFromSelectedText);
-    document.removeEventListener('cut', this.stripFormattingFromSelectedText);
-  }
-
-  stripFormattingFromSelectedText(event) {
-    if (
-      event.path.filter(elem =>
-        includes(elem.className, 'note-detail-textarea')
-      ).length
-    ) {
-      const selectedText = window.getSelection().toString();
-      // Replace \n with \r\n to keep line breaks on Windows
-      event.clipboardData.setData(
-        'text/plain',
-        selectedText.replace(LF_ONLY_NEWLINES, '\r\n')
-      );
-      event.clipboardData.setData(
-        'text/html',
-        selectedText.replace(/(?:\r\n|\r|\n)/g, '<br />')
-      );
-      event.preventDefault();
     }
   }
 

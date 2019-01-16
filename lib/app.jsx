@@ -4,16 +4,17 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
+import { loadTags } from './state/domain/tags';
 import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
-import exportNotes from './utils/export';
-import exportToZip from './utils/export/to-zip';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import Auth from './auth';
+import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
+import exportZipArchive from './utils/export';
 import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
@@ -35,7 +36,6 @@ import filterNotes from './utils/filter-notes';
 
 // Electron-specific mocks
 let ipc = getIpc();
-let fs = null;
 
 function getIpc() {
   try {
@@ -63,6 +63,11 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     dispatch(actionCreators.loadNotes({ noteBucket }));
   };
 
+  const thenReloadTags = action => a => {
+    dispatch(action(a));
+    dispatch(loadTags());
+  };
+
   return {
     actions: bindActionCreators(actionCreators, dispatch),
     ...bindActionCreators(
@@ -80,8 +85,10 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       ]),
       dispatch
     ),
+    loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
+    toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
 
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
@@ -94,10 +101,6 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
 const isElectron = (() => {
   // https://github.com/atom/electron/issues/2288
   const foundElectron = has(window, 'process.type');
-
-  if (foundElectron) {
-    fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
-  }
 
   return () => foundElectron;
 })();
@@ -115,7 +118,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       settings: PropTypes.object.isRequired,
 
       client: PropTypes.object.isRequired,
+      isDevConfig: PropTypes.bool.isRequired,
       isSmallScreen: PropTypes.bool.isRequired,
+      loadTags: PropTypes.func.isRequired,
       noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       tagBucket: PropTypes.object.isRequired,
@@ -149,15 +154,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
-        .on('update', debounce(this.onNoteUpdate, 200, { maxWait: 1000 }))
+        .on('update', this.onNoteUpdate)
+        .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
         .on('remove', this.onNoteRemoved);
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
-        .on('index', this.onTagsIndex)
-        .on('update', debounce(this.onTagsIndex, 200))
-        .on('remove', this.onTagsIndex);
+        .on('index', this.props.loadTags)
+        .on('update', debounce(this.props.loadTags, 200))
+        .on('remove', this.props.loadTags);
 
       this.props.client
         .on('authorized', this.onAuthChanged)
@@ -227,17 +233,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
     onAppCommand = (event, command) => {
       if ('exportZipArchive' === get(command, 'action')) {
-        return exportNotes()
-          .then(exportToZip)
-          .then(zip =>
-            zip.generateAsync({
-              compression: 'DEFLATE',
-              platform: get(window, 'process.platform', 'DOS'),
-              type: 'base64',
-            })
-          )
-          .then(blob => fs.writeFile(command.filename, blob, 'base64', noop))
-          .catch(console.log); // eslint-disable-line no-console
+        exportZipArchive();
       }
 
       const canRun = overEvery(
@@ -285,7 +281,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       // 'Kick' the app to ensure content is loaded after signing in
       this.onNotesIndex();
-      this.onTagsIndex();
+      this.props.loadTags();
     };
 
     onNotesIndex = () =>
@@ -307,9 +303,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         preferencesBucket: this.props.preferencesBucket,
       });
 
-    onTagsIndex = () =>
-      this.props.actions.loadTags({ tagBucket: this.props.tagBucket });
-
     initializeElectron = () => {
       const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
 
@@ -326,14 +319,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         noteBucket: this.props.noteBucket,
         note,
         content,
-      });
-
-    onUpdateNoteTags = (note, tags) =>
-      this.props.actions.updateNoteTags({
-        noteBucket: this.props.noteBucket,
-        tagBucket: this.props.tagBucket,
-        note,
-        tags,
       });
 
     // gets the index of the note located before the currently selected one
@@ -378,7 +363,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         appState: state,
         authIsPending,
         isAuthorized,
+        isDevConfig,
         noteBucket,
+        preferencesBucket,
         settings,
         tagBucket,
         isSmallScreen,
@@ -401,6 +388,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
 
       return (
         <div className={appClasses}>
+          {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
               {state.showNavigation && (
@@ -418,7 +406,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
-                onUpdateNoteTags={this.onUpdateNoteTags}
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
@@ -435,7 +422,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           )}
           <DialogRenderer
             appProps={this.props}
-            buckets={{ noteBucket, tagBucket }}
+            buckets={{ noteBucket, preferencesBucket, tagBucket }}
             themeClass={themeClass}
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}

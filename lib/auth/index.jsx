@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import cryptoRandomString from './crypto-random-string';
+import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
@@ -35,6 +35,12 @@ export class Auth extends Component {
   }
 
   render() {
+    // Don't render this component when running on the web
+    const config = getConfig();
+    if (config.is_app_engine) {
+      return null;
+    }
+
     const { isMacApp, isElectron } = this.props;
     const { isCreatingAccount, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {

@@ -42,6 +42,10 @@ optgroup {
   font-weight: $bold;
 }
 
+[contenteditable] {
+  user-select: text; // Safari (https://stackoverflow.com/questions/20435166)
+}
+
 .app {
   display: flex;
   position: absolute;

@@ -69,12 +69,7 @@
   input,
   textarea {
     border-color: darken($gray, 25%);
-    color: $gray-lightest;
     background-color: transparent;
-  }
-
-  input::placeholder {
-    color: $gray;
   }
 
   .transparent-input::placeholder {
@@ -173,13 +168,5 @@
         background-color: darken($gray, 33%);
       }
     }
-  }
-}
-
-.theme-light,
-.theme-dark {
-  .transparent-input {
-    color: inherit;
-    background-color: transparent;
   }
 }

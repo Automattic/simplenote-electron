@@ -5,7 +5,9 @@ import onClickOutside from 'react-onclickoutside';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import classNames from 'classnames';
+import Slider from '../components/slider';
 import appState from '../flux/app-state';
+import { updateNoteTags } from '../state/domain/notes';
 
 const sortedRevisions = revisions =>
   orderBy(revisions, 'data.modificationDate', 'asc');
@@ -19,6 +21,7 @@ export class RevisionSelector extends Component {
     setRevision: PropTypes.func.isRequired,
     resetIsViewingRevisions: PropTypes.func.isRequired,
     cancelRevision: PropTypes.func.isRequired,
+    updateNoteTags: PropTypes.func.isRequired,
   };
 
   constructor(...args) {
@@ -70,9 +73,10 @@ export class RevisionSelector extends Component {
     const revision = revisions[selection];
 
     if (revision) {
-      const { data: { content } } = revision;
+      const { data: { content, tags } } = revision;
 
       onUpdateContent(note, content);
+      this.props.updateNoteTags({ note, tags });
       resetIsViewingRevisions();
     }
     this.resetSelection();
@@ -124,8 +128,7 @@ export class RevisionSelector extends Component {
       <div className={mainClasses}>
         <div className="revision-date">{revisionDate}</div>
         <div className="revision-slider">
-          <input
-            type="range"
+          <Slider
             min={min}
             max={max}
             value={selection}
@@ -167,6 +170,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setRevision({ revision: null }));
     dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
   },
+  updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(

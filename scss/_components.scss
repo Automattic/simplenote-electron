@@ -1,8 +1,11 @@
 @import 'app-layout/style';
 @import 'auth/style';
+@import 'components/dev-badge/style';
 @import 'components/panel-title/style';
 @import 'components/progress-bar/style';
+@import 'components/slider/style';
 @import 'components/spinner/style';
+@import 'components/tab-panels/style';
 @import 'components/tag-chip/style';
 @import 'components/transition-delay-enter/style';
 @import 'components/transition-fade-in-out/style';
@@ -17,7 +20,7 @@
 @import 'dialogs/import/source-importer/executor/style';
 @import 'dialogs/settings/style';
 @import 'dialogs/share/style';
-@import 'dialogs/source-group/style';
+@import 'dialogs/button-group/style';
 @import 'editable-list/style';
 @import 'icon-button/style';
 @import 'icons/style';
