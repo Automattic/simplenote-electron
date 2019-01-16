@@ -95,7 +95,7 @@
   .tab-panels__tab-list li {
     color: lighten($gray, 10%);
 
-    &.dialog-tab-active {
+    &.is-active {
       color: $blue;
     }
   }
