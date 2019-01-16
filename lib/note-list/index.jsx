@@ -17,13 +17,17 @@ import PropTypes from 'prop-types';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
-import { debounce, escapeRegExp, get, isEmpty } from 'lodash';
+import { debounce, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import filterNotes from '../utils/filter-notes';
 import getNoteTitleAndPreview from './get-note-title-and-preview';
-import { splitWith, matchify } from './decorators';
+import {
+  decorateWith,
+  checkboxDecorator,
+  makeFilterDecorator,
+} from './decorators';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -153,7 +157,6 @@ const getRowHeight = rowHeightCache(computeRowHeight);
  *
  * @param {Object[]} notes list of filtered notes
  * @param {String} filter search filter
- * @param {RegExp} filterRegExp RegExp version of filter
  * @param {String} noteDisplay list view style: comfy, condensed, expanded
  * @param {Number} selectedNoteId id of currently selected note
  * @param {Function} onSelectNote used to change the current note selection
@@ -164,7 +167,6 @@ const renderNote = (
   notes,
   {
     filter,
-    filterRegExp,
     noteDisplay,
     selectedNoteId,
     onNoteOpened,
@@ -183,14 +185,7 @@ const renderNote = (
     'published-note': isPublished,
   });
 
-  const titleSplits =
-    filter.length > 0
-      ? splitWith(filterRegExp, filter.length, title)
-      : [{ type: 'text', text: title }];
-  const previewSplits =
-    filter.length > 0
-      ? splitWith(filterRegExp, filter.length, preview)
-      : [{ type: 'text', text: preview }];
+  const decorators = [checkboxDecorator, makeFilterDecorator(filter)];
 
   const selectNote = () => {
     onSelectNote(note.id);
@@ -210,7 +205,7 @@ const renderNote = (
         onClick={selectNote}
       >
         <div className="note-list-item-title">
-          <span>{matchify(titleSplits)}</span>
+          <span>{decorateWith(decorators, title)}</span>
           {isPublished && (
             <div className="note-list-item-published-icon">
               <PublishIcon />
@@ -220,7 +215,7 @@ const renderNote = (
         {'condensed' !== noteDisplay &&
           preview.trim() && (
             <div className="note-list-item-excerpt">
-              {matchify(previewSplits)}
+              {decorateWith(decorators, preview)}
             </div>
           )}
       </div>
@@ -320,12 +315,10 @@ export class NoteList extends Component {
       isSmallScreen,
     } = this.props;
 
-    const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
     const renderNoteRow = renderNote(notes, {
       filter,
-      filterRegExp,
       noteDisplay,
       onNoteOpened,
       onSelectNote,
