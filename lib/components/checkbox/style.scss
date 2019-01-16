@@ -1,5 +1,5 @@
 .checkbox {
-  line-height: 1;
+  line-height: inherit;
 
   &[aria-checked="true"] {
     opacity: .7;
@@ -13,7 +13,7 @@
 .checkbox__icon {
   display: inline;
   position: relative;
-  top: -1px;
+  top: -.09em;
 
   svg {
     width: 1.3em;
