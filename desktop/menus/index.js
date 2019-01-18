@@ -4,6 +4,7 @@ const macAppMenu = require('./mac-app-menu');
 const fileMenu = require('./file-menu');
 const buildEditMenu = require('./edit-menu');
 const buildViewMenu = require('./view-menu');
+const formatMenu = require('./format-menu');
 const helpMenu = require('./help-menu');
 
 function createMenuTemplate(settings) {
@@ -22,6 +23,7 @@ function createMenuTemplate(settings) {
     fileMenu,
     buildEditMenu(settings),
     buildViewMenu(settings),
+    formatMenu,
     platform.isOSX() ? windowMenu : null,
     helpMenu,
   ].filter(menu => menu !== null);
