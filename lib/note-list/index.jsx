@@ -17,12 +17,17 @@ import PropTypes from 'prop-types';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
-import { debounce, escapeRegExp, get, isEmpty } from 'lodash';
+import { debounce, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import filterNotes from '../utils/filter-notes';
 import getNoteTitleAndPreview from './get-note-title-and-preview';
+import {
+  decorateWith,
+  checkboxDecorator,
+  makeFilterDecorator,
+} from './decorators';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -146,72 +151,12 @@ const computeRowHeight = (width, noteDisplay, preview) => {
 const getRowHeight = rowHeightCache(computeRowHeight);
 
 /**
- * Splits a text segment by a RegExp and indicates which pieces are matches
- *
- * This is a recursive function and therefore inherently carries with it the
- * risk of stack overflow. However, we can reasonably guard against this because
- * our level of recursion should be practically limited by the length of the
- * notes and the frequency of search terms.
- *
- * Nonetheless we will hard limit it just in case.
- *
- * @param {RegExp} filter used to split the text
- * @param {Number} sliceLength length of original search text
- * @param {String} text text to split
- * @param {(Object<String, String>)[]} [splits=[]] list of split segments
- * @param {Number} [maxDepth=1000] limits the number of matches and prevents stack overflow on recursion
- * @returns {(Object<String, String>)[]} split segments with type indications
- */
-const splitWith = (filter, sliceLength, text, splits = [], maxDepth = 1000) => {
-  // prevent splitting a string when the filter is empty
-  // because this could easily cause stack-overflow
-  if (!sliceLength || !maxDepth) {
-    return [...splits, { type: 'text', text }];
-  }
-
-  const index = text.search(filter);
-
-  return index === -1
-    ? [...splits, { type: 'text', text }]
-    : splitWith(
-        filter, // pass along the original filter
-        sliceLength, // and the original slice length
-        text.slice(index + sliceLength), // text _following_ the match
-        [
-          ...splits, // the existing segments
-          { type: 'text', text: text.slice(0, index) }, // text _before_ the match
-          { type: 'match', text: text.slice(index, index + sliceLength) }, // the match itself
-        ],
-        maxDepth - 1 // prevent stack overflow on recursion
-      );
-};
-
-/**
- * Wraps "match" segments with appropriate CSS
- *
- * @param {String[]} splits segments of split text with type indication
- * @returns {Object[]} the wrapped segments
- */
-const matchify = splits =>
-  splits.map(
-    ({ type, text }, index) =>
-      type === 'match' ? (
-        <span key={index} className="search-match">
-          {text}
-        </span>
-      ) : (
-        <span key={index}>{text}</span>
-      )
-  );
-
-/**
  * Renders an individual row in the note list
  *
  * @see react-virtual/list
  *
  * @param {Object[]} notes list of filtered notes
  * @param {String} filter search filter
- * @param {RegExp} filterRegExp RegExp version of filter
  * @param {String} noteDisplay list view style: comfy, condensed, expanded
  * @param {Number} selectedNoteId id of currently selected note
  * @param {Function} onSelectNote used to change the current note selection
@@ -222,7 +167,6 @@ const renderNote = (
   notes,
   {
     filter,
-    filterRegExp,
     noteDisplay,
     selectedNoteId,
     onNoteOpened,
@@ -241,14 +185,7 @@ const renderNote = (
     'published-note': isPublished,
   });
 
-  const titleSplits =
-    filter.length > 0
-      ? splitWith(filterRegExp, filter.length, title)
-      : [{ type: 'text', text: title }];
-  const previewSplits =
-    filter.length > 0
-      ? splitWith(filterRegExp, filter.length, preview)
-      : [{ type: 'text', text: preview }];
+  const decorators = [checkboxDecorator, makeFilterDecorator(filter)];
 
   const selectNote = () => {
     onSelectNote(note.id);
@@ -268,7 +205,7 @@ const renderNote = (
         onClick={selectNote}
       >
         <div className="note-list-item-title">
-          <span>{matchify(titleSplits)}</span>
+          <span>{decorateWith(decorators, title)}</span>
           {isPublished && (
             <div className="note-list-item-published-icon">
               <PublishIcon />
@@ -278,7 +215,7 @@ const renderNote = (
         {'condensed' !== noteDisplay &&
           preview.trim() && (
             <div className="note-list-item-excerpt">
-              {matchify(previewSplits)}
+              {decorateWith(decorators, preview)}
             </div>
           )}
       </div>
@@ -378,12 +315,10 @@ export class NoteList extends Component {
       isSmallScreen,
     } = this.props;
 
-    const filterRegExp = new RegExp(escapeRegExp(filter), 'gi');
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
     const renderNoteRow = renderNote(notes, {
       filter,
-      filterRegExp,
       noteDisplay,
       onNoteOpened,
       onSelectNote,

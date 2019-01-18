@@ -145,6 +145,7 @@
     "semver": "^5.5.1",
     "showdown": "1.8.6",
     "simperium": "0.3.3",
+    "string-replace-to-array": "1.0.3",
     "turndown": "5.0.1",
     "valid-url": "1.0.9"
   }
