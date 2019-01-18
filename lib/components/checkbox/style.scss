@@ -1,0 +1,22 @@
+.checkbox {
+  line-height: inherit;
+
+  &[aria-checked="true"] {
+    opacity: .7;
+  }
+
+  &[aria-checked="false"] {
+    opacity: .4;
+  }
+}
+
+.checkbox__icon {
+  display: inline;
+  position: relative;
+  top: -.09em;
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+  }
+}

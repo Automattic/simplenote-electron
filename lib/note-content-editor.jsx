@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import { get, includes, invoke, noop } from 'lodash';
+import { compact, get, includes, invoke, noop } from 'lodash';
 
 import { filterHasText, searchPattern } from './utils/filter-notes';
+import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
+import checkboxDecorator from './editor/checkbox-decorator';
+import { taskRegex } from './note-detail/toggle-task/constants';
 
 function plainTextContent(editorState) {
   return editorState.getCurrentContent().getPlainText('\n');
@@ -15,7 +18,8 @@ function getCurrentBlock(editorState) {
   return editorState.getCurrentContent().getBlockForKey(key);
 }
 
-const isLonelyBullet = line => includes(['-', '*', '+'], line.trim());
+const isLonelyBullet = line =>
+  includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
 
 function indentCurrentBlock(editorState) {
   const selection = editorState.getSelection();
@@ -110,7 +114,7 @@ function finishList(editorState) {
   );
 }
 
-function continueList(editorState, listItemMatch) {
+function continueList(editorState, itemPrefix) {
   // create a new line
   const withNewLine = EditorState.push(
     editorState,
@@ -127,7 +131,7 @@ function continueList(editorState, listItemMatch) {
     Modifier.insertText(
       withNewLine.getCurrentContent(),
       withNewLine.getCurrentContent().getSelectionAfter(),
-      listItemMatch[0]
+      itemPrefix
     ),
     'insert-characters'
   );
@@ -154,11 +158,34 @@ export default class NoteContentEditor extends Component {
     storeHasFocus: noop,
   };
 
+  replaceRangeWithText = (rangeToReplace, newText) => {
+    const { editorState } = this.state;
+    const newContentState = Modifier.replaceText(
+      editorState.getCurrentContent(),
+      rangeToReplace,
+      newText
+    );
+    this.handleEditorStateChange(
+      EditorState.push(editorState, newContentState, 'replace-text')
+    );
+  };
+
+  createNewEditorState = (text, filter) => {
+    return EditorState.createWithContent(
+      ContentState.createFromText(text, '\n'),
+      new MultiDecorator(
+        compact([
+          filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+          checkboxDecorator(this.replaceRangeWithText),
+        ])
+      )
+    );
+  };
+
   state = {
-    editorState: EditorState.createWithContent(
-      ContentState.createFromText(this.props.content, '\n'),
-      filterHasText(this.props.filter) &&
-        matchingTextDecorator(searchPattern(this.props.filter))
+    editorState: this.createNewEditorState(
+      this.props.content,
+      this.props.filter
     ),
   };
 
@@ -211,11 +238,7 @@ export default class NoteContentEditor extends Component {
       return; // identical to rendered content
     }
 
-    let newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(newContent, '\n'),
-      filterHasText(nextFilter) &&
-        matchingTextDecorator(searchPattern(nextFilter))
-    );
+    let newEditorState = this.createNewEditorState(newContent, nextFilter);
 
     // avoids weird caret position if content is changed
     // while the editor had focus, see
@@ -276,8 +299,14 @@ export default class NoteContentEditor extends Component {
     }
 
     const listItemMatch = line.match(listItemRe);
-    if (listItemMatch) {
-      this.handleEditorStateChange(continueList(editorState, listItemMatch));
+    const taskItemMatch = line.match(taskRegex);
+
+    if (taskItemMatch) {
+      const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
+      this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
+      return 'handled';
+    } else if (listItemMatch) {
+      this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
       return 'handled';
     }
 
