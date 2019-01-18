@@ -16,6 +16,7 @@ import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
+import analytics from './analytics';
 
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
@@ -349,6 +350,7 @@ export default class NoteContentEditor extends Component {
       this.handleEditorStateChange(
         insertOrRemoveCheckboxes(this.state.editorState)
       );
+      analytics.tracks.recordEvent('editor_checklist_inserted');
     }
   };
 
