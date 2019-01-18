@@ -3,20 +3,13 @@ import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
+import { getCurrentBlock, plainTextContent } from './editor/utils';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
+import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
-
-function plainTextContent(editorState) {
-  return editorState.getCurrentContent().getPlainText('\n');
-}
-
-function getCurrentBlock(editorState) {
-  const key = editorState.getSelection().getFocusKey();
-  return editorState.getCurrentContent().getBlockForKey(key);
-}
 
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
@@ -196,6 +189,35 @@ export default class NoteContentEditor extends Component {
     this.props.storeHasFocus(this.hasFocus);
   }
 
+  handleEditorStateChange = editorState => {
+    const { editorState: prevEditorState } = this.state;
+
+    if (editorState === prevEditorState) {
+      return;
+    }
+
+    let newEditorState = editorState;
+
+    if (shouldRemoveCheckbox(editorState, prevEditorState)) {
+      const newContentState = removeCheckbox(editorState, prevEditorState);
+      newEditorState = EditorState.push(
+        editorState,
+        newContentState,
+        'remove-range'
+      );
+    }
+
+    const nextContent = plainTextContent(newEditorState);
+    const prevContent = plainTextContent(prevEditorState);
+
+    const announceChanges =
+      nextContent !== prevContent
+        ? () => this.props.onChangeContent(nextContent)
+        : noop;
+
+    this.setState({ editorState: newEditorState }, announceChanges);
+  };
+
   componentDidUpdate(prevProps) {
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
@@ -209,22 +231,6 @@ export default class NoteContentEditor extends Component {
 
   saveEditorRef = ref => {
     this.editor = ref;
-  };
-
-  handleEditorStateChange = editorState => {
-    if (editorState === this.state.editorState) {
-      return;
-    }
-
-    const nextContent = plainTextContent(editorState);
-    const prevContent = plainTextContent(this.state.editorState);
-
-    const announceChanges =
-      nextContent !== prevContent
-        ? () => this.props.onChangeContent(nextContent)
-        : noop;
-
-    this.setState({ editorState }, announceChanges);
   };
 
   componentWillReceiveProps({ content: newContent, filter: nextFilter }) {
