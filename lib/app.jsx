@@ -14,13 +14,13 @@ import AppLayout from './app-layout';
 import Auth from './auth';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
+import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { activityHooks, nudgeUnsynced } from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
   debounce,
-  noop,
   get,
   has,
   isObject,
@@ -34,20 +34,7 @@ import * as settingsActions from './state/settings/actions';
 
 import filterNotes from './utils/filter-notes';
 
-// Electron-specific mocks
-let ipc = getIpc();
-
-function getIpc() {
-  try {
-    return __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-  } catch (e) {
-    return {
-      on: noop,
-      removeListener: noop,
-      send: noop,
-    };
-  }
-}
+const ipc = getIpcRenderer();
 
 const mapStateToProps = state => ({
   ...state,

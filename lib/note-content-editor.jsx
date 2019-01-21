@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
+import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
 import {
@@ -9,11 +10,13 @@ import {
   plainTextContent,
 } from './editor/utils';
 import { filterHasText, searchPattern } from './utils/filter-notes';
-import MultiDecorator from 'draft-js-multidecorators';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
 import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
+import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
+import { getIpcRenderer } from './utils/electron';
+import analytics from './analytics';
 
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
@@ -155,6 +158,8 @@ export default class NoteContentEditor extends Component {
     storeHasFocus: noop,
   };
 
+  ipc = getIpcRenderer();
+
   replaceRangeWithText = (rangeToReplace, newText) => {
     const { editorState } = this.state;
     const newContentState = Modifier.replaceText(
@@ -191,6 +196,7 @@ export default class NoteContentEditor extends Component {
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
+    this.ipc.on('appCommand', this.onAppCommand);
   }
 
   handleEditorStateChange = editorState => {
@@ -258,6 +264,10 @@ export default class NoteContentEditor extends Component {
     }
 
     this.setState({ editorState: newEditorState });
+  }
+
+  componentWillUnmount() {
+    this.ipc.removeListener('appCommand', this.onAppCommand);
   }
 
   focus = () => {
@@ -333,6 +343,15 @@ export default class NoteContentEditor extends Component {
     }
 
     return 'not-handled';
+  };
+
+  onAppCommand = (event, command) => {
+    if (get(command, 'action') === 'insertChecklist') {
+      this.handleEditorStateChange(
+        insertOrRemoveCheckboxes(this.state.editorState)
+      );
+      analytics.tracks.recordEvent('editor_checklist_inserted');
+    }
   };
 
   /**
