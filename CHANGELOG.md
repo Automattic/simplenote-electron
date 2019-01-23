@@ -1,5 +1,37 @@
 # Changelog
 
+## v1.4.0 (To be released soon)
+
+### Features
+
+- Checklists! Markdown-style checkboxes (`- [ ]` and `- [x]`) will now be rendered in the Editor as a clickable checkbox. Checklists can also be added from the Format ▸ Insert Checklist menu item [#1145](https://github.com/Automattic/simplenote-electron/pull/1145) [#1154](https://github.com/Automattic/simplenote-electron/pull/1154) [#1159](https://github.com/Automattic/simplenote-electron/pull/1159) [#1166](https://github.com/Automattic/simplenote-electron/pull/1166) [#1168](https://github.com/Automattic/simplenote-electron/pull/1168)
+
+### Enhancements
+
+- Change the button icon in the top left corner from a tag to a hamburger menu [#1106](https://github.com/Automattic/simplenote-electron/pull/1106)
+- Improve accessibility of the tab panels in the Settings and Share dialogs [#1109](https://github.com/Automattic/simplenote-electron/pull/1109)
+- Add a Tools panel (containing the Import/Export functions) to the Settings dialog [#1111](https://github.com/Automattic/simplenote-electron/pull/1111)
+- Add ability to toggle checkboxes in the Markdown preview [#1133](https://github.com/Automattic/simplenote-electron/pull/1133)
+- Show Published icon in Condensed view [#1110](https://github.com/Automattic/simplenote-electron/pull/1110)
+- Add a “Check for Updates” menu item [#1090](https://github.com/Automattic/simplenote-electron/pull/1090)
+- Improve alphabetical note sorting to ignore accents, diacritics, and leading `#` characters [#1144](https://github.com/Automattic/simplenote-electron/pull/1144)
+- Improve contrast in Dark Mode [#1062](https://github.com/Automattic/simplenote-electron/pull/1062)
+
+### Fixes
+
+- Prevent the Search Bar from shrinking when there are no notes [#1108](https://github.com/Automattic/simplenote-electron/pull/1108)
+- In narrow screen sizes, correctly close the note after a “Trash” or “Restore from Trash” command [#1131](https://github.com/Automattic/simplenote-electron/pull/1131)
+- Make the text in the Markdown preview selectable [#1132](https://github.com/Automattic/simplenote-electron/pull/1132)
+- Update the selected note when notes have reloaded [#1130](https://github.com/Automattic/simplenote-electron/pull/1130)
+- Prevent Note List excerpts from being to short [#1104](https://github.com/Automattic/simplenote-electron/pull/1104)
+- Fix an issue where a local change to a note’s content would reselect that note in the Editor, even when the user had already navigated away to a different note [#1141](https://github.com/Automattic/simplenote-electron/pull/1141)
+- Fix lag when renaming tags [#1127](https://github.com/Automattic/simplenote-electron/pull/1127)
+- Remove unnecessary left border in Focus Mode [#1149](https://github.com/Automattic/simplenote-electron/pull/1149) [@qualitymanifest](https://github.com/qualitymanifest)
+- Prevent Markdown list prefixes from multiplying when hitting Return [#1148](https://github.com/Automattic/simplenote-electron/pull/1148)
+- When copying a note, ensure that the raw text is copied to the clipboard instead of rich text [#1155](https://github.com/Automattic/simplenote-electron/pull/1155)
+- Fix line break behavior in the Markdown preview to match common Markdown implementations, as well as the other Simplenote apps [#1169](https://github.com/Automattic/simplenote-electron/pull/1169)
+- Various security and under-the-hood improvements 
+
 ## [v1.3.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.4) (2018-12-18)
 
 ### Fixes
