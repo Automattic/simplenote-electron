@@ -30,6 +30,7 @@
 - Prevent Markdown list prefixes from multiplying when hitting Return [#1148](https://github.com/Automattic/simplenote-electron/pull/1148)
 - When copying a note, ensure that the raw text is copied to the clipboard instead of rich text [#1155](https://github.com/Automattic/simplenote-electron/pull/1155)
 - Fix line break behavior in the Markdown preview to match common Markdown implementations, as well as the other Simplenote apps [#1169](https://github.com/Automattic/simplenote-electron/pull/1169)
+- Fix CJK-related crashes after a tab character [#1171](https://github.com/Automattic/simplenote-electron/pull/1171)
 - Various security and under-the-hood improvements 
 
 ## [v1.3.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.4) (2018-12-18)
