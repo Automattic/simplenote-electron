@@ -68,7 +68,7 @@
     "concurrently": "^4.0.1",
     "css-loader": "0.28.9",
     "debug": "4.1.0",
-    "electron": "2.0.8",
+    "electron": "4.0.2",
     "electron-builder": "20.28.2",
     "electron-packager": "9.1.0",
     "electron-rebuild": "^1.8.2",
