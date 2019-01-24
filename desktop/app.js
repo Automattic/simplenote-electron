@@ -140,21 +140,20 @@ module.exports = function main() {
     mainWindow.once('ready-to-show', mainWindow.show);
   };
 
-  const shouldQuit = app.makeSingleInstance(() => {
-    if (!mainWindow) {
-      return;
-    }
+  const gotTheLock = app.requestSingleInstanceLock();
 
-    // Focus the main window if a second instance is attempted to be created
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore();
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus();
     }
-    mainWindow.focus();
   });
 
-  if (shouldQuit) {
-    app.quit();
-    return;
+  if (!gotTheLock) {
+    return app.quit();
   }
 
   // Quit when all windows are closed.
