@@ -20,6 +20,7 @@
   display: block;
   color: lighten($gray, 10%);
   background: transparent;
+  user-select: none;
 }
 
 .tag-input__entry {
