@@ -206,15 +206,6 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         return false;
       }
 
-      // focus search field
-      if (cmdOrCtrl && 'f' === key) {
-        this.props.setSearchFocus();
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
       return true;
     };
 
