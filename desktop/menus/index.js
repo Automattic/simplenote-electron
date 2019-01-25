@@ -26,7 +26,7 @@ function createMenuTemplate(settings) {
     formatMenu,
     platform.isOSX() ? windowMenu : null,
     helpMenu,
-  ];
+  ].filter(menu => menu !== null);
 }
 
 module.exports = createMenuTemplate;
