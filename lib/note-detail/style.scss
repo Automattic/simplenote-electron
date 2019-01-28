@@ -170,8 +170,11 @@
     }
 
     input {
+      position: relative;
+      bottom: .0625em;
       margin-right: 4px;
       height: 1em;
+      vertical-align: middle;
     }
   }
 
