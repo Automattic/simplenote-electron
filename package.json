@@ -69,7 +69,7 @@
     "css-loader": "0.28.9",
     "debug": "4.1.0",
     "electron": "4.0.2",
-    "electron-builder": "20.32.0",
+    "electron-builder": "20.33.1",
     "electron-packager": "9.1.0",
     "electron-rebuild": "^1.8.2",
     "enzyme": "3.7.0",
