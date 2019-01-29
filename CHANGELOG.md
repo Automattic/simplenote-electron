@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.4.0 (To be released soon)
+## [v1.4.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.4.0) (2019-01-29)
 
 ### Features
 
