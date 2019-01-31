@@ -32,7 +32,7 @@ for:
     build_script:
       - make build
       - make test
-      - npx electron-builder --win
+      - npx electron-builder --win -p onTag
 
   # Windows Store build / .appx / unsigned
   - matrix:
@@ -46,7 +46,7 @@ for:
     build_script:
       - make build
       - make test
-      - npx electron-builder --win --config=./electron-builder-appx.json
+      - npx electron-builder --win --config=./electron-builder-appx.json -p onTag
 
   # Windows Store test build / .appx / signed
   - matrix:
