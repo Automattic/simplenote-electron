@@ -14,11 +14,13 @@ export class NoteEditor extends Component {
     closeNote: PropTypes.func.isRequired,
     editorMode: PropTypes.oneOf(['edit', 'markdown']),
     isEditorActive: PropTypes.bool.isRequired,
+    isSmallScreen: PropTypes.bool.isRequired,
     filter: PropTypes.string.isRequired,
     markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
+    onNoteClosed: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
     setEditorMode: PropTypes.func.isRequired,
@@ -42,7 +44,7 @@ export class NoteEditor extends Component {
   }
 
   handleShortcut = event => {
-    const { ctrlKey, key, metaKey } = event;
+    const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
@@ -59,8 +61,9 @@ export class NoteEditor extends Component {
     }
 
     // open note list - shift + n
-    if (cmdOrCtrl && 'N' === key) {
+    if (this.props.isSmallScreen && cmdOrCtrl && shiftKey && 'n' === key) {
       this.props.closeNote();
+      this.props.onNoteClosed();
 
       event.stopPropagation();
       event.preventDefault();
