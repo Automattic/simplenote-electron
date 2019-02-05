@@ -288,7 +288,7 @@ export default class NoteContentEditor extends Component {
 
     // Handle transfer of focus from oldEditorState to newEditorState
     if (oldEditorState.getSelection().getHasFocus()) {
-      let newSelectionState = getNewSelectionState(
+      const newSelectionState = getNewSelectionState(
         oldEditorState,
         newEditorState
       );
