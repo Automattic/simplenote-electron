@@ -258,10 +258,9 @@ export default class NoteContentEditor extends Component {
           oldEditorState,
           newEditorState
         );
-        const selection = newEditorState.getSelection();
         newEditorState = EditorState.forceSelection(
           newEditorState,
-          selection.merge(newSelectionState)
+          newSelectionState
         );
       }
 
