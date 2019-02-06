@@ -18,6 +18,8 @@ import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
+const TEXT_DELIMITER = '\n';
+
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
 
@@ -202,7 +204,7 @@ export default class NoteContentEditor extends Component {
 
   createNewEditorState = (text, filter) => {
     return EditorState.createWithContent(
-      ContentState.createFromText(text, '\n'),
+      ContentState.createFromText(text, TEXT_DELIMITER),
       new MultiDecorator(
         compact([
           filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
@@ -282,7 +284,11 @@ export default class NoteContentEditor extends Component {
       return; // identical to rendered content
     }
 
-    let newEditorState = this.createNewEditorState(newContent, nextFilter);
+    let newEditorState = EditorState.push(
+      oldEditorState,
+      ContentState.createFromText(newContent, TEXT_DELIMITER),
+      'replace-text'
+    );
 
     // Handle transfer of focus from oldEditorState to newEditorState
     if (oldEditorState.getSelection().getHasFocus()) {
