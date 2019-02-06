@@ -148,8 +148,12 @@ function continueList(editorState, itemPrefix) {
 
 export default class NoteContentEditor extends Component {
   static propTypes = {
-    content: PropTypes.string.isRequired,
+    content: PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      hasRemoteUpdate: PropTypes.bool.isRequired,
+    }),
     filter: PropTypes.string.isRequired,
+    noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -189,7 +193,7 @@ export default class NoteContentEditor extends Component {
 
   state = {
     editorState: this.createNewEditorState(
-      this.props.content,
+      this.props.content.text,
       this.props.filter
     ),
   };
@@ -231,8 +235,30 @@ export default class NoteContentEditor extends Component {
     this.setState({ editorState: newEditorState }, announceChanges);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { content, spellCheckEnabled } = this.props;
+  reflectChangesFromReceivedContent = (oldEditorState, content) => {
+    let newEditorState = EditorState.push(
+      oldEditorState,
+      ContentState.createFromText(content, TEXT_DELIMITER),
+      'replace-text'
+    );
+
+    // Handle transfer of focus from oldEditorState to newEditorState
+    if (oldEditorState.getSelection().getHasFocus()) {
+      const newSelectionState = getEquivalentSelectionState(
+        oldEditorState,
+        newEditorState
+      );
+      newEditorState = EditorState.forceSelection(
+        newEditorState,
+        newSelectionState
+      );
+    }
+
+    this.setState({ editorState: newEditorState });
+  };
+
+  componentDidUpdate(prevProps) {
+    const { content, filter, noteId, spellCheckEnabled } = this.props;
 
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
@@ -243,28 +269,23 @@ export default class NoteContentEditor extends Component {
       this.forceUpdate();
     }
 
-    const oldEditorState = prevState.editorState;
+    // If another note is selected or the filter changes,
+    // create a new editor state from scratch.
+    // TODO: Set the new filter decorator without starting from scratch
+    // so the undo stack can be preserved.
+    if (noteId !== prevProps.noteId || filter !== prevProps.filter) {
+      this.setState({
+        editorState: this.createNewEditorState(content.text, filter),
+      });
+      return;
+    }
 
-    if (content !== prevProps.content) {
-      let newEditorState = EditorState.push(
-        oldEditorState,
-        ContentState.createFromText(content, TEXT_DELIMITER),
-        'replace-text'
+    // If a remote change comes in, push it to the existing editor state.
+    if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
+      this.reflectChangesFromReceivedContent(
+        this.state.editorState,
+        content.text
       );
-
-      // Handle transfer of focus from oldEditorState to newEditorState
-      if (oldEditorState.getSelection().getHasFocus()) {
-        const newSelectionState = getEquivalentSelectionState(
-          oldEditorState,
-          newEditorState
-        );
-        newEditorState = EditorState.forceSelection(
-          newEditorState,
-          newSelectionState
-        );
-      }
-
-      this.setState({ editorState: newEditorState });
     }
   }
 
