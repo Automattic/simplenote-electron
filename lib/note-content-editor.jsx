@@ -258,53 +258,47 @@ export default class NoteContentEditor extends Component {
     this.setState({ editorState: newEditorState }, announceChanges);
   };
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
+    const { content, spellCheckEnabled } = this.props;
+
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
     // done by changing the `key` prop on the Editor.
     // https://stackoverflow.com/questions/35792275/
-    if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
+    if (spellCheckEnabled !== prevProps.spellCheckEnabled) {
       this.editorKey += 1;
       this.forceUpdate();
+    }
+
+    const oldEditorState = prevState.editorState;
+
+    if (content !== prevProps.content) {
+      let newEditorState = EditorState.push(
+        oldEditorState,
+        ContentState.createFromText(content, TEXT_DELIMITER),
+        'replace-text'
+      );
+
+      // Handle transfer of focus from oldEditorState to newEditorState
+      if (oldEditorState.getSelection().getHasFocus()) {
+        const newSelectionState = getNewSelectionState(
+          oldEditorState,
+          newEditorState
+        );
+        const selection = newEditorState.getSelection();
+        newEditorState = EditorState.forceSelection(
+          newEditorState,
+          selection.merge(newSelectionState)
+        );
+      }
+
+      this.setState({ editorState: newEditorState });
     }
   }
 
   saveEditorRef = ref => {
     this.editor = ref;
   };
-
-  componentWillReceiveProps({ content: newContent, filter: nextFilter }) {
-    const { filter: prevFilter } = this.props;
-    const { editorState: oldEditorState } = this.state;
-
-    if (
-      newContent === plainTextContent(oldEditorState) &&
-      nextFilter === prevFilter
-    ) {
-      return; // identical to rendered content
-    }
-
-    let newEditorState = EditorState.push(
-      oldEditorState,
-      ContentState.createFromText(newContent, TEXT_DELIMITER),
-      'replace-text'
-    );
-
-    // Handle transfer of focus from oldEditorState to newEditorState
-    if (oldEditorState.getSelection().getHasFocus()) {
-      const newSelectionState = getNewSelectionState(
-        oldEditorState,
-        newEditorState
-      );
-      const selection = newEditorState.getSelection();
-      newEditorState = EditorState.forceSelection(
-        newEditorState,
-        selection.merge(newSelectionState)
-      );
-    }
-
-    this.setState({ editorState: newEditorState });
-  }
 
   componentWillUnmount() {
     this.ipc.removeListener('appCommand', this.onAppCommand);
