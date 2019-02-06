@@ -6,6 +6,7 @@ import { compact, get, includes, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
+  getEquivalentSelectionState,
   getSelectedText,
   plainTextContent,
 } from './editor/utils';
@@ -145,34 +146,6 @@ function continueList(editorState, itemPrefix) {
   );
 }
 
-function getNewSelectionState(oldEditorState, newEditorState) {
-  // Find the block index for the old focus/anchor keys
-  // Use the new focus/anchor keys at that index with the old focus/anchor offsets
-  const oldEditorSelection = oldEditorState.getSelection();
-  const oldAnchorKey = oldEditorSelection.getAnchorKey();
-  const oldFocusKey = oldEditorSelection.getFocusKey();
-  const oldEditorBlocks = oldEditorState.getCurrentContent().getBlocksAsArray();
-  let oldAnchorPosition;
-  let oldFocusPosition;
-  for (let i = 0; i < oldEditorBlocks.length; i++) {
-    if (oldEditorBlocks[i].getKey() === oldAnchorKey) {
-      oldAnchorPosition = i;
-    }
-    if (oldEditorBlocks[i].getKey() === oldFocusKey) {
-      oldFocusPosition = i;
-    }
-  }
-  const newEditorBlocks = newEditorState.getCurrentContent().getBlocksAsArray();
-  return {
-    anchorKey: newEditorBlocks[oldAnchorPosition].getKey(),
-    anchorOffset: oldEditorSelection.getAnchorOffset(),
-    focusKey: newEditorBlocks[oldFocusPosition].getKey(),
-    focusOffset: oldEditorSelection.getFocusOffset(),
-    isBackward: oldEditorSelection.getIsBackward(),
-    hasFocus: oldEditorSelection.getHasFocus(),
-  };
-}
-
 export default class NoteContentEditor extends Component {
   static propTypes = {
     content: PropTypes.string.isRequired,
@@ -281,7 +254,7 @@ export default class NoteContentEditor extends Component {
 
       // Handle transfer of focus from oldEditorState to newEditorState
       if (oldEditorState.getSelection().getHasFocus()) {
-        const newSelectionState = getNewSelectionState(
+        const newSelectionState = getEquivalentSelectionState(
           oldEditorState,
           newEditorState
         );
