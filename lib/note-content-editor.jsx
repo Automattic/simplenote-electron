@@ -186,7 +186,7 @@ export default class NoteContentEditor extends Component {
   };
 
   createNewEditorState = (text, filter) => {
-    return EditorState.createWithContent(
+    const newEditorState = EditorState.createWithContent(
       ContentState.createFromText(text, TEXT_DELIMITER),
       new MultiDecorator(
         compact([
@@ -194,6 +194,12 @@ export default class NoteContentEditor extends Component {
           checkboxDecorator(this.replaceRangeWithText),
         ])
       )
+    );
+    return EditorState.forceSelection(
+      newEditorState,
+      SelectionState.createEmpty(
+        newEditorState.getCurrentContent().getFirstBlock()
+      ).merge({ hasFocus: false }) // workaround for glitch when note is empty
     );
   };
 
@@ -284,14 +290,8 @@ export default class NoteContentEditor extends Component {
       content.version !== prevProps.content.version ||
       filter !== prevProps.filter
     ) {
-      const newEditorState = this.createNewEditorState(content.text, filter);
       this.setState({
-        editorState: EditorState.forceSelection(
-          newEditorState,
-          SelectionState.createEmpty(
-            newEditorState.getCurrentContent().getFirstBlock()
-          ).merge({ hasFocus: false }) // workaround for empty notes
-        ),
+        editorState: this.createNewEditorState(content.text, filter),
       });
       return;
     }
