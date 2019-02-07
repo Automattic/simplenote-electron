@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
+import {
+  ContentState,
+  Editor,
+  EditorState,
+  Modifier,
+  SelectionState,
+} from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
@@ -278,8 +284,14 @@ export default class NoteContentEditor extends Component {
       content.version !== prevProps.content.version ||
       filter !== prevProps.filter
     ) {
+      const newEditorState = this.createNewEditorState(content.text, filter);
       this.setState({
-        editorState: this.createNewEditorState(content.text, filter),
+        editorState: EditorState.forceSelection(
+          newEditorState,
+          SelectionState.createEmpty(
+            newEditorState.getCurrentContent().getFirstBlock()
+          ).merge({ hasFocus: false }) // workaround for empty notes
+        ),
       });
       return;
     }
