@@ -195,6 +195,7 @@ export class NoteDetail extends Component {
     const content = {
       text: get(note, 'data.content', ''),
       hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
+      version: get(note, 'version', undefined),
     };
     const divStyle = { fontSize: `${fontSize}px` };
 

@@ -269,11 +269,15 @@ export default class NoteContentEditor extends Component {
       this.forceUpdate();
     }
 
-    // If another note is selected or the filter changes,
+    // If another note/revision is selected or the filter changes,
     // create a new editor state from scratch.
     // TODO: Set the new filter decorator without starting from scratch
     // so the undo stack can be preserved.
-    if (noteId !== prevProps.noteId || filter !== prevProps.filter) {
+    if (
+      noteId !== prevProps.noteId ||
+      content.version !== prevProps.content.version ||
+      filter !== prevProps.filter
+    ) {
       this.setState({
         editorState: this.createNewEditorState(content.text, filter),
       });
