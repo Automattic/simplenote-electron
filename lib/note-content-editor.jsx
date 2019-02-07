@@ -238,11 +238,24 @@ export default class NoteContentEditor extends Component {
 
     const nextContent = plainTextContent(newEditorState);
     const prevContent = plainTextContent(prevEditorState);
+    const contentChanged = nextContent !== prevContent;
 
-    const announceChanges =
-      nextContent !== prevContent
-        ? () => this.props.onChangeContent(nextContent)
-        : noop;
+    // Workaround for bug when a new note is created when the cursor is
+    // in the editor for an existing note. Seems like the `hasFocus` change on
+    // the blur causes this setState change to override the incoming
+    // setState change in componentDidUpdate.
+    // TODO: Fix it in a way that is not hacky
+    if (
+      editorState.getSelection().hasFocus !==
+        prevEditorState.getSelection().hasFocus &&
+      !contentChanged // this keeps the checkboxes working
+    ) {
+      return;
+    }
+
+    const announceChanges = contentChanged
+      ? () => this.props.onChangeContent(nextContent)
+      : noop;
 
     this.setState({ editorState: newEditorState }, announceChanges);
   };
