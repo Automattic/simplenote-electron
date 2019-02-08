@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.4.1](https://github.com/Automattic/simplenote-electron/releases/tag/v1.4.1) (2019-02-08)
+
+### Enhancements
+
+- Keep approximate cursor position when a remote change comes in from the server [#1193](https://github.com/Automattic/simplenote-electron/pull/1193) [@qualitymanifest](https://github.com/qualitymanifest)
+
+### Fixes
+
+- Verify last used monitor availability when restoring window position [#1176](https://github.com/Automattic/simplenote-electron/pull/1176)
+- Fix erratic cursor jumps to last line [#1193](https://github.com/Automattic/simplenote-electron/pull/1193)
+
 ## [v1.4.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.4.0) (2019-01-29)
 
 ### Features
