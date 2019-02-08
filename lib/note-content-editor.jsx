@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
+import {
+  ContentState,
+  Editor,
+  EditorState,
+  Modifier,
+  SelectionState,
+} from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
+  getEquivalentSelectionState,
   getSelectedText,
   plainTextContent,
 } from './editor/utils';
@@ -18,6 +25,8 @@ import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
+
+const TEXT_DELIMITER = '\n';
 
 const isLonelyBullet = line =>
   includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
@@ -146,8 +155,12 @@ function continueList(editorState, itemPrefix) {
 
 export default class NoteContentEditor extends Component {
   static propTypes = {
-    content: PropTypes.string.isRequired,
+    content: PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      hasRemoteUpdate: PropTypes.bool.isRequired,
+    }),
     filter: PropTypes.string.isRequired,
+    noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -174,8 +187,8 @@ export default class NoteContentEditor extends Component {
   };
 
   createNewEditorState = (text, filter) => {
-    return EditorState.createWithContent(
-      ContentState.createFromText(text, '\n'),
+    const newEditorState = EditorState.createWithContent(
+      ContentState.createFromText(text, TEXT_DELIMITER),
       new MultiDecorator(
         compact([
           filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
@@ -184,11 +197,17 @@ export default class NoteContentEditor extends Component {
         ])
       )
     );
+    return EditorState.forceSelection(
+      newEditorState,
+      SelectionState.createEmpty(
+        newEditorState.getCurrentContent().getFirstBlock()
+      ).merge({ hasFocus: false }) // workaround for glitch when note is empty
+    );
   };
 
   state = {
     editorState: this.createNewEditorState(
-      this.props.content,
+      this.props.content.text,
       this.props.filter
     ),
   };
@@ -221,52 +240,89 @@ export default class NoteContentEditor extends Component {
 
     const nextContent = plainTextContent(newEditorState);
     const prevContent = plainTextContent(prevEditorState);
+    const contentChanged = nextContent !== prevContent;
 
-    const announceChanges =
-      nextContent !== prevContent
-        ? () => this.props.onChangeContent(nextContent)
-        : noop;
+    // Workaround for bug when a new note is created when the cursor is
+    // in the editor for an existing note. Seems like the `hasFocus` change on
+    // the blur causes this setState change to override the incoming
+    // setState change in componentDidUpdate.
+    // TODO: Fix it in a way that is not hacky
+    if (
+      editorState.getSelection().hasFocus !==
+        prevEditorState.getSelection().hasFocus &&
+      !contentChanged // this keeps the checkboxes working
+    ) {
+      return;
+    }
+
+    const announceChanges = contentChanged
+      ? () => this.props.onChangeContent(nextContent)
+      : noop;
 
     this.setState({ editorState: newEditorState }, announceChanges);
   };
 
+  reflectChangesFromReceivedContent = (oldEditorState, content) => {
+    let newEditorState = EditorState.push(
+      oldEditorState,
+      ContentState.createFromText(content, TEXT_DELIMITER),
+      'replace-text'
+    );
+
+    // Handle transfer of focus from oldEditorState to newEditorState
+    if (oldEditorState.getSelection().getHasFocus()) {
+      const newSelectionState = getEquivalentSelectionState(
+        oldEditorState,
+        newEditorState
+      );
+      newEditorState = EditorState.forceSelection(
+        newEditorState,
+        newSelectionState
+      );
+    }
+
+    this.setState({ editorState: newEditorState });
+  };
+
   componentDidUpdate(prevProps) {
+    const { content, filter, noteId, spellCheckEnabled } = this.props;
+
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
     // done by changing the `key` prop on the Editor.
     // https://stackoverflow.com/questions/35792275/
-    if (prevProps.spellCheckEnabled !== this.props.spellCheckEnabled) {
+    if (spellCheckEnabled !== prevProps.spellCheckEnabled) {
       this.editorKey += 1;
       this.forceUpdate();
+    }
+
+    // If another note/revision is selected or the filter changes,
+    // create a new editor state from scratch.
+    // TODO: Set the new filter decorator without starting from scratch
+    // so the undo stack can be preserved.
+    if (
+      noteId !== prevProps.noteId ||
+      content.version !== prevProps.content.version ||
+      filter !== prevProps.filter
+    ) {
+      this.setState({
+        editorState: this.createNewEditorState(content.text, filter),
+      });
+      return;
+    }
+
+    // If a remote change comes in, push it to the existing editor state.
+    if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
+      this.reflectChangesFromReceivedContent(
+        this.state.editorState,
+        content.text
+      );
     }
   }
 
   saveEditorRef = ref => {
     this.editor = ref;
   };
-
-  componentWillReceiveProps({ content: newContent, filter: nextFilter }) {
-    const { filter: prevFilter } = this.props;
-    const { editorState: oldEditorState } = this.state;
-
-    if (
-      newContent === plainTextContent(oldEditorState) &&
-      nextFilter === prevFilter
-    ) {
-      return; // identical to rendered content
-    }
-
-    let newEditorState = this.createNewEditorState(newContent, nextFilter);
-
-    // avoids weird caret position if content is changed
-    // while the editor had focus, see
-    // https://github.com/facebook/draft-js/issues/410#issuecomment-223408160
-    if (oldEditorState.getSelection().getHasFocus()) {
-      newEditorState = EditorState.moveFocusToEnd(newEditorState);
-    }
-
-    this.setState({ editorState: newEditorState });
-  }
 
   componentWillUnmount() {
     this.ipc.removeListener('appCommand', this.onAppCommand);

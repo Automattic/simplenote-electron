@@ -192,7 +192,11 @@ export class NoteDetail extends Component {
       spellCheckEnabled,
     } = this.props;
 
-    const content = get(this.props, 'note.data.content', '');
+    const content = {
+      text: get(note, 'data.content', ''),
+      hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
+      version: get(note, 'version', undefined),
+    };
     const divStyle = { fontSize: `${fontSize}px` };
 
     const mainClasses = classNames('note-detail', {
@@ -227,6 +231,7 @@ export class NoteDetail extends Component {
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
+                  noteId={get(note, 'id', null)}
                   content={content}
                   filter={filter}
                   onChangeContent={this.queueNoteSave}
