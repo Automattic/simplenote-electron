@@ -27,6 +27,7 @@ export class NavigationBar extends Component {
     selectedTag: PropTypes.object,
     showNavigation: PropTypes.bool.isRequired,
     showTrash: PropTypes.bool.isRequired,
+    unsyncedChangeCount: PropTypes.number.isRequired,
   };
 
   static defaultProps = {
@@ -62,6 +63,13 @@ export class NavigationBar extends Component {
   };
 
   render() {
+    const {
+      onAbout,
+      onSettings,
+      onShowAllNotes,
+      unsyncedChangeCount,
+    } = this.props;
+
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders">
@@ -69,7 +77,7 @@ export class NavigationBar extends Component {
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
             label="All Notes"
-            onClick={this.props.onShowAllNotes}
+            onClick={onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
@@ -85,7 +93,7 @@ export class NavigationBar extends Component {
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"
-            onClick={this.props.onSettings}
+            onClick={onSettings}
           />
         </div>
         <div className="navigation-bar__footer">
@@ -99,13 +107,16 @@ export class NavigationBar extends Component {
           <button
             type="button"
             className="navigation-bar__footer-item theme-color-fg-dim"
-            onClick={this.props.onAbout}
+            onClick={onAbout}
           >
             About
           </button>
         </div>
         <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
-          <SyncStatus isOffline={false} unsyncedChangeCount={0} />
+          <SyncStatus
+            isOffline={false}
+            unsyncedChangeCount={unsyncedChangeCount}
+          />
         </div>
       </div>
     );
@@ -117,6 +128,7 @@ const mapStateToProps = ({ appState: state }) => ({
   selectedTag: state.tag,
   showNavigation: state.showNavigation,
   showTrash: state.showTrash,
+  unsyncedChangeCount: state.unsyncedChangeCount,
 });
 
 const {

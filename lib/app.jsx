@@ -16,7 +16,11 @@ import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
-import { activityHooks, nudgeUnsynced } from './utils/sync';
+import {
+  activityHooks,
+  countUnsyncedChanges,
+  nudgeUnsynced,
+} from './utils/sync';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
@@ -262,8 +266,13 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.props.loadTags();
     };
 
-    onNotesIndex = () =>
-      this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
+    onNotesIndex = () => {
+      const { noteBucket } = this.props;
+      const { loadNotes, setUnsyncedChangeCount } = this.props.actions;
+
+      loadNotes({ noteBucket });
+      setUnsyncedChangeCount({ count: countUnsyncedChanges(noteBucket) });
+    };
 
     onNoteRemoved = () => this.onNotesIndex();
 
@@ -316,10 +325,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     syncActivityHooks = data => {
       activityHooks(data, {
         onIdle: () => {
-          nudgeUnsynced({
-            client: this.props.client,
-            noteBucket: this.props.noteBucket,
-            notes: this.props.appState.notes,
+          const {
+            actions: { setUnsyncedChangeCount },
+            appState: { notes },
+            client,
+            noteBucket,
+          } = this.props;
+
+          nudgeUnsynced({ client, noteBucket, notes });
+          setUnsyncedChangeCount({
+            count: countUnsyncedChanges(noteBucket),
           });
         },
       });
