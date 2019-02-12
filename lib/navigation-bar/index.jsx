@@ -13,13 +13,6 @@ import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
 
-const {
-  showAllNotesAndSelectFirst,
-  selectTrash,
-  showDialog,
-  toggleNavigation,
-} = appState.actionCreators;
-
 export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
@@ -114,13 +107,20 @@ const mapStateToProps = ({ appState: state }) => ({
   showTrash: state.showTrash,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onAbout: () => dispatch(showDialog({ dialog: DialogTypes.ABOUT })),
-  onOutsideClick: () => dispatch(toggleNavigation()),
-  onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
-  onSettings: () => dispatch(showDialog({ dialog: DialogTypes.SETTINGS })),
-  selectTrash: () => dispatch(selectTrash()),
-});
+const {
+  showAllNotesAndSelectFirst,
+  selectTrash,
+  showDialog,
+  toggleNavigation,
+} = appState.actionCreators;
+
+const mapDispatchToProps = {
+  onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
+  onOutsideClick: toggleNavigation,
+  onShowAllNotes: showAllNotesAndSelectFirst,
+  onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
+  selectTrash,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   onClickOutside(NavigationBar)
