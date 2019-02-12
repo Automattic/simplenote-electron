@@ -62,8 +62,8 @@ export class NavigationBar extends Component {
 
   render() {
     return (
-      <div className="navigation theme-color-bg theme-color-fg theme-color-border">
-        <div className="navigation-folders">
+      <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
+        <div className="navigation-bar__folders">
           <NavigationBarItem
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
@@ -77,27 +77,27 @@ export class NavigationBar extends Component {
             onClick={this.onSelectTrash}
           />
         </div>
-        <div className="navigation-tags theme-color-border">
+        <div className="navigation-bar__tags theme-color-border">
           <TagList />
         </div>
-        <div className="navigation-tools theme-color-border">
+        <div className="navigation-bar__tools theme-color-border">
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"
             onClick={this.props.onSettings}
           />
         </div>
-        <div className="navigation-footer">
+        <div className="navigation-bar__footer">
           <button
             type="button"
-            className="navigation-footer-item theme-color-fg-dim"
+            className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={this.onHelpClicked}
           >
             Help &amp; Support
           </button>
           <button
             type="button"
-            className="navigation-footer-item theme-color-fg-dim"
+            className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={this.props.onAbout}
           >
             About
