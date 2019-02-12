@@ -9,6 +9,7 @@ import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
+import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
@@ -102,6 +103,9 @@ export class NavigationBar extends Component {
           >
             About
           </button>
+        </div>
+        <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
+          <SyncStatus isOffline={false} unsyncedChangeCount={0} />
         </div>
       </div>
     );
