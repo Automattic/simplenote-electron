@@ -17,7 +17,15 @@ export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
   static propTypes = {
+    dialogs: PropTypes.array.isRequired,
+    onAbout: PropTypes.func.isRequired,
+    onOutsideClick: PropTypes.func.isRequired,
+    onSettings: PropTypes.func.isRequired,
+    onShowAllNotes: PropTypes.func.isRequired,
     selectTrash: PropTypes.func.isRequired,
+    selectedTag: PropTypes.object,
+    showNavigation: PropTypes.bool.isRequired,
+    showTrash: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
