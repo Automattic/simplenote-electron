@@ -425,7 +425,11 @@ export default class NoteContentEditor extends Component {
 
   render() {
     return (
-      <div onCopy={this.copyPlainText} onCut={this.copyPlainText}>
+      <div
+        onCopy={this.copyPlainText}
+        onCut={this.copyPlainText}
+        style={{ height: '100%' }}
+      >
         <Editor
           key={this.editorKey}
           ref={this.saveEditorRef}
