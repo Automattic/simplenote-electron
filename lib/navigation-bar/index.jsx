@@ -19,6 +19,7 @@ export class NavigationBar extends Component {
 
   static propTypes = {
     dialogs: PropTypes.array.isRequired,
+    isOffline: PropTypes.bool.isRequired,
     onAbout: PropTypes.func.isRequired,
     onOutsideClick: PropTypes.func.isRequired,
     onSettings: PropTypes.func.isRequired,
@@ -64,6 +65,7 @@ export class NavigationBar extends Component {
 
   render() {
     const {
+      isOffline,
       onAbout,
       onSettings,
       onShowAllNotes,
@@ -114,7 +116,7 @@ export class NavigationBar extends Component {
         </div>
         <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
           <SyncStatus
-            isOffline={false}
+            isOffline={isOffline}
             unsyncedChangeCount={unsyncedChangeCount}
           />
         </div>
@@ -125,6 +127,7 @@ export class NavigationBar extends Component {
 
 const mapStateToProps = ({ appState: state }) => ({
   dialogs: state.dialogs,
+  isOffline: state.isOffline,
   selectedTag: state.tag,
   showNavigation: state.showNavigation,
   showTrash: state.showTrash,

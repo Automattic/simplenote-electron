@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import AlertIcon from '../../icons/alert';
 import SyncIcon from '../../icons/sync';
 
 const SyncStatus = ({ isOffline, unsyncedChangeCount }) => {
@@ -12,7 +13,7 @@ const SyncStatus = ({ isOffline, unsyncedChangeCount }) => {
   return (
     <div className="sync-status">
       <span className="sync-status__icon">
-        <SyncIcon />
+        {isOffline ? <AlertIcon /> : <SyncIcon />}
       </span>
       {text}
     </div>

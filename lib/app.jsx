@@ -156,11 +156,15 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
+      const { actions: { setConnectionStatus } } = this.props;
+
       this.props.client
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
         .on('message', this.syncActivityHooks)
-        .on('send', this.syncActivityHooks);
+        .on('send', this.syncActivityHooks)
+        .on('connect', () => setConnectionStatus({ isOffline: false }))
+        .on('disconnect', () => setConnectionStatus({ isOffline: true }));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
