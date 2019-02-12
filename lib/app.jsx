@@ -372,9 +372,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && (
-                <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
-              )}
+              {state.showNavigation && <NavigationBar />}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}

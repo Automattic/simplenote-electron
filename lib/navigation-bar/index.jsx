@@ -60,8 +60,6 @@ export class NavigationBar extends Component {
   };
 
   render() {
-    const { noteBucket, tagBucket } = this.props;
-
     return (
       <div className="navigation theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-folders">
@@ -79,7 +77,7 @@ export class NavigationBar extends Component {
           />
         </div>
         <div className="navigation-tags theme-color-border">
-          <TagList noteBucket={noteBucket} tagBucket={tagBucket} />
+          <TagList />
         </div>
         <div className="navigation-tools theme-color-border">
           <NavigationBarItem
