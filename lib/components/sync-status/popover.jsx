@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import Popover from '@material-ui/core/Popover';
+
+import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
 
 class SyncStatusPopover extends React.Component {
   render() {
@@ -16,6 +19,10 @@ class SyncStatusPopover extends React.Component {
     } = this.props;
     const themeClass = `theme-${theme}`;
     const open = Boolean(anchorEl);
+
+    const lastSyncedTime = distanceInWordsToNow(getLastSyncedTime(), {
+      addSuffix: true,
+    });
 
     return (
       <Popover
@@ -65,7 +72,7 @@ class SyncStatusPopover extends React.Component {
             </div>
           </div>
         )}
-        <span>Last synced: 7 seconds ago</span>
+        <span>Last synced: {lastSyncedTime}</span>
       </Popover>
     );
   }

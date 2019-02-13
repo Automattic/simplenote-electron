@@ -21,6 +21,7 @@ import {
   countUnsyncedChanges,
   nudgeUnsynced,
 } from './utils/sync';
+import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
@@ -161,6 +162,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.props.client
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
+        .on('message', setLastSyncedTime)
         .on('message', this.syncActivityHooks)
         .on('send', this.syncActivityHooks)
         .on('connect', () => setConnectionStatus({ isOffline: false }))
