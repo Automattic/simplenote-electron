@@ -56,6 +56,7 @@ class SyncStatus extends Component {
           anchorEl={anchorEl}
           id={popoverId}
           onClose={this.handlePopoverClose}
+          unsyncedChangeCount={unsyncedChangeCount}
         />
       </div>
     );
