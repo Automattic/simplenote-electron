@@ -28,7 +28,7 @@ export class NavigationBar extends Component {
     selectedTag: PropTypes.object,
     showNavigation: PropTypes.bool.isRequired,
     showTrash: PropTypes.bool.isRequired,
-    unsyncedChangeCount: PropTypes.number.isRequired,
+    unsyncedNoteIds: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -69,7 +69,7 @@ export class NavigationBar extends Component {
       onAbout,
       onSettings,
       onShowAllNotes,
-      unsyncedChangeCount,
+      unsyncedNoteIds,
     } = this.props;
 
     return (
@@ -115,10 +115,7 @@ export class NavigationBar extends Component {
           </button>
         </div>
         <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
-          <SyncStatus
-            isOffline={isOffline}
-            unsyncedChangeCount={unsyncedChangeCount}
-          />
+          <SyncStatus isOffline={isOffline} unsyncedNoteIds={unsyncedNoteIds} />
         </div>
       </div>
     );
@@ -131,7 +128,7 @@ const mapStateToProps = ({ appState: state }) => ({
   selectedTag: state.tag,
   showNavigation: state.showNavigation,
   showTrash: state.showTrash,
-  unsyncedChangeCount: state.unsyncedChangeCount,
+  unsyncedNoteIds: state.unsyncedNoteIds,
 });
 
 const {

@@ -6,6 +6,7 @@ import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import Popover from '@material-ui/core/Popover';
 
 import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
+import getNoteTitles from './get-note-titles';
 
 class SyncStatusPopover extends React.Component {
   render() {
@@ -13,12 +14,18 @@ class SyncStatusPopover extends React.Component {
       anchorEl,
       classes = {},
       id,
+      notes,
       onClose,
       theme,
-      unsyncedChangeCount,
+      unsyncedNoteIds,
     } = this.props;
     const themeClass = `theme-${theme}`;
     const open = Boolean(anchorEl);
+    const hasUnsyncedChanges = unsyncedNoteIds.length > 0;
+
+    const noteTitles = hasUnsyncedChanges
+      ? getNoteTitles(unsyncedNoteIds, notes)
+      : [];
 
     const lastSyncedTime = distanceInWordsToNow(getLastSyncedTime(), {
       addSuffix: true,
@@ -38,7 +45,7 @@ class SyncStatusPopover extends React.Component {
             'theme-color-bg',
             'theme-color-border',
             'theme-color-fg-dim',
-            { 'has-unsynced-changes': !unsyncedChangeCount },
+            { 'has-unsynced-changes': hasUnsyncedChanges },
             classes.paper
           ),
         }}
@@ -56,15 +63,13 @@ class SyncStatusPopover extends React.Component {
         PaperProps={{ square: true }}
         disableRestoreFocus
       >
-        {!!unsyncedChangeCount && (
+        {hasUnsyncedChanges && (
           <div className="sync-status-popover__unsynced theme-color-border">
             <h2 className="sync-status-popover__heading">
               Notes with unsynced changes
             </h2>
             <ul className="sync-status-popover__notes theme-color-fg">
-              <li>Note 1</li>
-              <li>Note with longer title</li>
-              <li>Note 3</li>
+              {noteTitles.map(note => <li key={note.id}>{note.title}</li>)}
             </ul>
             <div>
               If a note isn’t syncing, try switching networks or editing the
@@ -82,12 +87,14 @@ SyncStatusPopover.propTypes = {
   anchorEl: PropTypes.object,
   classes: PropTypes.object,
   id: PropTypes.string,
+  notes: PropTypes.array,
   onClose: PropTypes.func.isRequired,
   theme: PropTypes.string.isRequired,
-  unsyncedChangeCount: PropTypes.number.isRequired,
+  unsyncedNoteIds: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = ({ settings }) => ({
+const mapStateToProps = ({ appState, settings }) => ({
+  notes: appState.notes,
   theme: settings.theme,
 });
 

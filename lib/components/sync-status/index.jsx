@@ -8,7 +8,7 @@ import SyncStatusPopover from './popover';
 class SyncStatus extends Component {
   static propTypes = {
     isOffline: PropTypes.bool.isRequired,
-    unsyncedChangeCount: PropTypes.number.isRequired,
+    unsyncedNoteIds: PropTypes.array.isRequired,
   };
 
   state = {
@@ -24,11 +24,12 @@ class SyncStatus extends Component {
   };
 
   render() {
-    const { isOffline, unsyncedChangeCount } = this.props;
+    const { isOffline, unsyncedNoteIds } = this.props;
     const { anchorEl } = this.state;
 
     const popoverId = 'sync-status__popover';
 
+    const unsyncedChangeCount = unsyncedNoteIds.length;
     const unit = unsyncedChangeCount === 1 ? 'change' : 'changes';
     const text = unsyncedChangeCount
       ? `${unsyncedChangeCount} unsynced ${unit}`
@@ -56,7 +57,7 @@ class SyncStatus extends Component {
           anchorEl={anchorEl}
           id={popoverId}
           onClose={this.handlePopoverClose}
-          unsyncedChangeCount={unsyncedChangeCount}
+          unsyncedNoteIds={unsyncedNoteIds}
         />
       </div>
     );
