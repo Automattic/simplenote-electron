@@ -1,7 +1,10 @@
 @media print {
   .app-layout__source-column {
     display: none;
-    border-left: 0;
+  }
+
+  .app-layout__note-column {
+    border: 0;
   }
 
   .tag-field,
@@ -11,7 +14,6 @@
 
   .note-detail-wrapper {
     overflow: visible;
-    border: 0;
   }
 
   .note-detail {
