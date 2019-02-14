@@ -23,9 +23,12 @@ class SyncStatusPopover extends React.Component {
     const open = Boolean(anchorEl);
     const hasUnsyncedChanges = unsyncedNoteIds.length > 0;
 
+    const QUERY_LIMIT = 10;
     const noteTitles = hasUnsyncedChanges
-      ? getNoteTitles(unsyncedNoteIds, notes)
+      ? getNoteTitles(unsyncedNoteIds, notes, QUERY_LIMIT)
       : [];
+    const overflowCount = unsyncedNoteIds.length - noteTitles.length;
+    const unit = overflowCount === 1 ? 'note' : 'notes';
 
     const lastSyncedTime = distanceInWordsToNow(getLastSyncedTime(), {
       addSuffix: true,
@@ -72,6 +75,11 @@ class SyncStatusPopover extends React.Component {
             <ul className="sync-status-popover__notes theme-color-fg">
               {noteTitles.map(note => <li key={note.id}>{note.title}</li>)}
             </ul>
+            {!!overflowCount && (
+              <p>
+                and {overflowCount} more {unit}
+              </p>
+            )}
             <div>
               If a note isn’t syncing, try switching networks or editing the
               note again.
