@@ -59,6 +59,7 @@ class SyncStatusPopover extends React.Component {
           vertical: 'bottom',
           horizontal: 'center',
         }}
+        onBlur={onClose}
         onClose={onClose}
         PaperProps={{ square: true }}
         disableRestoreFocus

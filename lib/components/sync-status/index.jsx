@@ -41,7 +41,6 @@ class SyncStatus extends Component {
           className="sync-status"
           aria-owns={anchorEl ? popoverId : undefined}
           aria-haspopup="true"
-          onBlur={this.handlePopoverClose}
           onFocus={this.handlePopoverOpen}
           onMouseEnter={this.handlePopoverOpen}
           onMouseLeave={this.handlePopoverClose}
