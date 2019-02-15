@@ -61,6 +61,7 @@ module.exports = function main() {
       icon: iconPath,
       titleBarStyle: 'hidden',
       show: false,
+      autoHideMenuBar: true,
       webPreferences: {
         preload: path.join(__dirname, './preload.js'),
       },
