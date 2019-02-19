@@ -25,7 +25,12 @@ export const SearchBar = ({
   showTrash,
 }) => (
   <div className="search-bar theme-color-border">
-    <IconButton icon={<MenuIcon />} onClick={onToggleNavigation} title="Menu" />
+    <IconButton
+      icon={<MenuIcon />}
+      disableTooltip={true}
+      onClick={onToggleNavigation}
+      title="Menu"
+    />
     <SearchField />
     <IconButton
       disabled={showTrash}
