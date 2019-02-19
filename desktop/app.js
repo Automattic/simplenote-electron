@@ -109,6 +109,11 @@ module.exports = function main() {
       });
     });
 
+    ipcMain.on('setAutoHideMenuBar', function(event, autoHideMenuBar) {
+      mainWindow.autoHideMenuBar = autoHideMenuBar;
+      mainWindow.setMenuBarVisibility = autoHideMenuBar;
+    });
+
     mainWindowState.manage(mainWindow);
 
     mainWindow.webContents.on('new-window', function(event, linkUrl) {
