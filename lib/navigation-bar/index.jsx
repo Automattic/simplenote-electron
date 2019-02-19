@@ -9,22 +9,26 @@ import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
+import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
-
-const {
-  showAllNotesAndSelectFirst,
-  selectTrash,
-  showDialog,
-  toggleNavigation,
-} = appState.actionCreators;
 
 export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
   static propTypes = {
+    dialogs: PropTypes.array.isRequired,
+    isOffline: PropTypes.bool.isRequired,
+    onAbout: PropTypes.func.isRequired,
+    onOutsideClick: PropTypes.func.isRequired,
+    onSettings: PropTypes.func.isRequired,
+    onShowAllNotes: PropTypes.func.isRequired,
     selectTrash: PropTypes.func.isRequired,
+    selectedTag: PropTypes.object,
+    showNavigation: PropTypes.bool.isRequired,
+    showTrash: PropTypes.bool.isRequired,
+    unsyncedNoteIds: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -60,16 +64,22 @@ export class NavigationBar extends Component {
   };
 
   render() {
-    const { noteBucket, tagBucket } = this.props;
+    const {
+      isOffline,
+      onAbout,
+      onSettings,
+      onShowAllNotes,
+      unsyncedNoteIds,
+    } = this.props;
 
     return (
-      <div className="navigation theme-color-bg theme-color-fg theme-color-border">
-        <div className="navigation-folders">
+      <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
+        <div className="navigation-bar__folders">
           <NavigationBarItem
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
             label="All Notes"
-            onClick={this.props.onShowAllNotes}
+            onClick={onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
@@ -78,31 +88,34 @@ export class NavigationBar extends Component {
             onClick={this.onSelectTrash}
           />
         </div>
-        <div className="navigation-tags theme-color-border">
-          <TagList noteBucket={noteBucket} tagBucket={tagBucket} />
+        <div className="navigation-bar__tags theme-color-border">
+          <TagList />
         </div>
-        <div className="navigation-tools theme-color-border">
+        <div className="navigation-bar__tools theme-color-border">
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"
-            onClick={this.props.onSettings}
+            onClick={onSettings}
           />
         </div>
-        <div className="navigation-footer">
+        <div className="navigation-bar__footer">
           <button
             type="button"
-            className="navigation-footer-item theme-color-fg-dim"
+            className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={this.onHelpClicked}
           >
             Help &amp; Support
           </button>
           <button
             type="button"
-            className="navigation-footer-item theme-color-fg-dim"
-            onClick={this.props.onAbout}
+            className="navigation-bar__footer-item theme-color-fg-dim"
+            onClick={onAbout}
           >
             About
           </button>
+        </div>
+        <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
+          <SyncStatus isOffline={isOffline} unsyncedNoteIds={unsyncedNoteIds} />
         </div>
       </div>
     );
@@ -111,18 +124,27 @@ export class NavigationBar extends Component {
 
 const mapStateToProps = ({ appState: state }) => ({
   dialogs: state.dialogs,
+  isOffline: state.isOffline,
   selectedTag: state.tag,
   showNavigation: state.showNavigation,
   showTrash: state.showTrash,
+  unsyncedNoteIds: state.unsyncedNoteIds,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onAbout: () => dispatch(showDialog({ dialog: DialogTypes.ABOUT })),
-  onOutsideClick: () => dispatch(toggleNavigation()),
-  onShowAllNotes: () => dispatch(showAllNotesAndSelectFirst()),
-  onSettings: () => dispatch(showDialog({ dialog: DialogTypes.SETTINGS })),
-  selectTrash: () => dispatch(selectTrash()),
-});
+const {
+  showAllNotesAndSelectFirst,
+  selectTrash,
+  showDialog,
+  toggleNavigation,
+} = appState.actionCreators;
+
+const mapDispatchToProps = {
+  onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
+  onOutsideClick: toggleNavigation,
+  onShowAllNotes: showAllNotesAndSelectFirst,
+  onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
+  selectTrash,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   onClickOutside(NavigationBar)

@@ -16,7 +16,8 @@ import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
-import { activityHooks, nudgeUnsynced } from './utils/sync';
+import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
+import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
 import classNames from 'classnames';
 import {
@@ -152,11 +153,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
+      const { actions: { setConnectionStatus } } = this.props;
+
       this.props.client
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
+        .on('message', setLastSyncedTime)
         .on('message', this.syncActivityHooks)
-        .on('send', this.syncActivityHooks);
+        .on('send', this.syncActivityHooks)
+        .on('connect', () => setConnectionStatus({ isOffline: false }))
+        .on('disconnect', () => setConnectionStatus({ isOffline: true }));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
@@ -262,8 +268,13 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       this.props.loadTags();
     };
 
-    onNotesIndex = () =>
-      this.props.actions.loadNotes({ noteBucket: this.props.noteBucket });
+    onNotesIndex = () => {
+      const { noteBucket } = this.props;
+      const { loadNotes, setUnsyncedNoteIds } = this.props.actions;
+
+      loadNotes({ noteBucket });
+      setUnsyncedNoteIds({ noteIds: getUnsyncedNoteIds(noteBucket) });
+    };
 
     onNoteRemoved = () => this.onNotesIndex();
 
@@ -316,10 +327,16 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     syncActivityHooks = data => {
       activityHooks(data, {
         onIdle: () => {
-          nudgeUnsynced({
-            client: this.props.client,
-            noteBucket: this.props.noteBucket,
-            notes: this.props.appState.notes,
+          const {
+            actions: { setUnsyncedNoteIds },
+            appState: { notes },
+            client,
+            noteBucket,
+          } = this.props;
+
+          nudgeUnsynced({ client, noteBucket, notes });
+          setUnsyncedNoteIds({
+            noteIds: getUnsyncedNoteIds(noteBucket),
           });
         },
       });
@@ -372,9 +389,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && (
-                <NavigationBar noteBucket={noteBucket} tagBucket={tagBucket} />
-              )}
+              {state.showNavigation && <NavigationBar />}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}

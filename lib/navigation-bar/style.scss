@@ -1,4 +1,4 @@
-.navigation {
+.navigation-bar {
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -11,12 +11,12 @@
   background: white;
 }
 
-.navigation-folders {
+.navigation-bar__folders {
   flex: none;
   padding: 10px 0;
 }
 
-.navigation-tags {
+.navigation-bar__tags {
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -35,13 +35,13 @@
   }
 }
 
-.navigation-tools {
+.navigation-bar__tools {
   flex: 1 0 auto;
   padding: 10px 0;
   border-top: 1px solid lighten($gray, 30%);
 }
 
-.navigation-footer {
+.navigation-bar__footer {
   display: flex;
   flex: none;
   justify-content: flex-start;
@@ -51,16 +51,20 @@
 }
 
 .is-electron {
-  .navigation-tools,
-  .navigation-footer {
+  .navigation-bar__tools,
+  .navigation-bar__footer {
     display: none;
   }
 }
 
-.navigation-footer-item {
+.navigation-bar__footer-item {
   margin-right: 10px;
 
   &:last-child {
     margin-right: 0;
   }
+}
+
+.navigation-bar__sync-status {
+  border-top: 1px solid lighten($gray, 30%);
 }
