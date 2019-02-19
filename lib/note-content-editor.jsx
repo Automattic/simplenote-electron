@@ -8,7 +8,7 @@ import {
   SelectionState,
 } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, includes, invoke, noop } from 'lodash';
+import { compact, get, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
@@ -16,6 +16,13 @@ import {
   getSelectedText,
   plainTextContent,
 } from './editor/utils';
+import {
+  continueList,
+  finishList,
+  indentCurrentBlock,
+  outdentCurrentBlock,
+  isLonelyBullet,
+} from './editor/text-manipulation-helpers';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
@@ -26,131 +33,6 @@ import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 const TEXT_DELIMITER = '\n';
-
-const isLonelyBullet = line =>
-  includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
-
-function indentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const offset = atStart ? 0 : selectionStart;
-
-  // add tab
-  const afterInsert = EditorState.push(
-    editorState,
-    Modifier.replaceText(
-      editorState.getCurrentContent(),
-      selection.isCollapsed()
-        ? selection.merge({
-            anchorOffset: offset,
-            focusOffset: offset,
-          })
-        : selection,
-      '\t'
-    ),
-    'insert-characters'
-  );
-
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterInsert,
-    afterInsert.getSelection().merge({
-      anchorOffset: selectionStart + 1, // +1 because 1 char was added
-      focusOffset: selectionStart + 1,
-    })
-  );
-}
-
-function outdentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const rangeStart = atStart ? 0 : selectionStart - 1;
-  const rangeEnd = atStart ? 1 : selectionStart;
-
-  const prevChar = line.slice(rangeStart, rangeEnd);
-  // there's no indentation to remove
-  if (prevChar !== '\t') {
-    return editorState;
-  }
-
-  // remove tab
-  const afterRemove = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      selection.merge({
-        anchorOffset: rangeStart,
-        focusOffset: rangeEnd,
-      })
-    ),
-    'remove-range'
-  );
-
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterRemove,
-    selection.merge({
-      anchorOffset: selectionStart - 1, // -1 because 1 char was removed
-      focusOffset: selectionStart - 1,
-    })
-  );
-}
-
-function finishList(editorState) {
-  // remove `- ` from the current line
-  const withoutBullet = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      editorState.getSelection().merge({
-        anchorOffset: 0,
-        focusOffset: getCurrentBlock(editorState).getLength(),
-      })
-    ),
-    'remove-range'
-  );
-
-  // move selection to the start of the line
-  return EditorState.forceSelection(
-    withoutBullet,
-    withoutBullet.getCurrentContent().getSelectionAfter()
-  );
-}
-
-function continueList(editorState, itemPrefix) {
-  // create a new line
-  const withNewLine = EditorState.push(
-    editorState,
-    Modifier.splitBlock(
-      editorState.getCurrentContent(),
-      editorState.getSelection()
-    ),
-    'split-block'
-  );
-
-  // insert `- ` in the new line
-  const withBullet = EditorState.push(
-    withNewLine,
-    Modifier.insertText(
-      withNewLine.getCurrentContent(),
-      withNewLine.getCurrentContent().getSelectionAfter(),
-      itemPrefix
-    ),
-    'insert-characters'
-  );
-
-  // move selection to the end of the new line
-  return EditorState.forceSelection(
-    withBullet,
-    withBullet.getCurrentContent().getSelectionAfter()
-  );
-}
 
 export default class NoteContentEditor extends Component {
   static propTypes = {
