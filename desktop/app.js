@@ -110,8 +110,8 @@ module.exports = function main() {
     });
 
     ipcMain.on('setAutoHideMenuBar', function(event, autoHideMenuBar) {
-      mainWindow.autoHideMenuBar = autoHideMenuBar;
-      mainWindow.setMenuBarVisibility = autoHideMenuBar;
+      mainWindow.setAutoHideMenuBar(autoHideMenuBar);
+      mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
     mainWindowState.manage(mainWindow);
