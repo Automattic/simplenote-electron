@@ -1,5 +1,22 @@
 # Changelog
 
+## [v1.5.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.5.0)
+
+### Features
+
+- Add a sync indicator in the Navigation Bar that shows the last synced time, as well as a list of unsynced notes when edits are made while disconnected from the server [#1201](https://github.com/Automattic/simplenote-electron/pull/1201)
+
+### Fixes
+
+- Fix issue where in short or empty notes, the clickable area did not expand to the height of the editor [#1199](https://github.com/Automattic/simplenote-electron/pull/1199)
+- Fix a Dark Mode color glitch in the Note List on Ubuntu [#1202](https://github.com/Automattic/simplenote-electron/pull/1202)
+- Change the Insert Checklist shortcut to <kbd>Ctrl+Shift+C</kbd> (<kbd>Cmd+Shift+C</kbd> on macOS) to avoid a conflict with Polish keyboards [#1210](https://github.com/Automattic/simplenote-electron/pull/1210)
+- Tweak the dropzone color to preserve the dashed border in Light Mode [#1211](https://github.com/Automattic/simplenote-electron/pull/1211)
+- Remove unneeded border when printing [#1206](https://github.com/Automattic/simplenote-electron/pull/1206)
+- Fix wrong icon in the “Check for Updates” dialog on Linux [#1172](https://github.com/Automattic/simplenote-electron/pull/1172)
+- Fix CJK-related text duplication bugs after a tab character [#1172](https://github.com/Automattic/simplenote-electron/pull/1172)
+- Make “Select All” work in the Markdown Preview [#1172](https://github.com/Automattic/simplenote-electron/pull/1172)
+
 ## [v1.4.1](https://github.com/Automattic/simplenote-electron/releases/tag/v1.4.1) (2019-02-08)
 
 ### Enhancements
