@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.5.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.5.0)
+## [v1.5.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.5.0) (2019-02-21)
 
 ### Features
 
