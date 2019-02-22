@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ContentState,
-  Editor,
-  EditorState,
-  Modifier,
-  SelectionState,
-} from 'draft-js';
+import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, includes, invoke, noop } from 'lodash';
 
@@ -195,12 +189,12 @@ export default class NoteContentEditor extends Component {
         ])
       )
     );
-    return EditorState.forceSelection(
-      newEditorState,
-      SelectionState.createEmpty(
-        newEditorState.getCurrentContent().getFirstBlock()
-      ).merge({ hasFocus: false }) // workaround for glitch when note is empty
-    );
+
+    // Focus the editor for a new, empty note when not searching
+    if (text === '' && filter === '') {
+      return EditorState.moveFocusToEnd(newEditorState);
+    }
+    return newEditorState;
   };
 
   state = {
@@ -216,6 +210,7 @@ export default class NoteContentEditor extends Component {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
     this.ipc.on('appCommand', this.onAppCommand);
+    this.editor.blur();
   }
 
   handleEditorStateChange = editorState => {
