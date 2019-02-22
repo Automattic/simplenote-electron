@@ -288,6 +288,7 @@ export default class NoteContentEditor extends Component {
 
   componentDidUpdate(prevProps) {
     const { content, filter, noteId, spellCheckEnabled } = this.props;
+    const { editorState } = this.state;
 
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
@@ -298,14 +299,11 @@ export default class NoteContentEditor extends Component {
       this.forceUpdate();
     }
 
-    // If another note/revision is selected or the filter changes,
+    // If another note/revision is selected,
     // create a new editor state from scratch.
-    // TODO: Set the new filter decorator without starting from scratch
-    // so the undo stack can be preserved.
     if (
       noteId !== prevProps.noteId ||
-      content.version !== prevProps.content.version ||
-      filter !== prevProps.filter
+      content.version !== prevProps.content.version
     ) {
       this.setState({
         editorState: this.createNewEditorState(content.text, filter),
@@ -313,12 +311,18 @@ export default class NoteContentEditor extends Component {
       return;
     }
 
+    // If filter changes, re-set decorators
+    if (filter !== prevProps.filter) {
+      this.setState({
+        editorState: EditorState.set(editorState, {
+          decorator: this.generateDecorators(filter),
+        }),
+      });
+    }
+
     // If a remote change comes in, push it to the existing editor state.
     if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
-      this.reflectChangesFromReceivedContent(
-        this.state.editorState,
-        content.text
-      );
+      this.reflectChangesFromReceivedContent(editorState, content.text);
     }
   }
 
