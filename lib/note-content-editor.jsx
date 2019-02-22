@@ -185,15 +185,19 @@ export default class NoteContentEditor extends Component {
     );
   };
 
+  generateDecorators = filter => {
+    return new MultiDecorator(
+      compact([
+        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+        checkboxDecorator(this.replaceRangeWithText),
+      ])
+    );
+  };
+
   createNewEditorState = (text, filter) => {
     const newEditorState = EditorState.createWithContent(
       ContentState.createFromText(text, TEXT_DELIMITER),
-      new MultiDecorator(
-        compact([
-          filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
-          checkboxDecorator(this.replaceRangeWithText),
-        ])
-      )
+      this.generateDecorators(filter)
     );
     return EditorState.forceSelection(
       newEditorState,
