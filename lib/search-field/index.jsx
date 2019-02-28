@@ -56,6 +56,7 @@ export class SearchField extends Component {
   clearQuery = () => {
     this.setState({ query: '' });
     this.debouncedSearch('');
+    this.debouncedSearch.flush();
   };
 
   render() {
