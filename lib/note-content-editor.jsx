@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ContentState,
-  Editor,
-  EditorState,
-  Modifier,
-  SelectionState,
-} from 'draft-js';
+import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, invoke, noop } from 'lodash';
 
@@ -77,12 +71,12 @@ export default class NoteContentEditor extends Component {
         ])
       )
     );
-    return EditorState.forceSelection(
-      newEditorState,
-      SelectionState.createEmpty(
-        newEditorState.getCurrentContent().getFirstBlock()
-      ).merge({ hasFocus: false }) // workaround for glitch when note is empty
-    );
+
+    // Focus the editor for a new, empty note when not searching
+    if (text === '' && filter === '') {
+      return EditorState.moveFocusToEnd(newEditorState);
+    }
+    return newEditorState;
   };
 
   state = {
@@ -98,6 +92,7 @@ export default class NoteContentEditor extends Component {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
     this.ipc.on('appCommand', this.onAppCommand);
+    this.editor.blur();
   }
 
   handleEditorStateChange = editorState => {
@@ -121,19 +116,6 @@ export default class NoteContentEditor extends Component {
     const nextContent = plainTextContent(newEditorState);
     const prevContent = plainTextContent(prevEditorState);
     const contentChanged = nextContent !== prevContent;
-
-    // Workaround for bug when a new note is created when the cursor is
-    // in the editor for an existing note. Seems like the `hasFocus` change on
-    // the blur causes this setState change to override the incoming
-    // setState change in componentDidUpdate.
-    // TODO: Fix it in a way that is not hacky
-    if (
-      editorState.getSelection().hasFocus !==
-        prevEditorState.getSelection().hasFocus &&
-      !contentChanged // this keeps the checkboxes working
-    ) {
-      return;
-    }
 
     const announceChanges = contentChanged
       ? () => this.props.onChangeContent(nextContent)
