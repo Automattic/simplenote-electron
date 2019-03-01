@@ -95,6 +95,7 @@
 
 .app-layout__source-column {
   width: 328px;
+  min-width: 328px;
   display: flex;
   flex-direction: column;
   transition: transform 200ms ease-in-out;
