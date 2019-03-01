@@ -102,6 +102,7 @@
 
   @media only screen and (max-width: $medium) {
     width: 300px;
+    min-width: 300px;
   }
 
   @media only screen and (max-width: $single-column) {
