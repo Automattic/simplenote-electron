@@ -95,14 +95,13 @@
 
 .app-layout__source-column {
   width: 328px;
-  min-width: 328px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   transition: transform 200ms ease-in-out;
 
   @media only screen and (max-width: $medium) {
     width: 300px;
-    min-width: 300px;
   }
 
   @media only screen and (max-width: $single-column) {
