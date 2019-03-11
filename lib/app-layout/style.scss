@@ -97,6 +97,7 @@
   width: 328px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   transition: transform 200ms ease-in-out;
 
   @media only screen and (max-width: $medium) {
