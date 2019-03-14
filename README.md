@@ -14,6 +14,8 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 
 _Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces._
 
+You can also use snap to permanently install it on Linux: `sudo snap install simplenote`
+
 ## Building
 
 - **`make package-osx`**
