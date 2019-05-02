@@ -1,21 +1,18 @@
 ---
-name: "\U0001F680 Feature request"
-about: "Suggest a new feature or enhancement to an existing one. \U0001F389 We'll
-  consider building it if it receives sufficient interest! \U0001F44D"
-title: ''
+name: "\U0001F680 Feature Request"
+about: "Suggest a new feature or enhancement to an existing one in the Simplenote Electron app."
+title: ""
 labels: feature request
-assignees: ''
-
+assignees: ""
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+Please, be as descriptive as possible.  Issues lacking detail, or for any other reason than to request a feature, may be closed without action.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+### What
+***(Required)*** What is the feature you are requesting?  Add a concise description of the feature being requested.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+### Why
+***(Required)*** Why are you requesting this feature?  Add a concise description of the problem this feature solves.
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+### How
+***(Optional)*** If applicable, add screenshots, animations, or videos to help illustrate how the feature could be done.
