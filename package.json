@@ -101,7 +101,7 @@
     "@babel/polyfill": "7.0.0",
     "@material-ui/core": "3.9.2",
     "bottleneck": "2.14.0",
-    "cookie": "0.3.1",
+    "cookie": "0.4.0",
     "core-js": "2.5.7",
     "create-hash": "1.1.3",
     "date-fns": "1.29.0",
