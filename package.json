@@ -71,7 +71,7 @@
     "electron": "4.0.2",
     "electron-builder": "20.32.0",
     "electron-rebuild": "1.8.2",
-    "enzyme": "3.7.0",
+    "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.6.0",
     "eslint": "4.18.0",
     "eslint-config-prettier": "2.9.0",
