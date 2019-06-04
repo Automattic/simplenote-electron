@@ -67,7 +67,7 @@
     "classnames": "2.2.5",
     "concurrently": "4.1.0",
     "css-loader": "0.28.9",
-    "debug": "4.1.0",
+    "debug": "4.1.1",
     "electron": "4.0.2",
     "electron-builder": "20.32.0",
     "electron-rebuild": "1.8.2",
