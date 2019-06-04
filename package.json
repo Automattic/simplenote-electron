@@ -64,7 +64,7 @@
     "babel-plugin-dynamic-import-node": "2.2.0",
     "babel-plugin-lodash": "3.3.4",
     "babel-plugin-transform-react-remove-prop-types": "0.4.20",
-    "classnames": "2.2.5",
+    "classnames": "2.2.6",
     "concurrently": "4.1.0",
     "css-loader": "0.28.9",
     "debug": "4.1.1",
