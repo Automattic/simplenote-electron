@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import createHash from 'create-hash/browser';
 import { includes, isEmpty } from 'lodash';
+import md5 from 'md5';
 
 import analytics from '../../analytics';
 import isEmailTag from '../../utils/is-email-tag';
@@ -85,15 +85,11 @@ export class ShareDialog extends Component {
   };
 
   gravatarURL = email => {
-    const hash = createHash('md5');
-
-    hash.update(email.trim().toLowerCase());
-    let digest = hash
-      .digest()
+    let hash = md5(email.trim().toLowerCase())
       .toString('hex')
       .toLowerCase();
 
-    return `https://secure.gravatar.com/avatar/${digest}.jpg?s=68`;
+    return `https://secure.gravatar.com/avatar/${hash}.jpg?s=68`;
   };
 
   render() {
