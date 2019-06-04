@@ -100,7 +100,7 @@
   "dependencies": {
     "@babel/polyfill": "7.4.4",
     "@material-ui/core": "3.9.3",
-    "bottleneck": "2.14.0",
+    "bottleneck": "2.19.0",
     "cookie": "0.4.0",
     "core-js": "2.5.7",
     "create-hash": "1.1.3",
