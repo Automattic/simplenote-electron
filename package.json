@@ -121,7 +121,7 @@
     "js-yaml": "^3.12.0",
     "jszip": "3.2.1",
     "lodash": "4.17.11",
-    "pretty-bytes": "5.1.0",
+    "pretty-bytes": "5.2.0",
     "promise": "7.3.1",
     "prop-types": "15.7.2",
     "randombytes": "2.1.0",
