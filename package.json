@@ -137,7 +137,7 @@
     "react-virtualized": "9.18.5",
     "redux": "3.7.2",
     "redux-localstorage": "0.4.1",
-    "redux-thunk": "2.2.0",
+    "redux-thunk": "2.3.0",
     "remove-markdown": "0.3.0",
     "sanitize-filename": "1.6.1",
     "sax": "1.2.4",
