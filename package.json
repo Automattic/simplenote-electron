@@ -133,7 +133,7 @@
     "react-overlays": "0.8.3",
     "react-redux": "5.1.1",
     "react-tabs": "2.3.0",
-    "react-transition-group": "2.5.0",
+    "react-transition-group": "2.9.0",
     "react-virtualized": "9.18.5",
     "redux": "3.7.2",
     "redux-localstorage": "0.4.1",
