@@ -90,7 +90,7 @@
     "prettier": "1.17.1",
     "react-onclickoutside": "6.8.0",
     "react-test-renderer": "16.2.0",
-    "sass-loader": "6.0.6",
+    "sass-loader": "6.0.7",
     "style-loader": "0.20.2",
     "wait-on": "3.0.1",
     "webpack": "4.5.0",
