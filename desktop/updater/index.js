@@ -3,6 +3,7 @@
 /**
  * Internal dependencies
  */
+const isDev = require('electron-is-dev');
 const platform = require('../detect/platform');
 const config = require('../config');
 const AutoUpdater = require('./auto-updater');
@@ -10,7 +11,10 @@ const ManualUpdater = require('./manual-updater');
 
 let updater = false;
 
-if (platform.isOSX() || platform.isWindows() || process.env.APPIMAGE) {
+if (
+  !isDev &&
+  (platform.isOSX() || platform.isWindows() || process.env.APPIMAGE)
+) {
   updater = new AutoUpdater({
     changelogUrl: config.updater.changelogUrl,
   });
