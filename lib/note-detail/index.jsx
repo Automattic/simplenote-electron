@@ -249,4 +249,7 @@ const mapDispatchToProps = {
   updateNoteContent,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NoteDetail);

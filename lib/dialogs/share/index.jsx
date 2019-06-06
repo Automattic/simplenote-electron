@@ -225,4 +225,7 @@ export class ShareDialog extends Component {
   }
 }
 
-export default connect(null, { updateNoteTags })(ShareDialog);
+export default connect(
+  null,
+  { updateNoteTags }
+)(ShareDialog);

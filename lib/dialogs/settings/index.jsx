@@ -52,9 +52,8 @@ export class SettingsDialog extends Component {
       // Also check persisted store for any notes with version 0
       const noteHasSynced = note =>
         new Promise((resolve, reject) =>
-          noteBucket.getVersion(
-            note.id,
-            (e, v) => (e || v === 0 ? reject() : resolve())
+          noteBucket.getVersion(note.id, (e, v) =>
+            e || v === 0 ? reject() : resolve()
           )
         );
 
@@ -150,4 +149,7 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(SettingsDialog);
+export default connect(
+  null,
+  mapDispatchToProps
+)(SettingsDialog);

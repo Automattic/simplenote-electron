@@ -138,7 +138,11 @@ export class TagField extends Component {
     this.setState({ selectedTag: this.props.tags.slice(-1).shift() });
 
   selectTag = event => {
-    const { target: { dataset: { tagName } } } = event;
+    const {
+      target: {
+        dataset: { tagName },
+      },
+    } = event;
 
     event.preventDefault();
     event.stopPropagation();
@@ -199,16 +203,14 @@ export class TagField extends Component {
             tabIndex="-1"
             ref={this.storeHiddenTag}
           />
-          {tags
-            .filter(negate(isEmailTag))
-            .map(tag => (
-              <TagChip
-                key={tag}
-                tag={tag}
-                selected={tag === selectedTag}
-                onSelect={this.selectTag}
-              />
-            ))}
+          {tags.filter(negate(isEmailTag)).map(tag => (
+            <TagChip
+              key={tag}
+              tag={tag}
+              selected={tag === selectedTag}
+              onSelect={this.selectTag}
+            />
+          ))}
           <TagInput
             allTags={allTags}
             inputRef={this.storeInputRef}
@@ -236,4 +238,7 @@ export class TagField extends Component {
   }
 }
 
-export default connect(null, { updateNoteTags })(TagField);
+export default connect(
+  null,
+  { updateNoteTags }
+)(TagField);
