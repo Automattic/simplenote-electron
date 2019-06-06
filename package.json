@@ -98,7 +98,6 @@
     "webpack-dev-server": "3.6.0"
   },
   "dependencies": {
-    "@babel/polyfill": "7.4.4",
     "@material-ui/core": "3.9.3",
     "bottleneck": "2.19.0",
     "cookie": "0.4.0",
