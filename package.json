@@ -130,7 +130,7 @@
     "react-dom": "16.8.6",
     "react-dropzone": "6.2.4",
     "react-modal": "3.8.1",
-    "react-overlays": "0.8.3",
+    "react-overlays": "1.2.0",
     "react-redux": "5.1.1",
     "react-tabs": "2.3.0",
     "react-transition-group": "2.9.0",
