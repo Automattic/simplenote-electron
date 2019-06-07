@@ -212,12 +212,11 @@ const renderNote = (
             </div>
           )}
         </div>
-        {'condensed' !== noteDisplay &&
-          preview.trim() && (
-            <div className="note-list-item-excerpt">
-              {decorateWith(decorators, preview)}
-            </div>
-          )}
+        {'condensed' !== noteDisplay && preview.trim() && (
+          <div className="note-list-item-excerpt">
+            {decorateWith(decorators, preview)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -475,4 +474,7 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NoteList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NoteList);

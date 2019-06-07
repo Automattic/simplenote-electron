@@ -49,4 +49,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(ToolsPanel);
+export default connect(
+  null,
+  mapDispatchToProps
+)(ToolsPanel);

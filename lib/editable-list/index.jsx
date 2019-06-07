@@ -106,19 +106,18 @@ export class EditableList extends Component {
                 </span>
               </span>
 
-              {onReorder &&
-                !sortTagsAlpha && (
-                  <span
-                    className="editable-list-reorder"
-                    tabIndex={editing ? '0' : '-1'}
-                    onDragStart={e => e.preventDefault()}
-                    onMouseDown={this.onReorderStart.bind(this, itemId)}
-                    onTouchStart={this.onReorderStart.bind(this, itemId)}
-                    onKeyDown={this.onReorderKeyDown.bind(this, itemId)}
-                  >
-                    <ReorderIcon />
-                  </span>
-                )}
+              {onReorder && !sortTagsAlpha && (
+                <span
+                  className="editable-list-reorder"
+                  tabIndex={editing ? '0' : '-1'}
+                  onDragStart={e => e.preventDefault()}
+                  onMouseDown={this.onReorderStart.bind(this, itemId)}
+                  onTouchStart={this.onReorderStart.bind(this, itemId)}
+                  onKeyDown={this.onReorderKeyDown.bind(this, itemId)}
+                >
+                  <ReorderIcon />
+                </span>
+              )}
             </li>
           );
         })}

@@ -96,7 +96,10 @@ const isElectron = (() => {
 const isElectronMac = () =>
   matchesProperty('process.platform', 'darwin')(window);
 
-export const App = connect(mapStateToProps, mapDispatchToProps)(
+export const App = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
   class extends Component {
     static displayName = 'App';
 
@@ -153,7 +156,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
-      const { actions: { setConnectionStatus } } = this.props;
+      const {
+        actions: { setConnectionStatus },
+      } = this.props;
 
       this.props.client
         .on('authorized', this.onAuthChanged)

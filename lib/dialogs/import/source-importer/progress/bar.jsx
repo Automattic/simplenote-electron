@@ -32,7 +32,7 @@ class ImportProgressBar extends React.Component {
       return (
         <ProgressBar
           variant="determinate"
-          value={currentValue / endValue * 100}
+          value={(currentValue / endValue) * 100}
         />
       );
     } else {

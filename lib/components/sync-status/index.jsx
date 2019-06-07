@@ -33,7 +33,9 @@ class SyncStatus extends Component {
     const unit = unsyncedChangeCount === 1 ? 'change' : 'changes';
     const text = unsyncedChangeCount
       ? `${unsyncedChangeCount} unsynced ${unit}`
-      : isOffline ? 'No connection' : 'All changes synced';
+      : isOffline
+      ? 'No connection'
+      : 'All changes synced';
 
     return (
       <div>
