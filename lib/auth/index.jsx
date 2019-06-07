@@ -199,11 +199,7 @@ export class Auth extends Component {
 
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
     this.authState = `app-${cryptoRandomString(20)}`;
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
-      config.wpcc_client_id
-    }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${
-      this.authState
-    }`;
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;
 
     this.authWindow.loadURL(authUrl);
     this.authWindow.show();
