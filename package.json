@@ -30,19 +30,6 @@
     "> 1%",
     "ie >= 11"
   ],
-  "jest": {
-    "globals": {
-      "config": {
-        "appVersion": "foo"
-      }
-    },
-    "roots": [
-      "desktop",
-      "lib"
-    ],
-    "setupTestFrameworkScriptFile": "<rootDir>setup-tests.js",
-    "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
-  },
   "prettier": {
     "bracketSpacing": true,
     "singleQuote": true,
