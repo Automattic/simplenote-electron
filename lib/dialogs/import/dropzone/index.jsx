@@ -1,102 +1,93 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Dropzone from 'react-dropzone';
 import GridiconUpload from 'gridicons/dist/cloud-upload';
 import GridiconWarn from 'gridicons/dist/notice-outline';
 import FileIcon from '../../../icons/file';
+import { useDropzone } from 'react-dropzone';
 
-class ImporterDropzone extends React.Component {
-  static propTypes = {
-    acceptedTypes: PropTypes.string,
-    locked: PropTypes.bool.isRequired,
-    multiple: PropTypes.bool,
-    onAccept: PropTypes.func.isRequired,
-    onReset: PropTypes.func.isRequired,
-  };
+function ImporterDropzone({
+  acceptedTypes,
+  locked,
+  multiple,
+  onAccept,
+  onReset,
+}) {
+  const [acceptedFile, setAcceptedFile] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(0);
 
-  state = {
-    acceptedFile: undefined,
-    errorMessage: undefined,
-  };
-
-  onDrop = (acceptedFiles, rejectedFiles) => {
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     if (acceptedFiles.length === 0) {
-      this.handleReject(rejectedFiles);
+      handleReject(rejectedFiles);
     } else {
-      this.handleAccept(acceptedFiles);
+      handleAccept(acceptedFiles);
     }
-  };
+  }, []);
 
-  handleAccept = acceptedFiles => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: acceptedTypes,
+    disabled: locked,
+    onDrop,
+  });
+
+  const handleAccept = acceptedFiles => {
     const fileCount = acceptedFiles.length;
     const label = fileCount > 1 ? `${fileCount} files` : acceptedFiles[0].name;
-
-    this.setState({ acceptedFile: label });
-    this.props.onAccept(acceptedFiles);
+    setAcceptedFile(label);
+    onAccept(acceptedFiles);
   };
 
-  handleReject = rejectedFiles => {
-    let errorMessage = 'File type is incorrect';
-
-    if (!this.props.multiple && rejectedFiles.length > 1) {
-      errorMessage = 'Choose a single file';
+  const handleReject = rejectedFiles => {
+    if (!multiple && rejectedFiles.length > 1) {
+      setErrorMessage('Choose a single file');
+    } else {
+      setErrorMessage('File type is incorrect');
     }
-    this.setState({
-      acceptedFile: undefined,
-      errorMessage: errorMessage,
-    });
-    this.errorTimer = window.setTimeout(() => {
-      this.setState({ errorMessage: undefined });
+    setAcceptedFile(undefined);
+    window.setTimeout(() => {
+      setErrorMessage(undefined);
     }, 2500);
 
-    this.props.onReset();
+    onReset();
   };
 
-  componentWillUnmount() {
-    window.clearTimeout(this.errorTimer);
-  }
+  const text = errorMessage ? errorMessage : 'Drag a file, or click to choose';
 
-  render() {
-    const { acceptedTypes, locked, multiple = false } = this.props;
-    const { acceptedFile, errorMessage } = this.state;
+  const DropzonePlaceholder = () => (
+    <Fragment>
+      {errorMessage ? <GridiconWarn /> : <GridiconUpload />}
+      {isDragActive ? 'Drop files here' : text}
+    </Fragment>
+  );
 
-    const text = errorMessage
-      ? errorMessage
-      : 'Drag a file, or click to choose';
+  const FileWithIcon = () => (
+    <Fragment>
+      <FileIcon />
+      <span className="importer-dropzone__filename">{acceptedFile}</span>
+    </Fragment>
+  );
 
-    const DropzonePlaceholder = () => (
-      <Fragment>
-        {errorMessage ? <GridiconWarn /> : <GridiconUpload />}
-        {text}
-      </Fragment>
-    );
-
-    const FileWithIcon = () => (
-      <Fragment>
-        <FileIcon />
-        <span className="importer-dropzone__filename">{acceptedFile}</span>
-      </Fragment>
-    );
-
-    return (
-      <Dropzone
-        accept={acceptedTypes}
-        activeClassName="is-active"
-        className={classnames(
-          { 'is-accepted': acceptedFile },
-          'importer-dropzone theme-color-border'
-        )}
-        disabled={locked}
-        disablePreview
-        multiple={multiple}
-        onDrop={this.onDrop}
-      >
-        {acceptedFile ? <FileWithIcon /> : <DropzonePlaceholder />}
-      </Dropzone>
-    );
-  }
+  return (
+    <div
+      {...getRootProps()}
+      className={classnames(
+        { 'is-accepted': acceptedFile },
+        'importer-dropzone theme-color-border'
+      )}
+    >
+      <input {...getInputProps()} />
+      {acceptedFile ? <FileWithIcon /> : <DropzonePlaceholder />}
+    </div>
+  );
 }
+
+ImporterDropzone.propTypes = {
+  acceptedTypes: PropTypes.string,
+  locked: PropTypes.bool.isRequired,
+  multiple: PropTypes.bool,
+  onAccept: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
+};
 
 export default ImporterDropzone;
