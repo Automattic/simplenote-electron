@@ -14,12 +14,15 @@ import { setWPToken } from '../state/settings/actions';
 
 export class Auth extends Component {
   static propTypes = {
+    authorizeUserWithToken: PropTypes.func.isRequired,
+    authPending: PropTypes.bool,
+    hasInvalidCredentials: PropTypes.bool,
+    hasLoginError: PropTypes.bool,
     isAuthenticated: PropTypes.bool,
-    isMacApp: PropTypes.bool,
     isElectron: PropTypes.bool,
+    isMacApp: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
-    authorizeUserWithToken: PropTypes.func.isRequired,
     saveWPToken: PropTypes.func.isRequired,
   };
 
