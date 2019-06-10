@@ -126,7 +126,7 @@
     "react": "16.8.6",
     "react-addons-update": "15.6.2",
     "react-dom": "16.8.6",
-    "react-dropzone": "6.2.4",
+    "react-dropzone": "10.1.5",
     "react-modal": "3.8.1",
     "react-overlays": "1.2.0",
     "react-redux": "7.0.3",
