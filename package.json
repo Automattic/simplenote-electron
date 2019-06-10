@@ -94,7 +94,7 @@
     "wait-on": "3.2.0",
     "webpack": "4.5.0",
     "webpack-cli": "3.3.3",
-    "webpack-dev-server": "3.6.0"
+    "webpack-dev-server": "3.7.1"
   },
   "dependencies": {
     "@material-ui/core": "4.1.0",
