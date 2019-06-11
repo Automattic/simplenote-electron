@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -14,8 +14,8 @@ function ImporterDropzone({
   onAccept,
   onReset,
 }) {
-  const [acceptedFile, setAcceptedFile] = useState(0);
-  const [errorMessage, setErrorMessage] = useState(0);
+  const [acceptedFile, setAcceptedFile] = useState();
+  const [errorMessage, setErrorMessage] = useState();
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     if (acceptedFiles.length === 0) {
@@ -28,6 +28,7 @@ function ImporterDropzone({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: acceptedTypes,
     disabled: locked,
+    multiple,
     onDrop,
   });
 
@@ -38,6 +39,14 @@ function ImporterDropzone({
     onAccept(acceptedFiles);
   };
 
+  useEffect(() => {
+    if (!errorMessage) {
+      return;
+    }
+    const timer = setTimeout(() => setErrorMessage(undefined), 2500);
+    return () => clearTimeout(timer);
+  }, [errorMessage]);
+
   const handleReject = rejectedFiles => {
     if (!multiple && rejectedFiles.length > 1) {
       setErrorMessage('Choose a single file');
@@ -45,10 +54,6 @@ function ImporterDropzone({
       setErrorMessage('File type is incorrect');
     }
     setAcceptedFile(undefined);
-    window.setTimeout(() => {
-      setErrorMessage(undefined);
-    }, 2500);
-
     onReset();
   };
 
