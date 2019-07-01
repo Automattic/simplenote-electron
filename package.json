@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "1.6.0-alpha",
+  "version": "1.6.0",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -30,19 +30,6 @@
     "> 1%",
     "ie >= 11"
   ],
-  "jest": {
-    "globals": {
-      "config": {
-        "appVersion": "foo"
-      }
-    },
-    "roots": [
-      "desktop",
-      "lib"
-    ],
-    "setupTestFrameworkScriptFile": "<rootDir>setup-tests.js",
-    "testRegex": "(/test/.*\\.jsx?)|(test\\.jsx?)$"
-  },
   "prettier": {
     "bracketSpacing": true,
     "singleQuote": true,

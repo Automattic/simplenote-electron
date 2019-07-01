@@ -1,5 +1,29 @@
 # Changelog
 
+## [v1.6.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.6.0) (2019-07-01)
+
+### Features
+- Add custom tooltips to toolbar buttons [#1214](https://github.com/Automattic/simplenote-electron/pull/1214)
+- Improve search performance on long notes [#1218](https://github.com/Automattic/simplenote-electron/pull/1218)
+
+### Fixes
+
+- Extract text manipulation helpers ( [#1212](https://github.com/Automattic/simplenote-electron/pull/1212) )
+- Refactor settings state ( [#1216](https://github.com/Automattic/simplenote-electron/pull/1216) )
+- Remove hacky focus manipulation in DraftJS ( [#1219](https://github.com/Automattic/simplenote-electron/pull/1219) )
+- Remove unused build files ( [#1173](https://github.com/Automattic/simplenote-electron/pull/1173) )
+- Keep editor in sync with selected note in NoteList ( [#1220](https://github.com/Automattic/simplenote-electron/pull/1220) )
+- Fix large tag-list squashing note-list ( [#1227](https://github.com/Automattic/simplenote-electron/pull/1227) )
+- Updated GitHub templates
+- Updated most dependencies
+- Fix Prettier Errors ( [#1343](https://github.com/Automattic/simplenote-electron/pull/1343) )
+- Use md5 node module ( [#1308](https://github.com/Automattic/simplenote-electron/pull/1308) )
+- Remove ajv peer dependency ( [#1360](https://github.com/Automattic/simplenote-electron/pull/1360) )
+- Fix linting warning in tag-chip ( [#1314](https://github.com/Automattic/simplenote-electron/pull/1314) )
+- Fix linting warning in lib/app ( [#1313](https://github.com/Automattic/simplenote-electron/pull/1313) )
+- Fix linting warning in lib/auth/index ( [#1311](https://github.com/Automattic/simplenote-electron/pull/1311) )
+- Docs update: Additional step in installing ( [#1252](https://github.com/Automattic/simplenote-electron/pull/1252) )
+
 ## [v1.5.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.5.0) (2019-02-21)
 
 ### Features
