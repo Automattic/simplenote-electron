@@ -1,3 +1,15 @@
+function readLocalConfig() {
+  try {
+    const config = require('./config-local');
+    if (typeof config === 'function') {
+      throw new Error('Invalid config file. Config must be JSON.');
+    }
+    return config;
+  } catch {
+    return false;
+  }
+}
+
 function readConfig() {
   try {
     const config = require('./config');
@@ -17,7 +29,7 @@ function readConfig() {
 }
 
 function getConfig() {
-  var config = readConfig();
+  var config = readLocalConfig() || readConfig();
   var pkg = require('./package.json');
   config.version = pkg.version;
   return config;
