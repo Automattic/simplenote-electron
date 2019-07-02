@@ -21,9 +21,9 @@ references:
     run:
       name: Install linux dev dependencies
       command: |
-              sudo dpkg --add-architecture i386
-              sudo apt update
-              sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
+        sudo dpkg --add-architecture i386
+        sudo apt update
+        sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
 
 jobs:
   build:
@@ -37,8 +37,8 @@ jobs:
       - run:
           name: Decrypt assets
           command: |
-                  openssl aes-256-cbc -md md5 -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
-                  openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
+            openssl aes-256-cbc -md md5 -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
+            openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
       - *npm_restore_cache
       - run: npm ci
       - run: make build
@@ -63,9 +63,9 @@ jobs:
       - run:
           name: Release cleanup
           command: |
-                  set +e
-                  rm -rf release/github
-                  rm -rf release/linux-unpacked
+            set +e
+            rm -rf release/github
+            rm -rf release/linux-unpacked
       - persist_to_workspace:
           root: ~/simplenote
           paths:
@@ -73,7 +73,7 @@ jobs:
 
   mac:
     macos:
-      xcode: "9.4.1"
+      xcode: '9.4.1'
     shell: /bin/bash --login
     working_directory: /Users/distiller/simplenote
     steps:
@@ -89,13 +89,13 @@ jobs:
             CSC_LINK: resources/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
           command: |
-                  make package-osx SKIP_BUILD=true
-      - run: 
+            make package-osx SKIP_BUILD=true
+      - run:
           name: Release cleanup
           command: |
-                  set +e
-                  rm -rf release/github
-                  rm -rf release/mac
+            set +e
+            rm -rf release/github
+            rm -rf release/mac
       - persist_to_workspace:
           root: /Users/distiller/simplenote
           paths:
@@ -111,6 +111,20 @@ jobs:
       - store_artifacts:
           path: /tmp/simplenote/release
 
+  deploydevelop:
+    docker:
+      - image: circleci/node:10.16.0
+    working_directory: ~/simplenote
+    steps:
+      - checkout
+      - *npm_restore_cache
+      - *install_linux_deps
+      - run: npm ci
+      - *npm_save_cache
+      - run:
+          name: Build and Push
+          command: |
+            ./bin/deploy-develop.sh
 
 workflows:
   version: 2
@@ -124,7 +138,7 @@ workflows:
               only: /.*/
       - linux:
           requires:
-          - build
+            - build
           filters:
             branches:
               ignore: webapp
@@ -132,7 +146,7 @@ workflows:
               only: /.*/
       - mac:
           requires:
-          - build
+            - build
           filters:
             branches:
               ignore: webapp
@@ -147,3 +161,10 @@ workflows:
               ignore: webapp
             tags:
               only: /.*/
+      - deploydevelop:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
