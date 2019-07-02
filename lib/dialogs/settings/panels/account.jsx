@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ChangeEmail from './changeEmail';
 import PanelTitle from '../../../components/panel-title';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
@@ -31,7 +32,7 @@ const AccountPanel = props => {
           <span className="settings-account-name">{accountName}</span>
         </div>
       </div>
-
+      <ChangeEmail></ChangeEmail>
       <ul className="dialog-actions">
         <li>
           <button
