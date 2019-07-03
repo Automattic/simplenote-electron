@@ -111,21 +111,6 @@ jobs:
       - store_artifacts:
           path: /tmp/simplenote/release
 
-  deploydevelop:
-    docker:
-      - image: circleci/node:10.16.0
-    working_directory: ~/simplenote
-    steps:
-      - checkout
-      - *npm_restore_cache
-      - *install_linux_deps
-      - run: npm ci
-      - *npm_save_cache
-      - run:
-          name: Build and Push
-          command: |
-            ./bin/deploy-develop.sh
-
 workflows:
   version: 2
   simplenote:
@@ -161,10 +146,3 @@ workflows:
               ignore: webapp
             tags:
               only: /.*/
-      - deploydevelop:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - develop
