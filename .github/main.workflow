@@ -7,7 +7,7 @@ action "Deploy Develop" {
   uses = "./actions/deploy-develop"
   secrets = ["GITHUB_TOKEN"]
   env = {
-    PUSHED_BRANCH = "add/develop-branch-deploy"
+    PUSHED_BRANCH = "develop"
     COMMIT_BRANCH = "webapp-develop"
   }
 }
