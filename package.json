@@ -89,7 +89,7 @@
     "cookie": "0.4.0",
     "core-js": "3.1.4",
     "date-fns": "1.30.1",
-    "draft-js": "0.10.5",
+    "draft-js": "0.11.0",
     "draft-js-multidecorators": "1.0.0",
     "draft-js-simpledecorator": "1.0.2",
     "electron-fetch": "^1.2.1",
