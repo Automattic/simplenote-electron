@@ -120,7 +120,7 @@
     "react-tabs": "3.0.0",
     "react-transition-group": "4.2.0",
     "react-virtualized": "9.21.1",
-    "redux": "4.0.1",
+    "redux": "4.0.4",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "2.3.0",
     "regenerator-runtime": "0.13.2",
