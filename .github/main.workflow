@@ -5,7 +5,7 @@ workflow "Build and Push to WebApp" {
 
 action "Deploy Develop" {
   uses = "./actions/deploy-develop"
-  secrets = ["GITHUB_TOKEN"]
+  secrets = ["GITHUB_TOKEN", "APP_ID"]
   env = {
     PUSHED_BRANCH = "develop"
     COMMIT_BRANCH = "webapp-develop"

@@ -9,6 +9,11 @@ fi
 # Install Node Modules
 npm install
 
+#Setup config-local to override config
+json='{"app_id": "%s", "app_key": "12345", "development": false, "wpcc_client_id": "0", "wpcc_redirect_url": "https://simplenote.com", "is_app_engine": true, "web_app_url": "https://simplenote-develop.go-vip.net", "app_engine_url": "https://develop.simplenote.com"}'
+json_string=$(printf "$json" "$APP_ID")
+echo $json_string > config-local.json
+
 # Build site
 NODE_ENV=production make build
 
