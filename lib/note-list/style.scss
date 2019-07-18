@@ -107,10 +107,7 @@
   }
 
   &.note-list-item-selected {
-    .note-list-item-title,
-    .note-list-item-excerpt {
-      color: $blue;
-    }
+    background: lighten($blue, 30%);
   }
 
   .note-list-item-published-icon {
@@ -136,6 +133,6 @@
   }
 
   .note-list-item-excerpt {
-    color: $gray;
+    color: $gray-darkest;
   }
 }
