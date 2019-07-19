@@ -21,9 +21,7 @@ module.exports = () => {
       path: __dirname + '/dist',
       filename: 'app.js',
       chunkFilename: '[name].js',
-      ...(config.is_app_engine && {
-        publicPath: config.web_app_url + '/',
-      }),
+      publicPath: config.is_app_engine ? config.web_app_url + '/' : '/',
     },
     module: {
       rules: [
