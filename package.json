@@ -54,7 +54,7 @@
     "concurrently": "4.1.1",
     "css-loader": "3.0.0",
     "debug": "4.1.1",
-    "electron": "4.2.4",
+    "electron": "4.2.8",
     "electron-builder": "20.32.0",
     "electron-rebuild": "1.8.5",
     "enzyme": "3.10.0",
