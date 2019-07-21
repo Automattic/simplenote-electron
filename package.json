@@ -59,7 +59,7 @@
     "electron-rebuild": "1.8.5",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
-    "eslint": "5.16.0",
+    "eslint": "6.1.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-loader": "2.2.1",
     "eslint-plugin-jest": "22.15.0",
