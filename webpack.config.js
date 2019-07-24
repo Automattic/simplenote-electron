@@ -15,7 +15,10 @@ module.exports = () => {
     mode: isDevMode ? 'development' : 'production',
     devtool:
       process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
-    devServer: { inline: true },
+    devServer: {
+      inline: true,
+      historyApiFallback: true,
+    },
     entry: ['./boot'],
     output: {
       path: __dirname + '/dist',
