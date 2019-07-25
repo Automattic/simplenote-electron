@@ -83,6 +83,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    setStateFromUrl: () => dispatch(actionCreators.setStateFromUrl),
   };
 }
 
@@ -122,6 +123,7 @@ export const App = connect(
       preferencesBucket: PropTypes.object.isRequired,
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
+      setStateFromUrl: PropTypes.func.isRequired,
       tagBucket: PropTypes.object.isRequired,
     };
 
@@ -144,6 +146,8 @@ export const App = connect(
     }
 
     componentDidMount() {
+      window.addEventListener('popstate', this.props.setStateFromUrl);
+      this.props.setStateFromUrl();
       ipc.on('appCommand', this.onAppCommand);
       ipc.send('settingsUpdate', this.props.settings);
 
