@@ -8,6 +8,7 @@ import getConfig from '../../get-config';
 import Spinner from '../components/spinner';
 
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
+import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 
 export class Auth extends Component {
@@ -21,6 +22,7 @@ export class Auth extends Component {
     isMacApp: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
+    resetErrors: PropTypes.func.isRequired,
     saveWPToken: PropTypes.func.isRequired,
   };
 
@@ -53,11 +55,11 @@ export class Auth extends Component {
     const buttonLabel = isCreatingAccount ? signUpText : logInText;
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
     const helpMessage = isCreatingAccount
-      ? 'Already have an account?'
-      : "Don't have an account?";
+      ? 'The email you’ve entered is already associated with a Simplenote account.'
+      : '';
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
-      : 'Login failed. Please try again.';
+      : 'Could not sign in with the provided email address and password.';
 
     return (
       <div className="login">
@@ -86,7 +88,7 @@ export class Auth extends Component {
           </label>
           <input
             id="login__field-username"
-            onKeyDown={this.onLogin}
+            onKeyDown={this.onInput}
             placeholder="Email"
             ref={ref => (this.usernameInput = ref)}
             spellCheck={false}
@@ -100,7 +102,7 @@ export class Auth extends Component {
           </label>
           <input
             id="login__field-password"
-            onKeyDown={this.onLogin}
+            onKeyDown={this.onInput}
             placeholder="Password"
             ref={ref => (this.passwordInput = ref)}
             spellCheck={false}
@@ -130,7 +132,6 @@ export class Auth extends Component {
           </a>
 
           <p className="login__signup">
-            {helpMessage}{' '}
             <a href="#" onClick={this.toggleSignUp}>
               {helpLinkLabel}
             </a>
@@ -149,13 +150,17 @@ export class Auth extends Component {
     );
   }
 
-  onLogin = event => {
+  onInput = event => {
     if (event.type === 'keydown' && event.keyCode !== 13) {
+      this.props.resetErrors();
       this.setState({
         passwordErrorMessage: '',
       });
       return;
     }
+  };
+
+  onLogin = event => {
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
@@ -164,6 +169,13 @@ export class Auth extends Component {
     if (!(username && password)) {
       this.setState({
         passwordErrorMessage: 'Please fill out email and password.',
+      });
+      return;
+    }
+
+    if (password.length < 4) {
+      this.setState({
+        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
       });
       return;
     }
@@ -284,12 +296,6 @@ export class Auth extends Component {
   };
 
   onSignUp = event => {
-    if (event.type === 'keydown' && event.keyCode !== 13) {
-      this.setState({
-        passwordErrorMessage: '',
-      });
-      return;
-    }
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
@@ -320,6 +326,7 @@ export class Auth extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+  resetErrors: () => dispatch(reset()),
   saveWPToken: token => dispatch(setWPToken(token)),
 });
 
