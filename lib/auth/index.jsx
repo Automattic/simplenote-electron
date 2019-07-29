@@ -42,7 +42,7 @@ export class Auth extends Component {
       return null;
     }
 
-    const { isMacApp } = this.props;
+    const { isMacApp, isElectron } = this.props;
     const { isCreatingAccount, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
@@ -135,7 +135,7 @@ export class Auth extends Component {
               {helpLinkLabel}
             </a>
           </p>
-          {true && (
+          {isElectron && (
             <Fragment>
               <span className="or">Or</span>
               <span className="or-line"></span>
