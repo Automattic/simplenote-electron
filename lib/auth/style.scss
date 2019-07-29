@@ -7,145 +7,116 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
-  .login__draggable-area {
-    -webkit-app-region: drag;
-    width: 100%;
-    height: 40px;
-    top: 0;
-    left: 0;
-    position: absolute;
+  form {
+    width: 95%;
   }
 
-  .login__form {
-    max-width: 320px;
-    margin: 0 auto;
-    padding: 10px;
-  }
-
-  .login__logo {
-    margin-bottom: 50px;
+  h1 {
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 16px;
     text-align: center;
-
-    svg {
-      border-radius: 50%;
-      border: 1px solid lighten($gray, 30%);
-    }
   }
 
-  .login__fields {
-    border: 1px solid lighten($gray, 25%);
-    border-radius: $border-radius;
-  }
-
-  .login__field {
-    display: flex;
-    align-items: center;
-    padding: 1px;
-    border-bottom: 1px solid lighten($gray, 30%);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .login__field-label {
-      flex: none;
-      width: 7.5em;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: $bold;
-      text-transform: uppercase;
-      color: $gray;
-    }
-
-    .login__field-control {
-      flex: 1 1 auto;
-    }
-
-    input {
-      width: 100%;
-      height: 2em;
-      line-height: 1.5em;
-      padding: 0.25em 0.15em;
-      border: none;
-      font-size: 143%;
-      font-weight: $light;
-    }
-
-    input:focus {
-      position: relative;
-      z-index: 1;
-      outline: none;
-    }
-  }
-
-  .login__auth-message {
-    opacity: 0;
-    margin-top: 8px;
-    margin-bottom: 0;
-
-    &.is-error {
-      color: $red;
-      text-align: center;
-      opacity: 1;
-      transition: opacity 0.5s ease-in-out;
-    }
-  }
-
-  .login__actions {
-    margin-top: 22px;
+  .login__auth-message.is-error {
+    color: #be2a31;
+    font-size: 16px;
+    margin: 0 auto 16px;
+    max-width: 347px;
     text-align: center;
-    color: $gray;
+    width: 90%;
   }
 
-  .button-primary {
-    width: 100%;
-    min-height: 47px; // so that the button doesn't get smaller with the spinner
-    display: flex;
-    justify-content: center; // centers spinner
-    align-items: center;
+  label {
+    display: none;
+  }
+
+  input,
+  button[type='submit'] {
+    background-color: #ffffff;
+    border: solid 1px #e3e0e2;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: block;
+    height: 48px;
+    padding: 11px 15px;
+    margin: 8px auto 0;
+    max-width: 365px;
+    width: 95%;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  button[type='submit'] {
+    background-color: #3584c8;
+    border: none;
+    color: #ffffff;
+    margin: 16px auto 8px;
   }
 
   .login__forgot {
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    color: #135d95;
+    display: block;
+    font-size: 16px;
+    margin: 16px auto;
+    text-align: center;
+    text-decoration: none;
   }
 
   .login__signup {
-    margin-top: 1em;
+    display: block;
+    font-size: 16px;
+    margin: 16px auto;
+    text-align: center;
+    text-decoration: none;
+  }
 
-    a {
-      font-weight: $bold;
-    }
+  .login__signup a {
+    color: #135d95;
+  }
+
+  .or {
+    background: #ffffff;
+    color: #6f7780;
+    display: block;
+    font-size: 15px;
+    font-style: italic;
+    height: 20px;
+    position: relative;
+    margin: 10px auto;
+    text-align: center;
+    width: 50px;
+    z-index: 1;
+  }
+
+  .or-line {
+    border-bottom: 1px solid #dbdee0;
+    margin: -20px auto;
+    max-width: 365px;
+    text-align: center;
+    width: 95%;
+    position: relative;
+    display: block;
+  }
+
+  .wpcc-button {
+    background-color: #006088;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #ffffff;
+    display: block;
+    font-size: 18px;
+    padding: 13px 15px;
+    margin: 50px auto 10px;
+    max-width: 365px;
+    text-align: center;
+    text-decoration: none;
+    width: 95%;
   }
 }
 
-.login__or {
-  text-align: center;
-  margin: 20px 0 12px;
-}
-
-.login__btn-wpcom {
-  button {
-    color: $gray;
-    width: 100%;
+.theme-dark .login {
+  .or {
+    background: #1e1e1e;
   }
-}
-
-.login__btn-wpcom-icon {
-  svg {
-    margin-right: 6px;
-    width: 32px;
-    height: 32px;
-
-    path {
-      fill: $blue;
-    }
-  }
-}
-
-.theme-dark .login__logo svg {
-  border-radius: 0;
-  border: none;
 }
