@@ -93,7 +93,7 @@
     "draft-js-multidecorators": "1.0.0",
     "draft-js-simpledecorator": "1.0.2",
     "electron-fetch": "^1.2.1",
-    "electron-progressbar": "1.1.0",
+    "electron-progressbar": "1.2.0",
     "electron-spellchecker": "^1.1.2",
     "electron-updater": "4.0.6",
     "electron-window-state": "5.0.3",
