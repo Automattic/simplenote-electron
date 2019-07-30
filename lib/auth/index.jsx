@@ -54,9 +54,6 @@ export class Auth extends Component {
     const logInText = 'Log in';
     const buttonLabel = isCreatingAccount ? signUpText : logInText;
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
-    const helpMessage = isCreatingAccount
-      ? 'The email you’ve entered is already associated with a Simplenote account.'
-      : '';
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
       : 'Could not sign in with the provided email address and password.';
