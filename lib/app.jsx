@@ -83,7 +83,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
-    setStateFromUrl: () => dispatch(actionCreators.setStateFromUrl),
+    setStateFromUrl: () => dispatch(actionCreators.setStateFromUrl()),
   };
 }
 
