@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
-import Popover from '@material-ui/core/Popover';
+import { Popover } from '@material-ui/core';
 
 import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
 import getNoteTitles from './get-note-titles';
