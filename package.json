@@ -106,7 +106,7 @@
     "jszip": "3.2.1",
     "lodash": "4.17.15",
     "md5": "2.2.1",
-    "pretty-bytes": "5.2.0",
+    "pretty-bytes": "5.3.0",
     "promise": "8.0.3",
     "prop-types": "15.7.2",
     "randombytes": "2.1.0",
