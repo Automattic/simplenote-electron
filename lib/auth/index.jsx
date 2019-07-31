@@ -331,6 +331,10 @@ export class Auth extends Component {
 
   toggleSignUp = event => {
     event.preventDefault();
+    this.props.resetErrors();
+    this.setState({
+      passwordErrorMessage: '',
+    });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
 }
