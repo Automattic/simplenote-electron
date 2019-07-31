@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
+import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
@@ -54,6 +55,9 @@ export class Auth extends Component {
     const logInText = 'Log in';
     const buttonLabel = isCreatingAccount ? signUpText : logInText;
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
+    const helpMessage = isCreatingAccount
+      ? 'Already have an account?'
+      : "Don't have an account?";
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
       : 'Could not sign in with the provided email address and password.';
@@ -61,6 +65,7 @@ export class Auth extends Component {
     return (
       <div className="login">
         {isMacApp && <div className="login__draggable-area" />}
+        <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onLogin}>
           <h1>{buttonLabel}</h1>
 
@@ -118,30 +123,38 @@ export class Auth extends Component {
             )}
           </button>
 
-          <a
-            className="login__forgot"
-            href="https://app.simplenote.com/forgot/"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={this.onForgot}
-          >
-            Forgot your password?
-          </a>
-
-          <p className="login__signup">
-            <a href="#" onClick={this.toggleSignUp}>
-              {helpLinkLabel}
+          {!isCreatingAccount && (
+            <a
+              className="login__forgot"
+              href="https://app.simplenote.com/forgot/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={this.onForgot}
+            >
+              Forgot your password?
             </a>
-          </p>
-          {isElectron && (
+          )}
+          {isElectron && !isCreatingAccount && (
             <Fragment>
               <span className="or">Or</span>
               <span className="or-line"></span>
               <button className="wpcc-button" onClick={this.onWPLogin}>
-                Log in with WordPress.com
+                {buttonLabel} with WordPress.com
               </button>
             </Fragment>
           )}
+          {isCreatingAccount && (
+            <div className="terms">
+              By creating an account you agree to our
+              <a href="http://simplenote.com/terms/">Terms of Service</a>.
+            </div>
+          )}
+          <p className="login__signup">
+            {helpMessage}{' '}
+            <a href="#" onClick={this.toggleSignUp}>
+              {helpLinkLabel}
+            </a>
+          </p>
         </form>
       </div>
     );

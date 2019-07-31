@@ -14,7 +14,7 @@
   h1 {
     font-size: 36px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin: 0 0 16px;
     text-align: center;
   }
 
@@ -38,12 +38,12 @@
     border-radius: 4px;
     box-sizing: border-box;
     display: block;
-    height: 48px;
+    height: 40px;
     padding: 11px 15px;
     margin: 8px auto 0;
-    max-width: 365px;
+    max-width: 320px;
     width: 95%;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
   }
 
@@ -51,28 +51,29 @@
     background-color: #3584c8;
     border: none;
     color: #ffffff;
+    font-weight: 500;
     margin: 16px auto 8px;
+    padding: 0px 15px 2px;
   }
 
-  .login__forgot {
+  a.login__forgot {
     color: #135d95;
-    display: block;
-    font-size: 16px;
-    margin: 16px auto;
-    text-align: center;
     text-decoration: none;
   }
 
-  .login__signup {
+  .login__forgot, .login__signup, .terms {
+    color: #51565f;
     display: block;
-    font-size: 16px;
+    font-size: 14px;
     margin: 16px auto;
+    max-width: 320px;
     text-align: center;
-    text-decoration: none;
   }
 
-  .login__signup a {
+  .login__signup a, .terms a {
     color: #135d95;
+    margin-left: 5px;
+    text-decoration: none;
   }
 
   .or {
@@ -92,7 +93,7 @@
   .or-line {
     border-bottom: 1px solid #dbdee0;
     margin: -20px auto;
-    max-width: 365px;
+    max-width: 320px;
     text-align: center;
     width: 95%;
     position: relative;
@@ -105,10 +106,12 @@
     box-sizing: border-box;
     color: #ffffff;
     display: block;
-    font-size: 18px;
-    padding: 13px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    height: 40px;
+    padding: 0px 15px 2px;
     margin: 50px auto 10px;
-    max-width: 365px;
+    max-width: 320px;
     text-align: center;
     text-decoration: none;
     width: 95%;
