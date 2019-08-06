@@ -12,6 +12,8 @@ import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
 import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 
+const AppleSignIn = require('./apple');
+
 export class Auth extends Component {
   static propTypes = {
     authorizeUserWithToken: PropTypes.func.isRequired,
@@ -36,6 +38,14 @@ export class Auth extends Component {
     if (this.usernameInput) {
       this.usernameInput.focus();
     }
+    const config = getConfig();
+    const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
+    AppleSignIn.auth.init({
+      clientId: 'foo',
+      scope: 'name email',
+      redirectURI: redirectUrl,
+      state: '1',
+    });
   }
 
   render() {
@@ -134,12 +144,21 @@ export class Auth extends Component {
               Forgot your password?
             </a>
           )}
-          {isElectron && !isCreatingAccount && (
+          {!isElectron && !isCreatingAccount && (
             <Fragment>
               <span className="or">Or</span>
               <span className="or-line"></span>
-              <button className="wpcc-button" onClick={this.onWPLogin}>
+              <button
+                className="third-party-login-button"
+                onClick={this.onWPLogin}
+              >
                 {buttonLabel} with WordPress.com
+              </button>
+              <button
+                className="third-party-login-button"
+                onClick={this.onAppleLogin}
+              >
+                {buttonLabel} with Apple
               </button>
             </Fragment>
           )}
@@ -191,6 +210,11 @@ export class Auth extends Component {
     }
 
     this.props.onAuthenticate(username, password);
+  };
+
+  onAppleLogin = e => {
+    e.preventDefault;
+    AppleSignIn.auth.signIn();
   };
 
   onWPLogin = () => {

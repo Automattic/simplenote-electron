@@ -65,7 +65,9 @@
     text-decoration: none;
   }
 
-  .login__forgot, .login__signup, .terms {
+  .login__forgot,
+  .login__signup,
+  .terms {
     color: #51565f;
     display: block;
     font-size: 14px;
@@ -74,7 +76,8 @@
     text-align: center;
   }
 
-  .login__signup a, .terms a {
+  .login__signup a,
+  .terms a {
     color: #135d95;
     margin-left: 5px;
     text-decoration: none;
@@ -96,7 +99,7 @@
 
   .or-line {
     border-bottom: 1px solid #dbdee0;
-    margin: -20px auto;
+    margin: -20px auto 30px;
     max-width: 320px;
     text-align: center;
     width: 95%;
@@ -104,7 +107,7 @@
     display: block;
   }
 
-  .wpcc-button {
+  .third-party-login-button {
     background-color: #006088;
     border-radius: 4px;
     box-sizing: border-box;
@@ -114,7 +117,7 @@
     font-weight: 500;
     height: 40px;
     padding: 0px 15px 2px;
-    margin: 50px auto 10px;
+    margin: 10px auto 10px;
     max-width: 320px;
     text-align: center;
     text-decoration: none;
