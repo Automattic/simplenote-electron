@@ -79,7 +79,7 @@
     "sass-loader": "7.1.0",
     "style-loader": "1.0.0",
     "wait-on": "3.3.0",
-    "webpack": "4.38.0",
+    "webpack": "4.39.1",
     "webpack-cli": "3.3.6",
     "webpack-dev-server": "3.7.2"
   },
