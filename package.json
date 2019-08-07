@@ -123,7 +123,7 @@
     "redux": "4.0.4",
     "redux-localstorage": "0.4.1",
     "redux-thunk": "2.3.0",
-    "regenerator-runtime": "0.13.2",
+    "regenerator-runtime": "0.13.3",
     "remove-markdown": "0.3.0",
     "sanitize-filename": "1.6.1",
     "sax": "1.2.4",
