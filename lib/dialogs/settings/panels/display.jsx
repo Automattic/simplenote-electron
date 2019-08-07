@@ -109,19 +109,18 @@ const DisplayPanel = props => {
         <Item title="Dark" slug="dark" />
       </SettingsGroup>
 
-      {isElectron &&
-        !isMacApp && (
-          <SettingsGroup
-            title="Menu Bar"
-            slug="autoHideMenuBar"
-            activeSlug={autoHideMenuBar ? 'autoHide' : ''}
-            description="When set to auto-hide, press the Alt key to toggle."
-            onChange={actions.toggleAutoHideMenuBar}
-            renderer={ToggleGroup}
-          >
-            <Item title="Hide Automatically" slug="autoHide" />
-          </SettingsGroup>
-        )}
+      {isElectron && !isMacApp && (
+        <SettingsGroup
+          title="Menu Bar"
+          slug="autoHideMenuBar"
+          activeSlug={autoHideMenuBar ? 'autoHide' : ''}
+          description="When set to auto-hide, press the Alt key to toggle."
+          onChange={actions.toggleAutoHideMenuBar}
+          renderer={ToggleGroup}
+        >
+          <Item title="Hide Automatically" slug="autoHide" />
+        </SettingsGroup>
+      )}
     </Fragment>
   );
 };
