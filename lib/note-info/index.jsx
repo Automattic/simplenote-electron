@@ -208,6 +208,7 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  onClickOutside(NoteInfo)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(onClickOutside(NoteInfo));

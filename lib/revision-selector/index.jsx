@@ -73,7 +73,9 @@ export class RevisionSelector extends Component {
     const revision = revisions[selection];
 
     if (revision) {
-      const { data: { content, tags } } = revision;
+      const {
+        data: { content, tags },
+      } = revision;
 
       onUpdateContent(note, content);
       this.props.updateNoteTags({ note, tags });
@@ -173,6 +175,7 @@ const mapDispatchToProps = dispatch => ({
   updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  onClickOutside(RevisionSelector)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(onClickOutside(RevisionSelector));

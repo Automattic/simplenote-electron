@@ -13,7 +13,8 @@ export const EmailToolTip = ({ openShareDialog }) => (
       the&nbsp;
       <a href="#" onClick={openShareDialog}>
         Collaborate screen
-      </a>.
+      </a>
+      .
     </div>
   </div>
 );
@@ -27,4 +28,7 @@ EmailToolTip.propTypes = {
   openShareDialog: PropTypes.func.isRequired,
 };
 
-export default connect(null, mapDispatchToProps)(EmailToolTip);
+export default connect(
+  null,
+  mapDispatchToProps
+)(EmailToolTip);

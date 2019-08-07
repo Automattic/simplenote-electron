@@ -135,16 +135,15 @@ export class NoteEditor extends Component {
           onChangeContent={this.props.onUpdateContent}
           fontSize={fontSize}
         />
-        {note &&
-          !isTrashed && (
-            <TagField
-              storeFocusTagField={this.storeFocusTagField}
-              storeHasFocus={this.storeTagFieldHasFocus}
-              allTags={this.props.allTags.map(property('data.name'))}
-              note={this.props.note}
-              tags={tags}
-            />
-          )}
+        {note && !isTrashed && (
+          <TagField
+            storeFocusTagField={this.storeFocusTagField}
+            storeHasFocus={this.storeTagFieldHasFocus}
+            allTags={this.props.allTags.map(property('data.name'))}
+            note={this.props.note}
+            tags={tags}
+          />
+        )}
       </div>
     );
   }
@@ -167,4 +166,7 @@ const mapDispatchToProps = dispatch => ({
   setEditorMode: args => dispatch(setEditorMode(args)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NoteEditor);

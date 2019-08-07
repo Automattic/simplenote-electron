@@ -126,7 +126,7 @@ endif
 
 .PHONY: package-osx 
 package-osx: build-if-changed
-	@npx electron-builder --mac -p $(PUBLISH)
+	@npx electron-builder --mac "dmg" -p $(PUBLISH)
 
 .PHONY: package-linux
 package-linux: build-if-changed

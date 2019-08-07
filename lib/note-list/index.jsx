@@ -212,12 +212,11 @@ const renderNote = (
             </div>
           )}
         </div>
-        {'condensed' !== noteDisplay &&
-          preview.trim() && (
-            <div className="note-list-item-excerpt">
-              {decorateWith(decorators, preview)}
-            </div>
-          )}
+        {'condensed' !== noteDisplay && preview.trim() && (
+          <div className="note-list-item-excerpt">
+            {decorateWith(decorators, preview)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -227,6 +226,8 @@ export class NoteList extends Component {
   static displayName = 'NoteList';
 
   static propTypes = {
+    closeNote: PropTypes.func.isRequired,
+    filter: PropTypes.string.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
@@ -254,12 +255,35 @@ export class NoteList extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const {
+      closeNote,
+      filter,
+      notes,
+      onSelectNote,
+      selectedNoteId,
+    } = this.props;
+
     if (
       prevProps.noteDisplay !== this.props.noteDisplay ||
-      prevProps.notes !== this.props.notes ||
+      prevProps.notes !== notes ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
+    }
+
+    // Ensure that the note selected here is also selected in the editor
+    if (selectedNoteId !== prevProps.selectedNoteId) {
+      onSelectNote(selectedNoteId);
+    }
+
+    // Deselect the currently selected note if it doesn't match the search query
+    if (filter !== prevProps.filter) {
+      const selectedNotePassesFilter = notes.some(
+        note => note.id === selectedNoteId
+      );
+      if (!selectedNotePassesFilter) {
+        closeNote();
+      }
     }
   }
 
@@ -381,7 +405,12 @@ export class NoteList extends Component {
   onPinNote = note => this.props.onPinNote(note, !note.pinned);
 }
 
-const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
+const {
+  closeNote,
+  emptyTrash,
+  loadAndSelectNote,
+  pinNote,
+} = appState.actionCreators;
 const { recordEvent } = tracks;
 
 const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
@@ -436,6 +465,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
 };
 
 const mapDispatchToProps = (dispatch, { noteBucket }) => ({
+  closeNote: () => dispatch(closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
   onSelectNote: noteId => {
     dispatch(loadAndSelectNote({ noteBucket, noteId }));
@@ -444,4 +474,7 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NoteList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NoteList);

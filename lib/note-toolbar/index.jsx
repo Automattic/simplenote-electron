@@ -97,7 +97,7 @@ export class NoteToolbar extends Component {
               <IconButton
                 icon={isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
                 onClick={this.setEditorMode}
-                title="Preview"
+                title="Preview • Ctrl+Shift+P"
               />
             </div>
           )}

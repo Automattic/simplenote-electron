@@ -96,26 +96,33 @@ const isElectron = (() => {
 const isElectronMac = () =>
   matchesProperty('process.platform', 'darwin')(window);
 
-export const App = connect(mapStateToProps, mapDispatchToProps)(
+export const App = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
   class extends Component {
     static displayName = 'App';
 
     static propTypes = {
       actions: PropTypes.object.isRequired,
       appState: PropTypes.object.isRequired,
-      settings: PropTypes.object.isRequired,
-
+      authIsPending: PropTypes.bool.isRequired,
+      authorizeUserWithToken: PropTypes.func.isRequired,
       client: PropTypes.object.isRequired,
+      isAuthorized: PropTypes.bool.isRequired,
       isDevConfig: PropTypes.bool.isRequired,
       isSmallScreen: PropTypes.bool.isRequired,
       loadTags: PropTypes.func.isRequired,
-      noteBucket: PropTypes.object.isRequired,
-      preferencesBucket: PropTypes.object.isRequired,
-      tagBucket: PropTypes.object.isRequired,
       onAuthenticate: PropTypes.func.isRequired,
       onCreateUser: PropTypes.func.isRequired,
+      openTagList: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
-      authorizeUserWithToken: PropTypes.func.isRequired,
+      settings: PropTypes.object.isRequired,
+      noteBucket: PropTypes.object.isRequired,
+      preferencesBucket: PropTypes.object.isRequired,
+      resetAuth: PropTypes.func.isRequired,
+      setAuthorized: PropTypes.func.isRequired,
+      tagBucket: PropTypes.object.isRequired,
     };
 
     static defaultProps = {
@@ -128,7 +135,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
       isNoteOpen: false,
     };
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       if (isElectron()) {
         this.initializeElectron();
       }
@@ -153,7 +160,9 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
-      const { actions: { setConnectionStatus } } = this.props;
+      const {
+        actions: { setConnectionStatus },
+      } = this.props;
 
       this.props.client
         .on('authorized', this.onAuthChanged)
@@ -179,20 +188,20 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(
     }
 
     componentDidUpdate(prevProps) {
-      const { settings, isSmallScreen, appState } = this.props;
+      const { settings, isSmallScreen } = this.props;
 
       if (settings !== prevProps.settings) {
         ipc.send('settingsUpdate', settings);
       }
 
       // If note has just been loaded
-      if (prevProps.appState.note === undefined && appState.note) {
+      if (prevProps.appState.note === undefined && this.props.appState.note) {
         this.setState({ isNoteOpen: true });
       }
 
       if (isSmallScreen !== prevProps.isSmallScreen) {
         this.setState({
-          isNoteOpen: Boolean(!isSmallScreen && appState.note),
+          isNoteOpen: Boolean(!isSmallScreen && this.props.appState.note),
         });
       }
     }

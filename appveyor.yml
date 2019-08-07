@@ -4,7 +4,7 @@ environment:
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
   GH_TOKEN:
-    secure: m2UKPC/0BUlPZ63dLNIbuoFRNW448BzVrlW6TnjtoLtXCqY+lz9+aKTP4miCwQEy
+    secure: rgCznyrNnbERL0+MFoT/48TazSzqodduLapcquSs2D3hidBCwjbaOUkE9wXIi3WG
   APPVEYOR_RDP_PASSWORD:
     secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
   CSC_LINK: .\resources\certificates\win.p12

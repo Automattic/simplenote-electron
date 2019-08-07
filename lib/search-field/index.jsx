@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
@@ -9,6 +9,7 @@ import { tracks } from '../analytics';
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
+const SEARCH_DELAY = 500;
 
 export class SearchField extends Component {
   static displayName = 'SearchField';
@@ -16,10 +17,13 @@ export class SearchField extends Component {
   static propTypes = {
     isTagSelected: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired,
-    query: PropTypes.string.isRequired,
     searchFocus: PropTypes.bool.isRequired,
     onSearch: PropTypes.func.isRequired,
     onSearchFocused: PropTypes.func.isRequired,
+  };
+
+  state = {
+    query: '',
   };
 
   componentDidUpdate() {
@@ -32,17 +36,33 @@ export class SearchField extends Component {
     }
   }
 
-  interceptEsc = ({ keyCode }) =>
-    KEY_ESC === keyCode ? this.clearQuery() : null;
+  interceptEsc = event => {
+    if (KEY_ESC === event.keyCode) {
+      if (this.state.query === '') {
+        this.inputField.blur();
+      }
+      this.clearQuery();
+    }
+  };
 
   storeInput = r => (this.inputField = r);
 
-  update = ({ target: { value: query } }) => this.props.onSearch(query);
+  debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
 
-  clearQuery = () => this.props.onSearch('');
+  update = ({ target: { value: query } }) => {
+    this.setState({ query });
+    this.debouncedSearch(query);
+  };
+
+  clearQuery = () => {
+    this.setState({ query: '' });
+    this.debouncedSearch('');
+    this.debouncedSearch.flush();
+  };
 
   render() {
-    const { isTagSelected, placeholder, query } = this.props;
+    const { isTagSelected, placeholder } = this.props;
+    const { query } = this.state;
     const hasQuery = query && query.length > 0;
 
     const screenReaderLabel =
@@ -54,6 +74,7 @@ export class SearchField extends Component {
           aria-label={screenReaderLabel}
           ref={this.storeInput}
           type="text"
+          aria-label="Search field"
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
@@ -74,7 +95,6 @@ export class SearchField extends Component {
 
 const mapStateToProps = ({ appState: state }) => ({
   isTagSelected: !isEmpty(state.tag),
-  query: state.filter,
   placeholder: state.listTitle,
   searchFocus: state.searchFocus,
 });
@@ -87,4 +107,7 @@ const mapDispatchToProps = dispatch => ({
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchField);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SearchField);

@@ -36,7 +36,8 @@ export class AboutDialog extends Component {
                 rel="noopener noreferrer"
               >
                 <span className="about-links-title">Blog</span>
-                <br />simplenote.com/blog/
+                <br />
+                simplenote.com/blog/
               </a>
               <TopRightArrowIcon />
             </li>
@@ -47,18 +48,8 @@ export class AboutDialog extends Component {
                 rel="noopener noreferrer"
               >
                 <span className="about-links-title">Twitter</span>
-                <br />@simplenoteapp
-              </a>
-              <TopRightArrowIcon />
-            </li>
-            <li>
-              <a
-                target="_blank"
-                href="https://simperium.com"
-                rel="noopener noreferrer"
-              >
-                <span className="about-links-title">Simperium</span>
-                <br />Add data sync to your app
+                <br />
+                @simplenoteapp
               </a>
               <TopRightArrowIcon />
             </li>
@@ -69,7 +60,8 @@ export class AboutDialog extends Component {
                 rel="noopener noreferrer"
               >
                 <span className="about-links-title">Contribute</span>
-                <br />GitHub.com
+                <br />
+                GitHub.com
               </a>
               <TopRightArrowIcon />
             </li>
@@ -80,7 +72,8 @@ export class AboutDialog extends Component {
                 rel="noopener noreferrer"
               >
                 Made with love by the folks at Automattic.
-                <br />Are you a developer? We&rsquo;re hiring.
+                <br />
+                Are you a developer? We&rsquo;re hiring.
               </a>
               <TopRightArrowIcon />
             </li>

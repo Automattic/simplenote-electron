@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  ContentState,
-  Editor,
-  EditorState,
-  Modifier,
-  SelectionState,
-} from 'draft-js';
+import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, includes, invoke, noop } from 'lodash';
+import { compact, get, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
@@ -16,6 +10,13 @@ import {
   getSelectedText,
   plainTextContent,
 } from './editor/utils';
+import {
+  continueList,
+  finishList,
+  indentCurrentBlock,
+  outdentCurrentBlock,
+  isLonelyBullet,
+} from './editor/text-manipulation-helpers';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
@@ -26,131 +27,6 @@ import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 const TEXT_DELIMITER = '\n';
-
-const isLonelyBullet = line =>
-  includes(['-', '*', '+', '- [ ]', '- [x]'], line.trim());
-
-function indentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const offset = atStart ? 0 : selectionStart;
-
-  // add tab
-  const afterInsert = EditorState.push(
-    editorState,
-    Modifier.replaceText(
-      editorState.getCurrentContent(),
-      selection.isCollapsed()
-        ? selection.merge({
-            anchorOffset: offset,
-            focusOffset: offset,
-          })
-        : selection,
-      '\t'
-    ),
-    'insert-characters'
-  );
-
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterInsert,
-    afterInsert.getSelection().merge({
-      anchorOffset: selectionStart + 1, // +1 because 1 char was added
-      focusOffset: selectionStart + 1,
-    })
-  );
-}
-
-function outdentCurrentBlock(editorState) {
-  const selection = editorState.getSelection();
-  const selectionStart = selection.getStartOffset();
-
-  const line = getCurrentBlock(editorState).getText();
-  const atStart = isLonelyBullet(line);
-  const rangeStart = atStart ? 0 : selectionStart - 1;
-  const rangeEnd = atStart ? 1 : selectionStart;
-
-  const prevChar = line.slice(rangeStart, rangeEnd);
-  // there's no indentation to remove
-  if (prevChar !== '\t') {
-    return editorState;
-  }
-
-  // remove tab
-  const afterRemove = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      selection.merge({
-        anchorOffset: rangeStart,
-        focusOffset: rangeEnd,
-      })
-    ),
-    'remove-range'
-  );
-
-  // move selection to where it was
-  return EditorState.forceSelection(
-    afterRemove,
-    selection.merge({
-      anchorOffset: selectionStart - 1, // -1 because 1 char was removed
-      focusOffset: selectionStart - 1,
-    })
-  );
-}
-
-function finishList(editorState) {
-  // remove `- ` from the current line
-  const withoutBullet = EditorState.push(
-    editorState,
-    Modifier.removeRange(
-      editorState.getCurrentContent(),
-      editorState.getSelection().merge({
-        anchorOffset: 0,
-        focusOffset: getCurrentBlock(editorState).getLength(),
-      })
-    ),
-    'remove-range'
-  );
-
-  // move selection to the start of the line
-  return EditorState.forceSelection(
-    withoutBullet,
-    withoutBullet.getCurrentContent().getSelectionAfter()
-  );
-}
-
-function continueList(editorState, itemPrefix) {
-  // create a new line
-  const withNewLine = EditorState.push(
-    editorState,
-    Modifier.splitBlock(
-      editorState.getCurrentContent(),
-      editorState.getSelection()
-    ),
-    'split-block'
-  );
-
-  // insert `- ` in the new line
-  const withBullet = EditorState.push(
-    withNewLine,
-    Modifier.insertText(
-      withNewLine.getCurrentContent(),
-      withNewLine.getCurrentContent().getSelectionAfter(),
-      itemPrefix
-    ),
-    'insert-characters'
-  );
-
-  // move selection to the end of the new line
-  return EditorState.forceSelection(
-    withBullet,
-    withBullet.getCurrentContent().getSelectionAfter()
-  );
-}
 
 export default class NoteContentEditor extends Component {
   static propTypes = {
@@ -185,22 +61,26 @@ export default class NoteContentEditor extends Component {
     );
   };
 
+  generateDecorators = filter => {
+    return new MultiDecorator(
+      compact([
+        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+        checkboxDecorator(this.replaceRangeWithText),
+      ])
+    );
+  };
+
   createNewEditorState = (text, filter) => {
     const newEditorState = EditorState.createWithContent(
       ContentState.createFromText(text, TEXT_DELIMITER),
-      new MultiDecorator(
-        compact([
-          filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
-          checkboxDecorator(this.replaceRangeWithText),
-        ])
-      )
+      this.generateDecorators(filter)
     );
-    return EditorState.forceSelection(
-      newEditorState,
-      SelectionState.createEmpty(
-        newEditorState.getCurrentContent().getFirstBlock()
-      ).merge({ hasFocus: false }) // workaround for glitch when note is empty
-    );
+
+    // Focus the editor for a new, empty note when not searching
+    if (text === '' && filter === '') {
+      return EditorState.moveFocusToEnd(newEditorState);
+    }
+    return newEditorState;
   };
 
   state = {
@@ -216,6 +96,7 @@ export default class NoteContentEditor extends Component {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
     this.ipc.on('appCommand', this.onAppCommand);
+    this.editor.blur();
   }
 
   handleEditorStateChange = editorState => {
@@ -239,19 +120,6 @@ export default class NoteContentEditor extends Component {
     const nextContent = plainTextContent(newEditorState);
     const prevContent = plainTextContent(prevEditorState);
     const contentChanged = nextContent !== prevContent;
-
-    // Workaround for bug when a new note is created when the cursor is
-    // in the editor for an existing note. Seems like the `hasFocus` change on
-    // the blur causes this setState change to override the incoming
-    // setState change in componentDidUpdate.
-    // TODO: Fix it in a way that is not hacky
-    if (
-      editorState.getSelection().hasFocus !==
-        prevEditorState.getSelection().hasFocus &&
-      !contentChanged // this keeps the checkboxes working
-    ) {
-      return;
-    }
 
     const announceChanges = contentChanged
       ? () => this.props.onChangeContent(nextContent)
@@ -284,6 +152,7 @@ export default class NoteContentEditor extends Component {
 
   componentDidUpdate(prevProps) {
     const { content, filter, noteId, spellCheckEnabled } = this.props;
+    const { editorState } = this.state;
 
     // To immediately reflect the changes to the spell check setting,
     // we must remount the Editor and force update. The remount is
@@ -294,14 +163,11 @@ export default class NoteContentEditor extends Component {
       this.forceUpdate();
     }
 
-    // If another note/revision is selected or the filter changes,
+    // If another note/revision is selected,
     // create a new editor state from scratch.
-    // TODO: Set the new filter decorator without starting from scratch
-    // so the undo stack can be preserved.
     if (
       noteId !== prevProps.noteId ||
-      content.version !== prevProps.content.version ||
-      filter !== prevProps.filter
+      content.version !== prevProps.content.version
     ) {
       this.setState({
         editorState: this.createNewEditorState(content.text, filter),
@@ -309,12 +175,18 @@ export default class NoteContentEditor extends Component {
       return;
     }
 
+    // If filter changes, re-set decorators
+    if (filter !== prevProps.filter) {
+      this.setState({
+        editorState: EditorState.set(editorState, {
+          decorator: this.generateDecorators(filter),
+        }),
+      });
+    }
+
     // If a remote change comes in, push it to the existing editor state.
     if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
-      this.reflectChangesFromReceivedContent(
-        this.state.editorState,
-        content.text
-      );
+      this.reflectChangesFromReceivedContent(editorState, content.text);
     }
   }
 

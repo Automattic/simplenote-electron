@@ -146,6 +146,7 @@ const mapDispatchToProps = {
   selectTrash,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  onClickOutside(NavigationBar)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(onClickOutside(NavigationBar));

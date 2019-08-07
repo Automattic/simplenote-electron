@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, debounce, invoke, noop } from 'lodash';
+import { get, debounce, noop } from 'lodash';
 import classNames from 'classnames';
 
 import analytics from '../analytics';
@@ -69,24 +69,12 @@ export class NoteDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      filter,
-      note,
-      onNotePrinted,
-      previewingMarkdown,
-      shouldPrint,
-    } = this.props;
-    const content = get(note, 'data.content', '');
+    const { note, onNotePrinted, previewingMarkdown, shouldPrint } = this.props;
 
     // Immediately print once `shouldPrint` has been set
     if (shouldPrint) {
       window.print();
       onNotePrinted();
-    }
-
-    // Focus the editor for a new, empty note when not searching
-    if (this.isValidNote(note) && content === '' && filter === '') {
-      invoke(this, 'editor.focus');
     }
 
     const prevContent = get(prevProps, 'note.data.content', '');
@@ -261,4 +249,7 @@ const mapDispatchToProps = {
   updateNoteContent,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NoteDetail);

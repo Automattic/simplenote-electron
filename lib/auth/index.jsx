@@ -7,19 +7,23 @@ import { get } from 'lodash';
 import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
-import WordPressLogo from '../icons/wordpress';
 
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
+import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 
 export class Auth extends Component {
   static propTypes = {
+    authorizeUserWithToken: PropTypes.func.isRequired,
+    authPending: PropTypes.bool,
+    hasInvalidCredentials: PropTypes.bool,
+    hasLoginError: PropTypes.bool,
     isAuthenticated: PropTypes.bool,
-    isMacApp: PropTypes.bool,
     isElectron: PropTypes.bool,
+    isMacApp: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
-    authorizeUserWithToken: PropTypes.func.isRequired,
+    resetErrors: PropTypes.func.isRequired,
     saveWPToken: PropTypes.func.isRequired,
   };
 
@@ -56,67 +60,18 @@ export class Auth extends Component {
       : "Don't have an account?";
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
-      : 'Login failed. Please try again.';
+      : 'Could not sign in with the provided email address and password.';
 
     return (
       <div className="login">
         {isMacApp && <div className="login__draggable-area" />}
+        <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onLogin}>
-          <div className="login__logo">
-            <SimplenoteLogo />
-          </div>
-          <div className="login__fields theme-color-border theme-color-fg">
-            <label
-              className="login__field theme-color-border"
-              htmlFor="login__field-username"
-            >
-              <span className="login__field-label">Email</span>
-              <span className="login__field-control">
-                <input
-                  ref={ref => (this.usernameInput = ref)}
-                  id="login__field-username"
-                  type="email"
-                  onKeyDown={this.onLogin}
-                  spellCheck={false}
-                />
-              </span>
-            </label>
-            <label
-              className="login__field theme-color-border"
-              htmlFor="login__field-password"
-            >
-              <span className="login__field-label">Password</span>
-              <span className="login__field-control">
-                <input
-                  ref={ref => (this.passwordInput = ref)}
-                  id="login__field-password"
-                  type="password"
-                  onKeyDown={this.onLogin}
-                  spellCheck={false}
-                />
-              </span>
-            </label>
-            {isCreatingAccount && (
-              <label
-                className="login__field theme-color-border"
-                htmlFor="login__field-password-confirm"
-              >
-                <span className="login__field-label">Confirm Password</span>
-                <span className="login__field-control">
-                  <input
-                    ref={ref => (this.passwordConfirmInput = ref)}
-                    id="login__field-password-confirm"
-                    type="password"
-                    onKeyDown={this.onSignUp}
-                    spellCheck={false}
-                  />
-                </span>
-              </label>
-            )}
-          </div>
+          <h1>{buttonLabel}</h1>
+
           {this.props.hasInvalidCredentials && (
             <p className="login__auth-message is-error">
-              The credentials you entered don&apos;t match
+              Could not sign in with the provided email address and password.
             </p>
           )}
           {this.props.hasLoginError && (
@@ -127,66 +82,111 @@ export class Auth extends Component {
               {passwordErrorMessage}
             </p>
           )}
-          <div className="login__actions">
-            <button
-              className={submitClasses}
-              onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
-              type="submit"
+          <label
+            className="login__field theme-color-border"
+            htmlFor="login__field-username"
+          >
+            Email
+          </label>
+          <input
+            id="login__field-username"
+            onKeyDown={this.onInput}
+            placeholder="Email"
+            ref={ref => (this.usernameInput = ref)}
+            spellCheck={false}
+            type="email"
+          />
+          <label
+            className="login__field theme-color-border"
+            htmlFor="login__field-password"
+          >
+            Password
+          </label>
+          <input
+            id="login__field-password"
+            onKeyDown={this.onInput}
+            placeholder="Password"
+            ref={ref => (this.passwordInput = ref)}
+            spellCheck={false}
+            type="password"
+          />
+
+          <button
+            className={submitClasses}
+            onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
+            type="submit"
+          >
+            {this.props.authPending ? (
+              <Spinner isWhite={true} size={20} thickness={5} />
+            ) : (
+              buttonLabel
+            )}
+          </button>
+
+          {!isCreatingAccount && (
+            <a
+              className="login__forgot"
+              href="https://app.simplenote.com/forgot/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={this.onForgot}
             >
-              {this.props.authPending ? (
-                <Spinner isWhite={true} size={20} thickness={5} />
-              ) : (
-                buttonLabel
-              )}
-            </button>
-            <p className="login__forgot">
-              <a
-                href="https://app.simplenote.com/forgot/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={this.onForgot}
-              >
-                Forgot your password?
-              </a>
-            </p>
-            <p className="login__signup">
-              {helpMessage}{' '}
-              <a href="#" onClick={this.toggleSignUp}>
-                {helpLinkLabel}
-              </a>
-            </p>
-          </div>
-          {isElectron && (
+              Forgot your password?
+            </a>
+          )}
+          {isElectron && !isCreatingAccount && (
             <Fragment>
-              <div className="login__or">or:</div>
-              <div className="login__btn-wpcom">
-                <button
-                  className="button button-borderless"
-                  onClick={this.onWPLogin}
-                >
-                  <span className="login__btn-wpcom-icon">
-                    <WordPressLogo />
-                  </span>
-                  Log in with WordPress.com
-                </button>
-              </div>
+              <span className="or">Or</span>
+              <span className="or-line"></span>
+              <button className="wpcc-button" onClick={this.onWPLogin}>
+                {buttonLabel} with WordPress.com
+              </button>
             </Fragment>
           )}
+          {isCreatingAccount && (
+            <div className="terms">
+              By creating an account you agree to our
+              <a href="http://simplenote.com/terms/">Terms of Service</a>.
+            </div>
+          )}
+          <p className="login__signup">
+            {helpMessage}{' '}
+            <a href="#" onClick={this.toggleSignUp}>
+              {helpLinkLabel}
+            </a>
+          </p>
         </form>
       </div>
     );
   }
 
-  onLogin = event => {
+  onInput = event => {
     if (event.type === 'keydown' && event.keyCode !== 13) {
+      this.props.resetErrors();
+      this.setState({
+        passwordErrorMessage: '',
+      });
       return;
     }
+  };
+
+  onLogin = event => {
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
     const password = get(this.passwordInput, 'value');
 
     if (!(username && password)) {
+      this.setState({
+        passwordErrorMessage: 'Please fill out email and password.',
+      });
+      return;
+    }
+
+    if (password.length < 4) {
+      this.setState({
+        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+      });
       return;
     }
 
@@ -199,11 +199,7 @@ export class Auth extends Component {
 
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
     this.authState = `app-${cryptoRandomString(20)}`;
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${
-      config.wpcc_client_id
-    }&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${
-      this.authState
-    }`;
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;
 
     this.authWindow.loadURL(authUrl);
     this.authWindow.show();
@@ -310,21 +306,15 @@ export class Auth extends Component {
   };
 
   onSignUp = event => {
-    if (event.type === 'keydown' && event.keyCode !== 13) {
-      return;
-    }
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
     const password = get(this.passwordInput, 'value');
-    const passwordConfirm = get(this.passwordConfirmInput, 'value');
 
-    if (!(username && password && passwordConfirm)) {
-      return;
-    }
-
-    if (password !== passwordConfirm) {
-      this.setState({ passwordErrorMessage: "The passwords don't match." });
+    if (!(username && password)) {
+      this.setState({
+        passwordErrorMessage: 'Please fill out email and password.',
+      });
       return;
     }
 
@@ -341,11 +331,16 @@ export class Auth extends Component {
 
   toggleSignUp = event => {
     event.preventDefault();
+    this.props.resetErrors();
+    this.setState({
+      passwordErrorMessage: '',
+    });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
 }
 
 const mapDispatchToProps = dispatch => ({
+  resetErrors: () => dispatch(reset()),
   saveWPToken: token => dispatch(setWPToken(token)),
 });
 
@@ -354,4 +349,7 @@ const mapStateToProps = state => ({
   hasLoginError: hasLoginError(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Auth);
