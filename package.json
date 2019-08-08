@@ -127,7 +127,7 @@
     "remove-markdown": "0.3.0",
     "sanitize-filename": "1.6.2",
     "sax": "1.2.4",
-    "semver": "^6.0.0",
+    "semver": "6.3.0",
     "showdown": "1.9.0",
     "simperium": "0.3.3",
     "string-replace-to-array": "1.0.3",
