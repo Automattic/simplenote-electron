@@ -2,17 +2,17 @@ version: '2'
 
 services:
   install:
-    image: node:8.16.0
+    image: node:10.16.0
     command: npm install
     volumes:
       - $PWD:/app
     working_dir: /app
-  
+
   dev:
-    image: node:8.16.0
+    image: node:10.16.0
     command: npm start
     ports:
-      - "4000:4000"
+      - '4000:4000'
     volumes:
       - $PWD:/app
     working_dir: /app
