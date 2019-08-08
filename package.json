@@ -94,7 +94,7 @@
     "draft-js-simpledecorator": "1.0.2",
     "electron-fetch": "1.2.1",
     "electron-progressbar": "1.2.0",
-    "electron-spellchecker": "1.1.2",
+    "electron-spellchecker": "2.2.0",
     "electron-updater": "4.1.2",
     "electron-window-state": "5.0.3",
     "file-saver": "2.0.2",
