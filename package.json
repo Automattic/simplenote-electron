@@ -98,7 +98,7 @@
     "electron-updater": "4.1.2",
     "electron-window-state": "5.0.3",
     "file-saver": "2.0.2",
-    "focus-visible": "5.0.0",
+    "focus-visible": "5.0.2",
     "gridicons": "3.3.1",
     "highlight.js": "9.15.9",
     "isemail": "3.2.0",
