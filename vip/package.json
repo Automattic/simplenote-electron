@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@automattic/vip-go": "0.3.2",
-    "express": "4.17.1",
-    "newrelic": "4.13.1"
+    "express": "4.17.1"
   }
 }
