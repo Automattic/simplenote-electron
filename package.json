@@ -51,7 +51,7 @@
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "classnames": "2.2.6",
     "concurrently": "4.1.1",
-    "css-loader": "3.0.0",
+    "css-loader": "3.2.0",
     "debug": "4.1.1",
     "electron": "4.2.8",
     "electron-builder": "20.32.0",
