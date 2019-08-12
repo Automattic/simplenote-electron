@@ -56,18 +56,6 @@ export class AboutDialog extends Component {
             <li>
               <a
                 target="_blank"
-                href="https://simperium.com"
-                rel="noopener noreferrer"
-              >
-                <span className="about-links-title">Simperium</span>
-                <br />
-                Add data sync to your app
-              </a>
-              <TopRightArrowIcon />
-            </li>
-            <li>
-              <a
-                target="_blank"
                 href="https://github.com/Automattic/simplenote-electron"
                 rel="noopener noreferrer"
               >

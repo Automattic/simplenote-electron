@@ -101,15 +101,6 @@
   }
 
   .note-list-item {
-    &:hover .note-list-item-pinner {
-      box-shadow: inset 0 0 0 2px darken($gray, 30%),
-        inset 0 0 0 3px $gray-darkest;
-
-      &:hover {
-        background: darken($gray, 10%);
-      }
-    }
-
     &.note-list-item-pinned .note-list-item-pinner {
       background: $white;
       box-shadow: inset 0 0 0 2px darken($gray, 10%),
@@ -120,24 +111,24 @@
       }
     }
 
-    &.note-list-item-pinned.note-list-item-selected .note-list-item-pinner {
-      background: $blue;
-      box-shadow: inset 0 0 0 2px darken($blue, 10%),
-        inset 0 0 0 3px $gray-darkest;
-
-      &:hover {
-        background: lighten($blue, 10%);
-      }
+    &.note-list-item-selected{
+      background: #2c3338;
     }
 
     .note-list-item-excerpt {
-      color: lighten($gray, 9.9%);
+      color: white;
     }
 
-    &.note-list-item-selected .note-list-item-excerpt {
-      color: $blue;
-    }
+
   }
+    &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
+      box-shadow: inset 0 0 0 2px $gray-darkest,
+        inset 0 0 0 3px $gray-darkest;
+
+      &:hover {
+        background: $gray-darkest;
+      }
+    }
 
   .note-detail-markdown {
     @import '../node_modules/highlight.js/styles/solarized-dark.css';

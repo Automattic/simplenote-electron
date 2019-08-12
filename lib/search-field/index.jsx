@@ -69,6 +69,7 @@ export class SearchField extends Component {
         <input
           ref={this.storeInput}
           type="text"
+          aria-label="Search field"
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
