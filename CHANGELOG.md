@@ -1,5 +1,9 @@
 # Changelog
 
+## Future Release
+
+- Updated Log in and Sign up form to match current styling
+
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
 ### Fixes
@@ -9,6 +13,7 @@
 ## [v1.6.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.6.0) (2019-07-01)
 
 ### Features
+
 - Add custom tooltips to toolbar buttons [#1214](https://github.com/Automattic/simplenote-electron/pull/1214)
 - Improve search performance on long notes [#1218](https://github.com/Automattic/simplenote-electron/pull/1218)
 - Fixed a linting error [#1427](https://github.com/Automattic/simplenote-electron/pull/1427)
@@ -90,7 +95,7 @@
 - When copying a note, ensure that the raw text is copied to the clipboard instead of rich text [#1155](https://github.com/Automattic/simplenote-electron/pull/1155)
 - Fix line break behavior in the Markdown preview to match common Markdown implementations, as well as the other Simplenote apps [#1169](https://github.com/Automattic/simplenote-electron/pull/1169)
 - Fix CJK-related crashes after a tab character [#1171](https://github.com/Automattic/simplenote-electron/pull/1171)
-- Various security and under-the-hood improvements 
+- Various security and under-the-hood improvements
 
 ## [v1.3.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.4) (2018-12-18)
 
@@ -112,9 +117,11 @@
 ## [v1.3.2](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.2) (2018-12-05)
 
 ### Enhancements
+
 - Add support for sorting the tags list [#1042](https://github.com/Automattic/simplenote-electron/pull/1042)
 
 ### Fixes
+
 - Add `:focus` outline to dropzone [#989](https://github.com/Automattic/simplenote-electron/pull/989)
 - Fix tag entry in Chinese, Japanese, and Korean [#999](https://github.com/Automattic/simplenote-electron/pull/999)
 - Make tag entry and removal smoother [#1000](https://github.com/Automattic/simplenote-electron/pull/1000)
@@ -171,20 +178,23 @@ This is a rebuild of the faulty packages released as [v1.2.0](https://github.com
 _Update: There was a problem somewhere in the automated build system, and these packages will not work on Windows or Ubuntu. Please use the rebuilt packages from [v1.2.1](https://github.com/Automattic/simplenote-electron/releases/tag/v1.2.1)_
 
 ### New features
-* [Focus Mode](https://github.com/Automattic/simplenote-electron/pull/881) to hide the note list pane. This can be toggled from the sidebar button, View menu, or shortcut ⌘⇧F.
-* [Line Length](https://github.com/Automattic/simplenote-electron/pull/815) setting to wrap the note content to Full or Narrow widths.
-* [Spell checker](https://github.com/Automattic/simplenote-electron/pull/821) (can be [toggled](https://github.com/Automattic/simplenote-electron/pull/872) on/off).
+
+- [Focus Mode](https://github.com/Automattic/simplenote-electron/pull/881) to hide the note list pane. This can be toggled from the sidebar button, View menu, or shortcut ⌘⇧F.
+- [Line Length](https://github.com/Automattic/simplenote-electron/pull/815) setting to wrap the note content to Full or Narrow widths.
+- [Spell checker](https://github.com/Automattic/simplenote-electron/pull/821) (can be [toggled](https://github.com/Automattic/simplenote-electron/pull/872) on/off).
 
 ### Enhancements
-* New user setting to [opt out](https://github.com/Automattic/simplenote-electron/pull/867) of analytics sharing.
-* When exporting notes (File menu ▸ Export Notes), the Date Modified of each note file in the zip will reflect the [last modified date](https://github.com/Automattic/simplenote-electron/pull/826) of the note (props to @ianmorti).
-* “Font Size” is renamed “Zoom” to match standard convention, and is now more discoverable at the [root level of the View menu](https://github.com/Automattic/simplenote-electron/pull/863) (props to @gie3d).
-* The modification date will now [be updated](https://github.com/Automattic/simplenote-electron/pull/889) when adding or removing note tags (props to @hanhmchau).
-* [Web] The [tag drawer will close](https://github.com/Automattic/simplenote-electron/issues/146) after opening the Settings dialog.
+
+- New user setting to [opt out](https://github.com/Automattic/simplenote-electron/pull/867) of analytics sharing.
+- When exporting notes (File menu ▸ Export Notes), the Date Modified of each note file in the zip will reflect the [last modified date](https://github.com/Automattic/simplenote-electron/pull/826) of the note (props to @ianmorti).
+- “Font Size” is renamed “Zoom” to match standard convention, and is now more discoverable at the [root level of the View menu](https://github.com/Automattic/simplenote-electron/pull/863) (props to @gie3d).
+- The modification date will now [be updated](https://github.com/Automattic/simplenote-electron/pull/889) when adding or removing note tags (props to @hanhmchau).
+- [Web] The [tag drawer will close](https://github.com/Automattic/simplenote-electron/issues/146) after opening the Settings dialog.
 
 ### Fixes
-* [Mac] “Bring All to Front” is now in the [correct menu](https://github.com/Automattic/simplenote-electron/pull/813).
-* Various security fixes.
+
+- [Mac] “Bring All to Front” is now in the [correct menu](https://github.com/Automattic/simplenote-electron/pull/813).
+- Various security fixes.
 
 ## [v1.1.7](https://github.com/Automattic/simplenote-electron/releases/tag/v1.1.7) (2018-08-17)
 
@@ -253,7 +263,6 @@ Bug fixes, including:
 - Replace value link in tag list for controlled state changes [@dmsnell](https://github.com/dmsnell).
 - Fix access to wrong variable name [@nfcampos](https://github.com/nfcampos).
 
-
 ## [v1.0.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.0.4) (2016-10-12)
 
 - Replaced textarea-based note editor with Draft.js [@nfcampos](https://github.com/nfcampos)
@@ -283,7 +292,6 @@ Bug fixes.
 - Submit login form on `enter`.
 - Better exception management.
 - Design updates.
-
 
 ## [v1.0.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.0.0) (2016-03-30)
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { debounce } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
@@ -15,6 +15,7 @@ export class SearchField extends Component {
   static displayName = 'SearchField';
 
   static propTypes = {
+    isTagSelected: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired,
     searchFocus: PropTypes.bool.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -60,16 +61,19 @@ export class SearchField extends Component {
   };
 
   render() {
-    const { placeholder } = this.props;
+    const { isTagSelected, placeholder } = this.props;
     const { query } = this.state;
     const hasQuery = query && query.length > 0;
+
+    const screenReaderLabel =
+      'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
 
     return (
       <div className="search-field">
         <input
+          aria-label={screenReaderLabel}
           ref={this.storeInput}
           type="text"
-          aria-label="Search field"
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
@@ -89,6 +93,7 @@ export class SearchField extends Component {
 }
 
 const mapStateToProps = ({ appState: state }) => ({
+  isTagSelected: !isEmpty(state.tag),
   placeholder: state.listTitle,
   searchFocus: state.searchFocus,
 });
