@@ -4,12 +4,19 @@
 
 - Updated Log in and Sign up form to match current styling
 
+## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
+
+### Fixes
+- Updates to dark mode styling [#1452](https://github.com/Automattic/simplenote-electron/pull/1452)
+- Updated several dependencies
+
 ## [v1.6.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.6.0) (2019-07-01)
 
 ### Features
 
 - Add custom tooltips to toolbar buttons [#1214](https://github.com/Automattic/simplenote-electron/pull/1214)
 - Improve search performance on long notes [#1218](https://github.com/Automattic/simplenote-electron/pull/1218)
+- Fixed a linting error [#1427](https://github.com/Automattic/simplenote-electron/pull/1427)
 
 ### Fixes
 
