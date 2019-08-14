@@ -12,6 +12,15 @@ module.exports = () => {
 
   return {
     context: __dirname + '/lib',
+    optimization: {
+      namedModules: true,
+      namedChunks: true,
+      splitChunks: {
+        cacheGroups: {
+          default: false,
+        },
+      },
+    },
     mode: isDevMode ? 'development' : 'production',
     devtool:
       process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
