@@ -13,7 +13,7 @@ action "Deploy Develop" {
 }
 
 action "Deploy Master" {
-  uses = "./actions/deploy-develop"
+  uses = "./actions/deploy-master"
   secrets = ["GITHUB_TOKEN", "APP_ID"]
   env = {
     PUSHED_BRANCH = "develop"
