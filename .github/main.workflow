@@ -17,6 +17,6 @@ action "Deploy Master" {
   secrets = ["GITHUB_TOKEN", "APP_ID"]
   env = {
     PUSHED_BRANCH = "develop"
-    COMMIT_BRANCH = "webapp"
+    COMMIT_BRANCH = "webapp-staging"
   }
 }
