@@ -20,7 +20,7 @@ module.exports = () => {
     output: {
       path: __dirname + '/dist',
       filename: 'app.js',
-      chunkFilename: '[name].js',
+      chunkFilename: '[name].[chunkhash].js',
       ...(config.is_app_engine && {
         publicPath: config.web_app_url + '/',
       }),
