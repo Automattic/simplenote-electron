@@ -60,7 +60,7 @@ export class Auth extends Component {
       : "Don't have an account?";
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
-      : 'Could not sign in with the provided email address and password.';
+      : 'Could not log in with the provided email address and password.';
 
     return (
       <div className="login">
@@ -71,7 +71,7 @@ export class Auth extends Component {
 
           {this.props.hasInvalidCredentials && (
             <p className="login__auth-message is-error">
-              Could not sign in with the provided email address and password.
+              Could not log in with the provided email address and password.
             </p>
           )}
           {this.props.hasLoginError && (
