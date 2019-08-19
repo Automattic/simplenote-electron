@@ -1,6 +1,6 @@
 workflow "Build and Push to WebApp" {
   on = "push"
-  resolves = ["Deploy Develop", "Deploy Master"]
+  resolves = []
 }
 
 action "Deploy Develop" {
