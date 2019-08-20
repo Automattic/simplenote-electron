@@ -44,6 +44,7 @@ module.exports = () => {
         },
         {
           test: /\.jsx?$/,
+          exclude: /node_modules\/core-js/,
           use: [
             {
               loader: 'babel-loader',
