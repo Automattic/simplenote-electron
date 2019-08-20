@@ -151,7 +151,7 @@ export class Auth extends Component {
                 href="https://simplenote.com/terms/"
                 onClick={event => {
                   event.preventDefault();
-                  viewExternalUrl('http://simplenote.com/terms/');
+                  viewExternalUrl( 'https://simplenote.com/terms/' );
                 }}
               >
                 Terms of Service
