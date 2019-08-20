@@ -75,7 +75,7 @@
     "prettier": "1.18.2",
     "react-onclickoutside": "6.8.0",
     "react-test-renderer": "16.9.0",
-    "sass-loader": "7.1.0",
+    "sass-loader": "7.3.1",
     "style-loader": "1.0.0",
     "wait-on": "3.3.0",
     "webpack": "4.39.1",
