@@ -12,7 +12,6 @@ module.exports = function(api) {
     '@babel/preset-react',
   ];
   const plugins = [
-    '@babel/plugin-transform-typeof-symbol',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-proposal-object-rest-spread',
     '@babel/plugin-syntax-dynamic-import',
