@@ -148,7 +148,7 @@ export class Auth extends Component {
             <div className="terms">
               By creating an account you agree to our
               <a
-                href="http://simplenote.com/terms/"
+                href="https://simplenote.com/terms/"
                 onClick={event => {
                   event.preventDefault();
                   viewExternalUrl('http://simplenote.com/terms/');
