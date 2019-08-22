@@ -12,7 +12,7 @@
 > Only one developer and one designer are required to review these changes, but anyone can perform the review.
 
 ### Release
-***(Required)*** Add a concise statement to RELEASE-NOTES.txt if the changes should be included in release notes. Include details about updating the notes in this section. For example:
+***(Required)*** Add a concise statement to `RELEASE-NOTES.txt` if the changes should be included in release notes. Include details about updating the notes in this section. For example:
 > `RELEASE-NOTES.txt` was updated in d3adb3ef with:
 > 
 > > Added markdown support
