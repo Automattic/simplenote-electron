@@ -2,7 +2,11 @@
 
 ## Future Release
 
-- Updated Log in and Sign up form to match current styling
+## [v1.8.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.8.0) (2019-08-26)
+
+### Features
+
+- Updated Log in and Sign up form to match current styling.
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
