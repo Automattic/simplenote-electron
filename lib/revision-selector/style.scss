@@ -1,5 +1,5 @@
 .revision-selector {
-  background: $blue;
+  background: $studio-blue-50;
   padding: 10px 20px 20px 20px;
   color: $white;
   z-index: 1000;
@@ -24,21 +24,17 @@
 
     button {
       @extend %smart-focus-outline;
-
-      &:focus {
-        outline-color: lighten($blue, 20%);
-      }
     }
   }
 
   .button-primary {
     background: $white;
-    color: $blue;
+    color: $studio-blue-50;
     border-color: $white;
 
     &:active {
-      background: lighten($blue, 30%);
-      border-color: lighten($blue, 30%);
+      background: $studio-blue-5;
+      border-color: $studio-blue-5;
     }
   }
 
@@ -49,7 +45,7 @@
 
     &:active {
       background: $white;
-      color: $blue;
+      color: $studio-blue-50;
     }
   }
 

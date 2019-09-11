@@ -80,15 +80,6 @@
     }
   }
 
-  &.note-list-item-pinned.note-list-item-selected .note-list-item-pinner {
-    background: $blue;
-    box-shadow: inset 0 0 0 2px lighten($blue, 25%), inset 0 0 0 3px $white;
-
-    &:hover {
-      background: darken($blue, 10%);
-    }
-  }
-
   .note-list-item-text {
     flex: 1 1 auto;
     overflow: hidden;
@@ -108,7 +99,7 @@
   }
 
   &.note-list-item-selected {
-    background: lighten($blue, 30%);
+    background: $studio-blue-5;
   }
 
   .note-list-item-published-icon {

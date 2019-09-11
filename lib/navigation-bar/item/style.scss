@@ -8,16 +8,12 @@
 
   &.is-selected {
     .button {
-      color: $blue;
+      color: $studio-blue-50;
     }
 
     svg[class^='icon-'] {
-      fill: $blue;
+      fill: $studio-blue-50;
     }
-  }
-
-  .button-borderless:active {
-    color: darken($blue, 20%);
   }
 }
 
