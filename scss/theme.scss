@@ -24,7 +24,7 @@
 
 .theme-dark {
   background-color: $gray-darkest;
-  color: $gray;
+  color: $studio-gray-50;
 
   .theme-color-bg {
     background-color: $gray-darkest;
@@ -54,7 +54,7 @@
     background-color: darken($gray, 10%);
   }
   ::-webkit-scrollbar-thumb:active {
-    background-color: $gray;
+    background-color: $studio-gray-50;
   }
 
   .button-borderless {
@@ -145,7 +145,7 @@
       border-color: darken($gray, 20%);
     }
     pre code {
-      color: $gray;
+      color: $studio-gray-50;
       background: transparent;
     }
     table {

@@ -1,9 +1,9 @@
 .spinner__circle {
   @at-root .theme-light & {
-    color: lighten($gray, 30%);
+    color: $studio-gray-5;
   }
   @at-root .theme-dark & {
-    color: darken($gray, 30%);
+    color: $studio-gray-80;
   }
 
   &.is-white {
