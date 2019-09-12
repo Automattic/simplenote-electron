@@ -59,7 +59,7 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
-  color: darken($gray, 20%);
+  color: $studio-gray-60;
   background: $white;
   resize: none;
   -webkit-tap-highlight-color: transparent;
@@ -177,18 +177,18 @@
   }
 
   code {
-    background: $gray-lightest;
+    background: $studio-gray-5;
   }
 
   pre {
-    border: 1px solid lighten($gray, 20%);
+    border: 1px solid $studio-gray-20;
     padding: 1em;
     border-radius: $border-radius;
     font-size: 85%;
   }
 
   pre code {
-    color: darken($gray, 10%);
+    color: $studio-gray-90;
     background: transparent;
   }
 
@@ -199,12 +199,12 @@
     width: 100%;
 
     tr:nth-child(2n) {
-      background-color: lighten($gray, 40%);
+      background-color: $studio-gray-5;
     }
 
     th,
     td {
-      border: 1px solid lighten($gray, 20%);
+      border: 1px solid $studio-gray-20;
       padding: 6px 13px;
     }
 
