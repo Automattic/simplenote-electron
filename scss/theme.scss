@@ -101,6 +101,8 @@
   }
 
   .note-list-item {
+    cursor: pointer;
+
     &.note-list-item-pinned .note-list-item-pinner {
       background: $white;
       box-shadow: inset 0 0 0 2px darken($gray, 10%),
