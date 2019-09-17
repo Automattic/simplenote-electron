@@ -6,27 +6,26 @@
   border-radius: 14px;
   line-height: 1.25em;
   white-space: nowrap;
-  background: lighten($gray, 30%);
-  color: darken($gray, 20%);
+  background: $studio-gray-5;
   text-decoration: none;
   font-size: 14px;
   -webkit-tap-highlight-color: transparent;
 
   &.selected,
   &:hover {
-    background: $studio-gray-50;
-    color: $white;
+    background: $studio-blue-5;
   }
 }
 
 .theme-dark {
   .tag-chip {
-    background: darken($gray, 25%);
-    color: lighten($gray, 10%);
+    background: $studio-gray-70;
+    color: $studio-gray-20;
 
-    &.selected {
-      background: lighten($gray, 10%);
-      color: darken($gray, 30%);
+    &.selected,
+    &:hover {
+      background: $studio-gray-70;
+      color: $white;
     }
   }
 }

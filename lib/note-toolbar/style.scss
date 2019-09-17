@@ -3,7 +3,7 @@
   justify-content: flex-end;
   flex: none;
   height: $toolbar-height;
-  border-bottom: 1px solid lighten($gray, 30%);
+  border-bottom: 1px solid $studio-gray-5;
 }
 
 .note-toolbar {
@@ -83,5 +83,5 @@
 .note-toolbar-placeholder {
   display: block;
   height: $toolbar-height;
-  border-bottom: 1px solid lighten($gray, 30%);
+  border-bottom: 1px solid $studio-gray-5;
 }

@@ -44,7 +44,7 @@
     pointer-events: none;
     border-radius: 50%;
     overflow: hidden;
-    border: 1px solid lighten($gray, 20%);
+    border: 1px solid $studio-gray-5;
   }
 
   .checkbox-control-checked {

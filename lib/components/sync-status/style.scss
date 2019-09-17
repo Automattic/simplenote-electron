@@ -24,7 +24,7 @@
 .sync-status-popover__paper {
   padding: .5em 1em;
   border-radius: $border-radius;
-  border: 1px solid lighten($gray, 30%);
+  border: 1px solid $studio-gray-5;
   font-size: .75rem;
 
   &.has-unsynced-changes {
@@ -36,7 +36,7 @@
   max-width: 18em;
   margin-bottom: .75em;
   padding-bottom: 1em;
-  border-bottom: 1px solid lighten($gray, 30%);
+  border-bottom: 1px $studio-gray-5;
   line-height: 1.45;
 }
 
