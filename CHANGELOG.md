@@ -3,10 +3,12 @@
 ## Future Release
 
 - Updated Log in and Sign up form to match current styling
+- Fixed cursors to use the proper type
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
 ### Fixes
+
 - Updates to dark mode styling [#1452](https://github.com/Automattic/simplenote-electron/pull/1452)
 - Updated several dependencies
 
