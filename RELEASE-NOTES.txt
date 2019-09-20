@@ -5,6 +5,7 @@
 - Updated Log in and Sign up form to match current styling
 - Hovering over a clickable or editable UI element now show the correct cursor for its type
 - Added tests to Checkbox component
+- Renamed CHANGELOG.md to RELEASE-NOTES.txt
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
