@@ -1,4 +1,9 @@
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
 .checkbox {
+  cursor: pointer;
   line-height: inherit;
 
   &[aria-checked="true"] {
