@@ -3,7 +3,7 @@
 ## Future Release
 
 - Updated Log in and Sign up form to match current styling
-- Fixed cursors to use the proper type
+- Hovering over a clickable or editable UI element now show the correct cursor for its type
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
