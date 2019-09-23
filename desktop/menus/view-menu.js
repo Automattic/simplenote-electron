@@ -106,6 +106,10 @@ const buildViewMenu = settings => {
             label: '&Dark',
             id: 'dark',
           },
+          {
+            label: '&System',
+            id: 'system',
+          },
         ].map(
           buildRadioGroup({
             action: 'activateTheme',

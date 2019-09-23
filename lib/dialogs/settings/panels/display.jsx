@@ -104,6 +104,7 @@ const DisplayPanel = props => {
       >
         <Item title="Light" slug="light" />
         <Item title="Dark" slug="dark" />
+        <Item title="System" slug="system" />
       </SettingsGroup>
     </Fragment>
   );

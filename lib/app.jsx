@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import getTheme from './utils/get-theme';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
@@ -404,7 +405,7 @@ export const App = connect(
       } = this.props;
       const isMacApp = isElectronMac();
 
-      const themeClass = `theme-${settings.theme}`;
+      const themeClass = `theme-${getTheme(settings.theme, isElectron())}`;
 
       const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
