@@ -198,13 +198,6 @@ export const App = connect(
       if (prevProps.appState.note === undefined && this.props.appState.note) {
         this.setState({ isNoteOpen: true });
       }
-      if (
-        prevProps.appState.note &&
-        this.props.appState.note &&
-        prevProps.appState.note.id !== this.props.appState.note.id
-      ) {
-        this.setState({ isNoteOpen: true });
-      }
 
       if (isSmallScreen !== prevProps.isSmallScreen) {
         this.setState({
