@@ -124,7 +124,7 @@
     "redux-thunk": "2.3.0",
     "regenerator-runtime": "0.13.3",
     "remove-markdown": "0.3.0",
-    "sanitize-filename": "1.6.2",
+    "sanitize-filename": "1.6.3",
     "sax": "1.2.4",
     "semver": "6.3.0",
     "showdown": "1.9.0",
