@@ -41,10 +41,11 @@ const mapStateToProps = ({ appState: state }) => ({
   showTrash: state.showTrash,
 });
 
-const mapDispatchToProps = (dispatch, { noteBucket }) => ({
+const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
   onNewNote: content => {
     dispatch(search({ filter: '' }));
     dispatch(newNote({ noteBucket, content }));
+    onNoteOpened();
     recordEvent('list_note_created');
   },
   onToggleNavigation: () => dispatch(toggleNavigation()),
