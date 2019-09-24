@@ -1,19 +1,23 @@
 // Resets button styles
 button {
   @extend %smart-focus-outline;
-
   background: transparent;
   border: none;
   padding: 0;
-  cursor: default;
+  cursor: pointer;
   font-size: 14px;
   appearance: none;
   vertical-align: baseline;
+
+  svg {
+    cursor: pointer;
+  }
 }
 
 // Generic button base class
 // Can be used by itself, or in conjunction with the .button-* modifier classes
 .button {
+  cursor: pointer;
   display: inline-block;
   white-space: nowrap;
   text-overflow: ellipsis;

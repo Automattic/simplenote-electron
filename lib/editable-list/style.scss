@@ -56,6 +56,7 @@
 
   .editable-list-trash,
   .editable-list-reorder {
+    cursor: pointer;
     flex: none;
     opacity: 0;
     pointer-events: none;

@@ -111,24 +111,21 @@
       }
     }
 
-    &.note-list-item-selected{
+    &.note-list-item-selected {
       background: #2c3338;
     }
 
     .note-list-item-excerpt {
       color: white;
     }
-
-
   }
-    &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
-      box-shadow: inset 0 0 0 2px $gray-darkest,
-        inset 0 0 0 3px $gray-darkest;
+  &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
+    box-shadow: inset 0 0 0 2px $gray-darkest, inset 0 0 0 3px $gray-darkest;
 
-      &:hover {
-        background: $gray-darkest;
-      }
+    &:hover {
+      background: $gray-darkest;
     }
+  }
 
   .note-detail-markdown {
     @import '../node_modules/highlight.js/styles/solarized-dark.css';
@@ -152,7 +149,8 @@
       background: transparent;
     }
     table {
-      th, td {
+      th,
+      td {
         border-color: darken($gray, 20%);
       }
       tr:nth-child(2n) {

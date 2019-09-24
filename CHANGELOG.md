@@ -3,11 +3,13 @@
 ## Future Release
 
 - Updated Log in and Sign up form to match current styling
+- Hovering over a clickable or editable UI element now show the correct cursor for its type
 - Added tests to Checkbox component
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
 ### Fixes
+
 - Updates to dark mode styling [#1452](https://github.com/Automattic/simplenote-electron/pull/1452)
 - Updated several dependencies
 

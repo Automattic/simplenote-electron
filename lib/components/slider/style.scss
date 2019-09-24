@@ -1,6 +1,7 @@
 .slider {
   @extend %smart-focus-outline;
 
+  cursor: pointer;
   width: 100%;
   max-width: $max-content-width;
   padding: 0; // IE11
