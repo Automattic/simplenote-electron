@@ -1,4 +1,4 @@
-FROM node:10.16.1-jessie
+FROM node:10.16.3-jessie
 
 RUN dpkg --add-architecture i386
 RUN apt update
