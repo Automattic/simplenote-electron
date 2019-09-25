@@ -95,7 +95,7 @@
     }
 
     &:focus svg {
-      fill: darken($gray, 20%);
+      fill: $studio-gray-80;
     }
   }
 

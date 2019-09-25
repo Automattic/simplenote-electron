@@ -133,7 +133,7 @@
 
   hr {
     border: 0;
-    border-top: 1px solid lighten($gray, 20%);
+    border-top: 1px solid $studio-gray-5;
   }
 
   a {
@@ -142,7 +142,7 @@
 
   blockquote {
     font-style: italic;
-    border-left: 4px solid lighten($gray, 20%);
+    border-left: 4px solid $studio-gray-5;
     margin-left: 0;
     padding-left: 1em;
   }

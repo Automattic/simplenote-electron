@@ -60,11 +60,11 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: darken($gray, 20%);
-    border-color: $gray-darkest;
+    background-color: $studio-gray-80;
+    border-color: $studio-gray-60;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: darken($gray, 10%);
+    background-color: $studio-gray-90;
   }
   ::-webkit-scrollbar-thumb:active {
     background-color: $studio-gray-50;
@@ -74,39 +74,39 @@
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
-        fill: darken($gray, 30%);
+        fill: $studio-gray-60;
       }
     }
   }
 
   input,
   textarea {
-    border-color: darken($gray, 25%);
+    border-color: $studio-gray-70;
     background-color: transparent;
   }
 
   .transparent-input::placeholder {
-    color: darken($gray, 10%);
+    color: $studio-gray-80;
   }
 
   .checkbox-control-base {
-    border-color: darken($gray, 20%);
+    border-color: $studio-gray-80;
   }
 
   .tag-field input {
     background: transparent;
 
     &::placeholder {
-      color: lighten($gray, 10%);
+      color: $studio-gray-20;
     }
   }
 
   .settings-group p {
-    color: lighten($gray, 45%);
+    color: $studio-gray-5;
   }
 
   .tab-panels__tab-list li {
-    color: lighten($gray, 10%);
+    color: $studio-gray-50;
 
     &.is-active {
       color: $studio-blue-30;
@@ -116,11 +116,11 @@
   .note-list-item {
     &.note-list-item-pinned .note-list-item-pinner {
       background: $white;
-      box-shadow: inset 0 0 0 2px darken($gray, 10%),
-        inset 0 0 0 3px $gray-darkest;
+      box-shadow: inset 0 0 0 2px $studio-gray-80,
+        inset 0 0 0 3px $studio-gray-80;
 
       &:hover {
-        background: darken($gray, 30%);
+        background: $studio-gray-80;
       }
     }
 
@@ -133,10 +133,10 @@
     }
   }
   &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
-    box-shadow: inset 0 0 0 2px $gray-darkest, inset 0 0 0 3px $gray-darkest;
+    box-shadow: inset 0 0 0 2px $studio-gray-80, inset 0 0 0 3px $studio-gray-90;
 
     &:hover {
-      background: $gray-darkest;
+      background: $studio-gray-80;
     }
   }
 
@@ -144,18 +144,18 @@
     @import '../node_modules/highlight.js/styles/solarized-dark.css';
 
     hr {
-      border-color: darken($gray, 20%);
+      border-color: $studio-gray-80;
     }
 
     blockquote {
-      border-color: darken($gray, 20%);
+      border-color: $studio-gray-80;
     }
 
     code {
-      background: darken($gray, 30%);
+      background: $studio-gray-60;
     }
     pre {
-      border-color: darken($gray, 20%);
+      border-color: $studio-gray-80;
     }
     pre code {
       color: $studio-gray-50;
@@ -164,10 +164,10 @@
     table {
       th,
       td {
-        border-color: darken($gray, 20%);
+        border-color: $studio-gray-60;
       }
       tr:nth-child(2n) {
-        background-color: darken($gray, 33%);
+        background-color: $studio-gray-80;
       }
     }
   }
