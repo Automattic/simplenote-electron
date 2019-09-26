@@ -1,12 +1,12 @@
 .theme-light {
-  background-color: $white;
+  background-color: $studio-white;
   color: $studio-gray-60;
 
   .theme-color-bg {
-    background-color: $white;
+    background-color: $studio-white;
   }
   .theme-color-bg-lighter {
-    background-color: $white;
+    background-color: $studio-white;
   }
   .theme-color-fg {
     color: $studio-gray-80;
@@ -18,7 +18,7 @@
     border-color: $studio-gray-5;
   }
   .search-field {
-    border-color: $studio-gray-5;
+    border-color: $studio-gray-10;
   }
 }
 
@@ -33,7 +33,7 @@
     background-color: $studio-gray-90;
   }
   .theme-color-fg {
-    color: $white;
+    color: $studio-white;
   }
   .theme-color-fg-dim {
     color: $studio-gray-30;
@@ -115,7 +115,7 @@
 
   .note-list-item {
     &.note-list-item-pinned .note-list-item-pinner {
-      background: $white;
+      background: $studio-white;
       box-shadow: inset 0 0 0 2px $studio-gray-80,
         inset 0 0 0 3px $studio-gray-80;
 

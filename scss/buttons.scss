@@ -41,7 +41,7 @@ button {
   &:active,
   &.active {
     background: $studio-blue-50;
-    color: $white;
+    color: $studio-white;
   }
   &[disabled],
   &:disabled {
@@ -64,12 +64,12 @@ button {
 
 // Danger buttons
 .button-danger {
-  color: $red;
-  border-color: $red;
+  color: $studio-red-40;
+  border-color: $studio-red-40;
 
   &:active {
-    background: $red;
-    color: $white;
+    background: $studio-red-40;
+    color: $studio-white;
   }
 }
 
@@ -85,7 +85,7 @@ button {
 
 .button-borderless.button-danger {
   &:active {
-    color: darken($red, 20%);
+    color: darken($studio-red-40, 20%);
   }
 }
 

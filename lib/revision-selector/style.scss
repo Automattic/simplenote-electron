@@ -1,7 +1,7 @@
 .revision-selector {
   background: $studio-blue-50;
   padding: 10px 20px 20px 20px;
-  color: $white;
+  color: $studio-white;
   z-index: 1000;
   position: absolute;
   height: 114px;
@@ -28,9 +28,9 @@
   }
 
   .button-primary {
-    background: $white;
+    background: $studio-white;
     color: $studio-blue-50;
-    border-color: $white;
+    border-color: $studio-white;
 
     &:active {
       background: $studio-blue-5;
@@ -39,12 +39,12 @@
   }
 
   .button-secondary {
-    border-color: $white;
-    color: $white;
+    border-color: $studio-white;
+    color: $studio-white;
     margin-right: 10px;
 
     &:active {
-      background: $white;
+      background: $studio-white;
       color: $studio-blue-50;
     }
   }
@@ -58,7 +58,7 @@
 
   .revision-date {
     width: 100%;
-    color: $white;
+    color: $studio-white;
     text-align: center;
     margin-bottom: 10px;
   }
