@@ -25,13 +25,12 @@
 
   p {
     line-height: normal;
-    color: darken($gray, 10%);
+    color: $studio-gray-80;
   }
 }
 
 .settings-items {
-  cursor: pointer;
-  border: 1px solid lighten($gray, 30%);
+  border: 1px solid $studio-gray-5;
 }
 
 .settings-item {
@@ -40,7 +39,7 @@
   height: 3em;
   padding-left: 18px;
   padding-right: 18px;
-  border-bottom: 1px solid lighten($gray, 30%);
+  border-bottom: 1px solid $studio-gray-5;
 
   &:last-child {
     border-bottom: none;

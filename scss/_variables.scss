@@ -1,34 +1,3 @@
-// Blues
-$blue: #4895d9; // old blue: #6da3d3
-$blue-lightest: lighten($blue, 33%);
-$blue-light: lighten($blue, 20%);
-
-$blue-active-highlight: lighten($blue, 10%);
-
-$blue-darkest: darken($blue, 20%);
-
-// Grays
-$gray: #808080;
-
-$gray-lightest: lighten($gray, 38%);
-$gray-darkest: darken($gray, 38.5%);
-
-// $gray color functions from light to dark:
-//
-// lighten($gray, 30%)
-// lighten($gray, 20%)
-// lighten($gray, 10%)
-// darken($gray, 10%)
-// darken($gray, 20%)
-// darken($gray, 30%)
-
-// Secondary
-$yellow: #f0b849;
-$red: #d94f4f;
-$green: #4ab866;
-$black: #000; // use $gray-darkest instead
-$white: #fff;
-
 $sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
   'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 $normal: 400;
@@ -43,7 +12,7 @@ $fade-alpha: 0.25;
 
 $border-radius: 3px;
 
-$focus-outline: 4px auto lighten($blue, 15%);
+$focus-outline: 4px auto $studio-blue-5;
 
 // Global Measurements
 $navigation-bar-width: 216px;

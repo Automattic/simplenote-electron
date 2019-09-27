@@ -6,7 +6,7 @@
   height: 1.75em;
   margin: 1px 12px 0;
   border-radius: 50px;
-  border: 1px solid lighten($gray, 30%);
+  border: 1px solid $studio-gray-10;
   padding: 0 8px 1px 15px;
 
   input {
@@ -23,6 +23,6 @@
 
   .icon-cross-small {
     transition: $anim-transition;
-    fill: $gray;
+    fill: $studio-gray-50;
   }
 }

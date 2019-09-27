@@ -1,7 +1,7 @@
 .icon-button {
   width: 32px;
   height: 32px;
-  color: $blue;
+  color: $studio-blue-50;
 
   svg {
     transition: $anim-fast;
@@ -9,12 +9,6 @@
 
   &:disabled {
     opacity: .4;
-  }
-
-  &:active:not(:disabled) {
-    svg {
-      fill: darken($blue, 20%);
-    }
   }
 }
 

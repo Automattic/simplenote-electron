@@ -76,11 +76,11 @@
     margin-right: 4px;
 
     svg {
-      fill: $red;
+      fill: $studio-red-40;
     }
 
     &:focus svg {
-      fill: darken($red, 20%);
+      fill: darken($studio-red-40, 20%);
     }
   }
 
@@ -91,11 +91,11 @@
     transform: translateX(24px);
 
     svg {
-      fill: $gray;
+      fill: $studio-gray-50;
     }
 
     &:focus svg {
-      fill: darken($gray, 20%);
+      fill: $studio-gray-80;
     }
   }
 
