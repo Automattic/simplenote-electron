@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 
   &.is-viewing-revisions {
     padding-top: 51px;
@@ -38,7 +38,7 @@
   .logo {
     width: 140px;
     height: 140px;
-    opacity: .2;
+    opacity: 0.2;
 
     path {
       fill: $studio-gray-50;
@@ -70,7 +70,6 @@
 }
 
 .is-line-length-full {
-
   .note-detail-textarea,
   .note-detail-markdown {
     max-width: none;
@@ -97,6 +96,10 @@
 
   p {
     margin: 0 0 1.5em;
+  }
+
+  ul p {
+    margin: 0;
   }
 
   a {
@@ -163,13 +166,13 @@
     // there will be a slight delay until the checkbox actually toggles
     &:active {
       input {
-        transform: scale(.9);
+        transform: scale(0.9);
       }
     }
 
     input {
       position: relative;
-      bottom: .0625em;
+      bottom: 0.0625em;
       margin-right: 4px;
       height: 1em;
       vertical-align: middle;
