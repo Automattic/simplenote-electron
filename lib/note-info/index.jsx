@@ -160,7 +160,7 @@ export class NoteInfo extends Component {
 }
 
 function formatTimestamp(unixTime) {
-  return format(unixTime * 1000, 'MMM D, YYYY h:mm a');
+  return format(unixTime * 1000, 'MMM d, yyyy h:mm a');
 }
 
 // https://github.com/RadLikeWhoa/Countable

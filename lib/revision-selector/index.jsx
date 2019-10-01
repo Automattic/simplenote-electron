@@ -115,7 +115,7 @@ export class RevisionSelector extends Component {
         ? 'Latest'
         : format(
             revisions[selection].data.modificationDate * 1000,
-            'MMM D, YYYY h:mm a'
+            'MMM d, yyyy h:mm a'
           );
 
     const revisionButtonStyle =
