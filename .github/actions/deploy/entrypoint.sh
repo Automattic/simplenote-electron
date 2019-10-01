@@ -18,12 +18,6 @@ case $BRANCH in
     APP_ENGINE_URL='https://app.simplenote.com'
     ;;
 
-  "refs/heads/add/develop-deploy")
-    COMMIT_BRANCH='webapp-staging'
-    WEB_APP_URL='https://simplenote-staging.go-vip.net'
-    APP_ENGINE_URL='https://staging.simplenote.com'
-    ;;
-
   *)
     exit 0
     ;;
