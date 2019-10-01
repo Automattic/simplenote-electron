@@ -12,7 +12,7 @@ import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
-const saveDelay = 2000;
+const syncDelay = 2000;
 
 export class NoteDetail extends Component {
   static displayName = 'NoteDetail';
@@ -23,6 +23,7 @@ export class NoteDetail extends Component {
     fontSize: PropTypes.number,
     isViewingRevisions: PropTypes.bool.isRequired,
     onChangeContent: PropTypes.func.isRequired,
+    syncNote: PropTypes.func.isRequired,
     onNotePrinted: PropTypes.func.isRequired,
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
@@ -41,7 +42,7 @@ export class NoteDetail extends Component {
   };
 
   componentWillMount() {
-    this.queueNoteSave = debounce(this.saveNote, saveDelay);
+    this.queueNoteSync = debounce(this.syncNote, syncDelay);
     document.addEventListener('copy', this.copyRenderedNote, false);
   }
 
@@ -51,7 +52,7 @@ export class NoteDetail extends Component {
     this.props.storeHasFocus(this.hasFocus);
 
     // Ensures note gets saved if user abruptly quits the app
-    window.addEventListener('beforeunload', this.queueNoteSave.flush);
+    window.addEventListener('beforeunload', this.queueNoteSync.flush);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -64,8 +65,14 @@ export class NoteDetail extends Component {
 
   isValidNote = note => note && note.id;
 
-  componentWillReceiveProps() {
-    this.queueNoteSave.flush();
+  componentWillReceiveProps(nextProps) {
+    const isEditingNote = get(this.props, ['note', 'id'], false);
+    if (isEditingNote === false) {
+      return;
+    }
+    if (get(nextProps, ['note', 'id']) !== isEditingNote) {
+      this.queueNoteSync.flush();
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -90,7 +97,7 @@ export class NoteDetail extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.queueNoteSave.flush);
+    window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
   }
 
@@ -153,7 +160,16 @@ export class NoteDetail extends Component {
     if (!this.isValidNote(note)) return;
 
     this.props.onChangeContent(note, content);
+    this.queueNoteSync();
     analytics.tracks.recordEvent('editor_note_edited');
+  };
+
+  syncNote = () => {
+    const { note } = this.props;
+
+    if (!this.isValidNote(note)) return;
+
+    this.props.syncNote(note.id);
   };
 
   storeEditorHasFocus = f => (this.editorHasFocus = f);
@@ -222,7 +238,7 @@ export class NoteDetail extends Component {
                   noteId={get(note, 'id', null)}
                   content={content}
                   filter={filter}
-                  onChangeContent={this.queueNoteSave}
+                  onChangeContent={this.saveNote}
                 />
               </div>
             )}
