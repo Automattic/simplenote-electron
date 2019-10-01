@@ -56,7 +56,9 @@ module.exports = () => {
             {
               loader: 'sass-loader',
               options: {
-                includePaths: [__dirname + '/lib'],
+                sassOptions: {
+                  includePaths: [__dirname + '/lib'],
+                },
                 sourceMap: isDevMode,
               },
             },
