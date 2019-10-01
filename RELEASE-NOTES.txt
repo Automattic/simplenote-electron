@@ -10,6 +10,7 @@
 - Open new note automatically upon creation [1566](https://github.com/Automattic/simplenote-electron/issues/1566)
 - Updated colors to use Color Studio, the color palette for Automattic products
 - Fixes vertical spacing with nested markdown lists
+- Added a GitHub Action to deploy develop and master branches
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
