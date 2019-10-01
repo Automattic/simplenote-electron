@@ -9,8 +9,7 @@ import Slider from '../components/slider';
 import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
 
-const sortedRevisions = revisions =>
-  orderBy(revisions, 'data.modificationDate', 'asc');
+const sortedRevisions = revisions => orderBy(revisions, 'version', 'asc');
 
 export class RevisionSelector extends Component {
   static propTypes = {
