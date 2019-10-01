@@ -8,13 +8,13 @@ case $BRANCH in
 
   "refs/heads/develop")
     COMMIT_BRANCH='webapp-develop'
-    WEB_APP_URL='https://simplenote.go-vip.co'
+    WEB_APP_URL='https://simplenote-develop.go-vip.net'
     APP_ENGINE_URL='https://develop.simplenote.com'
     ;;
 
   "refs/heads/master")
     COMMIT_BRANCH='webapp'
-    WEB_APP_URL='https://simplenote-develop.go-vip.net'
+    WEB_APP_URL='https://simplenote.go-vip.co'
     APP_ENGINE_URL='https://app.simplenote.com'
     ;;
 
