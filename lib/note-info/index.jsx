@@ -153,10 +153,10 @@ export class NoteInfo extends Component {
   }
 
   onPinChanged = event =>
-    this.props.onPinNote(this.props.note, event.currentTarget.checked);
+    this.props.onPinNote(this.props.note, !!event.currentTarget.checked);
 
   onMarkdownChanged = event =>
-    this.props.onMarkdownNote(this.props.note, event.currentTarget.checked);
+    this.props.onMarkdownNote(this.props.note, !!event.currentTarget.checked);
 }
 
 function formatTimestamp(unixTime) {
