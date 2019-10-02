@@ -5,7 +5,9 @@
 ### Enhancements
 
 - Open new note automatically upon creation [1582](https://github.com/Automattic/simplenote-electron/pull/1582)
-- Updated colors to use Color Studio, the color palette for Automattic products [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
+- Updated colors to use Color Studio, the color palette for Automattic products
+   - [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
+   - [#1612](https://github.com/Automattic/simplenote-electron/pull/1612)
 
 ### Fixes
 
