@@ -42,23 +42,6 @@
     border-color: $studio-gray-80;
   }
 
-  .search-field {
-    border-color: $studio-gray-60;
-
-    ::-moz-placeholder { /* Firefox 19+ */
-      color: $studio-gray-30;
-    }
-    ::webkit-input-placeholder { /* IE 10+ */
-      color: $studio-gray-30;
-    }
-    :-ms-input-placeholder { /* IE 10+ */
-      color: $studio-gray-30;
-    }
-    :-moz-placeholder { /* Firefox 18- */
-      color: $studio-gray-30;
-    }
-  }
-
   ::-webkit-scrollbar-thumb {
     background-color: $studio-gray-80;
     border-color: $studio-gray-60;
@@ -79,14 +62,18 @@
     }
   }
 
+  input {
+    color: $studio-white;
+  }
+
   input,
   textarea {
     border-color: $studio-gray-70;
     background-color: transparent;
   }
 
-  .transparent-input::placeholder {
-    color: $studio-gray-80;
+  .transparent-input::placeholder, input::placeholder {
+    color: $studio-gray-20;
   }
 
   .checkbox-control-base {
@@ -129,7 +116,7 @@
     }
 
     .note-list-item-excerpt {
-      color: white;
+      color: $studio-gray-20;
     }
   }
   &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
