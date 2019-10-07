@@ -55,7 +55,7 @@
     "debug": "4.1.1",
     "electron": "4.2.8",
     "electron-builder": "20.32.0",
-    "electron-rebuild": "1.8.5",
+    "electron-rebuild": "1.8.6",
     "enzyme": "3.10.0",
     "enzyme-adapter-react-16": "1.14.0",
     "eslint": "6.5.1",
