@@ -99,16 +99,16 @@ const buildViewMenu = settings => {
         label: 'T&heme',
         submenu: [
           {
+            label: '&System',
+            id: 'system',
+          },
+          {
             label: '&Light',
             id: 'light',
           },
           {
             label: '&Dark',
             id: 'dark',
-          },
-          {
-            label: '&System',
-            id: 'system',
           },
         ].map(
           buildRadioGroup({

@@ -102,9 +102,9 @@ const DisplayPanel = props => {
         onChange={actions.activateTheme}
         renderer={RadioGroup}
       >
+        <Item title="System" slug="system" />
         <Item title="Light" slug="light" />
         <Item title="Dark" slug="dark" />
-        <Item title="System" slug="system" />
       </SettingsGroup>
     </Fragment>
   );
