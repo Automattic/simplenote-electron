@@ -320,12 +320,28 @@ export const App = connect(
       });
     };
 
-    onUpdateContent = (note, content) =>
-      this.props.actions.updateNoteContent({
-        noteBucket: this.props.noteBucket,
-        note,
-        content,
-      });
+    onUpdateContent = (note, content) => {
+      if (!note) {
+        return;
+      }
+
+      const updatedNote = {
+        ...note,
+        data: {
+          ...note.data,
+          content,
+          modificationDate: Math.floor(Date.now() / 1000),
+        },
+      };
+
+      // update the bucket but don't force sync right away
+      // as this happens per keystroke when the user is editing
+      // a note. The NoteEditor will notify via props when
+      // it's time to sync via Simperium
+      const { noteBucket } = this.props;
+
+      noteBucket.update(note.id, updatedNote.data, {}, { sync: false });
+    };
 
     syncNote = noteId => {
       this.props.noteBucket.touch(noteId);
