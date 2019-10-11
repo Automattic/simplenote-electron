@@ -106,5 +106,5 @@
     "depends": ["gconf2"]
   },
   "afterSign": "./after_sign_hook.js",
-  "afterAllArtifactBuild": "./after_all_artifact_hook.js"
+  "afterAllArtifactBuild": "./after_sign_hook.js"
 }

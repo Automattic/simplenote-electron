@@ -17,7 +17,13 @@ module.exports = async function(params) {
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
 
-  let appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
+  let appPath = params.appOutDir
+    ? path.join(
+        params.appOutDir,
+        `${params.packager.appInfo.productFilename}.app`
+      )
+    : params.artifactPaths[0].replace(new RegExp('.blockmap'), '');
+
   if (!fs.existsSync(appPath)) {
     throw new Error(`Cannot find application at: ${appPath}`);
   }
