@@ -9,6 +9,11 @@ module.exports = async function(params) {
   }
   console.log('afterSign hook triggered', params);
 
+  if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
+    console.log('Not on a tag. Skipping notarization');
+    return;
+  }
+
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
 
