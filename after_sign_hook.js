@@ -25,6 +25,7 @@ module.exports = async function(params) {
       appPath: appPath,
       appleId: process.env.NOTARIZATION_ID,
       appleIdPassword: process.env.NOTARIZATION_PWD,
+      ascProvider: 'PZYM8XX95Q',
     });
   } catch (error) {
     console.error(error);
