@@ -73,7 +73,7 @@ jobs:
 
   mac:
     macos:
-      xcode: '9.4.1'
+      xcode: '10.0.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/simplenote
     steps:
