@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { debounce, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
+import SearchSuggestions from '../search-suggestions';
 
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
-const SEARCH_DELAY = 500;
+const KEY_ENTER = 13;
 
 export class SearchField extends Component {
   static displayName = 'SearchField';
@@ -24,6 +25,7 @@ export class SearchField extends Component {
 
   state = {
     query: '',
+    searchSelected: false,
   };
 
   componentDidUpdate() {
@@ -36,6 +38,11 @@ export class SearchField extends Component {
     }
   }
 
+  doSearch = query => {
+    this.setState({ query, searchSelected: true });
+    this.props.onSearch(query);
+  };
+
   interceptEsc = event => {
     if (KEY_ESC === event.keyCode) {
       if (this.state.query === '') {
@@ -43,51 +50,56 @@ export class SearchField extends Component {
       }
       this.clearQuery();
     }
+    if (KEY_ENTER === event.keyCode) {
+      this.doSearch(this.state.query);
+    }
   };
 
   storeInput = r => (this.inputField = r);
 
-  debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
-
   update = ({ target: { value: query } }) => {
-    this.setState({ query });
-    this.debouncedSearch(query);
+    this.setState({ query, searchSelected: false });
   };
 
   clearQuery = () => {
-    this.setState({ query: '' });
-    this.debouncedSearch('');
-    this.debouncedSearch.flush();
+    this.setState({ query: '', searchSelected: false });
+    this.props.onSearch('');
   };
 
   render() {
     const { isTagSelected, placeholder } = this.props;
-    const { query } = this.state;
+    const { query, searchSelected } = this.state;
     const hasQuery = query && query.length > 0;
+    const shouldShowSuggestions = hasQuery && !searchSelected;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
 
     return (
-      <div className="search-field">
-        <input
-          aria-label={screenReaderLabel}
-          ref={this.storeInput}
-          type="text"
-          placeholder={placeholder}
-          onChange={this.update}
-          onKeyUp={this.interceptEsc}
-          value={query}
-          spellCheck={false}
-        />
-        <button
-          aria-label="Clear search"
-          hidden={!hasQuery}
-          onClick={this.clearQuery}
-        >
-          <SmallCrossIcon />
-        </button>
-      </div>
+      <Fragment>
+        <div className="search-field">
+          <input
+            aria-label={screenReaderLabel}
+            ref={this.storeInput}
+            type="text"
+            placeholder={placeholder}
+            onChange={this.update}
+            onKeyUp={this.interceptEsc}
+            value={query}
+            spellCheck={false}
+          />
+          <button
+            aria-label="Clear search"
+            hidden={!hasQuery}
+            onClick={this.clearQuery}
+          >
+            <SmallCrossIcon />
+          </button>
+          {shouldShowSuggestions && (
+            <SearchSuggestions query={query} onSearch={this.doSearch} />
+          )}
+        </div>
+      </Fragment>
     );
   }
 }

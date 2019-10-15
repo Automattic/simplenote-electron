@@ -1,0 +1,25 @@
+.search-suggestions {
+  /* interim styles */
+  position: absolute;
+  top: 32px;
+  left: 0;
+  z-index: 10;
+  background: $studio-white;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid $studio-gray-10;
+
+  .search-suggestion-row {
+    cursor: pointer;
+
+    &:hover {
+      background: $studio-blue-5;
+    }
+  }
+
+  .icon-search-small, .icon-tag {
+    transition: $anim-transition;
+    fill: $studio-gray-50;
+    width: 28px;
+  }
+}
