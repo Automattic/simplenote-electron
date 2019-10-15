@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import getTheme from './utils/get-theme';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
@@ -310,8 +309,20 @@ export const App = connect(
         preferencesBucket: this.props.preferencesBucket,
       });
 
+    getSystemColorMode = () =>
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+
+    getTheme = () => {
+      const {
+        settings: { theme },
+      } = this.props;
+      return 'system' === theme ? this.getSystemColorMode() : theme;
+    };
+
     initializeElectron = () => {
-      const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
 
       this.setState({
         electron: {
@@ -405,7 +416,7 @@ export const App = connect(
       } = this.props;
       const isMacApp = isElectronMac();
 
-      const themeClass = `theme-${getTheme(settings.theme, isElectron())}`;
+      const themeClass = `theme-${this.getTheme()}`;
 
       const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
