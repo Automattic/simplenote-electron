@@ -50,13 +50,6 @@
   color: $studio-gray-80;
 }
 
-.is-electron {
-  .navigation-bar__tools,
-  .navigation-bar__footer {
-    display: none;
-  }
-}
-
 .navigation-bar__footer-item {
   margin-right: 10px;
 

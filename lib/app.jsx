@@ -68,6 +68,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleAutoHideMenuBar',
         'toggleFocusMode',
         'toggleSpellCheck',
       ]),
@@ -145,6 +146,7 @@ export const App = connect(
 
     componentDidMount() {
       ipc.on('appCommand', this.onAppCommand);
+      ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
       ipc.send('settingsUpdate', this.props.settings);
 
       this.props.noteBucket
@@ -435,7 +437,9 @@ export const App = connect(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && <NavigationBar />}
+              {state.showNavigation && (
+                <NavigationBar isElectron={isElectron()} />
+              )}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
@@ -470,6 +474,7 @@ export const App = connect(
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
+            isMacApp={isMacApp}
           />
         </div>
       );

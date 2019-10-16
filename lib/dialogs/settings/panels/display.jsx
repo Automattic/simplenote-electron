@@ -15,7 +15,10 @@ const DisplayPanel = props => {
   const {
     actions,
     activeTheme,
+    autoHideMenuBar,
     buckets: { noteBucket },
+    isElectron,
+    isMacApp,
     lineLength,
     loadNotes,
     noteDisplay,
@@ -108,6 +111,19 @@ const DisplayPanel = props => {
         <Item title="Light" slug="light" />
         <Item title="Dark" slug="dark" />
       </SettingsGroup>
+
+      {isElectron && !isMacApp && (
+        <SettingsGroup
+          title="Menu Bar"
+          slug="autoHideMenuBar"
+          activeSlug={autoHideMenuBar ? 'autoHide' : ''}
+          description="When set to auto-hide, press the Alt key to toggle."
+          onChange={actions.toggleAutoHideMenuBar}
+          renderer={ToggleGroup}
+        >
+          <Item title="Hide Automatically" slug="autoHide" />
+        </SettingsGroup>
+      )}
     </Fragment>
   );
 };
@@ -115,9 +131,12 @@ const DisplayPanel = props => {
 DisplayPanel.propTypes = {
   actions: PropTypes.object.isRequired,
   activeTheme: PropTypes.string.isRequired,
+  autoHideMenuBar: PropTypes.bool,
   buckets: PropTypes.shape({
     noteBucket: PropTypes.object.isRequired,
   }),
+  isElectron: PropTypes.bool.isRequired,
+  isMacApp: PropTypes.bool.isRequired,
   lineLength: PropTypes.string.isRequired,
   loadNotes: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,
@@ -130,6 +149,7 @@ DisplayPanel.propTypes = {
 const mapStateToProps = ({ settings }) => {
   return {
     activeTheme: settings.theme,
+    autoHideMenuBar: settings.autoHideMenuBar,
     lineLength: settings.lineLength,
     noteDisplay: settings.noteDisplay,
     sortIsReversed: settings.sortReversed,
