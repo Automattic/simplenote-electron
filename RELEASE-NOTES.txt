@@ -2,6 +2,10 @@
 
 ## Future release
 
+### Enhancements
+
+ - Add ability to select system as a theme option and make it the default
+
 ### Fixes
 
  - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)

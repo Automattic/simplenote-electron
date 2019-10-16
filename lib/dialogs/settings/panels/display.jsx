@@ -102,6 +102,9 @@ const DisplayPanel = props => {
         onChange={actions.activateTheme}
         renderer={RadioGroup}
       >
+        {navigator.userAgent.toLowerCase().indexOf(' electron/') === -1 && (
+          <Item title="System" slug="system" />
+        )}
         <Item title="Light" slug="light" />
         <Item title="Dark" slug="dark" />
       </SettingsGroup>

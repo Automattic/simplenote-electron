@@ -309,8 +309,20 @@ export const App = connect(
         preferencesBucket: this.props.preferencesBucket,
       });
 
+    getSystemColorMode = () =>
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+
+    getTheme = () => {
+      const {
+        settings: { theme },
+      } = this.props;
+      return 'system' === theme ? this.getSystemColorMode() : theme;
+    };
+
     initializeElectron = () => {
-      const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
 
       this.setState({
         electron: {
@@ -404,7 +416,7 @@ export const App = connect(
       } = this.props;
       const isMacApp = isElectronMac();
 
-      const themeClass = `theme-${settings.theme}`;
+      const themeClass = `theme-${this.getTheme()}`;
 
       const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
