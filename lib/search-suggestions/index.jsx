@@ -24,16 +24,20 @@ export class SearchSuggestions extends Component {
           <SmallSearchIcon />
           {query}
         </div>
-        {tags.map(tag => (
-          <div
-            key={tag.id}
-            className="search-suggestion-row"
-            onClick={() => onSearch(`tag:${tag.id}`)}
-          >
-            <TagIcon />
-            {tag.id}
-          </div>
-        ))}
+        {tags
+          .filter(function(tag) {
+            return tag.id.includes(query);
+          })
+          .map(tag => (
+            <div
+              key={tag.id}
+              className="search-suggestion-row"
+              onClick={() => onSearch(`tag:${tag.id}`)}
+            >
+              <TagIcon />
+              {tag.id}
+            </div>
+          ))}
       </div>
     );
   }
