@@ -334,6 +334,7 @@ export class NoteList extends Component {
       onSelectNote,
       onEmptyTrash,
       noteDisplay,
+      notesLoaded,
       showTrash,
       notes,
       isSmallScreen,
@@ -368,7 +369,7 @@ export class NoteList extends Component {
     return (
       <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
         {isEmptyList ? (
-          <span className="note-list-placeholder">No Notes</span>
+          <span className="note-list-placeholder">{ notesLoaded ? 'No Notes' : 'Loading Notes'}</span>
         ) : (
           <Fragment>
             <div className={listItemsClasses}>
@@ -456,6 +457,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     nextNote,
     noteDisplay,
     notes: filteredNotes,
+    notesLoaded: state.notesLoaded,
     prevNote,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
