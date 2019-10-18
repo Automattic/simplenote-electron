@@ -8,6 +8,7 @@
 - Updated colors to use Color Studio, the color palette for Automattic products
    - [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
    - [#1612](https://github.com/Automattic/simplenote-electron/pull/1612)
+- Display a notice that notes are loading when notes are loading
 
 ### Fixes
 
