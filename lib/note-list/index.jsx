@@ -329,6 +329,7 @@ export class NoteList extends Component {
   render() {
     const {
       filter,
+      hasLoaded,
       selectedNoteId,
       onNoteOpened,
       onSelectNote,
@@ -368,7 +369,7 @@ export class NoteList extends Component {
     return (
       <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
         {isEmptyList ? (
-          <span className="note-list-placeholder">No Notes</span>
+          <span className="note-list-placeholder">{ hasLoaded ? 'No Notes' : 'Loading Notes'}</span>
         ) : (
           <Fragment>
             <div className={listItemsClasses}>
@@ -453,6 +454,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
 
   return {
     filter: state.filter,
+    hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
     notes: filteredNotes,
