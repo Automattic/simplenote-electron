@@ -13,7 +13,10 @@
   "mac": {
     "icon": "./resources/images/app-icon.icns",
     "category": "public.app-category.social-networking",
-    "artifactName": "Simplenote-macOS-${version}.${ext}"
+    "artifactName": "Simplenote-macOS-${version}.${ext}",
+    "entitlements": "./resources/macos/entitlements.mac.plist",
+    "entitlementsInherit": "./resources/macos/entitlements.mac.inherit.plist",
+    "hardenedRuntime": true
   },
   "dmg": {
     "title": "Simplenote Installer",
@@ -100,5 +103,7 @@
   },
   "deb": {
     "depends": ["gconf2"]
-  }
+  },
+  "afterSign": "./after_sign_hook.js",
+  "afterAllArtifactBuild": "./after_sign_hook.js"
 }
