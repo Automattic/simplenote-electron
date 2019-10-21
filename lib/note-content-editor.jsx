@@ -233,10 +233,10 @@ export default class NoteContentEditor extends Component {
   };
 
   handleReturn = () => {
-    // matches lines that start with `- `, `* `, or `+ `
+    // matches lines that start with `- `, `* `, `+ `, or `\u2022` (bullet)
     // preceded by 0 or more space characters
     // i.e. a line prefixed by a list bullet
-    const listItemRe = /^[ \t\u2000-\u200a]*[-*+]\s/;
+    const listItemRe = /^[ \t\u2000-\u200a]*[-*+\u2022]\s/;
 
     const { editorState } = this.state;
     const line = getCurrentBlock(editorState).getText();

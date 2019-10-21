@@ -13,6 +13,7 @@ export const DialogRenderer = props => {
     closeDialog,
     dialogs,
     isElectron,
+    isMacApp,
   } = props;
 
   const renderDialog = dialog => {
@@ -40,6 +41,7 @@ export const DialogRenderer = props => {
           dialog={dialog}
           requestClose={closeThisDialog}
           isElectron={isElectron}
+          isMacApp={isMacApp}
           {...appProps}
         />
       </Modal>
@@ -56,6 +58,7 @@ DialogRenderer.propTypes = {
   closeDialog: PropTypes.func.isRequired,
   dialogs: PropTypes.array.isRequired,
   isElectron: PropTypes.bool.isRequired,
+  isMacApp: PropTypes.bool.isRequired,
 };
 
 export default DialogRenderer;

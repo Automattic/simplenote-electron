@@ -216,84 +216,73 @@ export class Auth extends Component {
   };
 
   setupAuthWindow = () => {
-    const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
-    const BrowserWindow = remote.BrowserWindow;
-    const protocol = remote.protocol;
+    // eslint-disable-next-line no-undef
+    const { BrowserWindow, session } = __non_webpack_require__(
+      'electron'
+    ).remote;
+
     this.authWindow = new BrowserWindow({
       width: 640,
       height: 640,
       show: false,
       webPreferences: {
         nodeIntegration: false,
+        session: session.fromPartition(`fresh-session-${Math.random()}`),
       },
     });
 
-    // Register simplenote:// protocol
-    protocol.registerHttpProtocol('simplenote', req => {
-      this.authWindow.loadURL(req.url);
+    this.authWindow.on('closed', () => {
+      // make sure to release this from memory
+      this.authWindow = null;
     });
 
-    this.authWindow.webContents.on('will-navigate', (event, url) =>
-      this.onBrowserNavigate(url)
-    );
+    this.authWindow.webContents.session.protocol.registerHttpProtocol(
+      'simplenote',
+      (req, callback) => {
+        const { searchParams } = new URL(req.url);
 
-    this.authWindow.webContents.on(
-      'did-get-redirect-request',
-      (event, oldUrl, newUrl) => this.onBrowserNavigate(newUrl)
-    );
-  };
+        // cancel the request by running callback() with no parameters
+        // we're going to close the window and continue processing the
+        // information we received in args of the simplenote://auth URL
+        callback();
 
-  onBrowserNavigate = url => {
-    try {
-      this.authenticateWithUrl(new URL(url));
-    } catch (error) {
-      // Do nothing if Url was invalid
-    }
-  };
+        const errorCode = searchParams.get('error')
+          ? searchParams.get('code')
+          : false;
+        const authState = searchParams.get('state');
+        const userEmail = searchParams.get('user');
+        const simpToken = searchParams.get('token');
+        const wpccToken = searchParams.get('wp_token');
 
-  authenticateWithUrl = url => {
-    // Bail out if the url is not the simplenote protocol
-    if (url.protocol !== 'simplenote:') {
-      return;
-    }
+        // Display an error message if authorization failed.
+        switch (errorCode) {
+          case false:
+            break;
+          case '1':
+            return this.authError(
+              'Please activate your WordPress.com account via email and try again.'
+            );
+          case '2':
+            return this.authError(
+              'Please confirm your account with the confirmation email before signing in to Simplenote.'
+            );
+          default:
+            return this.authError('An error was encountered while signing in.');
+        }
 
-    const { authorizeUserWithToken, saveWPToken } = this.props;
-    const params = url.searchParams;
+        this.closeAuthWindow();
 
-    // Display an error message if authorization failed.
-    if (params.get('error')) {
-      switch (params.get('code')) {
-        case '1':
-          return this.authError(
-            'Please activate your WordPress.com account via email and try again.'
-          );
-        default:
-          return this.authError('An error was encountered while signing in.');
+        if (authState !== this.authState) {
+          return;
+        }
+
+        const { authorizeUserWithToken, saveWPToken } = this.props;
+        authorizeUserWithToken(userEmail, simpToken);
+        if (wpccToken) {
+          saveWPToken(wpccToken);
+        }
       }
-    }
-
-    const userEmail = params.get('user');
-    const spToken = params.get('token');
-    const state = params.get('state');
-
-    // Sanity check on params
-    if (!(spToken && userEmail && state)) {
-      return this.closeAuthWindow();
-    }
-
-    // Verify that the state strings match
-    if (state !== this.authState) {
-      return;
-    }
-
-    authorizeUserWithToken(userEmail, spToken);
-
-    const wpToken = params.get('wp_token');
-    if (wpToken) {
-      saveWPToken(wpToken);
-    }
-
-    this.closeAuthWindow();
+    );
   };
 
   authError = errorMessage => {

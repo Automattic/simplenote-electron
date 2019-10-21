@@ -33,7 +33,6 @@ export class NoteDetail extends Component {
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
-    updateNoteContent: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -130,6 +129,8 @@ export class NoteDetail extends Component {
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
   onPreviewClick = event => {
+    const { note, onChangeContent, syncNote } = this.props;
+
     for (let node = event.target; node !== null; node = node.parentNode) {
       // open markdown preview links in a new window
       if (node.tagName === 'A') {
@@ -137,18 +138,16 @@ export class NoteDetail extends Component {
         viewExternalUrl(node.href);
         break;
       }
+
       // handle task list items
       if (node.className === 'task-list-item') {
         event.preventDefault();
-        const { note, noteBucket, updateNoteContent } = this.props;
-        toggleTask({
-          taskNode: node,
-          text: note.data.content,
-        })
-          .then(newNoteContent => {
-            updateNoteContent({ noteBucket, note, content: newNoteContent });
-          })
-          .catch(console.log);
+        toggleTask({ taskNode: node, text: note.data.content }).then(
+          newContent => {
+            onChangeContent(note, newContent);
+            syncNote(note.id);
+          }
+        );
         break;
       }
     }
@@ -258,11 +257,10 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-const { setShouldPrintNote, updateNoteContent } = appState.actionCreators;
+const { setShouldPrintNote } = appState.actionCreators;
 
 const mapDispatchToProps = {
   onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
-  updateNoteContent,
 };
 
 export default connect(
