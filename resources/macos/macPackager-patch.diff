@@ -1,5 +1,5 @@
 --- ./node_modules/app-builder-lib/out/macPackager.js	1985-10-26 09:15:00.000000000 +0100
-+++ /Users/lore/Desktop/macPackager.js	2019-10-14 12:50:02.000000000 +0200
++++ ./node_modules/app-builder-lib/new/macPackager.js	2019-10-14 12:50:02.000000000 +0200
 @@ -315,7 +315,8 @@
          keychain: keychainName || undefined,
          binaries: (isMas && masOptions != null ? masOptions.binaries : macOptions.binaries) || undefined,
