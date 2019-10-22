@@ -74,7 +74,7 @@ module.exports = function main() {
     }
 
     if (isDev || process.argv.includes('--devtools')) {
-      mainWindow.openDevTools();
+      mainWindow.openDevTools({ mode: 'detach' });
     }
 
     // Configure and set the application menu
