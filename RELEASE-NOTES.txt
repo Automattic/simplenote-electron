@@ -11,6 +11,7 @@
 ### Fixes
 
  - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
+ - Prevent ulimited duplication of changes after signing out and signing in [#1664](https://github.com/Automattic/simplenote-electron/pull/1664)
 
 ## [v1.9.0]
 
