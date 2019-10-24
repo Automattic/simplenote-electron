@@ -11,6 +11,7 @@ import Spinner from '../components/spinner';
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
 import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
+import { viewExternalUrl } from '../utils/url-utils';
 
 export class Auth extends Component {
   static propTypes = {
@@ -60,7 +61,7 @@ export class Auth extends Component {
       : "Don't have an account?";
     const errorMessage = isCreatingAccount
       ? 'Could not create account. Please try again.'
-      : 'Could not sign in with the provided email address and password.';
+      : 'Could not log in with the provided email address and password.';
 
     return (
       <div className="login">
@@ -71,7 +72,7 @@ export class Auth extends Component {
 
           {this.props.hasInvalidCredentials && (
             <p className="login__auth-message is-error">
-              Could not sign in with the provided email address and password.
+              Could not log in with the provided email address and password.
             </p>
           )}
           {this.props.hasLoginError && (
@@ -146,7 +147,16 @@ export class Auth extends Component {
           {isCreatingAccount && (
             <div className="terms">
               By creating an account you agree to our
-              <a href="http://simplenote.com/terms/">Terms of Service</a>.
+              <a
+                href="https://simplenote.com/terms/"
+                onClick={event => {
+                  event.preventDefault();
+                  viewExternalUrl('https://simplenote.com/terms/');
+                }}
+              >
+                Terms of Service
+              </a>
+              .
             </div>
           )}
           <p className="login__signup">

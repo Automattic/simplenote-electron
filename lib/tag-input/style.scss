@@ -1,4 +1,5 @@
 .tag-input {
+  cursor: text;
   position: relative;
   display: flex;
   flex: 1 0 auto;
@@ -11,7 +12,7 @@
     min-width: 140px;
     outline: none;
     font: 14px/1.5 $sans;
-    color: darken($gray, 20%);
+    color: $studio-gray-80;
     background: transparent;
   }
 }
@@ -19,7 +20,7 @@
 .tag-input__placeholder {
   position: absolute;
   display: block;
-  color: lighten($gray, 10%);
+  color: $studio-gray-60;
   background: transparent;
   user-select: none;
 }
@@ -43,5 +44,5 @@
 }
 
 .tag-input__suggestion {
-  color: lighten($gray, 10%);
+  color: $studio-gray-40;
 }

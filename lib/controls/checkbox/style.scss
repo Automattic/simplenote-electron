@@ -44,11 +44,11 @@
     pointer-events: none;
     border-radius: 50%;
     overflow: hidden;
-    border: 1px solid lighten($gray, 20%);
+    border: 1px solid $studio-gray-5;
   }
 
   .checkbox-control-checked {
-    background: $green;
+    background: $studio-green-20;
     transition: all 0.15s ease;
     opacity: 0;
   }

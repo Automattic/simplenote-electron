@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { Popover } from '@material-ui/core';
 
 import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
@@ -30,7 +30,7 @@ class SyncStatusPopover extends React.Component {
     const overflowCount = unsyncedNoteIds.length - noteTitles.length;
     const unit = overflowCount === 1 ? 'note' : 'notes';
 
-    const lastSyncedTime = distanceInWordsToNow(getLastSyncedTime(), {
+    const lastSyncedTime = formatDistanceToNow(getLastSyncedTime(), {
       addSuffix: true,
     });
 

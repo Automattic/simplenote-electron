@@ -6,7 +6,7 @@
   padding: 24px;
   border-width: 2px;
   border-style: dashed;
-  background: lighten($gray, 45%);
+  background: $studio-blue-5;
   transition: padding .2s ease-out, background .2s ease-out;
 
   &:focus-within {
@@ -15,7 +15,7 @@
   }
 
   @at-root .theme-dark & {
-    background: darken($gray, 35%);
+    background: $studio-gray-70;
   }
 
   &.is-active {

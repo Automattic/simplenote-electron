@@ -1,12 +1,38 @@
 # Changelog
 
-## Future Release
+## [v1.9.0]
 
-- Updated Log in and Sign up form to match current styling
+### Enhancements
+
+- Open new note automatically upon creation [1582](https://github.com/Automattic/simplenote-electron/pull/1582)
+- Updated colors to use Color Studio, the color palette for Automattic products
+   - [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
+   - [#1612](https://github.com/Automattic/simplenote-electron/pull/1612)
+
+### Fixes
+
+- Hovering over a clickable or editable UI element now show the correct cursor for its type [#1573](https://github.com/Automattic/simplenote-electron/pull/1573)
+- Fixes vertical spacing with nested markdown lists
+- Fixes sort order on revision slider when the timestamps don't match the change sequence [#1605](https://github.com/Automattic/simplenote-electron/pull/1605)
+- Prevents note corruption when receiving remote updates when local updates are pending
+   - [#1598](https://github.com/Automattic/simplenote-electron/pull/1598)
+   - [#1599](https://github.com/Automattic/simplenote-electron/pull/1599)
+
+### Other changes
+
+- Renamed CHANGELOG.md to RELEASE-NOTES.txt [#1576](https://github.com/Automattic/simplenote-electron/pull/1576)
+- Added tests to Checkbox component [#1580](https://github.com/Automattic/simplenote-electron/pull/1580)
+- Added a GitHub Action to deploy develop and master branches [#1603](https://github.com/Automattic/simplenote-electron/pull/1603)
+- Stopped aborting development builds on `eslint` errors [#1594](https://github.com/Automattic/simplenote-electron/pull/1594)
+
+## [v1.8.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.8.0)
+
+- Updated Log in and Sign up form to match current styling [#1459](https://github.com/Automattic/simplenote-electron/pull/1459)
 
 ## [v1.7.0](https://github.com/Automattic/simplenote-electron/releases/tag/v1.7.0) (2019-08-12)
 
 ### Fixes
+
 - Updates to dark mode styling [#1452](https://github.com/Automattic/simplenote-electron/pull/1452)
 - Updated several dependencies
 

@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  transition: all .3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 
   &.is-viewing-revisions {
     padding-top: 51px;
@@ -38,10 +38,10 @@
   .logo {
     width: 140px;
     height: 140px;
-    opacity: .2;
+    opacity: 0.2;
 
     path {
-      fill: $gray;
+      fill: $studio-gray-50;
     }
   }
 
@@ -59,8 +59,8 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
-  color: darken($gray, 20%);
-  background: $white;
+  color: $studio-gray-60;
+  background: $studio-white;
   resize: none;
   -webkit-tap-highlight-color: transparent;
 
@@ -70,7 +70,6 @@
 }
 
 .is-line-length-full {
-
   .note-detail-textarea,
   .note-detail-markdown {
     max-width: none;
@@ -97,6 +96,10 @@
 
   p {
     margin: 0 0 1.5em;
+  }
+
+  ul p {
+    margin: 0;
   }
 
   a {
@@ -133,7 +136,7 @@
 
   hr {
     border: 0;
-    border-top: 1px solid lighten($gray, 20%);
+    border-top: 1px solid $studio-gray-5;
   }
 
   a {
@@ -142,7 +145,7 @@
 
   blockquote {
     font-style: italic;
-    border-left: 4px solid lighten($gray, 20%);
+    border-left: 4px solid $studio-gray-5;
     margin-left: 0;
     padding-left: 1em;
   }
@@ -163,13 +166,13 @@
     // there will be a slight delay until the checkbox actually toggles
     &:active {
       input {
-        transform: scale(.9);
+        transform: scale(0.9);
       }
     }
 
     input {
       position: relative;
-      bottom: .0625em;
+      bottom: 0.0625em;
       margin-right: 4px;
       height: 1em;
       vertical-align: middle;
@@ -177,18 +180,18 @@
   }
 
   code {
-    background: $gray-lightest;
+    background: $studio-gray-5;
   }
 
   pre {
-    border: 1px solid lighten($gray, 20%);
+    border: 1px solid $studio-gray-20;
     padding: 1em;
     border-radius: $border-radius;
     font-size: 85%;
   }
 
   pre code {
-    color: darken($gray, 10%);
+    color: $studio-gray-90;
     background: transparent;
   }
 
@@ -199,12 +202,12 @@
     width: 100%;
 
     tr:nth-child(2n) {
-      background-color: lighten($gray, 40%);
+      background-color: $studio-gray-5;
     }
 
     th,
     td {
-      border: 1px solid lighten($gray, 20%);
+      border: 1px solid $studio-gray-20;
       padding: 6px 13px;
     }
 

@@ -19,8 +19,8 @@ module.exports = () => {
     entry: ['./boot'],
     output: {
       path: __dirname + '/dist',
-      filename: 'app.js',
-      chunkFilename: '[name].js',
+      filename: 'app.[hash].js',
+      chunkFilename: '[name].[chunkhash].js',
       ...(config.is_app_engine && {
         publicPath: config.web_app_url + '/',
       }),
@@ -28,22 +28,8 @@ module.exports = () => {
     module: {
       rules: [
         {
-          test: /lib\/.+\.jsx?$/,
-          exclude: /node_modules|lib\/simperium/,
-          enforce: 'pre',
-          use: [
-            {
-              loader: 'eslint-loader',
-              options: {
-                cache: true,
-                configFile: '.eslintrc.json',
-                quiet: true,
-              },
-            },
-          ],
-        },
-        {
           test: /\.jsx?$/,
+          exclude: /node_modules\/core-js/,
           use: [
             {
               loader: 'babel-loader',
@@ -70,7 +56,9 @@ module.exports = () => {
             {
               loader: 'sass-loader',
               options: {
-                includePaths: [__dirname + '/lib'],
+                sassOptions: {
+                  includePaths: [__dirname + '/lib'],
+                },
                 sourceMap: isDevMode,
               },
             },

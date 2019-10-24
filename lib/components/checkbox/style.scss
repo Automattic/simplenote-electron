@@ -1,4 +1,9 @@
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
 .checkbox {
+  cursor: pointer;
   line-height: inherit;
 
   &[aria-checked="true"] {
@@ -13,10 +18,10 @@
 .checkbox__icon {
   display: inline;
   position: relative;
-  top: -.09em;
+  top: -0.09em;
 
   svg {
-    width: 1.3em;
     height: 1.3em;
+    width: 1.3em;
   }
 }
