@@ -4,14 +4,16 @@
   left: 0;
   z-index: 10;
   width: 100%;
-  padding: 0 5px;
-  border-radius: 5px;
+  border-radius: 3px;
   border: 1px solid $studio-gray-10;
+  max-height: 248px;
+  overflow-y: scroll;
+  box-shadow: 0 2px 4px 2px rgba($studio-gray-90, 0.15);
 
   .search-suggestion-row {
     cursor: pointer;
-    padding: 5px;
     position: relative;
+    padding: 5px 0;
   }
   .search-suggestion {
     overflow-wrap: anywhere;
@@ -22,6 +24,7 @@
     position: absolute;
     transition: $anim-transition;
     width: 24px;
+    margin: 0 3px;
   }
 }
 
