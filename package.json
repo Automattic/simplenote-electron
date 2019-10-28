@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -129,7 +129,7 @@
     "sax": "1.2.4",
     "semver": "6.3.0",
     "showdown": "1.9.0",
-    "simperium": "1.0.0",
+    "simperium": "1.0.1",
     "string-replace-to-array": "1.0.3",
     "turndown": "5.0.3",
     "unorm": "^1.6.0",

@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.9.1]
+
+### Fixes
+
+ - Prevent ulimited duplication of changes after signing out and signing in [#1666](https://github.com/Automattic/simplenote-electron/pull/1666)
+
 ## [v1.9.0]
 
 ### Enhancements
