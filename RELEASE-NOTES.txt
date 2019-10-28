@@ -7,6 +7,7 @@
  - Add ability to select system as a theme option and make it the default
  - Added support for the unicode bullet • in list items
  - Display a notice that notes are loading when notes are loading
+ - In dev mode open Chrome Dev Tools in a separate window
 
 ### Fixes
 
