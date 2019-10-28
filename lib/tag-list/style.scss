@@ -38,6 +38,7 @@
   }
 
   .tag-list-input {
+    cursor: pointer;
     flex: 1 1 auto;
     display: block;
     width: 50px;
@@ -52,7 +53,7 @@
     appearance: none;
 
     &.is-selected {
-      color: $blue;
+      color: $studio-blue-50;
     }
 
     &:focus {

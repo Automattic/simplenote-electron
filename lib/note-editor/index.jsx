@@ -24,6 +24,7 @@ export class NoteEditor extends Component {
     onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
     setEditorMode: PropTypes.func.isRequired,
+    syncNote: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -133,6 +134,7 @@ export class NoteEditor extends Component {
           noteBucket={noteBucket}
           previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
           onChangeContent={this.props.onUpdateContent}
+          syncNote={this.props.syncNote}
           fontSize={fontSize}
         />
         {note && !isTrashed && (

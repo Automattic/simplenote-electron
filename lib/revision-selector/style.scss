@@ -1,7 +1,7 @@
 .revision-selector {
-  background: $blue;
+  background: $studio-blue-50;
   padding: 10px 20px 20px 20px;
-  color: $white;
+  color: $studio-white;
   z-index: 1000;
   position: absolute;
   height: 114px;
@@ -24,32 +24,28 @@
 
     button {
       @extend %smart-focus-outline;
-
-      &:focus {
-        outline-color: lighten($blue, 20%);
-      }
     }
   }
 
   .button-primary {
-    background: $white;
-    color: $blue;
-    border-color: $white;
+    background: $studio-white;
+    color: $studio-blue-50;
+    border-color: $studio-white;
 
     &:active {
-      background: lighten($blue, 30%);
-      border-color: lighten($blue, 30%);
+      background: $studio-blue-5;
+      border-color: $studio-blue-5;
     }
   }
 
   .button-secondary {
-    border-color: $white;
-    color: $white;
+    border-color: $studio-white;
+    color: $studio-white;
     margin-right: 10px;
 
     &:active {
-      background: $white;
-      color: $blue;
+      background: $studio-white;
+      color: $studio-blue-50;
     }
   }
 
@@ -62,7 +58,7 @@
 
   .revision-date {
     width: 100%;
-    color: $white;
+    color: $studio-white;
     text-align: center;
     margin-bottom: 10px;
   }

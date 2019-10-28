@@ -1,40 +1,37 @@
 .slider {
   @extend %smart-focus-outline;
 
+  cursor: pointer;
   width: 100%;
   max-width: $max-content-width;
   padding: 0; // IE11
   appearance: none;
   max-height: 18px;
 
-  &:focus {
-    outline-color: lighten($blue, 20%);
-  }
-
   // Track
   &::-webkit-slider-runnable-track {
     display: flex;
     align-items: center;
     height: 2px;
-    background: $white;
+    background: $studio-white;
     border-radius: 5px;
   }
   &::-moz-range-track {
     height: 2px;
-    background: $white;
+    background: $studio-white;
     border-radius: 5px;
   }
   &::-ms-track {
     height: 2px;
-    border-color: $blue;
+    border-color: $studio-blue-50;
     border-width: 7px 0;
     color: transparent;
   }
   &::-ms-fill-lower {
-    background: $white;
+    background: $studio-white;
   }
   &::-ms-fill-upper {
-    background: $white;
+    background: $studio-white;
   }
 
   // Thumb
@@ -42,9 +39,9 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 2px solid $blue;
+    border: 2px solid $studio-blue-50;
     appearance: none;
-    background: $white;
+    background: $studio-white;
     transition: 0.15s ease-in-out;
 
     &:active {
@@ -53,9 +50,9 @@
   }
   &::-moz-range-thumb {
     border-radius: 50%;
-    border: 2px solid $blue;
+    border: 2px solid $studio-blue-50;
     appearance: none;
-    background: $white;
+    background: $studio-white;
     transition: 0.15s ease-in-out;
 
     &:active {
@@ -66,9 +63,9 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 2px solid $blue;
+    border: 2px solid $studio-blue-50;
     appearance: none;
-    background: $white;
+    background: $studio-white;
     transition: 0.15s ease-in-out;
 
     &:active {

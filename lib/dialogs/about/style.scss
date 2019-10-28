@@ -5,8 +5,8 @@
 
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
-    background: $blue !important;
-    color: $white !important;
+    background: $studio-blue-50 !important;
+    color: $studio-white !important;
   }
 
   .dialog-content {
@@ -51,10 +51,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba($white, 0.25);
+    border-bottom: 1px solid rgba($studio-white, 0.25);
 
     &:first-child {
-      border-top: 1px solid rgba($white, 0.25);
+      border-top: 1px solid rgba($studio-white, 0.25);
     }
   }
 

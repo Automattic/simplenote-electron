@@ -151,7 +151,12 @@ export const App = connect(
         .on('index', this.onNotesIndex)
         .on('update', this.onNoteUpdate)
         .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
-        .on('remove', this.onNoteRemoved);
+        .on('remove', this.onNoteRemoved)
+        .beforeNetworkChange(noteId =>
+          this.props.actions.onNoteBeforeRemoteUpdate({
+            noteId,
+          })
+        );
 
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
@@ -322,6 +327,10 @@ export const App = connect(
         content,
       });
 
+    syncNote = noteId => {
+      this.props.noteBucket.touch(noteId);
+    };
+
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
       const filteredNotes = filterNotes(this.props.appState);
@@ -411,6 +420,7 @@ export const App = connect(
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}
                 onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
+                syncNote={this.syncNote}
               />
               {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>

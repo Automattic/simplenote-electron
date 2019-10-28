@@ -1,7 +1,6 @@
 *,
 *:before,
 *:after {
-  cursor: default; // Make everything use default cursor
   box-sizing: border-box;
 }
 
@@ -33,7 +32,7 @@ svg {
 }
 
 a {
-  color: $blue;
+  color: $studio-blue-50;
 }
 
 b,
@@ -110,9 +109,9 @@ optgroup {
 }
 
 .search-match {
-  background-color: $blue;
+  background-color: $studio-blue-50;
   border-radius: 3px;
   padding-left: 2px;
   padding-right: 2px;
-  color: $white;
+  color: $studio-white;
 }

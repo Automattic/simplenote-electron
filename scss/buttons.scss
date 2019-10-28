@@ -1,19 +1,23 @@
 // Resets button styles
 button {
   @extend %smart-focus-outline;
-
   background: transparent;
   border: none;
   padding: 0;
-  cursor: default;
+  cursor: pointer;
   font-size: 14px;
   appearance: none;
   vertical-align: baseline;
+
+  svg {
+    cursor: pointer;
+  }
 }
 
 // Generic button base class
 // Can be used by itself, or in conjunction with the .button-* modifier classes
 .button {
+  cursor: pointer;
   display: inline-block;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -24,10 +28,10 @@ button {
   transition: $anim-fast;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
-  border-color: $blue;
+  border-color: $studio-blue-50;
   border-style: solid;
   border-width: 2px;
-  color: $blue;
+  color: $studio-blue-50;
   font-size: 14px;
   line-height: 1.5;
   font-weight: $bold;
@@ -36,8 +40,8 @@ button {
 
   &:active,
   &.active {
-    background: $blue;
-    color: $white;
+    background: $studio-blue-50;
+    color: $studio-white;
   }
   &[disabled],
   &:disabled {
@@ -47,14 +51,8 @@ button {
 
 // Primary buttons. Solid buttons.
 .button-primary {
-  background: $blue;
+  background: $studio-blue-50;
   color: white;
-
-  &:active,
-  &.active {
-    background: darken($blue, 10%);
-    border-color: darken($blue, 10%);
-  }
 }
 
 // Compact buttons. Use to make buttons smaller.
@@ -66,12 +64,12 @@ button {
 
 // Danger buttons
 .button-danger {
-  color: $red;
-  border-color: $red;
+  color: $studio-red-40;
+  border-color: $studio-red-40;
 
   &:active {
-    background: $red;
-    color: $white;
+    background: $studio-red-40;
+    color: $studio-white;
   }
 }
 
@@ -83,20 +81,11 @@ button {
   svg[class^='icon-'] {
     transition: $anim-fast;
   }
-
-  &:active {
-    color: darken($blue, 20%);
-    background: transparent;
-
-    svg[class^='icon-'] {
-      fill: darken($blue, 20%);
-    }
-  }
 }
 
 .button-borderless.button-danger {
   &:active {
-    color: darken($red, 20%);
+    color: darken($studio-red-40, 20%);
   }
 }
 

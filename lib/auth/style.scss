@@ -1,3 +1,7 @@
+.ReactModal__Overlay {
+  z-index: 1000;
+}
+
 .login {
   display: flex;
   flex: 1 1 auto;
@@ -7,145 +11,142 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 
-  .login__draggable-area {
-    -webkit-app-region: drag;
-    width: 100%;
+  form {
+    width: 95%;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    text-align: center;
+  }
+
+  .login__auth-message.is-error {
+    color: $studio-red-60;
+    font-size: 16px;
+    margin: 0 auto 16px;
+    max-width: 347px;
+    text-align: center;
+    width: 90%;
+  }
+
+  label {
+    display: none;
+  }
+
+  input,
+  button[type='submit'] {
+    background-color: $studio-white;
+    border: solid 1px $studio-gray-5;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: block;
     height: 40px;
-    top: 0;
-    left: 0;
-    position: absolute;
-  }
-
-  .login__form {
+    padding: 11px 15px;
+    margin: 8px auto 0;
     max-width: 320px;
-    margin: 0 auto;
-    padding: 10px;
+    width: 95%;
+    font-size: 16px;
+    font-weight: 400;
   }
 
-  .login__logo {
-    margin-bottom: 50px;
+  button[type='submit'] {
+    background-color: $studio-blue-50;
+    border: none;
+    color: $studio-white;
+    font-weight: 500;
+    margin: 16px auto 8px;
+    padding: 0px 15px 2px;
+  }
+
+  a.login__forgot {
+    color: $studio-gray-60;
+    text-decoration: none;
+  }
+
+  .login__forgot, .login__signup, .terms {
+    color: $studio-gray-60;
+    display: block;
+    font-size: 14px;
+    margin: 16px auto;
+    max-width: 320px;
     text-align: center;
-
-    svg {
-      border-radius: 50%;
-      border: 1px solid lighten($gray, 30%);
-    }
   }
 
-  .login__fields {
-    border: 1px solid lighten($gray, 25%);
-    border-radius: $border-radius;
+  .login__signup a, .terms a {
+    color: $studio-blue-60;
+    margin-left: 5px;
+    text-decoration: none;
   }
 
-  .login__field {
-    display: flex;
-    align-items: center;
-    padding: 1px;
-    border-bottom: 1px solid lighten($gray, 30%);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .login__field-label {
-      flex: none;
-      width: 7.5em;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: $bold;
-      text-transform: uppercase;
-      color: $gray;
-    }
-
-    .login__field-control {
-      flex: 1 1 auto;
-    }
-
-    input {
-      width: 100%;
-      height: 2em;
-      line-height: 1.5em;
-      padding: 0.25em 0.15em;
-      border: none;
-      font-size: 143%;
-      font-weight: $light;
-    }
-
-    input:focus {
-      position: relative;
-      z-index: 1;
-      outline: none;
-    }
-  }
-
-  .login__auth-message {
-    opacity: 0;
-    margin-top: 8px;
-    margin-bottom: 0;
-
-    &.is-error {
-      color: $red;
-      text-align: center;
-      opacity: 1;
-      transition: opacity 0.5s ease-in-out;
-    }
-  }
-
-  .login__actions {
-    margin-top: 22px;
+  .or {
+    background: $studio-white;
+    color: $studio-gray-60;
+    display: block;
+    font-size: 15px;
+    font-style: italic;
+    height: 20px;
+    position: relative;
+    margin: 10px auto;
     text-align: center;
-    color: $gray;
+    width: 50px;
+    z-index: 1;
   }
 
-  .button-primary {
-    width: 100%;
-    min-height: 47px; // so that the button doesn't get smaller with the spinner
-    display: flex;
-    justify-content: center; // centers spinner
-    align-items: center;
+  .or-line {
+    border-bottom: 1px solid $studio-gray-5;
+    margin: -20px auto;
+    max-width: 320px;
+    text-align: center;
+    width: 95%;
+    position: relative;
+    display: block;
   }
 
-  .login__forgot {
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-  }
-
-  .login__signup {
-    margin-top: 1em;
-
-    a {
-      font-weight: $bold;
-    }
-  }
-}
-
-.login__or {
-  text-align: center;
-  margin: 20px 0 12px;
-}
-
-.login__btn-wpcom {
-  button {
-    color: $gray;
-    width: 100%;
+  .wpcc-button {
+    background-color: $studio-wordpress-blue-50;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: $studio-white;
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    height: 40px;
+    padding: 0px 15px 2px;
+    margin: 50px auto 10px;
+    max-width: 320px;
+    text-align: center;
+    text-decoration: none;
+    width: 95%;
   }
 }
 
-.login__btn-wpcom-icon {
-  svg {
-    margin-right: 6px;
-    width: 32px;
-    height: 32px;
-
-    path {
-      fill: $blue;
-    }
+.theme-dark .login {
+  h1 {
+    color: $studio-white;
   }
-}
+  a.login__forgot {
+    color: $studio-gray-20;
+  }
 
-.theme-dark .login__logo svg {
-  border-radius: 0;
-  border: none;
+  .login__forgot, .login__signup, .terms {
+    color: $studio-gray-20;
+  }
+
+  .login__signup a, .terms a {
+    color: $studio-blue-20;
+  }
+
+  .login__auth-message.is-error {
+    color: $studio-red-20;
+  }
+
+  .or {
+    background: $studio-gray-90;
+    color: $studio-gray-20;
+  }
+  .or-line {
+    border-color: $studio-gray-80;
+  }
 }
