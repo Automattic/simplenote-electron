@@ -14,6 +14,10 @@
  - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
  - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
 
+ ### Other changes
+
+ - Updated dependencies
+
 ## [v1.9.1]
 
 ### Fixes
