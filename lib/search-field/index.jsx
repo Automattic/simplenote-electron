@@ -11,6 +11,12 @@ const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 const KEY_ENTER = 13;
+
+/* used to select search suggestions by keyboard */
+// const KEY_TAB = 9;
+const KEY_ARROW_UP = 38;
+const KEY_ARROW_DOWN = 40;
+
 const SEARCH_DELAY = 500;
 
 export class SearchField extends Component {
@@ -44,7 +50,7 @@ export class SearchField extends Component {
     this.debouncedSearch(query);
   };
 
-  interceptEsc = event => {
+  interceptKeys = event => {
     if (KEY_ESC === event.keyCode) {
       if (this.state.query === '') {
         this.inputField.blur();
@@ -52,7 +58,21 @@ export class SearchField extends Component {
       this.clearQuery();
     }
     if (KEY_ENTER === event.keyCode) {
+      // todo handle enter with a suggestion selected
       this.doSearch(this.state.query);
+    }
+    // if (KEY_TAB === event.keyCode) {
+    //   // autocomplete
+    //   this.setState({ query: 'tabbed' });
+    //   // keep focus
+    //   this.inputField.focus();
+    //   event.preventDefault();
+    // }
+    if (KEY_ARROW_DOWN === event.keyCode) {
+      this.selectionHandlers.next();
+    }
+    if (KEY_ARROW_UP === event.keyCode) {
+      this.selectionHandlers.prev();
     }
   };
 
@@ -89,7 +109,7 @@ export class SearchField extends Component {
             type="text"
             placeholder={placeholder}
             onChange={this.update}
-            onKeyUp={this.interceptEsc}
+            onKeyDown={this.interceptKeys}
             value={query}
             spellCheck={false}
           />
@@ -101,7 +121,13 @@ export class SearchField extends Component {
             <SmallCrossIcon />
           </button>
           {shouldShowSuggestions && (
-            <SearchSuggestions query={query} onSearch={this.doSearch} />
+            <SearchSuggestions
+              query={query}
+              onSearch={this.doSearch}
+              setSelectionHandlers={handlers =>
+                (this.selectionHandlers = handlers)
+              }
+            />
           )}
         </div>
       </Fragment>
