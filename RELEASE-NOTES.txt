@@ -13,7 +13,7 @@
 
  - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
  - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
- - Don't update notes state with an empty array causing notes to be considered loaded
+ - Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
 
 ## [v1.9.1]
 
