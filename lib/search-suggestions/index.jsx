@@ -19,20 +19,12 @@ export class SearchSuggestions extends Component {
     selectedItem: 0,
   };
 
-  // constructor(props) {
-  //   super(props);
-
-  //   this.nextItem = this.nextItem.bind(this);
-  //   this.prevItem = this.prevItem.bind(this);
-  // }
-
   componentDidMount() {
     this.props.storeKeyHandler({
       next: this.nextItem,
       prev: this.prevItem,
       select: this.selectItem,
     });
-    // this.props.storeKeyHandler(this.keyHandler);
   }
 
   componentDidUpdate() {

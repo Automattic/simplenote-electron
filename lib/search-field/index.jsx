@@ -69,12 +69,10 @@ export class SearchField extends Component {
     //   event.preventDefault();
     // }
     if (KEY_ARROW_DOWN === event.keyCode) {
-      // this.selectionHandlers.next();
-      console.log(this.storeKeyHandler);
-      this.storeKeyHandler.next();
+      this.keyHandler.next();
     }
     if (KEY_ARROW_UP === event.keyCode) {
-      this.storeKeyHandler.prev();
+      this.keyHandler.prev();
     }
   };
 
@@ -128,9 +126,6 @@ export class SearchField extends Component {
               query={query}
               onSearch={this.doSearch}
               storeKeyHandler={this.storeKeyHandler}
-              // setSelectionHandlers={handlers =>
-                // (this.selectionHandlers = handlers)
-              // }
             />
           )}
         </div>
