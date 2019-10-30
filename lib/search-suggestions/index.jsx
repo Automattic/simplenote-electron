@@ -11,29 +11,39 @@ export class SearchSuggestions extends Component {
     onSearch: PropTypes.func.isRequired,
     query: PropTypes.string.isRequired,
     tags: PropTypes.array.isRequired,
-    setSelectionHandlers: PropTypes.func.isRequired,
+    // setSelectionHandlers: PropTypes.func.isRequired,
+    storeKeyHandler: PropTypes.func.isRequired,
   };
 
   state = {
     selectedItem: 0,
   };
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.nextItem = this.nextItem.bind(this);
-    this.prevItem = this.prevItem.bind(this);
-  }
+  //   this.nextItem = this.nextItem.bind(this);
+  //   this.prevItem = this.prevItem.bind(this);
+  // }
 
   componentDidMount() {
-    this.props.setSelectionHandlers({
+    this.props.storeKeyHandler({
+      next: this.nextItem,
+      prev: this.prevItem,
+      select: this.selectItem,
+    });
+    // this.props.storeKeyHandler(this.keyHandler);
+  }
+
+  componentDidUpdate() {
+    this.props.storeKeyHandler({
       next: this.nextItem,
       prev: this.prevItem,
       select: this.selectItem,
     });
   }
 
-  nextItem() {
+  nextItem = () => {
     const { query, tags } = this.props;
     const { selectedItem } = this.state;
     const matchedTagsLength = tags.filter(function(tag) {
@@ -42,13 +52,13 @@ export class SearchSuggestions extends Component {
     const newItem =
       selectedItem === matchedTagsLength ? matchedTagsLength : selectedItem + 1;
     this.setState({ selectedItem: newItem });
-  }
+  };
 
-  prevItem() {
+  prevItem = () => {
     const { selectedItem } = this.state;
     const newItem = selectedItem === 0 ? 0 : selectedItem - 1;
     this.setState({ selectedItem: newItem });
-  }
+  };
 
   selectItem() {
     console.log('select');

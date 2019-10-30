@@ -69,14 +69,17 @@ export class SearchField extends Component {
     //   event.preventDefault();
     // }
     if (KEY_ARROW_DOWN === event.keyCode) {
-      this.selectionHandlers.next();
+      // this.selectionHandlers.next();
+      console.log(this.storeKeyHandler);
+      this.storeKeyHandler.next();
     }
     if (KEY_ARROW_UP === event.keyCode) {
-      this.selectionHandlers.prev();
+      this.storeKeyHandler.prev();
     }
   };
 
   storeInput = r => (this.inputField = r);
+  storeKeyHandler = keyHandler => (this.keyHandler = keyHandler);
 
   debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
 
@@ -124,9 +127,10 @@ export class SearchField extends Component {
             <SearchSuggestions
               query={query}
               onSearch={this.doSearch}
-              setSelectionHandlers={handlers =>
-                (this.selectionHandlers = handlers)
-              }
+              storeKeyHandler={this.storeKeyHandler}
+              // setSelectionHandlers={handlers =>
+                // (this.selectionHandlers = handlers)
+              // }
             />
           )}
         </div>
