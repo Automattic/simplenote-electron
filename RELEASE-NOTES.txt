@@ -1,6 +1,6 @@
 # Changelog
 
-## Future release
+## [v1.10.0]
 
 ### Enhancements
 
