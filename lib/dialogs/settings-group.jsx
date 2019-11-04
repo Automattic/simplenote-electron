@@ -27,11 +27,13 @@ export const SettingsGroup = ({
     </a>
   );
 
+  const childElements = React.Children.toArray(children).filter(o => o);
+
   return (
     <div className="settings-group">
       <PanelTitle headingLevel="3">{groupTitle}</PanelTitle>
       <div className="settings-items theme-color-border">
-        {React.Children.map(children, ({ props: { slug, title } }) => (
+        {childElements.map(({ props: { slug, title } }) => (
           <label
             className="settings-item theme-color-border"
             htmlFor={`settings-field-${groupSlug}-${slug}`}

@@ -68,6 +68,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
         'setNoteDisplay',
         'setMarkdown',
         'setAccountName',
+        'toggleAutoHideMenuBar',
         'toggleFocusMode',
         'toggleSpellCheck',
       ]),
@@ -145,6 +146,7 @@ export const App = connect(
 
     componentDidMount() {
       ipc.on('appCommand', this.onAppCommand);
+      ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
       ipc.send('settingsUpdate', this.props.settings);
 
       this.props.noteBucket
@@ -309,8 +311,20 @@ export const App = connect(
         preferencesBucket: this.props.preferencesBucket,
       });
 
+    getSystemColorMode = () =>
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+
+    getTheme = () => {
+      const {
+        settings: { theme },
+      } = this.props;
+      return 'system' === theme ? this.getSystemColorMode() : theme;
+    };
+
     initializeElectron = () => {
-      const remote = __non_webpack_require__('electron').remote; // eslint-disable-line no-undef
+      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
 
       this.setState({
         electron: {
@@ -320,12 +334,28 @@ export const App = connect(
       });
     };
 
-    onUpdateContent = (note, content) =>
-      this.props.actions.updateNoteContent({
-        noteBucket: this.props.noteBucket,
-        note,
-        content,
-      });
+    onUpdateContent = (note, content) => {
+      if (!note) {
+        return;
+      }
+
+      const updatedNote = {
+        ...note,
+        data: {
+          ...note.data,
+          content,
+          modificationDate: Math.floor(Date.now() / 1000),
+        },
+      };
+
+      // update the bucket but don't force sync right away
+      // as this happens per keystroke when the user is editing
+      // a note. The NoteEditor will notify via props when
+      // it's time to sync via Simperium
+      const { noteBucket } = this.props;
+
+      noteBucket.update(note.id, updatedNote.data, {}, { sync: false });
+    };
 
     syncNote = noteId => {
       this.props.noteBucket.touch(noteId);
@@ -388,7 +418,7 @@ export const App = connect(
       } = this.props;
       const isMacApp = isElectronMac();
 
-      const themeClass = `theme-${settings.theme}`;
+      const themeClass = `theme-${this.getTheme()}`;
 
       const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
@@ -407,7 +437,9 @@ export const App = connect(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && <NavigationBar />}
+              {state.showNavigation && (
+                <NavigationBar isElectron={isElectron()} />
+              )}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
@@ -442,6 +474,7 @@ export const App = connect(
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
+            isMacApp={isMacApp}
           />
         </div>
       );

@@ -26,6 +26,7 @@ export class SettingsDialog extends Component {
     dialog: PropTypes.shape({ title: PropTypes.string.isRequired }),
     onSignOut: PropTypes.func.isRequired,
     isElectron: PropTypes.bool.isRequired,
+    isMacApp: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     requestClose: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
@@ -118,7 +119,14 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const { buckets, dialog, requestClose, settings } = this.props;
+    const {
+      buckets,
+      dialog,
+      isElectron,
+      isMacApp,
+      requestClose,
+      settings,
+    } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
@@ -132,7 +140,11 @@ export class SettingsDialog extends Component {
               this.onToggleShareAnalyticsPreference
             }
           />
-          <DisplayPanel buckets={buckets} />
+          <DisplayPanel
+            buckets={buckets}
+            isElectron={isElectron}
+            isMacApp={isMacApp}
+          />
           <ToolsPanel />
         </TabPanels>
       </Dialog>

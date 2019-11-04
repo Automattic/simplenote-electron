@@ -1,10 +1,25 @@
 # Changelog
 
+## [v1.10.0]
+
+### Enhancements
+
+ - Add ability to select system as a theme option and make it the default
+ - Added support for the unicode bullet • in list items
+ - Display a notice that notes are loading when notes are loading
+ - In dev mode open Chrome Dev Tools in a separate window
+
+### Fixes
+
+ - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
+ - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
+ - Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
+
 ## [v1.9.1]
 
 ### Fixes
 
- - Prevent ulimited duplication of changes after signing out and signing in [#1666](https://github.com/Automattic/simplenote-electron/pull/1666)
+ - Prevent ulimited duplication of changes after signing out and signing in [#1664](https://github.com/Automattic/simplenote-electron/pull/1664)
 
 ## [v1.9.0]
 
