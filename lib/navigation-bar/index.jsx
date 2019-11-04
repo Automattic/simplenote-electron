@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
@@ -18,7 +18,9 @@ export class NavigationBar extends Component {
   static displayName = 'NavigationBar';
 
   static propTypes = {
+    autoHideMenuBar: PropTypes.bool,
     dialogs: PropTypes.array.isRequired,
+    isElectron: PropTypes.bool.isRequired,
     isOffline: PropTypes.bool.isRequired,
     onAbout: PropTypes.func.isRequired,
     onOutsideClick: PropTypes.func.isRequired,
@@ -65,6 +67,8 @@ export class NavigationBar extends Component {
 
   render() {
     const {
+      autoHideMenuBar,
+      isElectron,
       isOffline,
       onAbout,
       onSettings,
@@ -91,29 +95,35 @@ export class NavigationBar extends Component {
         <div className="navigation-bar__tags theme-color-border">
           <TagList />
         </div>
-        <div className="navigation-bar__tools theme-color-border">
-          <NavigationBarItem
-            icon={<SettingsIcon />}
-            label="Settings"
-            onClick={onSettings}
-          />
-        </div>
-        <div className="navigation-bar__footer">
-          <button
-            type="button"
-            className="navigation-bar__footer-item theme-color-fg-dim"
-            onClick={this.onHelpClicked}
-          >
-            Help &amp; Support
-          </button>
-          <button
-            type="button"
-            className="navigation-bar__footer-item theme-color-fg-dim"
-            onClick={onAbout}
-          >
-            About
-          </button>
-        </div>
+
+        {(!isElectron || autoHideMenuBar) && (
+          <Fragment>
+            <div className="navigation-bar__tools theme-color-border">
+              <NavigationBarItem
+                icon={<SettingsIcon />}
+                label="Settings"
+                onClick={onSettings}
+              />
+            </div>
+            <div className="navigation-bar__footer">
+              <button
+                type="button"
+                className="navigation-bar__footer-item theme-color-fg-dim"
+                onClick={this.onHelpClicked}
+              >
+                Help &amp; Support
+              </button>
+              <button
+                type="button"
+                className="navigation-bar__footer-item theme-color-fg-dim"
+                onClick={onAbout}
+              >
+                About
+              </button>
+            </div>
+          </Fragment>
+        )}
+
         <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
           <SyncStatus isOffline={isOffline} unsyncedNoteIds={unsyncedNoteIds} />
         </div>
@@ -122,7 +132,8 @@ export class NavigationBar extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps = ({ appState: state, settings }) => ({
+  autoHideMenuBar: settings.autoHideMenuBar,
   dialogs: state.dialogs,
   isOffline: state.isOffline,
   selectedTag: state.tag,

@@ -74,7 +74,7 @@ module.exports = function main() {
     }
 
     if (isDev || process.argv.includes('--devtools')) {
-      mainWindow.openDevTools();
+      mainWindow.openDevTools({ mode: 'detach' });
     }
 
     // Configure and set the application menu
@@ -107,6 +107,11 @@ module.exports = function main() {
           );
         });
       });
+    });
+
+    ipcMain.on('setAutoHideMenuBar', function(event, autoHideMenuBar) {
+      mainWindow.setAutoHideMenuBar(autoHideMenuBar || false);
+      mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
     mainWindowState.manage(mainWindow);
