@@ -7,7 +7,6 @@ module.exports = async function(params) {
   if (process.platform !== 'darwin') {
     return;
   }
-  console.log('afterSign hook triggered', params);
 
   if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
     console.log('Not on a tag. Skipping notarization');

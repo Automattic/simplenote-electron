@@ -1,6 +1,6 @@
 # Changelog
 
-## Future release
+## [v1.10.0]
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
  - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
  - Fixed bug that only shows the first line of text in note list preview [#1647](https://github.com/Automattic/simplenote-electron/pull/1647)
  - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
+ - Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
 
  ### Other changes
 
