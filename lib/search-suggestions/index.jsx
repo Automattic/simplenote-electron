@@ -10,8 +10,7 @@ export class SearchSuggestions extends Component {
   static propTypes = {
     onSearch: PropTypes.func.isRequired,
     query: PropTypes.string.isRequired,
-    tags: PropTypes.array.isRequired,
-    // setSelectionHandlers: PropTypes.func.isRequired,
+    filteredTags: PropTypes.array.isRequired,
     storeKeyHandler: PropTypes.func.isRequired,
   };
 
@@ -36,13 +35,12 @@ export class SearchSuggestions extends Component {
   }
 
   nextItem = () => {
-    const { query, tags } = this.props;
+    const { filteredTags } = this.props;
     const { selectedItem } = this.state;
-    const matchedTagsLength = tags.filter(function(tag) {
-      return tag.id.startsWith(encodeURIComponent(query));
-    }).length;
     const newItem =
-      selectedItem === matchedTagsLength ? matchedTagsLength : selectedItem + 1;
+      selectedItem === filteredTags.length
+        ? filteredTags.length
+        : selectedItem + 1;
     this.setState({ selectedItem: newItem });
   };
 
@@ -52,14 +50,18 @@ export class SearchSuggestions extends Component {
     this.setState({ selectedItem: newItem });
   };
 
-  selectItem() {
-    console.log('select');
-    // return the value of selected item?
-    //onClick={() => onSearch(`tag:${tag.id}`)}
-  }
+  selectItem = () => {
+    const { selectedItem } = this.state;
+    const { query, onSearch, filteredTags } = this.props;
+    if (selectedItem === 0) {
+      onSearch(query);
+    } else {
+      onSearch(`tag:${filteredTags[selectedItem - 1].id}`);
+    }
+  };
 
   render() {
-    const { query, onSearch, tags } = this.props;
+    const { query, onSearch, filteredTags } = this.props;
     const { selectedItem } = this.state;
     const screenReaderLabel = 'Search suggestions';
     const shouldShowTagSuggestions = query.length > 2;
@@ -79,34 +81,32 @@ export class SearchSuggestions extends Component {
           <div className="search-suggestion">{query}</div>
         </div>
         {shouldShowTagSuggestions &&
-          tags
-            .filter(function(tag) {
-              return tag.id.startsWith(encodeURIComponent(query));
-            })
-            .map((tag, index) => (
-              <div
-                key={tag.id}
-                id={tag.id}
-                className={
-                  selectedItem === index + 1
-                    ? 'search-suggestion-row search-suggestion-row-selected'
-                    : 'search-suggestion-row'
-                }
-                onClick={() => onSearch(`tag:${tag.id}`)}
-              >
-                <TagIcon />
-                <div className="search-suggestion">
-                  {decodeURIComponent(tag.id)}
-                </div>
+          filteredTags.map((tag, index) => (
+            <div
+              key={tag.id}
+              id={tag.id}
+              className={
+                selectedItem === index + 1
+                  ? 'search-suggestion-row search-suggestion-row-selected'
+                  : 'search-suggestion-row'
+              }
+              onClick={() => onSearch(`tag:${tag.id}`)}
+            >
+              <TagIcon />
+              <div className="search-suggestion">
+                {decodeURIComponent(tag.id)}
               </div>
-            ))}
+            </div>
+          ))}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
-  tags: state.tags,
+const mapStateToProps = ({ appState: state }, ownProps) => ({
+  filteredTags: state.tags.filter(function(tag) {
+    return tag.id.startsWith(encodeURIComponent(ownProps.query));
+  }),
 });
 
 export default connect(

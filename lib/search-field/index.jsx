@@ -58,8 +58,7 @@ export class SearchField extends Component {
       this.clearQuery();
     }
     if (KEY_ENTER === event.keyCode) {
-      // todo handle enter with a suggestion selected
-      this.doSearch(this.state.query);
+      this.keyHandler.select();
     }
     // if (KEY_TAB === event.keyCode) {
     //   // autocomplete
