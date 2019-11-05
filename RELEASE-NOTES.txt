@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+ - Updated dependencies [#1693](https://github.com/Automattic/simplenote-electron/pull/1693)
+
 ## [v1.10.0]
 
 ### Enhancements
