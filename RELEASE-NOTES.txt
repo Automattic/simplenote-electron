@@ -14,6 +14,8 @@
 
 ### Enhancements
 
+ - Updated menu icon to use new icon set
+
 ### Fixes
 
  - Fixed bug that only shows the first line of text in note list preview [#1647](https://github.com/Automattic/simplenote-electron/pull/1647)
