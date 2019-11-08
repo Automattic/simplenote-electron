@@ -6,6 +6,8 @@
 
 ### Fixes
 
+- Fixed markdown code styles [#1702](https://github.com/Automattic/simplenote-electron/pull/1702)
+
 ### Other Changes
 
 - Updated dependencies [#1693](https://github.com/Automattic/simplenote-electron/pull/1693)
