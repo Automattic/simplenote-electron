@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SmallSearchIcon from '../icons/search-small';
@@ -27,6 +28,16 @@ export class SearchSuggestions extends Component {
   }
 
   componentDidUpdate() {
+    // scroll selected item into view
+    var selectedItem = this.refs.selectedItem;
+    var domNode = null;
+    // todo scroll only when needed (i.e. item is not visible)
+    if (selectedItem) {
+      domNode = ReactDOM.findDOMNode(selectedItem);
+      domNode.scrollIntoView(false);
+    }
+
+
     this.props.storeKeyHandler({
       next: this.nextItem,
       prev: this.prevItem,
@@ -91,6 +102,7 @@ export class SearchSuggestions extends Component {
                     : 'search-suggestion-row'
                 }
                 onClick={() => onSearch(`tag:${tag.id}`)}
+                ref={selectedItem === index + 1 ? 'selectedItem' : ''}
               >
                 <TagIcon />
                 <span className="search-suggestion">
