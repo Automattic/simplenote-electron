@@ -65,36 +65,38 @@ export class SearchSuggestions extends Component {
 
     return (
       <div className="search-suggestions" aria-label={screenReaderLabel}>
-        <div
-          id="query"
-          className={
-            selectedItem === 0
-              ? 'search-suggestion-row search-suggestion-row-selected'
-              : 'search-suggestion-row'
-          }
-          onClick={() => onSearch(query)}
-        >
-          <SmallSearchIcon />
-          <div className="search-suggestion">{query}</div>
-        </div>
-        {shouldShowTagSuggestions &&
-          filteredTags.map((tag, index) => (
-            <div
-              key={tag.id}
-              id={tag.id}
-              className={
-                selectedItem === index + 1
-                  ? 'search-suggestion-row search-suggestion-row-selected'
-                  : 'search-suggestion-row'
-              }
-              onClick={() => onSearch(`tag:${tag.id}`)}
-            >
-              <TagIcon />
-              <div className="search-suggestion">
-                {decodeURIComponent(tag.id)}
-              </div>
-            </div>
-          ))}
+        <ul className="search-suggestions-list">
+          <li
+            id="query"
+            className={
+              selectedItem === 0
+                ? 'search-suggestion-row search-suggestion-row-selected'
+                : 'search-suggestion-row'
+            }
+            onClick={() => onSearch(query)}
+          >
+            <SmallSearchIcon />
+            <span className="search-suggestion">{query}</span>
+          </li>
+          {shouldShowTagSuggestions &&
+            filteredTags.map((tag, index) => (
+              <li
+                key={tag.id}
+                id={tag.id}
+                className={
+                  selectedItem === index + 1
+                    ? 'search-suggestion-row search-suggestion-row-selected'
+                    : 'search-suggestion-row'
+                }
+                onClick={() => onSearch(`tag:${tag.id}`)}
+              >
+                <TagIcon />
+                <span className="search-suggestion">
+                  {decodeURIComponent(tag.id)}
+                </span>
+              </li>
+            ))}
+        </ul>
       </div>
     );
   }
