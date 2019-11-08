@@ -61,7 +61,7 @@ export class SearchSuggestions extends Component {
     const { query, onSearch, filteredTags } = this.props;
     const { selectedItem } = this.state;
     const screenReaderLabel = 'Search suggestions';
-    const shouldShowTagSuggestions = query.length > 2;
+    const shouldShowTagSuggestions = query.length > 1;
 
     return (
       <div className="search-suggestions" aria-label={screenReaderLabel}>
@@ -76,7 +76,9 @@ export class SearchSuggestions extends Component {
             onClick={() => onSearch(query)}
           >
             <SmallSearchIcon />
-            <span className="search-suggestion">{query}</span>
+            <span className="search-suggestion">
+              {decodeURIComponent(query)}
+            </span>
           </li>
           {shouldShowTagSuggestions &&
             filteredTags.map((tag, index) => (
@@ -104,7 +106,7 @@ export class SearchSuggestions extends Component {
 
 const mapStateToProps = ({ appState: state }, ownProps) => ({
   filteredTags: state.tags.filter(function(tag) {
-    return tag.id.startsWith(encodeURIComponent(ownProps.query));
+    return tag.id.search(new RegExp(ownProps.query, 'i')) !== -1;
   }),
 });
 

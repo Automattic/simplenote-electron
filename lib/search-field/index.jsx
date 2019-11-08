@@ -72,7 +72,7 @@ export class SearchField extends Component {
   debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
 
   update = ({ target: { value: query } }) => {
-    this.setState({ query, searchSelected: false });
+    this.setState({ query: encodeURIComponent(query), searchSelected: false });
     this.debouncedSearch(query);
   };
 
@@ -101,7 +101,7 @@ export class SearchField extends Component {
             placeholder={placeholder}
             onChange={this.update}
             onKeyDown={this.interceptKeys}
-            value={query}
+            value={decodeURIComponent(query)}
             spellCheck={false}
           />
           <button
