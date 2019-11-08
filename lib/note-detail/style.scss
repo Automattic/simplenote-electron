@@ -114,7 +114,7 @@
 }
 
 .note-detail-markdown {
-  @import '../node_modules/highlight.js/styles/solarized-light.css';
+  @import '../node_modules/highlight.js/scss/solarized-light.scss';
 
   h1,
   h2,
@@ -179,20 +179,11 @@
     }
   }
 
-  code {
-    background: $studio-gray-5;
-  }
-
   pre {
     border: 1px solid $studio-gray-20;
     padding: 1em;
     border-radius: $border-radius;
     font-size: 85%;
-  }
-
-  pre code {
-    color: $studio-gray-90;
-    background: transparent;
   }
 
   table {
