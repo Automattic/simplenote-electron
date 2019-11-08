@@ -11,9 +11,6 @@ const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 const KEY_ENTER = 13;
-
-/* used to select search suggestions by keyboard */
-// const KEY_TAB = 9;
 const KEY_ARROW_UP = 38;
 const KEY_ARROW_DOWN = 40;
 
@@ -51,27 +48,21 @@ export class SearchField extends Component {
   };
 
   interceptKeys = event => {
-    if (KEY_ESC === event.keyCode) {
-      if (this.state.query === '') {
-        this.inputField.blur();
-      }
-      this.clearQuery();
-    }
-    if (KEY_ENTER === event.keyCode) {
-      this.keyHandler.select();
-    }
-    // if (KEY_TAB === event.keyCode) {
-    //   // autocomplete
-    //   this.setState({ query: 'tabbed' });
-    //   // keep focus
-    //   this.inputField.focus();
-    //   event.preventDefault();
-    // }
-    if (KEY_ARROW_DOWN === event.keyCode) {
-      this.keyHandler.next();
-    }
-    if (KEY_ARROW_UP === event.keyCode) {
-      this.keyHandler.prev();
+    switch (event.keyCode) {
+      case KEY_ESC:
+        if (this.state.query === '') {
+          this.inputField.blur();
+        }
+        return this.clearQuery();
+
+      case KEY_ENTER:
+        return this.keyHandler.select();
+
+      case KEY_ARROW_DOWN:
+        return this.keyHandler.next();
+
+      case KEY_ARROW_UP:
+        return this.keyHandler.prev();
     }
   };
 

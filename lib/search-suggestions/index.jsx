@@ -37,16 +37,13 @@ export class SearchSuggestions extends Component {
   nextItem = () => {
     const { filteredTags } = this.props;
     const { selectedItem } = this.state;
-    const newItem =
-      selectedItem === filteredTags.length
-        ? filteredTags.length
-        : selectedItem + 1;
+    const newItem = Math.min(filteredTags.length, selectedItem + 1);
     this.setState({ selectedItem: newItem });
   };
 
   prevItem = () => {
     const { selectedItem } = this.state;
-    const newItem = selectedItem === 0 ? 0 : selectedItem - 1;
+    const newItem = Math.max(0, selectedItem - 1);
     this.setState({ selectedItem: newItem });
   };
 
