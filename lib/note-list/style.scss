@@ -44,6 +44,14 @@
   text-align: center;
 }
 
+.note-list-header {
+  width: 100%;
+  background: $studio-gray-5;
+  color: $studio-gray-70;
+  padding: 5px 10px;
+  font-size: .9em;
+}
+
 .note-list-item {
   cursor: pointer;
   display: flex;

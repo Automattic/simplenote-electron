@@ -33,13 +33,20 @@ export class SearchField extends Component {
   };
 
   componentDidUpdate() {
-    const { searchFocus, onSearchFocused } = this.props;
+    const { searchFocus, onSearchFocused, filter } = this.props;
 
     if (searchFocus && this.inputField) {
       this.inputField.select();
       this.inputField.focus();
       onSearchFocused();
     }
+
+    // check to see if the filter has been updated
+    // this is a hack to work around query not being in app state (yet)
+    // if (filter !== this.state.query) {
+    //   this.debouncedSearch.flush();
+    // this.setState({ query: filter });
+    // }
   }
 
   doSearch = query => {
@@ -86,7 +93,8 @@ export class SearchField extends Component {
     const { isTagSelected, placeholder } = this.props;
     const { query, searchSelected } = this.state;
     const hasQuery = query && query.length > 0;
-    const shouldShowSuggestions = hasQuery && !searchSelected;
+    // const shouldShowSuggestions = hasQuery && !searchSelected;
+    const shouldShowSuggestions = false;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
@@ -125,6 +133,7 @@ export class SearchField extends Component {
 }
 
 const mapStateToProps = ({ appState: state }) => ({
+  filter: state.filter,
   isTagSelected: !isEmpty(state.tag),
   placeholder: state.listTitle,
   searchFocus: state.searchFocus,

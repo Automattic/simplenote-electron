@@ -1,0 +1,36 @@
+.tag-suggestions {
+  max-height: 200px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  .tag-suggestions-list {
+    list-style-type: none;
+    padding: 8px 0;
+    margin: 0;
+    line-height: 40px;
+
+    .tag-suggestion-row {
+      cursor: pointer;
+      position: relative;
+      padding: 0 16px;
+      overflow-x: hidden;
+	  text-overflow: ellipsis;
+    }
+
+    .icon-tag {
+      display: inline-block;
+      position: absolute;
+      transition: $anim-transition;
+      top: 8px;
+      height: 24px;
+      width: 24px;
+
+      margin-right: 16px;
+   	  padding: 0;    	
+    }
+
+    .tag-suggestion {
+	  margin-left: 40px;
+    }
+  }
+}
