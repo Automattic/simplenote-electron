@@ -54,7 +54,11 @@ const mapStateToProps = ({ appState: state }, ownProps) => ({
   filteredTags: state.tags.filter(function(tag) {
     // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
     var testID = 'tag:' + tag.id;
-    return testID.search(new RegExp('(tag:)?' + ownProps.query, 'i')) !== -1;
+    return (
+      testID.search(
+        new RegExp('(tag:)?' + encodeURIComponent(ownProps.query), 'i')
+      ) !== -1
+    );
   }),
 });
 
