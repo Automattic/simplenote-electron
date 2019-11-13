@@ -1,19 +1,18 @@
 .tag-suggestions {
-  max-height: 40vh;
-  min-height: 90px;
-  overflow-y: scroll;
+  min-height: 72px;
+  max-height: 240px;
   overflow-x: hidden;
 
   .tag-suggestions-list {
     list-style-type: none;
-    padding: 8px 0;
+    padding: 0;
     margin: 0;
     line-height: 40px;
 
     .tag-suggestion-row {
       cursor: pointer;
       position: relative;
-      padding: 0 16px;
+      padding: 0;
       overflow-x: hidden;
 	  text-overflow: ellipsis;
     }
@@ -23,15 +22,14 @@
       position: absolute;
       transition: $anim-transition;
       top: 8px;
+      left: 4px;
       height: 24px;
       width: 24px;
-
-      margin-right: 16px;
    	  padding: 0;    	
     }
 
     .tag-suggestion {
-	  margin-left: 40px;
+	  margin-left: 30px;
     }
   }
 }
