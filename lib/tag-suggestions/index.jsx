@@ -31,12 +31,12 @@ export class TagSuggestions extends Component {
                   className="tag-suggestion-row"
                   onClick={() => this.props.onSearch(`tag:${tag.id}`)}
                 >
-                  <span
+                  <div
                     className="tag-suggestion"
                     title={decodeURIComponent(tag.id)}
                   >
                     tag:{decodeURIComponent(tag.id)}
-                  </span>
+                  </div>
                 </li>
               ))}
             </ul>

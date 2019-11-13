@@ -17,7 +17,6 @@
   &.is-empty {
     align-items: center;
     justify-content: center;
-    height: 100vh;
   }
 }
 
@@ -46,10 +45,16 @@
 
 .note-list-header {
   width: 100%;
-  background: rgba($studio-gray-5, 0.5);
-  color: $studio-gray-70;
-  padding: 5px 30px;
+  height: 28px;
   font-size: 14px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: $studio-gray-70;
+  background: rgba($studio-gray-5, 0.5);
+  padding: 5px 30px;
 }
 
 .note-list-item {
