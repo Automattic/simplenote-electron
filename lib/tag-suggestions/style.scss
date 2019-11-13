@@ -13,14 +13,14 @@
       cursor: pointer;
       position: relative;
       padding: 0;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
     }
 
     .tag-suggestion {
       margin-left: 30px;
       border-bottom-style: solid;
       border-bottom-width: 1px;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
     }
   }
 
