@@ -41,12 +41,11 @@ export class SearchField extends Component {
       onSearchFocused();
     }
 
-    // check to see if the filter has been updated
+    // check to see if the filter has been updated (by a tag being clicked from suggestions)
     // this is a hack to work around query not being in app state (yet)
-    // if (filter !== this.state.query) {
-    //   this.debouncedSearch.flush();
-    // this.setState({ query: filter });
-    // }
+    if (filter !== this.state.query) {
+      this.inputField.value = filter;
+    }
   }
 
   doSearch = query => {
