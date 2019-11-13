@@ -31,7 +31,7 @@
     margin-left: 40px;
   }
 
-  .icon-search-small, .icon-tag {
+  .icon-search-small {
     display: inline-block;
     position: absolute;
     transition: $anim-transition;
@@ -51,7 +51,7 @@
   }
 
   .search-suggestion-row {
-    .icon-search-small, .icon-tag {
+    .icon-search-small {
       fill: $studio-gray-50;
     }
     &:hover {
@@ -71,7 +71,7 @@
   }
 
   .search-suggestion-row {
-    .icon-search-small, .icon-tag {
+    .icon-search-small {
       fill: $studio-gray-30;
     }
     &:hover {

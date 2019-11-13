@@ -17,17 +17,6 @@
 	  text-overflow: ellipsis;
     }
 
-    .icon-tag {
-      display: inline-block;
-      position: absolute;
-      transition: $anim-transition;
-      top: 8px;
-      left: 4px;
-      height: 24px;
-      width: 24px;
-   	  padding: 0;    	
-    }
-
     .tag-suggestion {
 	  margin-left: 30px;
     }

@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
-import TagIcon from '../icons/tag';
 import { tracks } from '../analytics';
 
 const { search } = appState.actionCreators;
@@ -32,7 +31,6 @@ export class TagSuggestions extends Component {
                   className="tag-suggestion-row"
                   onClick={() => this.props.onSearch(`tag:${tag.id}`)}
                 >
-                  <TagIcon />
                   <span
                     className="tag-suggestion"
                     title={decodeURIComponent(tag.id)}

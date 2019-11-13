@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import SmallSearchIcon from '../icons/search-small';
-import TagIcon from '../icons/tag';
 
 export class SearchSuggestions extends Component {
   static displayName = 'SearchSuggestions';
@@ -104,7 +103,6 @@ export class SearchSuggestions extends Component {
                 onClick={() => onSearch(`tag:${tag.id}`)}
                 ref={selectedItem === index + 1 ? 'selectedItem' : ''}
               >
-                <TagIcon />
                 <span className="search-suggestion">
                   {decodeURIComponent(tag.id)}
                 </span>
