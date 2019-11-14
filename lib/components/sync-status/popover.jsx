@@ -85,11 +85,14 @@ class SyncStatusPopover extends React.Component {
             </div>
           </div>
         )}
-        { lastSyncedTime > -Infinity ? (
-			<span>Last synced: {formatDistanceToNow(lastSyncedTime, { addSuffix: true })}</span>
-		) : (
-			<span>Unknown sync status</span>
-		) }
+        {lastSyncedTime > -Infinity ? (
+          <span>
+            Last synced:{' '}
+            {formatDistanceToNow(lastSyncedTime, { addSuffix: true })}
+          </span>
+        ) : (
+          <span>Unknown sync status</span>
+        )}
       </Popover>
     );
   }
