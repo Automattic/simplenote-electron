@@ -29,10 +29,7 @@ class SyncStatusPopover extends React.Component {
       : [];
     const overflowCount = unsyncedNoteIds.length - noteTitles.length;
     const unit = overflowCount === 1 ? 'note' : 'notes';
-
-    const lastSyncedTime = formatDistanceToNow(getLastSyncedTime(), {
-      addSuffix: true,
-    });
+    const lastSyncedTime = getLastSyncedTime();
 
     return (
       <Popover
@@ -88,7 +85,11 @@ class SyncStatusPopover extends React.Component {
             </div>
           </div>
         )}
-        <span>Last synced: {lastSyncedTime}</span>
+        { lastSyncedTime > -Infinity ? (
+			<span>Last synced: {formatDistanceToNow(lastSyncedTime, { addSuffix: true })}</span>
+		) : (
+			<span>Unknown sync status</span>
+		) }
       </Popover>
     );
   }
