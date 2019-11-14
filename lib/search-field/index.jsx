@@ -1,19 +1,14 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { debounce, isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
-import SearchSuggestions from '../search-suggestions';
 
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
-const KEY_ENTER = 13;
-const KEY_ARROW_UP = 38;
-const KEY_ARROW_DOWN = 40;
-
 const SEARCH_DELAY = 500;
 
 export class SearchField extends Component {
@@ -29,7 +24,6 @@ export class SearchField extends Component {
 
   state = {
     query: '',
-    searchSelected: false,
   };
 
   componentDidUpdate() {
@@ -48,37 +42,21 @@ export class SearchField extends Component {
     }
   }
 
-  doSearch = query => {
-    this.setState({ query, searchSelected: true });
-    this.debouncedSearch(query);
-  };
-
-  interceptKeys = event => {
-    switch (event.keyCode) {
-      case KEY_ESC:
-        if (this.state.query === '') {
-          this.inputField.blur();
-        }
-        return this.clearQuery();
-
-      case KEY_ENTER:
-        return this.keyHandler.select();
-
-      case KEY_ARROW_DOWN:
-        return this.keyHandler.next();
-
-      case KEY_ARROW_UP:
-        return this.keyHandler.prev();
+  interceptEsc = event => {
+    if (KEY_ESC === event.keyCode) {
+      if (this.state.query === '') {
+        this.inputField.blur();
+      }
+      this.clearQuery();
     }
   };
 
   storeInput = r => (this.inputField = r);
-  storeKeyHandler = keyHandler => (this.keyHandler = keyHandler);
 
   debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
 
   update = ({ target: { value: query } }) => {
-    this.setState({ query: encodeURIComponent(query), searchSelected: false });
+    this.setState({ query });
     this.debouncedSearch(query);
   };
 
@@ -90,43 +68,32 @@ export class SearchField extends Component {
 
   render() {
     const { isTagSelected, placeholder } = this.props;
-    const { query, searchSelected } = this.state;
+    const { query } = this.state;
     const hasQuery = query && query.length > 0;
-    // const shouldShowSuggestions = hasQuery && !searchSelected;
-    const shouldShowSuggestions = false;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
 
     return (
-      <Fragment>
-        <div className="search-field">
-          <input
-            aria-label={screenReaderLabel}
-            ref={this.storeInput}
-            type="text"
-            placeholder={placeholder}
-            onChange={this.update}
-            onKeyDown={this.interceptKeys}
-            value={decodeURIComponent(query)}
-            spellCheck={false}
-          />
-          <button
-            aria-label="Clear search"
-            hidden={!hasQuery}
-            onClick={this.clearQuery}
-          >
-            <SmallCrossIcon />
-          </button>
-          {shouldShowSuggestions && (
-            <SearchSuggestions
-              query={query}
-              onSearch={this.doSearch}
-              storeKeyHandler={this.storeKeyHandler}
-            />
-          )}
-        </div>
-      </Fragment>
+      <div className="search-field">
+        <input
+          aria-label={screenReaderLabel}
+          ref={this.storeInput}
+          type="text"
+          placeholder={placeholder}
+          onChange={this.update}
+          onKeyUp={this.interceptEsc}
+          value={query}
+          spellCheck={false}
+        />
+        <button
+          aria-label="Clear search"
+          hidden={!hasQuery}
+          onClick={this.clearQuery}
+        >
+          <SmallCrossIcon />
+        </button>
+      </div>
     );
   }
 }
