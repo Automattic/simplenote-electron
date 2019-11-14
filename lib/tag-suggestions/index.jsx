@@ -52,8 +52,6 @@ const mapStateToProps = ({ appState: state }, ownProps) => ({
     .filter(function(tag) {
       // todo split on spaces to support additive query args
 
-      // todo limit to 5 suggestions
-
       // prefix tag ID with "tag:" (encoded) this allows us to match if the user typed the prefix
       // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
       // of tags that contain the string "tag:" ¯\_(ツ)_/¯
