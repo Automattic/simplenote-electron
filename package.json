@@ -129,7 +129,7 @@
     "sax": "1.2.4",
     "semver": "6.3.0",
     "showdown": "1.9.1",
-    "simperium": "Simperium/node-simperium#fix/encoding-issue-by-updating-diff-match-patch",
+    "simperium": "1.0.2",
     "string-replace-to-array": "1.0.3",
     "turndown": "5.0.3",
     "unorm": "1.6.0",
