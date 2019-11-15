@@ -67,7 +67,9 @@ find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' -exec rm -rf {} \
 
 # Copy vip files to base path
 cp -r vip/* ./
+rm -rf vip
 
+# Add, commit, push
 touch .gitignore
 echo config-local.json >> .gitignore
 git add --all
