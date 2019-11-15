@@ -52,21 +52,21 @@ const mapStateToProps = ({ appState: state }, ownProps) => ({
     .filter(function(tag) {
       // todo split on spaces to support additive query args
 
-      // prefix tag ID with "tag:" (encoded) this allows us to match if the user typed the prefix
+      // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
       // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
       // of tags that contain the string "tag:" ¯\_(ツ)_/¯
-      var testID = 'tag%3A' + tag.id;
+      var testID = 'tag:' + tag.data.name;
 
-      // todo what if the user has just typed "tag:", right now it matches every tag
-      // also subsets of "tag" such as "ta" will suggest all tags... :/
+      // exception: if the user typed "tag:" or some subset thereof, don't return all tags
+      if (['t', 'ta', 'tag', 'tag:'].includes(ownProps.query)) {
+        testID = tag.data.name;
+      }
 
       return (
-        testID.search(
-          new RegExp('(tag:)?' + encodeURIComponent(ownProps.query), 'i')
-        ) !== -1 &&
+        testID.search(new RegExp('(tag:)?' + ownProps.query, 'i')) !== -1 &&
         // discard exact matches -- if the user has already typed or clicked
-        // the full tag name, don't suggest it)
-        testID !== encodeURIComponent(ownProps.query)
+        // the full tag name, don't suggest it
+        testID !== ownProps.query
       );
     })
     .slice(0, 5),
