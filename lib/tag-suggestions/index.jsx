@@ -43,9 +43,9 @@ export class TagSuggestions extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
-  filteredTags: state.tags
-    .filter(function(tag) {
+const filterTags = (tags, query) =>
+  tags
+    .filter(tag => {
       // todo split on spaces to support additive query args
 
       // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
@@ -54,18 +54,35 @@ const mapStateToProps = ({ appState: state }) => ({
       var testID = 'tag:' + tag.data.name;
 
       // exception: if the user typed "tag:" or some subset thereof, don't return all tags
-      if (['t', 'ta', 'tag', 'tag:'].includes(state.filter)) {
+      if (['t', 'ta', 'tag', 'tag:'].includes(query)) {
         testID = tag.data.name;
       }
 
       return (
-        testID.search(new RegExp('(tag:)?' + state.filter, 'i')) !== -1 &&
+        testID.search(new RegExp('(tag:)?' + query, 'i')) !== -1 &&
         // discard exact matches -- if the user has already typed or clicked
         // the full tag name, don't suggest it
-        testID !== state.filter
+        testID !== query
       );
     })
-    .slice(0, 5),
+    .slice(0, 5);
+
+let lastTags = null;
+let lastQuery = null;
+let lastMatches = [];
+const getMatchingTags = (tags, query) => {
+  if (lastTags === tags && lastQuery === query) {
+    return lastMatches;
+  }
+
+  lastTags = tags;
+  lastQuery = query;
+  lastMatches = filterTags(tags, query);
+  return lastMatches;
+};
+
+const mapStateToProps = ({ appState: state }) => ({
+  filteredTags: getMatchingTags(state.tags, state.filter),
 });
 
 const mapDispatchToProps = dispatch => ({
