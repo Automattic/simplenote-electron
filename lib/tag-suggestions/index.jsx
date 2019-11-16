@@ -11,7 +11,6 @@ export class TagSuggestions extends Component {
   static displayName = 'TagSuggestions';
 
   static propTypes = {
-    query: PropTypes.string.isRequired,
     filteredTags: PropTypes.array.isRequired,
   };
 
@@ -29,13 +28,10 @@ export class TagSuggestions extends Component {
                   key={tag.id}
                   id={tag.id}
                   className="tag-suggestion-row"
-                  onClick={() => this.props.onSearch(`tag:${tag.id}`)}
+                  onClick={() => this.props.onSearch(`tag:${tag.data.name}`)}
                 >
-                  <div
-                    className="tag-suggestion"
-                    title={decodeURIComponent(tag.id)}
-                  >
-                    tag:{decodeURIComponent(tag.id)}
+                  <div className="tag-suggestion" title={tag.data.name}>
+                    tag:{tag.data.name}
                   </div>
                 </li>
               ))}
@@ -47,7 +43,7 @@ export class TagSuggestions extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state }, ownProps) => ({
+const mapStateToProps = ({ appState: state }) => ({
   filteredTags: state.tags
     .filter(function(tag) {
       // todo split on spaces to support additive query args
@@ -58,15 +54,15 @@ const mapStateToProps = ({ appState: state }, ownProps) => ({
       var testID = 'tag:' + tag.data.name;
 
       // exception: if the user typed "tag:" or some subset thereof, don't return all tags
-      if (['t', 'ta', 'tag', 'tag:'].includes(ownProps.query)) {
+      if (['t', 'ta', 'tag', 'tag:'].includes(state.filter)) {
         testID = tag.data.name;
       }
 
       return (
-        testID.search(new RegExp('(tag:)?' + ownProps.query, 'i')) !== -1 &&
+        testID.search(new RegExp('(tag:)?' + state.filter, 'i')) !== -1 &&
         // discard exact matches -- if the user has already typed or clicked
         // the full tag name, don't suggest it
-        testID !== ownProps.query
+        testID !== state.filter
       );
     })
     .slice(0, 5),
