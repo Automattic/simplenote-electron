@@ -1,7 +1,8 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { setSortType, toggleSortOrder } from '../state/settings/actions';
+import appState from '../flux/app-state';
+import { toggleSortOrder, setSortType } from '../state/settings/actions';
 import classNames from 'classnames';
 import ArrowDownIcon from '../icons/arrow-down';
 
@@ -65,10 +66,18 @@ const mapStateToProps = ({ settings }) => ({
   sortReversed: settings.sortReversed,
 });
 
-const mapDispatchToProps = {
-  setSortType,
-  toggleSortOrder,
-};
+function mapDispatchToProps(dispatch, { noteBucket }) {
+  const actionCreators = Object.assign({}, appState.actionCreators);
+
+  const thenReloadNotes = action => a => {
+    dispatch(action(a));
+    dispatch(actionCreators.loadNotes({ noteBucket }));
+  };
+  return {
+    setSortType: thenReloadNotes(setSortType),
+    toggleSortOrder: thenReloadNotes(toggleSortOrder),
+  };
+}
 
 export default connect(
   mapStateToProps,
