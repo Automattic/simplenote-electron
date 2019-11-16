@@ -22,7 +22,7 @@ export class TagSuggestions extends Component {
       <Fragment>
         {filteredTags.length > 0 && (
           <div className="tag-suggestions">
-            <div className="note-list-header">Tags</div>
+            <div className="note-list-header">Search by Tag</div>
             <ul className="tag-suggestions-list">
               {filteredTags.map(tag => (
                 <li
