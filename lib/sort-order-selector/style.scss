@@ -8,16 +8,17 @@
 	text-align: center;
 
 	font-size: 14px;
+	line-height: 44px;
 	color: $studio-gray-80;
 
-	.is-reversed .icon-arrow-down {
-		transform: rotate(180deg);
-	}
-
-	.icon-arrow-down {
+	.sort-order-reverse {
 		width: 24px;
 		height: 24px;
 		position: absolute;
 		left: 8px;
+	}
+
+	.is-reversed .icon-arrow-down {
+		transform: rotate(180deg);
 	}
 }
