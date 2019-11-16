@@ -1,0 +1,23 @@
+.sort-order-selector {
+	width: 328px;
+	height: 44px;
+	background-color: $studio-white;
+	box-shadow: 0 -1px 0 0 $studio-gray-5;
+	margin: 0;
+	padding: 0 15px;
+	text-align: center;
+
+	font-size: 14px;
+	color: $studio-gray-80;
+
+	.is-reversed .icon-arrow-down {
+		transform: rotate(180deg);
+	}
+
+	.icon-arrow-down {
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		left: 8px;
+	}
+}
