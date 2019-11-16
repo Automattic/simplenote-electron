@@ -329,6 +329,7 @@ export class NoteList extends Component {
   render() {
     const {
       filter,
+      filteredNoteIds,
       hasLoaded,
       selectedNoteId,
       onNoteOpened,
@@ -336,12 +337,15 @@ export class NoteList extends Component {
       onEmptyTrash,
       noteDisplay,
       showTrash,
-      notes,
+      notes: allNotes,
       isSmallScreen,
     } = this.props;
 
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
+    const notes = filteredNoteIds
+      ? allNotes.filter(note => filteredNoteIds.has(note.id))
+      : allNotes;
     const renderNoteRow = renderNote(notes, {
       filter,
       noteDisplay,
@@ -369,7 +373,9 @@ export class NoteList extends Component {
     return (
       <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
         {isEmptyList ? (
-          <span className="note-list-placeholder">{ hasLoaded ? 'No Notes' : 'Loading Notes'}</span>
+          <span className="note-list-placeholder">
+            {hasLoaded ? 'No Notes' : 'Loading Notes'}
+          </span>
         ) : (
           <Fragment>
             <div className={listItemsClasses}>
@@ -414,8 +420,15 @@ const {
 } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
-  const filteredNotes = filterNotes(state);
+const emptyList = Object.freeze([]);
+const mapStateToProps = ({
+  appState: state,
+  search: { filteredNoteIds, searchQuery },
+  settings: { noteDisplay },
+}) => {
+  const filteredNotes = (state.notes || emptyList).filter(note =>
+      (filteredNoteIds || new Set()).has(note.id)
+  );
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
   const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
@@ -453,11 +466,12 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
   return {
-    filter: state.filter,
+    filter: searchQuery,
+    filteredNoteIds,
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
-    notes: filteredNotes,
+    notes: state.notes || emptyList,
     prevNote,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),

@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { debounce, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
+import actions from '../state/actions';
 
-const { search, setSearchFocus } = appState.actionCreators;
+const { setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
-const SEARCH_DELAY = 500;
 
 export class SearchField extends Component {
   static displayName = 'SearchField';
@@ -18,52 +18,45 @@ export class SearchField extends Component {
     isTagSelected: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired,
     searchFocus: PropTypes.bool.isRequired,
-    onSearch: PropTypes.func.isRequired,
     onSearchFocused: PropTypes.func.isRequired,
   };
 
-  state = {
-    query: '',
-  };
+  constructor(...args) {
+    super(...args);
+
+    this.inputField = createRef();
+  }
 
   componentDidUpdate() {
     const { searchFocus, onSearchFocused } = this.props;
 
-    if (searchFocus && this.inputField) {
-      this.inputField.select();
-      this.inputField.focus();
+    if (searchFocus && this.inputField.current) {
+      this.inputField.current.select();
+      this.inputField.current.focus();
       onSearchFocused();
     }
   }
 
   interceptEsc = event => {
     if (KEY_ESC === event.keyCode) {
-      if (this.state.query === '') {
+      if (this.props.searchQuery === '') {
         this.inputField.blur();
       }
-      this.clearQuery();
+      this.props.resetSearch();
     }
   };
 
-  storeInput = r => (this.inputField = r);
-
-  debouncedSearch = debounce(query => this.props.onSearch(query), SEARCH_DELAY);
-
-  update = ({ target: { value: query } }) => {
-    this.setState({ query });
-    this.debouncedSearch(query);
+  resetSearch = () => {
+    this.props.resetSearch();
+    this.inputField.current.select();
+    this.inputField.current.focus();
   };
 
-  clearQuery = () => {
-    this.setState({ query: '' });
-    this.debouncedSearch('');
-    this.debouncedSearch.flush();
-  };
+  searchNotes = ({ target: { value } }) => this.props.searchNotes(value);
 
   render() {
-    const { isTagSelected, placeholder } = this.props;
-    const { query } = this.state;
-    const hasQuery = query && query.length > 0;
+    const { isTagSelected, placeholder, searchQuery } = this.props;
+    const hasQuery = searchQuery && searchQuery.length > 0;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
@@ -72,18 +65,18 @@ export class SearchField extends Component {
       <div className="search-field">
         <input
           aria-label={screenReaderLabel}
-          ref={this.storeInput}
+          ref={this.inputField}
           type="text"
           placeholder={placeholder}
-          onChange={this.update}
+          onChange={this.searchNotes}
           onKeyUp={this.interceptEsc}
-          value={query}
+          value={searchQuery}
           spellCheck={false}
         />
         <button
           aria-label="Clear search"
           hidden={!hasQuery}
-          onClick={this.clearQuery}
+          onClick={this.resetSearch}
         >
           <SmallCrossIcon />
         </button>
@@ -92,15 +85,22 @@ export class SearchField extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
-  isTagSelected: !isEmpty(state.tag),
-  placeholder: state.listTitle,
-  searchFocus: state.searchFocus,
-});
+const mapStateToProps = ({
+  appState: { listTitle, searchFocus, tag },
+  search: { searchQuery },
+}) => {
+  return {
+    searchQuery,
+    isTagSelected: !isEmpty(tag),
+    placeholder: listTitle,
+    searchFocus: searchFocus,
+  };
+};
 
 const mapDispatchToProps = dispatch => ({
-  onSearch: filter => {
-    dispatch(search({ filter }));
+  resetSearch: () => dispatch(actions.search.resetSearch()),
+  searchNotes: query => {
+    dispatch(actions.search.searchNotes(query, { debounce: true }));
     recordEvent('list_notes_searched');
   },
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
