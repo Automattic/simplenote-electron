@@ -71,6 +71,15 @@ const maxPreviewLines = {
   expanded: 4,
 };
 
+/** @type {Number} height of a single header in list rows */
+const HEADER_HEIGHT = 28;
+
+/** @type {Number} height of a single tag result row in list rows */
+const TAG_ROW_HEIGHT = 40;
+
+/** @type {Number} height of a the empty "No Notes" div in the notes list */
+const EMPTY_DIV_HEIGHT = 200;
+
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
  *
@@ -99,17 +108,15 @@ const previewCache = new Map();
  * @param {Function} f produces the row height
  * @returns {Number} row height for note in list
  */
-const rowHeightCache = f => (notes, { noteDisplay, numTags, width }) => ({
-  index,
-}) => {
+const rowHeightCache = f => (
+  notes,
+  { noteDisplay, tagResultsFound, width }
+) => ({ index }) => {
   const note = notes[index];
-
-  const HEADER_HEIGHT = 28;
-  const TAG_ROW_HEIGHT = 40;
 
   // handle special sections
   if ('tag-suggestions' === note.type) {
-    return TAG_ROW_HEIGHT * numTags + HEADER_HEIGHT;
+    return TAG_ROW_HEIGHT * tagResultsFound + HEADER_HEIGHT;
   }
 
   if ('header' === note.type) {
@@ -117,7 +124,7 @@ const rowHeightCache = f => (notes, { noteDisplay, numTags, width }) => ({
   }
 
   if ('empty' === note.type) {
-    return '200';
+    return EMPTY_DIV_HEIGHT;
   }
 
   const { preview } = getNoteTitleAndPreview(note);
@@ -219,7 +226,7 @@ const renderNote = (
   if ('empty' === note.type) {
     return (
       <div key={key} style={style} className="note-list is-empty">
-        <span className="note-list-placeholder">No Notes</span>
+        <span className="note-list-placeholder">{note.data}</span>
       </div>
     );
   }
@@ -270,6 +277,17 @@ const renderNote = (
   );
 };
 
+/**
+ * Modifies the filtered notes list to insert special sections. This
+ * allows us to handle tag suggestions and headers in the row renderer.
+ *
+ * @see renderNote
+ *
+ * @param {Object[]} notes list of filtered notes
+ * @param {String} filter search filter
+ * @param {Number} tagResultsFound number of tag matches to display
+ * @returns {Object[]} modified notes list
+ */
 const createCompositeNoteList = (notes, filter, tagResultsFound) => {
   if (filter.length > 0 && tagResultsFound > 0) {
     if (notes.length === 0) {
@@ -461,7 +479,7 @@ export class NoteList extends Component {
                     rowHeight={getRowHeight(notes, {
                       filter,
                       noteDisplay,
-                      numTags: tagResultsFound,
+                      tagResultsFound,
                       width,
                     })}
                     rowRenderer={renderNoteRow}
