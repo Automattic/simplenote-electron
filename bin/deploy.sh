@@ -63,7 +63,7 @@ fi
 git checkout -b $COMMIT_BRANCH
 
 # Delete files not needed in production
-find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' ! -name 'config-local.json' -delete
+find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' ! -name 'config-local.json' -exec rm -rf {} ';'
 
 # Copy vip files to base path
 cp -r vip/* ./
