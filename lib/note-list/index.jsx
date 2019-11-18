@@ -116,10 +116,10 @@ const rowHeightCache = f => (
 
   // handle special sections
   switch (note.type) {
-    case 'tag-suggestions':
-      return TAG_ROW_HEIGHT * tagResultsFound + HEADER_HEIGHT;
     case 'header':
       return HEADER_HEIGHT;
+    case 'tag-suggestions':
+      return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
     case 'empty':
       return EMPTY_DIV_HEIGHT;
   }
@@ -207,16 +207,16 @@ const renderNote = (
 
   // handle special sections
   switch (note.type) {
-    case 'tag-suggestions':
-      return (
-        <div key={key} style={style}>
-          <TagSuggestions />
-        </div>
-      );
     case 'header':
       return (
         <div key={key} style={style} className="note-list-header">
           {note.data}
+        </div>
+      );
+    case 'tag-suggestions':
+      return (
+        <div key={key} style={style}>
+          <TagSuggestions />
         </div>
       );
     case 'empty':
