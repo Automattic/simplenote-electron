@@ -115,16 +115,13 @@ const rowHeightCache = f => (
   const note = notes[index];
 
   // handle special sections
-  if ('tag-suggestions' === note.type) {
-    return TAG_ROW_HEIGHT * tagResultsFound + HEADER_HEIGHT;
-  }
-
-  if ('header' === note.type) {
-    return HEADER_HEIGHT;
-  }
-
-  if ('empty' === note.type) {
-    return EMPTY_DIV_HEIGHT;
+  switch (note.type) {
+    case 'tag-suggestions':
+      return TAG_ROW_HEIGHT * tagResultsFound + HEADER_HEIGHT;
+    case 'header':
+      return HEADER_HEIGHT;
+    case 'empty':
+      return EMPTY_DIV_HEIGHT;
   }
 
   const { preview } = getNoteTitleAndPreview(note);
@@ -207,28 +204,27 @@ const renderNote = (
   }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
-  if ('tag-suggestions' === note.type) {
-    return (
-      <div key={key} style={style}>
-        <TagSuggestions />
-      </div>
-    );
-  }
 
-  if ('header' === note.type) {
-    return (
-      <div key={key} style={style} className="note-list-header">
-        {note.data}
-      </div>
-    );
-  }
-
-  if ('empty' === note.type) {
-    return (
-      <div key={key} style={style} className="note-list is-empty">
-        <span className="note-list-placeholder">{note.data}</span>
-      </div>
-    );
+  // handle special sections
+  switch (note.type) {
+    case 'tag-suggestions':
+      return (
+        <div key={key} style={style}>
+          <TagSuggestions />
+        </div>
+      );
+    case 'header':
+      return (
+        <div key={key} style={style} className="note-list-header">
+          {note.data}
+        </div>
+      );
+    case 'empty':
+      return (
+        <div key={key} style={style} className="note-list is-empty">
+          <span className="note-list-placeholder">{note.data}</span>
+        </div>
+      );
   }
 
   const { title, preview } = getNoteTitleAndPreview(note);
