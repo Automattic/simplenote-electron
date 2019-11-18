@@ -203,7 +203,6 @@ const renderNote = (
   if ('tag-suggestions' === note.type) {
     return (
       <div key={key} style={style}>
-        {' '}
         <TagSuggestions />
       </div>
     );
@@ -271,13 +270,34 @@ const renderNote = (
   );
 };
 
+const createCompositeNoteList = (notes, filter, tagResultsFound) => {
+  if (filter.length > 0 && tagResultsFound > 0) {
+    if (notes.length === 0) {
+      notes.push({
+        type: 'empty',
+        data: 'No Notes',
+      });
+    }
+
+    notes.unshift({
+      type: 'header',
+      data: 'Notes',
+    });
+    notes.unshift({
+      type: 'tag-suggestions',
+      data: 'Tag Suggestions',
+    });
+  }
+  return notes;
+};
+
 export class NoteList extends Component {
   static displayName = 'NoteList';
 
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
     filter: PropTypes.string.isRequired,
-    filteredTags: PropTypes.array.isRequired,
+    tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
@@ -379,7 +399,6 @@ export class NoteList extends Component {
   render() {
     const {
       filter,
-      filteredTags,
       hasLoaded,
       selectedNoteId,
       onNoteOpened,
@@ -387,6 +406,7 @@ export class NoteList extends Component {
       onEmptyTrash,
       noteDisplay,
       showTrash,
+      tagResultsFound,
       notes,
       isSmallScreen,
     } = this.props;
@@ -418,44 +438,42 @@ export class NoteList extends Component {
     );
 
     return (
-      <Fragment>
-        <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
-          {isEmptyList ? (
-            <span className="note-list-placeholder">
-              {hasLoaded ? 'No Notes' : 'Loading Notes'}
-            </span>
-          ) : (
-            <Fragment>
-              <div className={listItemsClasses}>
-                <AutoSizer>
-                  {({ height, width }) => (
-                    <List
-                      ref={this.refList}
-                      estimatedRowSize={
-                        ROW_HEIGHT_BASE +
-                        ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
-                      }
-                      height={height}
-                      noteDisplay={noteDisplay}
-                      notes={notes}
-                      rowCount={notes.length}
-                      rowHeight={getRowHeight(notes, {
-                        filter,
-                        noteDisplay,
-                        numTags: filteredTags.length,
-                        width,
-                      })}
-                      rowRenderer={renderNoteRow}
-                      width={width}
-                    />
-                  )}
-                </AutoSizer>
-              </div>
-              {!!showTrash && emptyTrashButton}
-            </Fragment>
-          )}
-        </div>
-      </Fragment>
+      <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
+        {isEmptyList ? (
+          <span className="note-list-placeholder">
+            {hasLoaded ? 'No Notes' : 'Loading Notes'}
+          </span>
+        ) : (
+          <Fragment>
+            <div className={listItemsClasses}>
+              <AutoSizer>
+                {({ height, width }) => (
+                  <List
+                    ref={this.refList}
+                    estimatedRowSize={
+                      ROW_HEIGHT_BASE +
+                      ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
+                    }
+                    height={height}
+                    noteDisplay={noteDisplay}
+                    notes={notes}
+                    rowCount={notes.length}
+                    rowHeight={getRowHeight(notes, {
+                      filter,
+                      noteDisplay,
+                      numTags: tagResultsFound,
+                      width,
+                    })}
+                    rowRenderer={renderNoteRow}
+                    width={width}
+                  />
+                )}
+              </AutoSizer>
+            </div>
+            {!!showTrash && emptyTrashButton}
+          </Fragment>
+        )}
+      </div>
     );
   }
 
@@ -471,7 +489,14 @@ const {
 const { recordEvent } = tracks;
 
 const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
-  var filteredNotes = filterNotes(state);
+  const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
+
+  const filteredNotes = createCompositeNoteList(
+    filterNotes(state),
+    state.filter,
+    tagResultsFound
+  );
+
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
   const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
@@ -508,30 +533,8 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
   const selectedNotePreview =
     selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
-  const filteredTags = getMatchingTags(state.tags, state.filter);
-  const numNotes = filteredNotes.length;
-
-  if (state.filter.length > 0 && filteredTags.length > 0) {
-    filteredNotes.unshift({
-      type: 'header',
-      data: 'Notes',
-    });
-    filteredNotes.unshift({
-      type: 'tag-suggestions',
-      data: 'Tag Suggestions',
-    });
-
-    if (numNotes === 0) {
-      filteredNotes.push({
-        type: 'empty',
-        data: 'No Notes',
-      });
-    }
-  }
-
   return {
     filter: state.filter,
-    filteredTags,
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
@@ -541,6 +544,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash: state.showTrash,
+    tagResultsFound,
   };
 };
 
