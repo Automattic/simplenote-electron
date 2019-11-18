@@ -16,7 +16,8 @@
     "test": "make test",
     "lint": "make lint",
     "format": "make format",
-    "build": "make build"
+    "build": "make build",
+    "deploy": "./bin/deploy.sh"
   },
   "repository": {
     "type": "git",
