@@ -41,15 +41,9 @@
     "@babel/plugin-proposal-class-properties": "7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "7.6.2",
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
-<<<<<<< HEAD
-    "@babel/preset-env": "7.6.2",
-    "@babel/preset-react": "7.0.0",
-    "autoprefixer": "9.6.4",
-=======
     "@babel/preset-env": "7.6.3",
     "@babel/preset-react": "7.6.3",
     "autoprefixer": "9.7.0",
->>>>>>> release/1.11.0
     "babel-eslint": "10.0.3",
     "babel-loader": "8.0.6",
     "babel-plugin-dynamic-import-node": "2.3.0",
@@ -61,15 +55,6 @@
     "debug": "4.1.1",
     "electron": "4.2.11",
     "electron-builder": "20.32.0",
-<<<<<<< HEAD
-    "electron-notarize": "^0.1.1",
-    "electron-rebuild": "1.8.6",
-    "enzyme": "3.10.0",
-    "enzyme-adapter-react-16": "1.14.0",
-    "eslint": "6.5.1",
-    "eslint-config-prettier": "6.4.0",
-    "eslint-plugin-jest": "22.17.0",
-=======
     "electron-notarize": "0.1.1",
     "electron-rebuild": "1.8.6",
     "enzyme": "3.10.0",
@@ -77,7 +62,6 @@
     "eslint": "6.6.0",
     "eslint-config-prettier": "6.5.0",
     "eslint-plugin-jest": "23.0.1",
->>>>>>> release/1.11.0
     "eslint-plugin-prettier": "3.1.1",
     "eslint-plugin-react": "7.16.0",
     "fake-indexeddb": "2.1.1",
@@ -90,11 +74,7 @@
     "postcss-loader": "3.0.0",
     "prettier": "1.18.2",
     "react-onclickoutside": "6.9.0",
-<<<<<<< HEAD
-    "react-test-renderer": "16.10.2",
-=======
     "react-test-renderer": "16.11.0",
->>>>>>> release/1.11.0
     "sass-loader": "8.0.0",
     "style-loader": "1.0.0",
     "wait-on": "3.3.0",
@@ -130,21 +110,12 @@
     "promise": "8.0.3",
     "prop-types": "15.7.2",
     "randombytes": "2.1.0",
-<<<<<<< HEAD
-    "react": "16.10.2",
-    "react-addons-update": "15.6.2",
-    "react-dom": "16.10.2",
-    "react-dropzone": "10.1.10",
-    "react-modal": "3.10.1",
-    "react-overlays": "2.0.0",
-=======
     "react": "16.11.0",
     "react-addons-update": "15.6.2",
     "react-dom": "16.11.0",
     "react-dropzone": "10.1.10",
     "react-modal": "3.11.1",
     "react-overlays": "2.1.0",
->>>>>>> release/1.11.0
     "react-redux": "7.1.1",
     "react-tabs": "3.0.0",
     "react-transition-group": "4.3.0",
