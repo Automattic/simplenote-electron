@@ -104,6 +104,14 @@ optgroup {
   }
 }
 
+.login__draggable-area {
+  height: 100px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  -webkit-app-region: drag;
+}
+
 .gridicon {
   fill: currentColor;
 }

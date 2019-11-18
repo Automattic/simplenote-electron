@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.11.0]
+
+### Enhancements
+
+### Fixes
+
+ - Fixed bug that only shows the first line of text in note list preview [#1647](https://github.com/Automattic/simplenote-electron/pull/1647)
+
+### Other Changes
+
 ## [v1.10.0]
 
 ### Enhancements
@@ -15,6 +25,13 @@
  - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
  - Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
 
+<<<<<<< HEAD
+=======
+ ### Other changes
+
+ - Updated dependencies
+
+>>>>>>> release/1.11.0
 ## [v1.9.1]
 
 ### Fixes
@@ -142,7 +159,7 @@
 - When copying a note, ensure that the raw text is copied to the clipboard instead of rich text [#1155](https://github.com/Automattic/simplenote-electron/pull/1155)
 - Fix line break behavior in the Markdown preview to match common Markdown implementations, as well as the other Simplenote apps [#1169](https://github.com/Automattic/simplenote-electron/pull/1169)
 - Fix CJK-related crashes after a tab character [#1171](https://github.com/Automattic/simplenote-electron/pull/1171)
-- Various security and under-the-hood improvements 
+- Various security and under-the-hood improvements
 
 ## [v1.3.4](https://github.com/Automattic/simplenote-electron/releases/tag/v1.3.4) (2018-12-18)
 
