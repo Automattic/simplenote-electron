@@ -70,7 +70,7 @@ const filterTags = (tags, query) =>
 let lastTags = null;
 let lastQuery = null;
 let lastMatches = [];
-const getMatchingTags = (tags, query) => {
+export const getMatchingTags = (tags, query) => {
   if (lastTags === tags && lastQuery === query) {
     return lastMatches;
   }

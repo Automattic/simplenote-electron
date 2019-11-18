@@ -1,6 +1,4 @@
 .tag-suggestions {
-  min-height: 72px;
-  max-height: 240px;
   overflow-x: hidden;
 
   .tag-suggestions-list {
@@ -25,7 +23,7 @@
   }
 
   .tag-suggestion-row:last-child .tag-suggestion {
-      border-bottom: none;
+    border-bottom: none;
   }
 }
 

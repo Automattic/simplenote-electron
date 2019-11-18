@@ -28,6 +28,7 @@ import {
   checkboxDecorator,
   makeFilterDecorator,
 } from './decorators';
+import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -98,8 +99,27 @@ const previewCache = new Map();
  * @param {Function} f produces the row height
  * @returns {Number} row height for note in list
  */
-const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
+const rowHeightCache = f => (notes, { noteDisplay, numTags, width }) => ({
+  index,
+}) => {
   const note = notes[index];
+
+  const HEADER_HEIGHT = 28;
+  const TAG_ROW_HEIGHT = 40;
+
+  // handle special sections
+  if ('tag-suggestions' === note.type) {
+    return TAG_ROW_HEIGHT * numTags + HEADER_HEIGHT;
+  }
+
+  if ('header' === note.type) {
+    return HEADER_HEIGHT;
+  }
+
+  if ('empty' === note.type) {
+    return '200';
+  }
+
   const { preview } = getNoteTitleAndPreview(note);
 
   const key = notes[index].id;
@@ -133,6 +153,10 @@ const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
  * @returns {Number} height of the row in the list
  */
 const computeRowHeight = (width, noteDisplay, preview) => {
+  if ('condensed' === noteDisplay) {
+    return ROW_HEIGHT_BASE;
+  }
+
   const lines = Math.ceil(getTextWidth(preview, width - 24) / (width - 24));
   return (
     ROW_HEIGHT_BASE +
@@ -176,6 +200,31 @@ const renderNote = (
   }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
+  if ('tag-suggestions' === note.type) {
+    return (
+      <div key={key} style={style}>
+        {' '}
+        <TagSuggestions />
+      </div>
+    );
+  }
+
+  if ('header' === note.type) {
+    return (
+      <div key={key} style={style} className="note-list-header">
+        {note.data}
+      </div>
+    );
+  }
+
+  if ('empty' === note.type) {
+    return (
+      <div key={key} style={style} className="note-list is-empty">
+        <span className="note-list-placeholder">No Notes</span>
+      </div>
+    );
+  }
+
   const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
 
@@ -228,6 +277,7 @@ export class NoteList extends Component {
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
     filter: PropTypes.string.isRequired,
+    filteredTags: PropTypes.array.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
@@ -329,6 +379,7 @@ export class NoteList extends Component {
   render() {
     const {
       filter,
+      filteredTags,
       hasLoaded,
       selectedNoteId,
       onNoteOpened,
@@ -366,11 +417,8 @@ export class NoteList extends Component {
       </div>
     );
 
-    const shouldShowHeader = filter.length > 0;
-
     return (
       <Fragment>
-        {shouldShowHeader && <div className="note-list-header">Notes</div>}
         <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
           {isEmptyList ? (
             <span className="note-list-placeholder">
@@ -389,16 +437,14 @@ export class NoteList extends Component {
                       }
                       height={height}
                       noteDisplay={noteDisplay}
-                      notes={this.props.notes}
-                      rowCount={this.props.notes.length}
-                      rowHeight={
-                        'condensed' === noteDisplay
-                          ? ROW_HEIGHT_BASE
-                          : getRowHeight(this.props.notes, {
-                              noteDisplay,
-                              width,
-                            })
-                      }
+                      notes={notes}
+                      rowCount={notes.length}
+                      rowHeight={getRowHeight(notes, {
+                        filter,
+                        noteDisplay,
+                        numTags: filteredTags.length,
+                        width,
+                      })}
                       rowRenderer={renderNoteRow}
                       width={width}
                     />
@@ -425,7 +471,7 @@ const {
 const { recordEvent } = tracks;
 
 const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
-  const filteredNotes = filterNotes(state);
+  var filteredNotes = filterNotes(state);
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
   const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
@@ -462,8 +508,30 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
   const selectedNotePreview =
     selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
+  const filteredTags = getMatchingTags(state.tags, state.filter);
+  const numNotes = filteredNotes.length;
+
+  if (state.filter.length > 0 && filteredTags.length > 0) {
+    filteredNotes.unshift({
+      type: 'header',
+      data: 'Notes',
+    });
+    filteredNotes.unshift({
+      type: 'tag-suggestions',
+      data: 'Tag Suggestions',
+    });
+
+    if (numNotes === 0) {
+      filteredNotes.push({
+        type: 'empty',
+        data: 'No Notes',
+      });
+    }
+  }
+
   return {
     filter: state.filter,
+    filteredTags,
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
