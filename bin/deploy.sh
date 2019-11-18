@@ -39,7 +39,7 @@ esac
 npm install
 
 # Temporarily move config-local so it doesn't get overwritten
-mv config-local.json config-local.origional.json
+mv config-local.json config-local.original.json
 
 # Setup config
 json_string=$(printf '{"app_id": "chalk-bump-f49", "app_key": "12345", "development": false, "wpcc_client_id": "0", "wpcc_redirect_url": "https://simplenote.com", "is_app_engine": true, "web_app_url": "%s", "app_engine_url": "%s"}' "$WEB_APP_URL" "$APP_ENGINE_URL")
@@ -53,7 +53,7 @@ NODE_ENV=production make build
 
 # Restore config-local
 rm config-local.json
-mv config-local.origional.json  config-local.json
+mv config-local.original.json  config-local.json
 
 # Checkout deploy branch
 if [ "$(git branch | grep $COMMIT_BRANCH)" ]
@@ -63,7 +63,7 @@ fi
 git checkout -b $COMMIT_BRANCH
 
 # Delete files not needed in production
-find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' -exec rm -rf {} \;
+find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' ! -name 'config-local.json' -delete
 
 # Copy vip files to base path
 cp -r vip/* ./
