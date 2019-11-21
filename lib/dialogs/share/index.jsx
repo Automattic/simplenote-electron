@@ -21,6 +21,7 @@ export class ShareDialog extends Component {
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
+    settings: PropTypes.object.isRequired,
     tagBucket: PropTypes.object.isRequired,
     updateNoteTags: PropTypes.func.isRequired,
   };
@@ -55,7 +56,9 @@ export class ShareDialog extends Component {
     event.preventDefault();
     this.collaboratorElement.value = '';
 
-    if (collaborator !== '' && tags.indexOf(collaborator) === -1) {
+    const isSelf = this.props.settings.accountName === collaborator;
+
+    if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
       this.props.updateNoteTags({
         note,
         tags: [...tags, collaborator],
@@ -116,12 +119,13 @@ export class ShareDialog extends Component {
                   onSubmit={this.onAddCollaborator}
                 >
                   <input
-                    ref={e => (this.collaboratorElement = e)}
-                    type="email"
-                    pattern="[^@]+@[^@]+"
                     className="settings-item-text-input transparent-input"
+                    pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
                     placeholder="email@example.com"
+                    ref={e => (this.collaboratorElement = e)}
                     spellCheck={false}
+                    type="email"
+                    title="Please enter a valid email"
                   />
                   <div className="settings-item-control">
                     <button type="submit" className="button button-borderless">
@@ -223,6 +227,8 @@ export class ShareDialog extends Component {
 }
 
 export default connect(
-  null,
+  state => ({
+    settings: state.settings,
+  }),
   { updateNoteTags }
 )(ShareDialog);
