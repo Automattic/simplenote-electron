@@ -7,6 +7,8 @@
 
 ### Fixes
 
+- Disallow partial emails and user's own email from being adding to collaborators email field [#1735](https://github.com/Automattic/simplenote-electron/pull/1735)
+
 ### Other Changes
 
 - Updated dependencies [#1759](https://github.com/Automattic/simplenote-electron/pull/1759)
