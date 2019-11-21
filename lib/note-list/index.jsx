@@ -28,6 +28,7 @@ import {
   checkboxDecorator,
   makeFilterDecorator,
 } from './decorators';
+import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -70,6 +71,15 @@ const maxPreviewLines = {
   expanded: 4,
 };
 
+/** @type {Number} height of a single header in list rows */
+const HEADER_HEIGHT = 28;
+
+/** @type {Number} height of a single tag result row in list rows */
+const TAG_ROW_HEIGHT = 40;
+
+/** @type {Number} height of a the empty "No Notes" div in the notes list */
+const EMPTY_DIV_HEIGHT = 200;
+
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
  *
@@ -98,8 +108,22 @@ const previewCache = new Map();
  * @param {Function} f produces the row height
  * @returns {Number} row height for note in list
  */
-const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
+const rowHeightCache = f => (
+  notes,
+  { noteDisplay, tagResultsFound, width }
+) => ({ index }) => {
   const note = notes[index];
+
+  // handle special sections
+  switch (note.type) {
+    case 'header':
+      return HEADER_HEIGHT;
+    case 'tag-suggestions':
+      return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
+    case 'empty':
+      return EMPTY_DIV_HEIGHT;
+  }
+
   const { preview } = getNoteTitleAndPreview(note);
 
   const key = notes[index].id;
@@ -133,6 +157,10 @@ const rowHeightCache = f => (notes, { noteDisplay, width }) => ({ index }) => {
  * @returns {Number} height of the row in the list
  */
 const computeRowHeight = (width, noteDisplay, preview) => {
+  if ('condensed' === noteDisplay) {
+    return ROW_HEIGHT_BASE;
+  }
+
   const lines = Math.ceil(getTextWidth(preview, width - 24) / (width - 24));
   return (
     ROW_HEIGHT_BASE +
@@ -176,6 +204,29 @@ const renderNote = (
   }
 ) => ({ index, rowIndex, key, style }) => {
   const note = notes['undefined' === typeof index ? rowIndex : index];
+
+  // handle special sections
+  switch (note.type) {
+    case 'header':
+      return (
+        <div key={key} style={style} className="note-list-header">
+          {note.data}
+        </div>
+      );
+    case 'tag-suggestions':
+      return (
+        <div key={key} style={style}>
+          <TagSuggestions />
+        </div>
+      );
+    case 'empty':
+      return (
+        <div key={key} style={style} className="note-list is-empty">
+          <span className="note-list-placeholder">{note.data}</span>
+        </div>
+      );
+  }
+
   const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
 
@@ -222,12 +273,45 @@ const renderNote = (
   );
 };
 
+/**
+ * Modifies the filtered notes list to insert special sections. This
+ * allows us to handle tag suggestions and headers in the row renderer.
+ *
+ * @see renderNote
+ *
+ * @param {Object[]} notes list of filtered notes
+ * @param {String} filter search filter
+ * @param {Number} tagResultsFound number of tag matches to display
+ * @returns {Object[]} modified notes list
+ */
+const createCompositeNoteList = (notes, filter, tagResultsFound) => {
+  if (filter.length > 0 && tagResultsFound > 0) {
+    if (notes.length === 0) {
+      notes.push({
+        type: 'empty',
+        data: 'No Notes',
+      });
+    }
+
+    notes.unshift({
+      type: 'header',
+      data: 'Notes',
+    });
+    notes.unshift({
+      type: 'tag-suggestions',
+      data: 'Tag Suggestions',
+    });
+  }
+  return notes;
+};
+
 export class NoteList extends Component {
   static displayName = 'NoteList';
 
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
     filter: PropTypes.string.isRequired,
+    tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
     selectedNoteId: PropTypes.any,
@@ -336,6 +420,7 @@ export class NoteList extends Component {
       onEmptyTrash,
       noteDisplay,
       showTrash,
+      tagResultsFound,
       notes,
       isSmallScreen,
     } = this.props;
@@ -369,7 +454,9 @@ export class NoteList extends Component {
     return (
       <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
         {isEmptyList ? (
-          <span className="note-list-placeholder">{ hasLoaded ? 'No Notes' : 'Loading Notes'}</span>
+          <span className="note-list-placeholder">
+            {hasLoaded ? 'No Notes' : 'Loading Notes'}
+          </span>
         ) : (
           <Fragment>
             <div className={listItemsClasses}>
@@ -383,13 +470,14 @@ export class NoteList extends Component {
                     }
                     height={height}
                     noteDisplay={noteDisplay}
-                    notes={this.props.notes}
-                    rowCount={this.props.notes.length}
-                    rowHeight={
-                      'condensed' === noteDisplay
-                        ? ROW_HEIGHT_BASE
-                        : getRowHeight(this.props.notes, { noteDisplay, width })
-                    }
+                    notes={notes}
+                    rowCount={notes.length}
+                    rowHeight={getRowHeight(notes, {
+                      filter,
+                      noteDisplay,
+                      tagResultsFound,
+                      width,
+                    })}
                     rowRenderer={renderNoteRow}
                     width={width}
                   />
@@ -415,7 +503,14 @@ const {
 const { recordEvent } = tracks;
 
 const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
-  const filteredNotes = filterNotes(state);
+  const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
+
+  const filteredNotes = createCompositeNoteList(
+    filterNotes(state),
+    state.filter,
+    tagResultsFound
+  );
+
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
   const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
@@ -463,6 +558,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash: state.showTrash,
+    tagResultsFound,
   };
 };
 

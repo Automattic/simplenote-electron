@@ -1,0 +1,40 @@
+.tag-suggestions {
+  overflow-x: hidden;
+
+  .tag-suggestions-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    line-height: 40px;
+
+    .tag-suggestion-row {
+      cursor: pointer;
+      position: relative;
+      padding: 0;
+    }
+
+    .tag-suggestion {
+      margin-left: 30px;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .tag-suggestion-row:last-child .tag-suggestion {
+    border-bottom: none;
+  }
+}
+
+.theme-light {
+  .tag-suggestion {
+    border-color: $studio-gray-5;
+  }
+}
+
+.theme-dark {
+  .tag-suggestion {
+    border-color: $studio-gray-80;
+  }
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.13.0]
+
+### Enhancements
+
+ - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
+
 ## [v1.12.0]
 
 ### Enhancements

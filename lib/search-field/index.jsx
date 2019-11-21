@@ -27,12 +27,18 @@ export class SearchField extends Component {
   };
 
   componentDidUpdate() {
-    const { searchFocus, onSearchFocused } = this.props;
+    const { searchFocus, onSearchFocused, filter } = this.props;
 
     if (searchFocus && this.inputField) {
       this.inputField.select();
       this.inputField.focus();
       onSearchFocused();
+    }
+
+    // check to see if the filter has been updated (by a tag being clicked from suggestions)
+    // this is a hack to work around query not being in app state (yet)
+    if (filter !== this.state.query) {
+      this.inputField.value = filter;
     }
   }
 
@@ -93,6 +99,7 @@ export class SearchField extends Component {
 }
 
 const mapStateToProps = ({ appState: state }) => ({
+  filter: state.filter,
   isTagSelected: !isEmpty(state.tag),
   placeholder: state.listTitle,
   searchFocus: state.searchFocus,

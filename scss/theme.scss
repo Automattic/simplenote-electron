@@ -101,6 +101,11 @@
     }
   }
 
+  .note-list-header {
+    color: $studio-gray-30;
+    background-color: rgba(50, 52, 54, 0.5);
+  }
+
   .note-list-item {
     &.note-list-item-pinned .note-list-item-pinner {
       background: $studio-white;
