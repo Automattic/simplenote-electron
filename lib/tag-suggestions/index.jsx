@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 
-const { search } = appState.actionCreators;
+const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 export class TagSuggestions extends Component {
@@ -12,6 +12,20 @@ export class TagSuggestions extends Component {
 
   static propTypes = {
     filteredTags: PropTypes.array.isRequired,
+    query: PropTypes.string.isRequired,
+  };
+
+  updateSearch = filter => {
+    const { query, onSearch } = this.props;
+
+    // replace last word in current query with requested tag match
+    let newQuery = query.trim().split(' ');
+    newQuery.splice(-1, 1, filter);
+    let querystring = newQuery.join(' ');
+
+    // add a space at the end so the user can immediately start typing
+    querystring += ' ';
+    onSearch(querystring);
   };
 
   render() {
@@ -28,7 +42,7 @@ export class TagSuggestions extends Component {
                   key={tag.id}
                   id={tag.id}
                   className="tag-suggestion-row"
-                  onClick={() => this.props.onSearch(`tag:${tag.data.name}`)}
+                  onClick={() => this.updateSearch(`tag:${tag.data.name}`)}
                 >
                   <div className="tag-suggestion" title={tag.data.name}>
                     tag:{tag.data.name}
@@ -91,12 +105,14 @@ export const getMatchingTags = (tags, query) => {
 
 const mapStateToProps = ({ appState: state }) => ({
   filteredTags: getMatchingTags(state.tags, state.filter),
+  query: state.filter,
 });
 
 const mapDispatchToProps = dispatch => ({
   onSearch: filter => {
     dispatch(search({ filter }));
     recordEvent('list_notes_searched');
+    dispatch(setSearchFocus({ searchFocus: true }));
   },
 });
 
