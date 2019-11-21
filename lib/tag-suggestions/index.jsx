@@ -44,28 +44,36 @@ export class TagSuggestions extends Component {
 }
 
 const filterTags = (tags, query) =>
-  tags
-    .filter(tag => {
-      // todo split on spaces to support additive query args
+  query
+    ? tags
+        .filter(tag => {
+          // split on spaces and treat each "word" as a separate query
+          let queryWords = query.trim().split(' ');
 
-      // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
-      // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
-      // of tags that contain the string "tag:" ¯\_(ツ)_/¯
-      var testID = 'tag:' + tag.data.name;
+          // we'll only suggest matches for the last word
+          // ...this is possibly naive if the user has moved back and is editing,
+          // but without knowing where the cursor is it's maybe the best we can do
+          let testQuery = queryWords[queryWords.length - 1];
 
-      // exception: if the user typed "tag:" or some subset thereof, don't return all tags
-      if (['t', 'ta', 'tag', 'tag:'].includes(query)) {
-        testID = tag.data.name;
-      }
+          // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
+          // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
+          // of tags that contain the string "tag:" ¯\_(ツ)_/¯
+          let testID = 'tag:' + tag.data.name;
 
-      return (
-        testID.search(new RegExp('(tag:)?' + query, 'i')) !== -1 &&
-        // discard exact matches -- if the user has already typed or clicked
-        // the full tag name, don't suggest it
-        testID !== query
-      );
-    })
-    .slice(0, 5);
+          // exception: if the user typed "tag:" or some subset thereof, don't return all tags
+          if (['t', 'ta', 'tag', 'tag:'].includes(testQuery)) {
+            testID = tag.data.name;
+          }
+
+          return (
+            testID.search(new RegExp('(tag:)?' + testQuery, 'i')) !== -1 &&
+            // discard exact matches -- if the user has already typed or clicked
+            // the full tag name, don't suggest it
+            !queryWords.includes(testID)
+          );
+        })
+        .slice(0, 5)
+    : tags; // don't bother filtering if we don't have a query to filter by
 
 let lastTags = null;
 let lastQuery = null;
