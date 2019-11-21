@@ -18,8 +18,7 @@ const AccountPanel = props => {
   } = props;
 
   const onEditAccount = () => {
-    const source = getConfig().is_app_engine ? 'react' : 'electron';
-    viewExternalUrl(`https://app.simplenote.com/settings?from=${source}`);
+    viewExternalUrl(`https://app.simplenote.com/settings/?from=react`);
   };
 
   return (
