@@ -28,7 +28,7 @@ references:
 jobs:
   build:
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:12.13.0
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -51,7 +51,7 @@ jobs:
 
   linux:
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:12.13.0
     working_directory: ~/simplenote
     steps:
       - checkout
