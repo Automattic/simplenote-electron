@@ -6,6 +6,10 @@
 
  - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
 
+### Other Changes
+
+- Updated dependencies [#1738](https://github.com/Automattic/simplenote-electron/pull/1738)
+
 ## [v1.12.0]
 
 ### Enhancements
