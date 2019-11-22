@@ -125,6 +125,10 @@ export class RevisionSelector extends Component {
       'is-visible': isViewingRevisions,
     });
 
+    if (!isViewingRevisions) {
+      return null;
+    }
+
     return (
       <div className={mainClasses}>
         <div className="revision-date">{revisionDate}</div>

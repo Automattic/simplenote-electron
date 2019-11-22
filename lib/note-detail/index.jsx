@@ -21,7 +21,6 @@ export class NoteDetail extends Component {
     dialogs: PropTypes.array.isRequired,
     filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
-    isViewingRevisions: PropTypes.bool.isRequired,
     onChangeContent: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
     onNotePrinted: PropTypes.func.isRequired,
@@ -190,7 +189,6 @@ export class NoteDetail extends Component {
       note,
       filter,
       fontSize,
-      isViewingRevisions,
       previewingMarkdown,
       spellCheckEnabled,
     } = this.props;
@@ -202,10 +200,6 @@ export class NoteDetail extends Component {
     };
     const divStyle = { fontSize: `${fontSize}px` };
 
-    const mainClasses = classNames('note-detail', {
-      'is-viewing-revisions': isViewingRevisions,
-    });
-
     return (
       <div className="note-detail-wrapper">
         {!note ? (
@@ -213,7 +207,7 @@ export class NoteDetail extends Component {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className={mainClasses}>
+          <div className='note-detail'>
             {previewingMarkdown && (
               <div
                 ref={this.storePreview}
@@ -251,7 +245,6 @@ export class NoteDetail extends Component {
 const mapStateToProps = ({ appState: state, settings }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
-  isViewingRevisions: state.isViewingRevisions,
   shouldPrint: state.shouldPrint,
   showNoteInfo: state.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,

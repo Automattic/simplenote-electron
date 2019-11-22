@@ -19,10 +19,6 @@
   justify-content: center;
   transition: all 0.3s ease-in-out;
 
-  &.is-viewing-revisions {
-    padding-top: 51px;
-  }
-
   div[data-contents] {
     padding-bottom: 20px;
   }

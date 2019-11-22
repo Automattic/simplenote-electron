@@ -3,11 +3,7 @@
   padding: 10px 20px 20px 20px;
   color: $studio-white;
   z-index: 1000;
-  position: absolute;
   height: 114px;
-  left: 0;
-  top: -114px;
-  right: 0;
   transition: all 0.3s ease-in-out;
 
   &.is-visible {
