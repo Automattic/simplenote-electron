@@ -26,6 +26,7 @@ import getNoteTitleAndPreview from './get-note-title-and-preview';
 import {
   decorateWith,
   checkboxDecorator,
+  headingDecorator,
   makeFilterDecorator,
 } from './decorators';
 
@@ -185,7 +186,11 @@ const renderNote = (
     'published-note': isPublished,
   });
 
-  const decorators = [checkboxDecorator, makeFilterDecorator(filter)];
+  const decorators = [
+    checkboxDecorator,
+    headingDecorator,
+    makeFilterDecorator(filter),
+  ];
 
   const selectNote = () => {
     onSelectNote(note.id);

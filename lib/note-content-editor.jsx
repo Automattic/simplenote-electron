@@ -20,6 +20,7 @@ import {
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
+import headingDecorator from './editor/heading-decorator';
 import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
@@ -66,6 +67,7 @@ export default class NoteContentEditor extends Component {
       compact([
         filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
         checkboxDecorator(this.replaceRangeWithText),
+        headingDecorator(this.replaceRangeWithText),
       ])
     );
   };
