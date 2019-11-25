@@ -87,6 +87,7 @@
     "@automattic/color-studio": "2.2.0",
     "@material-ui/core": "4.7.1",
     "bottleneck": "2.19.5",
+    "clipboard": "2.0.4",
     "cookie": "0.4.0",
     "core-js": "3.4.7",
     "date-fns": "2.8.1",
