@@ -6,6 +6,7 @@ const {
   ipcMain,
   shell,
   Menu,
+  nativeImage,
   session,
 } = require('electron');
 
@@ -58,7 +59,7 @@ module.exports = function main() {
       height: mainWindowState.height,
       minWidth: 370,
       minHeight: 520,
-      icon: iconPath,
+      icon: nativeImage.createFromPath(iconPath),
       titleBarStyle: 'hidden',
       show: false,
       webPreferences: {
