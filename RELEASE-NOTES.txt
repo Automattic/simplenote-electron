@@ -10,6 +10,7 @@
 
 - Revision selector is now usable without dragging the entire window [#1741](https://github.com/Automattic/simplenote-electron/pull/1741)
 - Only display view settings when coming from the old web app [#1736](https://github.com/Automattic/simplenote-electron/pull/1736)
+- Fixed a bug where initial "s" was getting removed from note titles in preview [#1748](https://github.com/Automattic/simplenote-electron/pull/1748)
 
 ### Other Changes
 
