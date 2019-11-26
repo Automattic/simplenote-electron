@@ -104,8 +104,12 @@ export class RevisionSelector extends Component {
 
   render() {
     const { isViewingRevisions } = this.props;
-    const { revisions, selection: rawSelection } = this.state;
 
+    if (!isViewingRevisions) {
+      return null;
+    }
+
+    const { revisions, selection: rawSelection } = this.state;
     const min = 0;
     const max = Math.max(revisions.length - 1, 1);
     const selection = Math.min(rawSelection, max);
@@ -124,10 +128,6 @@ export class RevisionSelector extends Component {
     const mainClasses = classNames('revision-selector', {
       'is-visible': isViewingRevisions,
     });
-
-    if (!isViewingRevisions) {
-      return null;
-    }
 
     return (
       <div className={mainClasses}>
