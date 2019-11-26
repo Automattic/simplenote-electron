@@ -9,6 +9,11 @@
 ### Fixes
 
 - Revision selector is now usable without dragging the entire window [#1741](https://github.com/Automattic/simplenote-electron/pull/1741)
+- Only display view settings when coming from the old web app [#1736](https://github.com/Automattic/simplenote-electron/pull/1736)
+
+### Other Changes
+
+- Updated dependencies [#1738](https://github.com/Automattic/simplenote-electron/pull/1738)
 
 ## [v1.12.0]
 
