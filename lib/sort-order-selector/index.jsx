@@ -79,7 +79,4 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SortOrderSelector);
+export default connect(mapStateToProps, mapDispatchToProps)(SortOrderSelector);
