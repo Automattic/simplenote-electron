@@ -5,6 +5,7 @@
 ### Enhancements
 
  - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
+ - Added sort order to search results [#1726](https://github.com/Automattic/simplenote-electron/pull/1726)
 
 ### Fixes
 
