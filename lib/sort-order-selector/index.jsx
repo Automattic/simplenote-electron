@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
@@ -10,6 +10,7 @@ export class SortOrderSelector extends Component {
   static displayName = 'SortOrderSelector';
 
   static propTypes = {
+    query: PropTypes.string.isRequired,
     sortType: PropTypes.string.isRequired,
     sortReversed: PropTypes.bool.isRequired,
     toggleSortOrder: PropTypes.func.isRequired,
@@ -21,7 +22,7 @@ export class SortOrderSelector extends Component {
   };
 
   render() {
-    const { sortType, sortReversed } = this.props;
+    const { sortType, sortReversed, query } = this.props;
 
     const sortTypes = [
       {
@@ -39,31 +40,36 @@ export class SortOrderSelector extends Component {
     ];
 
     return (
-      <div className="sort-order-selector">
-        <div
-          className={classNames('sort-order-reverse', {
-            'is-reversed': sortReversed,
-          })}
-          onClick={this.props.toggleSortOrder}
-        >
-          <ArrowDownIcon />
-        </div>
-        Sort by
-        <select value={sortType} onChange={this.changeSort}>
-          {sortTypes.map(type => (
-            <option key={type.id} value={type.id}>
-              {type.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Fragment>
+        {query.length > 0 && (
+          <div className="sort-order-selector">
+            <div
+              className={classNames('sort-order-reverse', {
+                'is-reversed': sortReversed,
+              })}
+              onClick={this.props.toggleSortOrder}
+            >
+              <ArrowDownIcon />
+            </div>
+            Sort by
+            <select value={sortType} onChange={this.changeSort}>
+              {sortTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </Fragment>
     );
   }
 }
 
-const mapStateToProps = ({ settings }) => ({
+const mapStateToProps = ({ settings, appState: state }) => ({
   sortType: settings.sortType,
   sortReversed: settings.sortReversed,
+  query: state.filter,
 });
 
 function mapDispatchToProps(dispatch, { noteBucket }) {
