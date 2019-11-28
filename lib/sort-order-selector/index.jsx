@@ -22,6 +22,21 @@ export class SortOrderSelector extends Component {
     setSortType: PropTypes.func.isRequired,
   };
 
+  componentDidUpdate(prevProps) {
+    const { sortType, sortReversed, searchSortReversed, query } = this.props;
+    /* If there's a query and there wasn't before
+       (i.e., the search sort component is being newly displayed),
+       set the search sort to match the global setting.
+       This means whenever a user starts a new search, the notes will be filtered
+       in place, rather than being reordered to match the last selected search order. */
+    if (!prevProps.query && prevProps.query !== query) {
+      this.props.setSortType(sortType);
+      if (sortReversed !== searchSortReversed) {
+        this.props.toggleSortOrder();
+      }
+    }
+  }
+
   changeSort = event => {
     this.props.setSortType(event.currentTarget.value);
   };
