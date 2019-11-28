@@ -2,7 +2,10 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
-import { toggleSortOrder, setSortType } from '../state/settings/actions';
+import {
+  toggleSearchSortOrder,
+  setSearchSortType,
+} from '../state/settings/actions';
 import classNames from 'classnames';
 import ArrowDownIcon from '../icons/arrow-down';
 
@@ -13,6 +16,8 @@ export class SortOrderSelector extends Component {
     query: PropTypes.string.isRequired,
     sortType: PropTypes.string.isRequired,
     sortReversed: PropTypes.bool.isRequired,
+    searchSortType: PropTypes.string.isRequired,
+    searchSortReversed: PropTypes.bool.isRequired,
     toggleSortOrder: PropTypes.func.isRequired,
     setSortType: PropTypes.func.isRequired,
   };
@@ -22,7 +27,7 @@ export class SortOrderSelector extends Component {
   };
 
   render() {
-    const { sortType, sortReversed, query } = this.props;
+    const { searchSortType, searchSortReversed, query } = this.props;
 
     const sortTypes = [
       {
@@ -45,14 +50,14 @@ export class SortOrderSelector extends Component {
           <div className="sort-order-selector">
             <div
               className={classNames('sort-order-reverse', {
-                'is-reversed': sortReversed,
+                'is-reversed': searchSortReversed,
               })}
               onClick={this.props.toggleSortOrder}
             >
               <ArrowDownIcon />
             </div>
             Sort by
-            <select value={sortType} onChange={this.changeSort}>
+            <select value={searchSortType} onChange={this.changeSort}>
               {sortTypes.map(type => (
                 <option key={type.id} value={type.id}>
                   {type.label}
@@ -69,6 +74,8 @@ export class SortOrderSelector extends Component {
 const mapStateToProps = ({ settings, appState: state }) => ({
   sortType: settings.sortType,
   sortReversed: settings.sortReversed,
+  searchSortType: settings.searchSortType,
+  searchSortReversed: settings.searchSortReversed,
   query: state.filter,
 });
 
@@ -80,8 +87,8 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     dispatch(actionCreators.loadNotes({ noteBucket }));
   };
   return {
-    setSortType: thenReloadNotes(setSortType),
-    toggleSortOrder: thenReloadNotes(toggleSortOrder),
+    setSortType: thenReloadNotes(setSearchSortType),
+    toggleSortOrder: thenReloadNotes(toggleSearchSortOrder),
   };
 }
 
