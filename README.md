@@ -1,4 +1,4 @@
-# Simplenote for Electron and Web
+# Simplenote for Electron
 
 ![Screenshot](https://en-blog.files.wordpress.com/2018/09/screenshot-1.png)
 
