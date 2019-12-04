@@ -4,6 +4,16 @@
 
 ### Enhancements
 
+### Fixes
+
+### Other Changes
+
+- Updated dependencies [#1759](https://github.com/Automattic/simplenote-electron/pull/1759)
+
+## [v1.13.0]
+
+### Enhancements
+
  - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
 
 ### Fixes
