@@ -22,15 +22,19 @@
 
  - Updated menu icon to use the new icon set [#1694](https://github.com/Automattic/simplenote-electron/pull/1694)
  - Added script to deploy web app [#1723](https://github.com/Automattic/simplenote-electron/pull/1723)
+ - Prioritize search results where title matches query [#1705](https://github.com/Automattic/simplenote-electron/pull/1705)
 
 ### Fixes
 
 - Fixed markdown code styles [#1702](https://github.com/Automattic/simplenote-electron/pull/1702)
-- Only allow app to load in one instance per browser [#1700](https://github.com/Automattic/simplenote-electron/pull/1700)
+- Stop crashing app in a few cases where it shouldn't [#1721](https://github.com/Automattic/simplenote-electron/pull/1721)
+- Prevent infinite duplication of changes caused by relying on shared note bucket [#1724](https://github.com/Automattic/simplenote-electron/pull/1724)
+- Prevent note corruption in certain cases involving Asian characters, Emoji, and "surrogate pairs" [#1714](https://github.com/Automattic/simplenote-electron/pull/1714)
 
 ### Other Changes
 
 - Updated dependencies [#1693](https://github.com/Automattic/simplenote-electron/pull/1693)
+- Stop app boot when missing platform support and indicate what is missing [#1713](https://github.com/Automattic/simplenote-electron/pull/1713)
 
 ## [v1.11.0]
 
