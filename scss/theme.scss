@@ -119,13 +119,13 @@
       color: $studio-gray-20;
     }
   }
-    &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
-      box-shadow: inset 0 0 0 2px $studio-gray-80, inset 0 0 0 3px $studio-gray-90;
+  &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
+    box-shadow: inset 0 0 0 2px $studio-gray-80, inset 0 0 0 3px $studio-gray-90;
 
-      &:hover {
-        background: $studio-gray-80;
-      }
+    &:hover {
+      background: $studio-gray-80;
     }
+  }
 
   .note-detail-markdown {
     @import '../node_modules/highlight.js/styles/solarized-dark.css';
