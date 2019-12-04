@@ -72,7 +72,8 @@
     background-color: transparent;
   }
 
-  .transparent-input::placeholder, input::placeholder {
+  .transparent-input::placeholder,
+  input::placeholder {
     color: $studio-gray-20;
   }
 
@@ -128,7 +129,7 @@
   }
 
   .note-detail-markdown {
-    @import '../node_modules/highlight.js/styles/solarized-dark.css';
+    @import '../node_modules/highlight.js/scss/solarized-dark.scss';
 
     hr {
       border-color: $studio-gray-80;
@@ -138,16 +139,10 @@
       border-color: $studio-gray-80;
     }
 
-    code {
-      background: $studio-gray-60;
-    }
     pre {
       border-color: $studio-gray-80;
     }
-    pre code {
-      color: $studio-gray-50;
-      background: transparent;
-    }
+
     table {
       th,
       td {

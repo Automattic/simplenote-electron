@@ -5,11 +5,12 @@ export default function MenuIcon() {
     <svg
       className="icon-menu"
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
       viewBox="0 0 24 24"
     >
-      <path d="M21 6v2H3V6h18zM3 18h18v-2H3v2zm0-5h18v-2H3v2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <g>
+        <path d="M21,11H3v2H21Zm0-5H3V8H21Zm0,10H3v2H21Z" />
+      </g>
     </svg>
   );
 }
