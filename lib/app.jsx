@@ -208,7 +208,7 @@ export const App = connect(
 
       if (isSmallScreen !== prevProps.isSmallScreen) {
         this.setState({
-          isNoteOpen: Boolean(!isSmallScreen && this.props.appState.note),
+          isNoteOpen: Boolean(this.props.appState.note && (settings.focusModeEnabled || !isSmallScreen)),
         });
       }
     }
