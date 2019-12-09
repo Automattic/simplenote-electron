@@ -124,7 +124,6 @@ export class ShareDialog extends Component {
                     placeholder="email@example.com"
                     ref={e => (this.collaboratorElement = e)}
                     spellCheck={false}
-                    type="email"
                     title="Please enter a valid email"
                   />
                   <div className="settings-item-control">
