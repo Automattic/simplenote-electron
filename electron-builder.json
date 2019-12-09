@@ -93,6 +93,7 @@
     "desktop": {
       "Name": "Simplenote",
       "Comment": "Simplenote for Linux",
+      "GenericName": "Note Taking Application",
       "Type": "Application",
       "Icon": "simplenote",
       "StartupNotify": "true",
