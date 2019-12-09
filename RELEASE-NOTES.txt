@@ -4,6 +4,7 @@
 
 ### Enhancements
 - Keep note open when transitioning to small screen in focus mode [#1763](https://github.com/Automattic/simplenote-electron/pull/1763)
+- Added GenericName (description) field for app on Linux [#1761](https://github.com/Automattic/simplenote-electron/pull/1761)
 
 ### Fixes
 
