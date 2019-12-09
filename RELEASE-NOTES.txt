@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.13.0]
+## [v1.14.0]
 
 ### Enhancements
 - Keep note open when transitioning to small screen in focus mode [#1763](https://github.com/Automattic/simplenote-electron/pull/1763)
