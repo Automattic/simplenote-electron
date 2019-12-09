@@ -6,6 +6,7 @@
 - Keep note open when transitioning to small screen in focus mode [#1763](https://github.com/Automattic/simplenote-electron/pull/1763)
 
 ### Fixes
+- Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
 
 ### Other Changes
 
