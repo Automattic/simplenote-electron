@@ -73,7 +73,10 @@ module.exports = function main() {
       mainWindow.loadUrl(url);
     }
 
-    if (isDev || process.argv.includes('--devtools')) {
+    if (
+      'test' !== process.env.NODE_ENV &&
+      (isDev || process.argv.includes('--devtools'))
+    ) {
       mainWindow.openDevTools({ mode: 'detach' });
     }
 
