@@ -17,6 +17,7 @@
 - Added types to state/ui/actions [#1849](https://github.com/Automattic/simplenote-electron/pull/1849)
 - Updated Dependencies [#1848](https://github.com/Automattic/simplenote-electron/pull/1848)
 - Refactored selected note state [1851](https://github.com/Automattic/simplenote-electron/pull/1851)
+- Update Electron and associated dependencies [1771](https://github.com/Automattic/simplenote-electron/pull/1771)
 
 ## [v1.14.0]
 
