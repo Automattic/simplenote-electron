@@ -208,7 +208,10 @@ export const App = connect(
 
       if (isSmallScreen !== prevProps.isSmallScreen) {
         this.setState({
-          isNoteOpen: Boolean(this.props.appState.note && (settings.focusModeEnabled || !isSmallScreen)),
+          isNoteOpen: Boolean(
+            this.props.appState.note &&
+              (settings.focusModeEnabled || !isSmallScreen)
+          ),
         });
       }
     }
@@ -353,8 +356,8 @@ export const App = connect(
       // a note. The NoteEditor will notify via props when
       // it's time to sync via Simperium
       const { noteBucket } = this.props;
-
       noteBucket.update(note.id, updatedNote.data, {}, { sync: false });
+      this.syncNote(note.id);
     };
 
     syncNote = noteId => {
