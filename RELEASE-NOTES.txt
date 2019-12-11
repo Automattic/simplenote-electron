@@ -8,7 +8,7 @@
 
 ### Fixes
 - Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
-- After selecting a revisio to restore ensure that choice is sync'd [#1774](https://github.com/Automattic/simplenote-electron/pull/1774)
+- After selecting a revision to restore ensure that choice is sync'd [#1774](https://github.com/Automattic/simplenote-electron/pull/1774)
 
 ### Other Changes
 
