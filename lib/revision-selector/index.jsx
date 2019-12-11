@@ -76,7 +76,7 @@ export class RevisionSelector extends Component {
         data: { content, tags },
       } = revision;
 
-      onUpdateContent(note, content);
+      onUpdateContent(note, content, true);
       this.props.updateNoteTags({ note, tags });
       resetIsViewingRevisions();
     }

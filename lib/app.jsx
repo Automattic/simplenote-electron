@@ -337,7 +337,7 @@ export const App = connect(
       });
     };
 
-    onUpdateContent = (note, content) => {
+    onUpdateContent = (note, content, sync = false) => {
       if (!note) {
         return;
       }
@@ -356,8 +356,10 @@ export const App = connect(
       // a note. The NoteEditor will notify via props when
       // it's time to sync via Simperium
       const { noteBucket } = this.props;
-      noteBucket.update(note.id, updatedNote.data, {}, { sync: false });
-      this.syncNote(note.id);
+      noteBucket.update(note.id, updatedNote.data, {}, { sync });
+      if (sync) {
+        this.syncNote(note.id);
+      }
     };
 
     syncNote = noteId => {
