@@ -189,10 +189,7 @@ export class ShareDialog extends Component {
                       spellCheck={false}
                     />
                     <div className="settings-item-control">
-                      <ClipboardButton
-                        disabled={!publishURL}
-                        text={publishURL}
-                      />
+                      {publishURL && <ClipboardButton text={publishURL} />}
                     </div>
                   </div>
                 </div>
