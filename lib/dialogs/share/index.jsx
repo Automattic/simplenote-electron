@@ -5,6 +5,7 @@ import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
 import analytics from '../../analytics';
+import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import { updateNoteTags } from '../../state/domain/notes';
 import Dialog from '../../dialog';
@@ -32,18 +33,6 @@ export class ShareDialog extends Component {
       note: this.props.appState.note,
       publish: event.currentTarget.checked,
     });
-  };
-
-  copyPublishURL = () => {
-    this.publishUrlElement.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      return;
-    }
-
-    this.copyUrlElement.focus();
   };
 
   getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
@@ -204,15 +193,7 @@ export class ShareDialog extends Component {
                       spellCheck={false}
                     />
                     <div className="settings-item-control">
-                      <button
-                        ref={e => (this.copyUrlElement = e)}
-                        disabled={!publishURL}
-                        type="button"
-                        className="button button-borderless"
-                        onClick={this.copyPublishURL}
-                      >
-                        Copy
-                      </button>
+                      {publishURL && <ClipboardButton text={publishURL} />}
                     </div>
                   </div>
                 </div>

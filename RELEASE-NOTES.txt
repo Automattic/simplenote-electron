@@ -4,8 +4,12 @@
 
 ### Enhancements
 - Keep note open when transitioning to small screen in focus mode [#1763](https://github.com/Automattic/simplenote-electron/pull/1763)
+- Added GenericName (description) field for app on Linux [#1761](https://github.com/Automattic/simplenote-electron/pull/1761)
 
 ### Fixes
+- Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
+
+- Added indication that publish url has been copied [#1743](https://github.com/Automattic/simplenote-electron/pull/1743)
 
 - Disallow partial emails and user's own email from being adding to collaborators email field [#1735](https://github.com/Automattic/simplenote-electron/pull/1735)
 
@@ -17,7 +21,7 @@
 
 ### Enhancements
 
- - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
+- Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
 
 ### Fixes
 
