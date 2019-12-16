@@ -85,7 +85,6 @@ class ImportExecutor extends React.Component {
           }, 200);
           break;
         default:
-          console.log(`Unrecognized status event type "${type}"`);
       }
     });
     return thisImporter;

@@ -82,7 +82,10 @@ export const MenuItem = () => null;
 MenuItem.displayName = 'MenuItem';
 
 MenuItem.propTypes = {
+  children: PropTypes.node.isRequired,
+  currentWindow: PropTypes.object.isRequired,
   label: PropTypes.string,
+  Menu: PropTypes.object.isRequired,
   role: PropTypes.string,
   type: PropTypes.oneOf([
     'normal',
