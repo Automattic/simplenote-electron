@@ -9,6 +9,8 @@
 ### Fixes
 - Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
 
+- Added indication that publish url has been copied [#1743](https://github.com/Automattic/simplenote-electron/pull/1743)
+
 ### Other Changes
 
 - Updated dependencies [#1759](https://github.com/Automattic/simplenote-electron/pull/1759)
@@ -17,7 +19,7 @@
 
 ### Enhancements
 
- - Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
+- Added matching tags to the notes list on search [#1648](https://github.com/Automattic/simplenote-electron/pull/1648)
 
 ### Fixes
 
