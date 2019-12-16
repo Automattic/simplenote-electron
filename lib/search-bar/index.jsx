@@ -53,7 +53,4 @@ const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
 
 SearchBar.displayName = 'SearchBar';
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

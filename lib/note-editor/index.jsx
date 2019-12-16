@@ -168,7 +168,4 @@ const mapDispatchToProps = dispatch => ({
   setEditorMode: args => dispatch(setEditorMode(args)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NoteEditor);
+export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

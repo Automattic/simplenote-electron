@@ -116,7 +116,4 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TagSuggestions);
+export default connect(mapStateToProps, mapDispatchToProps)(TagSuggestions);
