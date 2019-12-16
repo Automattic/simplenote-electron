@@ -121,7 +121,7 @@ export class ShareDialog extends Component {
                   <input
                     className="settings-item-text-input transparent-input"
                     // Regex to detect valid email
-                    pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                    pattern="^[^@]+@.+"
                     placeholder="email@example.com"
                     ref={e => (this.collaboratorElement = e)}
                     spellCheck={false}
