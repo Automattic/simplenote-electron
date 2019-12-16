@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 
-function ClipboardButton({ text, disabled }) {
-  const buttonRef = React.useRef();
-
-  const textCallback = React.useRef();
-  const successCallback = React.useRef();
+function ClipboardButton({ text }) {
+  const buttonRef = useRef();
+  const textCallback = useRef();
+  const successCallback = useRef();
 
   const onCopy = () => {
     setCopied(true);
   };
 
-  const [isCopied, setCopied] = React.useState(false);
+  const [isCopied, setCopied] = useState(false);
 
   // toggle the `isCopied` flag back to `false` after 4 seconds
-  React.useEffect(() => {
+  useEffect(() => {
     if (isCopied) {
       const confirmationTimeout = setTimeout(() => setCopied(false), 4000);
       return () => clearTimeout(confirmationTimeout);
@@ -24,15 +23,14 @@ function ClipboardButton({ text, disabled }) {
   }, [isCopied]);
 
   // update the callbacks on rerenders that change `text` or `onCopy`
-  React.useEffect(() => {
+  useEffect(() => {
     textCallback.current = () => text;
     successCallback.current = onCopy;
   }, [text, onCopy]);
 
   // create the `Clipboard` object on mount and destroy on unmount
-  React.useEffect(() => {
-    const buttonEl = ReactDom.findDOMNode(buttonRef.current);
-    const clipboard = new Clipboard(buttonEl, {
+  useEffect(() => {
+    const clipboard = new Clipboard(buttonRef.current, {
       text: () => textCallback.current(),
     });
     clipboard.on('success', () => successCallback.current());
@@ -41,12 +39,7 @@ function ClipboardButton({ text, disabled }) {
   }, []);
 
   return (
-    <button
-      ref={buttonRef}
-      disabled={disabled}
-      type="button"
-      className="button button-borderless"
-    >
+    <button ref={buttonRef} type="button" className="button button-borderless">
       {isCopied ? 'Copied!' : 'Copy'}
     </button>
   );
