@@ -13,7 +13,7 @@ function CheckboxControl({ className, ...props }) {
   );
 }
 
-CheckboxControl.proptypes = {
+CheckboxControl.propTypes = {
   className: PropTypes.string.isRequired,
 };
 

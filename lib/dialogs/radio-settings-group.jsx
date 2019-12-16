@@ -14,11 +14,11 @@ const RadioGroup = ({ groupSlug, slug, isEnabled, onChange }) => (
   />
 );
 
-RadioGroup.proptypes = {
+RadioGroup.propTypes = {
+  groupSlug: PropTypes.string,
+  slug: PropTypes.string,
   isEnabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  groupSlug: PropTypes.string.isRequired,
-  slug: PropTypes.string.isRequired,
 };
 
 export default RadioGroup;

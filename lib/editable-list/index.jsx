@@ -9,6 +9,7 @@ export class EditableList extends Component {
   static displayName = 'EditableList';
 
   static propTypes = {
+    className: PropTypes.string,
     editing: PropTypes.bool.isRequired,
     items: PropTypes.array.isRequired,
     renderItem: PropTypes.func.isRequired,

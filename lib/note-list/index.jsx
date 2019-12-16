@@ -576,4 +576,11 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
 
+NoteList.propTypes = {
+  hasLoaded: PropTypes.bool.isRequired,
+  nextNote: PropTypes.object,
+  prevNote: PropTypes.object,
+  selectedNoteContent: PropTypes.string,
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

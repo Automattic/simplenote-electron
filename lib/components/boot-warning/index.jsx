@@ -7,7 +7,7 @@ const BootWarning = ({ children }) => (
   <h3 className="boot-warning__message">{children}</h3>
 );
 
-BootWarning.proptypes = {
+BootWarning.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
