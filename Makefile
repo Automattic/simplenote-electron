@@ -167,4 +167,4 @@ format:
 
 .PHONY: lint
 lint:
-	@npx eslint --ignore-path .gitignore --ext .js --ext .jsx lib
+	@npx eslint --ignore-path .gitignore "**/*.{js,jsx}"
