@@ -14,6 +14,7 @@
 ### Other Changes
 
 - Updated dependencies [#1759](https://github.com/Automattic/simplenote-electron/pull/1759)
+- Applied prettier formattig to all files [#1780](https://github.com/Automattic/simplenote-electron/pull/1780)
 
 ## [v1.13.0]
 
