@@ -207,7 +207,7 @@ export class NoteDetail extends Component {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className='note-detail'>
+          <div className="note-detail">
             {previewingMarkdown && (
               <div
                 ref={this.storePreview}
@@ -256,7 +256,4 @@ const mapDispatchToProps = {
   onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NoteDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);

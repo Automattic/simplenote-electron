@@ -167,7 +167,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DisplayPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(DisplayPanel);

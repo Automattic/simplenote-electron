@@ -238,7 +238,4 @@ export class TagField extends Component {
   }
 }
 
-export default connect(
-  null,
-  { updateNoteTags }
-)(TagField);
+export default connect(null, { updateNoteTags })(TagField);

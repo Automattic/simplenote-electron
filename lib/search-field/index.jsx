@@ -113,7 +113,4 @@ const mapDispatchToProps = dispatch => ({
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchField);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchField);
