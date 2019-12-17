@@ -59,7 +59,12 @@ export class NoteEditor extends Component {
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle editor mode
-    if (cmdOrCtrl && shiftKey && 'p' === key && this.markdownEnabled) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      'p' === key.toLowerCase() &&
+      this.markdownEnabled
+    ) {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
