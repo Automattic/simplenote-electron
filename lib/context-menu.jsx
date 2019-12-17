@@ -78,6 +78,12 @@ export class ContextMenu extends Component {
   }
 }
 
+ContextMenu.propTypes = {
+  children: PropTypes.node.isRequired,
+  currentWindow: PropTypes.object.isRequired,
+  Menu: PropTypes.object.isRequired,
+};
+
 export const MenuItem = () => null;
 MenuItem.displayName = 'MenuItem';
 

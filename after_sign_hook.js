@@ -9,7 +9,7 @@ module.exports = async function(params) {
   }
 
   if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
-    console.log('Not on a tag. Skipping notarization');
+    console.log('Not on a tag. Skipping notarization'); // eslint-disable-line no-console
     return;
   }
 
@@ -27,7 +27,7 @@ module.exports = async function(params) {
     throw new Error(`Cannot find application at: ${appPath}`);
   }
 
-  console.log(`Notarizing ${appId} found at ${appPath}`);
+  console.log(`Notarizing ${appId} found at ${appPath}`); // eslint-disable-line no-console
 
   try {
     await electron_notarize.notarize({
@@ -38,8 +38,8 @@ module.exports = async function(params) {
       ascProvider: 'AutomatticInc',
     });
   } catch (error) {
-    console.error(error);
+    console.error(error); // eslint-disable-line no-console
   }
 
-  console.log(`Done notarizing ${appId}`);
+  console.log(`Done notarizing ${appId}`); // eslint-disable-line no-console
 };

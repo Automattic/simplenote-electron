@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 
 function ClipboardButton({ text }) {

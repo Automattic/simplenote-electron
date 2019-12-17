@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
-import classNames from 'classnames';
-
 import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
