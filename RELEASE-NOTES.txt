@@ -15,7 +15,7 @@
 
 - Updated dependencies [#1759](https://github.com/Automattic/simplenote-electron/pull/1759)
 - Applied prettier formatting to all files [#1780](https://github.com/Automattic/simplenote-electron/pull/1780)
-- Transition TransitionDelayEnter to React hooks [#1784](https://github.com/Automattic/simplenote-electron/pull/1784)
+- Migrate TransitionDelayEnter to React hooks [#1784](https://github.com/Automattic/simplenote-electron/pull/1784)
 
 ## [v1.13.0]
 
