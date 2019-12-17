@@ -21,7 +21,7 @@ class Updater extends EventEmitter {
   ping() {}
 
   onDownloaded(event) {
-    console.log('Update downloaded');
+    console.log('Update downloaded'); // eslint-disable-line no-console
 
     // electron-updater provides us with new version
     if (event.version) {
@@ -32,11 +32,11 @@ class Updater extends EventEmitter {
   }
 
   onNotAvailable() {
-    console.log('Update is not available');
+    console.log('Update is not available'); // eslint-disable-line no-console
   }
 
   onError(event) {
-    console.log('Update error', event);
+    console.log('Update error', event); // eslint-disable-line no-console
   }
 
   onConfirm() {}
@@ -94,7 +94,7 @@ class Updater extends EventEmitter {
     let text = originalText;
 
     for (const key in macros) {
-      if (macros.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(macros, key)) {
         text = text.replace(new RegExp(`{${key}}`, 'ig'), macros[key]);
       }
     }

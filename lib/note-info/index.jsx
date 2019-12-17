@@ -13,6 +13,8 @@ import filterNotes from '../utils/filter-notes';
 
 export class NoteInfo extends Component {
   static propTypes = {
+    isMarkdown: PropTypes.bool.isRequired,
+    isPinned: PropTypes.bool.isRequired,
     note: PropTypes.object,
     markdownEnabled: PropTypes.bool,
     onPinNote: PropTypes.func.isRequired,
