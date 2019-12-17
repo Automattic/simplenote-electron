@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
@@ -8,43 +8,33 @@ import { CSSTransition } from 'react-transition-group';
  * Useful for progress bars and spinners, that should generally have about a
  * 1000 ms delay before displaying to the user.
  */
-class TransitionDelayEnter extends React.Component {
-  static propTypes = {
-    delay: PropTypes.number,
-    children: PropTypes.node.isRequired,
-  };
+const TransitionDelayEnter = ({ children, delay = 1000 }) => {
+  const [shouldRender, setShouldRender] = useState(false);
 
-  static defaultProps = {
-    delay: 1000,
-  };
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setShouldRender(true);
+    }, delay);
 
-  state = {
-    shouldRender: false,
-  };
+    return () => window.clearTimeout(timer);
+  }, []);
 
-  componentDidMount() {
-    this.timer = window.setTimeout(() => {
-      this.setState({ shouldRender: true });
-    }, this.props.delay);
-  }
+  return (
+    <CSSTransition
+      classNames="transition-delay-enter"
+      in={shouldRender}
+      mountOnEnter={true}
+      timeout={200 /* fade-in speed */}
+      unmountOnExit={true}
+    >
+      {children}
+    </CSSTransition>
+  );
+};
 
-  componentWillUnmount() {
-    window.clearTimeout(this.timer);
-  }
-
-  render() {
-    return (
-      <CSSTransition
-        classNames="transition-delay-enter"
-        in={this.state.shouldRender}
-        mountOnEnter={true}
-        timeout={200 /* fade-in speed */}
-        unmountOnExit={true}
-      >
-        {this.props.children}
-      </CSSTransition>
-    );
-  }
-}
+TransitionDelayEnter.propTypes = {
+  delay: PropTypes.number,
+  children: PropTypes.node.isRequired,
+};
 
 export default TransitionDelayEnter;
