@@ -33,6 +33,7 @@ export default class NoteContentEditor extends Component {
     content: PropTypes.shape({
       text: PropTypes.string.isRequired,
       hasRemoteUpdate: PropTypes.bool.isRequired,
+      version: PropTypes.string,
     }),
     filter: PropTypes.string.isRequired,
     noteId: PropTypes.string,

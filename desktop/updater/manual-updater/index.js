@@ -41,7 +41,7 @@ class ManualUpdater extends Updater {
 
       if (releaseResp.status !== 200) {
         this.emit('error');
-        console.log(releaseResp);
+        console.log(releaseResp); // eslint-disable-line no-console
         return;
       }
 
@@ -58,7 +58,7 @@ class ManualUpdater extends Updater {
 
         if (configResp.status !== 200) {
           this.emit('error');
-          console.log(configResp);
+          console.log(configResp); // eslint-disable-line no-console
           return;
         }
 
@@ -66,6 +66,7 @@ class ManualUpdater extends Updater {
         const releaseConfig = yaml.safeLoad(configBody);
 
         if (semver.lt(app.getVersion(), releaseConfig.version)) {
+          // eslint-disable-next-line no-console
           console.log(
             'New update is available, prompting user to update to',
             releaseConfig.version
@@ -79,7 +80,7 @@ class ManualUpdater extends Updater {
       }
     } catch (err) {
       this.emit('error');
-      console.log(err.message);
+      console.log(err.message); // eslint-disable-line no-console
     }
   }
 

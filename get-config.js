@@ -18,6 +18,7 @@ function readConfig() {
     }
     return config;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error(
       'Could not read in the required configuration file.\n' +
         'This file should exist as `config.json` inside the project root directory.\n' +

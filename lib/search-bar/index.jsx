@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -52,5 +53,12 @@ const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
 });
 
 SearchBar.displayName = 'SearchBar';
+
+SearchBar.propTypes = {
+  onNewNote: PropTypes.func.isRequired,
+  onToggleNavigation: PropTypes.func.isRequired,
+  query: PropTypes.string,
+  showTrash: PropTypes.bool.isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

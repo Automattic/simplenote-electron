@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
-export default function ToggleControl({ className, ...props }) {
+function ToggleControl({ className, ...props }) {
   return (
     <span className={classNames('toggle-control', className)}>
       <input type="checkbox" {...props} />
@@ -13,3 +14,9 @@ export default function ToggleControl({ className, ...props }) {
     </span>
   );
 }
+
+ToggleControl.propTypes = {
+  className: PropTypes.string,
+};
+
+export default ToggleControl;
