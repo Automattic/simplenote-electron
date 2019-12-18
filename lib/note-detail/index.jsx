@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
-import classNames from 'classnames';
-
 import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
@@ -207,7 +205,7 @@ export class NoteDetail extends Component {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className='note-detail'>
+          <div className="note-detail">
             {previewingMarkdown && (
               <div
                 ref={this.storePreview}
@@ -256,7 +254,4 @@ const mapDispatchToProps = {
   onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NoteDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);

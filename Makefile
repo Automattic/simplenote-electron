@@ -163,8 +163,8 @@ rebuild-deps:
 
 .PHONY: format
 format:
-	@npx prettier --write {desktop,lib,sass}/{**/,*}.{js,json,jsx,sass}
+	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass}"
 
 .PHONY: lint
 lint:
-	@npx eslint --ext .js --ext .jsx lib
+	@npx eslint --ignore-path .gitignore "**/*.{js,jsx}"

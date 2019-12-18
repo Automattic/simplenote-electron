@@ -15,6 +15,7 @@ export class SearchField extends Component {
   static displayName = 'SearchField';
 
   static propTypes = {
+    filter: PropTypes.string,
     isTagSelected: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired,
     searchFocus: PropTypes.bool.isRequired,
@@ -113,7 +114,4 @@ const mapDispatchToProps = dispatch => ({
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchField);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

@@ -12,6 +12,7 @@ export class TagSuggestions extends Component {
 
   static propTypes = {
     filteredTags: PropTypes.array.isRequired,
+    onSearch: PropTypes.func.isRequired,
     query: PropTypes.string.isRequired,
   };
 
@@ -116,7 +117,4 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TagSuggestions);
+export default connect(mapStateToProps, mapDispatchToProps)(TagSuggestions);

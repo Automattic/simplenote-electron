@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import PanelTitle from '../../../components/panel-title';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 import TopRightArrowIcon from '../../../icons/arrow-top-right';
-
-import getConfig from '../../../../get-config';
 import { viewExternalUrl } from '../../../utils/url-utils';
 
 const AccountPanel = props => {

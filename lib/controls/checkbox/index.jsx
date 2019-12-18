@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
-export default function CheckboxControl({ className, ...props }) {
+function CheckboxControl({ className, ...props }) {
   return (
     <span className={classNames('checkbox-control', className)}>
       <input type="checkbox" {...props} />
@@ -11,3 +12,9 @@ export default function CheckboxControl({ className, ...props }) {
     </span>
   );
 }
+
+CheckboxControl.propTypes = {
+  className: PropTypes.string.isRequired,
+};
+
+export default CheckboxControl;

@@ -505,11 +505,7 @@ const { recordEvent } = tracks;
 const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
   const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
 
-  const filteredNotes = createCompositeNoteList(
-    filterNotes(state),
-    state.filter,
-    tagResultsFound
-  );
+  const filteredNotes = filterNotes(state);
 
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
@@ -523,6 +519,12 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
 
   const nextNote = filteredNotes[nextNoteId];
   const prevNote = filteredNotes[prevNoteId];
+
+  const compositeNoteList = createCompositeNoteList(
+    filteredNotes,
+    state.filter,
+    tagResultsFound
+  );
 
   /**
    * Although not used directly in the React component this value
@@ -552,7 +554,7 @@ const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
-    notes: filteredNotes,
+    notes: compositeNoteList,
     prevNote,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
@@ -566,10 +568,19 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   closeNote: () => dispatch(closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
   onSelectNote: noteId => {
-    dispatch(loadAndSelectNote({ noteBucket, noteId }));
-    recordEvent('list_note_opened');
+    if (noteId) {
+      dispatch(loadAndSelectNote({ noteBucket, noteId }));
+      recordEvent('list_note_opened');
+    }
   },
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
+
+NoteList.propTypes = {
+  hasLoaded: PropTypes.bool.isRequired,
+  nextNote: PropTypes.object,
+  prevNote: PropTypes.object,
+  selectedNoteContent: PropTypes.string,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

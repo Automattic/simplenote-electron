@@ -28,7 +28,4 @@ EmailToolTip.propTypes = {
   openShareDialog: PropTypes.func.isRequired,
 };
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(EmailToolTip);
+export default connect(null, mapDispatchToProps)(EmailToolTip);

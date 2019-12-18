@@ -111,7 +111,4 @@ const mapDispatchToProps = dispatch => ({
   trashTag: arg => dispatch(trashTag(arg)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TagList);
+export default connect(mapStateToProps, mapDispatchToProps)(TagList);

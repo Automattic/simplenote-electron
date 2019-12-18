@@ -6,6 +6,7 @@ export const CssClassWrapper = ({ children, className }) => (
 );
 
 CssClassWrapper.propTypes = {
+  children: PropTypes.node.isRequired,
   className: PropTypes.string.isRequired,
 };
 

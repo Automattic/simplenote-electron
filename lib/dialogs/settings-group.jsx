@@ -64,8 +64,14 @@ export const SettingsGroup = ({
 };
 
 SettingsGroup.propTypes = {
+  activeSlug: PropTypes.string,
+  children: PropTypes.node,
   description: PropTypes.string,
   learnMoreURL: PropTypes.string,
+  onChange: PropTypes.func,
+  renderer: PropTypes.func,
+  slug: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export default SettingsGroup;

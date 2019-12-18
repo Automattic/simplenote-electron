@@ -5,6 +5,7 @@ import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
 import analytics from '../../analytics';
+import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import { updateNoteTags } from '../../state/domain/notes';
 import Dialog from '../../dialog';
@@ -21,6 +22,7 @@ export class ShareDialog extends Component {
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
+    settings: PropTypes.object.isRequired,
     tagBucket: PropTypes.object.isRequired,
     updateNoteTags: PropTypes.func.isRequired,
   };
@@ -33,18 +35,6 @@ export class ShareDialog extends Component {
     });
   };
 
-  copyPublishURL = () => {
-    this.publishUrlElement.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      return;
-    }
-
-    this.copyUrlElement.focus();
-  };
-
   getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
 
   onAddCollaborator = event => {
@@ -55,7 +45,9 @@ export class ShareDialog extends Component {
     event.preventDefault();
     this.collaboratorElement.value = '';
 
-    if (collaborator !== '' && tags.indexOf(collaborator) === -1) {
+    const isSelf = this.props.settings.accountName === collaborator;
+
+    if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
       this.props.updateNoteTags({
         note,
         tags: [...tags, collaborator],
@@ -116,12 +108,13 @@ export class ShareDialog extends Component {
                   onSubmit={this.onAddCollaborator}
                 >
                   <input
-                    ref={e => (this.collaboratorElement = e)}
-                    type="email"
-                    pattern="[^@]+@[^@]+"
                     className="settings-item-text-input transparent-input"
+                    // Regex to detect valid email
+                    pattern="^[^@]+@.+"
                     placeholder="email@example.com"
+                    ref={e => (this.collaboratorElement = e)}
                     spellCheck={false}
+                    title="Please enter a valid email"
                   />
                   <div className="settings-item-control">
                     <button type="submit" className="button button-borderless">
@@ -200,15 +193,7 @@ export class ShareDialog extends Component {
                       spellCheck={false}
                     />
                     <div className="settings-item-control">
-                      <button
-                        ref={e => (this.copyUrlElement = e)}
-                        disabled={!publishURL}
-                        type="button"
-                        className="button button-borderless"
-                        onClick={this.copyPublishURL}
-                      >
-                        Copy
-                      </button>
+                      {publishURL && <ClipboardButton text={publishURL} />}
                     </div>
                   </div>
                 </div>
@@ -223,6 +208,8 @@ export class ShareDialog extends Component {
 }
 
 export default connect(
-  null,
+  state => ({
+    settings: state.settings,
+  }),
   { updateNoteTags }
 )(ShareDialog);
