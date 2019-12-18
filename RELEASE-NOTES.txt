@@ -8,6 +8,7 @@
 
 ### Fixes
 - Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
+- After selecting a revision to restore ensure that choice is sync'd [#1774](https://github.com/Automattic/simplenote-electron/pull/1774)
 - Added indication that publish url has been copied [#1743](https://github.com/Automattic/simplenote-electron/pull/1743)
 - Disallow partial emails and user's own email from being adding to collaborators email field [#1735](https://github.com/Automattic/simplenote-electron/pull/1735)
 - Fixed keyboard shortcut to toggle markdown preview [#1788](https://github.com/Automattic/simplenote-electron/pull/1788)
@@ -18,6 +19,7 @@
 - Applied prettier formatting to all files [#1780](https://github.com/Automattic/simplenote-electron/pull/1780)
 - Delete unused tab restriction util [#1783](https://github.com/Automattic/simplenote-electron/pull/1783)
 - Migrate TransitionDelayEnter to React hooks [#1784](https://github.com/Automattic/simplenote-electron/pull/1784)
+- Added React Hooks Eslinnt Plugin [#1789](https://github.com/Automattic/simplenote-electron/pull/1789)
 
 ## [v1.13.0]
 
