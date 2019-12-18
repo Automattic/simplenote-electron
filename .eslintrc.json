@@ -21,7 +21,7 @@
     "prettier",
     "prettier/react"
   ],
-  "plugins": ["eslint-plugin-react", "jest", "prettier"],
+  "plugins": ["eslint-plugin-react", "jest", "prettier", "react-hooks"],
   "rules": {
     "eqeqeq": ["error", "always"],
     "no-console": "warn",
