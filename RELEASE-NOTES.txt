@@ -9,10 +9,9 @@
 ### Fixes
 - Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
 - After selecting a revision to restore ensure that choice is sync'd [#1774](https://github.com/Automattic/simplenote-electron/pull/1774)
-
 - Added indication that publish url has been copied [#1743](https://github.com/Automattic/simplenote-electron/pull/1743)
-
 - Disallow partial emails and user's own email from being adding to collaborators email field [#1735](https://github.com/Automattic/simplenote-electron/pull/1735)
+- Fixed keyboard shortcut to toggle markdown preview [#1788](https://github.com/Automattic/simplenote-electron/pull/1788)
 
 ### Other Changes
 

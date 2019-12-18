@@ -16,7 +16,6 @@ export class NoteEditor extends Component {
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     filter: PropTypes.string.isRequired,
-    markdownEnabled: PropTypes.bool.isRequired,
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
@@ -44,13 +43,28 @@ export class NoteEditor extends Component {
     this.toggleShortcuts(false);
   }
 
+  markdownEnabled = () => {
+    const revision = this.props.revision || this.props.note;
+    return (
+      revision &&
+      revision.data &&
+      revision.data.systemTags &&
+      revision.data.systemTags.indexOf('markdown') !== -1
+    );
+  };
+
   handleShortcut = event => {
     const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle editor mode
-    if (cmdOrCtrl && 'P' === key && this.props.markdownEnabled) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      'p' === key.toLowerCase() &&
+      this.markdownEnabled
+    ) {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
@@ -118,12 +132,6 @@ export class NoteEditor extends Component {
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
 
-    const markdownEnabled =
-      revision &&
-      revision.data &&
-      revision.data.systemTags &&
-      revision.data.systemTags.indexOf('markdown') !== -1;
-
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
         <NoteDetail
@@ -132,7 +140,9 @@ export class NoteEditor extends Component {
           filter={this.props.filter}
           note={revision}
           noteBucket={noteBucket}
-          previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
+          previewingMarkdown={
+            this.markdownEnabled() && editorMode === 'markdown'
+          }
           onChangeContent={this.props.onUpdateContent}
           syncNote={this.props.syncNote}
           fontSize={fontSize}
@@ -157,7 +167,6 @@ const mapStateToProps = ({ appState: state, settings }) => ({
   fontSize: settings.fontSize,
   editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
-  markdownEnabled: settings.markdownEnabled,
   revision: state.revision,
 });
 
