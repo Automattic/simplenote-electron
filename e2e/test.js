@@ -5,7 +5,7 @@ import path from 'path';
 
 const app = new Application({
   path: electronPath,
-  args: [path.join(__dirname, '..', '..')],
+  args: [path.join(__dirname, '..')],
 });
 
 describe('E2E', () => {

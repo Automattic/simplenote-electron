@@ -13,7 +13,8 @@
   "scripts": {
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
-    "test": "make test",
+    "test-e2e": "npx jest --config=./jest.config.e2e.js",
+    "test": "npx jest --config=./jest.config.js",
     "lint": "make lint",
     "format": "make format",
     "build": "make build",
