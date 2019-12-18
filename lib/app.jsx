@@ -337,7 +337,7 @@ export const App = connect(
       });
     };
 
-    onUpdateContent = (note, content) => {
+    onUpdateContent = (note, content, sync = false) => {
       if (!note) {
         return;
       }
@@ -351,13 +351,11 @@ export const App = connect(
         },
       };
 
-      // update the bucket but don't force sync right away
-      // as this happens per keystroke when the user is editing
-      // a note. The NoteEditor will notify via props when
-      // it's time to sync via Simperium
       const { noteBucket } = this.props;
-
-      noteBucket.update(note.id, updatedNote.data, {}, { sync: false });
+      noteBucket.update(note.id, updatedNote.data, {}, { sync });
+      if (sync) {
+        this.syncNote(note.id);
+      }
     };
 
     syncNote = noteId => {
