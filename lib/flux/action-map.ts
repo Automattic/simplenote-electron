@@ -2,7 +2,7 @@ import { Action } from 'redux';
 
 type ActionHandler<State> =
   | { creator: Function }
-  | ((state: State, ...args: any[]) => State);
+  | ((state: State, ...args: any[]) => any);
 
 type ActionHandlers<State, Handlers> = {
   [P in keyof Handlers]: ActionHandler<State>;
