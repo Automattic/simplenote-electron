@@ -16,18 +16,18 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:jest/recommended",
     "plugin:react/recommended",
     "prettier",
-    "prettier/react",
-    "plugin:@typescript-eslint/recommended"
+    "prettier/react"
   ],
   "plugins": [
+    "@typescript-eslint",
     "eslint-plugin-react",
     "jest",
     "prettier",
-    "react-hooks",
-    "@typescript-eslint"
+    "react-hooks"
   ],
   "rules": {
     "eqeqeq": ["error", "always"],
@@ -53,5 +53,13 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ]
 }
