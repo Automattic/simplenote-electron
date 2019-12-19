@@ -1,10 +1,10 @@
 module.exports = {
-  setupFilesAfterEnv: ['./setup-tests.js'],
+  setupFilesAfterEnv: ['<rootDir>/setup-tests.js'],
   globals: {
     config: {
       appVersion: 'foo',
     },
   },
   roots: ['desktop', 'lib'],
-  testRegex: '(/test/.*\\.jsx?)|(test\\.jsx?)$',
+  testRegex: '(/test/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
 };

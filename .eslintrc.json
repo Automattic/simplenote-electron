@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
   "env": {
     "browser": true,
     "es6": true,
@@ -19,9 +19,16 @@
     "plugin:jest/recommended",
     "plugin:react/recommended",
     "prettier",
-    "prettier/react"
+    "prettier/react",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": ["eslint-plugin-react", "jest", "prettier", "react-hooks"],
+  "plugins": [
+    "eslint-plugin-react",
+    "jest",
+    "prettier",
+    "react-hooks",
+    "@typescript-eslint"
+  ],
   "rules": {
     "eqeqeq": ["error", "always"],
     "no-console": "warn",

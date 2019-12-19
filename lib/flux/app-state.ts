@@ -126,7 +126,7 @@ export const actionMap = new ActionMap({
       },
     },
 
-    selectTag(state, { tag }) {
+    selectTag(state: State, { tag }) {
       return update(state, {
         showNavigation: { $set: false },
         editingTags: { $set: false },
