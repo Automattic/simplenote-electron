@@ -14,7 +14,7 @@
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
     "test-e2e": "npx jest --config=./jest.config.e2e.js",
-    "test": "npx jest --config=./jest.config.js",
+    "test": "make test",
     "lint": "make lint",
     "format": "make format",
     "build": "make build",

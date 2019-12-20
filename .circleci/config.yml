@@ -45,7 +45,7 @@ jobs:
       - run: patch -p1 < ./resources/macos/scheme-patch.diff
       - run: make build
       - run: make lint
-      - run: npm test
+      - run: make test
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths

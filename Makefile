@@ -62,6 +62,11 @@ dev-server:
 
 	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
 
+.PHONY: test
+test:
+	@npx jest --config=./jest.config.js
+
+
 # Build web app
 .PHONY: build
 build:
