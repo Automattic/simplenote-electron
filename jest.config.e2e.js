@@ -5,5 +5,5 @@ module.exports = {
     },
   },
   roots: ['e2e'],
-  testRegex: '(/.*\\.jsx?)|(test\\.jsx?)$',
+  testRegex: '(/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
 };
