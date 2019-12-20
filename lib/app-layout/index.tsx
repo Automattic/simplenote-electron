@@ -1,5 +1,4 @@
-import React, { Suspense } from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent, Suspense } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
 
@@ -10,6 +9,8 @@ import SearchBar from '../search-bar';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 
+import { NoteEntity } from '../types';
+
 const NoteList = React.lazy(() =>
   import(/* webpackChunkName: 'note-list' */ '../note-list')
 );
@@ -18,7 +19,22 @@ const NoteEditor = React.lazy(() =>
   import(/* webpackChunkName: 'note-editor' */ '../note-editor')
 );
 
-export const AppLayout = ({
+type Props = {
+  isFocusMode: boolean;
+  isNavigationOpen: boolean;
+  isNoteInfoOpen: boolean;
+  isNoteOpen: boolean;
+  isSmallScreen: boolean;
+  note: NoteEntity;
+  noteBucket: object;
+  revisions: NoteEntity[];
+  onNoteClosed: Function;
+  onNoteOpened: Function;
+  onUpdateContent: Function;
+  syncNote: Function;
+};
+
+export const AppLayout: FunctionComponent<Props> = ({
   isFocusMode = false,
   isNavigationOpen,
   isNoteInfoOpen,
@@ -84,21 +100,6 @@ export const AppLayout = ({
       </Suspense>
     </div>
   );
-};
-
-AppLayout.propTypes = {
-  isFocusMode: PropTypes.bool,
-  isNavigationOpen: PropTypes.bool.isRequired,
-  isNoteInfoOpen: PropTypes.bool.isRequired,
-  isNoteOpen: PropTypes.bool.isRequired,
-  isSmallScreen: PropTypes.bool.isRequired,
-  note: PropTypes.object,
-  noteBucket: PropTypes.object.isRequired,
-  revisions: PropTypes.array,
-  onNoteClosed: PropTypes.func.isRequired,
-  onNoteOpened: PropTypes.func.isRequired,
-  onUpdateContent: PropTypes.func.isRequired,
-  syncNote: PropTypes.func.isRequired,
 };
 
 export default AppLayout;

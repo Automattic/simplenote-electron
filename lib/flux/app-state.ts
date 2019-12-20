@@ -4,10 +4,16 @@ import Debug from 'debug';
 import ActionMap from './action-map';
 import filterNotes from '../utils/filter-notes';
 import analytics from '../analytics';
+import * as T from '../types';
+import { TranslatableString } from '../types';
 
 const debug = Debug('appState');
 
-const toggleSystemTag = (note, systemTag, shouldHaveTag) => {
+const toggleSystemTag = (
+  note: T.NoteEntity,
+  systemTag: T.SystemTag,
+  shouldHaveTag: boolean
+) => {
   const {
     data: { systemTags = [] },
   } = note;
@@ -26,33 +32,35 @@ const toggleSystemTag = (note, systemTag, shouldHaveTag) => {
     : note;
 };
 
+const initialState = {
+  editorMode: 'edit' as T.EditorMode,
+  filter: '' as string,
+  selectedNoteId: null as T.EntityId | null,
+  previousIndex: -1 as number,
+  notes: null as T.NoteEntity[] | null,
+  tags: [] as T.TagEntity[],
+  revision: null as T.NoteEntity | null,
+  showTrash: false,
+  listTitle: 'All Notes' as TranslatableString,
+  showNavigation: false,
+  showNoteInfo: false,
+  isViewingRevisions: false,
+  editingTags: false,
+  dialogs: [],
+  nextDialogKey: 0,
+  shouldPrint: false,
+  searchFocus: false,
+  unsyncedNoteIds: [] as T.EntityId[], // note bucket only
+  isOffline: true, // disconnected from Simperium server
+};
+
+type State = typeof initialState;
+
 export const actionMap = new ActionMap({
   namespace: 'App',
-
-  initialState: {
-    editorMode: 'edit',
-    filter: '',
-    selectedNoteId: null,
-    previousIndex: -1,
-    notes: null,
-    tags: [],
-    revision: null,
-    showTrash: false,
-    listTitle: 'All Notes',
-    showNavigation: false,
-    showNoteInfo: false,
-    isViewingRevisions: false,
-    editingTags: false,
-    dialogs: [],
-    nextDialogKey: 0,
-    shouldPrint: false,
-    searchFocus: false,
-    unsyncedNoteIds: [], // note bucket only
-    isOffline: true, // disconnected from Simperium server
-  },
-
+  initialState,
   handlers: {
-    authChanged(state) {
+    authChanged(state: State) {
       return update(state, {
         notes: { $set: null },
         tags: { $set: [] },
@@ -60,7 +68,7 @@ export const actionMap = new ActionMap({
       });
     },
 
-    toggleNavigation(state) {
+    toggleNavigation(state: State) {
       if (state.showNavigation) {
         return update(state, {
           showNavigation: { $set: false },
@@ -87,7 +95,7 @@ export const actionMap = new ActionMap({
       },
     },
 
-    showAllNotes(state) {
+    showAllNotes(state: State) {
       return update(state, {
         showNavigation: { $set: false },
         editingTags: { $set: false },
@@ -100,7 +108,7 @@ export const actionMap = new ActionMap({
       });
     },
 
-    selectTrash(state) {
+    selectTrash(state: State) {
       return update(state, {
         showNavigation: { $set: false },
         editingTags: { $set: false },
@@ -114,7 +122,7 @@ export const actionMap = new ActionMap({
     },
 
     selectTagAndSelectFirstNote: {
-      creator({ tag }) {
+      creator({ tag }: { tag: T.TagEntity }) {
         return (dispatch, getState) => {
           dispatch(this.action('selectTag', { tag }));
           dispatch(
@@ -126,7 +134,7 @@ export const actionMap = new ActionMap({
       },
     },
 
-    selectTag(state, { tag }) {
+    selectTag(state: State, { tag }: { tag: T.TagEntity }) {
       return update(state, {
         showNavigation: { $set: false },
         editingTags: { $set: false },
@@ -139,13 +147,13 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setEditorMode(state, { mode }) {
+    setEditorMode(state: State, { mode }: { mode: T.EditorMode }) {
       return update(state, {
         editorMode: { $set: mode },
       });
     },
 
-    showDialog(state, { dialog }) {
+    showDialog(state: State, { dialog }) {
       const { type, multiple = false, title, ...dialogProps } = dialog;
 
       // If there should only be one instance of the dialog in the stack
@@ -175,7 +183,7 @@ export const actionMap = new ActionMap({
       return update(state, updateCommands);
     },
 
-    closeDialog(state, { key }) {
+    closeDialog(state: State, { key }) {
       var dialogs = state.dialogs;
 
       for (let i = 0; i < dialogs.length; i++) {
@@ -187,20 +195,26 @@ export const actionMap = new ActionMap({
       }
     },
 
-    editTags(state) {
+    editTags(state: State) {
       return update(state, {
         editingTags: { $set: !state.editingTags },
       });
     },
 
-    search(state, { filter }) {
+    search(state: State, { filter }: { filter: string }) {
       return update(state, {
         filter: { $set: filter },
       });
     },
 
     newNote: {
-      creator({ noteBucket, content = '' }) {
+      creator({
+        noteBucket,
+        content = '',
+      }: {
+        noteBucket: T.Bucket<T.Note>;
+        content: string;
+      }) {
         return (dispatch, getState) => {
           const state = getState().appState;
           const settings = getState().settings;
@@ -240,11 +254,11 @@ export const actionMap = new ActionMap({
     },
 
     loadNotes: {
-      creator({ noteBucket }) {
+      creator({ noteBucket }: { noteBucket: T.Bucket<T.Note> }) {
         return (dispatch, getState) => {
           const settings = getState().settings;
           const { sortType, sortReversed } = settings;
-          var sortOrder;
+          var sortOrder: 'prev' | 'next';
           debug('loadNotes');
 
           if (sortType === 'alphabetical') {
@@ -254,7 +268,7 @@ export const actionMap = new ActionMap({
           }
 
           noteBucket.query(db => {
-            var notes = [];
+            var notes: T.NoteEntity[] = [];
             db
               .transaction('note')
               .objectStore('note')
@@ -276,7 +290,7 @@ export const actionMap = new ActionMap({
       },
     },
 
-    notesLoaded(state, { notes }) {
+    notesLoaded(state, { notes }: { notes: T.NoteEntity[] }) {
       const [pinned, notPinned] = partition(notes, note => note.pinned);
       const pinSortedNotes = [...pinned, ...notPinned];
 
@@ -323,25 +337,25 @@ export const actionMap = new ActionMap({
       },
     },
 
-    setRevision(state, { revision }) {
+    setRevision(state: State, { revision }) {
       return update(state, {
         revision: { $set: revision },
       });
     },
 
-    setIsViewingRevisions(state, { isViewingRevisions }) {
+    setIsViewingRevisions(state: State, { isViewingRevisions }) {
       return update(state, {
         isViewingRevisions: { $set: isViewingRevisions },
       });
     },
 
-    setShouldPrintNote(state, { shouldPrint = true }) {
+    setShouldPrintNote(state: State, { shouldPrint = true }) {
       return update(state, {
         shouldPrint: { $set: shouldPrint },
       });
     },
 
-    setSearchFocus(state, { searchFocus = true }) {
+    setSearchFocus(state: State, { searchFocus = true }) {
       return update(state, {
         searchFocus: { $set: searchFocus },
       });
@@ -377,7 +391,7 @@ export const actionMap = new ActionMap({
       },
     },
 
-    selectNote(state, { note, hasRemoteUpdate }) {
+    selectNote(state: State, { note, hasRemoteUpdate }) {
       return update(state, {
         editingTags: { $set: false },
         note: { $set: { ...note, hasRemoteUpdate } },
@@ -387,7 +401,7 @@ export const actionMap = new ActionMap({
       });
     },
 
-    closeNote(state, { previousIndex = -1 }) {
+    closeNote(state: State, { previousIndex = -1 }) {
       return update(state, {
         note: { $set: null },
         selectedNoteId: { $set: null },
@@ -429,7 +443,7 @@ export const actionMap = new ActionMap({
      * from the server and merge them together.
      */
     onNoteBeforeRemoteUpdate: {
-      creator({ noteId }) {
+      creator({ noteId }: { noteId: T.EntityId }) {
         return (dispatch, getState) => {
           const {
             appState: { selectedNoteId, note, notes },
@@ -451,7 +465,15 @@ export const actionMap = new ActionMap({
     },
 
     trashNote: {
-      creator({ noteBucket, note, previousIndex }) {
+      creator({
+        noteBucket,
+        note,
+        previousIndex,
+      }: {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }) {
         return dispatch => {
           if (note) {
             note.data.deleted = true;
@@ -464,7 +486,15 @@ export const actionMap = new ActionMap({
     },
 
     restoreNote: {
-      creator({ noteBucket, note, previousIndex }) {
+      creator({
+        noteBucket,
+        note,
+        previousIndex,
+      }: {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }) {
         return dispatch => {
           if (note) {
             note.data.deleted = false;
@@ -477,7 +507,15 @@ export const actionMap = new ActionMap({
     },
 
     deleteNoteForever: {
-      creator({ noteBucket, note, previousIndex }) {
+      creator({
+        noteBucket,
+        note,
+        previousIndex,
+      }: {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }) {
         return dispatch => {
           noteBucket.remove(note.id);
 
@@ -488,7 +526,13 @@ export const actionMap = new ActionMap({
     },
 
     noteRevisions: {
-      creator({ noteBucket, note }) {
+      creator({
+        noteBucket,
+        note,
+      }: {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+      }) {
         return dispatch => {
           noteBucket.getRevisions(note.id, (e, revisions) => {
             if (e) {
@@ -502,7 +546,7 @@ export const actionMap = new ActionMap({
     },
 
     emptyTrash: {
-      creator({ noteBucket }) {
+      creator({ noteBucket }: { noteBucket: T.Bucket<T.Note> }) {
         return (dispatch, getState) => {
           const state = getState().appState;
           const [deleted, notes] = partition(
@@ -517,13 +561,13 @@ export const actionMap = new ActionMap({
       },
     },
 
-    noteRevisionsLoaded(state, { revisions }) {
+    noteRevisionsLoaded(state: State, { revisions }) {
       return update(state, {
         revisions: { $set: revisions },
       });
     },
 
-    toggleNoteInfo(state) {
+    toggleNoteInfo(state: State) {
       if (state.showNoteInfo) {
         return update(state, {
           showNoteInfo: { $set: false },
@@ -537,7 +581,10 @@ export const actionMap = new ActionMap({
       });
     },
 
-    tagsLoaded(state, { tags, sortTagsAlpha }) {
+    tagsLoaded(
+      state: State,
+      { tags, sortTagsAlpha }: { tags: T.TagEntity[]; sortTagsAlpha: boolean }
+    ) {
       tags = tags.slice();
       if (sortTagsAlpha) {
         // Sort tags alphabetically by 'name' value
@@ -593,7 +640,10 @@ export const actionMap = new ActionMap({
       },
     },
 
-    preferencesLoaded(state, { analyticsEnabled }) {
+    preferencesLoaded(
+      state: State,
+      { analyticsEnabled }: { analyticsEnabled: boolean }
+    ) {
       return update(state, {
         preferences: {
           $set: {
@@ -603,7 +653,18 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setPreference(state, { key, value, preferencesBucket }) {
+    setPreference<K extends keyof T.Preferences>(
+      state: State,
+      {
+        key,
+        value,
+        preferencesBucket,
+      }: {
+        key: K;
+        value: T.Preferences[K];
+        preferencesBucket: T.Bucket<T.Preferences>;
+      }
+    ) {
       const objectKey = 'preferences-key';
 
       preferencesBucket.get(objectKey, (e, preferences) => {
@@ -634,13 +695,13 @@ export const actionMap = new ActionMap({
       },
     },
 
-    setUnsyncedNoteIds(state, { noteIds }) {
+    setUnsyncedNoteIds(state: State, { noteIds }: { noteIds: T.EntityId[] }) {
       return update(state, {
         unsyncedNoteIds: { $set: noteIds },
       });
     },
 
-    setConnectionStatus(state, { isOffline }) {
+    setConnectionStatus(state: State, { isOffline }: { isOffline: boolean }) {
       return update(state, {
         isOffline: { $set: isOffline },
       });

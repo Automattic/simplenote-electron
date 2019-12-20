@@ -28,7 +28,7 @@ module.exports = () => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.[jt]sx?$/,
           exclude: /node_modules\/core-js/,
           use: [
             {
@@ -67,7 +67,7 @@ module.exports = () => {
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json', '.scss', '.css'],
+      extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.ts', '.tsx'],
       modules: ['node_modules'],
     },
     plugins: [

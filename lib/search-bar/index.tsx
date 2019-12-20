@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -19,7 +18,14 @@ import { withoutTags } from '../utils/filter-notes';
 const { newNote, search, toggleNavigation } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-export const SearchBar = ({
+type Props = {
+  onNewNote: Function;
+  onToggleNavigation: Function;
+  query: string;
+  showTrash: boolean;
+};
+
+export const SearchBar: FunctionComponent<Props> = ({
   onNewNote,
   onToggleNavigation,
   query,
@@ -43,7 +49,7 @@ const mapStateToProps = ({ appState: state }) => ({
 });
 
 const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
-  onNewNote: content => {
+  onNewNote: (content: string) => {
     dispatch(search({ filter: '' }));
     dispatch(newNote({ noteBucket, content }));
     onNoteOpened();
@@ -53,12 +59,5 @@ const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
 });
 
 SearchBar.displayName = 'SearchBar';
-
-SearchBar.propTypes = {
-  onNewNote: PropTypes.func.isRequired,
-  onToggleNavigation: PropTypes.func.isRequired,
-  query: PropTypes.string,
-  showTrash: PropTypes.bool.isRequired,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

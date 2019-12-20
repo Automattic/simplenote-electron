@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
@@ -9,30 +8,38 @@ import Slider from '../components/slider';
 import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
 
-const sortedRevisions = revisions => orderBy(revisions, 'version', 'asc');
+import { NoteEntity } from '../types';
 
-export class RevisionSelector extends Component {
-  static propTypes = {
-    isViewingRevisions: PropTypes.bool.isRequired,
-    note: PropTypes.object,
-    revisions: PropTypes.array.isRequired,
-    onUpdateContent: PropTypes.func.isRequired,
-    setRevision: PropTypes.func.isRequired,
-    resetIsViewingRevisions: PropTypes.func.isRequired,
-    cancelRevision: PropTypes.func.isRequired,
-    updateNoteTags: PropTypes.func.isRequired,
-  };
+const sortedRevisions = (revisions: NoteEntity[]) =>
+  orderBy(revisions, 'version', 'asc');
 
-  constructor(...args) {
-    super(...args);
+type Props = {
+  isViewingRevisions: boolean;
+  note: NoteEntity;
+  revisions: NoteEntity[];
+  onUpdateContent: Function;
+  setRevision: Function;
+  resetIsViewingRevisions: Function;
+  cancelRevision: Function;
+  updateNoteTags: Function;
+};
+
+type State = {
+  revisions: NoteEntity[];
+  selection: number;
+};
+
+export class RevisionSelector extends Component<Props, State> {
+  constructor(props: Props, ...args: unknown[]) {
+    super(props, ...args);
 
     this.state = {
-      revisions: sortedRevisions(this.props.revisions),
+      revisions: sortedRevisions(props.revisions),
       selection: Infinity,
     };
   }
 
-  componentWillReceiveProps({ revisions: nextRevisions }) {
+  componentWillReceiveProps({ revisions: nextRevisions }: Props) {
     const { revisions: prevRevisions } = this.props;
 
     if (nextRevisions === prevRevisions) {
@@ -44,7 +51,7 @@ export class RevisionSelector extends Component {
     });
   }
 
-  componentDidUpdate({ revisions: prevRevisions }) {
+  componentDidUpdate({ revisions: prevRevisions }: Props) {
     const { revisions: nextRevisions } = this.props;
 
     if (prevRevisions !== nextRevisions) {
@@ -63,8 +70,6 @@ export class RevisionSelector extends Component {
       this.forceUpdate();
     }
   }
-
-  handleClickOutside = () => this.onCancelRevision();
 
   onAcceptRevision = () => {
     const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
@@ -85,15 +90,15 @@ export class RevisionSelector extends Component {
 
   resetSelection = () => this.setState({ selection: Infinity });
 
-  onSelectRevision = ({ target: { value } }) => {
+  onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
+    target: { value },
+  }) => {
     const { revisions } = this.state;
 
     const selection = parseInt(value, 10);
     const revision = revisions[selection];
 
-    this.setState({
-      selection,
-    });
+    this.setState({ selection });
     this.props.setRevision(revision);
   };
 
@@ -122,7 +127,7 @@ export class RevisionSelector extends Component {
             'MMM d, yyyy h:mm a'
           );
 
-    const revisionButtonStyle =
+    const revisionButtonStyle: CSSProperties =
       selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
 
     const mainClasses = classNames('revision-selector', {

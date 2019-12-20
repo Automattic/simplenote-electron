@@ -17,7 +17,7 @@ RED=`tput setaf 1`
 RESET=`tput sgr0`
 
 SIMPLENOTE_JS := $(THIS_DIR)/dist/app.js
-SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" \) -type f -print -quit | grep -v .min. | wc -l`
+SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" -o -name "*.ts" -o -name "*.tsx" \) -type f -print -quit | grep -v .min. | wc -l`
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 
@@ -53,7 +53,7 @@ start: rebuild-deps
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
 
 .PHONY: dev
-dev: 
+dev:
 	@npx misty
 
 .PHONY: dev-server
@@ -63,7 +63,7 @@ dev-server:
 	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
 
 .PHONY: test
-test: 
+test:
 	@npx jest
 
 
@@ -84,37 +84,37 @@ endif
 
 # Build utils
 .PHONY: build-app
-build-app: 
+build-app:
 	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
 
-.PHONY: build-if-not-exists 
+.PHONY: build-if-not-exists
 build-if-not-exists: config.json
 	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
 
-.PHONY: build-if-changed 
+.PHONY: build-if-changed
 build-if-changed: build-if-not-exists
 	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
 
 
 # Build binaries only
-.PHONY: osx 
+.PHONY: osx
 osx: config-release build-if-changed
 	@npx electron-builder -m --dir
 
-.PHONY: linux 
+.PHONY: linux
 linux: config-release build-if-changed
 	@npx electron-builder -l --dir
 
-.PHONY: win32 
+.PHONY: win32
 win32: config-release build-if-changed
 	@npx electron-builder -w --dir
 
 
-# Build installers 
-.PHONY: package 
+# Build installers
+.PHONY: package
 package: build-if-changed
 
-.PHONY: package-win32 
+.PHONY: package-win32
 package-win32:
 ifeq ($(IS_WINDOWS),true)
 	@echo Building .appx as well
@@ -124,7 +124,7 @@ else
 	@npx electron-builder --win -p $(PUBLISH)
 endif
 
-.PHONY: package-osx 
+.PHONY: package-osx
 package-osx: build-if-changed
 	@npx electron-builder --mac "dmg" -p $(PUBLISH)
 
@@ -134,7 +134,7 @@ package-linux: build-if-changed
 
 
 # NPM
-.PHONY: 
+.PHONY:
 install: node_modules
 
 node_modules/%:
@@ -153,7 +153,7 @@ ifeq (,$(wildcard $(THIS_DIR)$/config.json))
 endif
 
 
-# Utils 
+# Utils
 .PHONY: config-release
 config-release: config.json install
 
@@ -163,8 +163,8 @@ rebuild-deps:
 
 .PHONY: format
 format:
-	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass}"
+	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass,ts,tsx}"
 
 .PHONY: lint
 lint:
-	@npx eslint --ignore-path .gitignore "**/*.{js,jsx}"
+	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"

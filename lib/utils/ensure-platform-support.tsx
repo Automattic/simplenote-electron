@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import BootWarning from '../components/boot-warning';
 
-const hasLocalStorage = () => {
+const hasLocalStorage = (): boolean => {
   try {
     localStorage.setItem('__localStorageSentinel__', 'present');
     localStorage.removeItem('__localStorageSentinel__');
@@ -13,7 +13,7 @@ const hasLocalStorage = () => {
   }
 };
 
-const hasIndexedDB = () => {
+const hasIndexedDB = (): boolean => {
   try {
     const opener = indexedDB.open('simplenote_sentinel');
     if (!(opener instanceof IDBOpenDBRequest)) {
@@ -31,7 +31,7 @@ const hasIndexedDB = () => {
 const deps = [
   ['localStorage', hasLocalStorage()],
   ['indexedDB', hasIndexedDB()],
-];
+] as const;
 
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
 
