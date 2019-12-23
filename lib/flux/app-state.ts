@@ -291,7 +291,9 @@ export const actionMap = new ActionMap({
     },
 
     notesLoaded(state: AppState, { notes }: { notes: T.NoteEntity[] }) {
-      const [pinned, notPinned] = partition(notes, note => note.pinned);
+      const [pinned, notPinned] = partition(notes, note =>
+        note.data.systemTags.includes('pinned')
+      );
       const pinSortedNotes = [...pinned, ...notPinned];
 
       let selectedNote = null;

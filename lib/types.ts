@@ -19,7 +19,6 @@ export type Note = {
   creationDate: SecondsEpoch;
   deleted: boolean;
   modificationDate: SecondsEpoch;
-  pinned?: boolean;
   publishURL?: string;
   shareURL?: string;
   systemTags: SystemTag[];
