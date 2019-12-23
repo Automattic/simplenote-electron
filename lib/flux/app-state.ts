@@ -241,6 +241,9 @@ export const actionMap = new ActionMap({
               ),
             },
             (e, note) => {
+              if (e) {
+                return debug(`newNote: could not create note - ${e.message}`);
+              }
               dispatch(
                 this.action('loadAndSelectNote', {
                   noteBucket,
