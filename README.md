@@ -21,6 +21,15 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 - **`make package-win32`**
 - **`make package-linux`**
 
+## Testing
+
+Unit tests are run with `npm test`.
+
+End-to-end tests are run with `npm run test-e2e`.
+Note that the `Spectron` version corresponds with the version of `Electron` we are using and so at the time of writing this is pinned at version 6.
+Use the corresponding API docs for `webdriver-io` which correspond to the `Specron` version.
+At the time of writing you will want to refer to the [webdriver-io v4.13 API docs](http://v4.webdriver.io/v4.13/api.html).
+
 ## Coding Guidelines
 
 Please adhere to the same guidelines as found in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines.md).
@@ -32,6 +41,7 @@ Please adhere to the same guidelines as found in [wp-calypso](https://github.com
 - [Electron](https://electronjs.org/) for wrapping the JavaScript application.
 
 ## Simplenote for Other Platforms
+
 [simplenote-electron](https://github.com/Automattic/simplenote-electron) is the official Simplenote desktop app for Windows and Linux.
 
 For other platforms, see:

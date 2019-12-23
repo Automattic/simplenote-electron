@@ -64,7 +64,7 @@ dev-server:
 
 .PHONY: test
 test:
-	@npx jest
+	@npx jest --config=./jest.config.js
 
 
 # Build web app

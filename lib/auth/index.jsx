@@ -113,6 +113,7 @@ export class Auth extends Component {
           />
 
           <button
+            id="login__login-button"
             className={submitClasses}
             onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
             type="submit"
