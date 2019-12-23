@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
+import actions from '../state/actions';
 import IconButton from '../icon-button';
 import BackIcon from '../icons/back';
 import InfoIcon from '../icons/info';
@@ -12,31 +13,33 @@ import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
-export class NoteToolbar extends Component {
+import * as T from '../types';
+import { State } from '../state';
+
+type Props = {
+  note: T.NoteEntity;
+  onRestoreNote: Function;
+  onTrashNote: Function;
+  onDeleteNoteForever: Function;
+  onShowRevisions: Function;
+  onShareNote: Function;
+  onCloseNote: Function;
+  onShowNoteInfo: Function;
+  setIsViewingRevisions: Function;
+  toggleFocusMode: Function;
+  markdownEnabled: boolean;
+};
+
+type ConnectedProps = ReturnType<typeof mapStateToProps> &
+  typeof mapDispatchToProps;
+
+export class NoteToolbar extends Component<Props & ConnectedProps> {
   static displayName = 'NoteToolbar';
 
-  static propTypes = {
-    note: PropTypes.object,
-    onRestoreNote: PropTypes.func,
-    onTrashNote: PropTypes.func,
-    onDeleteNoteForever: PropTypes.func,
-    onShowRevisions: PropTypes.func,
-    onShareNote: PropTypes.func,
-    onCloseNote: PropTypes.func,
-    onShowNoteInfo: PropTypes.func,
-    setIsViewingRevisions: PropTypes.func,
-    toggleFocusMode: PropTypes.func.isRequired,
-    onSetEditorMode: PropTypes.func,
-    editorMode: PropTypes.string,
-    markdownEnabled: PropTypes.bool,
-  };
-
   static defaultProps = {
-    editorMode: 'edit',
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
-    onSetEditorMode: noop,
     onShowNoteInfo: noop,
     onShowRevisions: noop,
     onShareNote: noop,
@@ -64,7 +67,7 @@ export class NoteToolbar extends Component {
   setEditorMode = () => {
     const { editorMode } = this.props;
 
-    this.props.onSetEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
+    this.props.setEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
   };
 
   renderNormal = () => {
@@ -171,4 +174,12 @@ export class NoteToolbar extends Component {
   };
 }
 
-export default NoteToolbar;
+const mapStateToProps = (state: State) => ({
+  editorMode: state.ui.editorMode,
+});
+
+const mapDispatchToProps = {
+  setEditorMode: actions.ui.setEditorMode,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

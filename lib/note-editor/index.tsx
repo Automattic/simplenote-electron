@@ -1,33 +1,30 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 
-export class NoteEditor extends Component {
+import { State } from '../state';
+import { setEditorMode } from '../state/ui/actions';
+import * as T from '../types';
+
+type Props = {
+  isSmallScreen: boolean;
+  note: T.NoteEntity;
+  noteBucket: T.Bucket<T.Note>;
+  onNoteClosed: Function;
+  onUpdateContent: Function;
+  syncNote: Function;
+};
+
+type ConnectedProps = ReturnType<typeof mapStateToProps> &
+  typeof mapDispatchToProps;
+
+export class NoteEditor extends Component<Props & ConnectedProps> {
   static displayName = 'NoteEditor';
 
-  static propTypes = {
-    allTags: PropTypes.array.isRequired,
-    closeNote: PropTypes.func.isRequired,
-    editorMode: PropTypes.oneOf(['edit', 'markdown']),
-    isEditorActive: PropTypes.bool.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
-    filter: PropTypes.string.isRequired,
-    note: PropTypes.object,
-    noteBucket: PropTypes.object.isRequired,
-    fontSize: PropTypes.number,
-    onNoteClosed: PropTypes.func.isRequired,
-    onUpdateContent: PropTypes.func.isRequired,
-    revision: PropTypes.object,
-    setEditorMode: PropTypes.func.isRequired,
-    syncNote: PropTypes.func.isRequired,
-  };
-
   static defaultProps = {
-    editorMode: 'edit',
     note: {
       data: {
         tags: [],
@@ -68,7 +65,7 @@ export class NoteEditor extends Component {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
-      this.props.setEditorMode({ mode: nextEditorMode });
+      this.props.setEditorMode(nextEditorMode);
 
       event.stopPropagation();
       event.preventDefault();
@@ -118,7 +115,7 @@ export class NoteEditor extends Component {
 
   tagFieldHasFocus = () => this.tagFieldHasFocus && this.tagFieldHasFocus();
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable: boolean) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -161,20 +158,24 @@ export class NoteEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
-  allTags: state.tags,
-  filter: state.filter,
+const mapStateToProps = ({
+  appState: { filter, revision, showNavigation, tags },
+  settings,
+  ui: { editorMode },
+}: State) => ({
+  allTags: tags,
+  filter: filter,
   fontSize: settings.fontSize,
-  editorMode: state.editorMode,
-  isEditorActive: !state.showNavigation,
-  revision: state.revision,
+  editorMode,
+  isEditorActive: !showNavigation,
+  revision: revision,
 });
 
-const { closeNote, setEditorMode } = appState.actionCreators;
+const { closeNote } = appState.actionCreators;
 
-const mapDispatchToProps = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
-  setEditorMode: args => dispatch(setEditorMode(args)),
-});
+const mapDispatchToProps = {
+  closeNote,
+  setEditorMode,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

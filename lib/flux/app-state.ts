@@ -7,6 +7,7 @@ import analytics from '../analytics';
 
 import { AppState, State } from '../state';
 import * as T from '../types';
+import actions from '../state/actions';
 
 const debug = Debug('appState');
 
@@ -34,7 +35,6 @@ const toggleSystemTag = (
 };
 
 const initialState: AppState = {
-  editorMode: 'edit',
   filter: '',
   selectedNoteId: null,
   previousIndex: -1,
@@ -146,12 +146,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setEditorMode(state: AppState, { mode }: { mode: T.EditorMode }) {
-      return update(state, {
-        editorMode: { $set: mode },
-      });
-    },
-
     showDialog(state: AppState, { dialog }) {
       const { type, multiple = false, title, ...dialogProps } = dialog;
 
@@ -223,7 +217,7 @@ export const actionMap = new ActionMap({
           }
 
           if (settings.markdownEnabled) {
-            dispatch(this.action('setEditorMode', { mode: 'edit' }));
+            dispatch(actions.ui.setEditorMode('edit'));
           }
 
           // insert a new note into the store and select it

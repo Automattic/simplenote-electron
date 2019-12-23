@@ -67,8 +67,6 @@ export class NoteToolbarContainer extends Component<Props> {
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
-  onSetEditorMode = (mode: T.EditorMode) => this.props.setEditorMode({ mode });
-
   render() {
     const {
       editorMode,
@@ -81,7 +79,6 @@ export class NoteToolbarContainer extends Component<Props> {
       onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
-      onSetEditorMode: this.onSetEditorMode,
       onShowNoteInfo: this.props.toggleNoteInfo,
       onShowRevisions: this.onShowRevisions,
       onShareNote: this.onShareNote,
@@ -98,7 +95,7 @@ export class NoteToolbarContainer extends Component<Props> {
       ? revisionOrNote.data.systemTags.includes('markdown')
       : false;
 
-    return cloneElement(toolbar, { ...handlers, editorMode, markdownEnabled });
+    return cloneElement(toolbar, { ...handlers, markdownEnabled });
   }
 }
 
@@ -117,7 +114,6 @@ const {
   deleteNoteForever,
   noteRevisions,
   restoreNote,
-  setEditorMode,
   setIsViewingRevisions,
   showDialog,
   toggleNoteInfo,
@@ -129,7 +125,6 @@ const mapDispatchToProps = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  setEditorMode: args => dispatch(setEditorMode(args)),
   setIsViewingRevisions: (isViewingRevisions: boolean) => {
     dispatch(setIsViewingRevisions({ isViewingRevisions }));
   },
