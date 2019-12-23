@@ -725,6 +725,4 @@ export const actionMap = new ActionMap({
   },
 });
 
-actionMap.indexCtr = 0;
-
 export default actionMap;
