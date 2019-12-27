@@ -5,6 +5,7 @@ import { get, identity, invoke, noop } from 'lodash';
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
 const KEY_RIGHT = 39;
+const KEY_COMMA = 188;
 
 const startsWith = prefix => text =>
   text
@@ -101,6 +102,7 @@ export class TagInput extends Component {
     invoke(
       {
         [KEY_ENTER]: this.submitTag,
+        [KEY_COMMA]: this.submitTag,
         [KEY_TAB]: this.interceptTabPress,
         [KEY_RIGHT]: this.interceptRightArrow,
       },
@@ -149,9 +151,7 @@ export class TagInput extends Component {
       return;
     }
 
-    value.endsWith(',') && value.trim().length // commas should automatically insert non-zero tags
-      ? this.props.onSelect(value.slice(0, -1).trim())
-      : this.props.onChange(value.trim(), this.focusInput);
+    this.props.onChange(value.trim(), this.focusInput);
   };
 
   onCompositionEnd = e => {
