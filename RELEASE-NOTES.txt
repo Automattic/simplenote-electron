@@ -21,7 +21,7 @@
 - Delete unused tab restriction util [#1783](https://github.com/Automattic/simplenote-electron/pull/1783)
 - Migrate TransitionDelayEnter to React hooks [#1784](https://github.com/Automattic/simplenote-electron/pull/1784)
 - Added git hooks to run format, lints, and tests [#1790](https://github.com/Automattic/simplenote-electron/pull/1790)
-- Added React Hooks Eslinnt Plugin [#1789](https://github.com/Automattic/simplenote-electron/pull/1789)
+- Added React Hooks ESLint Plugin [#1789](https://github.com/Automattic/simplenote-electron/pull/1789)
 - Added end-to-end testing with Spectron [#1773](https://github.com/Automattic/simplenote-electron/pull/1773)
 
 ## [v1.13.0]
