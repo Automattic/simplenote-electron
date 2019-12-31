@@ -1,4 +1,4 @@
-import { Action } from 'redux';
+import { Action, Reducer } from 'redux';
 
 type ActionHandler<State> =
   | { creator: Function }
@@ -43,9 +43,10 @@ export class ActionMap<
 
         if (typeof handler === 'function') {
           this.actionCreators[name] = actionCreator.bind(`${namespace}${name}`);
-          this.actionReducers[`${namespace}${name}`] = handler as (
-            state: State
-          ) => State;
+          this.actionReducers[`${namespace}${name}`] = handler as Reducer<
+            State,
+            any
+          >;
         } else {
           this.actionCreators[name] =
             (handler as { creator: Function }).creator.bind(this) ||

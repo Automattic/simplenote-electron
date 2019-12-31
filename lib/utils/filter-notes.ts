@@ -118,7 +118,8 @@ export default function filterNotes(
   const notesToFilter = notesArray ? notesArray : notes;
 
   if (null === notesToFilter) {
-    return emptyList; // share the reference so the app doesn't re-render on shallow-compare
+    // share the reference so the app doesn't re-render on shallow-compare
+    return (emptyList as unknown) as NoteEntity[];
   }
 
   // skip into some imperative code for performance-critical code
