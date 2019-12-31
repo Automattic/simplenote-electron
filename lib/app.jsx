@@ -123,6 +123,7 @@ export const App = connect(
       preferencesBucket: PropTypes.object.isRequired,
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
+      systemTheme: PropTypes.string.isRequired,
       tagBucket: PropTypes.object.isRequired,
     };
 
@@ -314,16 +315,12 @@ export const App = connect(
         preferencesBucket: this.props.preferencesBucket,
       });
 
-    getSystemColorMode = () =>
-      window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-
     getTheme = () => {
       const {
         settings: { theme },
+        systemTheme,
       } = this.props;
-      return 'system' === theme ? this.getSystemColorMode() : theme;
+      return 'system' === theme ? systemTheme : theme;
     };
 
     initializeElectron = () => {
