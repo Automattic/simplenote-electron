@@ -23,6 +23,7 @@
 - Added git hooks to run format, lints, and tests [#1790](https://github.com/Automattic/simplenote-electron/pull/1790)
 - Added React Hooks ESLint Plugin [#1789](https://github.com/Automattic/simplenote-electron/pull/1789)
 - Added end-to-end testing with Spectron [#1773](https://github.com/Automattic/simplenote-electron/pull/1773)
+- Maintenance cleanups [#1796](https://github.com/Automattic/simplenote-electron/pull/1796)
 
 ## [v1.13.0]
 
