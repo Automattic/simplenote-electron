@@ -232,7 +232,7 @@ const renderNote = (
 
   const classes = classNames('note-list-item', {
     'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
-    'note-list-item-pinned': note.pinned,
+    'note-list-item-pinned': note.data.systemTags.includes('pinned'),
     'published-note': isPublished,
   });
 
@@ -491,7 +491,8 @@ export class NoteList extends Component {
     );
   }
 
-  onPinNote = note => this.props.onPinNote(note, !note.pinned);
+  onPinNote = note =>
+    this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
 const {
