@@ -41,8 +41,6 @@ jobs:
             openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
       - *npm_restore_cache
       - run: npm ci
-      - run: patch -p1 < ./resources/macos/macPackager-patch.diff
-      - run: patch -p1 < ./resources/macos/scheme-patch.diff
       - run: make build
       - run: make lint
       - run: make test
