@@ -4,7 +4,7 @@ const menuItems = require('./menu-items');
 const build = require('../detect/build');
 
 const macAppMenu = {
-  label: app.getName(),
+  label: app.name,
   submenu: [
     menuItems.about,
     ...(build.isMAS() ? [] : [menuItems.checkForUpdates]),
