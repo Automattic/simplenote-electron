@@ -18,6 +18,9 @@ module.exports = function(api) {
     '@babel/plugin-syntax-dynamic-import',
   ];
   const env = {
+    development: {
+      compact: false,
+    },
     test: {
       plugins: ['dynamic-import-node'],
     },
