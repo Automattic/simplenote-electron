@@ -26,6 +26,7 @@
 - Added end-to-end testing with Spectron [#1773](https://github.com/Automattic/simplenote-electron/pull/1773)
 - Removed a workaround for indexing note pinned status [#1795](https://github.com/Automattic/simplenote-electron/pull/1795)
 - Maintenance cleanups [#1796](https://github.com/Automattic/simplenote-electron/pull/1796), [#1797](https://github.com/Automattic/simplenote-electron/pull/1797)
+- Updated dependencies [#1802](https://github.com/Automattic/simplenote-electron/pull/1802)
 
 ## [v1.13.0]
 
