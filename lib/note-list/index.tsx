@@ -21,7 +21,6 @@ import { debounce, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
-import filterNotes from '../utils/filter-notes';
 import getNoteTitleAndPreview from './get-note-title-and-preview';
 import {
   decorateWith,
@@ -341,6 +340,7 @@ export class NoteList extends Component {
     } = this.props;
 
     if (
+      prevProps.filter !== this.props.filter ||
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== notes ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent
@@ -494,10 +494,12 @@ const {
 } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-const mapStateToProps = ({ appState: state, settings: { noteDisplay } }) => {
+const mapStateToProps = ({
+  appState: state,
+  ui: { filteredNotes },
+  settings: { noteDisplay },
+}) => {
   const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
-
-  const filteredNotes = filterNotes(state);
 
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];

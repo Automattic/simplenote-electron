@@ -32,6 +32,7 @@
 - Updated dependencies [#1802](https://github.com/Automattic/simplenote-electron/pull/1802)
 - Updated dependencies [#1821](https://github.com/Automattic/simplenote-electron/pull/1821)
 - Fixed build warning [#1806](https://github.com/Automattic/simplenote-electron/pull/1806)
+- Refactor how notes are filtered for better performance and maintainability [#1812](https://github.com/Automattic/simplenote-electron/pull/1812)
 
 ## [v1.13.0]
 

@@ -33,8 +33,6 @@ import {
 
 import * as settingsActions from './state/settings/actions';
 
-import filterNotes from './utils/filter-notes';
-
 const ipc = getIpcRenderer();
 
 const mapStateToProps = state => ({
@@ -361,13 +359,11 @@ export const App = connect(
 
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
-      const filteredNotes = filterNotes(this.props.appState);
+      const noteIndex = this.props.ui.filteredNotes.findIndex(
+        ({ id }) => note.id === id
+      );
 
-      const noteIndex = function(filteredNote) {
-        return note.id === filteredNote.id;
-      };
-
-      return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
+      return Math.max(noteIndex - 1, 0);
     };
 
     syncActivityHooks = data => {
