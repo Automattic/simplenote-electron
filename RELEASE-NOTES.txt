@@ -14,6 +14,7 @@
 - Fixed keyboard shortcut to toggle markdown preview [#1788](https://github.com/Automattic/simplenote-electron/pull/1788)
 - Fixed an issue where typing a comma in the tag input would insert an empty tag [#1798](https://github.com/Automattic/simplenote-electron/pull/1798)
 - When system theme is selected in Settings, changing the system theme is now immediately reflected in the app [#1801](https://github.com/Automattic/simplenote-electron/pull/1801)
+- Show all checkboxes and search results in note list [#1814](https://github.com/Automattic/simplenote-electron/pull/1814)
 
 ### Other Changes
 
