@@ -115,12 +115,12 @@ const rowHeightCache = f => (
   const note = notes[index];
 
   // handle special sections
-  switch (note.type) {
-    case 'header':
+  switch (note) {
+    case 'notes-header':
       return HEADER_HEIGHT;
     case 'tag-suggestions':
       return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
-    case 'empty':
+    case 'no-notes':
       return EMPTY_DIV_HEIGHT;
   }
 
@@ -206,11 +206,11 @@ const renderNote = (
   const note = notes['undefined' === typeof index ? rowIndex : index];
 
   // handle special sections
-  switch (note.type) {
-    case 'header':
+  switch (note) {
+    case 'notes-header':
       return (
         <div key={key} style={style} className="note-list-header">
-          {note.data}
+          Notes
         </div>
       );
     case 'tag-suggestions':
@@ -219,10 +219,10 @@ const renderNote = (
           <TagSuggestions />
         </div>
       );
-    case 'empty':
+    case 'no-notes':
       return (
         <div key={key} style={style} className="note-list is-empty">
-          <span className="note-list-placeholder">{note.data}</span>
+          <span className="note-list-placeholder">No Notes</span>
         </div>
       );
   }
@@ -285,24 +285,15 @@ const renderNote = (
  * @returns {Object[]} modified notes list
  */
 const createCompositeNoteList = (notes, filter, tagResultsFound) => {
-  if (filter.length > 0 && tagResultsFound > 0) {
-    if (notes.length === 0) {
-      notes.push({
-        type: 'empty',
-        data: 'No Notes',
-      });
-    }
-
-    notes.unshift({
-      type: 'header',
-      data: 'Notes',
-    });
-    notes.unshift({
-      type: 'tag-suggestions',
-      data: 'Tag Suggestions',
-    });
+  if (filter.length === 0 || tagResultsFound === 0) {
+    return notes;
   }
-  return notes;
+
+  return [
+    'tag-suggestions',
+    'notes-header',
+    ...(notes.length > 0 ? notes : ['no-notes']),
+  ];
 };
 
 export class NoteList extends Component {
