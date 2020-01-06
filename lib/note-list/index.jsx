@@ -247,12 +247,12 @@ const renderNote = (
     <div key={key} style={style} className={classes}>
       <div
         className="note-list-item-pinner"
-        tabIndex="0"
+        tabIndex={0}
         onClick={onPinNote.bind(null, note)}
       />
       <div
         className="note-list-item-text theme-color-border"
-        tabIndex="0"
+        tabIndex={0}
         onClick={selectNote}
       >
         <div className="note-list-item-title">
