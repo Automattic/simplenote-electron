@@ -126,7 +126,7 @@ const rowHeightCache = f => (
 
   const { preview } = getNoteTitleAndPreview(note);
 
-  const key = notes[index].id;
+  const key = note.id;
   const cached = previewCache.get(key);
 
   if ('undefined' !== typeof cached) {
