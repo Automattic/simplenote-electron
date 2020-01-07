@@ -73,7 +73,7 @@ const makeMatchesTag = (tag: TagEntity, filter = '') => (note: NoteEntity) => {
     }
   }
 
-  const givenTag = tag ? [get(tag, 'data.namer', '')] : [];
+  const givenTag = tag ? [get(tag, 'data.name', '')] : [];
 
   const noteTags = get(note, 'data.tags', []);
 
