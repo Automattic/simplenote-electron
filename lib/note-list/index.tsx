@@ -12,7 +12,7 @@
  * row height calculations should be double-checked
  * against performance regressions.
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { AutoSizer, List } from 'react-virtualized';
 import PublishIcon from '../icons/feed';
@@ -299,6 +299,8 @@ const createCompositeNoteList = (notes, filter, tagResultsFound) => {
 export class NoteList extends Component {
   static displayName = 'NoteList';
 
+  list = createRef();
+
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
     filter: PropTypes.string.isRequired,
@@ -320,7 +322,7 @@ export class NoteList extends Component {
      * performance hits due to row height computation
      */
     this.recomputeHeights = debounce(
-      () => this.list && this.list.recomputeRowHeights(),
+      () => this.list.current && this.list.current.recomputeRowHeights(),
       TYPING_DEBOUNCE_DELAY,
       { maxWait: TYPING_DEBOUNCE_MAX }
     );
@@ -391,8 +393,6 @@ export class NoteList extends Component {
     return true;
   };
 
-  refList = r => (this.list = r);
-
   toggleShortcuts = doEnable => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
@@ -454,7 +454,7 @@ export class NoteList extends Component {
               <AutoSizer>
                 {({ height, width }) => (
                   <List
-                    ref={this.refList}
+                    ref={this.list}
                     estimatedRowSize={
                       ROW_HEIGHT_BASE +
                       ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
