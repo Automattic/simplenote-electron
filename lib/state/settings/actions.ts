@@ -1,8 +1,9 @@
 import { getIpcRenderer } from '../../utils/electron';
+import * as A from '../action-types';
 
 const ipc = getIpcRenderer();
 
-export const setFontSize = fontSize => ({
+export const setFontSize = (fontSize?: number): A.SetFontSize => ({
   type: 'setFontSize',
   fontSize,
 });
@@ -69,7 +70,7 @@ export const setAccountName = accountName => ({
   accountName,
 });
 
-export const setWPToken = token => ({
+export const setWPToken = (token: string) => ({
   type: 'setWPToken',
   token,
 });

@@ -13,6 +13,13 @@ import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
 
+import { MapDispatchToProps } from '../state';
+
+type DispatchProps = {
+  resetErrors: () => any;
+  saveWPToken: (token: string) => any;
+};
+
 export class Auth extends Component {
   static propTypes = {
     authorizeUserWithToken: PropTypes.func.isRequired,
@@ -339,10 +346,10 @@ export class Auth extends Component {
   };
 }
 
-const mapDispatchToProps = dispatch => ({
-  resetErrors: () => dispatch(reset()),
-  saveWPToken: token => dispatch(setWPToken(token)),
-});
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = {
+  resetErrors: reset,
+  saveWPToken: setWPToken,
+};
 
 const mapStateToProps = state => ({
   hasInvalidCredentials: hasInvalidCredentials(state),

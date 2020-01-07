@@ -1,20 +1,23 @@
 import { difference, union } from 'lodash';
 import { combineReducers } from 'redux';
-import { FILTER_NOTES, TAG_DRAWER_TOGGLE } from '../action-types';
+import * as A from '../action-types';
 
 import * as T from '../../types';
 
 const defaultVisiblePanes = ['editor', 'noteList'];
 const emptyList: unknown[] = [];
 
-const filteredNotes = (
+const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   state = emptyList as T.NoteEntity[],
-  { type, notes }: { type: string; notes: T.NoteEntity[] }
-) => (FILTER_NOTES === type ? notes : state);
+  action
+) => ('FILTER_NOTES' === action.type ? action.notes : state);
 
-const visiblePanes = (state = defaultVisiblePanes, { type, show }) => {
-  if (TAG_DRAWER_TOGGLE === type) {
-    return show
+const visiblePanes: A.Reducer<string[]> = (
+  state = defaultVisiblePanes,
+  action
+) => {
+  if ('TAG_DRAWER_TOGGLE' === action.type) {
+    return action.show
       ? union(state, ['tagDrawer'])
       : difference(state, ['tagDrawer']);
   }

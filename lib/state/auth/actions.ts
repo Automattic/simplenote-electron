@@ -1,4 +1,4 @@
-import { AUTH_SET } from '../action-types';
+import * as A from '../action-types';
 
 import {
   Authorized,
@@ -8,27 +8,27 @@ import {
   NotAuthorized,
 } from './constants';
 
-export const reset = () => ({
-  type: AUTH_SET,
+export const reset = (): A.AuthSet => ({
+  type: 'AUTH_SET',
   status: NotAuthorized,
 });
 
-export const setInvalidCredentials = () => ({
-  type: AUTH_SET,
+export const setInvalidCredentials = (): A.AuthSet => ({
+  type: 'AUTH_SET',
   status: InvalidCredentials,
 });
 
-export const setLoginError = () => ({
-  type: AUTH_SET,
+export const setLoginError = (): A.AuthSet => ({
+  type: 'AUTH_SET',
   status: LoginError,
 });
 
-export const setPending = () => ({
-  type: AUTH_SET,
+export const setPending = (): A.AuthSet => ({
+  type: 'AUTH_SET',
   status: Authorizing,
 });
 
-export const setAuthorized = () => ({
-  type: AUTH_SET,
+export const setAuthorized = (): A.AuthSet => ({
+  type: 'AUTH_SET',
   status: Authorized,
 });

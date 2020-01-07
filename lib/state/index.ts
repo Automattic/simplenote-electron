@@ -4,7 +4,13 @@
  * All data should flow through here
  */
 
-import { compose, createStore, combineReducers, applyMiddleware } from 'redux';
+import {
+  applyMiddleware,
+  combineReducers,
+  compose,
+  createStore,
+  Reducer,
+} from 'redux';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 import { omit } from 'lodash';
@@ -17,6 +23,7 @@ import auth from './auth/reducer';
 import settings from './settings/reducer';
 import ui from './ui/reducer';
 
+import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
@@ -44,8 +51,8 @@ export type AppState = {
   unsyncedNoteIds: T.EntityId[];
 };
 
-export const reducers = combineReducers({
-  appState: appState.reducer.bind(appState),
+export const reducers: Reducer<State, A.ActionType> = combineReducers({
+  appState: appState.reducer.bind(appState) as Reducer<AppState, A.ActionType>,
   auth,
   settings,
   ui,
@@ -58,7 +65,7 @@ export type State = {
   ui: ReturnType<typeof ui>;
 };
 
-export const store = createStore(
+export const store = createStore<State, A.ActionType, {}, {}>(
   reducers,
   compose(
     persistState('settings', {
@@ -71,5 +78,17 @@ export const store = createStore(
     applyMiddleware(thunk, uiMiddleware)
   )
 );
+
+export type MapDispatchToPropsFunction<DispatchProps, OwnProps> = (
+  dispatch: <T extends A.ActionType>(action: T) => T,
+  ownProps: OwnProps
+) => DispatchProps;
+
+export type MapDispatchToProps<
+  DispatchProps extends {
+    [P in keyof DispatchProps]: (...args: any[]) => A.ActionType;
+  },
+  OwnProps
+> = MapDispatchToPropsFunction<DispatchProps, OwnProps> | DispatchProps;
 
 export default store;
