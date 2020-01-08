@@ -134,6 +134,14 @@ const isAllowedAttr = (tagName, attrName, value) => {
           return false;
       }
 
+    case 'ol':
+      switch (attrName) {
+        case 'start':
+          return true;
+        default:
+          return false;
+      }
+
     default:
       return false;
   }
