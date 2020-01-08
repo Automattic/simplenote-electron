@@ -16,6 +16,7 @@ export const renderNoteToHtml = content => {
       markdownConverter.setFlavor('github');
       markdownConverter.setOption('simpleLineBreaks', false); // override GFM
       markdownConverter.setOption('ghMentions', false);
+      markdownConverter.setOption('smoothLivePreview', true);
 
       return sanitizeHtml(markdownConverter.makeHtml(content));
     }
