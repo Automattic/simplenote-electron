@@ -348,11 +348,6 @@ export class NoteList extends Component {
       this.recomputeHeights();
     }
 
-    // Ensure that the note selected here is also selected in the editor
-    if (selectedNoteId !== prevProps.selectedNoteId) {
-      onSelectNote(selectedNoteId);
-    }
-
     // Deselect the currently selected note if it doesn't match the search query
     if (filter !== prevProps.filter) {
       const selectedNotePassesFilter = notes.some(

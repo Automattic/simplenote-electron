@@ -6,7 +6,7 @@ import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 
-const { search, setSearchFocus } = appState.actionCreators;
+const { searchAndSelectFirstNote, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 const SEARCH_DELAY = 500;
@@ -108,7 +108,7 @@ const mapStateToProps = ({ appState: state }) => ({
 
 const mapDispatchToProps = dispatch => ({
   onSearch: filter => {
-    dispatch(search({ filter }));
+    dispatch(searchAndSelectFirstNote({ filter }));
     recordEvent('list_notes_searched');
   },
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),

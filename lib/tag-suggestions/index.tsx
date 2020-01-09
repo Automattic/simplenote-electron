@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 
-const { search, setSearchFocus } = appState.actionCreators;
+const { searchAndSelectFirstNote, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 export class TagSuggestions extends Component {
@@ -111,7 +111,7 @@ const mapStateToProps = ({ appState: state }) => ({
 
 const mapDispatchToProps = dispatch => ({
   onSearch: filter => {
-    dispatch(search({ filter }));
+    dispatch(searchAndSelectFirstNote({ filter }));
     recordEvent('list_notes_searched');
     dispatch(setSearchFocus({ searchFocus: true }));
   },

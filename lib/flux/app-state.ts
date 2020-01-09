@@ -206,6 +206,19 @@ export const actionMap = new ActionMap({
       });
     },
 
+    searchAndSelectFirstNote: {
+      creator({ filter }: { filter: T.TagEntity }) {
+        return (dispatch, getState) => {
+          dispatch(this.action('search', { filter }));
+          dispatch(
+            this.action('notesLoaded', {
+              notes: getState().appState.notes,
+            })
+          );
+        };
+      },
+    },
+
     newNote: {
       creator({
         noteBucket,
