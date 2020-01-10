@@ -28,7 +28,7 @@ export type Note = {
 export type NoteEntity = Entity<Note>;
 
 export type Tag = {
-  index: number;
+  index?: number;
   name: TagName;
 };
 

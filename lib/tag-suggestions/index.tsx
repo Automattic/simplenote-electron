@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 
+import { State } from '../state';
+import * as T from '../types';
+
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
@@ -58,37 +61,56 @@ export class TagSuggestions extends Component {
   }
 }
 
-export const filterTags = (tags, query) =>
-  query
-    ? tags
-        .filter(tag => {
-          // split on spaces and treat each "word" as a separate query
-          let queryWords = query.trim().split(' ');
+/**
+ * Return the first maxResults matching items in the list
+ *
+ * This is like items.filter(predicate).slice(0,maxResults)
+ * but it early-aborts as soon as we find our max results.
+ * If we were filtering thousands of tags, for example, there'd
+ * be no reason to iterate through all of them and only prune
+ * the list after computing whether each one matches.
+ *
+ * @param items items to filter
+ * @param predicate filtering function
+ * @param maxResults maximum number of returned matching items
+ */
+const filterAtMost = function<I>(
+  items: I[],
+  predicate: (item: I) => boolean,
+  maxResults: number
+): I[] {
+  const results = [];
+  for (const item of items) {
+    if (predicate(item)) {
+      results.push(item);
+    }
 
-          // we'll only suggest matches for the last word
-          // ...this is possibly naive if the user has moved back and is editing,
-          // but without knowing where the cursor is it's maybe the best we can do
-          let testQuery = queryWords[queryWords.length - 1];
+    if (results.length === maxResults) {
+      break;
+    }
+  }
+  return results;
+};
 
-          // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
-          // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
-          // of tags that contain the string "tag:" ¯\_(ツ)_/¯
-          let testID = 'tag:' + tag.data.name;
+export const filterTags = (tags: T.TagEntity[], query: string) => {
+  const tagTerm = query
+    .trim()
+    .split(' ')
+    .pop();
 
-          // exception: if the user typed "tag:" or some subset thereof, don't return all tags
-          if (['t', 'ta', 'tag', 'tag:'].includes(testQuery)) {
-            testID = tag.data.name;
-          }
+  if (!tagTerm) {
+    return tags;
+  }
 
-          return (
-            testID.search(new RegExp('(tag:)?' + testQuery, 'i')) !== -1 &&
-            // discard exact matches -- if the user has already typed or clicked
-            // the full tag name, don't suggest it
-            !queryWords.includes(testID)
-          );
-        })
-        .slice(0, 5)
-    : tags; // don't bother filtering if we don't have a query to filter by
+  const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
+  const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
+
+  const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
+    ? ({ data: { name } }) => name !== term && name.startsWith(term)
+    : ({ data: { name } }) => name.includes(term);
+
+  return filterAtMost(tags, matcher, 5);
+};
 
 let lastTags = null;
 let lastQuery = null;
@@ -104,7 +126,7 @@ export const getMatchingTags = (tags, query) => {
   return lastMatches;
 };
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps = ({ appState: state }: State) => ({
   filteredTags: getMatchingTags(state.tags, state.filter),
   query: state.filter,
 });

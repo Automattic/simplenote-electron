@@ -1,15 +1,19 @@
 import { filterTags } from './';
 
-const t = (name: string) => ({ data: { name } });
-const animals = ['bat', 'cat', 'dog', 'owl'].map(t);
-const prefixen = ['do', 'doo', 'door', 'doort', 'doorth'].map(t);
-const infixen = ['unicode', 'sourcecode', 'codewars'].map(t);
-const taggers = ['atag', 'atag:what?', 'tag'].map(t);
+import { TagEntity as T } from '../types';
+
+const t = (name: string) => ({ id: name, data: { name }, version: 1 });
+const animals: T[] = ['bat', 'cat', 'dog', 'owl'].map(t);
+const prefixen: T[] = ['do', 'doo', 'door', 'doort', 'doorth'].map(t);
+const infixen: T[] = ['unicode', 'sourcecode', 'codewars'].map(t);
+const taggers: T[] = ['atag', 'atag:what?', 'tag'].map(t);
 
 it('only filters if given a query', () => {
   const tags = ['a', 'b'].map(t);
 
   expect(filterTags(tags, '')).toBe(tags);
+  expect(filterTags(tags, ' \t ')).toBe(tags);
+  expect(filterTags(tags, '    ')).toBe(tags);
 });
 
 it.each(animals)('finds full-tag matches', animal => {
