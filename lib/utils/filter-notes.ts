@@ -4,7 +4,7 @@
 import { difference, escapeRegExp, get } from 'lodash';
 import { NoteEntity, TagEntity } from '../types';
 
-const tagPattern = () => /(?:\btag:)([\w-]+)(?!\B)/g;
+const tagPattern = () => /(?:\btag:)([^\s,]+)/g;
 
 export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
 export const filterHasText = (filter: string) => !!withoutTags(filter);
