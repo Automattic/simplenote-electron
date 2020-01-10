@@ -1,23 +1,15 @@
-/**
- * @module NoteList
- *
- * This module includes some ugly code.
- * The note list display is a significant source of
- * visual re-render lag for accounts with many notes.
- * The trade-offs in this file reflect a decision to
- * optimize heavy inner loops for performance over
- * code burden.
- *
- * Any changes to this code which could affect the
- * row height calculations should be double-checked
- * against performance regressions.
- */
 import React, { Component, Fragment, createRef } from 'react';
 import PropTypes from 'prop-types';
-import { AutoSizer, List } from 'react-virtualized';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List,
+  ListRowRenderer,
+} from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
-import { debounce, get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
@@ -32,150 +24,12 @@ import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
 
-/**
- * Delay for preventing row height calculation thrashing
- *
- * this constant was determined experimentally
- * and is open to adjustment if it doesn't find
- * the proper balance between visual updates
- * and performance impacts recomputing row heights
- *
- * @type {Number} minimum number of ms between calls to recomputeRowHeights in virtual/list
- */
-const TYPING_DEBOUNCE_DELAY = 70;
-
-/**
- * Maximum delay when debouncing the row height calculation
- *
- * this is used to make sure that we don't endlessly delay
- * the row height recalculation in situations like when we
- * are constantly typing without pause. by setting this value
- * we can make sure that the updates don't happen
- * less-frequently than the number of ms set here
- *
- * @type {Number} maximum number of ms between calls when debouncing recomputeRowHeights in virtual/list
- */
-const TYPING_DEBOUNCE_MAX = 1000;
-
-/** @type {Number} height of title + vertical padding in list rows */
-const ROW_HEIGHT_BASE = 24 + 18;
-
-/** @type {Number} height of one row of preview text in list rows */
-const ROW_HEIGHT_LINE = 21;
-
-/** @type {Object.<String, Number>} maximum number of lines to display in list rows for display mode */
-const maxPreviewLines = {
-  comfy: 1,
-  condensed: 0,
-  expanded: 4,
-};
-
-/** @type {Number} height of a single header in list rows */
-const HEADER_HEIGHT = 28;
-
-/** @type {Number} height of a single tag result row in list rows */
-const TAG_ROW_HEIGHT = 40;
-
-/** @type {Number} height of a the empty "No Notes" div in the notes list */
-const EMPTY_DIV_HEIGHT = 200;
-
-/**
- * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
- *
- * @see http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
- *
- * @param {String} text The text to be rendered.
- * @param {String} width width of the containing area in which the text is rendered
- * @returns {number} width of rendered text in pixels
- */
-function getTextWidth(text, width) {
-  const canvas =
-    getTextWidth.canvas ||
-    (getTextWidth.canvas = document.createElement('canvas'));
-  canvas.width = width;
-  const context = canvas.getContext('2d');
-  context.font = '16px arial';
-  return context.measureText(text).width;
-}
-
-/** @type {Map} stores a cache of computed row heights to prevent re-rendering the canvas calculation */
-const previewCache = new Map();
-
-/**
- * Caches based on note id, width, note display format, and note preview excerpt
- *
- * @param {Function} f produces the row height
- * @returns {Number} row height for note in list
- */
-const rowHeightCache = f => (
-  notes,
-  { noteDisplay, tagResultsFound, width }
-) => ({ index }) => {
-  const note = notes[index];
-
-  // handle special sections
-  switch (note) {
-    case 'notes-header':
-      return HEADER_HEIGHT;
-    case 'tag-suggestions':
-      return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
-    case 'no-notes':
-      return EMPTY_DIV_HEIGHT;
-  }
-
-  const { preview } = getNoteTitleAndPreview(note);
-
-  const key = note.id;
-  const cached = previewCache.get(key);
-
-  if ('undefined' !== typeof cached) {
-    const [cWidth, cNoteDisplay, cPreview, cHeight] = cached;
-
-    if (
-      cWidth === width &&
-      cNoteDisplay === noteDisplay &&
-      cPreview === preview
-    ) {
-      return cHeight;
-    }
-  }
-
-  const height = f(width, noteDisplay, preview);
-
-  previewCache.set(key, [width, noteDisplay, preview, height]);
-
-  return height;
-};
-
-/**
- * Computes the pixel height of a row for a given preview text in the list
- *
- * @param {Number} width how wide the list renders
- * @param {String} noteDisplay mode of list display: 'comfy', 'condensed', or 'expanded'
- * @param {String} preview preview snippet from note
- * @returns {Number} height of the row in the list
- */
-const computeRowHeight = (width, noteDisplay, preview) => {
-  if ('condensed' === noteDisplay) {
-    return ROW_HEIGHT_BASE;
-  }
-
-  const lines = Math.ceil(getTextWidth(preview, width - 24) / (width - 24));
-  return (
-    ROW_HEIGHT_BASE +
-    ROW_HEIGHT_LINE * Math.min(maxPreviewLines[noteDisplay], lines)
-  );
-};
-
-/**
- * Estimates the pixel height of a given row in the note list
- *
- * This function utilizes a cache to prevent rerendering the text into a canvas
- * @see rowHeightCache
- *
- * @function
- */
-const getRowHeight = rowHeightCache(computeRowHeight);
+const heightCache = new CellMeasurerCache({
+  // row height base is 21px for the title + 18px vertical padding
+  // max preview lines is 4 lines of 24px
+  defaultHeight: 21 + 18 + 24 * 4,
+  fixedWidth: true,
+});
 
 /**
  * Renders an individual row in the note list
@@ -201,37 +55,42 @@ const renderNote = (
     onPinNote,
     isSmallScreen,
   }
-) => ({ index, rowIndex, key, style }) => {
-  const note = notes['undefined' === typeof index ? rowIndex : index];
+): ListRowRenderer => ({ index, key, parent, style }) => {
+  const note = notes[index];
 
-  // handle special sections
-  switch (note) {
-    case 'notes-header':
-      return (
-        <div key={key} style={style} className="note-list-header">
-          Notes
-        </div>
-      );
-    case 'tag-suggestions':
-      return (
-        <div key={key} style={style}>
+  if (
+    'tag-suggestions' === note ||
+    'notes-header' === note ||
+    'no-notes' === note
+  ) {
+    return (
+      <CellMeasurer
+        cache={heightCache}
+        columnIndex={0}
+        key={key}
+        parent={parent}
+        rowIndex={index}
+      >
+        {'tag-suggestions' === note ? (
           <TagSuggestions />
-        </div>
-      );
-    case 'no-notes':
-      return (
-        <div key={key} style={style} className="note-list is-empty">
-          <span className="note-list-placeholder">No Notes</span>
-        </div>
-      );
+        ) : 'notes-header' === note ? (
+          <div className="note-list-header">Notes</div>
+        ) : (
+          <div className="note-list is-empty">
+            <span className="note-list-placeholder">No Notes</span>
+          </div>
+        )}
+      </CellMeasurer>
+    );
   }
 
   const { title, preview } = getNoteTitleAndPreview(note);
-  const isPublished = !isEmpty(note.data.publishURL);
+  const isPinned = note.data.systemTags.includes('pinned');
+  const isPublished = note.data.publishURL && note.data.publishURL.length > 0;
 
   const classes = classNames('note-list-item', {
     'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
-    'note-list-item-pinned': note.data.systemTags.includes('pinned'),
+    'note-list-item-pinned': isPinned,
     'published-note': isPublished,
   });
 
@@ -243,32 +102,40 @@ const renderNote = (
   };
 
   return (
-    <div key={key} style={style} className={classes}>
-      <div
-        className="note-list-item-pinner"
-        tabIndex={0}
-        onClick={onPinNote.bind(null, note)}
-      />
-      <div
-        className="note-list-item-text theme-color-border"
-        tabIndex={0}
-        onClick={selectNote}
-      >
-        <div className="note-list-item-title">
-          <span>{decorateWith(decorators, title)}</span>
-          {isPublished && (
-            <div className="note-list-item-published-icon">
-              <PublishIcon />
+    <CellMeasurer
+      cache={heightCache}
+      columnIndex={0}
+      key={key}
+      parent={parent}
+      rowIndex={index}
+    >
+      <div style={style} className={classes}>
+        <div
+          className="note-list-item-pinner"
+          tabIndex={0}
+          onClick={() => onPinNote(note, !isPinned)}
+        />
+        <div
+          className="note-list-item-text theme-color-border"
+          tabIndex={0}
+          onClick={selectNote}
+        >
+          <div className="note-list-item-title">
+            <span>{decorateWith(decorators, title)}</span>
+            {isPublished && (
+              <div className="note-list-item-published-icon">
+                <PublishIcon />
+              </div>
+            )}
+          </div>
+          {'condensed' !== noteDisplay && preview.trim() && (
+            <div className="note-list-item-excerpt">
+              {decorateWith(decorators, preview)}
             </div>
           )}
         </div>
-        {'condensed' !== noteDisplay && preview.trim() && (
-          <div className="note-list-item-excerpt">
-            {decorateWith(decorators, preview)}
-          </div>
-        )}
       </div>
-    </div>
+    </CellMeasurer>
   );
 };
 
@@ -298,7 +165,7 @@ const createCompositeNoteList = (notes, filter, tagResultsFound) => {
 export class NoteList extends Component {
   static displayName = 'NoteList';
 
-  list = createRef();
+  list = createRef<List>();
 
   static propTypes = {
     closeNote: PropTypes.func.isRequired,
@@ -316,18 +183,20 @@ export class NoteList extends Component {
   };
 
   componentDidMount() {
-    /**
-     * Prevents rapid changes from incurring major
-     * performance hits due to row height computation
-     */
-    this.recomputeHeights = debounce(
-      () => this.list.current && this.list.current.recomputeRowHeights(),
-      TYPING_DEBOUNCE_DELAY,
-      { maxWait: TYPING_DEBOUNCE_MAX }
-    );
-
     this.toggleShortcuts(true);
     window.addEventListener('resize', this.recomputeHeights);
+  }
+
+  componentWillReceiveProps(nextProps): void {
+    if (
+      nextProps.tagResultsFound !== this.props.tagResultsFound ||
+      nextProps.filter !== this.props.filter ||
+      nextProps.noteDisplay !== this.props.noteDisplay ||
+      nextProps.notes !== this.props.notes ||
+      nextProps.selectedNoteContent !== this.props.selectedNoteContent
+    ) {
+      heightCache.clearAll();
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -338,15 +207,6 @@ export class NoteList extends Component {
       onSelectNote,
       selectedNoteId,
     } = this.props;
-
-    if (
-      prevProps.filter !== this.props.filter ||
-      prevProps.noteDisplay !== this.props.noteDisplay ||
-      prevProps.notes !== notes ||
-      prevProps.selectedNoteContent !== this.props.selectedNoteContent
-    ) {
-      this.recomputeHeights();
-    }
 
     // Ensure that the note selected here is also selected in the editor
     if (selectedNoteId !== prevProps.selectedNoteId) {
@@ -409,6 +269,7 @@ export class NoteList extends Component {
       onNoteOpened,
       onSelectNote,
       onEmptyTrash,
+      onPinNote,
       noteDisplay,
       showTrash,
       tagResultsFound,
@@ -416,16 +277,15 @@ export class NoteList extends Component {
       isSmallScreen,
     } = this.props;
 
-    const listItemsClasses = classNames('note-list-items', noteDisplay);
-
     const renderNoteRow = renderNote(notes, {
       filter,
       noteDisplay,
       onNoteOpened,
       onSelectNote,
-      onPinNote: this.onPinNote,
+      onPinNote,
       selectedNoteId,
       isSmallScreen,
+      tagResultsFound,
     });
 
     const isEmptyList = notes.length === 0;
@@ -450,25 +310,17 @@ export class NoteList extends Component {
           </span>
         ) : (
           <Fragment>
-            <div className={listItemsClasses}>
+            <div className={`note-list-items ${noteDisplay}`}>
               <AutoSizer>
                 {({ height, width }) => (
                   <List
                     ref={this.list}
-                    estimatedRowSize={
-                      ROW_HEIGHT_BASE +
-                      ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
-                    }
+                    estimatedRowSize={24 + 18 + 21 * 4}
                     height={height}
                     noteDisplay={noteDisplay}
                     notes={notes}
                     rowCount={notes.length}
-                    rowHeight={getRowHeight(notes, {
-                      filter,
-                      noteDisplay,
-                      tagResultsFound,
-                      width,
-                    })}
+                    rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
                     width={width}
                   />
@@ -481,9 +333,6 @@ export class NoteList extends Component {
       </div>
     );
   }
-
-  onPinNote = note =>
-    this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
 const {
