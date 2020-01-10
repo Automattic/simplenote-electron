@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
+import { escapeRegExp } from 'lodash';
 
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
@@ -68,7 +69,7 @@ const filterTags = (tags, query) =>
           // we'll only suggest matches for the last word
           // ...this is possibly naive if the user has moved back and is editing,
           // but without knowing where the cursor is it's maybe the best we can do
-          let testQuery = queryWords[queryWords.length - 1];
+          let testQuery = escapeRegExp(queryWords[queryWords.length - 1]);
 
           // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
           // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
