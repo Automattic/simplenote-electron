@@ -58,7 +58,7 @@ export class TagSuggestions extends Component {
   }
 }
 
-const filterTags = (tags, query) =>
+export const filterTags = (tags, query) =>
   query
     ? tags
         .filter(tag => {
