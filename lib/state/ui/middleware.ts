@@ -12,23 +12,31 @@ export default store => {
     const result = next(action);
 
     switch (action.type) {
+      // on clicks re-filter "immediately"
       case 'App.authChanged':
       case 'App.deleteNoteForever':
       case 'App.notesLoaded':
       case 'App.restoreNote':
-      case 'App.showAllNotes':
       case 'App.selectTag':
       case 'App.selectTrash':
+      case 'App.showAllNotes':
       case 'App.tagsLoaded':
       case 'App.trashNote':
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(updateNotes, 50);
         break;
 
+      // on updating the search field we should delay the update
+      // so we don't waste our CPU time and lose responsiveness
       case 'App.noteUpdatedRemotely':
       case 'App.search':
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(updateNotes, 500);
+        if ('App.search' === action.type && !action.filter) {
+          // if we just cleared out the search bar then immediately update
+          updateNotes();
+        } else {
+          searchTimeout = setTimeout(updateNotes, 500);
+        }
         break;
     }
 
