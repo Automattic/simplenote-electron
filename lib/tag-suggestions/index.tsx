@@ -1,20 +1,27 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
+
+import { State } from '../state';
+import * as T from '../types';
 
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-export class TagSuggestions extends Component {
-  static displayName = 'TagSuggestions';
+type StateProps = {
+  filteredTags: T.TagEntity[];
+  query: string;
+};
 
-  static propTypes = {
-    filteredTags: PropTypes.array.isRequired,
-    onSearch: PropTypes.func.isRequired,
-    query: PropTypes.string.isRequired,
-  };
+type DispatchProps = {
+  onSearch: (filter: string) => void;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class TagSuggestions extends Component<Props> {
+  static displayName = 'TagSuggestions';
 
   updateSearch = filter => {
     const { query, onSearch } = this.props;
@@ -93,7 +100,11 @@ const filterTags = (tags, query) =>
 let lastTags = null;
 let lastQuery = null;
 let lastMatches = [];
-export const getMatchingTags = (tags, query) => {
+
+export const getMatchingTags = (
+  tags: T.TagEntity[],
+  query: string
+): T.TagEntity[] => {
   if (lastTags === tags && lastQuery === query) {
     return lastMatches;
   }
@@ -104,13 +115,15 @@ export const getMatchingTags = (tags, query) => {
   return lastMatches;
 };
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps: MapStateToProps<StateProps, {}, State> = ({
+  appState: state,
+}) => ({
   filteredTags: getMatchingTags(state.tags, state.filter),
   query: state.filter,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSearch: filter => {
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = dispatch => ({
+  onSearch: (filter: string) => {
     dispatch(search({ filter }));
     recordEvent('list_notes_searched');
     dispatch(setSearchFocus({ searchFocus: true }));

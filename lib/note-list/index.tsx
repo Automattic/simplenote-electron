@@ -13,12 +13,11 @@
  * against performance regressions.
  */
 import React, { Component, Fragment, createRef } from 'react';
-import PropTypes from 'prop-types';
-import { AutoSizer, List } from 'react-virtualized';
+import { AutoSizer, List, ListRowRenderer } from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
 import { debounce, get, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
+import { connect, MapDispatchToProps } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import getNoteTitleAndPreview from './get-note-title-and-preview';
@@ -28,6 +27,9 @@ import {
   makeFilterDecorator,
 } from './decorators';
 import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
+
+import { State } from '../state';
+import * as T from '../types';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -79,6 +81,8 @@ const TAG_ROW_HEIGHT = 40;
 /** @type {Number} height of a the empty "No Notes" div in the notes list */
 const EMPTY_DIV_HEIGHT = 200;
 
+const sizingCanvas = document.createElement('canvas');
+
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
  *
@@ -88,12 +92,12 @@ const EMPTY_DIV_HEIGHT = 200;
  * @param {String} width width of the containing area in which the text is rendered
  * @returns {number} width of rendered text in pixels
  */
-function getTextWidth(text, width) {
-  const canvas =
-    getTextWidth.canvas ||
-    (getTextWidth.canvas = document.createElement('canvas'));
-  canvas.width = width;
-  const context = canvas.getContext('2d');
+function getTextWidth(text: string, width: number) {
+  sizingCanvas.width = width;
+  const context = sizingCanvas.getContext('2d');
+  if (!context) {
+    return width;
+  }
   context.font = '16px arial';
   return context.measureText(text).width;
 }
@@ -107,12 +111,17 @@ const previewCache = new Map();
  * @param {Function} f produces the row height
  * @returns {Number} row height for note in list
  */
-const rowHeightCache = f => (
-  notes,
-  { noteDisplay, tagResultsFound, width }
-) => ({ index }) => {
+const rowHeightCache = (
+  f: (width: number, noteDisplay: T.ListDisplayMode, preview: string) => number
+) => (
+  notes: ListItem[],
+  {
+    noteDisplay,
+    tagResultsFound,
+    width,
+  }: { noteDisplay: T.ListDisplayMode; tagResultsFound: number; width: number }
+) => ({ index }: { index: number }) => {
   const note = notes[index];
-
   // handle special sections
   switch (note) {
     case 'notes-header':
@@ -155,7 +164,11 @@ const rowHeightCache = f => (
  * @param {String} preview preview snippet from note
  * @returns {Number} height of the row in the list
  */
-const computeRowHeight = (width, noteDisplay, preview) => {
+const computeRowHeight = (
+  width: number,
+  noteDisplay: T.ListDisplayMode,
+  preview: string
+) => {
   if ('condensed' === noteDisplay) {
     return ROW_HEIGHT_BASE;
   }
@@ -191,7 +204,7 @@ const getRowHeight = rowHeightCache(computeRowHeight);
  * @returns {Function} does the actual rendering for the List
  */
 const renderNote = (
-  notes,
+  notes: ListItem[],
   {
     filter,
     noteDisplay,
@@ -200,9 +213,18 @@ const renderNote = (
     onSelectNote,
     onPinNote,
     isSmallScreen,
-  }
-) => ({ index, rowIndex, key, style }) => {
-  const note = notes['undefined' === typeof index ? rowIndex : index];
+  }: Pick<
+    Props,
+    | 'filter'
+    | 'noteDisplay'
+    | 'selectedNoteId'
+    | 'onNoteOpened'
+    | 'onSelectNote'
+    | 'onPinNote'
+    | 'isSmallScreen'
+  >
+): ListRowRenderer => ({ index, key, style }) => {
+  const note = notes[index];
 
   // handle special sections
   switch (note) {
@@ -272,6 +294,8 @@ const renderNote = (
   );
 };
 
+type ListItem = 'tag-suggestions' | 'notes-header' | 'no-notes' | T.NoteEntity;
+
 /**
  * Modifies the filtered notes list to insert special sections. This
  * allows us to handle tag suggestions and headers in the row renderer.
@@ -283,7 +307,11 @@ const renderNote = (
  * @param {Number} tagResultsFound number of tag matches to display
  * @returns {Object[]} modified notes list
  */
-const createCompositeNoteList = (notes, filter, tagResultsFound) => {
+const createCompositeNoteList = (
+  notes: ListItem[],
+  filter: string,
+  tagResultsFound: number
+): ListItem[] => {
   if (filter.length === 0 || tagResultsFound === 0) {
     return notes;
   }
@@ -291,29 +319,44 @@ const createCompositeNoteList = (notes, filter, tagResultsFound) => {
   return [
     'tag-suggestions',
     'notes-header',
-    ...(notes.length > 0 ? notes : ['no-notes']),
+    ...(notes.length > 0 ? notes : (['no-notes'] as ListItem[])),
   ];
 };
 
-export class NoteList extends Component {
+type OwnProps = {
+  isSmallScreen: boolean;
+  noteBucket: T.Bucket<T.Note>;
+  onNoteOpened: Function;
+};
+
+type StateProps = {
+  filter: string;
+  hasLoaded: boolean;
+  nextNote: T.NoteEntity;
+  noteDisplay: T.ListDisplayMode;
+  notes: ListItem[];
+  prevNote: T.NoteEntity;
+  selectedNoteContent: string;
+  selectedNoteId: T.EntityId | null;
+  selectedNotePreview: string;
+  showTrash: boolean;
+  tagResultsFound: number;
+};
+
+type DispatchProps = {
+  closeNote: () => void;
+  onEmptyTrash: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onSelectNote: (noteId: T.EntityId | null) => void;
+  onPinNote: Function;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
-  list = createRef();
-
-  static propTypes = {
-    closeNote: PropTypes.func.isRequired,
-    filter: PropTypes.string.isRequired,
-    tagResultsFound: PropTypes.number.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
-    notes: PropTypes.array.isRequired,
-    selectedNoteId: PropTypes.any,
-    onNoteOpened: PropTypes.func.isRequired,
-    onSelectNote: PropTypes.func.isRequired,
-    onPinNote: PropTypes.func.isRequired,
-    noteDisplay: PropTypes.string.isRequired,
-    onEmptyTrash: PropTypes.any.isRequired,
-    showTrash: PropTypes.bool,
-  };
+  list = createRef<List>();
+  recomputeHeights: (() => void) | null = null;
 
   componentDidMount() {
     /**
@@ -330,7 +373,7 @@ export class NoteList extends Component {
     window.addEventListener('resize', this.recomputeHeights);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const {
       closeNote,
       filter,
@@ -342,10 +385,10 @@ export class NoteList extends Component {
     if (
       prevProps.filter !== this.props.filter ||
       prevProps.noteDisplay !== this.props.noteDisplay ||
-      prevProps.notes !== notes ||
+      prevProps.notes !== this.props.notes ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
-      this.recomputeHeights();
+      this.recomputeHeights?.();
     }
 
     // Ensure that the note selected here is also selected in the editor
@@ -356,7 +399,7 @@ export class NoteList extends Component {
     // Deselect the currently selected note if it doesn't match the search query
     if (filter !== prevProps.filter) {
       const selectedNotePassesFilter = notes.some(
-        note => note.id === selectedNoteId
+        note => 'string' !== typeof note && note.id === selectedNoteId
       );
       if (!selectedNotePassesFilter) {
         closeNote();
@@ -366,10 +409,12 @@ export class NoteList extends Component {
 
   componentWillUnmount() {
     this.toggleShortcuts(false);
-    window.removeEventListener('resize', this.recomputeHeights);
+    if (this.recomputeHeights) {
+      window.removeEventListener('resize', this.recomputeHeights);
+    }
   }
 
-  handleShortcut = event => {
+  handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
@@ -393,7 +438,7 @@ export class NoteList extends Component {
     return true;
   };
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable: boolean) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -464,7 +509,6 @@ export class NoteList extends Component {
                     notes={notes}
                     rowCount={notes.length}
                     rowHeight={getRowHeight(notes, {
-                      filter,
                       noteDisplay,
                       tagResultsFound,
                       width,
@@ -475,14 +519,14 @@ export class NoteList extends Component {
                 )}
               </AutoSizer>
             </div>
-            {!!showTrash && emptyTrashButton}
+            {showTrash && emptyTrashButton}
           </Fragment>
         )}
       </div>
     );
   }
 
-  onPinNote = note =>
+  onPinNote = (note: T.NoteEntity) =>
     this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
@@ -498,7 +542,7 @@ const mapStateToProps = ({
   appState: state,
   ui: { filteredNotes },
   settings: { noteDisplay },
-}) => {
+}: State): StateProps => {
   const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
 
   const noteIndex = Math.max(state.previousIndex, 0);
@@ -558,23 +602,20 @@ const mapStateToProps = ({
   };
 };
 
-const mapDispatchToProps = (dispatch, { noteBucket }) => ({
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = (
+  dispatch,
+  { noteBucket }
+) => ({
   closeNote: () => dispatch(closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
-  onSelectNote: noteId => {
+  onSelectNote: (noteId: T.EntityId | null) => {
     if (noteId) {
       dispatch(loadAndSelectNote({ noteBucket, noteId }));
       recordEvent('list_note_opened');
     }
   },
-  onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
+  onPinNote: (note: T.NoteEntity, pin: boolean) =>
+    dispatch(pinNote({ noteBucket, note, pin })),
 });
-
-NoteList.propTypes = {
-  hasLoaded: PropTypes.bool.isRequired,
-  nextNote: PropTypes.object,
-  prevNote: PropTypes.object,
-  selectedNoteContent: PropTypes.string,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

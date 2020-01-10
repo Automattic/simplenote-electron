@@ -1,7 +1,12 @@
 import getNoteExcerpt from '../utils/note-utils';
 
-/** @type {Map} stores a cache of computed note preview excerpts to prevent re-truncating note content */
-const noteCache = new Map();
+import * as T from '../types';
+
+type TitleAndPreview = Record<'title' | 'preview', string>;
+type CachedValue = { key: number; value: TitleAndPreview };
+
+/** @var stores a cache of computed note preview excerpts to prevent re-truncating note content */
+const noteCache = new Map<T.EntityId, CachedValue>();
 
 /**
  * Caches based on note id
@@ -10,7 +15,10 @@ const noteCache = new Map();
  * @param {Function} getValue Get the value for the cache
  * @returns {Object} note title and preview excerpt
  */
-export const withCache = (getKey, getValue) => note => {
+export const withCache = (
+  getKey: (o: T.NoteEntity) => number,
+  getValue: (o: T.NoteEntity) => TitleAndPreview
+) => (note: T.NoteEntity) => {
   let cached = noteCache.get(note.id);
   const key = getKey(note);
 

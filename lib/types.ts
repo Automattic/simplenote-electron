@@ -63,4 +63,8 @@ export type Bucket<T> = {
 ///////////////////////////////////////
 
 export type EditorMode = 'edit' | 'markdown' | 'preview';
+export type LineLengthMode = 'narrow' | 'full';
+export type ListDisplayMode = 'comfy' | 'condensed' | 'expanded';
+export type SortMode = 'modificationDate' | 'creationDate' | 'alphabetical';
+export type Theme = 'system' | 'light' | 'dark';
 export type TranslatableString = string;
