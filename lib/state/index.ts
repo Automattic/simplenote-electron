@@ -11,6 +11,8 @@ import { omit } from 'lodash';
 
 import appState from '../flux/app-state';
 
+import uiMiddleware from './ui/middleware';
+
 import auth from './auth/reducer';
 import settings from './settings/reducer';
 import ui from './ui/reducer';
@@ -66,7 +68,7 @@ export const store = createStore(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk)
+    applyMiddleware(thunk, uiMiddleware)
   )
 );
 

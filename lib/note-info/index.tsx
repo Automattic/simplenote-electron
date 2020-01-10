@@ -9,7 +9,6 @@ import CrossIcon from '../icons/cross';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { setMarkdown } from '../state/settings/actions';
-import filterNotes from '../utils/filter-notes';
 
 export class NoteInfo extends Component {
   static propTypes = {
@@ -189,8 +188,7 @@ function characterCount(content) {
 
 const { markdownNote, pinNote, toggleNoteInfo } = appState.actionCreators;
 
-const mapStateToProps = ({ appState: state }) => {
-  const filteredNotes = filterNotes(state);
+const mapStateToProps = ({ appState: state, ui: { filteredNotes } }) => {
   const noteIndex = Math.max(state.previousIndex, 0);
   const note = state.note ? state.note : filteredNotes[noteIndex];
   return {

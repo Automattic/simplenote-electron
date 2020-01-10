@@ -1,48 +1,31 @@
-import { Component, cloneElement } from 'react';
-import PropTypes from 'prop-types';
+import { Component, ReactElement, cloneElement } from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
 
 import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
-import filterNotes from './utils/filter-notes';
 
-export class NoteToolbarContainer extends Component {
-  static propTypes = {
-    closeNote: PropTypes.func.isRequired,
-    deleteNoteForever: PropTypes.func.isRequired,
-    editorMode: PropTypes.oneOf(['edit', 'markdown']),
-    isViewingRevisions: PropTypes.bool.isRequired,
-    noteBucket: PropTypes.object.isRequired,
-    noteRevisions: PropTypes.func.isRequired,
-    onNoteClosed: PropTypes.func.isRequired,
-    restoreNote: PropTypes.func.isRequired,
-    revisionOrNote: PropTypes.object,
-    setEditorMode: PropTypes.func.isRequired,
-    setIsViewingRevisions: PropTypes.func.isRequired,
-    shareNote: PropTypes.func.isRequired,
-    stateForFilterNotes: PropTypes.object.isRequired,
-    toggleFocusMode: PropTypes.func.isRequired,
-    toggleNoteInfo: PropTypes.func.isRequired,
-    toolbar: PropTypes.element.isRequired,
-    trashNote: PropTypes.func.isRequired,
-  };
+import * as T from './types';
+import { State } from './state';
 
-  static defaultProps = {
-    editorMode: 'edit',
-  };
+type ExternalProps = {
+  noteBucket: T.Bucket<T.Note>;
+  onNoteClosed: Function;
+  toolbar: ReactElement;
+};
 
+type ConnectedProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+type Props = ExternalProps & ConnectedProps;
+
+export class NoteToolbarContainer extends Component<Props> {
   // Gets the index of the note located before the currently selected one
-  getPreviousNoteIndex = note => {
-    const filteredNotes = filterNotes(this.props.stateForFilterNotes);
+  getPreviousNoteIndex = (note: T.NoteEntity) => {
+    const noteIndex = this.props.notes.findIndex(({ id }) => note.id === id);
 
-    const noteIndex = function(filteredNote) {
-      return note.id === filteredNote.id;
-    };
-
-    return Math.max(filteredNotes.findIndex(noteIndex) - 1, 0);
+    return Math.max(noteIndex - 1, 0);
   };
 
   onCloseNote = () => {
@@ -50,7 +33,7 @@ export class NoteToolbarContainer extends Component {
     this.props.onNoteClosed();
   };
 
-  onTrashNote = note => {
+  onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.trashNote({ noteBucket, note, previousIndex });
@@ -58,14 +41,14 @@ export class NoteToolbarContainer extends Component {
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
-  onDeleteNoteForever = note => {
+  onDeleteNoteForever = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.deleteNoteForever({ noteBucket, note, previousIndex });
     this.props.onNoteClosed();
   };
 
-  onRestoreNote = note => {
+  onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
@@ -73,7 +56,7 @@ export class NoteToolbarContainer extends Component {
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
-  onShowRevisions = note => {
+  onShowRevisions = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     this.props.noteRevisions({ noteBucket, note });
     analytics.tracks.recordEvent('editor_versions_accessed');
@@ -84,10 +67,16 @@ export class NoteToolbarContainer extends Component {
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
-  onSetEditorMode = mode => this.props.setEditorMode({ mode });
+  onSetEditorMode = (mode: T.EditorMode) => this.props.setEditorMode({ mode });
 
   render() {
-    const { toolbar } = this.props;
+    const {
+      editorMode,
+      isViewingRevisions,
+      toolbar,
+      revisionOrNote,
+    } = this.props;
+
     const handlers = {
       onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
@@ -100,29 +89,27 @@ export class NoteToolbarContainer extends Component {
       setIsViewingRevisions: this.props.setIsViewingRevisions,
       toggleFocusMode: this.props.toggleFocusMode,
     };
-    const { editorMode, revisionOrNote, isViewingRevisions } = this.props;
-
-    const systemTags = get(revisionOrNote, 'data.systemTags', []);
-    const markdownEnabled = includes(systemTags, 'markdown');
 
     if (isViewingRevisions) {
       return null;
     }
 
+    const markdownEnabled = revisionOrNote
+      ? revisionOrNote.data.systemTags.includes('markdown')
+      : false;
+
     return cloneElement(toolbar, { ...handlers, editorMode, markdownEnabled });
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps = ({
+  appState: state,
+  ui: { filteredNotes },
+}: State) => ({
   isViewingRevisions: state.isViewingRevisions,
   editorMode: state.editorMode,
+  notes: filteredNotes,
   revisionOrNote: state.revision || state.note,
-  stateForFilterNotes: {
-    filter: state.filter,
-    notes: state.notes,
-    showTrash: state.showTrash,
-    tag: state.tag,
-  },
 });
 
 const {
@@ -143,7 +130,7 @@ const mapDispatchToProps = dispatch => ({
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
   setEditorMode: args => dispatch(setEditorMode(args)),
-  setIsViewingRevisions: isViewingRevisions => {
+  setIsViewingRevisions: (isViewingRevisions: boolean) => {
     dispatch(setIsViewingRevisions({ isViewingRevisions }));
   },
   shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
