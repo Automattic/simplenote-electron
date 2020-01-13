@@ -12,7 +12,7 @@ export const decorateWith = (decorators, text) =>
       const searchText = 'string' === typeof filter && withoutTags(filter);
       const pattern =
         searchText && searchText.length > 0
-          ? new RegExp(escapeRegExp(searchText), 'g')
+          ? new RegExp(escapeRegExp(searchText), 'gi')
           : filter;
 
       return replaceToArray(output, pattern, replacer);
