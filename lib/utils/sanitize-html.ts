@@ -105,6 +105,7 @@ const isAllowedAttr = (tagName, attrName, value) => {
         case 'alt':
         case 'src':
         case 'title':
+        case 'width':
           return true;
         default:
           return false;
