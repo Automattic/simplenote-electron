@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.15.0]
+
+### Fixes
+
+- Fixed tag rename functionality [#1834](https://github.com/Automattic/simplenote-electron/pull/1834)
+
 ## [v1.14.0]
 
 ### Enhancements
