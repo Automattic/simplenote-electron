@@ -168,6 +168,7 @@
     "string-replace-to-array": "1.0.3",
     "turndown": "5.0.3",
     "unorm": "1.6.0",
-    "valid-url": "1.0.9"
+    "valid-url": "1.0.9",
+    "worker-loader": "2.0.0"
   }
 }

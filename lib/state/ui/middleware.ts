@@ -1,21 +1,44 @@
 import { AnyAction } from 'redux';
 import { applySearch } from './actions';
-import filterNotes from '../../utils/filter-notes';
-import { filterTags } from '../../tag-suggestions';
+
+import SearchWorker from 'worker-loader!../../utils/search-processor.worker';
 
 import { State } from '../';
+import { SearchPort } from '../../utils/search-processor.worker';
 
-let searchTimeout: NodeJS.Timeout;
+const searchWorker = new SearchWorker();
 
-export default store => {
-  const updateNotes = () => {
-    const { appState } = store.getState() as State;
-    const { filter, tags } = appState;
+export default (store: { dispatch: Function; getState: () => State }) => {
+  const {
+    port1: searchProcessor,
+    port2: _searchProcessor,
+  } = new MessageChannel() as { port1: SearchPort; port2: MessagePort };
 
-    const filteredNotes = filterNotes(appState);
-    const filteredTags = filterTags(filter, filteredNotes, tags);
+  // give the search processor their comm port
+  searchProcessor.onmessage = event => {
+    switch (event.data.action) {
+      case 'applySearch': {
+        const { filter, notes, tags } = event.data;
 
-    store.dispatch(applySearch(filter, filteredNotes, filteredTags));
+        store.dispatch(applySearch(filter, notes, tags));
+      }
+    }
+  };
+  searchWorker.postMessage('boot', [_searchProcessor]);
+
+  const updateNotes = (delay: number) => {
+    const {
+      appState: { filter, notes, showTrash, tag, tags },
+    } = store.getState();
+    searchProcessor.postMessage({
+      action: 'applySearch',
+      delay,
+      filter,
+      notes,
+      showTrash,
+      tag,
+      tags,
+    });
   };
 
   return next => (action: AnyAction) => {
@@ -32,25 +55,18 @@ export default store => {
       case 'App.showAllNotes':
       case 'App.tagsLoaded':
       case 'App.trashNote':
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(updateNotes, 50);
+        updateNotes(0);
         break;
 
       case 'App.noteUpdatedRemotely':
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(updateNotes, 500);
+        updateNotes(10);
         break;
 
       // on updating the search field we should delay the update
       // so we don't waste our CPU time and lose responsiveness
       // but there are some cases where we do want an immediate response
       case 'App.search':
-        clearTimeout(searchTimeout);
-        if (!action.filter || action.sync) {
-          updateNotes();
-        } else {
-          searchTimeout = setTimeout(updateNotes, 500);
-        }
+        updateNotes(!action.filter.trim() || action.sync ? 0 : 100);
         break;
     }
 

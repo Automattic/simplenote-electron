@@ -191,14 +191,6 @@ export class NoteList extends Component {
       selectedNoteId,
     } = this.props;
 
-    if (
-      prevProps.noteDisplay !== this.props.noteDisplay ||
-      prevProps.notes !== this.props.notes ||
-      prevProps.selectedNoteContent !== this.props.selectedNoteContent
-    ) {
-      heightCache.clearAll();
-    }
-
     // Ensure that the note selected here is also selected in the editor
     if (selectedNoteId !== prevProps.selectedNoteId) {
       onSelectNote(selectedNoteId);

@@ -1,4 +1,4 @@
-import { filterTags } from './';
+import { filterTags } from '../utils/filter-tags';
 
 import { TagEntity as T } from '../types';
 
