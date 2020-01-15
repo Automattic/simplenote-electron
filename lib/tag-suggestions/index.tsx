@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 
@@ -10,16 +9,23 @@ import * as T from '../types';
 const { search, setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-export class TagSuggestions extends Component {
+type OwnProps = {};
+
+type StateProps = {
+  filteredTags: T.TagEntity[];
+  query: string;
+};
+
+type DispatchProps = {
+  onSearch: (filter: string) => void;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class TagSuggestions extends Component<Props> {
   static displayName = 'TagSuggestions';
 
-  static propTypes = {
-    filteredTags: PropTypes.array.isRequired,
-    onSearch: PropTypes.func.isRequired,
-    query: PropTypes.string.isRequired,
-  };
-
-  updateSearch = filter => {
+  updateSearch = (filter: string) => {
     const { query, onSearch } = this.props;
 
     // replace last word in current query with requested tag match
@@ -92,7 +98,13 @@ const filterAtMost = function<I>(
   return results;
 };
 
-export const filterTags = (tags: T.TagEntity[], query: string) => {
+const emptyTagList: T.TagEntity[] = [];
+
+export const filterTags = (
+  query: string,
+  notes: T.NoteEntity[],
+  tags: T.TagEntity[]
+): T.TagEntity[] => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
@@ -102,7 +114,7 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
     .pop();
 
   if (!tagTerm) {
-    return tags;
+    return emptyTagList;
   }
 
   // with `tag:` we don't want to suggest tags which have already been added
@@ -118,28 +130,21 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   return filterAtMost(tags, matcher, 5);
 };
 
-let lastTags = null;
-let lastQuery = null;
-let lastMatches = [];
-export const getMatchingTags = (tags, query) => {
-  if (lastTags === tags && lastQuery === query) {
-    return lastMatches;
-  }
-
-  lastTags = tags;
-  lastQuery = query;
-  lastMatches = filterTags(tags, query);
-  return lastMatches;
-};
-
-const mapStateToProps = ({ appState: state }: State) => ({
-  filteredTags: getMatchingTags(state.tags, state.filter),
-  query: state.filter,
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  State
+> = state => ({
+  filteredTags: state.ui.filteredTags,
+  query: state.appState.filter,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSearch: filter => {
-    dispatch(search({ filter }));
+const mapDispatchToProps: MapDispatchToProps<
+  DispatchProps,
+  OwnProps
+> = dispatch => ({
+  onSearch: (filter: string) => {
+    dispatch(search({ filter, sync: true }));
     recordEvent('list_notes_searched');
     dispatch(setSearchFocus({ searchFocus: true }));
   },

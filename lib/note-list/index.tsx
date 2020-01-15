@@ -19,7 +19,16 @@ import {
   checkboxDecorator,
   makeFilterDecorator,
 } from './decorators';
-import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
+import TagSuggestions from '../tag-suggestions';
+
+import { State } from '../state';
+import * as T from '../types';
+
+export type NoteListItem =
+  | T.NoteEntity
+  | 'tag-suggestions'
+  | 'notes-header'
+  | 'no-notes';
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -139,29 +148,6 @@ const renderNote = (
   );
 };
 
-/**
- * Modifies the filtered notes list to insert special sections. This
- * allows us to handle tag suggestions and headers in the row renderer.
- *
- * @see renderNote
- *
- * @param {Object[]} notes list of filtered notes
- * @param {String} filter search filter
- * @param {Number} tagResultsFound number of tag matches to display
- * @returns {Object[]} modified notes list
- */
-const createCompositeNoteList = (notes, filter, tagResultsFound) => {
-  if (filter.length === 0 || tagResultsFound === 0) {
-    return notes;
-  }
-
-  return [
-    'tag-suggestions',
-    'notes-header',
-    ...(notes.length > 0 ? notes : ['no-notes']),
-  ];
-};
-
 export class NoteList extends Component {
   static displayName = 'NoteList';
 
@@ -184,13 +170,10 @@ export class NoteList extends Component {
 
   componentDidMount() {
     this.toggleShortcuts(true);
-    window.addEventListener('resize', this.recomputeHeights);
   }
 
-  componentWillReceiveProps(nextProps): void {
+  componentWillReceiveProps(nextProps) {
     if (
-      nextProps.tagResultsFound !== this.props.tagResultsFound ||
-      nextProps.filter !== this.props.filter ||
       nextProps.noteDisplay !== this.props.noteDisplay ||
       nextProps.notes !== this.props.notes ||
       nextProps.selectedNoteContent !== this.props.selectedNoteContent
@@ -207,6 +190,14 @@ export class NoteList extends Component {
       onSelectNote,
       selectedNoteId,
     } = this.props;
+
+    if (
+      prevProps.noteDisplay !== this.props.noteDisplay ||
+      prevProps.notes !== this.props.notes ||
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent
+    ) {
+      heightCache.clearAll();
+    }
 
     // Ensure that the note selected here is also selected in the editor
     if (selectedNoteId !== prevProps.selectedNoteId) {
@@ -272,7 +263,6 @@ export class NoteList extends Component {
       onPinNote,
       noteDisplay,
       showTrash,
-      tagResultsFound,
       notes,
       isSmallScreen,
     } = this.props;
@@ -285,7 +275,6 @@ export class NoteList extends Component {
       onPinNote,
       selectedNoteId,
       isSmallScreen,
-      tagResultsFound,
     });
 
     const isEmptyList = notes.length === 0;
@@ -345,11 +334,9 @@ const { recordEvent } = tracks;
 
 const mapStateToProps = ({
   appState: state,
-  ui: { filteredNotes },
+  ui: { filteredNotes, noteListItems },
   settings: { noteDisplay },
-}) => {
-  const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
-
+}: State) => {
   const noteIndex = Math.max(state.previousIndex, 0);
   const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
   const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
@@ -362,12 +349,6 @@ const mapStateToProps = ({
 
   const nextNote = filteredNotes[nextNoteId];
   const prevNote = filteredNotes[prevNoteId];
-
-  const compositeNoteList = createCompositeNoteList(
-    filteredNotes,
-    state.filter,
-    tagResultsFound
-  );
 
   /**
    * Although not used directly in the React component this value
@@ -397,13 +378,12 @@ const mapStateToProps = ({
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
-    notes: compositeNoteList,
+    notes: noteListItems,
     prevNote,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash: state.showTrash,
-    tagResultsFound,
   };
 };
 
