@@ -25,8 +25,8 @@
     "url": "git://github.com/Automattic/simplenote-electron.git"
   },
   "engines": {
-    "node": ">= 7.9.0",
-    "npm": ">= 6.4.0"
+    "node": ">= 10.15.0",
+    "npm": ">= 6.7.0"
   },
   "browserslist": [
     "> 1%",
