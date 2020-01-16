@@ -1,5 +1,5 @@
 environment:
-  CSC_ENC_KEY: 
+  CSC_ENC_KEY:
     secure: ef2yQX3A9dZPQzS6r7oY7pUtzK/ICiUUDZZsh/K7eT59a4BVdxqCfIZU812MmqQHK/iC4cYLdTW+tWHrq9bJquzQgHGjgB0cTBwS9KUjyOg=
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
@@ -17,7 +17,7 @@ configuration:
   - AppX-Testing
 
 install:
-  - ps: Install-Product node 10
+  - ps: Install-Product node 11.15.0
   - cinst make
   - npm ci
   - patch -p1 < ./resources/macos/macPackager-patch.diff
@@ -28,7 +28,7 @@ for:
   - matrix:
       only:
         - configuration: Default
-    before_build: 
+    before_build:
       - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
     build_script:
@@ -44,7 +44,7 @@ for:
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
     skip_non_tags: true
     environment:
-      CSC_LINK: ""
+      CSC_LINK: ''
     build_script:
       - make build
       - make test
@@ -54,7 +54,7 @@ for:
   - matrix:
       only:
         - configuration: AppX-Testing
-    before_build: 
+    before_build:
       - openssl aes-256-cbc -d -in .\resources\certificates\win.p12.enc -out %CSC_LINK% -k "%CSC_ENC_KEY%"
       - openssl aes-256-cbc -d -in .\resources\secrets\config.json.enc -out .\config.json -k "%CSC_ENC_KEY%"
     build_script:
@@ -72,7 +72,6 @@ cache:
   - '%APPDATA%\npm-cache'
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
-
 # RDP Debug mode
 # on_finish:
 #   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
