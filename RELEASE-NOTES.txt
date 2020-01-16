@@ -5,6 +5,7 @@
 ### Fixes
 
 - Fixed tag rename functionality [#1834](https://github.com/Automattic/simplenote-electron/pull/1834)
+- Only remove markdown syntax in note list if markdown enabled for note [#1839](https://github.com/Automattic/simplenote-electron/pull/1839)
 
 ## [v1.14.0]
 
