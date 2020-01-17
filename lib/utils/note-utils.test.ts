@@ -46,10 +46,15 @@ describe('noteTitleAndPreview', () => {
     const bugInducingString =
       '# aaa                                               bbb';
     note.data.content = bugInducingString + '\n' + bugInducingString;
-    const startTime = Date.now();
-    noteTitleAndPreview(note);
-    const elapsedMs = Date.now() - startTime;
-    expect(elapsedMs).toBeLessThanOrEqual(1);
+    const count = 100;
+    let sentinel = '';
+    const tic = process.hrtime();
+    for (let i = 0; i < count; i++) {
+      sentinel += noteTitleAndPreview(note);
+    }
+    const [s, ns] = process.hrtime(tic);
+    expect(sentinel.length).toBeGreaterThan(0);
+    expect((s * 1000 + ns / 1000 / 1000) / count).toBeLessThan(1);
   });
 
   it('should have enough text for an Expanded preview, even if the title is very long', () => {

@@ -1,6 +1,13 @@
 import removeMarkdown from 'remove-markdown';
 import { isFunction } from 'lodash';
 
+import * as T from '../types';
+
+export interface TitleAndPreview {
+  title: string;
+  preview: string;
+}
+
 export const maxTitleChars = 64;
 export const maxPreviewChars = 200;
 const maxPreviewLines = 4; // probably need to adjust if we're in the comfy view
@@ -48,9 +55,8 @@ const getPreview = content => {
   return matchUntilLimit(previewPattern, content);
 };
 
-const removeMarkdownFromOutput = isMarkdown
-  ? s => removeMarkdownWithFix(s) || s
-  : s => s;
+const formatPreview = (stripMarkdown: boolean, s: string): string =>
+  stripMarkdown ? removeMarkdownWithFix(s) || s : s;
 
 /**
  * Returns the title and excerpt for a given note
@@ -58,14 +64,15 @@ const removeMarkdownFromOutput = isMarkdown
  * @param {Object} note a note object
  * @returns {Object} title and excerpt (if available)
  */
-export const noteTitleAndPreview = note => {
+export const noteTitleAndPreview = (note: T.NoteEntity): TitleAndPreview => {
   const content = (note && note.data && note.data.content) || '';
-  const title = removeMarkdownFromOutput(getTitle(content));
-  const preview = removeMarkdownFromOutput(getPreview(content));
+  const stripMarkdown = isMarkdown(note);
+  const title = formatPreview(stripMarkdown, getTitle(content));
+  const preview = formatPreview(stripMarkdown, getPreview(content));
   return { title, preview };
 };
 
-function isMarkdown(note) {
+function isMarkdown(note: T.NoteEntity): boolean {
   return note && note.data && note.data.systemTags.includes('markdown');
 }
 
