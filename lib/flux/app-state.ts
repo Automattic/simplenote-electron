@@ -451,10 +451,10 @@ export const actionMap = new ActionMap({
       creator({ noteId }: { noteId: T.EntityId }) {
         return (dispatch, getState: () => State) => {
           const {
-            appState: { selectedNoteId, note, notes },
+            appState: { note, notes },
           } = getState();
 
-          if (selectedNoteId === noteId) {
+          if (note && note.id === noteId) {
             return note.data;
           }
 
