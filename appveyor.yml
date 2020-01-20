@@ -17,7 +17,7 @@ configuration:
   - AppX-Testing
 
 install:
-  - ps: Install-Product node 10
+  - ps: Install-Product node 11.15.0
   - cinst make
   - npm ci
   - patch -p1 < ./resources/macos/macPackager-patch.diff
