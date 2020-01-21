@@ -292,6 +292,9 @@ export default class NoteContentEditor extends Component {
    */
   copyPlainText = event => {
     const textToCopy = getSelectedText(this.state.editorState);
+    if (!textToCopy) {
+      return;
+    }
     event.clipboardData.setData('text/plain', textToCopy);
     event.preventDefault();
   };

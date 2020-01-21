@@ -2,6 +2,9 @@
 
 ## [v1.15.0]
 
+### Enhancements
+- Stop erasing the copy buffer if copying empty editor selections [#1847](https://github.com/Automattic/simplenote-electron/pull/1847)
+
 ### Fixes
 
 - Fixed tag rename functionality [#1834](https://github.com/Automattic/simplenote-electron/pull/1834)
