@@ -1,6 +1,5 @@
 import { difference, union } from 'lodash';
 import { combineReducers } from 'redux';
-
 import * as A from '../action-types';
 import * as T from '../../types';
 
@@ -30,8 +29,40 @@ const visiblePanes: A.Reducer<string[]> = (
   return state;
 };
 
+const note = (state = null, action) => {
+  switch (action.type) {
+    case 'App.notesLoaded': {
+      return state
+        ? action.notes.find(({ id }) => id === state.id) || state
+        : action.notes[0] || null;
+    }
+    case 'App.noteUpdatedRemotely':
+    case 'App.selectNote': {
+      return {
+        ...action.note,
+        hasRemoteUpdate: action.hasRemoteUpdate,
+      };
+    }
+    case 'App.closeNote':
+    case 'App.showAllNotes':
+    case 'App.selectTrash':
+    case 'App.selectTag':
+      return null;
+    case 'SET_SELECTED_NOTE':
+      return action.note;
+    case 'FILTER_NOTES':
+      // keep note if still in new filtered list otherwise try to choose first note in list
+      return state && action.notes.some(({ id }) => id === state.id)
+        ? state
+        : action.notes[0] || null;
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   filteredNotes,
+  note,
   simperiumConnected,
   visiblePanes,
 });

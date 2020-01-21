@@ -25,7 +25,7 @@ export type Note = {
   tags: TagName[];
 };
 
-export type NoteEntity = Entity<Note>;
+export type NoteEntity = Entity<Note> & { hasRemoteUpdate?: boolean };
 
 export type Tag = {
   index?: number;

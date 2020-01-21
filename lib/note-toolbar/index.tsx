@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -171,4 +172,8 @@ export class NoteToolbar extends Component {
   };
 }
 
-export default NoteToolbar;
+const mapStateToProps = ({ ui: { note } }) => ({
+  note,
+});
+
+export default connect(mapStateToProps)(NoteToolbar);

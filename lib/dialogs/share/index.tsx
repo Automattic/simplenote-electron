@@ -30,7 +30,7 @@ export class ShareDialog extends Component {
   onTogglePublished = event => {
     this.props.actions.publishNote({
       noteBucket: this.props.noteBucket,
-      note: this.props.appState.note,
+      note: this.props.note,
       publish: event.currentTarget.checked,
     });
   };
@@ -38,7 +38,7 @@ export class ShareDialog extends Component {
   getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
 
   onAddCollaborator = event => {
-    const { note } = this.props.appState;
+    const { note } = this.props;
     const tags = (note.data && note.data.tags) || [];
     const collaborator = this.collaboratorElement.value.trim();
 
@@ -57,7 +57,7 @@ export class ShareDialog extends Component {
   };
 
   onRemoveCollaborator = collaborator => {
-    const { note } = this.props.appState;
+    const { note } = this.props;
 
     let tags = (note.data && note.data.tags) || [];
     tags = tags.filter(tag => tag !== collaborator);
@@ -67,7 +67,7 @@ export class ShareDialog extends Component {
   };
 
   collaborators = () => {
-    const { note } = this.props.appState;
+    const { note } = this.props;
     const tags = (note.data && note.data.tags) || [];
     const collaborators = tags.filter(isEmailTag);
 
@@ -86,9 +86,7 @@ export class ShareDialog extends Component {
   };
 
   render() {
-    const { dialog, requestClose } = this.props;
-    const { note } = this.props.appState;
-
+    const { dialog, note, requestClose } = this.props;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
@@ -207,9 +205,9 @@ export class ShareDialog extends Component {
   }
 }
 
-export default connect(
-  state => ({
-    settings: state.settings,
-  }),
-  { updateNoteTags }
-)(ShareDialog);
+const mapStateToProps = ({ settings, ui: { note } }) => ({
+  settings,
+  note,
+});
+
+export default connect(mapStateToProps, { updateNoteTags })(ShareDialog);

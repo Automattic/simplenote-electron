@@ -167,8 +167,9 @@ export class RevisionSelector extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
+const mapStateToProps = ({ appState: state, ui: { note } }) => ({
   isViewingRevisions: state.isViewingRevisions,
+  note: note,
 });
 
 const { setRevision, setIsViewingRevisions } = appState.actionCreators;

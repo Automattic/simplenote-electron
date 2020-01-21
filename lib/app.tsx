@@ -6,6 +6,7 @@ import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
 import reduxActions from './state/actions';
+import { setSelectedNote } from './state/ui/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import NoteInfo from './note-info';
@@ -85,6 +86,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
+    setSelectedNote: id => dispatch(setSelectedNote(id)),
   };
 }
 
@@ -296,12 +298,14 @@ export const App = connect(
     onNoteRemoved = () => this.onNotesIndex();
 
     onNoteUpdate = (noteId, data, remoteUpdateInfo = {}) => {
-      if (remoteUpdateInfo.patch) {
-        this.props.actions.noteUpdatedRemotely({
-          noteBucket: this.props.noteBucket,
-          noteId,
-          data,
-          remoteUpdateInfo,
+      const {
+        noteBucket,
+        setSelectedNote,
+        ui: { note },
+      } = this.props;
+      if (remoteUpdateInfo.patch && note && noteId === note.id) {
+        noteBucket.get(noteId, (e, updatedNote) => {
+          setSelectedNote({ ...updatedNote, hasRemoteUpdate: true });
         });
       }
     };
@@ -439,7 +443,6 @@ export const App = connect(
                 isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
                 isSmallScreen={isSmallScreen}
-                note={state.note}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}

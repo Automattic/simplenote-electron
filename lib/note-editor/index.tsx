@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
@@ -161,13 +162,15 @@ export class NoteEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps = ({ appState: state, settings, ui: { note } }) => ({
   allTags: state.tags,
   filter: state.filter,
   fontSize: settings.fontSize,
   editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
+  note,
   revision: state.revision,
+  tags: get(note, 'data.tags', []),
 });
 
 const { closeNote, setEditorMode } = appState.actionCreators;

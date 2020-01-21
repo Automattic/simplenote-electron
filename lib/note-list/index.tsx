@@ -348,11 +348,6 @@ export class NoteList extends Component {
       this.recomputeHeights();
     }
 
-    // Ensure that the note selected here is also selected in the editor
-    if (selectedNoteId !== prevProps.selectedNoteId) {
-      onSelectNote(selectedNoteId);
-    }
-
     // Deselect the currently selected note if it doesn't match the search query
     if (filter !== prevProps.filter) {
       const selectedNotePassesFilter = notes.some(
@@ -496,14 +491,12 @@ const { recordEvent } = tracks;
 
 const mapStateToProps = ({
   appState: state,
-  ui: { filteredNotes },
+  ui: { filteredNotes, note },
   settings: { noteDisplay },
 }) => {
   const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
-
-  const noteIndex = Math.max(state.previousIndex, 0);
-  const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
-  const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
+  const selectedNote = note;
+  const selectedNoteId = selectedNote?.id;
   const selectedNoteIndex = filteredNotes.findIndex(
     ({ id }) => id === selectedNoteId
   );
