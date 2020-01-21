@@ -71,6 +71,8 @@ export class RevisionSelector extends Component<Props, State> {
     }
   }
 
+  handleClickOutside = () => this.onCancelRevision();
+
   onAcceptRevision = () => {
     const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
     const { revisions, selection } = this.state;
