@@ -70,7 +70,7 @@ export const setAccountName = accountName => ({
   accountName,
 });
 
-export const setWPToken = (token: string) => ({
+export const setWPToken = (token: string): A.SetWPToken => ({
   type: 'setWPToken',
   token,
 });

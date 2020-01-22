@@ -1,7 +1,7 @@
 import { difference, union } from 'lodash';
 import { combineReducers } from 'redux';
-import * as A from '../action-types';
 
+import * as A from '../action-types';
 import * as T from '../../types';
 
 const defaultVisiblePanes = ['editor', 'noteList'];

@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
@@ -8,33 +7,41 @@ import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 
-import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
+import { LoginError, InvalidCredentials } from '../state/auth/constants';
 import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
 
-import { MapDispatchToProps } from '../state';
+import { MapDispatchToProps, MapStateToProps } from '../state';
+
+type OwnProps = {
+  authorizeUserWithToken: Function;
+  authPending: boolean;
+  isAuthenticated: boolean;
+  isElectron: boolean;
+  isMacApp: boolean;
+  onAuthenticate: Function;
+  onCreateUser: Function;
+};
+
+type StateProps = {
+  hasInvalidCredentials: boolean;
+  hasLoginError: boolean;
+};
 
 type DispatchProps = {
   resetErrors: () => any;
   saveWPToken: (token: string) => any;
 };
 
-export class Auth extends Component {
-  static propTypes = {
-    authorizeUserWithToken: PropTypes.func.isRequired,
-    authPending: PropTypes.bool,
-    hasInvalidCredentials: PropTypes.bool,
-    hasLoginError: PropTypes.bool,
-    isAuthenticated: PropTypes.bool,
-    isElectron: PropTypes.bool,
-    isMacApp: PropTypes.bool,
-    onAuthenticate: PropTypes.func.isRequired,
-    onCreateUser: PropTypes.func.isRequired,
-    resetErrors: PropTypes.func.isRequired,
-    saveWPToken: PropTypes.func.isRequired,
-  };
+type ComponentState = {
+  isCreatingAccount: boolean;
+  passwordErrorMessage: string | null;
+};
 
+type Props = OwnProps & StateProps & DispatchProps;
+
+export class Auth extends Component<Props, ComponentState> {
   state = {
     isCreatingAccount: false,
     passwordErrorMessage: null,
@@ -346,14 +353,14 @@ export class Auth extends Component {
   };
 }
 
-const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = {
+const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = {
   resetErrors: reset,
   saveWPToken: setWPToken,
 };
 
-const mapStateToProps = state => ({
-  hasInvalidCredentials: hasInvalidCredentials(state),
-  hasLoginError: hasLoginError(state),
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = state => ({
+  hasInvalidCredentials: state.auth.authStatus === InvalidCredentials,
+  hasLoginError: state.auth.authStatus === LoginError,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
