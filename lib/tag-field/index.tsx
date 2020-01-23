@@ -114,21 +114,24 @@ export class TagField extends Component {
   focusTagField = () => this.focusInput && this.focusInput();
 
   interceptKeys = e => {
-    // only handle backspace
-    if (8 !== e.which) {
-      return;
-    }
+    // handle backspace
+    if (8 === e.which) {
+      if (this.hasSelection()) {
+        this.deleteSelection();
+      }
 
-    if (this.hasSelection()) {
-      this.deleteSelection();
-    }
+      if ('' !== this.state.tagInput) {
+        return;
+      }
 
-    if ('' !== this.state.tagInput) {
-      return;
+      this.selectLastTag();
+      e.preventDefault();
     }
-
-    this.selectLastTag();
-    e.preventDefault();
+    // handle right arrow
+    if (39 === e.which && this.hasSelection()) {
+      this.unselect(e);
+      this.focusTagField();
+    }
   };
 
   updateTags = tags =>
