@@ -11,6 +11,10 @@
 - Properly close revision/history view when clicking outside of slider [#1837](https://github.com/Automattic/simplenote-electron/pull/1837)
 - Only remove markdown syntax in note list if markdown enabled for note [#1839](https://github.com/Automattic/simplenote-electron/pull/1839)
 
+### Other Changes
+
+- Added types to state/ui/actions [#1849](https://github.com/Automattic/simplenote-electron/pull/1849)
+
 ## [v1.14.0]
 
 ### Enhancements
