@@ -34,7 +34,6 @@ const toggleSystemTag = (
 };
 
 const initialState: AppState = {
-  editorMode: 'edit',
   filter: '',
   selectedNoteId: null,
   previousIndex: -1,
@@ -145,11 +144,7 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setEditorMode(state: AppState, { mode }: { mode: T.EditorMode }) {
-      return update(state, {
-        editorMode: { $set: mode },
-      });
-    },
+    setEditorMode() {},
 
     showDialog(state: AppState, { dialog }) {
       const { type, multiple = false, title, ...dialogProps } = dialog;

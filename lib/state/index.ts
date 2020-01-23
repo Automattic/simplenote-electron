@@ -28,7 +28,6 @@ import * as T from '../types';
 
 export type AppState = {
   dialogs: unknown[];
-  editorMode: T.EditorMode;
   editingTags: boolean;
   filter: string;
   isViewingRevisions: boolean;

@@ -15,6 +15,11 @@ export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumC
   simperiumConnected,
 });
 
+export const setEditorMode: A.ActionCreator<A.SetEditorMode> = mode => ({
+  type: 'SET_EDITOR_MODE',
+  mode,
+});
+
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   show: boolean
 ) => ({

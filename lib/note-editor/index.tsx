@@ -5,6 +5,7 @@ import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
+import { setEditorMode } from '../state/ui/actions';
 
 export class NoteEditor extends Component {
   static displayName = 'NoteEditor';
@@ -27,7 +28,6 @@ export class NoteEditor extends Component {
   };
 
   static defaultProps = {
-    editorMode: 'edit',
     note: {
       data: {
         tags: [],
@@ -68,7 +68,7 @@ export class NoteEditor extends Component {
       const prevEditorMode = this.props.editorMode;
       const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
 
-      this.props.setEditorMode({ mode: nextEditorMode });
+      this.props.setEditorMode(nextEditorMode);
 
       event.stopPropagation();
       event.preventDefault();
@@ -161,20 +161,24 @@ export class NoteEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps = ({
+  appState: state,
+  settings,
+  ui: { editorMode },
+}) => ({
   allTags: state.tags,
   filter: state.filter,
   fontSize: settings.fontSize,
-  editorMode: state.editorMode,
+  editorMode,
   isEditorActive: !state.showNavigation,
   revision: state.revision,
 });
 
-const { closeNote, setEditorMode } = appState.actionCreators;
+const { closeNote } = appState.actionCreators;
 
 const mapDispatchToProps = dispatch => ({
   closeNote: () => dispatch(closeNote()),
-  setEditorMode: args => dispatch(setEditorMode(args)),
+  setEditorMode: mode => dispatch(setEditorMode(mode)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
