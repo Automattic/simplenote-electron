@@ -34,6 +34,8 @@ At the time of writing you will want to refer to the [webdriver-io v4.13 API doc
 
 Please adhere to the same guidelines as found in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines.md).
 
+See <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a> for more guidelines.
+
 ## Dependencies
 
 - [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
