@@ -4,7 +4,7 @@ export const TAG_DRAWER_TOGGLE = 'TAG_DRAWER_TOGGLE';
 
 export type Action<
   T extends string,
-  Args extends { [extraProps: string]: unknown }
+  Args extends { [extraProps: string]: unknown } = {}
 > = { type: T } & Args;
 
 export type ActionType = never;
