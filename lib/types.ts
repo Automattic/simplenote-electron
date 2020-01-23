@@ -61,8 +61,6 @@ export type Bucket<T> = {
 ///////////////////////////////////////
 // Application Types
 ///////////////////////////////////////
-
-export type EditorMode = 'edit' | 'markdown' | 'preview';
 export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';

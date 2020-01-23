@@ -31,6 +31,7 @@ import {
   values,
 } from 'lodash';
 import {
+  createNote,
   setUnsyncedNoteIds,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
@@ -48,6 +49,7 @@ export type OwnProps = {
 };
 
 export type DispatchProps = {
+  createNote: () => any;
   selectNote: (note: T.NoteEntity) => any;
 };
 
@@ -97,7 +99,7 @@ const mapDispatchToProps: S.MapDispatch<
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
-
+    createNote: () => dispatch(createNote()),
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
@@ -259,6 +261,10 @@ export const App = connect(
         exportZipArchive();
       }
 
+      if ('printNote' === command.action) {
+        return window.print();
+      }
+
       const canRun = overEvery(
         isObject,
         o => o.action !== null,
@@ -268,6 +274,7 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
+          this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });

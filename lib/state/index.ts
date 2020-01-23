@@ -28,7 +28,6 @@ import * as T from '../types';
 
 export type AppState = {
   dialogs: unknown[];
-  editorMode: T.EditorMode;
   editingTags: boolean;
   filter: string;
   isViewingRevisions: boolean;
@@ -39,7 +38,6 @@ export type AppState = {
   previousIndex: number;
   revision: T.NoteEntity | null;
   searchFocus: boolean;
-  shouldPrint: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
   showTrash: boolean;
