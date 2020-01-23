@@ -12,7 +12,7 @@ import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
 
-import { MapDispatchToProps, MapStateToProps } from '../state';
+import * as S from '../state';
 
 type OwnProps = {
   authorizeUserWithToken: Function;
@@ -353,12 +353,12 @@ export class Auth extends Component<Props, ComponentState> {
   };
 }
 
-const mapDispatchToProps: MapDispatchToProps<DispatchProps, OwnProps> = {
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   resetErrors: reset,
   saveWPToken: setWPToken,
 };
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = state => ({
+const mapStateToProps: S.MapState<StateProps> = state => ({
   hasInvalidCredentials: state.auth.authStatus === InvalidCredentials,
   hasLoginError: state.auth.authStatus === LoginError,
 });

@@ -80,21 +80,21 @@ export const store = createStore<State, A.ActionType, {}, {}>(
   )
 );
 
-export type MapStateToProps<StateProps, OwnProps> = (
+export type MapState<StateProps, OwnProps = {}> = (
   state: State,
   ownProps: OwnProps
 ) => StateProps;
 
-export type MapDispatchToPropsFunction<DispatchProps, OwnProps> = (
+export type MapDispatchFunction<DispatchProps, OwnProps = {}> = (
   dispatch: <T extends A.ActionType>(action: T) => T,
   ownProps: OwnProps
 ) => DispatchProps;
 
-export type MapDispatchToProps<
+export type MapDispatch<
   DispatchProps extends { [name: string]: (...args: any[]) => any },
-  OwnProps
+  OwnProps = {}
 > =
-  | MapDispatchToPropsFunction<DispatchProps, OwnProps>
+  | MapDispatchFunction<DispatchProps, OwnProps>
   | {
       [P in keyof DispatchProps]: (
         ...args: Parameters<DispatchProps[P]>

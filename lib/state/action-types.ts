@@ -19,4 +19,5 @@ export type ActionType =
   | SetFontSize
   | SetWPToken;
 
+export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
