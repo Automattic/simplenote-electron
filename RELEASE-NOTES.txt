@@ -4,6 +4,7 @@
 
 ### Enhancements
 - Stop erasing the copy buffer if copying empty editor selections [#1847](https://github.com/Automattic/simplenote-electron/pull/1847)
+- Allow for unselecting a tag by pressing right arrow [#1853](https://github.com/Automattic/simplenote-electron/pull/1853)
 
 ### Fixes
 
