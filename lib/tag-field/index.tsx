@@ -128,9 +128,13 @@ export class TagField extends Component {
       e.preventDefault();
     }
     // handle right arrow
-    if (39 === e.which && this.hasSelection()) {
+    else if (39 === e.which && this.hasSelection()) {
       this.unselect(e);
       this.focusTagField();
+    }
+    // handle tab
+    else if (9 === e.which && this.hasSelection()) {
+      this.unselect(e);
     }
   };
 
