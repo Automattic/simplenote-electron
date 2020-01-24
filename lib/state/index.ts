@@ -17,6 +17,7 @@ import auth from './auth/reducer';
 import settings from './settings/reducer';
 import ui from './ui/reducer';
 
+import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
@@ -71,5 +72,26 @@ export const store = createStore(
     applyMiddleware(thunk, uiMiddleware)
   )
 );
+
+export type MapState<StateProps, OwnProps = {}> = (
+  state: State,
+  ownProps: OwnProps
+) => StateProps;
+
+export type MapDispatchFunction<DispatchProps, OwnProps = {}> = (
+  dispatch: <T extends A.ActionType>(action: T) => T,
+  ownProps: OwnProps
+) => DispatchProps;
+
+export type MapDispatch<
+  DispatchProps extends { [name: string]: (...args: any[]) => any },
+  OwnProps = {}
+> =
+  | MapDispatchFunction<DispatchProps, OwnProps>
+  | {
+      [P in keyof DispatchProps]: (
+        ...args: Parameters<DispatchProps[P]>
+      ) => A.ActionType;
+    };
 
 export default store;
