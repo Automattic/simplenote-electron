@@ -1,10 +1,12 @@
-import { AnyAction } from 'redux';
+import { AnyAction, Dispatch, Middleware } from 'redux';
 import { filterNotes as filterAction } from './actions';
 import filterNotes from '../../utils/filter-notes';
 
+import * as S from '../';
+
 let searchTimeout: NodeJS.Timeout;
 
-export default store => {
+export const middleware: Middleware<{}, S.State, Dispatch> = store => {
   const updateNotes = () =>
     store.dispatch(filterAction(filterNotes(store.getState().appState)));
 
@@ -43,3 +45,5 @@ export default store => {
     return result;
   };
 };
+
+export default middleware;

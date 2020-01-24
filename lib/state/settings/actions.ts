@@ -1,8 +1,12 @@
 import { getIpcRenderer } from '../../utils/electron';
 
+import * as A from '../action-types';
+
 const ipc = getIpcRenderer();
 
-export const setFontSize = fontSize => ({
+export const setFontSize: A.ActionCreator<A.SetFontSize> = (
+  fontSize?: number
+) => ({
   type: 'setFontSize',
   fontSize,
 });
@@ -23,19 +27,20 @@ export const decreaseFontSize = () => (dispatch, getState) => {
   dispatch(setFontSize(fontSize - 1));
 };
 
-export const resetFontSize = () => setFontSize(undefined);
+export const resetFontSize: A.ActionCreator<A.SetFontSize> = () =>
+  setFontSize(undefined);
 
-export const activateTheme = theme => ({
+export const activateTheme: A.ActionCreator<A.SetTheme> = theme => ({
   type: 'setTheme',
   theme,
 });
 
-export const setNoteDisplay = noteDisplay => ({
+export const setNoteDisplay: A.ActionCreator<A.SetNoteDisplay> = noteDisplay => ({
   type: 'setNoteDisplay',
   noteDisplay,
 });
 
-export const setLineLength = lineLength => ({
+export const setLineLength: A.ActionCreator<A.SetLineLength> = lineLength => ({
   type: 'setLineLength',
   lineLength,
 });
@@ -47,7 +52,7 @@ export const toggleSortOrder = () => (dispatch, getState) => {
   });
 };
 
-export const setSortType = sortType => ({
+export const setSortType: A.ActionCreator<A.SetSortType> = sortType => ({
   type: 'setSortType',
   sortType,
 });
@@ -59,17 +64,17 @@ export const toggleSortTagsAlpha = () => (dispatch, getState) => {
   });
 };
 
-export const setMarkdown = markdownEnabled => ({
+export const setMarkdown: A.ActionCreator<A.SetMarkdownEnabled> = markdownEnabled => ({
   type: 'setMarkdownEnabled',
   markdownEnabled,
 });
 
-export const setAccountName = accountName => ({
+export const setAccountName: A.ActionCreator<A.SetAccountName> = accountName => ({
   type: 'setAccountName',
   accountName,
 });
 
-export const setWPToken = token => ({
+export const setWPToken: A.ActionCreator<A.SetWPToken> = token => ({
   type: 'setWPToken',
   token,
 });
