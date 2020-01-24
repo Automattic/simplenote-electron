@@ -4,7 +4,13 @@
  * All data should flow through here
  */
 
-import { compose, createStore, combineReducers, applyMiddleware } from 'redux';
+import {
+  Store as ReduxStore,
+  compose,
+  createStore,
+  combineReducers,
+  applyMiddleware,
+} from 'redux';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 import { omit } from 'lodash';
@@ -72,6 +78,8 @@ export const store = createStore(
     applyMiddleware(thunk, uiMiddleware)
   )
 );
+
+export type Store = ReduxStore<State, A.ActionType>;
 
 export type MapState<StateProps, OwnProps = {}> = (
   state: State,

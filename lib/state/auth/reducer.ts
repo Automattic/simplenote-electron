@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
 
-import { AUTH_SET } from '../action-types';
+import * as A from '../action-types';
+import { AuthState } from './constants';
 
-import { NotAuthorized } from './constants';
-
-export const authStatus = (state = NotAuthorized, { type, status }) =>
-  AUTH_SET === type ? status : state;
+export const authStatus: A.Reducer<AuthState> = (
+  state = 'not-authorized',
+  action
+) => ('AUTH_SET' === action.type ? action.status : state);
 
 export default combineReducers({
   authStatus,

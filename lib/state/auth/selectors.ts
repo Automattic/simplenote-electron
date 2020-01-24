@@ -1,20 +1,13 @@
-import { get } from 'lodash';
+import * as S from '../';
 
-import {
-  Authorized,
-  Authorizing,
-  InvalidCredentials,
-  LoginError,
-} from './constants';
+export const authIsPending = (state: S.State) =>
+  'authorizing' === state.auth.authStatus;
 
-export const authIsPending = state =>
-  Authorizing === get(state, 'auth.authStatus');
+export const hasInvalidCredentials = (state: S.State) =>
+  'invalid-credentials' === state.auth.authStatus;
 
-export const hasInvalidCredentials = state =>
-  InvalidCredentials === get(state, 'auth.authStatus');
+export const hasLoginError = (state: S.State) =>
+  'login-error' === state.auth.authStatus;
 
-export const hasLoginError = state =>
-  LoginError === get(state, 'auth.authStatus');
-
-export const isAuthorized = state =>
-  Authorized === get(state, 'auth.authStatus');
+export const isAuthorized = (state: S.State) =>
+  'authorized' === state.auth.authStatus;
