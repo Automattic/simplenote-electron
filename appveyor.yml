@@ -4,7 +4,7 @@ environment:
   CSC_KEY_PASSWORD:
     secure: Sz53shy7P4kPzBKa9shHTw==
   GH_TOKEN:
-    secure: rgCznyrNnbERL0+MFoT/48TazSzqodduLapcquSs2D3hidBCwjbaOUkE9wXIi3WG
+    secure: YT95oZAVxC7cDNT/XzUpN8fDwfysXTKETux44ta/sfm7gAo/Wghm1ZWCElNqvAKx
   APPVEYOR_RDP_PASSWORD:
     secure: G+yYok+QzBzcrkdhtx+UC4vjyU0kSlWRQ+l+iooLV7o=
   CSC_LINK: .\resources\certificates\win.p12
@@ -17,7 +17,7 @@ configuration:
   - AppX-Testing
 
 install:
-  - ps: Install-Product node 10
+  - ps: Install-Product node 11.15.0
   - cinst make
   - npm ci
   - patch -p1 < ./resources/macos/macPackager-patch.diff

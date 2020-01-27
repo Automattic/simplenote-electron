@@ -3,16 +3,27 @@
   flex: 1 0 auto;
   width: 100%;
 
-  &.is-focus-mode.is-note-open {
+  &.is-focus-mode {
     .app-layout__source-column {
       overflow: hidden;
       opacity: $fade-alpha;
       width: 0;
-      transition: width .2s ease-in-out, opacity .2s ease-in-out;
+      transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
     }
     .app-layout__note-column {
       border-left-width: 0px;
-      transition: border-left-width .2s;
+      transition: border-left-width 0.2s;
+    }
+
+    @media only screen and (max-width: $single-column) {
+      .app-layout__source-column {
+        overflow: inherit;
+        opacity: 1;
+        width: inherit;
+      }
+      .app-layout__note-column {
+        transition: inherit;
+      }
     }
   }
 
@@ -43,7 +54,7 @@
 
   &.is-note-open {
     .app-layout__source-column {
-      transition: opacity .2s ease-in-out;
+      transition: opacity 0.2s ease-in-out;
     }
 
     @media only screen and (max-width: $single-column) {

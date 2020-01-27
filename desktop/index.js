@@ -1,1 +1,1 @@
-var app = require('./app')();
+require('./app')();

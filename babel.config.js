@@ -10,6 +10,7 @@ module.exports = function(api) {
       },
     ],
     '@babel/preset-react',
+    '@babel/typescript',
   ];
   const plugins = [
     '@babel/plugin-proposal-class-properties',
@@ -17,6 +18,9 @@ module.exports = function(api) {
     '@babel/plugin-syntax-dynamic-import',
   ];
   const env = {
+    development: {
+      compact: false,
+    },
     test: {
       plugins: ['dynamic-import-node'],
     },
