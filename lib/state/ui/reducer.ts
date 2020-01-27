@@ -1,5 +1,5 @@
 import { difference, union } from 'lodash';
-import { combineReducers } from 'redux';
+import { AnyAction, combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 
@@ -29,7 +29,10 @@ const visiblePanes: A.Reducer<string[]> = (
   return state;
 };
 
-const note = (state = null, action) => {
+const note: A.Reducer<T.NoteEntity | null> = (
+  state = null,
+  action: AnyAction
+) => {
   switch (action.type) {
     case 'App.notesLoaded': {
       return state

@@ -34,7 +34,6 @@ export type AppState = {
   isViewingRevisions: boolean;
   listTitle: T.TranslatableString;
   nextDialogKey: number;
-  note?: T.NoteEntity;
   notes: T.NoteEntity[] | null;
   preferences?: T.Preferences;
   previousIndex: number;

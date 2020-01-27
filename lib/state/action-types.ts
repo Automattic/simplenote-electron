@@ -58,6 +58,10 @@ export type ToggleSimperiumConnectionStatus = Action<
   { simperiumConnected: boolean }
 >;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
+export type SetSelectedNote = Action<
+  'SET_SELECTED_NOTE',
+  { note: T.NoteEntity | null }
+>;
 
 export type ActionType =
   | FilterNotes
@@ -69,6 +73,7 @@ export type ActionType =
   | SetLineLength
   | SetMarkdownEnabled
   | SetNoteDisplay
+  | SetSelectedNote
   | SetSortReversed
   | SetSortTagsAlpha
   | SetSortType

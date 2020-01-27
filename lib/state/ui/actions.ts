@@ -15,7 +15,9 @@ export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumC
   simperiumConnected,
 });
 
-export const setSelectedNote = note => ({
+export const setSelectedNote: A.ActionCreator<A.SetSelectedNote> = (
+  note: T.NoteEntity | null
+) => ({
   type: 'SET_SELECTED_NOTE',
   note,
 });
