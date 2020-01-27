@@ -33,12 +33,8 @@ const note: A.Reducer<T.NoteEntity | null> = (
   state = null,
   action: AnyAction
 ) => {
+  console.log(state, action);
   switch (action.type) {
-    case 'App.notesLoaded': {
-      return state
-        ? action.notes.find(({ id }) => id === state.id) || state
-        : action.notes[0] || null;
-    }
     case 'App.noteUpdatedRemotely':
     case 'App.selectNote': {
       return {
