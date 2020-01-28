@@ -12,6 +12,9 @@ const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   action
 ) => ('FILTER_NOTES' === action.type ? action.notes : state);
 
+const print: A.Reducer<boolean> = (state = false, action) =>
+  'SHOULD_PRINT_TOGGLE' === action.type ? action.shouldPrint : state;
+
 const visiblePanes: A.Reducer<string[]> = (
   state = defaultVisiblePanes,
   action
@@ -25,4 +28,4 @@ const visiblePanes: A.Reducer<string[]> = (
   return state;
 };
 
-export default combineReducers({ filteredNotes, visiblePanes });
+export default combineReducers({ filteredNotes, print, visiblePanes });

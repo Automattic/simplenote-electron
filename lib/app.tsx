@@ -30,6 +30,7 @@ import {
   pick,
   values,
 } from 'lodash';
+import { toggleShouldPrint } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
 
@@ -76,12 +77,12 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
-
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    setShouldPrint: () => dispatch(toggleShouldPrint(true)),
   };
 }
 
@@ -258,6 +259,15 @@ export const App = connect(
         } else {
           this.props.actions[command.action](command);
         }
+        return;
+      }
+
+      switch (command?.action) {
+        case 'setShouldPrintNote':
+          this.props.setShouldPrint();
+          break;
+        default:
+          break;
       }
     };
 

@@ -53,6 +53,10 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
  */
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
+export type ToggleShouldPrint = Action<
+  'SHOULD_PRINT_TOGGLE',
+  { shouldPrint: boolean }
+>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 
 export type ActionType =
@@ -71,6 +75,7 @@ export type ActionType =
   | SetSpellCheck
   | SetTheme
   | SetWPToken
+  | ToggleShouldPrint
   | ToggleTagDrawer;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;

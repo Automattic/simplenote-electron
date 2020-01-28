@@ -8,6 +8,13 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes,
 });
 
+export const toggleShouldPrint: A.ActionCreator<A.ToggleShouldPrint> = (
+  shouldPrint: boolean
+) => ({
+  type: 'SHOULD_PRINT_TOGGLE',
+  shouldPrint,
+});
+
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   show: boolean
 ) => ({

@@ -42,7 +42,6 @@ export type AppState = {
   revision: T.NoteEntity | null;
   searchFocus: boolean;
   selectedNoteId: T.EntityId | null;
-  shouldPrint: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
   showTrash: boolean;

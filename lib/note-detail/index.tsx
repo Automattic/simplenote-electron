@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
 import analytics from '../analytics';
-import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
+import { toggleShouldPrint } from '../state/ui/actions';
 
 const syncDelay = 2000;
 
@@ -25,7 +25,7 @@ export class NoteDetail extends Component {
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
-    shouldPrint: PropTypes.bool.isRequired,
+    print: PropTypes.bool.isRequired,
     showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -72,10 +72,11 @@ export class NoteDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, onNotePrinted, previewingMarkdown, shouldPrint } = this.props;
+    const { note, onNotePrinted, previewingMarkdown, print } = this.props;
 
-    // Immediately print once `shouldPrint` has been set
-    if (shouldPrint) {
+    // Immediately print once `print` has been set
+    console.log(print);
+    if (print) {
       window.print();
       onNotePrinted();
     }
@@ -240,18 +241,16 @@ export class NoteDetail extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps = ({ appState: state, settings, ui: { print } }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
-  shouldPrint: state.shouldPrint,
+  print,
   showNoteInfo: state.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-const { setShouldPrintNote } = appState.actionCreators;
-
-const mapDispatchToProps = {
-  onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
-};
+const mapDispatchToProps = dispatch => ({
+  onNotePrinted: () => dispatch(toggleShouldPrint(false)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);

@@ -49,7 +49,6 @@ const initialState: AppState = {
   editingTags: false,
   dialogs: [],
   nextDialogKey: 0,
-  shouldPrint: false,
   searchFocus: false,
   unsyncedNoteIds: [], // note bucket only
   isOffline: true, // disconnected from Simperium server
@@ -351,12 +350,6 @@ export const actionMap = new ActionMap({
     setIsViewingRevisions(state: AppState, { isViewingRevisions }) {
       return update(state, {
         isViewingRevisions: { $set: isViewingRevisions },
-      });
-    },
-
-    setShouldPrintNote(state: AppState, { shouldPrint = true }) {
-      return update(state, {
-        shouldPrint: { $set: shouldPrint },
       });
     },
 
