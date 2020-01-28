@@ -7,10 +7,11 @@ import SyncIcon from '../../icons/sync';
 import SyncStatusPopover from './popover';
 
 import * as S from '../../state';
+import * as T from '../../types';
 
 type StateProps = {
   simperiumConnected: boolean;
-  unsyncedNoteIds: string[];
+  unsyncedNoteIds: T.EntityId[];
 };
 
 class SyncStatus extends Component<StateProps> {
