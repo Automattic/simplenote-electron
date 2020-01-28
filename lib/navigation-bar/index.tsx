@@ -21,7 +21,6 @@ export class NavigationBar extends Component {
     autoHideMenuBar: PropTypes.bool,
     dialogs: PropTypes.array.isRequired,
     isElectron: PropTypes.bool.isRequired,
-    isOffline: PropTypes.bool.isRequired,
     onAbout: PropTypes.func.isRequired,
     onOutsideClick: PropTypes.func.isRequired,
     onSettings: PropTypes.func.isRequired,
@@ -30,7 +29,6 @@ export class NavigationBar extends Component {
     selectedTag: PropTypes.object,
     showNavigation: PropTypes.bool.isRequired,
     showTrash: PropTypes.bool.isRequired,
-    unsyncedNoteIds: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -69,13 +67,10 @@ export class NavigationBar extends Component {
     const {
       autoHideMenuBar,
       isElectron,
-      isOffline,
       onAbout,
       onSettings,
       onShowAllNotes,
-      unsyncedNoteIds,
     } = this.props;
-
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders">
@@ -125,7 +120,7 @@ export class NavigationBar extends Component {
         )}
 
         <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
-          <SyncStatus isOffline={isOffline} unsyncedNoteIds={unsyncedNoteIds} />
+          <SyncStatus />
         </div>
       </div>
     );
@@ -135,11 +130,9 @@ export class NavigationBar extends Component {
 const mapStateToProps = ({ appState: state, settings }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
   dialogs: state.dialogs,
-  isOffline: state.isOffline,
   selectedTag: state.tag,
   showNavigation: state.showNavigation,
   showTrash: state.showTrash,
-  unsyncedNoteIds: state.unsyncedNoteIds,
 });
 
 const {

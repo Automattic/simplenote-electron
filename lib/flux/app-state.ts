@@ -52,7 +52,6 @@ const initialState: AppState = {
   shouldPrint: false,
   searchFocus: false,
   unsyncedNoteIds: [], // note bucket only
-  isOffline: true, // disconnected from Simperium server
 };
 
 export const actionMap = new ActionMap({
@@ -716,15 +715,6 @@ export const actionMap = new ActionMap({
     ) {
       return update(state, {
         unsyncedNoteIds: { $set: noteIds },
-      });
-    },
-
-    setConnectionStatus(
-      state: AppState,
-      { isOffline }: { isOffline: boolean }
-    ) {
-      return update(state, {
-        isOffline: { $set: isOffline },
       });
     },
   },
