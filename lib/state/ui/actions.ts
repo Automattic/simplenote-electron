@@ -8,6 +8,13 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes,
 });
 
+export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumConnectionStatus> = (
+  simperiumConnected: boolean
+) => ({
+  type: 'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
+  simperiumConnected,
+});
+
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   show: boolean
 ) => ({

@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import AlertIcon from '../../icons/alert';
 import SyncIcon from '../../icons/sync';
 import SyncStatusPopover from './popover';
 
-class SyncStatus extends Component {
-  static propTypes = {
-    isOffline: PropTypes.bool.isRequired,
-    unsyncedNoteIds: PropTypes.array.isRequired,
-  };
+import * as S from '../../state';
+import * as T from '../../types';
 
+type StateProps = {
+  simperiumConnected: boolean;
+  unsyncedNoteIds: T.EntityId[];
+};
+
+class SyncStatus extends Component<StateProps> {
   state = {
     anchorEl: null,
   };
@@ -24,7 +28,7 @@ class SyncStatus extends Component {
   };
 
   render() {
-    const { isOffline, unsyncedNoteIds } = this.props;
+    const { simperiumConnected, unsyncedNoteIds } = this.props;
     const { anchorEl } = this.state;
 
     const popoverId = 'sync-status__popover';
@@ -33,9 +37,9 @@ class SyncStatus extends Component {
     const unit = unsyncedChangeCount === 1 ? 'change' : 'changes';
     const text = unsyncedChangeCount
       ? `${unsyncedChangeCount} unsynced ${unit}`
-      : isOffline
-      ? 'No connection'
-      : 'All changes synced';
+      : simperiumConnected
+      ? 'All changes synced'
+      : 'No connection';
 
     return (
       <div>
@@ -49,7 +53,7 @@ class SyncStatus extends Component {
           tabIndex="0"
         >
           <span className="sync-status__icon">
-            {isOffline ? <AlertIcon /> : <SyncIcon />}
+            {simperiumConnected ? <SyncIcon /> : <AlertIcon />}
           </span>
           {text}
         </div>
@@ -65,4 +69,12 @@ class SyncStatus extends Component {
   }
 }
 
-export default SyncStatus;
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui: { simperiumConnected },
+}) => ({
+  simperiumConnected,
+  unsyncedNoteIds: state.unsyncedNoteIds,
+});
+
+export default connect(mapStateToProps)(SyncStatus);

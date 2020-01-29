@@ -30,6 +30,7 @@ import {
   pick,
   values,
 } from 'lodash';
+import { toggleSimperiumConnectionStatus } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
 
@@ -82,6 +83,8 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    setSimperiumConnectionStatus: connected =>
+      dispatch(toggleSimperiumConnectionStatus(connected)),
   };
 }
 
@@ -166,18 +169,14 @@ export const App = connect(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
-      const {
-        actions: { setConnectionStatus },
-      } = this.props;
-
       this.props.client
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
         .on('message', setLastSyncedTime)
         .on('message', this.syncActivityHooks)
         .on('send', this.syncActivityHooks)
-        .on('connect', () => setConnectionStatus({ isOffline: false }))
-        .on('disconnect', () => setConnectionStatus({ isOffline: true }));
+        .on('connect', () => this.props.setSimperiumConnectionStatus(true))
+        .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded

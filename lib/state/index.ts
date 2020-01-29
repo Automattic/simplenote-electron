@@ -31,7 +31,6 @@ export type AppState = {
   editorMode: T.EditorMode;
   editingTags: boolean;
   filter: string;
-  isOffline: boolean;
   isViewingRevisions: boolean;
   listTitle: T.TranslatableString;
   nextDialogKey: number;
