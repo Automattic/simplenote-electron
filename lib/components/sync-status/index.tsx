@@ -62,7 +62,6 @@ class SyncStatus extends Component<StateProps> {
           anchorEl={anchorEl}
           id={popoverId}
           onClose={this.handlePopoverClose}
-          unsyncedNoteIds={unsyncedNoteIds}
         />
       </div>
     );
@@ -70,11 +69,10 @@ class SyncStatus extends Component<StateProps> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  ui: { simperiumConnected },
+  ui: { simperiumConnected, unsyncedNoteIds },
 }) => ({
   simperiumConnected,
-  unsyncedNoteIds: state.unsyncedNoteIds,
+  unsyncedNoteIds,
 });
 
 export default connect(mapStateToProps)(SyncStatus);

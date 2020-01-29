@@ -657,14 +657,14 @@ export const actionMap = new ActionMap({
       },
     },
 
-    setUnsyncedNoteIds(
-      state: AppState,
-      { noteIds }: { noteIds: T.EntityId[] }
-    ) {
-      return update(state, {
-        unsyncedNoteIds: { $set: noteIds },
-      });
-    },
+    // setUnsyncedNoteIds(
+    //   state: AppState,
+    //   { noteIds }: { noteIds: T.EntityId[] }
+    // ) {
+    //   return update(state, {
+    //     unsyncedNoteIds: { $set: noteIds },
+    //   });
+    // },
   },
 });
 
