@@ -175,12 +175,8 @@ export const App = connect(
         .on('message', setLastSyncedTime)
         .on('message', this.syncActivityHooks)
         .on('send', this.syncActivityHooks)
-        .on('connect', () => {
-          this.props.setSimperiumConnectionStatus(true);
-        })
-        .on('disconnect', () => {
-          this.props.setSimperiumConnectionStatus(false);
-        });
+        .on('connect', () => this.props.setSimperiumConnectionStatus(true))
+        .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
