@@ -8,15 +8,14 @@ import Slider from '../components/slider';
 import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
 
-import { NoteEntity } from '../types';
+import * as S from '../state';
+import * as T from '../types';
 
-const sortedRevisions = (revisions: NoteEntity[]) =>
+const sortedRevisions = (revisions: T.NoteEntity[]) =>
   orderBy(revisions, 'version', 'asc');
 
-type Props = {
-  isViewingRevisions: boolean;
-  note: NoteEntity;
-  revisions: NoteEntity[];
+type OwnProps = {
+  revisions: T.NoteEntity[];
   onUpdateContent: Function;
   setRevision: Function;
   resetIsViewingRevisions: Function;
@@ -24,12 +23,19 @@ type Props = {
   updateNoteTags: Function;
 };
 
-type State = {
-  revisions: NoteEntity[];
+type StateProps = {
+  isViewingRevisions: boolean;
+  note: T.NoteEntity | null;
+};
+
+type ComponentState = {
+  revisions: T.NoteEntity[];
   selection: number;
 };
 
-export class RevisionSelector extends Component<Props, State> {
+type Props = OwnProps & StateProps;
+
+export class RevisionSelector extends Component<Props, ComponentState> {
   constructor(props: Props, ...args: unknown[]) {
     super(props, ...args);
 
@@ -167,7 +173,10 @@ export class RevisionSelector extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appState: state, ui: { note } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui: { note },
+}) => ({
   isViewingRevisions: state.isViewingRevisions,
   note: note,
 });

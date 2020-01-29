@@ -29,24 +29,16 @@ const visiblePanes: A.Reducer<string[]> = (
   return state;
 };
 
-const note: A.Reducer<T.NoteEntity | null> = (
-  state = null,
-  action: AnyAction
-) => {
+const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
-    case 'App.noteUpdatedRemotely':
-    case 'App.selectNote': {
-      return {
-        ...action.note,
-        hasRemoteUpdate: action.hasRemoteUpdate,
-      };
-    }
+    case 'App.selectNote':
+      return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
     case 'App.closeNote':
     case 'App.showAllNotes':
     case 'App.selectTrash':
     case 'App.selectTag':
       return null;
-    case 'SET_SELECTED_NOTE':
+    case 'SELECT_NOTE':
       return action.note;
     case 'FILTER_NOTES':
       // keep note if still in new filtered list otherwise try to choose first note in list

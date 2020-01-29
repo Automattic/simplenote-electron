@@ -13,11 +13,19 @@ import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
-export class NoteToolbar extends Component {
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  note: T.NoteEntity | null;
+};
+
+type Props = StateProps;
+
+export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   static propTypes = {
-    note: PropTypes.object,
     onRestoreNote: PropTypes.func,
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
@@ -172,7 +180,7 @@ export class NoteToolbar extends Component {
   };
 }
 
-const mapStateToProps = ({ ui: { note } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   note,
 });
 

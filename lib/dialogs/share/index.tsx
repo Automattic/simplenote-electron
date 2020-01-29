@@ -13,16 +13,25 @@ import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
 
+import * as S from '../../state';
+import * as T from '../../types';
+
 const shareTabs = ['collaborate', 'publish'];
 
-export class ShareDialog extends Component {
+type StateProps = {
+  settings: S.State['settings'];
+  note: T.NoteEntity | null;
+};
+
+type Props = StateProps;
+
+export class ShareDialog extends Component<Props> {
   static propTypes = {
     actions: PropTypes.object.isRequired,
     dialog: PropTypes.object.isRequired,
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
     requestClose: PropTypes.func.isRequired,
-    settings: PropTypes.object.isRequired,
     tagBucket: PropTypes.object.isRequired,
     updateNoteTags: PropTypes.func.isRequired,
   };
@@ -205,7 +214,10 @@ export class ShareDialog extends Component {
   }
 }
 
-const mapStateToProps = ({ settings, ui: { note } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  settings,
+  ui: { note },
+}) => ({
   settings,
   note,
 });
