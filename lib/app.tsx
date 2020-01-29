@@ -30,6 +30,7 @@ import {
   pick,
   values,
 } from 'lodash';
+import { setEditorMode } from './state/ui/actions';
 import { toggleSimperiumConnectionStatus } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
@@ -39,6 +40,7 @@ const ipc = getIpcRenderer();
 const mapStateToProps = state => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
+  editorMode: state?.ui?.editorMode,
   isAuthorized: selectors.auth.isAuthorized(state),
 });
 
@@ -85,6 +87,7 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
+    setEditorMode: mode => dispatch(setEditorMode(mode)),
   };
 }
 
@@ -235,6 +238,19 @@ export const App = connect(
     onAppCommand = (event, command) => {
       if ('exportZipArchive' === get(command, 'action')) {
         exportZipArchive();
+      }
+
+      if ('printNote' === command.action) {
+        const { editorMode, setEditorMode } = this.props;
+
+        setTimeout(() => {
+          setEditorMode('markdown');
+          setTimeout(() => {
+            window.print();
+            // setEditorMode(editorMode);
+          }, 0);
+        }, 0);
+        return;
       }
 
       const canRun = overEvery(

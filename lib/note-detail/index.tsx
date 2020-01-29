@@ -21,11 +21,9 @@ export class NoteDetail extends Component {
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
-    onNotePrinted: PropTypes.func.isRequired,
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
-    shouldPrint: PropTypes.bool.isRequired,
     showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -72,13 +70,7 @@ export class NoteDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, onNotePrinted, previewingMarkdown, shouldPrint } = this.props;
-
-    // Immediately print once `shouldPrint` has been set
-    if (shouldPrint) {
-      window.print();
-      onNotePrinted();
-    }
+    const { note, previewingMarkdown } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
@@ -243,15 +235,8 @@ export class NoteDetail extends Component {
 const mapStateToProps = ({ appState: state, settings }) => ({
   dialogs: state.dialogs,
   filter: state.filter,
-  shouldPrint: state.shouldPrint,
   showNoteInfo: state.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-const { setShouldPrintNote } = appState.actionCreators;
-
-const mapDispatchToProps = {
-  onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);
+export default connect(mapStateToProps)(NoteDetail);

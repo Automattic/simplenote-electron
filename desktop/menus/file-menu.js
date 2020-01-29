@@ -28,7 +28,7 @@ const submenu = [
   {
     label: '&Print…',
     accelerator: 'CommandOrControl+P',
-    click: appCommandSender({ action: 'setShouldPrintNote' }),
+    click: appCommandSender({ action: 'printNote' }),
   },
 ];
 
