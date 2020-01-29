@@ -7,10 +7,7 @@ import * as T from '../../types';
 const defaultVisiblePanes = ['editor', 'noteList'];
 const emptyList: unknown[] = [];
 
-const editorMode: A.Reducer<T.EditorMode> = (
-  state = 'edit',
-  action: AnyAction
-) => {
+const editorMode: A.Reducer<T.EditorMode> = (state = 'edit', action) => {
   switch (action.type) {
     case 'SET_EDITOR_MODE':
     case 'App.setEditorMode': {
