@@ -1,6 +1,5 @@
 import React, { FunctionComponent, Suspense } from 'react';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 import NoteToolbarContainer from '../note-toolbar-container';
 import NoteToolbar from '../note-toolbar';
@@ -40,7 +39,6 @@ export const AppLayout: FunctionComponent<Props> = ({
   isNoteInfoOpen,
   isNoteOpen,
   isSmallScreen,
-  note,
   noteBucket,
   revisions,
   onNoteClosed,
@@ -76,25 +74,20 @@ export const AppLayout: FunctionComponent<Props> = ({
         </div>
         <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
           <RevisionSelector
-            note={note}
             revisions={revisions || []}
             onUpdateContent={onUpdateContent}
           />
           <NoteToolbarContainer
             onNoteClosed={onNoteClosed}
             noteBucket={noteBucket}
-            toolbar={<NoteToolbar note={note} />}
+            toolbar={<NoteToolbar />}
           />
           <NoteEditor
             isSmallScreen={isSmallScreen}
-            note={note}
             noteBucket={noteBucket}
             onNoteClosed={onNoteClosed}
             onUpdateContent={onUpdateContent}
             syncNote={syncNote}
-            tags={
-              get(note, 'data.tags', []) /* flattened to trigger re-render */
-            }
           />
         </div>
       </Suspense>

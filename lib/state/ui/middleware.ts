@@ -30,7 +30,6 @@ export const middleware: Middleware<{}, S.State, Dispatch> = store => {
 
       // on updating the search field we should delay the update
       // so we don't waste our CPU time and lose responsiveness
-      case 'App.noteUpdatedRemotely':
       case 'App.search':
         clearTimeout(searchTimeout);
         if ('App.search' === action.type && !action.filter) {

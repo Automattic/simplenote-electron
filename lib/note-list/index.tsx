@@ -29,6 +29,15 @@ import {
 } from './decorators';
 import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  selectedNoteId?: T.EntityId;
+};
+
+type Props = StateProps;
+
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
 
@@ -295,7 +304,7 @@ const createCompositeNoteList = (notes, filter, tagResultsFound) => {
   ];
 };
 
-export class NoteList extends Component {
+export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
   list = createRef();
@@ -306,7 +315,6 @@ export class NoteList extends Component {
     tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
-    selectedNoteId: PropTypes.any,
     onNoteOpened: PropTypes.func.isRequired,
     onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
@@ -346,11 +354,6 @@ export class NoteList extends Component {
       prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
-    }
-
-    // Ensure that the note selected here is also selected in the editor
-    if (selectedNoteId !== prevProps.selectedNoteId) {
-      onSelectNote(selectedNoteId);
     }
 
     // Deselect the currently selected note if it doesn't match the search query
@@ -494,16 +497,14 @@ const {
 } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-const mapStateToProps = ({
+const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes },
+  ui: { filteredNotes, note },
   settings: { noteDisplay },
 }) => {
   const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
-
-  const noteIndex = Math.max(state.previousIndex, 0);
-  const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
-  const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
+  const selectedNote = note;
+  const selectedNoteId = selectedNote?.id;
   const selectedNoteIndex = filteredNotes.findIndex(
     ({ id }) => id === selectedNoteId
   );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -12,11 +13,19 @@ import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
-export class NoteToolbar extends Component {
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  note: T.NoteEntity | null;
+};
+
+type Props = StateProps;
+
+export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   static propTypes = {
-    note: PropTypes.object,
     onRestoreNote: PropTypes.func,
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
@@ -171,4 +180,8 @@ export class NoteToolbar extends Component {
   };
 }
 
-export default NoteToolbar;
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
+  note,
+});
+
+export default connect(mapStateToProps)(NoteToolbar);

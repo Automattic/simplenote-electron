@@ -10,11 +10,19 @@ import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import { setMarkdown } from '../state/settings/actions';
 
-export class NoteInfo extends Component {
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  isMarkdown: boolean;
+  isPinned: boolean;
+  note: T.NoteEntity | null;
+};
+
+type Props = StateProps;
+
+export class NoteInfo extends Component<Props> {
   static propTypes = {
-    isMarkdown: PropTypes.bool.isRequired,
-    isPinned: PropTypes.bool.isRequired,
-    note: PropTypes.object,
     markdownEnabled: PropTypes.bool,
     onPinNote: PropTypes.func.isRequired,
     onMarkdownNote: PropTypes.func.isRequired,
@@ -188,15 +196,11 @@ function characterCount(content) {
 
 const { markdownNote, pinNote, toggleNoteInfo } = appState.actionCreators;
 
-const mapStateToProps = ({ appState: state, ui: { filteredNotes } }) => {
-  const noteIndex = Math.max(state.previousIndex, 0);
-  const note = state.note ? state.note : filteredNotes[noteIndex];
-  return {
-    note,
-    isMarkdown: note.data.systemTags.includes('markdown'),
-    isPinned: note.data.systemTags.includes('pinned'),
-  };
-};
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
+  note,
+  isMarkdown: !!note && note.data.systemTags.includes('markdown'),
+  isPinned: !!note && note.data.systemTags.includes('pinned'),
+});
 
 const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onMarkdownNote: (note, markdown = true) => {

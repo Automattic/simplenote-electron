@@ -58,10 +58,12 @@ export type ToggleSimperiumConnectionStatus = Action<
   { simperiumConnected: boolean }
 >;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
+export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
 export type ActionType =
   | LegacyAction
   | FilterNotes
+  | SelectNote
   | SetAccountName
   | SetAuth
   | SetAutoHideMenuBar

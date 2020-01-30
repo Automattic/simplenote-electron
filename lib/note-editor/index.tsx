@@ -6,7 +6,16 @@ import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 
-export class NoteEditor extends Component {
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  note: T.NoteEntity | null;
+};
+
+type Props = StateProps;
+
+export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
 
   static propTypes = {
@@ -16,7 +25,6 @@ export class NoteEditor extends Component {
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     filter: PropTypes.string.isRequired,
-    note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onNoteClosed: PropTypes.func.isRequired,
@@ -161,12 +169,17 @@ export class NoteEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  settings,
+  ui: { note },
+}) => ({
   allTags: state.tags,
   filter: state.filter,
   fontSize: settings.fontSize,
   editorMode: state.editorMode,
   isEditorActive: !state.showNavigation,
+  note,
   revision: state.revision,
 });
 

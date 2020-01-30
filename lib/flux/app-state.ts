@@ -2,7 +2,6 @@ import { get, partition, some } from 'lodash';
 import update from 'react-addons-update';
 import Debug from 'debug';
 import ActionMap from './action-map';
-import filterNotes from '../utils/filter-notes';
 import analytics from '../analytics';
 
 import { AppState, State } from '../state';
@@ -36,7 +35,6 @@ const toggleSystemTag = (
 const initialState: AppState = {
   editorMode: 'edit',
   filter: '',
-  selectedNoteId: null,
   previousIndex: -1,
   notes: null,
   tags: [],
@@ -100,8 +98,6 @@ export const actionMap = new ActionMap({
         showTrash: { $set: false },
         listTitle: { $set: 'All Notes' },
         tag: { $set: null },
-        note: { $set: null },
-        selectedNoteId: { $set: null },
         previousIndex: { $set: -1 },
       });
     },
@@ -113,8 +109,6 @@ export const actionMap = new ActionMap({
         showTrash: { $set: true },
         listTitle: { $set: 'Trash' },
         tag: { $set: null },
-        note: { $set: null },
-        selectedNoteId: { $set: null },
         previousIndex: { $set: -1 },
       });
     },
@@ -139,8 +133,6 @@ export const actionMap = new ActionMap({
         showTrash: { $set: false },
         listTitle: { $set: tag.data.name },
         tag: { $set: tag },
-        note: { $set: null },
-        selectedNoteId: { $set: null },
         previousIndex: { $set: -1 },
       });
     },
@@ -297,25 +289,8 @@ export const actionMap = new ActionMap({
         note.data.systemTags.includes('pinned')
       );
       const pinSortedNotes = [...pinned, ...notPinned];
-
-      let selectedNote = null;
-
-      if (state.note) {
-        // Load the newest version of the selected note
-        selectedNote = notes.find(note => note.id === state.note.id);
-      } else {
-        // If no note is selected, select either the first note
-        // or the previous note in the list
-        const filteredNotes = filterNotes(state, pinSortedNotes);
-        if (filteredNotes.length > 0) {
-          selectedNote = filteredNotes[Math.max(state.previousIndex, 0)];
-        }
-      }
-
       return update(state, {
         notes: { $set: pinSortedNotes },
-        note: { $set: selectedNote },
-        selectedNoteId: { $set: get(selectedNote, 'id', null) },
       });
     },
 
@@ -395,11 +370,9 @@ export const actionMap = new ActionMap({
       },
     },
 
-    selectNote(state: AppState, { note, hasRemoteUpdate }) {
+    selectNote(state: AppState) {
       return update(state, {
         editingTags: { $set: false },
-        note: { $set: { ...note, hasRemoteUpdate } },
-        selectedNoteId: { $set: note.id },
         revision: { $set: null },
         revisions: { $set: null },
       });
@@ -407,33 +380,8 @@ export const actionMap = new ActionMap({
 
     closeNote(state: AppState, { previousIndex = -1 }) {
       return update(state, {
-        note: { $set: null },
-        selectedNoteId: { $set: null },
         previousIndex: { $set: previousIndex },
       });
-    },
-
-    noteUpdatedRemotely: {
-      creator({ noteBucket, noteId, data, remoteUpdateInfo = {} }) {
-        return (dispatch, getState: () => State) => {
-          const state = getState().appState;
-          const { patch } = remoteUpdateInfo;
-
-          debug('noteUpdatedRemotely: %O', data);
-
-          if (state.selectedNoteId !== noteId || !patch) {
-            return;
-          }
-
-          dispatch(
-            this.action('loadAndSelectNote', {
-              noteBucket,
-              noteId,
-              hasRemoteUpdate: true,
-            })
-          );
-        };
-      },
     },
 
     /**

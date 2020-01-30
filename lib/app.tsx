@@ -34,7 +34,21 @@ import { toggleSimperiumConnectionStatus } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
 
+import actions from './state/actions';
+import * as S from './state';
+import * as T from './types';
+
 const ipc = getIpcRenderer();
+
+export type OwnProps = {
+  noteBucket: object;
+};
+
+export type DispatchProps = {
+  selectNote: (note: T.NoteEntity) => any;
+};
+
+export type Props = DispatchProps;
 
 const mapStateToProps = state => ({
   ...state,
@@ -42,7 +56,10 @@ const mapStateToProps = state => ({
   isAuthorized: selectors.auth.isAuthorized(state),
 });
 
-function mapDispatchToProps(dispatch, { noteBucket }) {
+const mapDispatchToProps: S.MapDispatch<
+  DispatchProps,
+  OwnProps
+> = function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
   const thenReloadNotes = action => a => {
@@ -85,8 +102,9 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
+    selectNote: note => dispatch(actions.ui.selectNote(note)),
   };
-}
+};
 
 const isElectron = (() => {
   // https://github.com/atom/electron/issues/2288
@@ -102,7 +120,7 @@ export const App = connect(
   mapStateToProps,
   mapDispatchToProps
 )(
-  class extends Component {
+  class extends Component<Props> {
     static displayName = 'App';
 
     static propTypes = {
@@ -120,7 +138,6 @@ export const App = connect(
       openTagList: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
       settings: PropTypes.object.isRequired,
-      noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
@@ -296,12 +313,14 @@ export const App = connect(
     onNoteRemoved = () => this.onNotesIndex();
 
     onNoteUpdate = (noteId, data, remoteUpdateInfo = {}) => {
-      if (remoteUpdateInfo.patch) {
-        this.props.actions.noteUpdatedRemotely({
-          noteBucket: this.props.noteBucket,
-          noteId,
-          data,
-          remoteUpdateInfo,
+      const {
+        noteBucket,
+        selectNote,
+        ui: { note },
+      } = this.props;
+      if (remoteUpdateInfo.patch && note && noteId === note.id) {
+        noteBucket.get(noteId, (e, updatedNote) => {
+          selectNote({ ...updatedNote, hasRemoteUpdate: true });
         });
       }
     };
@@ -439,7 +458,6 @@ export const App = connect(
                 isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={state.showNoteInfo}
                 isSmallScreen={isSmallScreen}
-                note={state.note}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
                 onNoteClosed={() => this.setState({ isNoteOpen: false })}

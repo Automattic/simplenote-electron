@@ -15,6 +15,10 @@ export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumC
   simperiumConnected,
 });
 
+export const selectNote: A.ActionCreator<A.SelectNote> = (
+  note: T.NoteEntity
+) => ({ type: 'SELECT_NOTE', note });
+
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   show: boolean
 ) => ({
