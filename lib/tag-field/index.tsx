@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, KeyboardEventHandler } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Overlay } from 'react-overlays';
@@ -17,6 +17,10 @@ import {
   noop,
   union,
 } from 'lodash';
+
+const KEY_BACKSPACE = 8;
+const KEY_TAB = 9;
+const KEY_RIGHT = 39;
 
 export class TagField extends Component {
   static displayName = 'TagField';
@@ -113,22 +117,29 @@ export class TagField extends Component {
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys = e => {
-    // only handle backspace
-    if (8 !== e.which) {
+  interceptKeys: KeyboardEventHandler<HTMLDivElement> = e => {
+    if (KEY_BACKSPACE === e.which) {
+      if (this.hasSelection()) {
+        this.deleteSelection();
+      }
+
+      if ('' !== this.state.tagInput) {
+        return;
+      }
+
+      this.selectLastTag();
+      e.preventDefault();
       return;
     }
-
-    if (this.hasSelection()) {
-      this.deleteSelection();
-    }
-
-    if ('' !== this.state.tagInput) {
+    if (KEY_RIGHT === e.which && this.hasSelection()) {
+      this.unselect(e);
+      this.focusTagField();
       return;
     }
-
-    this.selectLastTag();
-    e.preventDefault();
+    if (KEY_TAB === e.which && this.hasSelection()) {
+      this.unselect(e);
+      return;
+    }
   };
 
   updateTags = tags =>
