@@ -10,7 +10,7 @@ const ButtonGroup = props => {
         <li key={item.slug} className="button-group__item theme-color-border">
           <button type="button" onClick={() => onClickItem(item)}>
             {item.name}
-            <div class="icon">{item.icon ? <item.icon /> : '→'}</div>
+            <div className="icon">{item.icon ? <item.icon /> : '→'}</div>
           </button>
         </li>
       ))}
