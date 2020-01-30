@@ -60,6 +60,7 @@ export type ToggleSimperiumConnectionStatus = Action<
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 
 export type ActionType =
+  | LegacyAction
   | FilterNotes
   | SetAccountName
   | SetAuth
@@ -80,3 +81,106 @@ export type ActionType =
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
+
+type LegacyAction =
+  | Action<
+      'App.deleteNoteForever',
+      {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }
+    >
+  | Action<
+      'App.loadAndSelectNote',
+      {
+        noteBucket: T.Bucket<T.Note>;
+        noteId: T.EntityId;
+        hasRemoteUpdate: boolean;
+      }
+    >
+  | Action<
+      'App.loadPreferences',
+      { callback?: Function; preferencesBucket: T.Bucket<T.Preferences> }
+    >
+  | Action<
+      'App.markdownNote',
+      { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity; markdown: boolean }
+    >
+  | Action<
+      'App.noteRevisions',
+      { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity }
+    >
+  | Action<
+      'App.noteUpdatedRemotely',
+      {
+        noteBucket: T.Bucket<T.Note>;
+        noteId: T.EntityId;
+        data: object;
+        remoteUpdateInfo: object;
+      }
+    >
+  | Action<
+      'App.pinNote',
+      { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity; pin: boolean }
+    >
+  | Action<
+      'App.publishNote',
+      { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity; publish: boolean }
+    >
+  | Action<
+      'App.restoreNote',
+      {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }
+    >
+  | Action<
+      'App.setPreference',
+      {
+        key: keyof T.Preferences;
+        value: unknown;
+        preferencesBucket: T.Bucket<T.Preferences>;
+      }
+    >
+  | Action<
+      'App.toggleShareAnalyticsPreference',
+      { preferencesBucket: T.Bucket<T.Preferences> }
+    >
+  | Action<
+      'App.trashNote',
+      {
+        noteBucket: T.Bucket<T.Note>;
+        note: T.NoteEntity;
+        previousIndex: number;
+      }
+    >
+  | Action<'App.authChanged'>
+  | Action<'App.closeDialog', { key: unknown }>
+  | Action<'App.closeNote', { previousIndex: number }>
+  | Action<'App.editTags'>
+  | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
+  | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
+  | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
+  | Action<'App.noteRevisionsLoaded', { reivisions: T.NoteEntity[] }>
+  | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
+  | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
+  | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
+  | Action<'App.search', { filter: string }>
+  | Action<'App.selectNote', { note: T.NoteEntity; hasRemoteUpdate: boolean }>
+  | Action<'App.selectTag', { tag: T.TagEntity }>
+  | Action<'App.selectTagAndSElectFirstNote'>
+  | Action<'App.selectTrash'>
+  | Action<'App.setEditorMode', { mode: T.EditorMode }>
+  | Action<'App.setIsViewingRevisions', { isReviewingRevisions: boolean }>
+  | Action<'App.setRevision', { revision: T.NoteEntity }>
+  | Action<'App.setSearchFocus', { searchFocus: boolean }>
+  | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
+  | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
+  | Action<'App.showAllNotes'>
+  | Action<'App.showAllNotesAndSelectFirst'>
+  | Action<'App.showDialog', { dialog: object }>
+  | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>
+  | Action<'App.toggleNavigation'>
+  | Action<'App.toggleNoteInfo'>;
