@@ -13,11 +13,9 @@
 
 ### Other Changes
 
-- Added types to state/ui/actions [#1849](https://github.com/Automattic/simplenote-electron/pull/1849)
-
-### Other Changes
-
 - Updated Dependencies [#1848](https://github.com/Automattic/simplenote-electron/pull/1848)
+- Added types to state/ui/actions [#1849](https://github.com/Automattic/simplenote-electron/pull/1849)
+- Changed Export Notes icon in Settings to indicate that it's a file download [#1874](https://github.com/Automattic/simplenote-electron/pull/1874)
 
 ## [v1.14.0]
 
