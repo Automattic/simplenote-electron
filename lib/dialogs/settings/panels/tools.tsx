@@ -9,6 +9,8 @@ import exportZipArchive from '../../../utils/export';
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
 
+import DownloadIcon from '../../../icons/download';
+
 const ToolsPanel = ({ showImportDialog }) => {
   const onSelectItem = item => {
     if (item.slug === 'import') {
@@ -30,6 +32,7 @@ const ToolsPanel = ({ showImportDialog }) => {
           {
             name: 'Export Notes',
             slug: 'export',
+            icon: DownloadIcon,
           },
         ]}
         onClickItem={onSelectItem}

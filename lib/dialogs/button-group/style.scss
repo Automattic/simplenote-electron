@@ -24,8 +24,7 @@
     text-align: left;
     font-size: 115%;
 
-    &::after {
-      content: '→';
+    .icon {
       display: block;
       width: 1em;
       height: 1em;
