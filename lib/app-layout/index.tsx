@@ -8,7 +8,7 @@ import SearchBar from '../search-bar';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 
-import { NoteEntity } from '../types';
+import * as T from '../types';
 
 const NoteList = React.lazy(() =>
   import(/* webpackChunkName: 'note-list' */ '../note-list')
@@ -24,9 +24,9 @@ type Props = {
   isNoteInfoOpen: boolean;
   isNoteOpen: boolean;
   isSmallScreen: boolean;
-  note: NoteEntity;
-  noteBucket: object;
-  revisions: NoteEntity[];
+  note: T.NoteEntity;
+  noteBucket: T.Bucket<T.Note>;
+  revisions: T.NoteEntity[];
   onNoteClosed: Function;
   onNoteOpened: Function;
   onUpdateContent: Function;

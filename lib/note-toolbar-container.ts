@@ -6,19 +6,43 @@ import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
 
+import * as S from './state';
 import * as T from './types';
-import { State } from './state';
 
-type ExternalProps = {
+type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
   onNoteClosed: Function;
   toolbar: ReactElement;
 };
 
-type ConnectedProps = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
+type StateProps = {
+  isViewingRevisions: boolean;
+  editorMode: T.EditorMode;
+  notes: T.NoteEntity[];
+  revisionOrNote: T.NoteEntity | null;
+};
 
-type Props = ExternalProps & ConnectedProps;
+type NoteChanger = {
+  noteBucket: T.Bucket<T.Note>;
+  note: T.NoteEntity;
+};
+
+type ListChanger = NoteChanger & { previousIndex: number };
+
+type DispatchProps = {
+  closeNote: () => any;
+  deleteNoteForever: (args: ListChanger) => any;
+  noteRevisions: (args: NoteChanger) => any;
+  restoreNote: (args: ListChanger) => any;
+  setEditorMode: ({ mode }: { mode: T.EditorMode }) => any;
+  setIsViewingRevisions: (isViewingRevisions: boolean) => any;
+  shareNote: () => any;
+  toggleFocusMode: () => any;
+  toggleNoteInfo: () => any;
+  trashNote: (args: ListChanger) => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteToolbarContainer extends Component<Props> {
   // Gets the index of the note located before the currently selected one
@@ -102,14 +126,14 @@ export class NoteToolbarContainer extends Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  appState: state,
-  ui: { filteredNotes },
-}: State) => ({
-  isViewingRevisions: state.isViewingRevisions,
-  editorMode: state.editorMode,
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState,
+  ui: { filteredNotes, note },
+}) => ({
+  isViewingRevisions: appState.isViewingRevisions,
+  editorMode: appState.editorMode,
   notes: filteredNotes,
-  revisionOrNote: state.revision || state.note,
+  revisionOrNote: appState.revision || note,
 });
 
 const {
@@ -124,7 +148,7 @@ const {
   trashNote,
 } = appState.actionCreators;
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeNote: () => dispatch(closeNote()),
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
