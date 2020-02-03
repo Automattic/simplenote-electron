@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
@@ -8,17 +7,26 @@ import { Popover } from '@material-ui/core';
 import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
 import getNoteTitles from './get-note-titles';
 
-class SyncStatusPopover extends React.Component {
+import * as S from '../../state';
+import * as T from '../../types';
+
+type StateProps = {
+  notes: T.NoteEntity[] | null;
+  theme: T.Theme;
+  unsyncedNoteIds: T.EntityId[];
+};
+
+type OwnProps = {
+  anchorEl: HTMLElement;
+  id: T.EntityId;
+  onClose: () => void;
+};
+
+type Props = StateProps & OwnProps;
+
+class SyncStatusPopover extends React.Component<Props> {
   render() {
-    const {
-      anchorEl,
-      classes = {},
-      id,
-      notes,
-      onClose,
-      theme,
-      unsyncedNoteIds,
-    } = this.props;
+    const { anchorEl, id, notes, onClose, theme, unsyncedNoteIds } = this.props;
     const themeClass = `theme-${theme}`;
     const open = Boolean(anchorEl);
     const hasUnsyncedChanges = unsyncedNoteIds.length > 0;
@@ -34,19 +42,14 @@ class SyncStatusPopover extends React.Component {
     return (
       <Popover
         id={id}
-        className={classnames(
-          'sync-status-popover',
-          classes.popover,
-          themeClass
-        )}
+        className={classnames('sync-status-popover', themeClass)}
         classes={{
           paper: classnames(
             'sync-status-popover__paper',
             'theme-color-bg',
             'theme-color-border',
             'theme-color-fg-dim',
-            { 'has-unsynced-changes': hasUnsyncedChanges },
-            classes.paper
+            { 'has-unsynced-changes': hasUnsyncedChanges }
           ),
         }}
         open={open}
@@ -98,19 +101,14 @@ class SyncStatusPopover extends React.Component {
   }
 }
 
-SyncStatusPopover.propTypes = {
-  anchorEl: PropTypes.object,
-  classes: PropTypes.object,
-  id: PropTypes.string,
-  notes: PropTypes.array,
-  onClose: PropTypes.func.isRequired,
-  theme: PropTypes.string.isRequired,
-  unsyncedNoteIds: PropTypes.array.isRequired,
-};
-
-const mapStateToProps = ({ appState, settings }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState,
+  settings,
+  ui: { unsyncedNoteIds },
+}) => ({
   notes: appState.notes,
   theme: settings.theme,
+  unsyncedNoteIds,
 });
 
 export default connect(mapStateToProps)(SyncStatusPopover);

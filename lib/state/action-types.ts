@@ -53,6 +53,10 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
  */
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
+export type SetUnsyncedNoteIds = Action<
+  'SET_UNSYNCED_NOTE_IDS',
+  { noteIds: T.EntityId[] }
+>;
 export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
@@ -77,6 +81,7 @@ export type ActionType =
   | SetSortType
   | SetSpellCheck
   | SetTheme
+  | SetUnsyncedNoteIds
   | SetWPToken
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer;

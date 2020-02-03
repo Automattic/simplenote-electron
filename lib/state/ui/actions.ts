@@ -8,6 +8,13 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes,
 });
 
+export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
+  noteIds: T.EntityId[]
+) => ({
+  type: 'SET_UNSYNCED_NOTE_IDS',
+  noteIds,
+});
+
 export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumConnectionStatus> = (
   simperiumConnected: boolean
 ) => ({
