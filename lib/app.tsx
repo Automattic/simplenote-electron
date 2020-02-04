@@ -100,6 +100,7 @@ const mapDispatchToProps: S.MapDispatch<
 
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
+    selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
@@ -367,6 +368,8 @@ export const App = connect(
           modificationDate: Math.floor(Date.now() / 1000),
         },
       };
+
+      this.props.selectNote(updatedNote);
 
       const { noteBucket } = this.props;
       noteBucket.update(note.id, updatedNote.data, {}, { sync });
