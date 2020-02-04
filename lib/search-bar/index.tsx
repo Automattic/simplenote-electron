@@ -14,22 +14,29 @@ import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
-import { createNote } from '../state/ui/actions';
+import { createNote, search } from '../state/ui/actions';
 
-const { newNote, search, toggleNavigation } = appState.actionCreators;
+import * as S from '../state';
+
+const { newNote, toggleNavigation } = appState.actionCreators;
 const { recordEvent } = tracks;
 
-type Props = {
+type OwnProps = {
   onNewNote: Function;
   onToggleNavigation: Function;
-  query: string;
+};
+
+type StateProps = {
+  searchQuery: string;
   showTrash: boolean;
 };
+
+type Props = OwnProps & StateProps;
 
 export const SearchBar: FunctionComponent<Props> = ({
   onNewNote,
   onToggleNavigation,
-  query,
+  searchQuery,
   showTrash,
 }) => (
   <div className="search-bar theme-color-border">
@@ -38,21 +45,24 @@ export const SearchBar: FunctionComponent<Props> = ({
     <IconButton
       disabled={showTrash}
       icon={<NewNoteIcon />}
-      onClick={() => onNewNote(withoutTags(query))}
+      onClick={() => onNewNote(withoutTags(searchQuery))}
       title="New Note"
     />
   </div>
 );
 
-const mapStateToProps = ({ appState: state }) => ({
-  query: state.filter,
-  showTrash: state.showTrash,
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: { showTrash },
+  ui: { searchQuery },
+}) => ({
+  searchQuery,
+  showTrash,
 });
 
 const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
   onNewNote: (content: string) => {
     dispatch(createNote());
-    dispatch(search({ filter: '' }));
+    dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
     onNoteOpened();
     recordEvent('list_note_created');
