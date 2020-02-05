@@ -317,15 +317,25 @@ export const App = connect(
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, remoteUpdateInfo = {}) => {
+    onNoteUpdate = (
+      noteId: T.EntityId,
+      data,
+      remoteUpdateInfo: { patch?: object } = {}
+    ) => {
       const {
         noteBucket,
         selectNote,
         ui: { note },
       } = this.props;
-      if (remoteUpdateInfo.patch && note && noteId === note.id) {
-        noteBucket.get(noteId, (e, updatedNote) => {
-          selectNote({ ...updatedNote, hasRemoteUpdate: true });
+      if (note && noteId === note.id) {
+        noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
+          if (e) {
+            return;
+          }
+          const updatedNote = remoteUpdateInfo.patch
+            ? { ...storedNote, hasRemoteUpdate: true }
+            : storedNote;
+          selectNote(updatedNote);
         });
       }
     };
