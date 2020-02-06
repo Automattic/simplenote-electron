@@ -146,7 +146,6 @@ export class NoteEditor extends Component<Props> {
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
           filter={this.props.filter}
-          note={revision}
           noteBucket={noteBucket}
           previewingMarkdown={
             this.markdownEnabled() && editorMode === 'markdown'

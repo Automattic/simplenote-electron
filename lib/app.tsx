@@ -100,6 +100,7 @@ const mapDispatchToProps: S.MapDispatch<
 
     openTagList: () => dispatch(actionCreators.toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
+    selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     setSearchFocus: () =>
       dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
@@ -316,15 +317,25 @@ export const App = connect(
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, remoteUpdateInfo = {}) => {
+    onNoteUpdate = (
+      noteId: T.EntityId,
+      data,
+      remoteUpdateInfo: { patch?: object } = {}
+    ) => {
       const {
         noteBucket,
         selectNote,
         ui: { note },
       } = this.props;
-      if (remoteUpdateInfo.patch && note && noteId === note.id) {
-        noteBucket.get(noteId, (e, updatedNote) => {
-          selectNote({ ...updatedNote, hasRemoteUpdate: true });
+      if (note && noteId === note.id) {
+        noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
+          if (e) {
+            return;
+          }
+          const updatedNote = remoteUpdateInfo.patch
+            ? { ...storedNote, hasRemoteUpdate: true }
+            : storedNote;
+          selectNote(updatedNote);
         });
       }
     };
@@ -367,6 +378,8 @@ export const App = connect(
           modificationDate: Math.floor(Date.now() / 1000),
         },
       };
+
+      this.props.selectNote(updatedNote);
 
       const { noteBucket } = this.props;
       noteBucket.update(note.id, updatedNote.data, {}, { sync });
