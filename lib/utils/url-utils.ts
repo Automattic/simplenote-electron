@@ -2,12 +2,7 @@ import { has } from 'lodash';
 
 const allowedProtocols = ['http:', 'https:', 'mailto:'];
 
-let state = {
-  isRunningElectron: null,
-};
-init();
-
-function init() {
+const state = (() => {
   const getBoundElectronOpener = () => {
     const shell = window.require('electron').shell;
     return shell.openExternal.bind(shell);
@@ -18,10 +13,10 @@ function init() {
     ? getBoundElectronOpener()
     : window.open.bind(window);
 
-  state = { ...state, isRunningElectron, openExternalUrl };
-}
+  return { isRunningElectron, openExternalUrl };
+})();
 
-export const viewExternalUrl = url => {
+export const viewExternalUrl = (url: string) => {
   try {
     const protocol = new URL(url).protocol;
 

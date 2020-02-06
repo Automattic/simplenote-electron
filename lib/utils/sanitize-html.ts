@@ -5,10 +5,10 @@ import { filter } from 'lodash';
 /**
  * Determine if a given tag is allowed
  *
- * @param {Node} node node being examined
- * @returns {Boolean} whether the tag is allowed
+ * @param node node being examined
+ * @returns whether the tag is allowed
  */
-const isAllowedTag = node => {
+const isAllowedTag = (node: Element) => {
   const tagName = node.nodeName.toLowerCase();
 
   if ('input' === tagName) {
@@ -72,11 +72,11 @@ const isAllowedTag = node => {
  *       snippet of code to execute, such
  *       as `onclick` or `onmouseover`
  *
- * @param {String} tagName name of tag on which attribute is found
- * @param {String} attrName name of attribute under inspection
- * @returns {Boolean} whether the attribute is allowed
+ * @param tagName name of tag on which attribute is found
+ * @param attrName name of attribute under inspection
+ * @returns whether the attribute is allowed
  */
-const isAllowedAttr = (tagName, attrName, value) => {
+const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
   switch (tagName) {
     case 'a':
       switch (attrName) {
@@ -152,10 +152,10 @@ const isAllowedAttr = (tagName, attrName, value) => {
  * Determine if the given tag and its children
  * should be removed entirely from the DOM tree
  *
- * @param {Node} node node being examined
- * @return {boolean} whether the node is forbidden
+ * @param node node being examined
+ * @return whether the node is forbidden
  */
-const isForbidden = node => {
+const isForbidden = (node: Element) => {
   const tagName = node.nodeName.toLowerCase();
 
   switch (tagName) {
@@ -176,10 +176,10 @@ const isForbidden = node => {
 /**
  * Sanitizes input HTML for security and styling
  *
- * @param {String} content unverified HTML
- * @returns {string} sanitized HTML
+ * @param content unverified HTML
+ * @returns sanitized HTML
  */
-export const sanitizeHtml = content => {
+export const sanitizeHtml = (content: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, 'text/html');
 
@@ -211,7 +211,7 @@ export const sanitizeHtml = content => {
 
   // walk over every DOM node
   while (walker.nextNode()) {
-    const node = walker.currentNode;
+    const node = walker.currentNode as Element;
 
     if (isForbidden(node)) {
       forbiddenList.push(node);
@@ -278,7 +278,7 @@ export const sanitizeHtml = content => {
   // eliminate the forbidden tags and drop their children
   forbiddenList.forEach(node => {
     try {
-      node.parentNode.removeChild(node);
+      node?.parentNode?.removeChild(node);
     } catch (e) {
       // this one could have existed
       // under a node that we already removed,
@@ -294,12 +294,11 @@ export const sanitizeHtml = content => {
     let child;
 
     try {
-      // eslint-disable-next-line no-cond-assign
       while ((child = node.firstChild)) {
-        parent.insertBefore(child, node);
+        parent?.insertBefore(child, node);
       }
 
-      parent.removeChild(node);
+      parent?.removeChild(node);
     } catch (e) {
       // this one could have originally existed
       // under a node that we already removed,

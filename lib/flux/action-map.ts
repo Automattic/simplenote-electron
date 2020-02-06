@@ -1,5 +1,7 @@
 import { Action, Reducer } from 'redux';
 
+import * as A from '../state/action-types';
+
 type ActionHandler<State> =
   | { creator: Function }
   | ((state: State, ...args: any[]) => any);
@@ -60,17 +62,13 @@ export class ActionMap<
     return this.actionCreators[name].apply(this, params);
   }
 
-  reducer(state: State, action) {
-    if (!state) {
-      state = this.initialState;
-    }
+  reducer(state: State | undefined, action: A.ActionType) {
+    const oldState = state || this.initialState;
 
-    let fn = this.actionReducers[action.type];
-    if (typeof fn === 'function') {
-      state = fn(state, action) || state;
-    }
-
-    return state;
+    const fn = this.actionReducers[action.type];
+    return typeof fn === 'function'
+      ? fn(oldState, action) || oldState
+      : oldState;
   }
 }
 
