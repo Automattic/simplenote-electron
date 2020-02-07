@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SmallCrossOutlineIcon from '../icons/cross-outline-small';
 import ReorderIcon from '../icons/reorder';
@@ -31,10 +30,6 @@ export class EditableList extends Component<Props> {
   reorderingClientY: number = 0;
   reorderingOffsetY: number = 0;
   reorderingTranslateY: number = 0;
-
-  static propTypes = {
-    editing: PropTypes.bool.isRequired,
-  };
 
   static defaultProps = {
     getItemKey: (item: T.TagEntity) => item.id,

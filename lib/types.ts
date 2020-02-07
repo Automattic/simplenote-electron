@@ -73,7 +73,11 @@ export type TranslatableString = string;
 // Language and Platform
 ///////////////////////////////////////
 
+// Returns a type with the properties in T not also present in U
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+
+// Either type T or type U, a powered-up union/sum type
+// useful when missing a discriminating property
 export type XOR<T, U> = T | U extends object
   ? (Without<T, U> & U) | (Without<U, T> & T)
   : T | U;
