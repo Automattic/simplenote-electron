@@ -376,8 +376,11 @@ export class NoteList extends Component<Props> {
     const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
-
-    if (cmdOrCtrl && shiftKey && (key === 'ArrowUp' || key === 'k')) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      (key === 'ArrowUp' || key.toLowerCase() === 'k')
+    ) {
       this.props.onSelectNote(this.props.nextNote.id);
 
       event.stopPropagation();
@@ -385,7 +388,11 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (cmdOrCtrl && shiftKey && (key === 'ArrowDown' || key === 'j')) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      (key === 'ArrowDown' || key.toLowerCase() === 'j')
+    ) {
       this.props.onSelectNote(this.props.prevNote.id);
 
       event.stopPropagation();

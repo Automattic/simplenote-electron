@@ -84,7 +84,12 @@ export class NoteEditor extends Component<Props> {
     }
 
     // open note list - shift + n
-    if (this.props.isSmallScreen && cmdOrCtrl && shiftKey && 'n' === key) {
+    if (
+      this.props.isSmallScreen &&
+      cmdOrCtrl &&
+      shiftKey &&
+      'n' === key.toLowerCase()
+    ) {
       this.props.closeNote();
       this.props.onNoteClosed();
 
@@ -94,7 +99,7 @@ export class NoteEditor extends Component<Props> {
     }
 
     // toggle between tag editor and note editor
-    if (cmdOrCtrl && 't' === key && this.props.isEditorActive) {
+    if (cmdOrCtrl && 't' === key.toLowerCase() && this.props.isEditorActive) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
         this.focusNoteEditor && this.focusNoteEditor();

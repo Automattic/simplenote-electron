@@ -243,7 +243,11 @@ export const App = connect(
       const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
       // open tag list
-      if (cmdOrCtrl && 'T' === key && !this.state.showNavigation) {
+      if (
+        cmdOrCtrl &&
+        't' === key.toLowerCase() &&
+        !this.state.showNavigation
+      ) {
         this.props.openTagList();
 
         event.stopPropagation();
