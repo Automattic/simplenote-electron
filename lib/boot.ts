@@ -126,7 +126,7 @@ let props = {
   noteBucket: client.bucket('note'),
   preferencesBucket: client.bucket('preferences'),
   tagBucket: client.bucket('tag'),
-  isDevConfig: isDevConfig(config),
+  isDevConfig: isDevConfig(config?.development),
   onAuthenticate: (username, password) => {
     if (!(username && password)) {
       return;
