@@ -13,6 +13,8 @@ THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
 
+ELECTRON_VERSION := $(shell node -e "console.log(require('./package.json').devDependencies.electron)")
+
 RED=`tput setaf 1`
 RESET=`tput sgr0`
 
@@ -159,7 +161,7 @@ config-release: config.json install
 
 .PHONY: rebuild-deps
 rebuild-deps:
-	@npx electron-rebuild
+	@npx electron-rebuild -v $(ELECTRON_VERSION)
 
 .PHONY: format
 format:
