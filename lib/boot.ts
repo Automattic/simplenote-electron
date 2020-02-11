@@ -169,7 +169,7 @@ let props = {
       .then(user => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
-          return store.dispatch(resetAuth);
+          return store.dispatch(resetAuth());
         }
 
         store.dispatch(setAccountName(username));
