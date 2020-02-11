@@ -24,6 +24,7 @@ export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
+    detectLanguage: PropTypes.bool.isRequired,
     dialogs: PropTypes.array.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
@@ -37,6 +38,7 @@ export class NoteDetail extends Component<Props> {
   };
 
   static defaultProps = {
+    detectLanguage: false,
     storeFocusEditor: noop,
     storeHasFocus: noop,
   };
@@ -60,6 +62,8 @@ export class NoteDetail extends Component<Props> {
   }
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
+
+  saveEditorRef = ref => (this.editor = ref);
 
   isValidNote = note => note && note.id;
 
@@ -180,6 +184,7 @@ export class NoteDetail extends Component<Props> {
 
   render() {
     const {
+      detectLanguage,
       note,
       fontSize,
       previewingMarkdown,
@@ -217,6 +222,8 @@ export class NoteDetail extends Component<Props> {
                 style={divStyle}
               >
                 <NoteContentEditor
+                  ref={this.saveEditorRef}
+                  detectLanguage={detectLanguage}
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
@@ -238,6 +245,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui,
   settings,
 }) => ({
+  detectLanguage: settings.languageDetectionEnabled,
   dialogs: state.dialogs,
   note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,

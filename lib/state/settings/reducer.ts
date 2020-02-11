@@ -8,6 +8,7 @@ export const initialState = {
   autoHideMenuBar: false,
   focusModeEnabled: false,
   fontSize: 16,
+  languageDetectionEnabled: false,
   lineLength: 'narrow' as T.LineLength,
   markdownEnabled: false,
   noteDisplay: 'comfy' as T.ListDisplayMode,
@@ -53,6 +54,11 @@ const reducer: A.Reducer<typeof initialState> = (
       return { ...state, theme: action.theme };
     case 'setWPToken':
       return { ...state, wpToken: action.token };
+    case 'toggleLanguageDetection':
+      return {
+        ...state,
+        languageDetectionEnabled: !state.languageDetectionEnabled,
+      };
     default:
       return state;
   }

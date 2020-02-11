@@ -47,6 +47,7 @@ export type SetSpellCheck = Action<
 >;
 export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
 export type SetWPToken = Action<'setWPToken', { token: string }>;
+export type ToggleLanguageDetection = Action<'toggleLanguageDetection'>;
 
 /*
  * Normal action types
@@ -128,6 +129,7 @@ export type ActionType =
   | SetWPToken
   | StoreRevisions
   | ToggleEditMode
+  | ToggleLanguageDetection
   | ToggleNavigation
   | ToggleNoteInfo
   | ToggleRevisions

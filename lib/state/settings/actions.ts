@@ -103,3 +103,7 @@ export const toggleAutoHideMenuBar = () => (dispatch, getState) => {
     autoHideMenuBar: newValue,
   });
 };
+
+export const toggleLanguageDetection: A.ActionCreator<A.ToggleLanguageDetection> = () => ({
+  type: 'toggleLanguageDetection',
+});
