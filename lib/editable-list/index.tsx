@@ -1,26 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SmallCrossOutlineIcon from '../icons/cross-outline-small';
 import ReorderIcon from '../icons/reorder';
 
-export class EditableList extends Component {
+import * as S from '../state';
+import * as T from '../types';
+
+type OwnProps = {
+  className: string;
+  getItemKey: (item: T.TagEntity) => T.EntityId;
+  onRemove: (tag: T.TagEntity) => any;
+  onReorder: (tags: T.TagEntity[]) => any;
+  renderItem: (tag: T.TagEntity) => React.ReactNode;
+};
+
+type StateProps = {
+  editing: boolean;
+  items: T.TagEntity[] | null;
+  sortTagsAlpha: boolean;
+};
+
+type Props = OwnProps & StateProps;
+
+export class EditableList extends Component<Props> {
   static displayName = 'EditableList';
 
-  static propTypes = {
-    className: PropTypes.string,
-    editing: PropTypes.bool.isRequired,
-    items: PropTypes.array.isRequired,
-    renderItem: PropTypes.func.isRequired,
-    sortTagsAlpha: PropTypes.bool.isRequired,
-    getItemKey: PropTypes.func,
-    onRemove: PropTypes.func,
-    onReorder: PropTypes.func,
-  };
+  reorderingElement: HTMLElement | null = null;
+  reorderingClientY: number = 0;
+  reorderingOffsetY: number = 0;
+  reorderingTranslateY: number = 0;
 
   static defaultProps = {
-    getItemKey: item => item.id,
+    getItemKey: (item: T.TagEntity) => item.id,
   };
 
   state = {
@@ -32,17 +44,17 @@ export class EditableList extends Component {
   componentWillMount() {
     this.setState({
       items: this.props.items,
-      reorderedItems: this.props.items.slice(),
+      reorderedItems: this.props.items ? this.props.items.slice() : [],
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     if (nextProps.items !== this.state.items) {
       this.stopReordering();
 
       this.setState({
         items: nextProps.items,
-        reorderedItems: nextProps.items.slice(),
+        reorderedItems: nextProps.items ? nextProps.items.slice() : [],
       });
     }
   }
@@ -95,7 +107,7 @@ export class EditableList extends Component {
                 {onRemove && (
                   <span
                     className="editable-list-trash"
-                    tabIndex={editing ? '0' : '-1'}
+                    tabIndex={editing ? 0 : -1}
                     onClick={onRemove.bind(null, item)}
                   >
                     <SmallCrossOutlineIcon />
@@ -110,7 +122,7 @@ export class EditableList extends Component {
               {onReorder && !sortTagsAlpha && (
                 <span
                   className="editable-list-reorder"
-                  tabIndex={editing ? '0' : '-1'}
+                  tabIndex={editing ? 0 : -1}
                   onDragStart={e => e.preventDefault()}
                   onMouseDown={this.onReorderStart.bind(this, itemId)}
                   onTouchStart={this.onReorderStart.bind(this, itemId)}
@@ -126,7 +138,10 @@ export class EditableList extends Component {
     );
   }
 
-  setReorderingElementRef = (reorderingId, element) => {
+  setReorderingElementRef = (
+    reorderingId: T.EntityId,
+    element: HTMLElement
+  ) => {
     if (reorderingId !== this.state.reorderingId) {
       return;
     }
@@ -177,12 +192,12 @@ export class EditableList extends Component {
     this.reorderingElement = null;
   };
 
-  stopReordering = resetOrdering => {
+  stopReordering = (resetOrdering = false) => {
     this.unsetReorderingElement();
 
     if (resetOrdering) {
       this.setState({
-        reorderedItems: this.props.items.slice(),
+        reorderedItems: this.props.items ? this.props.items.slice() : [],
         reorderingId: null,
       });
     } else {
@@ -192,10 +207,15 @@ export class EditableList extends Component {
     }
   };
 
-  reorderItemById = (reorderingId, offset, targetReorderingId) => {
+  reorderItemById = (
+    reorderingId: T.EntityId | null,
+    offset: number,
+    targetReorderingId: T.EntityId | null = null
+  ) => {
     const { getItemKey } = this.props;
     const { reorderedItems } = this.state;
-    let reorderingIndex, targetIndex;
+    let reorderingIndex = null;
+    let targetIndex = null;
 
     if (targetReorderingId === null) {
       targetReorderingId = reorderingId;
@@ -215,7 +235,10 @@ export class EditableList extends Component {
     return this.reorderItemByIndex(reorderingIndex, targetIndex + offset);
   };
 
-  reorderItemByIndex = (reorderingIndex, targetIndex) => {
+  reorderItemByIndex = (
+    reorderingIndex: number | null,
+    targetIndex: number | null
+  ) => {
     if (reorderingIndex === targetIndex) {
       return;
     }
@@ -235,7 +258,13 @@ export class EditableList extends Component {
     this.setState({ reorderedItems });
   };
 
-  onReorderStart = (reorderingId, event) => {
+  onReorderStart = (
+    reorderingId: T.EntityId,
+    event: T.XOR<
+      React.MouseEvent<HTMLSpanElement>,
+      React.TouchEvent<HTMLSpanElement>
+    >
+  ) => {
     event.preventDefault();
     event.currentTarget.focus();
 
@@ -252,7 +281,13 @@ export class EditableList extends Component {
     this.bindReorderingListeners();
   };
 
-  onReorderMove = (targetReorderingId, event) => {
+  onReorderMove = (
+    targetReorderingId: T.EntityId,
+    event: T.XOR<
+      React.MouseEvent<HTMLLIElement>,
+      React.TouchEvent<HTMLLIElement>
+    >
+  ) => {
     if (!this.reorderingElement || !this.props.editing) {
       return;
     }
@@ -276,7 +311,7 @@ export class EditableList extends Component {
     this.positionReorderingElement();
   };
 
-  onReorderEnd = event => {
+  onReorderEnd = (event: MouseEvent | TouchEvent) => {
     event.preventDefault();
     this.stopReordering();
     this.props.onReorder(this.state.reorderedItems);
@@ -284,7 +319,10 @@ export class EditableList extends Component {
 
   onReorderCancel = () => this.stopReordering(true);
 
-  onReorderKeyDown = (reorderingId, event) => {
+  onReorderKeyDown = (
+    reorderingId: T.EntityId,
+    event: React.KeyboardEvent<HTMLSpanElement>
+  ) => {
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.reorderItemById(reorderingId, -1);
@@ -294,7 +332,7 @@ export class EditableList extends Component {
     }
   };
 
-  onKeyDown = event => {
+  onKeyDown = (event: KeyboardEvent) => {
     const keyCode = event.keyCode || event.which;
 
     if (keyCode === 27) {
@@ -304,7 +342,12 @@ export class EditableList extends Component {
   };
 }
 
-const mapStateToProps = ({ settings: { sortTagsAlpha } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: { editingTags, tags },
+  settings: { sortTagsAlpha },
+}) => ({
+  editing: editingTags,
+  items: tags,
   sortTagsAlpha,
 });
 
