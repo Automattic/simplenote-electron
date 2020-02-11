@@ -11,7 +11,6 @@ import * as T from './types';
 
 type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
-  onNoteClosed: Function;
   toolbar: ReactElement;
 };
 
@@ -29,7 +28,6 @@ type NoteChanger = {
 type ListChanger = NoteChanger & { previousIndex: number };
 
 type DispatchProps = {
-  closeNote: () => any;
   deleteNoteForever: (args: ListChanger) => any;
   noteRevisions: (args: NoteChanger) => any;
   restoreNote: (args: ListChanger) => any;
@@ -49,16 +47,10 @@ export class NoteToolbarContainer extends Component<Props> {
     return Math.max(noteIndex - 1, 0);
   };
 
-  onCloseNote = () => {
-    this.props.closeNote();
-    this.props.onNoteClosed();
-  };
-
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.trashNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
@@ -66,14 +58,12 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.deleteNoteForever({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
@@ -92,7 +82,6 @@ export class NoteToolbarContainer extends Component<Props> {
     const { isViewingRevisions, toolbar, revisionOrNote } = this.props;
 
     const handlers = {
-      onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
       onShowRevisions: this.onShowRevisions,
@@ -124,7 +113,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const {
-  closeNote,
   deleteNoteForever,
   noteRevisions,
   restoreNote,
@@ -134,7 +122,6 @@ const {
 } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),

@@ -29,6 +29,8 @@ import {
 } from './decorators';
 import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 
+import { closeNote } from '../state/ui/actions';
+
 import * as S from '../state';
 import * as T from '../types';
 
@@ -205,7 +207,6 @@ const renderNote = (
     searchQuery,
     noteDisplay,
     selectedNoteId,
-    onNoteOpened,
     onSelectNote,
     onPinNote,
     isSmallScreen,
@@ -248,7 +249,6 @@ const renderNote = (
 
   const selectNote = () => {
     onSelectNote(note.id);
-    onNoteOpened();
   };
 
   return (
@@ -310,11 +310,9 @@ export class NoteList extends Component<Props> {
   list = createRef();
 
   static propTypes = {
-    closeNote: PropTypes.func.isRequired,
     tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
-    onNoteOpened: PropTypes.func.isRequired,
     onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
     noteDisplay: PropTypes.string.isRequired,
@@ -399,7 +397,6 @@ export class NoteList extends Component<Props> {
       searchQuery,
       hasLoaded,
       selectedNoteId,
-      onNoteOpened,
       onSelectNote,
       onEmptyTrash,
       noteDisplay,
@@ -414,7 +411,6 @@ export class NoteList extends Component<Props> {
     const renderNoteRow = renderNote(notes, {
       searchQuery,
       noteDisplay,
-      onNoteOpened,
       onSelectNote,
       onPinNote: this.onPinNote,
       selectedNoteId,
@@ -479,12 +475,7 @@ export class NoteList extends Component<Props> {
     this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
-const {
-  closeNote,
-  emptyTrash,
-  loadAndSelectNote,
-  pinNote,
-} = appState.actionCreators;
+const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
 const { recordEvent } = tracks;
 
 const mapStateToProps: S.MapState<StateProps> = ({

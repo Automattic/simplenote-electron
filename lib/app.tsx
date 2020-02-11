@@ -32,6 +32,7 @@ import {
 } from 'lodash';
 import {
   createNote,
+  closeNote,
   setUnsyncedNoteIds,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
@@ -50,6 +51,7 @@ export type OwnProps = {
 
 export type DispatchProps = {
   createNote: () => any;
+  closeNote: () => any;
   selectNote: (note: T.NoteEntity) => any;
 };
 
@@ -95,6 +97,7 @@ const mapDispatchToProps: S.MapDispatch<
       ]),
       dispatch
     ),
+    closeNote: () => dispatch(closeNote()),
     loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
@@ -158,10 +161,6 @@ export const App = connect(
       onSignOut: () => {},
     };
 
-    state = {
-      isNoteOpen: false,
-    };
-
     UNSAFE_componentWillMount() {
       if (isElectron()) {
         this.initializeElectron();
@@ -217,24 +216,10 @@ export const App = connect(
     }
 
     componentDidUpdate(prevProps) {
-      const { settings, isSmallScreen } = this.props;
+      const { settings } = this.props;
 
       if (settings !== prevProps.settings) {
         ipc.send('settingsUpdate', settings);
-      }
-
-      // If note has just been loaded
-      if (prevProps.appState.note === undefined && this.props.appState.note) {
-        this.setState({ isNoteOpen: true });
-      }
-
-      if (isSmallScreen !== prevProps.isSmallScreen) {
-        this.setState({
-          isNoteOpen: Boolean(
-            this.props.appState.note &&
-              (settings.focusModeEnabled || !isSmallScreen)
-          ),
-        });
       }
     }
 
@@ -305,7 +290,7 @@ export const App = connect(
       actions.authChanged();
 
       if (!client.isAuthorized()) {
-        actions.closeNote();
+        this.props.closeNote();
         return resetAuth();
       }
 
@@ -482,13 +467,10 @@ export const App = connect(
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={state.showNavigation}
-                isNoteOpen={this.state.isNoteOpen}
                 isNoteInfoOpen={showNoteInfo}
                 isSmallScreen={isSmallScreen}
                 noteBucket={noteBucket}
                 revisions={state.revisions}
-                onNoteClosed={() => this.setState({ isNoteOpen: false })}
-                onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
                 syncNote={this.syncNote}
               />

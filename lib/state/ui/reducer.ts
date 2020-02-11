@@ -82,7 +82,9 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.selectNote':
       return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
-    case 'App.closeNote':
+    case 'CLOSE_NOTE':
+    case 'App.trashNote':
+    case 'App.emptyTrash':
     case 'App.showAllNotes':
     case 'App.selectTrash':
     case 'App.selectTag':

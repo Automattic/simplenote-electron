@@ -347,12 +347,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    closeNote(state: AppState, { previousIndex = -1 }) {
-      return update(state, {
-        previousIndex: { $set: previousIndex },
-      });
-    },
-
     /**
      * A note is being changed from somewhere else! If the same
      * note is also open and being edited, we need to make sure
@@ -395,12 +389,10 @@ export const actionMap = new ActionMap({
         note: T.NoteEntity;
         previousIndex: number;
       }) {
-        return dispatch => {
+        return () => {
           if (note) {
             note.data.deleted = true;
             noteBucket.update(note.id, note.data);
-
-            dispatch(this.action('closeNote', { previousIndex }));
           }
         };
       },
@@ -420,8 +412,6 @@ export const actionMap = new ActionMap({
           if (note) {
             note.data.deleted = false;
             noteBucket.update(note.id, note.data);
-
-            dispatch(this.action('closeNote', { previousIndex }));
           }
         };
       },
@@ -439,8 +429,6 @@ export const actionMap = new ActionMap({
       }) {
         return dispatch => {
           noteBucket.remove(note.id);
-
-          dispatch(this.action('closeNote', { previousIndex }));
           dispatch(this.action('loadNotes', { noteBucket }));
         };
       },
@@ -474,8 +462,6 @@ export const actionMap = new ActionMap({
             state.notes,
             note => note.data.deleted
           );
-
-          dispatch(this.action('closeNote'));
           deleted.forEach(note => noteBucket.remove(note.id));
           dispatch(this.action('notesLoaded', { notes }));
         };
