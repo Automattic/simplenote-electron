@@ -56,13 +56,18 @@ const visiblePanes: A.Reducer<string[]> = (
   state = defaultVisiblePanes,
   action
 ) => {
-  if ('TAG_DRAWER_TOGGLE' === action.type) {
-    return action.show
-      ? union(state, ['tagDrawer'])
-      : difference(state, ['tagDrawer']);
+  switch (action.type) {
+    case 'NOTE_LIST_TOGGLE':
+      return action.show
+        ? new Set(state).add('noteList')
+        : new Set(state).delete('noteList');
+    case 'TAG_DRAWER_TOGGLE':
+      return action.show
+        ? new Set(state).add('tagDrawer')
+        : new Set(state).delete('tagDrawer');
+    default:
+      return state;
   }
-
-  return state;
 };
 
 const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
