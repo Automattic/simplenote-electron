@@ -40,7 +40,7 @@ export type Preferences = {
 
 export type PreferencesEntity = Entity<Preferences>;
 
-export type Bucket<T> = {
+export type Bucket<T = unknown> = {
   add(
     data: T,
     callback: (error: Error | null, data: Entity<T> | null) => any

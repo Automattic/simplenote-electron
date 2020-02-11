@@ -48,7 +48,7 @@ export type AppState = {
   unsyncedNoteIds: T.EntityId[];
 };
 
-export const reducers = combineReducers({
+export const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   auth,
   settings,
@@ -62,7 +62,7 @@ export type State = {
   ui: ReturnType<typeof ui>;
 };
 
-export const store = createStore(
+export const store = createStore<State, A.ActionType, {}, {}>(
   reducers,
   compose(
     persistState('settings', {
@@ -75,8 +75,6 @@ export const store = createStore(
     applyMiddleware(thunk, uiMiddleware)
   )
 );
-
-export type Store = ReduxStore<State, A.ActionType>;
 
 export type MapState<StateProps, OwnProps = {}> = (
   state: State,
