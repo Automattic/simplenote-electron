@@ -86,7 +86,7 @@ class Updater extends EventEmitter {
 
   expandMacros(originalText) {
     const macros = {
-      name: app.getName(),
+      name: app.name,
       currentVersion: app.getVersion(),
       newVersion: this._version,
     };
