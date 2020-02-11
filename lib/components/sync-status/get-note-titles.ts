@@ -1,24 +1,25 @@
-import { compact } from 'lodash';
 import noteTitleAndPreview from '../../utils/note-utils';
 
-const getNoteTitles = (ids, notes, limit = Infinity) => {
-  const matchedNotes = ids.map((id, i) => {
-    if (i >= limit) {
-      return;
-    }
+import * as T from '../../types';
 
-    const note = notes.find(thisNote => thisNote.id === id);
+type NoteTitle = {
+  id: String;
+  title: String;
+};
 
-    if (!note) {
-      // eslint-disable-next-line no-console
-      console.log(`Could not find note with id '${id}'`);
-      return null;
-    }
+const getNoteTitles = (
+  ids: String[] = [],
+  notes: T.NoteEntity[] = [],
+  limit: number = Infinity
+) => {
+  const matchedNotes = ids.reduce((acc: NoteTitle[], id: String) => {
+    const note = notes.find((thisNote: T.NoteEntity) => thisNote.id === id);
+    return note
+      ? [...acc, { id, title: noteTitleAndPreview(note).title }]
+      : acc;
+  }, []);
 
-    return { id, title: noteTitleAndPreview(note).title };
-  });
-
-  return compact(matchedNotes);
+  return matchedNotes.slice(0, limit);
 };
 
 export default getNoteTitles;
