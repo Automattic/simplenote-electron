@@ -30,7 +30,6 @@ import * as T from '../types';
 
 export type AppState = {
   dialogs: unknown[];
-  editingTags: boolean;
   isViewingRevisions: boolean;
   nextDialogKey: number;
   notes: T.NoteEntity[] | null;

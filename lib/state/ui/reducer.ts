@@ -16,6 +16,22 @@ const editMode: A.Reducer<boolean> = (state = true, action) => {
   }
 };
 
+const editingTags: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'TAG_EDITING_TOGGLE':
+      return !state;
+    case 'App.selectNote':
+    case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+    case 'App.toggleNavigation':
+    case 'App.toggleNoteInfo':
+      return false;
+    default:
+      return state;
+  }
+};
+
 const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   state = emptyList as T.NoteEntity[],
   action
@@ -77,6 +93,7 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
 };
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
+  console.log(action.type);
   switch (action.type) {
     case 'App.selectNote':
       return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
@@ -101,6 +118,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 
 export default combineReducers({
   editMode,
+  editingTags,
   filteredNotes,
   listTitle,
   note,

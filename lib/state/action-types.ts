@@ -67,6 +67,7 @@ export type ToggleSimperiumConnectionStatus = Action<
 >;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
+export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
 export type ActionType =
@@ -94,7 +95,8 @@ export type ActionType =
   | ToggleEditMode
   | ToggleNoteInfo
   | ToggleSimperiumConnectionStatus
-  | ToggleTagDrawer;
+  | ToggleTagDrawer
+  | ToggleTagEditing;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
@@ -175,7 +177,6 @@ type LegacyAction =
     >
   | Action<'App.authChanged'>
   | Action<'App.closeDialog', { key: unknown }>
-  | Action<'App.editTags'>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>

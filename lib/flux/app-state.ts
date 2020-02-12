@@ -40,7 +40,6 @@ const initialState: AppState = {
   showTrash: false,
   showNavigation: false,
   isViewingRevisions: false,
-  editingTags: false,
   dialogs: [],
   nextDialogKey: 0,
   searchFocus: false,
@@ -63,7 +62,6 @@ export const actionMap = new ActionMap({
       if (state.showNavigation) {
         return update(state, {
           showNavigation: { $set: false },
-          editingTags: { $set: false },
         });
       }
 
@@ -88,7 +86,6 @@ export const actionMap = new ActionMap({
     showAllNotes(state: AppState) {
       return update(state, {
         showNavigation: { $set: false },
-        editingTags: { $set: false },
         showTrash: { $set: false },
         tag: { $set: null },
         previousIndex: { $set: -1 },
@@ -98,7 +95,6 @@ export const actionMap = new ActionMap({
     selectTrash(state: AppState) {
       return update(state, {
         showNavigation: { $set: false },
-        editingTags: { $set: false },
         showTrash: { $set: true },
         tag: { $set: null },
         previousIndex: { $set: -1 },
@@ -121,7 +117,6 @@ export const actionMap = new ActionMap({
     selectTag(state: AppState, { tag }: { tag: T.TagEntity }) {
       return update(state, {
         showNavigation: { $set: false },
-        editingTags: { $set: false },
         showTrash: { $set: false },
         tag: { $set: tag },
         previousIndex: { $set: -1 },
@@ -168,12 +163,6 @@ export const actionMap = new ActionMap({
           });
         }
       }
-    },
-
-    editTags(state: AppState) {
-      return update(state, {
-        editingTags: { $set: !state.editingTags },
-      });
     },
 
     newNote: {
@@ -341,7 +330,6 @@ export const actionMap = new ActionMap({
 
     selectNote(state: AppState) {
       return update(state, {
-        editingTags: { $set: false },
         revision: { $set: null },
         revisions: { $set: null },
       });
