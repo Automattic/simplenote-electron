@@ -93,7 +93,6 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
 };
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
-  console.log(action.type);
   switch (action.type) {
     case 'App.selectNote':
       return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
