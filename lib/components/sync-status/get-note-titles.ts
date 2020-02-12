@@ -1,3 +1,4 @@
+import filterAtMost from '../../utils/filter-at-most';
 import noteTitleAndPreview from '../../utils/note-utils';
 
 import * as T from '../../types';
@@ -12,14 +13,17 @@ const getNoteTitles = (
   notes: T.NoteEntity[] = [],
   limit: number = Infinity
 ) => {
-  const matchedNotes = ids.reduce((acc: NoteTitle[], id): NoteTitle[] => {
-    const note = notes.find(thisNote => thisNote.id === id);
-    return note
-      ? [...acc, { id, title: noteTitleAndPreview(note).title }]
-      : acc;
-  }, []);
+  const wantedIds = new Set(ids);
+  const wantedNotes = filterAtMost(
+    notes,
+    ({ id }: { id: T.EntityId }) => wantedIds.has(id),
+    limit
+  );
 
-  return matchedNotes.slice(0, limit);
+  return wantedNotes.map((note: T.NoteEntity) => ({
+    id: note.id,
+    title: noteTitleAndPreview(note).title,
+  }));
 };
 
 export default getNoteTitles;
