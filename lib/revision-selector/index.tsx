@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import Slider from '../components/slider';
 import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
+import { toggleRevisions } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -175,22 +176,22 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { note },
+  ui: { note, visiblePanes },
 }) => ({
-  isViewingRevisions: state.isViewingRevisions,
+  isViewingRevisions: visiblePanes.has('revisions'),
   note: note,
 });
 
-const { setRevision, setIsViewingRevisions } = appState.actionCreators;
+const { setRevision } = appState.actionCreators;
 
 const mapDispatchToProps = dispatch => ({
   setRevision: revision => dispatch(setRevision({ revision })),
   resetIsViewingRevisions: () => {
-    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
+    dispatch(toggleRevisions());
   },
   cancelRevision: () => {
     dispatch(setRevision({ revision: null }));
-    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
+    dispatch(toggleRevisions());
   },
   updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });

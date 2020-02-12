@@ -86,7 +86,6 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
 
     case 'App.toggleNavigation':
       return false;
-
     default:
       return state;
   }

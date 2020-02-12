@@ -23,6 +23,10 @@ export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
   noteIds,
 });
 
+export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({
+  type: 'REVISIONS_TOGGLE',
+});
+
 export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumConnectionStatus> = (
   simperiumConnected: boolean
 ) => ({

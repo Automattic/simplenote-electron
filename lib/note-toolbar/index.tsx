@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -12,6 +12,7 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
+import { toggleRevisions } from '../state/ui/actions';
 
 import { closeNote, toggleEditMode, toggleNoteInfo } from '../state/ui/actions';
 
@@ -22,6 +23,7 @@ type DispatchProps = {
   closeNote: () => any;
   toggleEditMode: () => any;
   toggleNoteInfo: () => any;
+  toggleRevisions: () => any;
 };
 
 type StateProps = {
@@ -38,9 +40,7 @@ export class NoteToolbar extends Component<Props> {
     onRestoreNote: PropTypes.func,
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
-    onShowRevisions: PropTypes.func,
     onShareNote: PropTypes.func,
-    setIsViewingRevisions: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
     markdownEnabled: PropTypes.bool,
   };
@@ -48,16 +48,9 @@ export class NoteToolbar extends Component<Props> {
   static defaultProps = {
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
-    onShowRevisions: noop,
     onShareNote: noop,
     onTrashNote: noop,
-    setIsViewingRevisions: noop,
     toggleFocusMode: noop,
-  };
-
-  showRevisions = () => {
-    this.props.setIsViewingRevisions(true);
-    this.props.onShowRevisions(this.props.note);
   };
 
   render() {
@@ -106,7 +99,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<RevisionsIcon />}
-              onClick={this.showRevisions}
+              onClick={this.props.toggleRevisions}
               title="History"
             />
           </div>
@@ -184,6 +177,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   closeNote,
   toggleEditMode,
   toggleNoteInfo,
+  toggleRevisions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);
