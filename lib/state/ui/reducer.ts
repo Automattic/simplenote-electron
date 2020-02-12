@@ -65,6 +65,19 @@ const visiblePanes: A.Reducer<string[]> = (
   return state;
 };
 
+const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'NOTE_INFO_TOGGLE':
+      return !state;
+
+    case 'App.toggleNavigation':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.selectNote':
@@ -92,6 +105,7 @@ export default combineReducers({
   listTitle,
   note,
   searchQuery,
+  showNoteInfo,
   simperiumConnected,
   unsyncedNoteIds,
   visiblePanes,

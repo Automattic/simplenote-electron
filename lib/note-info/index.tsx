@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
+import format from 'date-fns/format';
+
+import appState from '../flux/app-state';
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
-import format from 'date-fns/format';
 import CrossIcon from '../icons/cross';
-import { connect } from 'react-redux';
-import appState from '../flux/app-state';
-import { setMarkdown } from '../state/settings/actions';
+
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+
+type OwnProps = {
+  noteBucket: T.Bucket<T.Note>;
+};
 
 type StateProps = {
   isMarkdown: boolean;
@@ -19,9 +25,15 @@ type StateProps = {
   note: T.NoteEntity | null;
 };
 
-type Props = StateProps;
+type DispatchProps = {
+  onOutsideClick: () => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteInfo extends Component<Props> {
+  static displayName = 'NoteInfo';
+
   static propTypes = {
     markdownEnabled: PropTypes.bool,
     onPinNote: PropTypes.func.isRequired,
@@ -194,7 +206,7 @@ function characterCount(content) {
   );
 }
 
-const { markdownNote, pinNote, toggleNoteInfo } = appState.actionCreators;
+const { markdownNote, pinNote } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   note,
@@ -202,13 +214,16 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   isPinned: !!note && note.data.systemTags.includes('pinned'),
 });
 
-const mapDispatchToProps = (dispatch, { noteBucket }) => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
+  dispatch,
+  { noteBucket }
+) => ({
   onMarkdownNote: (note, markdown = true) => {
     dispatch(markdownNote({ markdown, note, noteBucket }));
     // Update global setting to set markdown flag for new notes
-    dispatch(setMarkdown(markdown));
+    dispatch(actions.settings.setMarkdown(markdown));
   },
-  onOutsideClick: () => dispatch(toggleNoteInfo()),
+  onOutsideClick: () => dispatch(actions.ui.toggleNoteInfo()),
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
 });
 

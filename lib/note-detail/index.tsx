@@ -10,9 +10,17 @@ import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
+import * as S from '../state';
+
 const syncDelay = 2000;
 
-export class NoteDetail extends Component {
+type StateProps = {
+  showNoteInfo: boolean;
+};
+
+type Props = StateProps;
+
+export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
@@ -23,7 +31,6 @@ export class NoteDetail extends Component {
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
-    showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
@@ -226,10 +233,14 @@ export class NoteDetail extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, ui, settings }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui,
+  settings,
+}) => ({
   dialogs: state.dialogs,
   note: state.revision || ui.note,
-  showNoteInfo: state.showNoteInfo,
+  showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 

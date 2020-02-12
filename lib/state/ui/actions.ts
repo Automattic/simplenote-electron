@@ -39,6 +39,10 @@ export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
   type: 'TOGGLE_EDIT_MODE',
 });
 
+export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({
+  type: 'NOTE_INFO_TOGGLE',
+});
+
 export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   show: boolean
 ) => ({
