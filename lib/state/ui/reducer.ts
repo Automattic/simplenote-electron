@@ -100,6 +100,22 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const trash: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'App.selectTrash':
+      return true;
+    case 'CREATE_NOTE':
+    case 'App.selectTag':
+    case 'App.showAllNotes': {
+      return false;
+    }
+    case 'TRASH_TOGGLE':
+      return !state;
+    default:
+      return state;
+  }
+};
+
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.selectNote':
@@ -134,5 +150,6 @@ export default combineReducers({
   showNoteList,
   showRevisions,
   simperiumConnected,
+  trash,
   unsyncedNoteIds,
 });

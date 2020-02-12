@@ -69,6 +69,7 @@ export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
+export type ToggleTrash = Action<'TRASH_TOGGLE'>;
 export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
 
 export type ActionType =
@@ -98,7 +99,8 @@ export type ActionType =
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer
-  | ToggleTagEditing;
+  | ToggleTagEditing
+  | ToggleTrash;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;

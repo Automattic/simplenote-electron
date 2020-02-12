@@ -480,7 +480,7 @@ const { recordEvent } = tracks;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes, note, searchQuery },
+  ui: { filteredNotes, note, searchQuery, trash },
   settings: { noteDisplay },
 }) => {
   const tagResultsFound = getMatchingTags(state.tags, searchQuery).length;
@@ -535,7 +535,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
-    showTrash: state.showTrash,
+    showTrash: trash,
     tagResultsFound,
   };
 };
