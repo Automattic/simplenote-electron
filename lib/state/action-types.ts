@@ -177,7 +177,6 @@ type LegacyAction =
     >
   | Action<'App.authChanged'>
   | Action<'App.closeDialog', { key: unknown }>
-  | Action<'App.closeNote', { previousIndex: number }>
   | Action<'App.editTags'>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
