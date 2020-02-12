@@ -40,7 +40,6 @@ const initialState: AppState = {
   tags: [],
   revision: null,
   showTrash: false,
-  listTitle: 'All Notes',
   showNavigation: false,
   showNoteInfo: false,
   isViewingRevisions: false,
@@ -96,7 +95,6 @@ export const actionMap = new ActionMap({
         showNavigation: { $set: false },
         editingTags: { $set: false },
         showTrash: { $set: false },
-        listTitle: { $set: 'All Notes' },
         tag: { $set: null },
         previousIndex: { $set: -1 },
       });
@@ -107,7 +105,6 @@ export const actionMap = new ActionMap({
         showNavigation: { $set: false },
         editingTags: { $set: false },
         showTrash: { $set: true },
-        listTitle: { $set: 'Trash' },
         tag: { $set: null },
         previousIndex: { $set: -1 },
       });
@@ -131,7 +128,6 @@ export const actionMap = new ActionMap({
         showNavigation: { $set: false },
         editingTags: { $set: false },
         showTrash: { $set: false },
-        listTitle: { $set: tag.data.name },
         tag: { $set: tag },
         previousIndex: { $set: -1 },
       });

@@ -11,6 +11,19 @@ const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   action
 ) => ('FILTER_NOTES' === action.type ? action.notes : state);
 
+const listTitle: A.Reducer<string> = (state = 'All Notes', action) => {
+  switch (action.type) {
+    case 'App.showAllNotes':
+      return 'All Notes';
+    case 'App.selectTrash':
+      return 'Trash';
+    case 'App.selectTag':
+      return action?.tag?.data?.name;
+    default:
+      return state;
+  }
+};
+
 const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
@@ -57,6 +70,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 
 export default combineReducers({
   filteredNotes,
+  listTitle,
   note,
   simperiumConnected,
   unsyncedNoteIds,
