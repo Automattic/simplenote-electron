@@ -8,7 +8,7 @@ type NoteTitle = {
 };
 
 const getNoteTitles = (
-  ids: String[] = [],
+  ids: T.EntityId[] = [],
   notes: T.NoteEntity[] = [],
   limit: number = Infinity
 ) => {
