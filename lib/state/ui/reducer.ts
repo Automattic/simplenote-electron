@@ -55,7 +55,6 @@ const visiblePanes: A.Reducer<Set<string>> = (
   state = defaultVisiblePanes,
   action
 ) => {
-  console.log(action.type);
   switch (action.type) {
     case 'CLOSE_NOTE': {
       return new Set(state).add('noteList');
