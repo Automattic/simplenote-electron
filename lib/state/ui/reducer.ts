@@ -1,9 +1,8 @@
-import { difference, union } from 'lodash';
 import { combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 
-const defaultVisiblePanes = ['editor', 'noteList'];
+const defaultVisiblePanes = new Set(['editor', 'noteList']);
 const emptyList: unknown[] = [];
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
@@ -52,19 +51,37 @@ const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
     ? action.simperiumConnected
     : state;
 
-const visiblePanes: A.Reducer<string[]> = (
+const visiblePanes: A.Reducer<Set<string>> = (
   state = defaultVisiblePanes,
   action
 ) => {
+  console.log(action.type);
   switch (action.type) {
+    case 'CLOSE_NOTE': {
+      return new Set(state).add('noteList');
+    }
+    case 'App.selectNote': {
+      const newSet = new Set(state);
+      newSet.delete('noteList');
+      return newSet;
+    }
     case 'NOTE_LIST_TOGGLE':
-      return action.show
-        ? new Set(state).add('noteList')
-        : new Set(state).delete('noteList');
-    case 'TAG_DRAWER_TOGGLE':
-      return action.show
-        ? new Set(state).add('tagDrawer')
-        : new Set(state).delete('tagDrawer');
+      if (action.show) {
+        return new Set(state).add('noteList');
+      } else {
+        const newSet = new Set(state);
+        newSet.delete('noteList');
+        return newSet;
+      }
+    case 'TAG_DRAWER_TOGGLE': {
+      if (action.show) {
+        return new Set(state).add('tagDrawer');
+      } else {
+        const newSet = new Set(state);
+        newSet.delete('tagDrawer');
+        return newSet;
+      }
+    }
     default:
       return state;
   }

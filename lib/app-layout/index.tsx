@@ -1,5 +1,6 @@
 import React, { FunctionComponent, Suspense } from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 import NoteToolbarContainer from '../note-toolbar-container';
 import NoteToolbar from '../note-toolbar';
@@ -8,6 +9,7 @@ import SearchBar from '../search-bar';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 
+import * as S from './state';
 import * as T from '../types';
 
 const NoteList = React.lazy(() =>
@@ -18,7 +20,7 @@ const NoteEditor = React.lazy(() =>
   import(/* webpackChunkName: 'note-editor' */ '../note-editor')
 );
 
-type Props = {
+type OwnProps = {
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -30,10 +32,17 @@ type Props = {
   syncNote: Function;
 };
 
+type StateProps = {
+  isNoteOpen: boolean;
+};
+
+type Props = OwnProps & StateProps;
+
 export const AppLayout: FunctionComponent<Props> = ({
   isFocusMode = false,
   isNavigationOpen,
   isNoteInfoOpen,
+  isNoteOpen,
   isSmallScreen,
   noteBucket,
   revisions,
@@ -43,7 +52,7 @@ export const AppLayout: FunctionComponent<Props> = ({
   const mainClasses = classNames('app-layout', {
     'is-focus-mode': isFocusMode,
     'is-navigation-open': isNavigationOpen,
-    'is-note-open': true,
+    'is-note-open': isNoteOpen,
     'is-showing-note-info': isNoteInfoOpen,
   });
 
@@ -83,4 +92,8 @@ export const AppLayout: FunctionComponent<Props> = ({
   );
 };
 
-export default AppLayout;
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { visiblePanes } }) => ({
+  isNoteOpen: !visiblePanes.has('noteList'),
+});
+
+export default connect(mapStateToProps)(AppLayout);

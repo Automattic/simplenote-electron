@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import analytics from './analytics';
 import appState from './flux/app-state';
+import { closeNote } from './state/ui/actions';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
 
@@ -50,6 +51,7 @@ export class NoteToolbarContainer extends Component<Props> {
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
+    this.props.closeNote();
     this.props.trashNote({ noteBucket, note, previousIndex });
     analytics.tracks.recordEvent('editor_note_deleted');
   };
@@ -122,6 +124,7 @@ const {
 } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  closeNote: () => dispatch(closeNote()),
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
