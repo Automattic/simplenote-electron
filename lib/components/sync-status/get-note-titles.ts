@@ -1,7 +1,7 @@
 import { compact } from 'lodash';
 import noteTitleAndPreview from '../../utils/note-utils';
 
-const getNoteTitles = (ids, notes, limit = Infinity) => {
+const getNoteTitles = (ids = [], notes = [], limit = Infinity) => {
   const matchedNotes = ids.map((id, i) => {
     if (i >= limit) {
       return;
