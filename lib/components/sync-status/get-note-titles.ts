@@ -1,24 +1,32 @@
-import { compact } from 'lodash';
+import filterAtMost from '../../utils/filter-at-most';
 import noteTitleAndPreview from '../../utils/note-utils';
 
-const getNoteTitles = (ids, notes, limit = Infinity) => {
-  const matchedNotes = ids.map((id, i) => {
-    if (i >= limit) {
-      return;
-    }
+import * as T from '../../types';
 
-    const note = notes.find(thisNote => thisNote.id === id);
+type NoteTitle = {
+  id: T.EntityId;
+  title: string;
+};
 
-    if (!note) {
-      // eslint-disable-next-line no-console
-      console.log(`Could not find note with id '${id}'`);
-      return null;
-    }
+const getNoteTitles = (
+  ids: T.EntityId[],
+  notes: T.NoteEntity[] | null,
+  limit: number = Infinity
+): NoteTitle[] => {
+  if (!notes) {
+    return [];
+  }
+  const wantedIds = new Set(ids);
+  const wantedNotes = filterAtMost(
+    notes,
+    ({ id }: { id: T.EntityId }) => wantedIds.has(id),
+    limit
+  );
 
-    return { id, title: noteTitleAndPreview(note).title };
-  });
-
-  return compact(matchedNotes);
+  return wantedNotes.map((note: T.NoteEntity) => ({
+    id: note.id,
+    title: noteTitleAndPreview(note).title,
+  }));
 };
 
 export default getNoteTitles;
