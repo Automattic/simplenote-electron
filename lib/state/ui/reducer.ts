@@ -11,14 +11,17 @@ const filteredNotes: A.Reducer<T.NoteEntity[]> = (
   action
 ) => ('FILTER_NOTES' === action.type ? action.notes : state);
 
-const listTitle: A.Reducer<string> = (state = 'All Notes', action) => {
+const listTitle: A.Reducer<T.TranslatableString> = (
+  state = 'All Notes',
+  action
+) => {
   switch (action.type) {
     case 'App.showAllNotes':
       return 'All Notes';
     case 'App.selectTrash':
       return 'Trash';
     case 'App.selectTag':
-      return action?.tag?.data?.name;
+      return action.tag.data.name;
     default:
       return state;
   }
