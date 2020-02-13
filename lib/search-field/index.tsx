@@ -76,7 +76,10 @@ export class SearchField extends Component<ConnectedProps> {
   }
 }
 
-const mapStateToProps = ({ appState: state, ui: { listTitle, searchQuery } }: State) => ({
+const mapStateToProps = ({
+  appState: state,
+  ui: { listTitle, searchQuery },
+}: State) => ({
   isTagSelected: !!state.tag,
   placeholder: listTitle,
   searchFocus: state.searchFocus,
