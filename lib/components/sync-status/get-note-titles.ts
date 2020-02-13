@@ -9,10 +9,13 @@ type NoteTitle = {
 };
 
 const getNoteTitles = (
-  ids: T.EntityId[] = [],
-  notes: T.NoteEntity[] = [],
+  ids: T.EntityId[],
+  notes: T.NoteEntity[] | null,
   limit: number = Infinity
-) => {
+): NoteTitle[] => {
+  if (!notes) {
+    return [];
+  }
   const wantedIds = new Set(ids);
   const wantedNotes = filterAtMost(
     notes,
