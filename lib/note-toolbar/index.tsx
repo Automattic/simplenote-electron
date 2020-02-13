@@ -12,15 +12,21 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
+import { toggleEditMode } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
+type DispatchProps = {
+  toggleEditMode: () => any;
+};
+
 type StateProps = {
+  editMode: boolean;
   note: T.NoteEntity | null;
 };
 
-type Props = StateProps;
+type Props = DispatchProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
@@ -35,17 +41,13 @@ export class NoteToolbar extends Component<Props> {
     onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
-    onSetEditorMode: PropTypes.func,
-    editorMode: PropTypes.string,
     markdownEnabled: PropTypes.bool,
   };
 
   static defaultProps = {
-    editorMode: 'edit',
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
-    onSetEditorMode: noop,
     onShowNoteInfo: noop,
     onShowRevisions: noop,
     onShareNote: noop,
@@ -70,16 +72,8 @@ export class NoteToolbar extends Component<Props> {
     );
   }
 
-  setEditorMode = () => {
-    const { editorMode } = this.props;
-
-    this.props.onSetEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
-  };
-
   renderNormal = () => {
-    const { note, editorMode, markdownEnabled } = this.props;
-    const isPreviewing = editorMode === 'markdown';
-
+    const { editMode, markdownEnabled, note } = this.props;
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -104,8 +98,8 @@ export class NoteToolbar extends Component<Props> {
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
-                icon={isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
-                onClick={this.setEditorMode}
+                icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
+                onClick={this.props.toggleEditMode}
                 title="Preview • Ctrl+Shift+P"
               />
             </div>
@@ -180,8 +174,15 @@ export class NoteToolbar extends Component<Props> {
   };
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { note, editMode },
+}) => ({
+  editMode,
   note,
 });
 
-export default connect(mapStateToProps)(NoteToolbar);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  toggleEditMode: () => dispatch(toggleEditMode()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

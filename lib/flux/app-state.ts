@@ -33,7 +33,6 @@ const toggleSystemTag = (
 };
 
 const initialState: AppState = {
-  editorMode: 'edit',
   filter: '',
   previousIndex: -1,
   notes: null,
@@ -46,7 +45,6 @@ const initialState: AppState = {
   editingTags: false,
   dialogs: [],
   nextDialogKey: 0,
-  shouldPrint: false,
   searchFocus: false,
   unsyncedNoteIds: [], // note bucket only
 };
@@ -133,12 +131,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    setEditorMode(state: AppState, { mode }: { mode: T.EditorMode }) {
-      return update(state, {
-        editorMode: { $set: mode },
-      });
-    },
-
     showDialog(state: AppState, { dialog }) {
       const { type, multiple = false, title, ...dialogProps } = dialog;
 
@@ -207,10 +199,6 @@ export const actionMap = new ActionMap({
 
           if (state.showTrash) {
             dispatch(this.action('showAllNotes'));
-          }
-
-          if (settings.markdownEnabled) {
-            dispatch(this.action('setEditorMode', { mode: 'edit' }));
           }
 
           // insert a new note into the store and select it
@@ -321,12 +309,6 @@ export const actionMap = new ActionMap({
     setIsViewingRevisions(state: AppState, { isViewingRevisions }) {
       return update(state, {
         isViewingRevisions: { $set: isViewingRevisions },
-      });
-    },
-
-    setShouldPrintNote(state: AppState, { shouldPrint = true }) {
-      return update(state, {
-        shouldPrint: { $set: shouldPrint },
       });
     },
 
