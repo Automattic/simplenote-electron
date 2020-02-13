@@ -28,7 +28,6 @@ export class NoteEditor extends Component<Props> {
     closeNote: PropTypes.func.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
-    filter: PropTypes.string.isRequired,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onNoteClosed: PropTypes.func.isRequired,
@@ -148,7 +147,6 @@ export class NoteEditor extends Component<Props> {
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
-          filter={this.props.filter}
           noteBucket={noteBucket}
           previewingMarkdown={this.markdownEnabled() && !editMode}
           onChangeContent={this.props.onUpdateContent}
@@ -175,7 +173,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui: { note, editMode },
 }) => ({
   allTags: state.tags,
-  filter: state.filter,
   fontSize: settings.fontSize,
   editMode,
   isEditorActive: !state.showNavigation,

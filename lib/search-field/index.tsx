@@ -4,8 +4,9 @@ import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import { State } from '../state';
+import { search } from '../state/ui/actions';
 
-const { search, setSearchFocus } = appState.actionCreators;
+const { setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 
@@ -29,7 +30,7 @@ export class SearchField extends Component<ConnectedProps> {
 
   interceptEsc = (event: KeyboardEvent) => {
     if (KEY_ESC === event.keyCode) {
-      if (this.props.filter === '' && this.inputField.current) {
+      if (this.props.searchQuery === '' && this.inputField.current) {
         this.inputField.current.blur();
       }
       this.clearQuery();
@@ -37,16 +38,16 @@ export class SearchField extends Component<ConnectedProps> {
   };
 
   update = ({
-    currentTarget: { value: filter },
+    currentTarget: { value: query },
   }: FormEvent<HTMLInputElement>) => {
-    this.props.onSearch(filter);
+    this.props.onSearch(query);
   };
 
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { filter, isTagSelected, placeholder } = this.props;
-    const hasQuery = filter.length > 0;
+    const { searchQuery, isTagSelected, placeholder } = this.props;
+    const hasQuery = searchQuery.length > 0;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
@@ -60,7 +61,7 @@ export class SearchField extends Component<ConnectedProps> {
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
-          value={filter}
+          value={searchQuery}
           spellCheck={false}
         />
         <button
@@ -75,16 +76,19 @@ export class SearchField extends Component<ConnectedProps> {
   }
 }
 
-const mapStateToProps = ({ appState: state, ui: { listTitle } }: State) => ({
-  filter: state.filter,
+const mapStateToProps = ({
+  appState: state,
+  ui: { listTitle, searchQuery },
+}: State) => ({
   isTagSelected: !!state.tag,
   placeholder: listTitle,
   searchFocus: state.searchFocus,
+  searchQuery,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSearch: (filter: string) => {
-    dispatch(search({ filter }));
+  onSearch: (query: string) => {
+    dispatch(search(query));
     recordEvent('list_notes_searched');
   },
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),

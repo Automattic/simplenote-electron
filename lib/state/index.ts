@@ -5,6 +5,8 @@
  */
 
 import {
+  Dispatch as ReduxDispatch,
+  Middleware as ReduxMiddleware,
   Store as ReduxStore,
   compose,
   createStore,
@@ -29,7 +31,6 @@ import * as T from '../types';
 export type AppState = {
   dialogs: unknown[];
   editingTags: boolean;
-  filter: string;
   isViewingRevisions: boolean;
   nextDialogKey: number;
   notes: T.NoteEntity[] | null;
@@ -93,5 +94,12 @@ export type MapDispatch<
         ...args: Parameters<DispatchProps[P]>
       ) => A.ActionType;
     };
+
+export type Dispatch = ReduxDispatch<A.ActionType>;
+export type Middleware<Extension = {}> = ReduxMiddleware<
+  Extension,
+  State,
+  Dispatch
+>;
 
 export default store;

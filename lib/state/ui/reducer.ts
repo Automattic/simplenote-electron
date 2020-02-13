@@ -1,6 +1,5 @@
 import { difference, union } from 'lodash';
-import { AnyAction, combineReducers } from 'redux';
-
+import { combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 
@@ -44,6 +43,9 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
 ) => ('SET_UNSYNCED_NOTE_IDS' === action.type ? action.noteIds : state);
+
+const searchQuery: A.Reducer<string> = (state = '', action) =>
+  'SEARCH' === action.type ? action.searchQuery : state;
 
 const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
@@ -89,6 +91,7 @@ export default combineReducers({
   filteredNotes,
   listTitle,
   note,
+  searchQuery,
   simperiumConnected,
   unsyncedNoteIds,
   visiblePanes,

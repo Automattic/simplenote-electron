@@ -33,7 +33,6 @@ const toggleSystemTag = (
 };
 
 const initialState: AppState = {
-  filter: '',
   previousIndex: -1,
   notes: null,
   tags: [],
@@ -176,12 +175,6 @@ export const actionMap = new ActionMap({
     editTags(state: AppState) {
       return update(state, {
         editingTags: { $set: !state.editingTags },
-      });
-    },
-
-    search(state: AppState, { filter }: { filter: string }) {
-      return update(state, {
-        filter: { $set: filter },
       });
     },
 
