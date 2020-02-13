@@ -36,6 +36,11 @@ it('finds mid-tag matches', () => {
   expect(filterTags(infixen, 'code')).toEqual(infixen);
 });
 
+it('finds case insensitive matches', () => {
+  expect(filterTags(animals, 'Cat')).toEqual(['cat'].map(t));
+  expect(filterTags(animals, 'OWL')).toEqual(['owl'].map(t));
+});
+
 it('uses the last space-separated segment in the query for search', () => {
   expect(filterTags(infixen, 'code bug')).toEqual([]);
   expect(filterTags(infixen, 'bug code')).toEqual(infixen);

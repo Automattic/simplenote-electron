@@ -98,6 +98,7 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   // but without knowing where the cursor is it's maybe the best we can do
   const tagTerm = query
     .trim()
+    .toLowerCase()
     .split(' ')
     .pop();
 
@@ -112,8 +113,9 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
 
   const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
-    ? ({ data: { name } }) => name !== term && name.startsWith(term)
-    : ({ data: { name } }) => name.includes(term);
+    ? ({ data: { name } }) =>
+        name.toLowerCase() !== term && name.toLowerCase().startsWith(term)
+    : ({ data: { name } }) => name.toLowerCase().includes(term);
 
   return filterAtMost(tags, matcher, 5);
 };
