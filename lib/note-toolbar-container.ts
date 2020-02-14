@@ -36,7 +36,6 @@ type DispatchProps = {
   setIsViewingRevisions: (isViewingRevisions: boolean) => any;
   shareNote: () => any;
   toggleFocusMode: () => any;
-  toggleNoteInfo: () => any;
   trashNote: (args: ListChanger) => any;
 };
 
@@ -96,7 +95,6 @@ export class NoteToolbarContainer extends Component<Props> {
       onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
-      onShowNoteInfo: this.props.toggleNoteInfo,
       onShowRevisions: this.onShowRevisions,
       onShareNote: this.onShareNote,
       onTrashNote: this.onTrashNote,
@@ -132,7 +130,6 @@ const {
   restoreNote,
   setIsViewingRevisions,
   showDialog,
-  toggleNoteInfo,
   trashNote,
 } = appState.actionCreators;
 
@@ -146,7 +143,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   },
   shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
-  toggleNoteInfo: () => dispatch(toggleNoteInfo()),
   trashNote: args => dispatch(trashNote(args)),
 });
 

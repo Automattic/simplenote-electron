@@ -12,13 +12,16 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
+
 import { toggleEditMode } from '../state/ui/actions';
+import { toggleNoteInfo } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type DispatchProps = {
   toggleEditMode: () => any;
+  toggleNoteInfo: () => any;
 };
 
 type StateProps = {
@@ -38,7 +41,6 @@ export class NoteToolbar extends Component<Props> {
     onShowRevisions: PropTypes.func,
     onShareNote: PropTypes.func,
     onCloseNote: PropTypes.func,
-    onShowNoteInfo: PropTypes.func,
     setIsViewingRevisions: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
     markdownEnabled: PropTypes.bool,
@@ -48,7 +50,6 @@ export class NoteToolbar extends Component<Props> {
     onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
-    onShowNoteInfo: noop,
     onShowRevisions: noop,
     onShareNote: noop,
     onTrashNote: noop,
@@ -73,7 +74,7 @@ export class NoteToolbar extends Component<Props> {
   }
 
   renderNormal = () => {
-    const { editMode, markdownEnabled, note } = this.props;
+    const { editMode, markdownEnabled, note, toggleNoteInfo } = this.props;
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -128,7 +129,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<InfoIcon />}
-              onClick={this.props.onShowNoteInfo}
+              onClick={toggleNoteInfo}
               title="Info"
             />
           </div>
@@ -181,8 +182,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  toggleEditMode: () => dispatch(toggleEditMode()),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  toggleEditMode,
+  toggleNoteInfo,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

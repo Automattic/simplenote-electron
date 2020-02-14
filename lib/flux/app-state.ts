@@ -39,7 +39,6 @@ const initialState: AppState = {
   revision: null,
   showTrash: false,
   showNavigation: false,
-  showNoteInfo: false,
   isViewingRevisions: false,
   editingTags: false,
   dialogs: [],
@@ -70,7 +69,6 @@ export const actionMap = new ActionMap({
 
       return update(state, {
         showNavigation: { $set: true },
-        showNoteInfo: { $set: false },
       });
     },
 
@@ -487,20 +485,6 @@ export const actionMap = new ActionMap({
     noteRevisionsLoaded(state: AppState, { revisions }) {
       return update(state, {
         revisions: { $set: revisions },
-      });
-    },
-
-    toggleNoteInfo(state: AppState) {
-      if (state.showNoteInfo) {
-        return update(state, {
-          showNoteInfo: { $set: false },
-        });
-      }
-
-      return update(state, {
-        showNoteInfo: { $set: true },
-        showNavigation: { $set: false },
-        editingTags: { $set: false },
       });
     },
 
