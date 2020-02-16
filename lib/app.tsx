@@ -34,6 +34,7 @@ import {
   createNote,
   closeNote,
   setUnsyncedNoteIds,
+  toggleNavigation,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
 
@@ -103,7 +104,7 @@ const mapDispatchToProps: S.MapDispatch<
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
     createNote: () => dispatch(createNote()),
-    openTagList: () => dispatch(actionCreators.toggleNavigation()),
+    openTagList: () => dispatch(toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
@@ -233,7 +234,7 @@ export const App = connect(
       if (
         cmdOrCtrl &&
         't' === key.toLowerCase() &&
-        !this.state.showNavigation
+        !this.props.showNavigation
       ) {
         this.props.openTagList();
 
@@ -438,7 +439,7 @@ export const App = connect(
         settings,
         tagBucket,
         isSmallScreen,
-        ui: { showNoteInfo },
+        ui: { showNavigation, showNoteInfo },
       } = this.props;
       const isMacApp = isElectronMac();
 
@@ -451,7 +452,7 @@ export const App = connect(
 
       const mainClasses = classNames('simplenote-app', {
         'note-info-open': showNoteInfo,
-        'navigation-open': state.showNavigation,
+        'navigation-open': showNavigation,
         'is-electron': isElectron(),
         'is-macos': isMacApp,
       });
@@ -461,12 +462,10 @@ export const App = connect(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && (
-                <NavigationBar isElectron={isElectron()} />
-              )}
+              {showNavigation && <NavigationBar isElectron={isElectron()} />}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
-                isNavigationOpen={state.showNavigation}
+                isNavigationOpen={showNavigation}
                 isNoteInfoOpen={showNoteInfo}
                 isSmallScreen={isSmallScreen}
                 noteBucket={noteBucket}

@@ -37,7 +37,6 @@ const initialState: AppState = {
   notes: null,
   tags: [],
   revision: null,
-  showNavigation: false,
   dialogs: [],
   nextDialogKey: 0,
   searchFocus: false,
@@ -56,18 +55,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    toggleNavigation(state: AppState) {
-      if (state.showNavigation) {
-        return update(state, {
-          showNavigation: { $set: false },
-        });
-      }
-
-      return update(state, {
-        showNavigation: { $set: true },
-      });
-    },
-
     showAllNotesAndSelectFirst: {
       creator() {
         return (dispatch, getState) => {
@@ -83,7 +70,6 @@ export const actionMap = new ActionMap({
 
     showAllNotes(state: AppState) {
       return update(state, {
-        showNavigation: { $set: false },
         tag: { $set: null },
         previousIndex: { $set: -1 },
       });
@@ -91,7 +77,6 @@ export const actionMap = new ActionMap({
 
     selectTrash(state: AppState) {
       return update(state, {
-        showNavigation: { $set: false },
         tag: { $set: null },
         previousIndex: { $set: -1 },
       });
@@ -112,7 +97,6 @@ export const actionMap = new ActionMap({
 
     selectTag(state: AppState, { tag }: { tag: T.TagEntity }) {
       return update(state, {
-        showNavigation: { $set: false },
         tag: { $set: tag },
         previousIndex: { $set: -1 },
       });
@@ -142,7 +126,7 @@ export const actionMap = new ActionMap({
       };
 
       if (type === 'Settings') {
-        updateCommands.showNavigation = { $set: false };
+        // updateCommands.showNavigation = { $set: false }; //@todo
       }
 
       return update(state, updateCommands);

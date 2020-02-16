@@ -60,6 +60,8 @@ export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
   { noteIds: T.EntityId[] }
 >;
+
+export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
@@ -94,6 +96,7 @@ export type ActionType =
   | SetUnsyncedNoteIds
   | SetWPToken
   | ToggleEditMode
+  | ToggleNavigation
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
@@ -197,5 +200,4 @@ type LegacyAction =
   | Action<'App.showAllNotes'>
   | Action<'App.showAllNotesAndSelectFirst'>
   | Action<'App.showDialog', { dialog: object }>
-  | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>
-  | Action<'App.toggleNavigation'>;
+  | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>;

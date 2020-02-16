@@ -14,7 +14,23 @@ import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
 
-export class NavigationBar extends Component {
+import { toggleNavigation } from '../state/ui/actions';
+
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  showNavigation: boolean;
+};
+
+type DispatchProps = {
+  onOutsideClick: () => any;
+  toggleNavigation: Function;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class NavigationBar extends Component<Props> {
   static displayName = 'NavigationBar';
 
   static propTypes = {
@@ -22,12 +38,10 @@ export class NavigationBar extends Component {
     dialogs: PropTypes.array.isRequired,
     isElectron: PropTypes.bool.isRequired,
     onAbout: PropTypes.func.isRequired,
-    onOutsideClick: PropTypes.func.isRequired,
     onSettings: PropTypes.func.isRequired,
     onShowAllNotes: PropTypes.func.isRequired,
     selectTrash: PropTypes.func.isRequired,
     selectedTag: PropTypes.object,
-    showNavigation: PropTypes.bool.isRequired,
     showTrash: PropTypes.bool.isRequired,
   };
 
@@ -127,11 +141,15 @@ export class NavigationBar extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings, ui: { showTrash } }) => ({
+const mapStateToProps = ({
+  appState: state,
+  settings,
+  ui: { showNavigation, showTrash },
+}) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
   dialogs: state.dialogs,
   selectedTag: state.tag,
-  showNavigation: state.showNavigation,
+  showNavigation,
   showTrash,
 });
 
@@ -139,10 +157,9 @@ const {
   showAllNotesAndSelectFirst,
   selectTrash,
   showDialog,
-  toggleNavigation,
 } = appState.actionCreators;
 
-const mapDispatchToProps = {
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
