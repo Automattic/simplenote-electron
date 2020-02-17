@@ -4,9 +4,8 @@ import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import { State } from '../state';
-import { search } from '../state/ui/actions';
+import { search, unsetSearchFocus } from '../state/ui/actions';
 
-const { setSearchFocus } = appState.actionCreators;
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 
@@ -19,9 +18,9 @@ export class SearchField extends Component<ConnectedProps> {
   inputField = createRef<HTMLInputElement>();
 
   componentDidUpdate() {
-    const { searchFocus, onSearchFocused } = this.props;
+    const { searchFocused, onSearchFocused } = this.props;
 
-    if (searchFocus && this.inputField.current) {
+    if (searchFocused && this.inputField.current) {
       this.inputField.current.select();
       this.inputField.current.focus();
       onSearchFocused();
@@ -78,11 +77,11 @@ export class SearchField extends Component<ConnectedProps> {
 
 const mapStateToProps = ({
   appState: state,
-  ui: { listTitle, searchQuery },
+  ui: { listTitle, searchFocused, searchQuery },
 }: State) => ({
   isTagSelected: !!state.tag,
   placeholder: listTitle,
-  searchFocus: state.searchFocus,
+  searchFocused,
   searchQuery,
 });
 
@@ -91,7 +90,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(search(query));
     recordEvent('list_notes_searched');
   },
-  onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
+  onSearchFocused: () => dispatch(unsetSearchFocus()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

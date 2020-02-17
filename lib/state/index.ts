@@ -35,7 +35,7 @@ export type AppState = {
   preferences?: T.Preferences;
   previousIndex: number;
   revision: T.NoteEntity | null;
-  searchFocus: boolean;
+  searchFocused: boolean;
   showNavigation: boolean;
   showTrash: boolean;
   tags: T.TagEntity[];

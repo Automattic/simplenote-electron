@@ -39,6 +39,14 @@ export const search: A.ActionCreator<A.Search> = (searchQuery: string) => ({
   searchQuery,
 });
 
+export const setSearchFocus: A.ActionCreator<A.SetSearchFocus> = () => ({
+  type: 'SET_SEARCH_FOCUS',
+});
+
+export const unsetSearchFocus: A.ActionCreator<A.UnsetSearchFocus> = () => ({
+  type: 'UNSET_SEARCH_FOCUS',
+});
+
 export const selectNote: A.ActionCreator<A.SelectNote> = (
   note: T.NoteEntity
 ) => ({ type: 'SELECT_NOTE', note });

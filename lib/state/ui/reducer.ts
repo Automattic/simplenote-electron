@@ -74,6 +74,17 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
 const searchQuery: A.Reducer<string> = (state = '', action) =>
   'SEARCH' === action.type ? action.searchQuery : state;
 
+const searchFocused: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'SET_SEARCH_FOCUS':
+      return true;
+    case 'UNSET_SEARCH_FOCUS':
+      return false;
+    default:
+      return state;
+  }
+};
+
 const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
     ? action.simperiumConnected
@@ -129,6 +140,7 @@ export default combineReducers({
   filteredNotes,
   listTitle,
   note,
+  searchFocused,
   searchQuery,
   showNoteInfo,
   showNoteList,

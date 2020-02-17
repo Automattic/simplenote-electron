@@ -56,6 +56,10 @@ export type CloseNote = Action<'CLOSE_NOTE'>;
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
+
+export type SetSearchFocus = Action<'SET_SEARCH_FOCUS'>;
+export type UnsetSearchFocus = Action<'UNSET_SEARCH_FOCUS'>;
+
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
   { noteIds: T.EntityId[] }
@@ -86,6 +90,7 @@ export type ActionType =
   | SetLineLength
   | SetMarkdownEnabled
   | SetNoteDisplay
+  | SetSearchFocus
   | SetSortReversed
   | SetSortTagsAlpha
   | SetSortType
@@ -98,7 +103,8 @@ export type ActionType =
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer
-  | ToggleTagEditing;
+  | ToggleTagEditing
+  | UnsetSearchFocus;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
@@ -191,7 +197,6 @@ type LegacyAction =
   | Action<'App.selectTagAndSElectFirstNote'>
   | Action<'App.selectTrash'>
   | Action<'App.setRevision', { revision: T.NoteEntity }>
-  | Action<'App.setSearchFocus', { searchFocus: boolean }>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
   | Action<'App.showAllNotes'>
