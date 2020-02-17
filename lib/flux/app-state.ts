@@ -91,7 +91,7 @@ export const actionMap = new ActionMap({
 
     selectTrash(state: AppState) {
       return update(state, {
-        showNavigation: { $set: false }
+        showNavigation: { $set: false },
         tag: { $set: null },
         previousIndex: { $set: -1 },
       });
