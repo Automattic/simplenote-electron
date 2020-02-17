@@ -12,9 +12,13 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-import { toggleRevisions } from '../state/ui/actions';
 
-import { closeNote, toggleEditMode, toggleNoteInfo } from '../state/ui/actions';
+import {
+  closeNote,
+  toggleEditMode,
+  toggleNoteInfo,
+  toggleRevisions,
+} from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
