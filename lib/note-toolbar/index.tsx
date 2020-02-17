@@ -180,10 +180,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
-  toggleEditMode: () => dispatch(toggleEditMode()),
-  toggleNoteInfo: () => dispatch(toggleNoteInfo()),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeNote,
+  toggleEditMode,
+  toggleNoteInfo,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

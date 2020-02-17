@@ -29,6 +29,7 @@ type NoteChanger = {
 type ListChanger = NoteChanger & { previousIndex: number };
 
 type DispatchProps = {
+  closeNote: () => any;
   deleteNoteForever: (args: ListChanger) => any;
   noteRevisions: (args: NoteChanger) => any;
   restoreNote: (args: ListChanger) => any;
