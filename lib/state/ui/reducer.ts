@@ -42,9 +42,6 @@ const showNoteList: A.Reducer<boolean> = (state = false, action) => {
     case 'CLOSE_NOTE': {
       return true;
     }
-    case 'NOTE_LIST_TOGGLE':
-      return !state;
-
     case 'App.selectNote':
       return false;
 

@@ -53,10 +53,3 @@ export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   type: 'TAG_DRAWER_TOGGLE',
   show,
 });
-
-export const toggleNoteList: A.ActionCreator<A.ToggleNoteList> = (
-  show: boolean
-) => ({
-  type: 'NOTE_LIST_TOGGLE',
-  show,
-});
