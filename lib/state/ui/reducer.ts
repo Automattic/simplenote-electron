@@ -1,9 +1,7 @@
-import { difference, union } from 'lodash';
 import { combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 
-const defaultVisiblePanes = ['editor', 'noteList'];
 const emptyList: unknown[] = [];
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
@@ -39,6 +37,19 @@ const listTitle: A.Reducer<T.TranslatableString> = (
   }
 };
 
+const showNoteList: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'CLOSE_NOTE': {
+      return true;
+    }
+    case 'App.selectNote':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
@@ -51,19 +62,6 @@ const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
     ? action.simperiumConnected
     : state;
-
-const visiblePanes: A.Reducer<string[]> = (
-  state = defaultVisiblePanes,
-  action
-) => {
-  if ('TAG_DRAWER_TOGGLE' === action.type) {
-    return action.show
-      ? union(state, ['tagDrawer'])
-      : difference(state, ['tagDrawer']);
-  }
-
-  return state;
-};
 
 const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
@@ -82,7 +80,9 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.selectNote':
       return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
-    case 'App.closeNote':
+    case 'CLOSE_NOTE':
+    case 'App.trashNote':
+    case 'App.emptyTrash':
     case 'App.showAllNotes':
     case 'App.selectTrash':
     case 'App.selectTag':
@@ -106,7 +106,7 @@ export default combineReducers({
   note,
   searchQuery,
   showNoteInfo,
+  showNoteList,
   simperiumConnected,
   unsyncedNoteIds,
-  visiblePanes,
 });

@@ -7,6 +7,8 @@ import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 import { toggleEditMode } from '../state/ui/actions';
 
+import { closeNote } from '../state/ui/actions';
+
 import * as S from '../state';
 import * as T from '../types';
 
@@ -25,12 +27,10 @@ export class NoteEditor extends Component<Props> {
 
   static propTypes = {
     allTags: PropTypes.array.isRequired,
-    closeNote: PropTypes.func.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
-    onNoteClosed: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
     syncNote: PropTypes.func.isRequired,
@@ -88,8 +88,6 @@ export class NoteEditor extends Component<Props> {
       'n' === key.toLowerCase()
     ) {
       this.props.closeNote();
-      this.props.onNoteClosed();
-
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -179,8 +177,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note,
   revision: state.revision,
 });
-
-const { closeNote } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeNote: () => dispatch(closeNote()),

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import analytics from './analytics';
 import appState from './flux/app-state';
+import { closeNote } from './state/ui/actions';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
 
@@ -11,7 +12,6 @@ import * as T from './types';
 
 type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
-  onNoteClosed: Function;
   toolbar: ReactElement;
 };
 
@@ -49,16 +49,11 @@ export class NoteToolbarContainer extends Component<Props> {
     return Math.max(noteIndex - 1, 0);
   };
 
-  onCloseNote = () => {
-    this.props.closeNote();
-    this.props.onNoteClosed();
-  };
-
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
+    this.props.closeNote();
     this.props.trashNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
@@ -66,14 +61,12 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.deleteNoteForever({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
@@ -92,7 +85,6 @@ export class NoteToolbarContainer extends Component<Props> {
     const { isViewingRevisions, toolbar, revisionOrNote } = this.props;
 
     const handlers = {
-      onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
       onShowRevisions: this.onShowRevisions,
@@ -124,7 +116,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const {
-  closeNote,
   deleteNoteForever,
   noteRevisions,
   restoreNote,

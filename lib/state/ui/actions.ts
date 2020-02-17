@@ -5,6 +5,10 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
+export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
+  type: 'CLOSE_NOTE',
+});
+
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes: T.NoteEntity[]
 ) => ({
