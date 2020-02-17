@@ -39,7 +39,6 @@ const initialState: AppState = {
   revision: null,
   showTrash: false,
   showNavigation: false,
-  isViewingRevisions: false,
   dialogs: [],
   nextDialogKey: 0,
   searchFocus: false,
@@ -283,12 +282,6 @@ export const actionMap = new ActionMap({
     setRevision(state: AppState, { revision }) {
       return update(state, {
         revision: { $set: revision },
-      });
-    },
-
-    setIsViewingRevisions(state: AppState, { isViewingRevisions }) {
-      return update(state, {
-        isViewingRevisions: { $set: isViewingRevisions },
       });
     },
 

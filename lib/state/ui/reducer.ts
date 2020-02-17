@@ -86,7 +86,15 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
 
     case 'App.toggleNavigation':
       return false;
+    default:
+      return state;
+  }
+};
 
+const showRevisions: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'REVISIONS_TOGGLE':
+      return !state;
     default:
       return state;
   }
@@ -124,6 +132,7 @@ export default combineReducers({
   searchQuery,
   showNoteInfo,
   showNoteList,
+  showRevisions,
   simperiumConnected,
   unsyncedNoteIds,
 });
