@@ -52,10 +52,10 @@ export const SearchBar: FunctionComponent<Props> = ({
 );
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, trash },
+  ui: { searchQuery, showTrash },
 }) => ({
   searchQuery,
-  showTrash: trash,
+  showTrash,
 });
 
 const mapDispatchToProps = (dispatch, { noteBucket }) => ({

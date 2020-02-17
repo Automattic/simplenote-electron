@@ -115,7 +115,7 @@ export default function filterNotes(
 ) {
   const {
     appState: { notes, tag },
-    ui: { searchQuery, trash },
+    ui: { searchQuery, showTrash },
   } = state;
 
   const notesToFilter = notesArray ? notesArray : notes;
@@ -130,7 +130,7 @@ export default function filterNotes(
   const otherMatches: T.NoteEntity[] = [];
 
   // reuse these functions for each note
-  const matchesTrash = matchesTrashView(trash);
+  const matchesTrash = matchesTrashView(showTrash);
   const matchesTag = makeMatchesTag(tag, searchQuery);
   const matchesSearch = makeMatchesSearch(searchQuery);
   const matchesFilter = (note: T.NoteEntity) =>

@@ -100,7 +100,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const trash: A.Reducer<boolean> = (state = false, action) => {
+const showTrash: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'App.selectTrash':
       return true;
@@ -149,7 +149,7 @@ export default combineReducers({
   showNoteInfo,
   showNoteList,
   showRevisions,
+  showTrash,
   simperiumConnected,
-  trash,
   unsyncedNoteIds,
 });
