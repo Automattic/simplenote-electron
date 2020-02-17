@@ -91,6 +91,15 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const showRevisions: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'REVISIONS_TOGGLE':
+      return !state;
+    default:
+      return state;
+  }
+};
+
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.selectNote':
@@ -123,6 +132,7 @@ export default combineReducers({
   searchQuery,
   showNoteInfo,
   showNoteList,
+  showRevisions,
   simperiumConnected,
   unsyncedNoteIds,
 });

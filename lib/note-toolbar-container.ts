@@ -107,9 +107,9 @@ export class NoteToolbarContainer extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState,
-  ui: { filteredNotes, note, visiblePanes },
+  ui: { filteredNotes, note, showRevisions },
 }) => ({
-  isViewingRevisions: visiblePanes.has('revisions'),
+  isViewingRevisions: showRevisions,
   notes: filteredNotes,
   revisionOrNote: appState.revision || note,
 });
