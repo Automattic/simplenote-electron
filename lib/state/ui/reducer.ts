@@ -109,8 +109,6 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
     case 'App.showAllNotes': {
       return false;
     }
-    case 'TRASH_TOGGLE':
-      return !state;
     default:
       return state;
   }
