@@ -53,3 +53,7 @@ export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
   type: 'TAG_DRAWER_TOGGLE',
   show,
 });
+
+export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
+  type: 'TAG_EDITING_TOGGLE',
+});
