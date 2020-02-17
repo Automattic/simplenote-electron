@@ -92,8 +92,8 @@ export const AppLayout: FunctionComponent<Props> = ({
   );
 };
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { visiblePanes } }) => ({
-  isNoteOpen: !visiblePanes.has('noteList'),
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { showNoteList } }) => ({
+  isNoteOpen: !showNoteList,
 });
 
 export default connect(mapStateToProps)(AppLayout);

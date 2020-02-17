@@ -2,7 +2,6 @@ import { combineReducers } from 'redux';
 import * as A from '../action-types';
 import * as T from '../../types';
 
-const defaultVisiblePanes = new Set(['editor', 'noteList']);
 const emptyList: unknown[] = [];
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
@@ -38,6 +37,22 @@ const listTitle: A.Reducer<T.TranslatableString> = (
   }
 };
 
+const showNoteList: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'CLOSE_NOTE': {
+      return true;
+    }
+    case 'NOTE_LIST_TOGGLE':
+      return !state;
+
+    case 'App.selectNote':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
@@ -50,41 +65,6 @@ const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
     ? action.simperiumConnected
     : state;
-
-const visiblePanes: A.Reducer<Set<string>> = (
-  state = defaultVisiblePanes,
-  action
-) => {
-  switch (action.type) {
-    case 'CLOSE_NOTE': {
-      return new Set(state).add('noteList');
-    }
-    case 'App.selectNote': {
-      const newSet = new Set(state);
-      newSet.delete('noteList');
-      return newSet;
-    }
-    case 'NOTE_LIST_TOGGLE':
-      if (action.show) {
-        return new Set(state).add('noteList');
-      } else {
-        const newSet = new Set(state);
-        newSet.delete('noteList');
-        return newSet;
-      }
-    case 'TAG_DRAWER_TOGGLE': {
-      if (action.show) {
-        return new Set(state).add('tagDrawer');
-      } else {
-        const newSet = new Set(state);
-        newSet.delete('tagDrawer');
-        return newSet;
-      }
-    }
-    default:
-      return state;
-  }
-};
 
 const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
@@ -129,7 +109,7 @@ export default combineReducers({
   note,
   searchQuery,
   showNoteInfo,
+  showNoteList,
   simperiumConnected,
   unsyncedNoteIds,
-  visiblePanes,
 });
