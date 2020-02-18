@@ -37,7 +37,6 @@ export type AppState = {
   revision: T.NoteEntity | null;
   searchFocus: boolean;
   showNavigation: boolean;
-  showTrash: boolean;
   tags: T.TagEntity[];
   tag?: T.TagEntity;
   unsyncedNoteIds: T.EntityId[];

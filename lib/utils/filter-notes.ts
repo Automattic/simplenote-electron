@@ -114,8 +114,8 @@ export default function filterNotes(
   notesArray: T.NoteEntity[] | null = null
 ) {
   const {
-    appState: { notes, showTrash, tag },
-    ui: { searchQuery },
+    appState: { notes, tag },
+    ui: { searchQuery, showTrash },
   } = state;
 
   const notesToFilter = notesArray ? notesArray : notes;
