@@ -33,7 +33,7 @@ import {
 import {
   createNote,
   closeNote,
-  setSearchFocus,
+  focusSearch,
   setUnsyncedNoteIds,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
@@ -54,7 +54,7 @@ export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
   selectNote: (note: T.NoteEntity) => any;
-  setSearchFocus: () => any;
+  focusSearch: () => any;
 };
 
 export type Props = DispatchProps;
@@ -109,7 +109,7 @@ const mapDispatchToProps: S.MapDispatch<
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
-    setSearchFocus: () => dispatch(setSearchFocus()),
+    focusSearch: () => dispatch(focusSearch()),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),

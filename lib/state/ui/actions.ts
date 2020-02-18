@@ -1,6 +1,10 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
+export const blurSearch: A.ActionCreator<A.BlurSearch> = () => ({
+  type: 'BLUR_SEARCH',
+});
+
 export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
@@ -14,6 +18,10 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
 ) => ({
   type: 'FILTER_NOTES',
   notes,
+});
+
+export const focusSearch: A.ActionCreator<A.FocusSearch> = () => ({
+  type: 'FOCUS_SEARCH',
 });
 
 export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
@@ -37,14 +45,6 @@ export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumC
 export const search: A.ActionCreator<A.Search> = (searchQuery: string) => ({
   type: 'SEARCH',
   searchQuery,
-});
-
-export const setSearchFocus: A.ActionCreator<A.SetSearchFocus> = () => ({
-  type: 'SET_SEARCH_FOCUS',
-});
-
-export const unsetSearchFocus: A.ActionCreator<A.UnsetSearchFocus> = () => ({
-  type: 'UNSET_SEARCH_FOCUS',
 });
 
 export const selectNote: A.ActionCreator<A.SelectNote> = (

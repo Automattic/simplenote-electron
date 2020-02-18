@@ -4,7 +4,7 @@ import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import { State } from '../state';
-import { search, unsetSearchFocus } from '../state/ui/actions';
+import { search, blurSearch } from '../state/ui/actions';
 
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
@@ -90,7 +90,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(search(query));
     recordEvent('list_notes_searched');
   },
-  onSearchFocused: () => dispatch(unsetSearchFocus()),
+  onSearchFocused: () => dispatch(blurSearch()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

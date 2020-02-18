@@ -76,9 +76,9 @@ const searchQuery: A.Reducer<string> = (state = '', action) =>
 
 const searchFocused: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'SET_SEARCH_FOCUS':
+    case 'FOCUS_SEARCH':
       return true;
-    case 'UNSET_SEARCH_FOCUS':
+    case 'BLUR_SEARCH':
       return false;
     default:
       return state;
