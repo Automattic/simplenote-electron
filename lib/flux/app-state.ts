@@ -40,7 +40,6 @@ const initialState: AppState = {
   showNavigation: false,
   dialogs: [],
   nextDialogKey: 0,
-  searchFocus: false,
   unsyncedNoteIds: [], // note bucket only
 };
 
@@ -274,12 +273,6 @@ export const actionMap = new ActionMap({
     setRevision(state: AppState, { revision }) {
       return update(state, {
         revision: { $set: revision },
-      });
-    },
-
-    setSearchFocus(state: AppState, { searchFocus = true }) {
-      return update(state, {
-        searchFocus: { $set: searchFocus },
       });
     },
 

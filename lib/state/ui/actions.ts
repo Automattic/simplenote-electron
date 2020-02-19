@@ -16,6 +16,10 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes,
 });
 
+export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
+  type: 'FOCUS_SEARCH_FIELD',
+});
+
 export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
   noteIds: T.EntityId[]
 ) => ({
