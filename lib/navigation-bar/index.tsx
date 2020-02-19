@@ -25,7 +25,7 @@ type StateProps = {
 
 type DispatchProps = {
   onOutsideClick: () => any;
-  toggleNavigation: Function;
+  toggleNavigation: () => any;
 };
 
 type Props = StateProps & DispatchProps;
