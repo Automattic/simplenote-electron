@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect, DispatchProp } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -30,12 +30,16 @@ type DispatchProps = {
   toggleRevisions: () => any;
 };
 
+type OwnProps = {
+  onShowRevisions: (note: T.NoteEntity | null) => any;
+};
+
 type StateProps = {
   editMode: boolean;
   note: T.NoteEntity | null;
 };
 
-type Props = DispatchProps & StateProps;
+type Props = DispatchProps & OwnProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
@@ -55,6 +59,11 @@ export class NoteToolbar extends Component<Props> {
     onShareNote: noop,
     onTrashNote: noop,
     toggleFocusMode: noop,
+  };
+
+  showRevisions = () => {
+    this.props.toggleRevisions();
+    this.props.onShowRevisions(this.props.note);
   };
 
   render() {
@@ -103,7 +112,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<RevisionsIcon />}
-              onClick={this.props.toggleRevisions}
+              onClick={this.showRevisions}
               title="History"
             />
           </div>

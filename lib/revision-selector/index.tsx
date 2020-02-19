@@ -49,6 +49,8 @@ export class RevisionSelector extends Component<Props, ComponentState> {
   componentWillReceiveProps({ revisions: nextRevisions }: Props) {
     const { revisions: prevRevisions } = this.props;
 
+    console.log(nextRevisions);
+
     if (nextRevisions === prevRevisions) {
       return;
     }
@@ -175,7 +177,6 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
   ui: { note, showRevisions },
 }) => ({
   isViewingRevisions: showRevisions,
