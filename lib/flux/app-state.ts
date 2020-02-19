@@ -125,10 +125,6 @@ export const actionMap = new ActionMap({
         nextDialogKey: { $set: state.nextDialogKey + 1 },
       };
 
-      if (type === 'Settings') {
-        // updateCommands.showNavigation = { $set: false }; //@todo
-      }
-
       return update(state, updateCommands);
     },
 

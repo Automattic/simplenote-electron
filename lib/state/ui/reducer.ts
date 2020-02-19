@@ -101,6 +101,11 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'App.selectTrash':
     case 'App.showAllNotes':
       return false;
+    case 'App.showDialog':
+      if (action.dialog && action.dialog.type === 'Settings') {
+        return false;
+      }
+      return state;
     default:
       return state;
   }
