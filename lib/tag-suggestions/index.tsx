@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { tracks } from '../analytics';
-import { focusSearchField, search } from '../state/ui/actions';
+import { search } from '../state/ui/actions';
 import filterAtMost from '../utils/filter-at-most';
 
 import * as S from '../state';
@@ -119,7 +119,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onSearch: query => {
     dispatch(search(query));
     recordEvent('list_notes_searched');
-    dispatch(focusSearchField());
   },
 });
 

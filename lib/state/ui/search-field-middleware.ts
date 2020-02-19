@@ -10,8 +10,12 @@ export const middleware: S.Middleware = () => {
     const result = next(action);
 
     switch (action.type) {
-      case 'FOCUS_SEARCH_FIELD':
+      case 'SEARCH':
         searchFields.forEach(focus => focus());
+        break;
+
+      case 'FOCUS_SEARCH_FIELD':
+        searchFields.forEach(focus => focus('select'));
         break;
     }
 

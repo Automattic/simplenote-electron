@@ -30,12 +30,14 @@ export class SearchField extends Component<ConnectedProps> {
     this.inputField.current.blur();
   };
 
-  focus = () => {
+  focus = (operation = 'focus-only') => {
     if (!this.inputField.current) {
       return;
     }
 
-    this.inputField.current.select();
+    if ('select' === operation) {
+      this.inputField.current.select();
+    }
     this.inputField.current.focus();
   };
 
