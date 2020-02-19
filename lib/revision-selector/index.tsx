@@ -49,8 +49,6 @@ export class RevisionSelector extends Component<Props, ComponentState> {
   componentWillReceiveProps({ revisions: nextRevisions }: Props) {
     const { revisions: prevRevisions } = this.props;
 
-    console.log(nextRevisions);
-
     if (nextRevisions === prevRevisions) {
       return;
     }
