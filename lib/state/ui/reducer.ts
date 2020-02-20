@@ -24,7 +24,7 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
     case 'App.selectTag':
     case 'App.selectTrash':
     case 'App.showAllNotes':
-    case 'App.toggleNavigation':
+    case 'NAVIGATION_TOGGLE':
     case 'App.toggleNoteInfo':
       return false;
     default:
@@ -84,8 +84,28 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
     case 'NOTE_INFO_TOGGLE':
       return !state;
 
-    case 'App.toggleNavigation':
+    case 'NAVIGATION_TOGGLE':
       return false;
+
+    default:
+      return state;
+  }
+};
+
+const showNavigation: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'NAVIGATION_TOGGLE':
+      return !state;
+
+    case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+      return false;
+    case 'App.showDialog':
+      if (action.dialog && action.dialog.type === 'Settings') {
+        return false;
+      }
+      return state;
     default:
       return state;
   }
@@ -144,6 +164,7 @@ export default combineReducers({
   listTitle,
   note,
   searchQuery,
+  showNavigation,
   showNoteInfo,
   showNoteList,
   showRevisions,
