@@ -89,7 +89,7 @@ const noteIndex: A.Reducer<number> = (state = -1, action) => {
   console.log(action);
   switch (action.type) {
     case 'CLOSE_NOTE':
-      return action.noteIndex;
+      return action.noteIndex || state;
     case 'App.selectTag':
     case 'App.selectTrash':
     case 'App.showAllNotes':

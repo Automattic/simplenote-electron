@@ -52,7 +52,7 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
  * Normal action types
  */
 export type CreateNote = Action<'CREATE_NOTE'>;
-export type CloseNote = Action<'CLOSE_NOTE', { noteIndex: number }>;
+export type CloseNote = Action<'CLOSE_NOTE', { noteIndex: number | null }>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
   { notes: T.NoteEntity[]; noteIndex: number }

@@ -5,7 +5,9 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
-export const closeNote: A.ActionCreator<A.CloseNote> = (noteIndex: number) => ({
+export const closeNote: A.ActionCreator<A.CloseNote> = (
+  noteIndex: number | null
+) => ({
   type: 'CLOSE_NOTE',
   noteIndex,
 });
