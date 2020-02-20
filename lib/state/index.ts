@@ -56,9 +56,11 @@ export type State = {
   ui: ReturnType<typeof ui>;
 };
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 export const store = createStore<State, A.ActionType, {}, {}>(
   reducers,
-  compose(
+  composeEnhancers(
     persistState('settings', {
       key: 'simpleNote',
       slicer: path => state => ({
@@ -66,8 +68,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk, uiMiddleware, searchFieldMiddleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    applyMiddleware(thunk, uiMiddleware, searchFieldMiddleware)
   )
 );
 
