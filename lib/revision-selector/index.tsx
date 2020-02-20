@@ -5,9 +5,8 @@ import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import Slider from '../components/slider';
-import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
-import { toggleRevisions } from '../state/ui/actions';
+import { selectRevision, toggleRevisions } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -16,9 +15,7 @@ const sortedRevisions = (revisions: T.NoteEntity[]) =>
   orderBy(revisions, 'version', 'asc');
 
 type OwnProps = {
-  revisions: T.NoteEntity[];
   onUpdateContent: Function;
-  setRevision: Function;
   resetIsViewingRevisions: Function;
   cancelRevision: Function;
   updateNoteTags: Function;
@@ -27,6 +24,17 @@ type OwnProps = {
 type StateProps = {
   isViewingRevisions: boolean;
   note: T.NoteEntity | null;
+  revisions: T.NoteEntity[];
+};
+
+type DispatchProps = {
+  setRevision: (revision: T.NoteEntity | null) => any;
+  resetIsViewingRevisions: () => any;
+  cancelRevision: () => any;
+  updateNoteTags: (arg: {
+    note: T.NoteEntity | null;
+    tags: T.TagName[];
+  }) => any;
 };
 
 type ComponentState = {
@@ -34,7 +42,7 @@ type ComponentState = {
   selection: number;
 };
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props, ComponentState> {
   constructor(props: Props, ...args: unknown[]) {
@@ -108,7 +116,7 @@ export class RevisionSelector extends Component<Props, ComponentState> {
     const revision = revisions[selection];
 
     this.setState({ selection });
-    this.props.setRevision(revision);
+    this.props.setRevision(revision || null);
   };
 
   onCancelRevision = () => {
@@ -175,23 +183,17 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, showRevisions },
+  ui: { note, noteRevisions, showRevisions },
 }) => ({
   isViewingRevisions: showRevisions,
   note: note,
+  revisions: noteRevisions,
 });
 
-const { setRevision } = appState.actionCreators;
-
-const mapDispatchToProps = dispatch => ({
-  setRevision: revision => dispatch(setRevision({ revision })),
-  resetIsViewingRevisions: () => {
-    dispatch(toggleRevisions());
-  },
-  cancelRevision: () => {
-    dispatch(setRevision({ revision: null }));
-    dispatch(toggleRevisions());
-  },
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  setRevision: (revision: T.NoteEntity) => dispatch(selectRevision(revision)),
+  resetIsViewingRevisions: () => dispatch(toggleRevisions()),
+  cancelRevision: () => dispatch(toggleRevisions()),
   updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });
 

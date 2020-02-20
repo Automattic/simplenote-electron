@@ -56,12 +56,19 @@ export type CloseNote = Action<'CLOSE_NOTE'>;
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
+export type SelectRevision = Action<
+  'SELECT_REVISION',
+  { revision: T.NoteEntity }
+>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
   { noteIds: T.EntityId[] }
 >;
-
+export type StoreRevisions = Action<
+  'STORE_REVISIONS',
+  { noteId: T.EntityId; revisions: T.NoteEntity[] }
+>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
@@ -72,7 +79,10 @@ export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
-export type SelectNote = Action<'SELECT_NOTE', { note: T.NoteEntity }>;
+export type SelectNote = Action<
+  'SELECT_NOTE',
+  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
+>;
 
 export type ActionType =
   | CreateNote
@@ -82,6 +92,7 @@ export type ActionType =
   | FocusSearchField
   | Search
   | SelectNote
+  | SelectRevision
   | SetAccountName
   | SetAuth
   | SetAutoHideMenuBar
@@ -97,6 +108,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | SetWPToken
+  | StoreRevisions
   | ToggleEditMode
   | ToggleNavigation
   | ToggleNoteInfo
@@ -132,10 +144,6 @@ type LegacyAction =
   | Action<
       'App.markdownNote',
       { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity; markdown: boolean }
-    >
-  | Action<
-      'App.noteRevisions',
-      { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity }
     >
   | Action<
       'App.noteUpdatedRemotely',
@@ -187,15 +195,12 @@ type LegacyAction =
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
-  | Action<'App.noteRevisionsLoaded', { reivisions: T.NoteEntity[] }>
   | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
   | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
-  | Action<'App.selectNote', { note: T.NoteEntity; hasRemoteUpdate: boolean }>
   | Action<'App.selectTag', { tag: T.TagEntity }>
   | Action<'App.selectTagAndSElectFirstNote'>
   | Action<'App.selectTrash'>
-  | Action<'App.setRevision', { revision: T.NoteEntity }>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
   | Action<'App.showAllNotes'>

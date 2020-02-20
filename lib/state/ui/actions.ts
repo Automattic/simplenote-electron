@@ -20,11 +20,27 @@ export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
 });
 
+export const selectRevision: A.ActionCreator<A.SelectRevision> = (
+  revision: T.NoteEntity
+) => ({
+  type: 'SELECT_REVISION',
+  revision,
+});
+
 export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
   noteIds: T.EntityId[]
 ) => ({
   type: 'SET_UNSYNCED_NOTE_IDS',
   noteIds,
+});
+
+export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (
+  noteId: T.EntityId,
+  revisions: T.NoteEntity[]
+) => ({
+  type: 'STORE_REVISIONS',
+  noteId,
+  revisions,
 });
 
 export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({

@@ -10,6 +10,7 @@ import Debug from 'debug';
 import { initClient } from './client';
 import getConfig from '../get-config';
 import store from './state';
+import * as simperiumMiddleware from './state/simperium/middleware';
 import {
   reset as resetAuth,
   setAuthorized,
@@ -231,6 +232,9 @@ if (cookie.email && config.is_app_engine) {
 }
 
 Modal.setAppElement('#root');
+simperiumMiddleware.storeBuckets({
+  note: client.bucket('note'),
+});
 
 render(
   React.createElement(Provider, { store }, React.createElement(App, props)),
