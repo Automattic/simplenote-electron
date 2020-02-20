@@ -42,7 +42,7 @@ class NoteContentEditor extends Component<Props> {
     content: PropTypes.shape({
       text: PropTypes.string.isRequired,
       hasRemoteUpdate: PropTypes.bool.isRequired,
-      version: PropTypes.string,
+      version: PropTypes.number,
     }),
     noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
