@@ -20,6 +20,7 @@ import { omit } from 'lodash';
 import appState from '../flux/app-state';
 
 import uiMiddleware from './ui/middleware';
+import searchFieldMiddleware from './ui/search-field-middleware';
 
 import auth from './auth/reducer';
 import settings from './settings/reducer';
@@ -35,7 +36,6 @@ export type AppState = {
   preferences?: T.Preferences;
   previousIndex: number;
   revision: T.NoteEntity | null;
-  searchFocus: boolean;
   showNavigation: boolean;
   tags: T.TagEntity[];
   tag?: T.TagEntity;
@@ -66,7 +66,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk, uiMiddleware)
+    applyMiddleware(thunk, uiMiddleware, searchFieldMiddleware)
   )
 );
 

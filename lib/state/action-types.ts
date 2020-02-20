@@ -54,6 +54,7 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
 export type CreateNote = Action<'CREATE_NOTE'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
 export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
+export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
@@ -78,6 +79,7 @@ export type ActionType =
   | CloseNote
   | LegacyAction
   | FilterNotes
+  | FocusSearchField
   | Search
   | SelectNote
   | SetAccountName
@@ -194,7 +196,6 @@ type LegacyAction =
   | Action<'App.selectTagAndSElectFirstNote'>
   | Action<'App.selectTrash'>
   | Action<'App.setRevision', { revision: T.NoteEntity }>
-  | Action<'App.setSearchFocus', { searchFocus: boolean }>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
   | Action<'App.showAllNotes'>

@@ -1,12 +1,12 @@
 import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
-import appState from '../flux/app-state';
 import { tracks } from '../analytics';
 import { State } from '../state';
 import { search } from '../state/ui/actions';
 
-const { setSearchFocus } = appState.actionCreators;
+import { registerSearchField } from '../state/ui/search-field-middleware';
+
 const { recordEvent } = tracks;
 const KEY_ESC = 27;
 
@@ -18,20 +18,33 @@ export class SearchField extends Component<ConnectedProps> {
 
   inputField = createRef<HTMLInputElement>();
 
-  componentDidUpdate() {
-    const { searchFocus, onSearchFocused } = this.props;
-
-    if (searchFocus && this.inputField.current) {
-      this.inputField.current.select();
-      this.inputField.current.focus();
-      onSearchFocused();
-    }
+  componentDidMount() {
+    registerSearchField(this.focus);
   }
+
+  blur = () => {
+    if (!this.inputField.current) {
+      return;
+    }
+
+    this.inputField.current.blur();
+  };
+
+  focus = (operation = 'focus-only') => {
+    if (!this.inputField.current) {
+      return;
+    }
+
+    if ('select' === operation) {
+      this.inputField.current.select();
+    }
+    this.inputField.current.focus();
+  };
 
   interceptEsc = (event: KeyboardEvent) => {
     if (KEY_ESC === event.keyCode) {
-      if (this.props.searchQuery === '' && this.inputField.current) {
-        this.inputField.current.blur();
+      if (this.props.searchQuery === '') {
+        this.blur();
       }
       this.clearQuery();
     }
@@ -82,7 +95,6 @@ const mapStateToProps = ({
 }: State) => ({
   isTagSelected: !!state.tag,
   placeholder: listTitle,
-  searchFocus: state.searchFocus,
   searchQuery,
 });
 
@@ -91,7 +103,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(search(query));
     recordEvent('list_notes_searched');
   },
-  onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

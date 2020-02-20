@@ -53,6 +53,7 @@ export type OwnProps = {
 export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
+  focusSearchField: () => any;
   selectNote: (note: T.NoteEntity) => any;
 };
 
@@ -108,8 +109,7 @@ const mapDispatchToProps: S.MapDispatch<
     resetAuth: () => dispatch(reduxActions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
-    setSearchFocus: () =>
-      dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),
@@ -253,6 +253,10 @@ export const App = connect(
 
       if ('printNote' === command.action) {
         return window.print();
+      }
+
+      if ('focusSearchField' === command.action) {
+        return this.props.focusSearchField();
       }
 
       const canRun = overEvery(
