@@ -18,7 +18,6 @@ import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
 import { setLastSyncedTime } from './utils/sync/last-synced-time';
-import analytics from './analytics';
 import classNames from 'classnames';
 import {
   debounce,
@@ -148,7 +147,6 @@ export const App = connect(
       openTagList: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
       settings: PropTypes.object.isRequired,
-      preferencesBucket: PropTypes.object.isRequired,
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
       systemTheme: PropTypes.string.isRequired,
@@ -185,8 +183,6 @@ export const App = connect(
           })
         );
 
-      this.props.preferencesBucket.on('update', this.onLoadPreferences);
-
       this.props.tagBucket
         .on('index', this.props.loadTags)
         .on('update', debounce(this.props.loadTags, 200))
@@ -200,11 +196,6 @@ export const App = connect(
         .on('send', this.syncActivityHooks)
         .on('connect', () => this.props.setSimperiumConnectionStatus(true))
         .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
-
-      this.onLoadPreferences(() =>
-        // Make sure that tracking starts only after preferences are loaded
-        analytics.tracks.recordEvent('application_opened')
-      );
 
       this.toggleShortcuts(true);
     }
@@ -267,7 +258,6 @@ export const App = connect(
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
-          analytics.tracks.recordEvent('list_note_created');
         } else if (has(this.props, command.action)) {
           const { action, ...args } = command;
 
@@ -295,8 +285,6 @@ export const App = connect(
       }
 
       setAuthorized();
-      analytics.initialize(accountName);
-      this.onLoadPreferences();
 
       // 'Kick' the app to ensure content is loaded after signing in
       this.onNotesIndex();
@@ -335,12 +323,6 @@ export const App = connect(
         });
       }
     };
-
-    onLoadPreferences = callback =>
-      this.props.actions.loadPreferences({
-        callback,
-        preferencesBucket: this.props.preferencesBucket,
-      });
 
     getTheme = () => {
       const {
@@ -421,12 +403,6 @@ export const App = connect(
       }
     };
 
-    loadPreferences = () => {
-      this.props.actions.loadPreferences({
-        preferencesBucket: this.props.preferencesBucket,
-      });
-    };
-
     render() {
       const {
         appState: state,
@@ -434,7 +410,6 @@ export const App = connect(
         isAuthorized,
         isDevConfig,
         noteBucket,
-        preferencesBucket,
         settings,
         tagBucket,
         isSmallScreen,
@@ -489,7 +464,7 @@ export const App = connect(
           )}
           <DialogRenderer
             appProps={this.props}
-            buckets={{ noteBucket, preferencesBucket, tagBucket }}
+            buckets={{ noteBucket, tagBucket }}
             themeClass={themeClass}
             closeDialog={this.props.actions.closeDialog}
             dialogs={this.props.appState.dialogs}

@@ -9,10 +9,8 @@ import TagListInput from './input';
 import appState from '../flux/app-state';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { toggleTagEditing } from '../state/ui/actions';
-import { tracks } from '../analytics';
 
 const { selectTagAndSelectFirstNote } = appState.actionCreators;
-const { recordEvent } = tracks;
 
 export class TagList extends Component {
   static displayName = 'TagList';
@@ -57,7 +55,6 @@ export class TagList extends Component {
 
   onTrashTag = tag => {
     this.props.trashTag({ tag });
-    recordEvent('list_tag_deleted');
   };
 
   render() {
@@ -102,7 +99,6 @@ const mapDispatchToProps = dispatch => ({
   onEditTags: () => dispatch(toggleTagEditing()),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
-    recordEvent('list_tag_viewed');
   },
   renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),

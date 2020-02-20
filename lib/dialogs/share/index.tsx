@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
-import analytics from '../../analytics';
 import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import { updateNoteTags } from '../../state/domain/notes';
@@ -61,7 +60,6 @@ export class ShareDialog extends Component<Props> {
         note,
         tags: [...tags, collaborator],
       });
-      analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
@@ -72,7 +70,6 @@ export class ShareDialog extends Component<Props> {
     tags = tags.filter(tag => tag !== collaborator);
 
     this.props.updateNoteTags({ note, tags });
-    analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {

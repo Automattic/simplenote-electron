@@ -121,10 +121,6 @@ type LegacyAction =
       }
     >
   | Action<
-      'App.loadPreferences',
-      { callback?: Function; preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
       'App.markdownNote',
       { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity; markdown: boolean }
     >
@@ -158,18 +154,6 @@ type LegacyAction =
       }
     >
   | Action<
-      'App.setPreference',
-      {
-        key: keyof T.Preferences;
-        value: unknown;
-        preferencesBucket: T.Bucket<T.Preferences>;
-      }
-    >
-  | Action<
-      'App.toggleShareAnalyticsPreference',
-      { preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
       'App.trashNote',
       {
         noteBucket: T.Bucket<T.Note>;
@@ -185,7 +169,6 @@ type LegacyAction =
   | Action<'App.noteRevisionsLoaded', { reivisions: T.NoteEntity[] }>
   | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
-  | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
   | Action<'App.selectNote', { note: T.NoteEntity; hasRemoteUpdate: boolean }>
   | Action<'App.selectTag', { tag: T.TagEntity }>
   | Action<'App.selectTagAndSElectFirstNote'>

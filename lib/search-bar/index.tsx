@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import appState from '../flux/app-state';
-import { tracks } from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
@@ -19,7 +18,6 @@ import { createNote, search } from '../state/ui/actions';
 import * as S from '../state';
 
 const { newNote, toggleNavigation } = appState.actionCreators;
-const { recordEvent } = tracks;
 
 type OwnProps = {
   onNewNote: Function;
@@ -63,7 +61,6 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
     dispatch(createNote());
     dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
-    recordEvent('list_note_created');
   },
   onToggleNavigation: () => dispatch(toggleNavigation()),
 });

@@ -7,12 +7,7 @@ import TopRightArrowIcon from '../../../icons/arrow-top-right';
 import { viewExternalUrl } from '../../../utils/url-utils';
 
 const AccountPanel = props => {
-  const {
-    accountName,
-    analyticsEnabled,
-    requestSignOut,
-    toggleShareAnalyticsPreference,
-  } = props;
+  const { accountName, requestSignOut } = props;
 
   const onEditAccount = () => {
     viewExternalUrl(`https://app.simplenote.com/settings/?from=react`);
@@ -39,19 +34,6 @@ const AccountPanel = props => {
           </button>
         </li>
         <li>
-          <SettingsGroup
-            title="Privacy"
-            slug="shareAnalytics"
-            activeSlug={analyticsEnabled ? 'enabled' : ''}
-            description="Help us improve Simplenote by sharing usage data with our analytics tool."
-            onChange={toggleShareAnalyticsPreference}
-            learnMoreURL="https://automattic.com/cookies"
-            renderer={ToggleGroup}
-          >
-            <Item title="Share analytics" slug="enabled" />
-          </SettingsGroup>
-        </li>
-        <li>
           <button
             type="button"
             className="button button-primary"
@@ -67,9 +49,7 @@ const AccountPanel = props => {
 
 AccountPanel.propTypes = {
   accountName: PropTypes.string.isRequired,
-  analyticsEnabled: PropTypes.bool.isRequired,
   requestSignOut: PropTypes.func.isRequired,
-  toggleShareAnalyticsPreference: PropTypes.func.isRequired,
 };
 
 export default AccountPanel;

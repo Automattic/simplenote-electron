@@ -34,12 +34,6 @@ export type Tag = {
 
 export type TagEntity = Entity<Tag>;
 
-export type Preferences = {
-  analytics_enabled: boolean;
-};
-
-export type PreferencesEntity = Entity<Preferences>;
-
 export type Bucket<T = unknown> = {
   add(
     data: T,

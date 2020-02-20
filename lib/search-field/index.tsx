@@ -2,12 +2,10 @@ import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
 import appState from '../flux/app-state';
-import { tracks } from '../analytics';
 import { State } from '../state';
 import { search } from '../state/ui/actions';
 
 const { setSearchFocus } = appState.actionCreators;
-const { recordEvent } = tracks;
 const KEY_ESC = 27;
 
 type ConnectedProps = ReturnType<typeof mapStateToProps> &
@@ -89,7 +87,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch => ({
   onSearch: (query: string) => {
     dispatch(search(query));
-    recordEvent('list_notes_searched');
   },
   onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });

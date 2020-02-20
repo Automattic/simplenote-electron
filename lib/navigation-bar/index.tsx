@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 
-import analytics from '../analytics';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
@@ -52,7 +51,6 @@ export class NavigationBar extends Component {
 
   onSelectTrash = () => {
     this.props.selectTrash();
-    analytics.tracks.recordEvent('list_trash_viewed');
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows

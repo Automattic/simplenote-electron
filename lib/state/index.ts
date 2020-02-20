@@ -32,7 +32,6 @@ export type AppState = {
   dialogs: unknown[];
   nextDialogKey: number;
   notes: T.NoteEntity[] | null;
-  preferences?: T.Preferences;
   previousIndex: number;
   revision: T.NoteEntity | null;
   searchFocus: boolean;

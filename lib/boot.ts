@@ -18,7 +18,6 @@ import {
   setPending as setPendingAuth,
 } from './state/auth/actions';
 import { setAccountName } from './state/settings/actions';
-import analytics from './analytics';
 import { Auth } from 'simperium';
 import { parse } from 'cookie';
 import { render } from 'react-dom';
@@ -121,7 +120,6 @@ client.on('unauthorized', () => {
 let props = {
   client: client,
   noteBucket: client.bucket('note'),
-  preferencesBucket: client.bucket('preferences'),
   tagBucket: client.bucket('tag'),
   isDevConfig: isDevConfig(config?.development),
   onAuthenticate: (username: string, password: string) => {
@@ -143,7 +141,6 @@ let props = {
         localStorage.access_token = user.access_token;
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_signed_in');
       })
       .catch(({ message }: { message: string }) => {
         if (
@@ -177,8 +174,6 @@ let props = {
         localStorage.setItem('access_token', user.access_token);
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_account_created');
-        analytics.tracks.recordEvent('user_signed_in');
       })
       .then(() =>
         store.dispatch(
@@ -198,7 +193,6 @@ let props = {
     store.dispatch(setAccountName(null));
     client.deauthorize();
     redirectToWebSigninIfNecessary();
-    analytics.tracks.recordEvent('user_signed_out');
   },
   authorizeUserWithToken: (accountName: string, userToken: string) => {
     resetStorageIfAccountChanged(accountName);
@@ -209,8 +203,6 @@ let props = {
 
     const user = { access_token: userToken };
     client.setUser(user);
-
-    analytics.tracks.recordEvent('user_signed_in');
   },
 };
 

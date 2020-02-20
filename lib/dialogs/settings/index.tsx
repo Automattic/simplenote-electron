@@ -21,7 +21,6 @@ export class SettingsDialog extends Component {
     appState: PropTypes.object.isRequired,
     buckets: PropTypes.shape({
       noteBucket: PropTypes.object.isRequired,
-      preferencesBucket: PropTypes.object.isRequired,
     }),
     dialog: PropTypes.shape({ title: PropTypes.string.isRequired }),
     onSignOut: PropTypes.func.isRequired,
@@ -30,13 +29,6 @@ export class SettingsDialog extends Component {
     onSetWPToken: PropTypes.func.isRequired,
     requestClose: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
-    toggleShareAnalyticsPreference: PropTypes.func.isRequired,
-  };
-
-  onToggleShareAnalyticsPreference = () => {
-    this.props.toggleShareAnalyticsPreference({
-      preferencesBucket: this.props.buckets.preferencesBucket,
-    });
   };
 
   onSignOutRequested = () => {
@@ -127,18 +119,13 @@ export class SettingsDialog extends Component {
       requestClose,
       settings,
     } = this.props;
-    const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
       <Dialog className="settings" title={dialog.title} onDone={requestClose}>
         <TabPanels tabNames={settingTabs}>
           <AccountPanel
             accountName={settings.accountName}
-            analyticsEnabled={analyticsEnabled}
             requestSignOut={this.onSignOutRequested}
-            toggleShareAnalyticsPreference={
-              this.onToggleShareAnalyticsPreference
-            }
           />
           <DisplayPanel
             buckets={buckets}
@@ -152,13 +139,8 @@ export class SettingsDialog extends Component {
   }
 }
 
-const { toggleShareAnalyticsPreference } = appState.actionCreators;
-
 const mapDispatchToProps = dispatch => ({
   onSetWPToken: token => dispatch(setWPToken(token)),
-  toggleShareAnalyticsPreference: args => {
-    dispatch(toggleShareAnalyticsPreference(args));
-  },
 });
 
 export default connect(null, mapDispatchToProps)(SettingsDialog);

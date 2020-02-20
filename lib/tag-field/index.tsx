@@ -8,7 +8,6 @@ import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
-import analytics from '../analytics';
 import {
   differenceBy,
   intersectionBy,
@@ -84,7 +83,6 @@ export class TagField extends Component {
     this.updateTags(nextTagList);
     this.storeTagInput('');
     invoke(this, 'tagInput.focus');
-    analytics.tracks.recordEvent('editor_tag_added');
   };
 
   hasSelection = () =>
@@ -101,8 +99,6 @@ export class TagField extends Component {
         invoke(this, 'tagInput.focus');
       });
     }
-
-    analytics.tracks.recordEvent('editor_tag_removed');
   };
 
   deleteSelection = () => {

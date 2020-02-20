@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
-import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
@@ -153,7 +152,6 @@ export class NoteDetail extends Component<Props> {
 
     this.props.onChangeContent(note, content);
     this.queueNoteSync();
-    analytics.tracks.recordEvent('editor_note_edited');
   };
 
   syncNote = () => {
