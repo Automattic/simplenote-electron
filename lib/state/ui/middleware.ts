@@ -1,0 +1,59 @@
+import { filterNotes as filterAction } from './actions';
+import filterNotes from '../../utils/filter-notes';
+
+import * as A from '../action-types';
+import * as S from '../';
+
+let searchTimeout: NodeJS.Timeout;
+
+export const middleware: S.Middleware = store => {
+  const updateNotes = () =>
+    store.dispatch(
+      filterAction(
+        filterNotes(store.getState()),
+        store.getState().ui.previousIndex
+      )
+    );
+
+  return next => (action: A.ActionType) => {
+    const result = next(action);
+
+    switch (action.type) {
+      // on clicks re-filter immediately
+      case 'DELETE_NOTE_FOREVER':
+      case 'RESTORE_NOTE':
+      case 'TRASH_NOTE':
+        clearTimeout(searchTimeout);
+        updateNotes();
+        break;
+
+      // on events re-filter "immediately"
+      case 'App.authChanged':
+      case 'App.notesLoaded':
+      case 'OPEN_TAG':
+      case 'App.selectTrash':
+      case 'App.showAllNotes':
+      case 'App.tagsLoaded':
+      case 'App.trashNote':
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(updateNotes, 50);
+        break;
+
+      // on updating the search field we should delay the update
+      // so we don't waste our CPU time and lose responsiveness
+      case 'SEARCH':
+        clearTimeout(searchTimeout);
+        if (!action.searchQuery) {
+          // if we just cleared out the search bar then immediately update
+          updateNotes();
+        } else {
+          searchTimeout = setTimeout(updateNotes, 500);
+        }
+        break;
+    }
+
+    return result;
+  };
+};
+
+export default middleware;

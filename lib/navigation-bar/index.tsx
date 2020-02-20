@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 
 import analytics from '../analytics';
@@ -19,31 +18,30 @@ import { toggleNavigation } from '../state/ui/actions';
 import * as S from '../state';
 import * as T from '../types';
 
+type OwnProps = {
+  isElectron: boolean;
+};
+
 type StateProps = {
+  autoHideMenuBar: boolean;
+  dialogs: unknown[];
+  openedTag: T.TagEntity | null;
   showNavigation: boolean;
+  showTrash: boolean;
 };
 
 type DispatchProps = {
+  onAbout: () => any;
   onOutsideClick: () => any;
-  toggleNavigation: () => any;
+  onSettings: () => any;
+  onShowAllNotes: () => any;
+  selectTrash: () => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class NavigationBar extends Component<Props> {
   static displayName = 'NavigationBar';
-
-  static propTypes = {
-    autoHideMenuBar: PropTypes.bool,
-    dialogs: PropTypes.array.isRequired,
-    isElectron: PropTypes.bool.isRequired,
-    onAbout: PropTypes.func.isRequired,
-    onSettings: PropTypes.func.isRequired,
-    onShowAllNotes: PropTypes.func.isRequired,
-    selectTrash: PropTypes.func.isRequired,
-    selectedTag: PropTypes.object,
-    showTrash: PropTypes.bool.isRequired,
-  };
 
   static defaultProps = {
     onShowAllNotes: function() {},
@@ -70,11 +68,11 @@ export class NavigationBar extends Component<Props> {
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
-  isSelected = ({ isTrashRow }) => {
-    const { showTrash, selectedTag } = this.props;
+  isSelected = ({ isTrashRow }: { isTrashRow: boolean }) => {
+    const { showTrash, openedTag } = this.props;
     const isItemSelected = isTrashRow === showTrash;
 
-    return isItemSelected && !selectedTag;
+    return isItemSelected && !openedTag;
   };
 
   render() {
@@ -141,14 +139,14 @@ export class NavigationBar extends Component<Props> {
   }
 }
 
-const mapStateToProps = ({
+const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   settings,
-  ui: { showNavigation, showTrash },
+  ui: { openedTag, showNavigation, showTrash },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
   dialogs: state.dialogs,
-  selectedTag: state.tag,
+  openedTag,
   showNavigation,
   showTrash,
 });

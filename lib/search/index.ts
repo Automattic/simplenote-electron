@@ -65,7 +65,7 @@ export const middleware: S.Middleware = store => {
         });
         break;
 
-      case 'App.selectTag':
+      case 'OPEN_TAG':
         searchProcessor.postMessage({
           action: 'filterNotes',
           openedTag: action.tag.data.name,
