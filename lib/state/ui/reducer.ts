@@ -85,8 +85,6 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
 };
 
 const noteIndex: A.Reducer<number> = (state = -1, action) => {
-  console.log(action.type);
-  console.log(action);
   switch (action.type) {
     case 'CLOSE_NOTE':
       return action.noteIndex || state;
