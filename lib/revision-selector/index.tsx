@@ -175,7 +175,6 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
   ui: { note, showRevisions },
 }) => ({
   isViewingRevisions: showRevisions,
