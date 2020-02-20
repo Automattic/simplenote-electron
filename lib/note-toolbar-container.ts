@@ -25,16 +25,13 @@ type NoteChanger = {
   note: T.NoteEntity;
 };
 
-type ListChanger = NoteChanger & { previousIndex: number };
-
 type DispatchProps = {
-  closeNote: () => any;
-  deleteNoteForever: (args: ListChanger) => any;
-  restoreNote: (args: ListChanger) => any;
-  toggleRevisions: () => any;
+  closeNote: (noteIndex: number) => any;
+  deleteNoteForever: (args: NoteChanger) => any;
+  restoreNote: (args: NoteChanger) => any;
   shareNote: () => any;
   toggleFocusMode: () => any;
-  trashNote: (args: ListChanger) => any;
+  trashNote: (args: NoteChanger) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -50,21 +47,23 @@ export class NoteToolbarContainer extends Component<Props> {
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.closeNote();
-    this.props.trashNote({ noteBucket, note, previousIndex });
+    this.props.closeNote(previousIndex);
+    this.props.trashNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
   onDeleteNoteForever = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.deleteNoteForever({ noteBucket, note, previousIndex });
+    this.props.closeNote(previousIndex);
+    this.props.deleteNoteForever({ noteBucket, note });
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.restoreNote({ noteBucket, note, previousIndex });
+    this.props.closeNote(previousIndex);
+    this.props.restoreNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
@@ -107,7 +106,7 @@ const {
 } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
+  closeNote: (noteIndex: number) => dispatch(closeNote(noteIndex)),
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   restoreNote: args => dispatch(restoreNote(args)),
   shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),

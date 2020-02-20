@@ -84,6 +84,21 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
   }
 };
 
+const noteIndex: A.Reducer<number> = (state = -1, action) => {
+  console.log(action.type);
+  console.log(action);
+  switch (action.type) {
+    case 'CLOSE_NOTE':
+      return action.noteIndex;
+    case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+      return -1;
+    default:
+      return state;
+  }
+};
+
 const showNoteList: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'CLOSE_NOTE':
@@ -188,7 +203,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
       // keep note if still in new filtered list otherwise try to choose first note in list
       return state && action.notes.some(({ id }) => id === state.id)
         ? state
-        : action.notes[0] || null;
+        : action.notes[Math.max(action.noteIndex, 0)] || null;
     default:
       return state;
   }
@@ -201,6 +216,7 @@ export default combineReducers({
   listTitle,
   note,
   noteRevisions,
+  noteIndex,
   searchQuery,
   selectedRevision,
   showNavigation,

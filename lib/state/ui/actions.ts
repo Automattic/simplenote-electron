@@ -5,15 +5,18 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
-export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
+export const closeNote: A.ActionCreator<A.CloseNote> = (noteIndex: number) => ({
   type: 'CLOSE_NOTE',
+  noteIndex,
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
-  notes: T.NoteEntity[]
+  notes: T.NoteEntity[],
+  noteIndex: number
 ) => ({
   type: 'FILTER_NOTES',
   notes,
+  noteIndex,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
