@@ -67,6 +67,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
       }),
     }),
     applyMiddleware(thunk, uiMiddleware, searchFieldMiddleware)
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
 
