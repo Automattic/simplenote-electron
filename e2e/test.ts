@@ -14,6 +14,31 @@ const el = (app: Application, selector: string) => app.client.$(selector);
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const waitFor = async (app: Application, selector: string, msTimeout = 10000) =>
   expect(await app.client.waitForExist(selector, msTimeout)).toBe(true);
+const waitForWindowProp = async (
+  app: Application,
+  propName: string,
+  msTimeout = 10000
+) => {
+  const tic = Date.now();
+
+  return new Promise(async (resolve, reject) => {
+    const f = async () => {
+      const result = await app.client.executeAsync(function(prop, done) {
+        return done(window[prop]);
+      }, propName);
+
+      if (result.value) {
+        resolve(result.value);
+      } else if (Date.now() - tic < msTimeout) {
+        setTimeout(f, 100);
+      } else {
+        reject();
+      }
+    };
+
+    await f();
+  });
+};
 
 const app: Application = new Application({
   path: path.join(__dirname, '../node_modules/.bin/electron'),
@@ -63,8 +88,8 @@ describe('E2E', () => {
     await waitFor(app, usernameField);
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
-    await waitFor(app, '.note-list');
-    await wait(5000);
+    await waitForWindowProp(app, 'testHasLoadedNotes');
+    await wait(1000); // @TODO: This delay is necessary but shouldn't be
   }, 20000);
 
   test('login with wrong password fails', async () => {
@@ -76,12 +101,13 @@ describe('E2E', () => {
   test('login with correct password logs in', async () => {
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
-    await waitFor(app, '.note-list');
+    await waitForWindowProp(app, 'testHasLoadedNotes');
   }, 20000);
 
   test('can create new note by clicking on new note button', async () => {
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
-    await wait(5000); // wait for notes to load
+    await waitForWindowProp(app, 'testHasLoadedNotes');
+    await wait(1000); // @TODO: This delay is necessary but shouldn't be
 
     const newNoteButton = 'button[data-title="New Note"]';
     await waitFor(app, newNoteButton);

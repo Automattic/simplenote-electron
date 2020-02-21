@@ -85,6 +85,7 @@ module.exports = () => {
         chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
       }),
       new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         config: JSON.stringify(config),
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),

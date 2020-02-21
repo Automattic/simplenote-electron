@@ -314,6 +314,10 @@ export const App = connect(
 
       loadNotes({ noteBucket });
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
+
+      if ('test' === process.env.NODE_ENV) {
+        window.testHasLoadedNotes = true;
+      }
     };
 
     onNoteRemoved = () => this.onNotesIndex();
