@@ -9,7 +9,7 @@ import SearchBar from '../search-bar';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 
-import * as S from './state';
+import * as S from '../state';
 import * as T from '../types';
 
 const NoteList = React.lazy(() =>
