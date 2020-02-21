@@ -6,7 +6,7 @@ const enableCheckboxes = {
   replace: '<input type="checkbox" ',
 };
 
-export const renderNoteToHtml = content => {
+export const renderNoteToHtml = (content: string) => {
   return import(/* webpackChunkName: 'showdown' */ 'showdown').then(
     ({ default: showdown }) => {
       showdown.extension('enableCheckboxes', enableCheckboxes);
@@ -18,7 +18,12 @@ export const renderNoteToHtml = content => {
       markdownConverter.setOption('ghMentions', false);
       markdownConverter.setOption('smoothLivePreview', true);
 
-      return sanitizeHtml(markdownConverter.makeHtml(content));
+      const withNormalizedBullets = content.replace(
+        /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
+        '$1-$2'
+      );
+
+      return sanitizeHtml(markdownConverter.makeHtml(withNormalizedBullets));
     }
   );
 };
