@@ -1,3 +1,7 @@
+if ('test' === process.env.NODE_ENV) {
+  window.testEvents = [];
+}
+
 import './utils/ensure-platform-support';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

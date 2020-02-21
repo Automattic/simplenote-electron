@@ -14,21 +14,39 @@ const el = (app: Application, selector: string) => app.client.$(selector);
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const waitFor = async (app: Application, selector: string, msTimeout = 10000) =>
   expect(await app.client.waitForExist(selector, msTimeout)).toBe(true);
-const waitForWindowProp = async (
+const waitForEvent = async (
   app: Application,
-  propName: string,
+  eventName: string,
   msTimeout = 10000
-) => {
+): Promise<any[]> => {
   const tic = Date.now();
 
   return new Promise(async (resolve, reject) => {
     const f = async () => {
-      const result = await app.client.executeAsync(function(prop, done) {
-        return done(window[prop]);
-      }, propName);
+      const result = await app.client.execute(function() {
+        var events = window.testEvents;
 
-      if (result.value) {
-        resolve(result.value);
+        if (!events.length) {
+          return undefined;
+        }
+
+        window.testEvents = [];
+        return events;
+      });
+
+      const firstOfType =
+        result.value &&
+        result.value.findIndex(
+          (event: string | [string, ...any[]]) =>
+            event === eventName || event[0] === eventName
+        );
+
+      if (result.value && firstOfType > -1) {
+        resolve(
+          'string' === typeof result.value
+            ? []
+            : result.value[firstOfType].slice(1)
+        );
       } else if (Date.now() - tic < msTimeout) {
         setTimeout(f, 100);
       } else {
@@ -88,7 +106,7 @@ describe('E2E', () => {
     await waitFor(app, usernameField);
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
-    await waitForWindowProp(app, 'testHasLoadedNotes');
+    await waitForEvent(app, 'notesLoaded');
     await wait(1000); // @TODO: This delay is necessary but shouldn't be
   }, 20000);
 
@@ -101,18 +119,18 @@ describe('E2E', () => {
   test('login with correct password logs in', async () => {
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
-    await waitForWindowProp(app, 'testHasLoadedNotes');
+    await waitForEvent(app, 'notesLoaded');
   }, 20000);
 
   test('can create new note by clicking on new note button', async () => {
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
-    await waitForWindowProp(app, 'testHasLoadedNotes');
+    await waitForEvent(app, 'notesLoaded');
     await wait(1000); // @TODO: This delay is necessary but shouldn't be
 
     const newNoteButton = 'button[data-title="New Note"]';
     await waitFor(app, newNoteButton);
     el(app, newNoteButton).click();
 
-    await waitFor(app, '.public-DraftEditor-content.focus-visible');
+    await waitForEvent(app, 'editorNewNote');
   }, 20000);
 });

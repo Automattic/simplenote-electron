@@ -208,6 +208,10 @@ export const App = connect(
       );
 
       this.toggleShortcuts(true);
+
+      if ('test' === process.env.NODE_ENV) {
+        window.testEvents.push('booted');
+      }
     }
 
     componentWillUnmount() {
@@ -316,7 +320,7 @@ export const App = connect(
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
 
       if ('test' === process.env.NODE_ENV) {
-        window.testHasLoadedNotes = true;
+        window.testEvents.push('notesLoaded');
       }
     };
 
