@@ -1,10 +1,14 @@
 import 'regenerator-runtime/runtime';
 import path from 'path';
 import rimraf from 'rimraf';
+import randomString from '../lib/utils/crypto-random-string';
 import { Application } from 'spectron';
 
-const TEST_USERNAME = process.env.TEST_USERNAME as string;
-const TEST_PASSWORD = process.env.TEST_PASSWORD as string;
+const TEST_USERNAME = `sptest-${randomString(16)}@test.localhost.localdomain`;
+const TEST_PASSWORD = randomString(22);
+console.info(
+  `Creating user:\n       email: ${TEST_USERNAME}\n    password: ${TEST_PASSWORD}`
+);
 
 const el = (app: Application, selector: string) => app.client.$(selector);
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -28,12 +32,12 @@ describe('E2E', () => {
   beforeEach(async () => {
     await new Promise(resolve => rimraf(userData, () => resolve()));
     await app.start();
+    await app.client.waitUntilWindowLoaded();
   }, 10000);
 
   afterEach(async () => app && app.isRunning() && (await app.stop()));
 
   test('starts', async () => {
-    await app.client.waitUntilWindowLoaded();
     expect(app.isRunning()).toEqual(true);
   });
 
@@ -52,6 +56,17 @@ describe('E2E', () => {
     el(app, loginButton).click();
   };
 
+  test('creates an account', async () => {
+    await waitFor(app, '=Sign up');
+    el(app, '=Sign up').click();
+
+    await waitFor(app, usernameField);
+    await loginWith(TEST_USERNAME, TEST_PASSWORD);
+
+    await waitFor(app, '.note-list');
+    await wait(5000);
+  }, 20000);
+
   test('login with wrong password fails', async () => {
     await loginWith(TEST_USERNAME, `${TEST_PASSWORD}_wrong`);
 
@@ -59,7 +74,6 @@ describe('E2E', () => {
   }, 20000);
 
   test('login with correct password logs in', async () => {
-    await app.client.waitUntilWindowLoaded();
     await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
     await waitFor(app, '.note-list');
