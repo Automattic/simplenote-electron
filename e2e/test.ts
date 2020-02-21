@@ -6,85 +6,73 @@ import { Application } from 'spectron';
 const TEST_USERNAME = process.env.TEST_USERNAME as string;
 const TEST_PASSWORD = process.env.TEST_PASSWORD as string;
 
+const el = (app: Application, selector: string) => app.client.$(selector);
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const waitFor = async (app: Application, selector: string, msTimeout = 10000) =>
+  expect(await app.client.waitForExist(selector, msTimeout)).toBe(true);
 
 const app: Application = new Application({
   path: path.join(__dirname, '../node_modules/.bin/electron'),
   args: [path.join(__dirname, '..')],
 });
 
+let userData = '';
+
 beforeAll(async () => {
   await app.start();
-  const userData = await app.electron.remote.app.getPath('userData');
+  userData = await app.electron.remote.app.getPath('userData');
   await app.stop();
-  await new Promise(resolve => rimraf(userData, () => resolve()));
-  await app.start();
 }, 10000);
 
-afterAll(async () => app && app.isRunning() && (await app.stop()));
-
 describe('E2E', () => {
+  beforeEach(async () => {
+    await new Promise(resolve => rimraf(userData, () => resolve()));
+    await app.start();
+  }, 10000);
+
+  afterEach(async () => app && app.isRunning() && (await app.stop()));
+
   test('starts', async () => {
     await app.client.waitUntilWindowLoaded();
     expect(app.isRunning()).toEqual(true);
   });
 
-  const usernameField = () => app.client.$('#login__field-username');
-  const passwordField = () => app.client.$('#login__field-password');
-  const loginButton = () => app.client.$('#login__login-button');
+  const usernameField = '#login__field-username';
+  const passwordField = '#login__field-password';
+  const loginButton = '#login__login-button';
 
-  const enterLoginInfo = async (
-    username: string,
-    password: string,
-    maxWait = 500
-  ) => {
-    await app.client.waitUntilWindowLoaded();
+  const loginWith = async (username: string, password: string) => {
+    await waitFor(app, usernameField);
+    el(app, usernameField).setValue(username);
+    await waitFor(app, passwordField);
+    el(app, passwordField).setValue(password);
 
-    expect(usernameField().waitForExist(maxWait)).toBeTruthy();
-    usernameField().setValue(username);
-    expect(passwordField().waitForExist(maxWait)).toBeTruthy();
-    passwordField().setValue(password);
+    await wait(2000); // try and prevent DDoS protection
+    await waitFor(app, loginButton);
+    el(app, loginButton).click();
   };
 
   test('login with wrong password fails', async () => {
-    await app.client.waitUntilWindowLoaded();
-    await enterLoginInfo(TEST_USERNAME, `${TEST_PASSWORD}_wrong`);
-    await wait(500);
-    expect(loginButton().waitForExist(500)).toBeTruthy();
-    loginButton().click();
+    await loginWith(TEST_USERNAME, `${TEST_PASSWORD}_wrong`);
 
-    expect(
-      app.client.$('[data-error-name="invalid-credentials"]').waitForExist(5000)
-    ).toBeTruthy();
-  }, 6000);
+    await waitFor(app, '[data-error-name="invalid-login"]');
+  }, 20000);
 
   test('login with correct password logs in', async () => {
     await app.client.waitUntilWindowLoaded();
-    await enterLoginInfo(TEST_USERNAME, TEST_PASSWORD);
-    await wait(2000); // DDoS guard
-    expect(loginButton().waitForExist(500)).toBeTruthy();
-    loginButton().click();
+    await loginWith(TEST_USERNAME, TEST_PASSWORD);
 
-    await app.client.waitUntilWindowLoaded();
-    expect(app.client.$('.note-list').waitForExist(10000)).toBeTruthy();
+    await waitFor(app, '.note-list');
   }, 20000);
 
   test('can create new note by clicking on new note button', async () => {
-    await app.client.waitUntilWindowLoaded();
-    await enterLoginInfo(TEST_USERNAME, TEST_PASSWORD);
-    await wait(2000); // DDoS guard
-    expect(loginButton().waitForExist(500)).toBeTruthy();
-    loginButton().click();
+    await loginWith(TEST_USERNAME, TEST_PASSWORD);
+    await wait(5000); // wait for notes to load
 
-    await app.client.waitUntilWindowLoaded();
-    const newNoteButton = app.client.$('button[data-title="New Note"]');
-    expect(newNoteButton.waitForExist(10000)).toBeTruthy();
-    newNoteButton.click();
+    const newNoteButton = 'button[data-title="New Note"]';
+    await waitFor(app, newNoteButton);
+    el(app, newNoteButton).click();
 
-    expect(
-      app.client
-        .$('.public-DraftEditor-content.focus-visible')
-        .waitForExist(2000)
-    ).toBeTruthy();
+    await waitFor(app, '.public-DraftEditor-content.focus-visible');
   }, 20000);
 });
