@@ -1,50 +1,89 @@
+import * as T from '../types';
+
+declare global {
+  interface Window {
+    wpcom: {
+      _tkq: TKQItem[];
+      tracks: TracksAPI;
+    };
+  }
+}
+
+declare const TRACKS_COOKIE_DOMAIN: string | undefined;
+
+export type TKQItem =
+  | Function
+  | [keyof TracksAPI, ...(string | T.JSONSerializable)[]];
+
+export type TracksAPI = {
+  storeContext: (c: object) => void;
+  identifyUser: (user: string, login: string) => void;
+  recordEvent: (name: string, props: T.JSONSerializable) => void;
+  setProperties: (properties: object) => void;
+  clearIdentity: () => void;
+};
+
+type Query = Partial<{
+  _dl: string;
+  _dr: string;
+  _en: string;
+  _ht: number;
+  _lg: string;
+  _pf: string;
+  _sx: number;
+  _sy: number;
+  _ts: number;
+  _tz: number;
+  _ui: string | null;
+  _ul: string;
+  _ut: string;
+  _wd: number;
+  anonId: string;
+}>;
+
 window.wpcom = window.wpcom || {};
 window._tkq = window._tkq || [];
 
 window.wpcom.tracks = (function() {
-  var userId,
-    userIdType,
-    userLogin,
-    localCache = {},
-    context = {},
-    pixel = 'https://pixel.wp.com/t.gif',
-    cookieDomain = null,
-    cookiePrefix = 'tk_',
-    testCookie = 'tc',
-    userNameCookie = 'ni',
-    userAnonCookie = 'ai',
-    queriesCookie = 'qs',
-    queriesTTL = 1800,
-    queriesPending = {};
+  let userId: string | null | undefined;
+  let userIdType: string;
+  let userLogin: string | null | undefined;
+  const localCache: { [key: string]: string } = {};
+  let context = {};
+  let pixel = 'https://pixel.wp.com/t.gif';
+  let cookieDomain: string | null = null;
+  const cookiePrefix = 'tk_';
+  const testCookie = 'tc';
+  const userNameCookie = 'ni';
+  const userAnonCookie = 'ai';
+  const queriesCookie = 'qs';
+  const queriesTTL = 1800;
+  const queriesPending: { [key: string]: boolean } = {};
 
-  var getCookie = function(key) {
-    var name =
-        cookiePrefix + encodeURIComponent(key).replace(/[-.+*]/g, '\\$&'),
-      pattern = new RegExp(
-        '(?:(?:^|.*;)\\s*' + name + '\\s*\\=\\s*([^;]*).*$)|^.*$'
-      );
+  const getCookie = function(key: string) {
+    const name = `${cookiePrefix}${encodeURIComponent(key).replace(
+      /[-.+*]/g,
+      '\\$&'
+    )}`;
+    const pattern = new RegExp(
+      `(?:(?:^|.*;)\\s*${name}\\s*\\=\\s*([^;]*).*$)|^.*$`
+    );
     return decodeURIComponent(document.cookie.replace(pattern, '$1')) || null;
   };
 
-  var checkCookieDomain = function(domain) {
-    var time = new Date().getTime();
-    document.cookie =
-      cookiePrefix +
-      testCookie +
-      '=' +
-      time +
-      '; domain=' +
-      domain +
-      '; path=/;';
+  const checkCookieDomain = function(domain: string) {
+    const time = new Date().getTime();
+    document.cookie = `${cookiePrefix}${testCookie}=${time}; domain=${domain}; path=/;`;
+    // @ts-ignore
     return getCookie(testCookie) === time;
   };
 
-  var getCookieDomain = function() {
+  const getCookieDomain = function() {
     if (cookieDomain === null) {
       cookieDomain = '';
-      let host = document.location.host.toLowerCase().split(':')[0],
-        tokens = host.split('.'),
-        tryDomain;
+      const host = document.location.host.toLowerCase().split(':')[0];
+      const tokens = host.split('.');
+      let tryDomain: string;
       if (typeof TRACKS_COOKIE_DOMAIN !== 'undefined') {
         cookieDomain = TRACKS_COOKIE_DOMAIN; // eslint-disable-line no-undef
       } else {
@@ -64,12 +103,9 @@ window.wpcom.tracks = (function() {
   };
 
   // Set a first-party cookie (same domain only, default 5 years)
-  var setCookie = function(key, value, seconds) {
-    var name = cookiePrefix + encodeURIComponent(key),
-      date = new Date();
-    if ('undefined' === typeof seconds) {
-      seconds = 15768e4;
-    }
+  const setCookie = function(key: string, value: string, seconds = 15768e4) {
+    const name = cookiePrefix + encodeURIComponent(key);
+    const date = new Date();
     date.setTime(date.getTime() + seconds * 1e3);
     document.cookie =
       name +
@@ -80,17 +116,17 @@ window.wpcom.tracks = (function() {
       date.toUTCString();
   };
 
-  var get = function(key) {
+  const get = function(key: string) {
     return getCookie(key) || localCache[key];
   };
 
-  var set = function(key, value, ttl) {
+  const set = function(key: string, value: string, ttl?: number) {
     localCache[key] = value;
     setCookie(key, value, ttl);
   };
 
-  var loadWpcomIdentity = function() {
-    var wpcomCookie =
+  const loadWpcomIdentity = function() {
+    const wpcomCookie =
       getCookie('wordpress') ||
       getCookie('wordpress_sec') ||
       getCookie('wordpress_loggedin');
@@ -99,9 +135,9 @@ window.wpcom.tracks = (function() {
     }
   };
 
-  var newAnonId = function() {
-    var randomBytesLength = 18, // 18 * 4/3 = 24
-      randomBytes = [];
+  const newAnonId = function() {
+    const randomBytesLength = 18; // 18 * 4/3 = 24
+    let randomBytes: number[] | Uint8Array = [];
 
     if (window.crypto && window.crypto.getRandomValues) {
       randomBytes = new Uint8Array(randomBytesLength);
@@ -112,10 +148,10 @@ window.wpcom.tracks = (function() {
       }
     }
 
-    return btoa(String.fromCharCode.apply(String, randomBytes));
+    return btoa(String.fromCharCode.apply(String, randomBytes as number[]));
   };
 
-  var loadIdentity = function() {
+  const loadIdentity = function() {
     if (userId) {
       return;
     }
@@ -132,30 +168,29 @@ window.wpcom.tracks = (function() {
     }
   };
 
-  var getQueries = function() {
+  const getQueries = function() {
     var queries = get(queriesCookie);
     return queries ? queries.split(' ') : [];
   };
 
-  var bot = function() {
+  const bot = function() {
     // https://github.com/tobie/ua-parser/blob/master/regexes.yaml
     return !!navigator.userAgent.match(
       /bingbot|bot|borg|google(^tv)|yahoo|slurp|msnbot|msrbot|openbot|archiver|netresearch|lycos|scooter|altavista|teoma|gigabot|baiduspider|blitzbot|oegp|charlotte|furlbot|http%20client|polybot|htdig|ichiro|mogimogi|larbin|pompos|scrubby|searchsight|seekbot|semanticdiscovery|silk|snappy|speedy|spider|voila|vortex|voyager|zao|zeal|fast-webcrawler|converacrawler|dataparksearch|findlinks|crawler|Netvibes|Sogou Pic Spider|ICC-Crawler|Innovazion Crawler|Daumoa|EtaoSpider|A6-Indexer|YisouSpider|Riddler|DBot|wsr-agent|Xenu|SeznamBot|PaperLiBot|SputnikBot|CCBot|ProoXiBot|Scrapy|Genieo|Screaming Frog|YahooCacheSystem|CiBra|Nutch/
     );
   };
 
-  var saveQueries = function(queries) {
+  const saveQueries = function(queries: string[]) {
     while (queries.join(' ').length > 2048) {
       queries = queries.slice(1);
     }
     set(queriesCookie, queries.join(' '), queriesTTL);
   };
 
-  var removeQuery = function(query) {
-    var i,
-      toSave = [],
-      queries = getQueries();
-    for (i = 0; i < queries.length; ++i) {
+  const removeQuery = function(query: string) {
+    const toSave = [];
+    const queries = getQueries();
+    for (let i = 0; i < queries.length; ++i) {
       if (query !== queries[i]) {
         toSave.push(queries[i]);
       }
@@ -163,26 +198,27 @@ window.wpcom.tracks = (function() {
     saveQueries(toSave);
   };
 
-  var saveQuery = function(query) {
+  const saveQuery = function(query: string) {
     removeQuery(query);
     let queries = getQueries();
     queries.push(query);
     saveQueries(queries);
   };
 
-  var getPixel = function(query) {
+  const getPixel = function(query: string) {
     if (!bot()) {
       if (query in queriesPending) {
         return;
       }
       queriesPending[query] = true;
-      let img = new Image();
+      const img = new Image();
       saveQuery(query);
-      img.query = query;
+      // @TODO: should we be using a data-attribute here? or save `img` in the pending map?
+      (img as HTMLImageElement & { query: string }).query = query;
       img.onload = function() {
         delete queriesPending[query];
         if (img) {
-          removeQuery(img.query);
+          removeQuery((img as HTMLImageElement & { query: string }).query);
         }
       };
       // Add request timestamp just before the request
@@ -190,34 +226,36 @@ window.wpcom.tracks = (function() {
     }
   };
 
-  var retryQueries = function() {
+  const retryQueries = function() {
     getQueries().forEach(getPixel);
   };
 
   // Deep copy, optionally into another object
-  var clone = function(obj, target) {
+  const clone = function(obj: any, target?: any) {
     if (obj === null || 'object' !== typeof obj) return obj;
     if (target === null || 'object' !== typeof target)
       target = obj.constructor();
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        target[key] = clone(obj[key]);
+        (target as any)[key] = clone(obj[key]);
       }
     }
     return target;
   };
 
-  var serialize = function(obj) {
-    var str = [];
+  const serialize = function(obj: Query) {
+    const str = [];
     for (const p in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, p)) {
-        str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+        str.push(
+          encodeURIComponent(p) + '=' + encodeURIComponent((obj as any)[p])
+        );
       }
     }
     return str.join('&');
   };
 
-  var send = function(query) {
+  const send = function(query: Query) {
     loadIdentity();
     retryQueries();
     query._ui = userId;
@@ -267,7 +305,10 @@ window.wpcom.tracks = (function() {
     getPixel(serialize(query));
   };
 
-  var recordEvent = function(eventName, eventProps) {
+  const recordEvent = function(
+    eventName: string,
+    eventProps: T.JSONSerializable
+  ) {
     if ('_setProperties' === eventName) {
       return;
     }
@@ -278,7 +319,7 @@ window.wpcom.tracks = (function() {
     send(eventProps);
   };
 
-  var identifyUser = function(newUserId, newUserLogin) {
+  const identifyUser = function(newUserId: string, newUserLogin: string) {
     if (newUserLogin) {
       userLogin = newUserLogin;
     }
@@ -305,7 +346,7 @@ window.wpcom.tracks = (function() {
     set(userAnonCookie, '', -1);
   };
 
-  var clearIdentity = function() {
+  const clearIdentity = function() {
     userId = null;
     userLogin = null;
     set(userNameCookie, '', -1);
@@ -313,20 +354,20 @@ window.wpcom.tracks = (function() {
     loadIdentity();
   };
 
-  var setProperties = function(properties) {
+  const setProperties = function(properties: Query) {
     properties._en = '_setProperties';
 
     send(properties);
   };
 
-  var storeContext = function(c) {
+  const storeContext = function(c: object) {
     if ('object' !== typeof c) {
       return;
     }
     context = c;
   };
 
-  var API = {
+  const API: TracksAPI = {
     storeContext: storeContext,
     identifyUser: identifyUser,
     recordEvent: recordEvent,
@@ -335,26 +376,30 @@ window.wpcom.tracks = (function() {
   };
 
   // <3 KM
-  var TKQ = function(q) {
+  const TKQ = function(q: TKQItem[]) {
+    // @ts-ignore
     this.a = 1;
     if (q && q.length) {
       for (let i = 0; i < q.length; i++) {
+        // @ts-ignore
         this.push(q[i]);
       }
     }
   };
 
-  var initQueue = function() {
-    if (!window._tkq.a) {
+  const initQueue = function() {
+    if (!(window._tkq as any).a) {
       retryQueries();
+      // @ts-ignore
       window._tkq = new TKQ(window._tkq);
     }
   };
 
-  TKQ.prototype.push = function(args) {
+  TKQ.prototype.push = function(args: TKQItem) {
     if (args) {
       if ('object' === typeof args && args.length) {
         const cmd = args.splice(0, 1);
+        // @ts-ignore
         if (API[cmd]) API[cmd].apply(null, args);
       } else if ('function' === typeof args) {
         args();
