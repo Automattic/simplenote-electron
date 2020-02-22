@@ -54,7 +54,7 @@ const waitForEvent = async (
       }
     };
 
-    await f();
+    f();
   });
 };
 
