@@ -209,9 +209,7 @@ export const App = connect(
 
       this.toggleShortcuts(true);
 
-      if ('test' === process.env.NODE_ENV) {
-        window.testEvents.push('booted');
-      }
+      __TEST__ && window.testEvents.push('booted');
     }
 
     componentWillUnmount() {
@@ -319,9 +317,7 @@ export const App = connect(
       loadNotes({ noteBucket });
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
 
-      if ('test' === process.env.NODE_ENV) {
-        window.testEvents.push('notesLoaded');
-      }
+      __TEST__ && window.testEvents.push('notesLoaded');
     };
 
     onNoteRemoved = () => this.onNotesIndex();

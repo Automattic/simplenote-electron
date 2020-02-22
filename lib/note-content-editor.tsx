@@ -183,14 +183,12 @@ class NoteContentEditor extends Component<Props> {
         {
           editorState: this.createNewEditorState(content.text, searchQuery),
         },
-        () => {
-          if ('test' === process.env.NODE_ENV) {
-            window.testEvents.push([
-              'editorNewNote',
-              plainTextContent(this.state.editorState),
-            ]);
-          }
-        }
+        () =>
+          __TEST__ &&
+          window.testEvents.push([
+            'editorNewNote',
+            plainTextContent(this.state.editorState),
+          ])
       );
       return;
     }

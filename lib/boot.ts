@@ -1,4 +1,4 @@
-if ('test' === process.env.NODE_ENV) {
+if (__TEST__) {
   window.testEvents = [];
 }
 
