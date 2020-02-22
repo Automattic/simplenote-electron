@@ -30,16 +30,13 @@ type DispatchProps = {
   toggleRevisions: () => any;
 };
 
-type OwnProps = {
-  onShowRevisions: (note: T.NoteEntity | null) => any;
-};
-
 type StateProps = {
   editMode: boolean;
+  markdownEnabled: boolean;
   note: T.NoteEntity | null;
 };
 
-type Props = DispatchProps & OwnProps & StateProps;
+type Props = DispatchProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
@@ -50,7 +47,6 @@ export class NoteToolbar extends Component<Props> {
     onDeleteNoteForever: PropTypes.func,
     onShareNote: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
-    markdownEnabled: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -59,11 +55,6 @@ export class NoteToolbar extends Component<Props> {
     onShareNote: noop,
     onTrashNote: noop,
     toggleFocusMode: noop,
-  };
-
-  showRevisions = () => {
-    this.props.toggleRevisions();
-    this.props.onShowRevisions(this.props.note);
   };
 
   render() {
@@ -112,7 +103,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<RevisionsIcon />}
-              onClick={this.showRevisions}
+              onClick={this.props.toggleRevisions}
               title="History"
             />
           </div>
@@ -180,11 +171,18 @@ export class NoteToolbar extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, editMode },
-}) => ({
-  editMode,
-  note,
-});
+  ui: { note, editMode, selectedRevision },
+}) => {
+  const revisionOrNote = selectedRevision || note;
+
+  return {
+    editMode,
+    markdownEnabled: revisionOrNote
+      ? revisionOrNote.data.systemTags.includes('markdown')
+      : false,
+    note,
+  };
+};
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   closeNote,

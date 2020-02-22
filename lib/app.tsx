@@ -473,7 +473,6 @@ export const App = connect(
                 isNoteInfoOpen={showNoteInfo}
                 isSmallScreen={isSmallScreen}
                 noteBucket={noteBucket}
-                revisions={state.revisions}
                 onUpdateContent={this.onUpdateContent}
                 syncNote={this.syncNote}
               />

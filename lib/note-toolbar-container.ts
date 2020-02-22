@@ -18,7 +18,6 @@ type OwnProps = {
 type StateProps = {
   isViewingRevisions: boolean;
   notes: T.NoteEntity[];
-  revisionOrNote: T.NoteEntity | null;
 };
 
 type NoteChanger = {
@@ -31,7 +30,6 @@ type ListChanger = NoteChanger & { previousIndex: number };
 type DispatchProps = {
   closeNote: () => any;
   deleteNoteForever: (args: ListChanger) => any;
-  noteRevisions: (args: NoteChanger) => any;
   restoreNote: (args: ListChanger) => any;
   toggleRevisions: () => any;
   shareNote: () => any;
@@ -70,24 +68,17 @@ export class NoteToolbarContainer extends Component<Props> {
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
-  onShowRevisions = (note: T.NoteEntity) => {
-    const { noteBucket } = this.props;
-    this.props.noteRevisions({ noteBucket, note });
-    analytics.tracks.recordEvent('editor_versions_accessed');
-  };
-
   onShareNote = () => {
     this.props.shareNote();
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
   render() {
-    const { isViewingRevisions, toolbar, revisionOrNote } = this.props;
+    const { isViewingRevisions, toolbar } = this.props;
 
     const handlers = {
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
-      onShowRevisions: this.onShowRevisions,
       onShareNote: this.onShareNote,
       onTrashNote: this.onTrashNote,
       toggleFocusMode: this.props.toggleFocusMode,
@@ -97,26 +88,19 @@ export class NoteToolbarContainer extends Component<Props> {
       return null;
     }
 
-    const markdownEnabled = revisionOrNote
-      ? revisionOrNote.data.systemTags.includes('markdown')
-      : false;
-
-    return cloneElement(toolbar, { ...handlers, markdownEnabled });
+    return cloneElement(toolbar, { ...handlers });
   }
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState,
-  ui: { filteredNotes, note, showRevisions },
+  ui: { filteredNotes, showRevisions },
 }) => ({
   isViewingRevisions: showRevisions,
   notes: filteredNotes,
-  revisionOrNote: appState.revision || note,
 });
 
 const {
   deleteNoteForever,
-  noteRevisions,
   restoreNote,
   showDialog,
   trashNote,
@@ -125,7 +109,6 @@ const {
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeNote: () => dispatch(closeNote()),
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
-  noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
   shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
   toggleFocusMode: () => dispatch(toggleFocusMode()),

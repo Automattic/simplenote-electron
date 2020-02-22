@@ -239,7 +239,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   settings,
 }) => ({
   dialogs: state.dialogs,
-  note: state.revision || ui.note,
+  note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });

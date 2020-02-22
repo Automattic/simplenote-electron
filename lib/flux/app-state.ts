@@ -3,6 +3,7 @@ import update from 'react-addons-update';
 import Debug from 'debug';
 import ActionMap from './action-map';
 import analytics from '../analytics';
+import actions from '../state/actions';
 
 import { AppState, State } from '../state';
 import * as T from '../types';
@@ -36,7 +37,6 @@ const initialState: AppState = {
   previousIndex: -1,
   notes: null,
   tags: [],
-  revision: null,
   dialogs: [],
   nextDialogKey: 0,
   unsyncedNoteIds: [], // note bucket only
@@ -232,7 +232,7 @@ export const actionMap = new ActionMap({
       creator({ noteBucket, noteId, hasRemoteUpdate = false }) {
         return dispatch => {
           noteBucket.get(noteId, (e, note) => {
-            dispatch(this.action('selectNote', { note, hasRemoteUpdate }));
+            dispatch(actions.ui.selectNote(note, { hasRemoteUpdate }));
           });
         };
       },
@@ -246,14 +246,8 @@ export const actionMap = new ActionMap({
           noteBucket.update(note.id, updated.data);
         }
 
-        return this.action('selectNote', { note: updated });
+        return actions.ui.selectNote(updated);
       },
-    },
-
-    setRevision(state: AppState, { revision }) {
-      return update(state, {
-        revision: { $set: revision },
-      });
     },
 
     markdownNote: {
@@ -264,7 +258,7 @@ export const actionMap = new ActionMap({
           noteBucket.update(note.id, updated.data);
         }
 
-        return this.action('selectNote', { note: updated });
+        return actions.ui.selectNote(updated);
       },
     },
 
@@ -282,15 +276,8 @@ export const actionMap = new ActionMap({
           }
         }
 
-        return this.action('selectNote', { note: updated });
+        return actions.ui.selectNote(updated);
       },
-    },
-
-    selectNote(state: AppState) {
-      return update(state, {
-        revision: { $set: null },
-        revisions: { $set: null },
-      });
     },
 
     /**
@@ -380,26 +367,6 @@ export const actionMap = new ActionMap({
       },
     },
 
-    noteRevisions: {
-      creator({
-        noteBucket,
-        note,
-      }: {
-        noteBucket: T.Bucket<T.Note>;
-        note: T.NoteEntity;
-      }) {
-        return dispatch => {
-          noteBucket.getRevisions(note.id, (e, revisions) => {
-            if (e) {
-              return console.warn('Failed to load revisions', e); // eslint-disable-line no-console
-            }
-
-            dispatch(this.action('noteRevisionsLoaded', { revisions }));
-          });
-        };
-      },
-    },
-
     emptyTrash: {
       creator({ noteBucket }: { noteBucket: T.Bucket<T.Note> }) {
         return (dispatch, getState: () => State) => {
@@ -412,12 +379,6 @@ export const actionMap = new ActionMap({
           dispatch(this.action('notesLoaded', { notes }));
         };
       },
-    },
-
-    noteRevisionsLoaded(state: AppState, { revisions }) {
-      return update(state, {
-        revisions: { $set: revisions },
-      });
     },
 
     tagsLoaded(

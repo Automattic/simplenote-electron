@@ -168,14 +168,14 @@ export class NoteEditor extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   settings,
-  ui: { note, editMode },
+  ui: { note, editMode, selectedRevision },
 }) => ({
   allTags: state.tags,
   fontSize: settings.fontSize,
   editMode,
   isEditorActive: !state.showNavigation,
   note,
-  revision: state.revision,
+  revision: selectedRevision,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({

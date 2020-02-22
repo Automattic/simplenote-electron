@@ -27,7 +27,6 @@ type OwnProps = {
   isSmallScreen: boolean;
   note: T.NoteEntity;
   noteBucket: T.Bucket<T.Note>;
-  revisions: T.NoteEntity[];
   onUpdateContent: Function;
   syncNote: Function;
 };
@@ -45,7 +44,6 @@ export const AppLayout: FunctionComponent<Props> = ({
   isNoteOpen,
   isSmallScreen,
   noteBucket,
-  revisions,
   onUpdateContent,
   syncNote,
 }) => {
@@ -72,10 +70,7 @@ export const AppLayout: FunctionComponent<Props> = ({
           <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
         </div>
         <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-          <RevisionSelector
-            revisions={revisions || []}
-            onUpdateContent={onUpdateContent}
-          />
+          <RevisionSelector onUpdateContent={onUpdateContent} />
           <NoteToolbarContainer
             noteBucket={noteBucket}
             toolbar={<NoteToolbar />}

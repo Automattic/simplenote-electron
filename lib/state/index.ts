@@ -7,6 +7,7 @@
 import {
   Dispatch as ReduxDispatch,
   Middleware as ReduxMiddleware,
+  MiddlewareAPI,
   Store as ReduxStore,
   compose,
   createStore,
@@ -21,6 +22,7 @@ import appState from '../flux/app-state';
 
 import uiMiddleware from './ui/middleware';
 import searchFieldMiddleware from './ui/search-field-middleware';
+import simperiumMiddleware from './simperium/middleware';
 
 import auth from './auth/reducer';
 import settings from './settings/reducer';
@@ -68,9 +70,19 @@ export const store = createStore<State, A.ActionType, {}, {}>(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk, uiMiddleware, searchFieldMiddleware)
+    applyMiddleware(
+      thunk,
+      uiMiddleware,
+      searchFieldMiddleware,
+      simperiumMiddleware
+    )
   )
 );
+
+export type Store = {
+  dispatch: Dispatch;
+  getState(): State;
+};
 
 export type MapState<StateProps, OwnProps = {}> = (
   state: State,

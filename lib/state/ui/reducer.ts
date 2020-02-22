@@ -20,7 +20,7 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'TAG_EDITING_TOGGLE':
       return !state;
-    case 'App.selectNote':
+    case 'SELECT_NOTE':
     case 'App.selectTag':
     case 'App.selectTrash':
     case 'App.showAllNotes':
@@ -53,12 +53,43 @@ const listTitle: A.Reducer<T.TranslatableString> = (
   }
 };
 
+const noteRevisions: A.Reducer<T.NoteEntity[]> = (
+  state = emptyList as T.NoteEntity[],
+  action
+) => {
+  switch (action.type) {
+    case 'STORE_REVISIONS':
+      return action.revisions;
+    case 'CREATE_NOTE':
+    case 'SELECT_NOTE':
+      return emptyList as T.NoteEntity[];
+    default:
+      return state;
+  }
+};
+
+const selectedRevision: A.Reducer<T.NoteEntity | null> = (
+  state = null,
+  action
+) => {
+  switch (action.type) {
+    case 'SELECT_REVISION':
+      return action.revision;
+    case 'CREATE_NOTE':
+    case 'REVISIONS_TOGGLE':
+    case 'SELECT_NOTE':
+      return null;
+    default:
+      return state;
+  }
+};
+
 const showNoteList: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'CLOSE_NOTE': {
+    case 'CLOSE_NOTE':
       return true;
-    }
-    case 'App.selectNote':
+
+    case 'SELECT_NOTE':
       return false;
 
     default:
@@ -115,6 +146,9 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'REVISIONS_TOGGLE':
       return !state;
+    case 'SELECT_NOTE':
+    case 'CREATE_NOTE':
+      return false;
     default:
       return state;
   }
@@ -136,8 +170,6 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
-    case 'App.selectNote':
-      return { ...action.note, hasRemoteUpdate: action.hasRemoteUpdate };
     case 'CLOSE_NOTE':
     case 'App.trashNote':
     case 'App.emptyTrash':
@@ -146,7 +178,12 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
     case 'App.selectTag':
       return null;
     case 'SELECT_NOTE':
-      return action.note;
+      return action.options
+        ? {
+            ...action.note,
+            hasRemoteUpdate: action.options.hasRemoteUpdate,
+          }
+        : action.note;
     case 'FILTER_NOTES':
       // keep note if still in new filtered list otherwise try to choose first note in list
       return state && action.notes.some(({ id }) => id === state.id)
@@ -163,7 +200,9 @@ export default combineReducers({
   filteredNotes,
   listTitle,
   note,
+  noteRevisions,
   searchQuery,
+  selectedRevision,
   showNavigation,
   showNoteInfo,
   showNoteList,
