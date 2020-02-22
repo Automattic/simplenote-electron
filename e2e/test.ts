@@ -21,7 +21,7 @@ const waitForEvent = async (
 ): Promise<any[]> => {
   const tic = Date.now();
 
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const f = async () => {
       const result = await app.client.execute(function() {
         var events = window.testEvents;
