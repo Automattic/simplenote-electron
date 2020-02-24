@@ -1,4 +1,7 @@
 import { combineReducers } from 'redux';
+
+import { toggleSystemTag } from '../domain/notes';
+
 import * as A from '../action-types';
 import * as T from '../../types';
 
@@ -213,6 +216,8 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
             hasRemoteUpdate: action.options.hasRemoteUpdate,
           }
         : action.note;
+    case 'SET_SYSTEM_TAG':
+      return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
     case 'FILTER_NOTES':
       // keep note if still in new filtered list otherwise try to choose first note in list
       return state && action.notes.some(({ id }) => id === state.id)

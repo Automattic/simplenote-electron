@@ -29,16 +29,37 @@ import {
 } from './decorators';
 import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
 
-import { closeNote } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
-type StateProps = {
-  selectedNoteId?: T.EntityId;
+type OwnProps = {
+  noteBucket: T.Bucket<T.Note>;
 };
 
-type Props = StateProps;
+type StateProps = {
+  hasLoaded: boolean;
+  nextNote: T.NoteEntity;
+  noteDisplay: T.ListDisplayMode;
+  notes: T.NoteEntity[];
+  prevNote: T.NoteEntity;
+  searchQuery: string;
+  selectedNoteContent: string;
+  selectedNotePreview: { title: string; preview: string };
+  selectedNoteId?: T.EntityId;
+  showTrash: boolean;
+  tagResultsFound: number;
+};
+
+type DispatchProps = {
+  closeNote: () => any;
+  onEmptyTrash: () => any;
+  onSelectNote: (noteId: T.EntityId | null) => any;
+  onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -471,11 +492,11 @@ export class NoteList extends Component<Props> {
     );
   }
 
-  onPinNote = note =>
+  onPinNote = (note: T.NoteEntity) =>
     this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
-const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
+const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
@@ -539,8 +560,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
   };
 };
 
-const mapDispatchToProps = (dispatch, { noteBucket }) => ({
-  closeNote: () => dispatch(closeNote()),
+const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
+  dispatch,
+  { noteBucket }
+) => ({
+  closeNote: () => dispatch(actions.ui.closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
   onSelectNote: noteId => {
     if (noteId) {
@@ -548,14 +572,7 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
       analytics.tracks.recordEvent('list_note_opened');
     }
   },
-  onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
+  onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
 });
-
-NoteList.propTypes = {
-  hasLoaded: PropTypes.bool.isRequired,
-  nextNote: PropTypes.object,
-  prevNote: PropTypes.object,
-  selectedNoteContent: PropTypes.string,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);
