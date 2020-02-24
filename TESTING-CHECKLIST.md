@@ -1,0 +1,79 @@
+## Testing
+
+- [ ] Logout
+- [ ] Login with wrong password fails
+- [ ] Login with correct password
+- [ ] Create new note appears in other device
+- [ ] Changes to new note sync to other device
+- [ ] Changes to new note sync _from_ other device (after debounce delay)
+- [ ] New tag immediately syncs to other device
+- [ ] New tag immediately syncs _from_ other device
+- [ ] Removed tag immediately syncs to other device
+- [ ] Removed tag immediately syncs _from_ other device
+- [ ] Note publishes with link
+- [ ] Note unpublishes
+- [ ] Note publish change syncs _from_ other device (visible with dialog open)
+- [ ] Markdown setting syncs _from_ other device
+- [ ] Preview mode disappears/reappears when receiving remote changes to markdown setting
+- [ ] Note pinning syncs immediately from either direction
+- [ ] Note pinning works regardless if clicking in list view or from note info
+- [ ] Viewing history on one device leaves note unchanged on other device
+- [ ] Restoring history immediately syncs note from both directions
+- [ ] Restoring history revisions updates pinned status
+- [ ] Restoring history revisions updates markdown status
+- [ ] Restoring history revisions updates publish status
+- [ ] Can view trashed notes by clicking on `Trash`
+- [ ] Can delete note forever from trash screen
+- [ ] Can restore note from trash screen
+- [ ] Can trash note
+- [ ] Selects note above recently-trashed note
+- [ ] Selects note above recently-restored note in trash view
+- [ ] Selects note above recently-deleted-forever note in trash view
+- [ ] Can preview markdown with 👁 button
+- [ ] Can flip to edit mode with 👁 button
+- [ ] Markdown rendered in note list when markdown enabled
+- [ ] Markdown syntax unrendered in note list when markdown disabled
+- [ ] Can filter by tag when clicking on tag in tag drawer
+- [ ] Can add tag to note and have it appear in filtered tag view when previously not in filter
+- [ ] Can search by keyword with tag selected
+- [ ] Searching in the search field highlights matches in note list
+- [ ] Searching in the search field highlights matches in the note editor
+- [ ] Searching in the search field highlights matches in the note editor during preview
+- [ ] Clearing the search field immediately updates filtered notes
+- [ ] Clicking on different tags or `All Notes` or `Trash` immediately updates filtered notes
+- [ ] Can search by keyword, filtering debounced
+- [ ] Tag auto-completes appear when typing in search field
+- [ ] Typing `tag:` does not result a list of all tags in the autocompleter
+- [ ] Typing `tag:` and something else, like `tag:te` results in autocomplete results starting with that something else, e.g. `test`
+- [ ] Tag suggestions suggest tags regardless of case
+- [ ] Search field updates with results of `tag:test` format search string
+- [ ] Can toggle sidebar
+- [ ] Syncs when introducing sequential surrogate pairs sharing the same high surrogate, e.g. `🅰🅱` to `🅰🅰🅱`
+- [ ] When disabling network connectivity, changes start counting in unsync'ed changes counter
+- [ ] When going back online changes sync and counter resets to `All chagnes synced`
+- [ ] Can change analytics sharing setting
+- [ ] Changing `Note Display` mode immediately updates and reflects in note list
+- [ ] With sidebar disabled, toggling `Line Length` between `Narrow` and `Full` removes and adds border around note content appropriately and immediately.
+- [ ] Changing `Sort Type` mode immediately updates and reflects in note list
+- [ ] Toggling `Sort Order` immediately updates and reflects in note list for each sort type
+- [ ] For each sort type the pinned notes appear first in the note list
+- [ ] Changing `Theme` immediately updates app for desired color scheme
+- [ ] Using the `Insert checklist` item from the format menu inserts a checklist
+- [ ] "Undo" undoes the last edit
+- [ ] Typing `- [x]` creates a checked checklist item
+- [ ] Typing `- [ ]` created an unchecked checklist item
+- [ ] Typing `-` creates a list
+- [ ] Typing _tab_ in a list item underneath another list item indents item
+- [ ] Typing _shift tab_ in the same spot unindents the list
+- [ ] Changing `-` to `+` changes the list item bullet, also for `*` and `•` (`\u2022`)
+- [ ] All list bullet types render to markdown lists
+- [ ] Added URL is linkified
+- [ ] When clicking on link it opens in new window
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>p</kbd> toggles preview mode
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>k</kbd> or <kbd>up</kbd>) selects next note above current note, stops at top of list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>j</kbd> or <kbd>down</kbd>) selects next note below current note, stops at bottom of list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>t</kbd> toggles tab list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>n</kbd> creates new note
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>n</kbd> _when in small screen mode_ navigates to note list
+- [ ] Can print note in plaintext view
+- [ ] Can print note in Markdown-preview view
