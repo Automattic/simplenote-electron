@@ -91,7 +91,7 @@ jobs:
 
   test:
     docker:
-      - image: circleci/node:12.14.0
+      - image: circleci/node:12.14.0-browsers
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
