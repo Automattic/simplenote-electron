@@ -26,6 +26,8 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  onMarkdownNote: (note: T.NoteEntity, isMarkdown: boolean) => any;
+  onPinNote: (note: T.NoteEntity, shouldPinNote: boolean) => any;
   onOutsideClick: () => any;
 };
 
@@ -180,12 +182,12 @@ export class NoteInfo extends Component<Props> {
     this.props.onMarkdownNote(this.props.note, event.currentTarget.checked);
 }
 
-function formatTimestamp(unixTime) {
+function formatTimestamp(unixTime: number) {
   return format(unixTime * 1000, 'MMM d, yyyy h:mm a');
 }
 
 // https://github.com/RadLikeWhoa/Countable
-function wordCount(content) {
+function wordCount(content: string) {
   const matches = (content || '')
     .replace(/[\u200B]+/, '')
     .trim()
@@ -197,7 +199,7 @@ function wordCount(content) {
 
 // https://mathiasbynens.be/notes/javascript-unicode
 const surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-function characterCount(content) {
+function characterCount(content: string) {
   return (
     // then get the length
     (content || '')

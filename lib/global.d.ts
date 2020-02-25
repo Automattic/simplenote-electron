@@ -1,9 +1,14 @@
-declare var __TEST__: boolean;
+import { TKQItem, TracksAPI } from './analytics/types';
 
-interface Window {
-  _tkq: Array;
-  testEvents: (string | [string, ...any[]])[];
-  wpcom: {
-    tracks: object;
-  };
+declare global {
+  const __TEST__: boolean;
+
+  interface Window {
+    analyticsEnabled: boolean;
+    testEvents: (string | [string, ...any[]])[];
+    _tkq: TKQItem[] & { a: unknown };
+    wpcom: {
+      tracks: TracksAPI;
+    };
+  }
 }

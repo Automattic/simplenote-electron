@@ -4,17 +4,9 @@ const debug = require('debug')('analytics');
  * Internal dependencies
  */
 import './tracks';
-import { TKQItem } from './tracks';
 let user: string;
 
 import * as T from '../types';
-
-declare global {
-  interface Window {
-    analyticsEnabled: boolean;
-    _tkq: TKQItem[];
-  }
-}
 
 declare const config: { version: string };
 

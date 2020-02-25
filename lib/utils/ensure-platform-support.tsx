@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 
 import BootWarning from '../components/boot-warning';
 
@@ -36,7 +36,7 @@ const deps = [
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
 
 if (missingDeps.length) {
-  ReactDOM.render(
+  render(
     <BootWarning>
       <p>
         Simplenote depends on a few web technologies to operate. Please make

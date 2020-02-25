@@ -1,27 +1,7 @@
 import * as T from '../types';
-
-declare global {
-  interface Window {
-    wpcom: {
-      _tkq: TKQItem[];
-      tracks: TracksAPI;
-    };
-  }
-}
+import { TKQItem, TracksAPI } from './types';
 
 declare const TRACKS_COOKIE_DOMAIN: string | undefined;
-
-export type TKQItem =
-  | Function
-  | [keyof TracksAPI, ...(string | T.JSONSerializable)[]];
-
-export type TracksAPI = {
-  storeContext: (c: object) => void;
-  identifyUser: (user: string, login: string) => void;
-  recordEvent: (name: string, props: T.JSONSerializable) => void;
-  setProperties: (properties: object) => void;
-  clearIdentity: () => void;
-};
 
 type Query = Partial<{
   _dl: string;
@@ -41,10 +21,11 @@ type Query = Partial<{
   anonId: string;
 }>;
 
-window.wpcom = window.wpcom || {};
 window._tkq = window._tkq || [];
+window.wpcom = window.wpcom || { tracks: buildTracks() };
+window.wpcom.tracks = window.wpcom.tracks || buildTracks();
 
-window.wpcom.tracks = (function() {
+function buildTracks() {
   let userId: string | null | undefined;
   let userIdType: string;
   let userLogin: string | null | undefined;
@@ -277,19 +258,16 @@ window.wpcom.tracks = (function() {
     const sx =
       window.pageXOffset !== undefined
         ? window.pageXOffset
-        : (
-            document.documentElement ||
+        : ((document.documentElement ||
             document.body.parentNode ||
-            document.body
-          ).scrollLeft;
+            document.body) as HTMLElement).scrollLeft;
+
     const sy =
       window.pageYOffset !== undefined
         ? window.pageYOffset
-        : (
-            document.documentElement ||
+        : ((document.documentElement ||
             document.body.parentNode ||
-            document.body
-          ).scrollTop;
+            document.body) as HTMLElement).scrollTop;
 
     query._sx = sx !== undefined ? sx : 0;
     query._sy = sy !== undefined ? sy : 0;
@@ -410,4 +388,4 @@ window.wpcom.tracks = (function() {
   initQueue();
 
   return API;
-})();
+}
