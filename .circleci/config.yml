@@ -208,15 +208,22 @@ workflows:
       - build:
           filters:
             branches:
-              ignore: webapp
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
+
       - linux:
           requires:
             - build
           filters:
             branches:
-              ignore: webapp
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
       - mac:
@@ -224,7 +231,10 @@ workflows:
             - build
           filters:
             branches:
-              ignore: webapp
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
       - windows:
@@ -232,7 +242,10 @@ workflows:
             - build
           filters:
             branches:
-              ignore: webapp
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
       - artifacts:
@@ -242,6 +255,9 @@ workflows:
             - windows
           filters:
             branches:
-              ignore: webapp
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
