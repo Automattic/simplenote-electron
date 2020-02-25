@@ -85,11 +85,33 @@ jobs:
       - *npm_restore_cache
       - *npm_install
       - run: make build
-      - run: make lint
-      - run: make test
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths
+
+  test:
+    docker:
+      - image: circleci/node:12.14.0
+    shell: /bin/bash --login
+    working_directory: ~/simplenote
+    steps:
+      - *install_linux_deps
+      - checkout
+      - run:
+          name: Decrypt assets
+          command: |
+            openssl aes-256-cbc -md md5 -d -in ./resources/certificates/win.p12.enc -out ./resources/certificates/win.p12 -k ${SECRETS_ENCRYPTION_KEY}
+            openssl aes-256-cbc -md md5 -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
+            openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
+      - *restore_nvm
+      - *setup_nvm
+      - *save_nvm
+      - *npm_restore_cache
+      - *npm_install
+      - run: NODE_ENV=test npm run build
+      - run: npm run test-e2e
+      - run: npm test
+      - run: npm run lint
 
   linux:
     docker:
@@ -209,6 +231,15 @@ workflows:
           filters:
             branches:
               ignore: webapp
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            branches:
+              ignore:
+                - webapp
+                - webapp-develop
+                - webapp-staging
             tags:
               only: /.*/
       - linux:
