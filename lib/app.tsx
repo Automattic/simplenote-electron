@@ -208,6 +208,8 @@ export const App = connect(
       );
 
       this.toggleShortcuts(true);
+
+      __TEST__ && window.testEvents.push('booted');
     }
 
     componentWillUnmount() {
@@ -314,6 +316,8 @@ export const App = connect(
 
       loadNotes({ noteBucket });
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
+
+      __TEST__ && window.testEvents.push('notesLoaded');
     };
 
     onNoteRemoved = () => this.onNotesIndex();
