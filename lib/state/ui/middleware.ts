@@ -20,7 +20,7 @@ export const middleware: S.Middleware = store => {
 
     switch (action.type) {
       // on clicks re-filter immediately
-      case 'App.deleteNoteForever':
+      case 'DELETE_NOTE_FOREVER':
       case 'RESTORE_NOTE':
       case 'TRASH_NOTE':
         clearTimeout(searchTimeout);
@@ -30,7 +30,6 @@ export const middleware: S.Middleware = store => {
       // on events re-filter "immediately"
       case 'App.authChanged':
       case 'App.notesLoaded':
-      case 'App.restoreNote':
       case 'App.selectTag':
       case 'App.selectTrash':
       case 'App.showAllNotes':
