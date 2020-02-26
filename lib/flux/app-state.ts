@@ -34,7 +34,6 @@ const toggleSystemTag = (
 };
 
 const initialState: AppState = {
-  previousIndex: -1,
   notes: null,
   tags: [],
   dialogs: [],
@@ -70,14 +69,12 @@ export const actionMap = new ActionMap({
     showAllNotes(state: AppState) {
       return update(state, {
         tag: { $set: null },
-        previousIndex: { $set: -1 },
       });
     },
 
     selectTrash(state: AppState) {
       return update(state, {
         tag: { $set: null },
-        previousIndex: { $set: -1 },
       });
     },
 
@@ -97,7 +94,6 @@ export const actionMap = new ActionMap({
     selectTag(state: AppState, { tag }: { tag: T.TagEntity }) {
       return update(state, {
         tag: { $set: tag },
-        previousIndex: { $set: -1 },
       });
     },
 
@@ -320,12 +316,12 @@ export const actionMap = new ActionMap({
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
-        previousIndex: number;
       }) {
-        return () => {
+        return dispatch => {
           if (note) {
             note.data.deleted = true;
             noteBucket.update(note.id, note.data);
+            dispatch(actions.ui.trashNote(previousIndex));
           }
         };
       },
@@ -339,12 +335,12 @@ export const actionMap = new ActionMap({
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
-        previousIndex: number;
       }) {
         return dispatch => {
           if (note) {
             note.data.deleted = false;
             noteBucket.update(note.id, note.data);
+            dispatch(actions.ui.restoreNote(previousIndex));
           }
         };
       },
@@ -358,11 +354,11 @@ export const actionMap = new ActionMap({
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
-        previousIndex: number;
       }) {
         return dispatch => {
           noteBucket.remove(note.id);
           dispatch(this.action('loadNotes', { noteBucket }));
+          dispatch(actions.ui.deleteNoteForever(previousIndex));
         };
       },
     },

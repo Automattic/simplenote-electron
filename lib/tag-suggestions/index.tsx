@@ -1,13 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
 import { search } from '../state/ui/actions';
 import filterAtMost from '../utils/filter-at-most';
 
 import * as S from '../state';
 import * as T from '../types';
-
-const { recordEvent } = tracks;
 
 type StateProps = {
   filteredTags: T.TagEntity[];
@@ -118,7 +116,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onSearch: query => {
     dispatch(search(query));
-    recordEvent('list_notes_searched');
+    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 

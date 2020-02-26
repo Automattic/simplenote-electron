@@ -208,6 +208,8 @@ export const App = connect(
       );
 
       this.toggleShortcuts(true);
+
+      __TEST__ && window.testEvents.push('booted');
     }
 
     componentWillUnmount() {
@@ -314,6 +316,8 @@ export const App = connect(
 
       loadNotes({ noteBucket });
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
+
+      __TEST__ && window.testEvents.push('notesLoaded');
     };
 
     onNoteRemoved = () => this.onNotesIndex();
@@ -395,11 +399,11 @@ export const App = connect(
 
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
-      const noteIndex = this.props.ui.filteredNotes.findIndex(
+      const previousIndex = this.props.ui.filteredNotes.findIndex(
         ({ id }) => note.id === id
       );
 
-      return Math.max(noteIndex - 1, 0);
+      return Math.max(previousIndex - 1, 0);
     };
 
     syncActivityHooks = data => {

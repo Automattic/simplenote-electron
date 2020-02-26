@@ -3,11 +3,15 @@ const debug = require('debug')('analytics');
 /**
  * Internal dependencies
  */
-var user;
-require('./tracks');
+import './tracks';
+let user: string;
+
+import * as T from '../types';
+
+declare const config: { version: string };
 
 const analytics = {
-  initialize: function(initUser) {
+  initialize: function(initUser: string) {
     analytics.setUser(initUser);
     analytics.identifyUser();
   },
@@ -28,12 +32,15 @@ const analytics = {
     return null;
   },
 
-  setUser: function(newUser) {
+  setUser: function(newUser: string) {
     user = newUser;
   },
 
   tracks: {
-    recordEvent: function(eventName, eventProperties) {
+    recordEvent: function(
+      eventName: string,
+      eventProperties: T.JSONSerializable = {}
+    ) {
       const prefix = analytics.getPlatformPrefix();
 
       const fullEventName = `${prefix}_${eventName}`;
@@ -53,7 +60,10 @@ const analytics = {
         window._tkq.push(['recordEvent', fullEventName, fullEventProperties]);
       }
     },
-    validateEvent: function(fullEventName, fullEventProperties) {
+    validateEvent: function(
+      fullEventName: string,
+      fullEventProperties: T.JSONSerializable
+    ) {
       if (process.env.NODE_ENV !== 'development') {
         return;
       }
@@ -76,7 +86,7 @@ const analytics = {
 
   identifyUser: function() {
     // Don't identify the user if we don't have one
-    if (user) {
+    if (undefined !== user) {
       window._tkq.push(['identifyUser', user, user]);
     }
   },
@@ -89,4 +99,4 @@ const analytics = {
 // Load tracking script
 window._tkq = window._tkq || [];
 
-module.exports = analytics;
+export default analytics;

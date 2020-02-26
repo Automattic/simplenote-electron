@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
-    "test-e2e": "npx jest --config=./jest.config.e2e.js",
+    "test-e2e": "npx jest --config=./jest.config.e2e.js --runInBand",
     "test": "make test",
     "lint": "make lint",
     "format": "make format",
@@ -68,6 +68,7 @@
     "@types/rimraf": "2.0.3",
     "@types/valid-url": "1.0.2",
     "@types/webdriverio": "4.13.3",
+    "@types/webpack-env": "1.15.1",
     "@typescript-eslint/eslint-plugin": "2.17.0",
     "@typescript-eslint/parser": "2.17.0",
     "autoprefixer": "9.7.4",

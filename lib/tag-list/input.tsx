@@ -1,17 +1,22 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, FocusEvent, MouseEvent } from 'react';
 import classNames from 'classnames';
 
-export class TagListInput extends Component {
-  static propTypes = {
-    editable: PropTypes.bool.isRequired,
-    isSelected: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired,
-    onDone: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
-  };
+type OwnProps = {
+  editable: boolean;
+  isSelected: boolean;
+  onClick: (event: MouseEvent<HTMLInputElement>) => any;
+  onDone: (event: FocusEvent<HTMLInputElement>) => any;
+  value: string;
+};
 
-  constructor(props) {
+type OwnState = {
+  value: string;
+};
+
+type Props = OwnProps;
+
+export class TagListInput extends Component<Props, OwnState> {
+  constructor(props: Props) {
     super(props);
     this.state = { value: props.value };
   }

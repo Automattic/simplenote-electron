@@ -9,15 +9,31 @@ export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
 });
 
+export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = (
+  previousIndex: number
+) => ({
+  type: 'DELETE_NOTE_FOREVER',
+  previousIndex,
+});
+
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
-  notes: T.NoteEntity[]
+  notes: T.NoteEntity[],
+  previousIndex: number
 ) => ({
   type: 'FILTER_NOTES',
   notes,
+  previousIndex,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
+});
+
+export const restoreNote: A.ActionCreator<A.RestoreNote> = (
+  previousIndex: number
+) => ({
+  type: 'RESTORE_NOTE',
+  previousIndex,
 });
 
 export const selectRevision: A.ActionCreator<A.SelectRevision> = (
@@ -84,4 +100,11 @@ export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
 
 export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
   type: 'TAG_EDITING_TOGGLE',
+});
+
+export const trashNote: A.ActionCreator<A.TrashNote> = (
+  previousIndex: number
+) => ({
+  type: 'TRASH_NOTE',
+  previousIndex,
 });

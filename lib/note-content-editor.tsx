@@ -179,9 +179,17 @@ class NoteContentEditor extends Component<Props> {
       noteId !== prevProps.noteId ||
       content.version !== prevProps.content.version
     ) {
-      this.setState({
-        editorState: this.createNewEditorState(content.text, searchQuery),
-      });
+      this.setState(
+        {
+          editorState: this.createNewEditorState(content.text, searchQuery),
+        },
+        () =>
+          __TEST__ &&
+          window.testEvents.push([
+            'editorNewNote',
+            plainTextContent(this.state.editorState),
+          ])
+      );
       return;
     }
 

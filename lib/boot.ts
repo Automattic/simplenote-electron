@@ -1,3 +1,7 @@
+if (__TEST__) {
+  window.testEvents = [];
+}
+
 import './utils/ensure-platform-support';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

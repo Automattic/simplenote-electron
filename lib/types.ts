@@ -71,6 +71,16 @@ export type TranslatableString = string;
 // Language and Platform
 ///////////////////////////////////////
 
+export type JSONValue =
+  | null
+  | boolean
+  | number
+  | string
+  | Array<JSONValue>
+  | { [key: string]: JSONValue };
+
+export type JSONSerializable = { [key: string]: JSONValue };
+
 // Returns a type with the properties in T not also present in U
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 

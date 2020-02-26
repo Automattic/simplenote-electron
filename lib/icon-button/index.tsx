@@ -8,7 +8,7 @@ export const IconButton = ({ icon, title, ...props }) => (
     enterDelay={200}
     title={title}
   >
-    <button className="icon-button" type="button" {...props}>
+    <button className="icon-button" type="button" data-title={title} {...props}>
       {icon}
     </button>
   </Tooltip>

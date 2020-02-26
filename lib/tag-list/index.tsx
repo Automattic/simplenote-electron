@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, FocusEvent, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PanelTitle from '../components/panel-title';
@@ -9,29 +8,39 @@ import TagListInput from './input';
 import appState from '../flux/app-state';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { toggleTagEditing } from '../state/ui/actions';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
+
+import * as S from '../state';
+import * as T from '../types';
 
 const { selectTagAndSelectFirstNote } = appState.actionCreators;
-const { recordEvent } = tracks;
 
-export class TagList extends Component {
+type StateProps = {
+  editingTags: boolean;
+  tags: T.TagEntity[] | null;
+  selectedTag?: T.TagEntity;
+};
+
+type DispatchProps = {
+  onEditTags: () => any;
+  onSelectTag: (tag: T.TagEntity) => any;
+  renameTag: (args: { tag: T.TagEntity; name: T.TagName }) => any;
+  reorderTags: (args: { tags: T.TagEntity[] }) => any;
+  trashTag: (args: { tag: T.TagEntity }) => any;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class TagList extends Component<Props> {
   static displayName = 'TagList';
 
-  static propTypes = {
-    onSelectTag: PropTypes.func.isRequired,
-    onEditTags: PropTypes.func.isRequired,
-    renameTag: PropTypes.func.isRequired,
-    reorderTags: PropTypes.func.isRequired,
-    selectedTag: PropTypes.object,
-    tags: PropTypes.array.isRequired,
-    trashTag: PropTypes.func.isRequired,
-  };
-
-  renderItem = tag => {
+  renderItem = (tag: T.TagEntity) => {
     const { editingTags, selectedTag } = this.props;
     const isSelected = tag.data.name === get(selectedTag, 'data.name', '');
 
-    const handleRenameTag = ({ target: { value } }) =>
+    const handleRenameTag = ({
+      target: { value },
+    }: FocusEvent<HTMLInputElement>) =>
       this.props.renameTag({ tag, name: value });
 
     return (
@@ -45,9 +54,9 @@ export class TagList extends Component {
     );
   };
 
-  onReorderTags = tags => this.props.reorderTags({ tags });
+  onReorderTags = (tags: T.TagEntity[]) => this.props.reorderTags({ tags });
 
-  onSelectTag = (tag, event) => {
+  onSelectTag = (tag: T.TagEntity, event: MouseEvent<HTMLInputElement>) => {
     if (!this.props.editingTags) {
       event.preventDefault();
       event.currentTarget.blur();
@@ -55,9 +64,9 @@ export class TagList extends Component {
     }
   };
 
-  onTrashTag = tag => {
+  onTrashTag = (tag: T.TagEntity) => {
     this.props.trashTag({ tag });
-    recordEvent('list_tag_deleted');
+    analytics.tracks.recordEvent('list_tag_deleted');
   };
 
   render() {
@@ -74,7 +83,7 @@ export class TagList extends Component {
           {tags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"
-              tabIndex="0"
+              tabIndex={0}
               onClick={onEditTags}
             >
               {editingTags ? 'Done' : 'Edit'}
@@ -92,17 +101,20 @@ export class TagList extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, ui: { editingTags } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui: { editingTags },
+}) => ({
   editingTags,
   tags: state.tags,
   selectedTag: state.tag,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onEditTags: () => dispatch(toggleTagEditing()),
   onSelectTag: tag => {
     dispatch(selectTagAndSelectFirstNote({ tag }));
-    recordEvent('list_tag_viewed');
+    analytics.tracks.recordEvent('list_tag_viewed');
   },
   renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),

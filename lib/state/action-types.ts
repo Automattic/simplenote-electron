@@ -53,13 +53,21 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
  */
 export type CreateNote = Action<'CREATE_NOTE'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
-export type FilterNotes = Action<'FILTER_NOTES', { notes: T.NoteEntity[] }>;
+export type DeleteNoteForever = Action<
+  'DELETE_NOTE_FOREVER',
+  { previousIndex: number }
+>;
+export type FilterNotes = Action<
+  'FILTER_NOTES',
+  { notes: T.NoteEntity[]; previousIndex: number }
+>;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
 >;
+export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
@@ -79,6 +87,7 @@ export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
+export type TrashNote = Action<'TRASH_NOTE', { previousIndex: number }>;
 export type SelectNote = Action<
   'SELECT_NOTE',
   { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
@@ -87,9 +96,11 @@ export type SelectNote = Action<
 export type ActionType =
   | CreateNote
   | CloseNote
+  | DeleteNoteForever
   | LegacyAction
   | FilterNotes
   | FocusSearchField
+  | RestoreNote
   | Search
   | SelectNote
   | SelectRevision
@@ -115,7 +126,8 @@ export type ActionType =
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer
-  | ToggleTagEditing;
+  | ToggleTagEditing
+  | TrashNote;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
