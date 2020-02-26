@@ -8,17 +8,28 @@ let searchTimeout: NodeJS.Timeout;
 
 export const middleware: S.Middleware = store => {
   const updateNotes = () =>
-    store.dispatch(filterAction(filterNotes(store.getState())));
+    store.dispatch(
+      filterAction(
+        filterNotes(store.getState()),
+        store.getState().ui.previousIndex
+      )
+    );
 
   return next => (action: A.ActionType) => {
     const result = next(action);
 
     switch (action.type) {
-      // on clicks re-filter "immediately"
+      // on clicks re-filter immediately
+      case 'DELETE_NOTE_FOREVER':
+      case 'RESTORE_NOTE':
+      case 'TRASH_NOTE':
+        clearTimeout(searchTimeout);
+        updateNotes();
+        break;
+
+      // on events re-filter "immediately"
       case 'App.authChanged':
-      case 'App.deleteNoteForever':
       case 'App.notesLoaded':
-      case 'App.restoreNote':
       case 'App.selectTag':
       case 'App.selectTrash':
       case 'App.showAllNotes':

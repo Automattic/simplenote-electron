@@ -84,6 +84,21 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
   }
 };
 
+const previousIndex: A.Reducer<number> = (state = -1, action) => {
+  switch (action.type) {
+    case 'DELETE_NOTE_FOREVER':
+    case 'RESTORE_NOTE':
+    case 'TRASH_NOTE':
+      return action.previousIndex || state;
+    case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+      return -1;
+    default:
+      return state;
+  }
+};
+
 const showNoteList: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'CLOSE_NOTE':
@@ -170,12 +185,14 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
-    case 'CLOSE_NOTE':
-    case 'App.trashNote':
     case 'App.emptyTrash':
-    case 'App.showAllNotes':
-    case 'App.selectTrash':
     case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+    case 'CLOSE_NOTE':
+    case 'DELETE_NOTE_FOREVER':
+    case 'RESTORE_NOTE':
+    case 'TRASH_NOTE':
       return null;
     case 'SELECT_NOTE':
       return action.options
@@ -188,7 +205,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
       // keep note if still in new filtered list otherwise try to choose first note in list
       return state && action.notes.some(({ id }) => id === state.id)
         ? state
-        : action.notes[0] || null;
+        : action.notes[Math.max(action.previousIndex, 0)] || null;
     default:
       return state;
   }
@@ -201,6 +218,7 @@ export default combineReducers({
   listTitle,
   note,
   noteRevisions,
+  previousIndex,
   searchQuery,
   selectedRevision,
   showNavigation,
