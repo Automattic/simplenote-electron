@@ -5,24 +5,35 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
-export const closeNote: A.ActionCreator<A.CloseNote> = (
-  noteIndex: number | null
-) => ({
+export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
-  noteIndex,
+});
+
+export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = (
+  previousIndex: number
+) => ({
+  type: 'DELETE_NOTE_FOREVER',
+  previousIndex,
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes: T.NoteEntity[],
-  noteIndex: number
+  previousIndex: number
 ) => ({
   type: 'FILTER_NOTES',
   notes,
-  noteIndex,
+  previousIndex,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
+});
+
+export const restoreNote: A.ActionCreator<A.RestoreNote> = (
+  previousIndex: number
+) => ({
+  type: 'RESTORE_NOTE',
+  previousIndex,
 });
 
 export const selectRevision: A.ActionCreator<A.SelectRevision> = (
@@ -89,4 +100,11 @@ export const toggleTagDrawer: A.ActionCreator<A.ToggleTagDrawer> = (
 
 export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
   type: 'TAG_EDITING_TOGGLE',
+});
+
+export const trashNote: A.ActionCreator<A.TrashNote> = (
+  previousIndex: number
+) => ({
+  type: 'TRASH_NOTE',
+  previousIndex,
 });

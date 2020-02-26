@@ -395,11 +395,11 @@ export const App = connect(
 
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
-      const noteIndex = this.props.ui.filteredNotes.findIndex(
+      const previousIndex = this.props.ui.filteredNotes.findIndex(
         ({ id }) => note.id === id
       );
 
-      return Math.max(noteIndex - 1, 0);
+      return Math.max(previousIndex - 1, 0);
     };
 
     syncActivityHooks = data => {

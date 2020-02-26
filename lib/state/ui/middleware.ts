@@ -9,7 +9,10 @@ let searchTimeout: NodeJS.Timeout;
 export const middleware: S.Middleware = store => {
   const updateNotes = () =>
     store.dispatch(
-      filterAction(filterNotes(store.getState()), store.getState().ui.noteIndex)
+      filterAction(
+        filterNotes(store.getState()),
+        store.getState().ui.previousIndex
+      )
     );
 
   return next => (action: A.ActionType) => {
