@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
 import analytics from '../analytics';
-import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
@@ -24,7 +23,6 @@ export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
-    detectLanguage: PropTypes.bool.isRequired,
     dialogs: PropTypes.array.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
@@ -32,13 +30,11 @@ export class NoteDetail extends Component<Props> {
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
-    spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
   };
 
   static defaultProps = {
-    detectLanguage: false,
     storeFocusEditor: noop,
     storeHasFocus: noop,
   };
@@ -62,8 +58,6 @@ export class NoteDetail extends Component<Props> {
   }
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
-
-  saveEditorRef = ref => (this.editor = ref);
 
   isValidNote = note => note && note.id;
 
@@ -183,13 +177,7 @@ export class NoteDetail extends Component<Props> {
   };
 
   render() {
-    const {
-      detectLanguage,
-      note,
-      fontSize,
-      previewingMarkdown,
-      spellCheckEnabled,
-    } = this.props;
+    const { note, fontSize, previewingMarkdown } = this.props;
 
     const content = {
       text: get(note, 'data.content', ''),
@@ -222,9 +210,6 @@ export class NoteDetail extends Component<Props> {
                 style={divStyle}
               >
                 <NoteContentEditor
-                  ref={this.saveEditorRef}
-                  detectLanguage={detectLanguage}
-                  spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
                   noteId={get(note, 'id', null)}
@@ -240,16 +225,10 @@ export class NoteDetail extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  ui,
-  settings,
-}) => ({
-  detectLanguage: settings.languageDetectionEnabled,
+const mapStateToProps: S.MapState<StateProps> = ({ appState: state, ui }) => ({
   dialogs: state.dialogs,
   note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,
-  spellCheckEnabled: settings.spellCheckEnabled,
 });
 
 export default connect(mapStateToProps)(NoteDetail);

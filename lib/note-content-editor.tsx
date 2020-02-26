@@ -32,7 +32,9 @@ import * as S from './state';
 const TEXT_DELIMITER = '\n';
 
 type StateProps = {
+  detectLanguage: boolean;
   searchQuery: string;
+  spellCheckEnabled: boolean;
 };
 
 type Props = StateProps;
@@ -44,10 +46,8 @@ class NoteContentEditor extends Component<Props> {
       hasRemoteUpdate: PropTypes.bool.isRequired,
       version: PropTypes.number,
     }),
-    detectLanguage: PropTypes.bool.isRequired,
     noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
-    spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
   };
@@ -101,8 +101,6 @@ class NoteContentEditor extends Component<Props> {
     ),
     lang: undefined,
   };
-
-  editorKey = 0;
 
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
@@ -173,40 +171,27 @@ class NoteContentEditor extends Component<Props> {
 
     const { editorState } = this.state;
 
-    const updateLanguage = () => {
-      const minimumContentLength = 10;
-      if (!detectLanguage || content.text.length < minimumContentLength) {
-        window.spellCheckHandler.switchLanguage(navigator.language);
-        this.setState({ lang: undefined });
-      } else {
-        // Auto-detect the note content language to switch spellchecker
-        window.spellCheckHandler.provideHintText(content.text).then(() => {
-          // Use the auto-detected language to set a `lang` attribute on the
-          // note, which helps Chromium in Electron pick an appropriate font
-          this.setState({
-            lang: window.spellCheckHandler.currentSpellcheckerLanguage,
-          });
-        });
-      }
-    };
-
     // Only relevant in Electron
     if (window.spellCheckHandler) {
-      // To immediately reflect the changes to the spell check setting,
-      // we must remount the Editor and force update. The remount is
-      // done by changing the `key` prop on the Editor.
-      // https://stackoverflow.com/questions/35792275/
-      if (spellCheckEnabled !== prevProps.spellCheckEnabled) {
-        this.editorKey += 1;
-        this.forceUpdate();
-        updateLanguage();
-      }
-
       if (
+        spellCheckEnabled !== prevProps.spellCheckEnabled ||
         noteId !== prevProps.noteId ||
         detectLanguage !== prevProps.detectLanguage
       ) {
-        updateLanguage();
+        const minimumContentLength = 10;
+        if (!detectLanguage || content.text.length < minimumContentLength) {
+          window.spellCheckHandler.switchLanguage(navigator.language);
+          this.setState({ lang: undefined });
+        } else {
+          // Auto-detect the note content language to switch spellchecker
+          window.spellCheckHandler.provideHintText(content.text).then(() => {
+            // Use the auto-detected language to set a `lang` attribute on the
+            // note, which helps Chromium in Electron pick an appropriate font
+            this.setState({
+              lang: window.spellCheckHandler.currentSpellcheckerLanguage,
+            });
+          });
+        }
       }
     }
 
@@ -252,6 +237,19 @@ class NoteContentEditor extends Component<Props> {
   componentWillUnmount() {
     this.ipc.removeListener('appCommand', this.onAppCommand);
   }
+
+  editorKey = () => {
+    const { noteId, spellCheckEnabled } = this.props;
+    const { lang } = this.state;
+
+    const notePart = noteId ? `note-${noteId}` : 'no-note';
+    const spellcheckPart = spellCheckEnabled
+      ? 'with-spelling'
+      : 'without-spelling';
+    const langPart = lang ? `lang-${lang}` : 'without-lang';
+
+    return `${notePart}-${spellcheckPart}-${langPart}`;
+  };
 
   focus = () => {
     invoke(this, 'editor.focus');
@@ -362,7 +360,7 @@ class NoteContentEditor extends Component<Props> {
         style={{ height: '100%' }}
       >
         <Editor
-          key={this.editorKey}
+          key={this.editorKey()}
           ref={this.saveEditorRef}
           spellCheck={this.props.spellCheckEnabled}
           stripPastedStyles
@@ -376,8 +374,13 @@ class NoteContentEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { searchQuery } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  settings: { languageDetectionEnabled, spellCheckEnabled },
+  ui: { searchQuery },
+}) => ({
+  detectLanguage: languageDetectionEnabled,
   searchQuery,
+  spellCheckEnabled,
 });
 
 export default connect(mapStateToProps)(NoteContentEditor);
