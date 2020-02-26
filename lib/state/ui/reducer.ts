@@ -185,12 +185,14 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
-    case 'CLOSE_NOTE':
-    case 'TRASH_NOTE':
+    case 'App.deleteNoteForever':
     case 'App.emptyTrash':
-    case 'App.showAllNotes':
-    case 'App.selectTrash':
     case 'App.selectTag':
+    case 'App.selectTrash':
+    case 'App.showAllNotes':
+    case 'CLOSE_NOTE':
+    case 'RESTORE_NOTE':
+    case 'TRASH_NOTE':
       return null;
     case 'SELECT_NOTE':
       return action.options
