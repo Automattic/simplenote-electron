@@ -100,6 +100,8 @@ const mapDispatchToProps: S.MapDispatch<
       dispatch
     ),
     closeNote: () => dispatch(closeNote()),
+    remoteNoteUpdate: (noteId, data) =>
+      dispatch(actions.simperium.remoteNoteUpdate(noteId, data)),
     loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
@@ -332,6 +334,9 @@ export const App = connect(
         selectNote,
         ui: { note },
       } = this.props;
+
+      this.props.remoteNoteUpdate(noteId, data);
+
       if (note && noteId === note.id) {
         noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
           if (e) {

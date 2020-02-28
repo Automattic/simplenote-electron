@@ -12,7 +12,7 @@ export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
 export const filterHasText = (searchQuery: string) =>
   !!withoutTags(searchQuery);
 
-const getTerms = (filterText: string) => {
+export const getTerms = (filterText: string): string[] => {
   if (!filterText) {
     return [];
   }
