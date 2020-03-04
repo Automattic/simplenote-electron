@@ -5,6 +5,7 @@ import { get, debounce, noop } from 'lodash';
 import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
+import GutenbergEditor from '../gutenberg';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
@@ -216,14 +217,15 @@ export class NoteDetail extends Component<Props> {
                 className="note-detail-textarea theme-color-bg theme-color-fg"
                 style={divStyle}
               >
-                <NoteContentEditor
-                  spellCheckEnabled={spellCheckEnabled}
-                  storeFocusEditor={this.storeFocusContentEditor}
-                  storeHasFocus={this.storeEditorHasFocus}
-                  noteId={get(note, 'id', null)}
-                  content={content}
-                  onChangeContent={this.saveNote}
-                />
+                <GutenbergEditor saveNote={this.saveNote} />
+                {/*<NoteContentEditor*/}
+                {/*  spellCheckEnabled={spellCheckEnabled}*/}
+                {/*  storeFocusEditor={this.storeFocusContentEditor}*/}
+                {/*  storeHasFocus={this.storeEditorHasFocus}*/}
+                {/*  noteId={get(note, 'id', null)}*/}
+                {/*  content={content}*/}
+                {/*  onChangeContent={this.saveNote}*/}
+                {/*/>*/}
               </div>
             )}
           </div>

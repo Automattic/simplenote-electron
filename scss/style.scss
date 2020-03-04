@@ -1,8 +1,9 @@
 // Vendor
 @import 'normalize';
-@import '../node_modules/draft-js/dist/Draft.css';
+//@import '../node_modules/draft-js/dist/Draft.css';
+@import '../lib/gutenberg/style.scss';
 
-@import "~@automattic/color-studio/dist/color-variables";
+@import '~@automattic/color-studio/dist/color-variables';
 
 // Internal
 @import 'variables';
