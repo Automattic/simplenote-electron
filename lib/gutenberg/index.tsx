@@ -4,6 +4,7 @@ import {
   BlockEditorKeyboardShortcuts,
   BlockEditorProvider,
   BlockList,
+  ObserveTyping,
   WritingFlow,
 } from '@wordpress/block-editor';
 import {
@@ -13,12 +14,17 @@ import {
   serialize,
   unregisterBlockType,
 } from '@wordpress/blocks';
-import { SlotFillProvider } from '@wordpress/components';
+import {
+  DropZoneProvider,
+  Popover,
+  SlotFillProvider,
+} from '@wordpress/components';
+import '@wordpress/editor';
 import { useState } from '@wordpress/element';
 import { registerCoreBlocks } from '@wordpress/block-library';
+import '@wordpress/format-library';
 
 import * as S from '../state';
-import * as T from '../types';
 
 type StateProps = {
   content: string;
@@ -55,7 +61,7 @@ export const GutenbergEditor: FunctionComponent<Props> = ({
     setBlocks(parse(content));
   }
 
-  if (blocks.length === 0) {
+  if (content.length > 0 && blocks.length === 0) {
     setBlocks(
       content
         .split('\n\n')
@@ -64,21 +70,27 @@ export const GutenbergEditor: FunctionComponent<Props> = ({
   }
 
   return (
-    <div className="editor-styles-wrapper">
-      <SlotFillProvider>
+    <SlotFillProvider>
+      <DropZoneProvider>
         <BlockEditorProvider
           value={blocks}
           onInput={setBlocks}
           onChange={blocks => saveNote(serialize(blocks))}
           settings={{}}
         >
-          <BlockEditorKeyboardShortcuts />
-          <WritingFlow>
-            <BlockList />
-          </WritingFlow>
+          <div className="editor-styles-wrapper">
+            <Popover.Slot name="block-toolbar" />
+            <BlockEditorKeyboardShortcuts />
+            <WritingFlow>
+              <ObserveTyping>
+                <BlockList />
+              </ObserveTyping>
+            </WritingFlow>
+          </div>
+          <Popover.Slot />
         </BlockEditorProvider>
-      </SlotFillProvider>
-    </div>
+      </DropZoneProvider>
+    </SlotFillProvider>
   );
 };
 
