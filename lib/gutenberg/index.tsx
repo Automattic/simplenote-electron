@@ -33,6 +33,7 @@ type StateProps = {
 type Props = StateProps;
 
 registerCoreBlocks();
+import './formulas';
 
 const allowedBlockTypes = new Set([
   'core/paragraph',
@@ -42,6 +43,7 @@ const allowedBlockTypes = new Set([
   'core/code',
   'core/preformatted',
   'core/separator',
+  'dmsnell/formula',
 ]);
 
 getBlockTypes()

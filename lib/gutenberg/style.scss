@@ -116,3 +116,24 @@
     max-width: none;
   }
 }
+
+.block-editor-block-toolbar {
+  display: none;
+}
+
+.block-editor-block-list__layout .block-editor-block-list__block::before,
+.block-editor-block-list__layout
+  .block-editor-block-list__block.is-selected::before {
+  border: none;
+  box-shadow: none;
+}
+
+.block-editor-block-list__block::before,
+.block-editor-block-list__block.is-selected::before {
+  border: none;
+  box-shadow: none;
+}
+
+.block-editor-block-list__insertion-point-popover {
+  display: none;
+}

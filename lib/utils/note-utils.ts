@@ -65,8 +65,17 @@ const formatPreview = (stripMarkdown: boolean, s: string): string =>
  * @returns {Object} title and excerpt (if available)
  */
 export const noteTitleAndPreview = (note: T.NoteEntity): TitleAndPreview => {
-  const content = (note && note.data && note.data.content) || '';
+  const rawContent = (note && note.data && note.data.content) || '';
   const stripMarkdown = isMarkdown(note);
+
+  const content = stripMarkdown
+    ? (() => {
+        const div = document.createElement('div');
+        div.innerHTML = rawContent;
+        return div.innerText;
+      })()
+    : rawContent;
+
   const title = formatPreview(stripMarkdown, getTitle(content));
   const preview = formatPreview(stripMarkdown, getPreview(content));
   return { title, preview };
