@@ -4,20 +4,51 @@
 
 ### Enhancements
 - Stop erasing the copy buffer if copying empty editor selections [#1847](https://github.com/Automattic/simplenote-electron/pull/1847)
-- Allow for unselecting a tag by tab or right arrow [#1853](https://github.com/Automattic/simplenote-electron/pull/1853) @qualitymanifest
+- Allow for un-selecting a tag by tab or right arrow [#1853](https://github.com/Automattic/simplenote-electron/pull/1853) @qualitymanifest
 
 ### Fixes
 
-- Fixed tag rename functionality [#1834](https://github.com/Automattic/simplenote-electron/pull/1834)
-- Only remove markdown syntax in note list if markdown enabled for note [#1839](https://github.com/Automattic/simplenote-electron/pull/1839)
-- Fixed a bug causing the search result highlighting in the sidebar to be case sensitive [#1831](https://github.com/Automattic/simplenote-electron/pull/1831)
+- Highlight search results in note list regardless of case [#1831](https://github.com/Automattic/simplenote-electron/pull/1831)
+- Stop wiping out tag name when renaming a tag [#1834](https://github.com/Automattic/simplenote-electron/pull/1834)
+- Only render markdown syntax in note list if markdown enabled for note [#1839](https://github.com/Automattic/simplenote-electron/pull/1839)
+- Fix up/down keyboard navigation in Windows Chrome [#1888](https://github.com/Automattic/simplenote-electron/pull/1888)
+- Stop accidentally hiding the _Edit Tag_ button when clicking on it [#1900](https://github.com/Automattic/simplenote-electron/pull/1900)
+- Make tag auto-suggest case-insensitive [#1905](https://github.com/Automattic/simplenote-electron/pull/1905)
+- Incorporate second fix for Unicode bug with successive surrogate pairs [#1912](https://github.com/Automattic/simplenote-electron/pull/1912)
+- Render unicode bullet as a list item in Markdown preview [#1922](https://github.com/Automattic/simplenote-electron/pull/1922)
 
 ### Other Changes
 
-- Added types to state/ui/actions [#1849](https://github.com/Automattic/simplenote-electron/pull/1849)
-- Updated Dependencies [#1848](https://github.com/Automattic/simplenote-electron/pull/1848)
-- Refactored selected note state [1851](https://github.com/Automattic/simplenote-electron/pull/1851)
-- Update Electron and associated dependencies [1771](https://github.com/Automattic/simplenote-electron/pull/1771)
+- Added type information throughout the codebase
+  [#1849](https://github.com/Automattic/simplenote-electron/pull/1849),
+  [#1873](https://github.com/Automattic/simplenote-electron/pull/1873),
+  [#1883](https://github.com/Automattic/simplenote-electron/pull/1883),
+  [#1884](https://github.com/Automattic/simplenote-electron/pull/1884),
+  [#1886](https://github.com/Automattic/simplenote-electron/pull/1886),
+  [#1889](https://github.com/Automattic/simplenote-electron/pull/1889),
+  [#1932](https://github.com/Automattic/simplenote-electron/pull/1932),
+  [#1933](https://github.com/Automattic/simplenote-electron/pull/1933)
+- Refactored internal state and data flow
+  [#1851](https://github.com/Automattic/simplenote-electron/pull/1851),
+  [#1866](https://github.com/Automattic/simplenote-electron/pull/1866),
+  [#1867](https://github.com/Automattic/simplenote-electron/pull/1867),
+  [#1870](https://github.com/Automattic/simplenote-electron/pull/1870),
+  [#1871](https://github.com/Automattic/simplenote-electron/pull/1871),
+  [#1881](https://github.com/Automattic/simplenote-electron/pull/1881),
+  [#1895](https://github.com/Automattic/simplenote-electron/pull/1895),
+  [#1896](https://github.com/Automattic/simplenote-electron/pull/1896),
+  [#1899](https://github.com/Automattic/simplenote-electron/pull/1899),
+  [#1901](https://github.com/Automattic/simplenote-electron/pull/1901),
+  [#1902](https://github.com/Automattic/simplenote-electron/pull/1902),
+  [#1903](https://github.com/Automattic/simplenote-electron/pull/1903),
+  [#1907](https://github.com/Automattic/simplenote-electron/pull/1907),
+  [#1914](https://github.com/Automattic/simplenote-electron/pull/1914),
+  [#1915](https://github.com/Automattic/simplenote-electron/pull/1915),
+  [#1919](https://github.com/Automattic/simplenote-electron/pull/1919),
+  [#1921](https://github.com/Automattic/simplenote-electron/pull/1921)
+- Updated dependencies [#1771](https://github.com/automattic/simplenote-electron/pull/1771), [#1848](https://github.com/Automattic/simplenote-electron/pull/1848)
+- Connect Redux Devtools store enhancer for easier debugging [#1918](https://github.com/Automattic/simplenote-electron/pull/1918)
+- Removed `hard-source-plugin` for more reliable builds [#1924](https://github.com/Automattic/simplenote-electron/pull/1924)
 
 ## [v1.14.0]
 
