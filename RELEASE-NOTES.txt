@@ -20,33 +20,24 @@
 ### Other Changes
 
 - Added type information throughout the codebase
-  [#1849](https://github.com/Automattic/simplenote-electron/pull/1849),
-  [#1873](https://github.com/Automattic/simplenote-electron/pull/1873),
-  [#1883](https://github.com/Automattic/simplenote-electron/pull/1883),
-  [#1884](https://github.com/Automattic/simplenote-electron/pull/1884),
-  [#1886](https://github.com/Automattic/simplenote-electron/pull/1886),
-  [#1889](https://github.com/Automattic/simplenote-electron/pull/1889),
-  [#1932](https://github.com/Automattic/simplenote-electron/pull/1932),
-  [#1933](https://github.com/Automattic/simplenote-electron/pull/1933)
 - Refactored internal state and data flow
-  [#1851](https://github.com/Automattic/simplenote-electron/pull/1851),
-  [#1866](https://github.com/Automattic/simplenote-electron/pull/1866),
-  [#1867](https://github.com/Automattic/simplenote-electron/pull/1867),
-  [#1870](https://github.com/Automattic/simplenote-electron/pull/1870),
-  [#1871](https://github.com/Automattic/simplenote-electron/pull/1871),
-  [#1881](https://github.com/Automattic/simplenote-electron/pull/1881),
-  [#1895](https://github.com/Automattic/simplenote-electron/pull/1895),
-  [#1896](https://github.com/Automattic/simplenote-electron/pull/1896),
-  [#1899](https://github.com/Automattic/simplenote-electron/pull/1899),
-  [#1901](https://github.com/Automattic/simplenote-electron/pull/1901),
-  [#1902](https://github.com/Automattic/simplenote-electron/pull/1902),
-  [#1903](https://github.com/Automattic/simplenote-electron/pull/1903),
-  [#1907](https://github.com/Automattic/simplenote-electron/pull/1907),
-  [#1914](https://github.com/Automattic/simplenote-electron/pull/1914),
-  [#1915](https://github.com/Automattic/simplenote-electron/pull/1915),
-  [#1919](https://github.com/Automattic/simplenote-electron/pull/1919),
-  [#1921](https://github.com/Automattic/simplenote-electron/pull/1921)
+  [#1851](https://github.com/Automattic/simplenote-electron/pull/1851) (selected note),
+  [#1866](https://github.com/Automattic/simplenote-electron/pull/1866) (editor mode),
+  [#1870](https://github.com/Automattic/simplenote-electron/pull/1870) (connection status),
+  [#1871](https://github.com/Automattic/simplenote-electron/pull/1871) (unsync'd note ids),
+  [#1881](https://github.com/Automattic/simplenote-electron/pull/1881) (search query),
+  [#1895](https://github.com/Automattic/simplenote-electron/pull/1895) (close note action),
+  [#1896](https://github.com/Automattic/simplenote-electron/pull/1896) (various UI toggles),
+  [#1899](https://github.com/Automattic/simplenote-electron/pull/1899) (tag editing),
+  [#1901](https://github.com/Automattic/simplenote-electron/pull/1901) (show trash),
+  [#1902](https://github.com/Automattic/simplenote-electron/pull/1902) (filter list title),
+  [#1903](https://github.com/Automattic/simplenote-electron/pull/1903) (viewing revisions),
+  [#1907](https://github.com/Automattic/simplenote-electron/pull/1907) (toggle navigation),
+  [#1914](https://github.com/Automattic/simplenote-electron/pull/1914) (search field focus),
+  [#1919](https://github.com/Automattic/simplenote-electron/pull/1919) (previous selected note),
+  [#1921](https://github.com/Automattic/simplenote-electron/pull/1921) (revision fetching)
 - Updated dependencies [#1771](https://github.com/automattic/simplenote-electron/pull/1771), [#1848](https://github.com/Automattic/simplenote-electron/pull/1848)
+- Improve reliability of end-to-end tests by removing data races and test parallelism [#1913](https://github.com/automattic/simplenote-electron/pull/1913)
 - Connect Redux Devtools store enhancer for easier debugging [#1918](https://github.com/Automattic/simplenote-electron/pull/1918)
 - Removed `hard-source-plugin` for more reliable builds [#1924](https://github.com/Automattic/simplenote-electron/pull/1924)
 
