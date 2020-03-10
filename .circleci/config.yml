@@ -4,6 +4,14 @@ orbs:
   win: circleci/windows@2.2.0
 
 references:
+  job_filters: &job_filters
+    branches:
+      ignore:
+        - webapp
+        - webapp-develop
+        - webapp-staging
+    tags:
+      only: /.*/
   restore_nvm: &restore_nvm
     restore_cache:
       name: Restoring NVM cache
@@ -206,42 +214,22 @@ workflows:
   simplenote:
     jobs:
       - build:
-          filters:
-            branches:
-              ignore: webapp
-            tags:
-              only: /.*/
+          filters: *job_filters
       - linux:
           requires:
             - build
-          filters:
-            branches:
-              ignore: webapp
-            tags:
-              only: /.*/
+          filters: *job_filters
       - mac:
           requires:
             - build
-          filters:
-            branches:
-              ignore: webapp
-            tags:
-              only: /.*/
+          filters: *job_filters
       - windows:
           requires:
             - build
-          filters:
-            branches:
-              ignore: webapp
-            tags:
-              only: /.*/
+          filters: *job_filters
       - artifacts:
           requires:
             - linux
             - mac
             - windows
-          filters:
-            branches:
-              ignore: webapp
-            tags:
-              only: /.*/
+          filters: *job_filters
