@@ -93,7 +93,7 @@ jobs:
 
   test:
     docker:
-      - image: circleci/node:12.14.0-browsers
+      - image: circleci/node:12.14.0
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -106,7 +106,6 @@ jobs:
       - *npm_restore_cache
       - *npm_install
       - run: NODE_ENV=test npm run build
-      - run: npm run test-e2e
       - run: npm test
       - run: npm run lint
 
