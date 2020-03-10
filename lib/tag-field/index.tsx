@@ -1,6 +1,11 @@
-import React, { Component } from 'react';
+import React, {
+  Component,
+  KeyboardEvent,
+  KeyboardEventHandler,
+  MouseEvent,
+  RefObject,
+} from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Overlay } from 'react-overlays';
 import isEmailTag from '../utils/is-email-tag';
 import { updateNoteTags } from '../state/domain/notes';
@@ -18,19 +23,42 @@ import {
   union,
 } from 'lodash';
 
-export class TagField extends Component {
-  static displayName = 'TagField';
+import * as S from '../state';
+import * as T from '../types';
 
-  static propTypes = {
-    allTags: PropTypes.array.isRequired,
-    note: PropTypes.object.isRequired,
-    storeFocusTagField: PropTypes.func,
-    storeHasFocus: PropTypes.func,
-    tags: PropTypes.array.isRequired,
-    unusedTags: PropTypes.arrayOf(PropTypes.string),
-    updateNoteTags: PropTypes.func.isRequired,
-    usedTags: PropTypes.arrayOf(PropTypes.string),
-  };
+type OwnProps = {
+  allTags: T.TagName[];
+  note: T.NoteEntity;
+  storeFocusTagField: (focusSetter: () => any) => any;
+  storeHasFocus: (focusGetter: () => boolean) => any;
+  tags: T.TagName[];
+  unusedTags: T.TagName[];
+  usedTags: T.TagName[];
+};
+
+type OwnState = {
+  selectedTag: T.TagName;
+  showEmailTooltip?: boolean;
+  tagInput: string;
+};
+
+type DispatchProps = {
+  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagEntity[] }) => any;
+};
+
+type Props = OwnProps & DispatchProps;
+
+const KEY_BACKSPACE = 8;
+const KEY_TAB = 9;
+const KEY_RIGHT = 39;
+
+export class TagField extends Component<Props, OwnState> {
+  focusInput?: () => any;
+  hiddenTag?: RefObject<HTMLInputElement> | null;
+  inputHasFocus?: () => boolean;
+  tagInput?: RefObject<HTMLDivElement> | null;
+
+  static displayName = 'TagField';
 
   static defaultProps = {
     storeFocusTagField: noop,
@@ -60,7 +88,7 @@ export class TagField extends Component {
     }
   }
 
-  addTag = tags => {
+  addTag = (tags: string) => {
     const { allTags, tags: existingTags } = this.props;
 
     const newTags = tags
@@ -86,7 +114,7 @@ export class TagField extends Component {
   hasSelection = () =>
     this.state.selectedTag && !!this.state.selectedTag.length;
 
-  deleteTag = tagName => {
+  deleteTag = (tagName: T.TagName) => {
     const { tags } = this.props;
     const { selectedTag } = this.state;
 
@@ -113,22 +141,29 @@ export class TagField extends Component {
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys = e => {
-    // only handle backspace
-    if (8 !== e.which) {
+  interceptKeys: KeyboardEventHandler = e => {
+    if (KEY_BACKSPACE === e.which) {
+      if (this.hasSelection()) {
+        this.deleteSelection();
+      }
+
+      if ('' !== this.state.tagInput) {
+        return;
+      }
+
+      this.selectLastTag();
+      e.preventDefault();
       return;
     }
-
-    if (this.hasSelection()) {
-      this.deleteSelection();
-    }
-
-    if ('' !== this.state.tagInput) {
+    if (KEY_RIGHT === e.which && this.hasSelection()) {
+      this.unselect(e);
+      this.focusTagField();
       return;
     }
-
-    this.selectLastTag();
-    e.preventDefault();
+    if (KEY_TAB === e.which && this.hasSelection()) {
+      this.unselect(e);
+      return;
+    }
   };
 
   updateTags = tags =>
@@ -137,7 +172,7 @@ export class TagField extends Component {
   selectLastTag = () =>
     this.setState({ selectedTag: this.props.tags.slice(-1).shift() });
 
-  selectTag = event => {
+  selectTag = (event: MouseEvent<HTMLDivElement>) => {
     const {
       target: {
         dataset: { tagName },
@@ -156,7 +191,7 @@ export class TagField extends Component {
     setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
   };
 
-  onKeyDown = e => {
+  onKeyDown = (e: KeyboardEvent) => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
     }
@@ -172,10 +207,10 @@ export class TagField extends Component {
 
   storeInputRef = r => (this.tagInput = r);
 
-  storeTagInput = (value, callback) =>
+  storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
 
-  unselect = event => {
+  unselect = (event: KeyboardEvent) => {
     if (!this.state.selectedTag) {
       return;
     }
@@ -238,4 +273,6 @@ export class TagField extends Component {
   }
 }
 
-export default connect(null, { updateNoteTags })(TagField);
+export default connect(null, { updateNoteTags } as S.MapDispatch<
+  DispatchProps
+>)(TagField);

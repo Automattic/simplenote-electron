@@ -1,30 +1,42 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  ClipboardEvent,
+  Component,
+  CompositionEvent,
+  KeyboardEvent,
+  RefObject,
+} from 'react';
 import { get, identity, invoke, noop } from 'lodash';
+
+import * as T from '../types';
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
 const KEY_RIGHT = 39;
 const KEY_COMMA = 188;
 
-const startsWith = prefix => text =>
+const startsWith = (prefix: string) => (text: string): boolean =>
   text
     .trim()
     .toLowerCase()
     .startsWith(prefix.trim().toLowerCase());
 
-export class TagInput extends Component {
-  static displayName = 'TagInput';
+type OwnProps = {
+  inputRef: (ref: RefObject<HTMLDivElement>) => any;
+  onChange: (tagName: string, callback: () => any) => any;
+  onSelect: (tagName: string) => any;
+  storeFocusInput: (focusSetter: () => any) => any;
+  storeHasFocus: (focusGetter: () => boolean) => any;
+  tagNames: T.TagName[];
+  value: string;
+};
 
-  static propTypes = {
-    inputRef: PropTypes.func,
-    onChange: PropTypes.func,
-    onSelect: PropTypes.func,
-    storeFocusInput: PropTypes.func,
-    storeHasFocus: PropTypes.func,
-    tagNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-    value: PropTypes.string.isRequired,
-  };
+type Props = OwnProps;
+
+export class TagInput extends Component<Props> {
+  inputField?: RefObject<HTMLDivElement> | null;
+  inputObserver?: MutationObserver;
+
+  static displayName = 'TagInput';
 
   static defaultProps = {
     inputRef: identity,
@@ -63,7 +75,7 @@ export class TagInput extends Component {
     this.inputObserver.disconnect();
   }
 
-  completeSuggestion = (andThen = identity) => {
+  completeSuggestion = (andThen: (...args: any[]) => any = identity) => {
     const { onChange, tagNames, value } = this.props;
 
     if (!value.length) {
@@ -98,7 +110,7 @@ export class TagInput extends Component {
 
   hasFocus = () => document.activeElement === this.inputField;
 
-  interceptKeys = event =>
+  interceptKeys = (event: KeyboardEvent) =>
     invoke(
       {
         [KEY_ENTER]: this.submitTag,
@@ -110,7 +122,7 @@ export class TagInput extends Component {
       event
     );
 
-  interceptRightArrow = event => {
+  interceptRightArrow = (event: KeyboardEvent) => {
     const { value } = this.props;
 
     // if we aren't already at the right-most extreme
@@ -127,14 +139,14 @@ export class TagInput extends Component {
     event.stopPropagation();
   };
 
-  interceptTabPress = event => {
+  interceptTabPress = (event: KeyboardEvent) => {
     this.completeSuggestion(this.submitTag);
 
     event.preventDefault();
     event.stopPropagation();
   };
 
-  onInputMutation = mutationList => {
+  onInputMutation = (mutationList: MutationRecord[]) => {
     mutationList.forEach(mutation => {
       let value = get(mutation, 'target.data', '');
 
@@ -146,7 +158,7 @@ export class TagInput extends Component {
     });
   };
 
-  onInput = value => {
+  onInput = (value: string) => {
     if (this.state.isComposing) {
       return;
     }
@@ -154,12 +166,12 @@ export class TagInput extends Component {
     this.props.onChange(value.trim(), this.focusInput);
   };
 
-  onCompositionEnd = e => {
+  onCompositionEnd = (e: CompositionEvent) => {
     const value = e.target.textContent;
     this.setState({ isComposing: false }, () => this.onInput(value));
   };
 
-  removePastedFormatting = event => {
+  removePastedFormatting = (event: ClipboardEvent) => {
     let clipboardText;
 
     if (get(event, 'clipboardData.getData')) {
@@ -174,7 +186,7 @@ export class TagInput extends Component {
     event.stopPropagation();
   };
 
-  storeInput = ref => {
+  storeInput = (ref: RefObject<HTMLDivElement> | null) => {
     this.inputField = ref;
     this.props.inputRef(ref);
     invoke(
@@ -186,7 +198,7 @@ export class TagInput extends Component {
     );
   };
 
-  submitTag = event => {
+  submitTag = (event?: KeyboardEvent) => {
     const { onSelect, value } = this.props;
 
     value.trim().length && onSelect(value.trim());

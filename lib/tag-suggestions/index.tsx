@@ -1,27 +1,32 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import appState from '../flux/app-state';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
+import { search } from '../state/ui/actions';
+import filterAtMost from '../utils/filter-at-most';
 
-const { search, setSearchFocus } = appState.actionCreators;
-const { recordEvent } = tracks;
+import * as S from '../state';
+import * as T from '../types';
 
-export class TagSuggestions extends Component {
+type StateProps = {
+  filteredTags: T.TagEntity[];
+  searchQuery: string;
+};
+
+type DispatchProps = {
+  onSearch: (query: string) => any;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class TagSuggestions extends Component<Props> {
   static displayName = 'TagSuggestions';
 
-  static propTypes = {
-    filteredTags: PropTypes.array.isRequired,
-    onSearch: PropTypes.func.isRequired,
-    query: PropTypes.string.isRequired,
-  };
+  updateSearch = (nextSearch: string) => {
+    const { searchQuery, onSearch } = this.props;
 
-  updateSearch = filter => {
-    const { query, onSearch } = this.props;
-
-    // replace last word in current query with requested tag match
-    let newQuery = query.trim().split(' ');
-    newQuery.splice(-1, 1, filter);
+    // replace last word in current searchQuery with requested tag match
+    let newQuery = searchQuery.trim().split(' ');
+    newQuery.splice(-1, 1, nextSearch);
     let querystring = newQuery.join(' ');
 
     // add a space at the end so the user can immediately start typing
@@ -58,37 +63,33 @@ export class TagSuggestions extends Component {
   }
 }
 
-const filterTags = (tags, query) =>
-  query
-    ? tags
-        .filter(tag => {
-          // split on spaces and treat each "word" as a separate query
-          let queryWords = query.trim().split(' ');
+export const filterTags = (tags: T.TagEntity[], query: string) => {
+  // we'll only suggest matches for the last word
+  // ...this is possibly naive if the user has moved back and is editing,
+  // but without knowing where the cursor is it's maybe the best we can do
+  const tagTerm = query
+    .trim()
+    .toLowerCase()
+    .split(' ')
+    .pop();
 
-          // we'll only suggest matches for the last word
-          // ...this is possibly naive if the user has moved back and is editing,
-          // but without knowing where the cursor is it's maybe the best we can do
-          let testQuery = queryWords[queryWords.length - 1];
+  if (!tagTerm) {
+    return tags;
+  }
 
-          // prefix tag ID with "tag:"; this allows us to match if the user typed the prefix
-          // n.b. doing it in this direction instead of stripping off any "tag:" prefix allows support
-          // of tags that contain the string "tag:" ¯\_(ツ)_/¯
-          let testID = 'tag:' + tag.data.name;
+  // with `tag:` we don't want to suggest tags which have already been added
+  // to the search bar, so we make it an explicit prefix match, meaning we
+  // don't match inside the tag and we don't match full-text matches
+  const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
+  const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
 
-          // exception: if the user typed "tag:" or some subset thereof, don't return all tags
-          if (['t', 'ta', 'tag', 'tag:'].includes(testQuery)) {
-            testID = tag.data.name;
-          }
+  const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
+    ? ({ data: { name } }) =>
+        name.toLowerCase() !== term && name.toLowerCase().startsWith(term)
+    : ({ data: { name } }) => name.toLowerCase().includes(term);
 
-          return (
-            testID.search(new RegExp('(tag:)?' + testQuery, 'i')) !== -1 &&
-            // discard exact matches -- if the user has already typed or clicked
-            // the full tag name, don't suggest it
-            !queryWords.includes(testID)
-          );
-        })
-        .slice(0, 5)
-    : tags; // don't bother filtering if we don't have a query to filter by
+  return filterAtMost(tags, matcher, 5);
+};
 
 let lastTags = null;
 let lastQuery = null;
@@ -104,16 +105,18 @@ export const getMatchingTags = (tags, query) => {
   return lastMatches;
 };
 
-const mapStateToProps = ({ appState: state }) => ({
-  filteredTags: getMatchingTags(state.tags, state.filter),
-  query: state.filter,
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui: { searchQuery },
+}) => ({
+  filteredTags: getMatchingTags(state.tags, searchQuery),
+  searchQuery,
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSearch: filter => {
-    dispatch(search({ filter }));
-    recordEvent('list_notes_searched');
-    dispatch(setSearchFocus({ searchFocus: true }));
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  onSearch: query => {
+    dispatch(search(query));
+    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 

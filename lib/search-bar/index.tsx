@@ -1,61 +1,81 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import appState from '../flux/app-state';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
+import { createNote, search, toggleNavigation } from '../state/ui/actions';
 
-const { newNote, search, toggleNavigation } = appState.actionCreators;
-const { recordEvent } = tracks;
+import * as S from '../state';
+import * as T from '../types';
 
-type Props = {
+const { newNote } = appState.actionCreators;
+
+type OwnProps = {
   onNewNote: Function;
-  onToggleNavigation: Function;
-  query: string;
+  noteBucket: object;
+  onNoteOpened: Function;
+};
+
+type StateProps = {
+  searchQuery: string;
   showTrash: boolean;
 };
 
-export const SearchBar: FunctionComponent<Props> = ({
+type DispatchProps = {
+  toggleNavigation: () => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+export const SearchBar: Component<Props> = ({
   onNewNote,
-  onToggleNavigation,
-  query,
+  searchQuery,
   showTrash,
+  toggleNavigation,
 }) => (
   <div className="search-bar theme-color-border">
-    <IconButton icon={<MenuIcon />} onClick={onToggleNavigation} title="Menu" />
+    <IconButton icon={<MenuIcon />} onClick={toggleNavigation} title="Menu" />
     <SearchField />
     <IconButton
       disabled={showTrash}
       icon={<NewNoteIcon />}
-      onClick={() => onNewNote(withoutTags(query))}
+      onClick={() => onNewNote(withoutTags(searchQuery))}
       title="New Note"
     />
   </div>
 );
 
-const mapStateToProps = ({ appState: state }) => ({
-  query: state.filter,
-  showTrash: state.showTrash,
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { searchQuery, showTrash },
+}) => ({
+  searchQuery,
+  showTrash,
 });
 
-const mapDispatchToProps = (dispatch, { noteBucket, onNoteOpened }) => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
+  dispatch,
+  { noteBucket }
+) => ({
   onNewNote: (content: string) => {
-    dispatch(search({ filter: '' }));
+    dispatch(createNote());
+    dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
-    onNoteOpened();
-    recordEvent('list_note_created');
+    analytics.tracks.recordEvent('list_note_created');
   },
-  onToggleNavigation: () => dispatch(toggleNavigation()),
+  toggleNavigation: () => {
+    dispatch(toggleNavigation());
+  },
 });
 
 SearchBar.displayName = 'SearchBar';

@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["dom", "jest"]
   },
   "include": ["lib/**/*"]
 }

@@ -1,22 +1,35 @@
-import { AnyAction } from 'redux';
 import { filterNotes as filterAction } from './actions';
 import filterNotes from '../../utils/filter-notes';
 
+import * as A from '../action-types';
+import * as S from '../';
+
 let searchTimeout: NodeJS.Timeout;
 
-export default store => {
+export const middleware: S.Middleware = store => {
   const updateNotes = () =>
-    store.dispatch(filterAction(filterNotes(store.getState().appState)));
+    store.dispatch(
+      filterAction(
+        filterNotes(store.getState()),
+        store.getState().ui.previousIndex
+      )
+    );
 
-  return next => (action: AnyAction) => {
+  return next => (action: A.ActionType) => {
     const result = next(action);
 
     switch (action.type) {
-      // on clicks re-filter "immediately"
+      // on clicks re-filter immediately
+      case 'DELETE_NOTE_FOREVER':
+      case 'RESTORE_NOTE':
+      case 'TRASH_NOTE':
+        clearTimeout(searchTimeout);
+        updateNotes();
+        break;
+
+      // on events re-filter "immediately"
       case 'App.authChanged':
-      case 'App.deleteNoteForever':
       case 'App.notesLoaded':
-      case 'App.restoreNote':
       case 'App.selectTag':
       case 'App.selectTrash':
       case 'App.showAllNotes':
@@ -28,10 +41,9 @@ export default store => {
 
       // on updating the search field we should delay the update
       // so we don't waste our CPU time and lose responsiveness
-      case 'App.noteUpdatedRemotely':
-      case 'App.search':
+      case 'SEARCH':
         clearTimeout(searchTimeout);
-        if ('App.search' === action.type && !action.filter) {
+        if (!action.searchQuery) {
           // if we just cleared out the search bar then immediately update
           updateNotes();
         } else {
@@ -43,3 +55,5 @@ export default store => {
     return result;
   };
 };
+
+export default middleware;

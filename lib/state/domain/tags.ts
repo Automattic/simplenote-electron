@@ -50,7 +50,7 @@ export const renameTag = ({ tag, name: newName }) => (dispatch, getState) => {
       data: {
         ...note.data,
         tags: note.data.tags.map(noteTag =>
-          noteTag === tagName ? name : noteTag
+          noteTag === tagName ? newName : noteTag
         ),
       },
     }))

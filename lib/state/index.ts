@@ -4,7 +4,16 @@
  * All data should flow through here
  */
 
-import { compose, createStore, combineReducers, applyMiddleware } from 'redux';
+import {
+  Dispatch as ReduxDispatch,
+  Middleware as ReduxMiddleware,
+  MiddlewareAPI,
+  Store as ReduxStore,
+  compose,
+  createStore,
+  combineReducers,
+  applyMiddleware,
+} from 'redux';
 import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 import { omit } from 'lodash';
@@ -12,39 +21,29 @@ import { omit } from 'lodash';
 import appState from '../flux/app-state';
 
 import uiMiddleware from './ui/middleware';
+import searchFieldMiddleware from './ui/search-field-middleware';
+import simperiumMiddleware from './simperium/middleware';
 
 import auth from './auth/reducer';
 import settings from './settings/reducer';
 import ui from './ui/reducer';
 
+import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
   dialogs: unknown[];
-  editorMode: T.EditorMode;
-  editingTags: boolean;
-  filter: string;
-  isOffline: boolean;
-  isViewingRevisions: boolean;
-  listTitle: T.TranslatableString;
   nextDialogKey: number;
-  note?: T.NoteEntity;
   notes: T.NoteEntity[] | null;
   preferences?: T.Preferences;
-  previousIndex: number;
   revision: T.NoteEntity | null;
-  searchFocus: boolean;
-  selectedNoteId: T.EntityId | null;
-  shouldPrint: boolean;
   showNavigation: boolean;
-  showNoteInfo: boolean;
-  showTrash: boolean;
   tags: T.TagEntity[];
   tag?: T.TagEntity;
   unsyncedNoteIds: T.EntityId[];
 };
 
-export const reducers = combineReducers({
+export const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   auth,
   settings,
@@ -58,9 +57,11 @@ export type State = {
   ui: ReturnType<typeof ui>;
 };
 
-export const store = createStore(
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export const store = createStore<State, A.ActionType, {}, {}>(
   reducers,
-  compose(
+  composeEnhancers(
     persistState('settings', {
       key: 'simpleNote',
       slicer: path => state => ({
@@ -68,8 +69,46 @@ export const store = createStore(
         [path]: omit(state[path], 'focusModeEnabled'),
       }),
     }),
-    applyMiddleware(thunk, uiMiddleware)
+    applyMiddleware(
+      thunk,
+      uiMiddleware,
+      searchFieldMiddleware,
+      simperiumMiddleware
+    )
   )
 );
+
+export type Store = {
+  dispatch: Dispatch;
+  getState(): State;
+};
+
+export type MapState<StateProps, OwnProps = {}> = (
+  state: State,
+  ownProps: OwnProps
+) => StateProps;
+
+export type MapDispatchFunction<DispatchProps, OwnProps = {}> = (
+  dispatch: <T extends A.ActionType>(action: T) => T,
+  ownProps: OwnProps
+) => DispatchProps;
+
+export type MapDispatch<
+  DispatchProps extends { [name: string]: (...args: any[]) => any },
+  OwnProps = {}
+> =
+  | MapDispatchFunction<DispatchProps, OwnProps>
+  | {
+      [P in keyof DispatchProps]: (
+        ...args: Parameters<DispatchProps[P]>
+      ) => A.ActionType;
+    };
+
+export type Dispatch = ReduxDispatch<A.ActionType>;
+export type Middleware<Extension = {}> = ReduxMiddleware<
+  Extension,
+  State,
+  Dispatch
+>;
 
 export default store;

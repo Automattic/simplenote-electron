@@ -5,7 +5,7 @@ const updater = require('../updater');
 const DialogTypes = require('../../shared/dialog-types');
 
 const about = {
-  label: '&About ' + app.getName(),
+  label: '&About ' + app.name,
   click: appCommandSender({
     action: 'showDialog',
     dialog: DialogTypes.ABOUT,

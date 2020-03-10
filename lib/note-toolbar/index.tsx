@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -12,42 +13,48 @@ import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
-export class NoteToolbar extends Component {
+import {
+  closeNote,
+  toggleEditMode,
+  toggleNoteInfo,
+  toggleRevisions,
+} from '../state/ui/actions';
+
+import * as S from '../state';
+import * as T from '../types';
+
+type DispatchProps = {
+  closeNote: () => any;
+  toggleEditMode: () => any;
+  toggleNoteInfo: () => any;
+  toggleRevisions: () => any;
+};
+
+type StateProps = {
+  editMode: boolean;
+  markdownEnabled: boolean;
+  note: T.NoteEntity | null;
+};
+
+type Props = DispatchProps & StateProps;
+
+export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   static propTypes = {
-    note: PropTypes.object,
     onRestoreNote: PropTypes.func,
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
-    onShowRevisions: PropTypes.func,
     onShareNote: PropTypes.func,
-    onCloseNote: PropTypes.func,
-    onShowNoteInfo: PropTypes.func,
-    setIsViewingRevisions: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
-    onSetEditorMode: PropTypes.func,
-    editorMode: PropTypes.string,
-    markdownEnabled: PropTypes.bool,
   };
 
   static defaultProps = {
-    editorMode: 'edit',
-    onCloseNote: noop,
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
-    onSetEditorMode: noop,
-    onShowNoteInfo: noop,
-    onShowRevisions: noop,
     onShareNote: noop,
     onTrashNote: noop,
-    setIsViewingRevisions: noop,
     toggleFocusMode: noop,
-  };
-
-  showRevisions = () => {
-    this.props.setIsViewingRevisions(true);
-    this.props.onShowRevisions(this.props.note);
   };
 
   render() {
@@ -61,16 +68,8 @@ export class NoteToolbar extends Component {
     );
   }
 
-  setEditorMode = () => {
-    const { editorMode } = this.props;
-
-    this.props.onSetEditorMode(editorMode === 'markdown' ? 'edit' : 'markdown');
-  };
-
   renderNormal = () => {
-    const { note, editorMode, markdownEnabled } = this.props;
-    const isPreviewing = editorMode === 'markdown';
-
+    const { editMode, markdownEnabled, note, toggleNoteInfo } = this.props;
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -88,15 +87,15 @@ export class NoteToolbar extends Component {
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
-              onClick={this.props.onCloseNote}
+              onClick={this.props.closeNote}
               title="Back"
             />
           </div>
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
-                icon={isPreviewing ? <PreviewStopIcon /> : <PreviewIcon />}
-                onClick={this.setEditorMode}
+                icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
+                onClick={this.props.toggleEditMode}
                 title="Preview • Ctrl+Shift+P"
               />
             </div>
@@ -104,7 +103,7 @@ export class NoteToolbar extends Component {
           <div className="note-toolbar__button">
             <IconButton
               icon={<RevisionsIcon />}
-              onClick={this.showRevisions}
+              onClick={this.props.toggleRevisions}
               title="History"
             />
           </div>
@@ -125,7 +124,7 @@ export class NoteToolbar extends Component {
           <div className="note-toolbar__button">
             <IconButton
               icon={<InfoIcon />}
-              onClick={this.props.onShowNoteInfo}
+              onClick={toggleNoteInfo}
               title="Info"
             />
           </div>
@@ -142,7 +141,7 @@ export class NoteToolbar extends Component {
         <div className="note-toolbar__column-left">
           <IconButton
             icon={<BackIcon />}
-            onClick={this.props.onCloseNote}
+            onClick={this.props.closeNote}
             title="Back"
           />
         </div>
@@ -171,4 +170,25 @@ export class NoteToolbar extends Component {
   };
 }
 
-export default NoteToolbar;
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { note, editMode, selectedRevision },
+}) => {
+  const revisionOrNote = selectedRevision || note;
+
+  return {
+    editMode,
+    markdownEnabled: revisionOrNote
+      ? revisionOrNote.data.systemTags.includes('markdown')
+      : false,
+    note,
+  };
+};
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeNote,
+  toggleEditMode,
+  toggleNoteInfo,
+  toggleRevisions,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

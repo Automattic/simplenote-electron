@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = () => {
@@ -71,7 +70,6 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
-      new HardSourceWebpackPlugin(),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,
         'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
@@ -87,6 +85,7 @@ module.exports = () => {
         chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
       }),
       new webpack.DefinePlugin({
+        __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),
         config: JSON.stringify(config),
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),

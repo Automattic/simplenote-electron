@@ -1,3 +1,7 @@
+if (__TEST__) {
+  window.testEvents = [];
+}
+
 import './utils/ensure-platform-support';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -10,6 +14,7 @@ import Debug from 'debug';
 import { initClient } from './client';
 import getConfig from '../get-config';
 import store from './state';
+import * as simperiumMiddleware from './state/simperium/middleware';
 import {
   reset as resetAuth,
   setAuthorized,
@@ -33,6 +38,8 @@ import appState from './flux/app-state';
 import isDevConfig from './utils/is-dev-config';
 import { normalizeForSorting } from './utils/note-utils';
 const { newNote } = appState.actionCreators;
+
+import * as T from './types';
 
 const config = getConfig();
 
@@ -66,7 +73,7 @@ const client = initClient({
   token,
   bucketConfig: {
     note: {
-      beforeIndex: function(note) {
+      beforeIndex: function(note: T.NoteEntity) {
         var content = (note.data && note.data.content) || '';
 
         return {
@@ -91,13 +98,8 @@ const client = initClient({
   version: 42,
 });
 
-const l = msg => {
-  const debug = Debug('client');
-
-  return function() {
-    debug.apply(debug, [msg].concat([].slice.call(arguments)));
-  };
-};
+const debug = Debug('client');
+const l = (msg: string) => (...args: unknown[]) => debug(msg, ...args);
 
 client
   .on('connect', l('Connected'))
@@ -126,8 +128,8 @@ let props = {
   noteBucket: client.bucket('note'),
   preferencesBucket: client.bucket('preferences'),
   tagBucket: client.bucket('tag'),
-  isDevConfig: isDevConfig(config),
-  onAuthenticate: (username, password) => {
+  isDevConfig: isDevConfig(config?.development),
+  onAuthenticate: (username: string, password: string) => {
     if (!(username && password)) {
       return;
     }
@@ -138,7 +140,7 @@ let props = {
       .then(user => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
-          return store.dispatch(resetAuth);
+          return store.dispatch(resetAuth());
         }
 
         store.dispatch(setAccountName(username));
@@ -148,7 +150,7 @@ let props = {
         client.setUser(user);
         analytics.tracks.recordEvent('user_signed_in');
       })
-      .catch(({ message }) => {
+      .catch(({ message }: { message: string }) => {
         if (
           some([
             'invalid password' === message,
@@ -161,7 +163,7 @@ let props = {
         }
       });
   },
-  onCreateUser: (username, password) => {
+  onCreateUser: (username: string, password: string) => {
     if (!(username && password)) {
       return;
     }
@@ -172,7 +174,7 @@ let props = {
       .then(user => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
-          return store.dispatch(resetAuth);
+          return store.dispatch(resetAuth());
         }
 
         store.dispatch(setAccountName(username));
@@ -203,7 +205,7 @@ let props = {
     redirectToWebSigninIfNecessary();
     analytics.tracks.recordEvent('user_signed_out');
   },
-  authorizeUserWithToken: (accountName, userToken) => {
+  authorizeUserWithToken: (accountName: string, userToken: string) => {
     resetStorageIfAccountChanged(accountName);
     localStorage.setItem('access_token', userToken);
     token = userToken;
@@ -218,7 +220,7 @@ let props = {
 };
 
 // If we sign in with a different username, ensure storage is reset
-function resetStorageIfAccountChanged(newAccountName) {
+function resetStorageIfAccountChanged(newAccountName: string) {
   const accountName = get(store.getState(), 'settings.accountName', '');
   if (accountName !== newAccountName) {
     client.reset();
@@ -234,6 +236,9 @@ if (cookie.email && config.is_app_engine) {
 }
 
 Modal.setAppElement('#root');
+simperiumMiddleware.storeBuckets({
+  note: client.bucket('note'),
+});
 
 render(
   React.createElement(Provider, { store }, React.createElement(App, props)),

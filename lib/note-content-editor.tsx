@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
 import { compact, get, invoke, noop } from 'lodash';
@@ -26,16 +27,23 @@ import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
+import * as S from './state';
+
 const TEXT_DELIMITER = '\n';
 
-export default class NoteContentEditor extends Component {
+type StateProps = {
+  searchQuery: string;
+};
+
+type Props = StateProps;
+
+class NoteContentEditor extends Component<Props> {
   static propTypes = {
     content: PropTypes.shape({
       text: PropTypes.string.isRequired,
       hasRemoteUpdate: PropTypes.bool.isRequired,
-      version: PropTypes.string,
+      version: PropTypes.number,
     }),
-    filter: PropTypes.string.isRequired,
     noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
@@ -62,23 +70,24 @@ export default class NoteContentEditor extends Component {
     );
   };
 
-  generateDecorators = filter => {
+  generateDecorators = (searchQuery: string) => {
     return new MultiDecorator(
       compact([
-        filterHasText(filter) && matchingTextDecorator(searchPattern(filter)),
+        filterHasText(searchQuery) &&
+          matchingTextDecorator(searchPattern(searchQuery)),
         checkboxDecorator(this.replaceRangeWithText),
       ])
     );
   };
 
-  createNewEditorState = (text, filter) => {
+  createNewEditorState = (text: string, searchQuery: string) => {
     const newEditorState = EditorState.createWithContent(
       ContentState.createFromText(text, TEXT_DELIMITER),
-      this.generateDecorators(filter)
+      this.generateDecorators(searchQuery)
     );
 
     // Focus the editor for a new, empty note when not searching
-    if (text === '' && filter === '') {
+    if (text === '' && searchQuery === '') {
       return EditorState.moveFocusToEnd(newEditorState);
     }
     return newEditorState;
@@ -87,7 +96,7 @@ export default class NoteContentEditor extends Component {
   state = {
     editorState: this.createNewEditorState(
       this.props.content.text,
-      this.props.filter
+      this.props.searchQuery
     ),
   };
 
@@ -152,7 +161,7 @@ export default class NoteContentEditor extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { content, filter, noteId, spellCheckEnabled } = this.props;
+    const { content, searchQuery, noteId, spellCheckEnabled } = this.props;
     const { editorState } = this.state;
 
     // To immediately reflect the changes to the spell check setting,
@@ -170,17 +179,25 @@ export default class NoteContentEditor extends Component {
       noteId !== prevProps.noteId ||
       content.version !== prevProps.content.version
     ) {
-      this.setState({
-        editorState: this.createNewEditorState(content.text, filter),
-      });
+      this.setState(
+        {
+          editorState: this.createNewEditorState(content.text, searchQuery),
+        },
+        () =>
+          __TEST__ &&
+          window.testEvents.push([
+            'editorNewNote',
+            plainTextContent(this.state.editorState),
+          ])
+      );
       return;
     }
 
-    // If filter changes, re-set decorators
-    if (filter !== prevProps.filter) {
+    // If searchQuery changes, re-set decorators
+    if (searchQuery !== prevProps.searchQuery) {
       this.setState({
         editorState: EditorState.set(editorState, {
-          decorator: this.generateDecorators(filter),
+          decorator: this.generateDecorators(searchQuery),
         }),
       });
     }
@@ -292,6 +309,9 @@ export default class NoteContentEditor extends Component {
    */
   copyPlainText = event => {
     const textToCopy = getSelectedText(this.state.editorState);
+    if (!textToCopy) {
+      return;
+    }
     event.clipboardData.setData('text/plain', textToCopy);
     event.preventDefault();
   };
@@ -317,3 +337,9 @@ export default class NoteContentEditor extends Component {
     );
   }
 }
+
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { searchQuery } }) => ({
+  searchQuery,
+});
+
+export default connect(mapStateToProps)(NoteContentEditor);

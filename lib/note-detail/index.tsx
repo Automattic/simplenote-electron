@@ -10,23 +10,27 @@ import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
+import * as S from '../state';
+
 const syncDelay = 2000;
 
-export class NoteDetail extends Component {
+type StateProps = {
+  showNoteInfo: boolean;
+};
+
+type Props = StateProps;
+
+export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
     dialogs: PropTypes.array.isRequired,
-    filter: PropTypes.string.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
-    onNotePrinted: PropTypes.func.isRequired,
     note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
-    shouldPrint: PropTypes.bool.isRequired,
-    showNoteInfo: PropTypes.bool.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
     storeHasFocus: PropTypes.func,
@@ -57,8 +61,6 @@ export class NoteDetail extends Component {
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  saveEditorRef = ref => (this.editor = ref);
-
   isValidNote = note => note && note.id;
 
   componentWillReceiveProps(nextProps) {
@@ -72,13 +74,7 @@ export class NoteDetail extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, onNotePrinted, previewingMarkdown, shouldPrint } = this.props;
-
-    // Immediately print once `shouldPrint` has been set
-    if (shouldPrint) {
-      window.print();
-      onNotePrinted();
-    }
+    const { note, previewingMarkdown } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
@@ -185,7 +181,6 @@ export class NoteDetail extends Component {
   render() {
     const {
       note,
-      filter,
       fontSize,
       previewingMarkdown,
       spellCheckEnabled,
@@ -222,13 +217,11 @@ export class NoteDetail extends Component {
                 style={divStyle}
               >
                 <NoteContentEditor
-                  ref={this.saveEditorRef}
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
                   noteId={get(note, 'id', null)}
                   content={content}
-                  filter={filter}
                   onChangeContent={this.saveNote}
                 />
               </div>
@@ -240,18 +233,15 @@ export class NoteDetail extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  ui,
+  settings,
+}) => ({
   dialogs: state.dialogs,
-  filter: state.filter,
-  shouldPrint: state.shouldPrint,
-  showNoteInfo: state.showNoteInfo,
+  note: ui.selectedRevision || ui.note,
+  showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-const { setShouldPrintNote } = appState.actionCreators;
-
-const mapDispatchToProps = {
-  onNotePrinted: () => setShouldPrintNote({ shouldPrint: false }),
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);
+export default connect(mapStateToProps)(NoteDetail);

@@ -14,7 +14,7 @@ function CheckboxControl({ className, ...props }) {
 }
 
 CheckboxControl.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };
 
 export default CheckboxControl;

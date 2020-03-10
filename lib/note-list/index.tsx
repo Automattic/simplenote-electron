@@ -20,7 +20,7 @@ import classNames from 'classnames';
 import { debounce, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
 import getNoteTitleAndPreview from './get-note-title-and-preview';
 import {
   decorateWith,
@@ -28,6 +28,17 @@ import {
   makeFilterDecorator,
 } from './decorators';
 import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
+
+import { closeNote } from '../state/ui/actions';
+
+import * as S from '../state';
+import * as T from '../types';
+
+type StateProps = {
+  selectedNoteId?: T.EntityId;
+};
+
+type Props = StateProps;
 
 AutoSizer.displayName = 'AutoSizer';
 List.displayName = 'List';
@@ -183,7 +194,7 @@ const getRowHeight = rowHeightCache(computeRowHeight);
  * @see react-virtual/list
  *
  * @param {Object[]} notes list of filtered notes
- * @param {String} filter search filter
+ * @param {String} searchQuery search searchQuery
  * @param {String} noteDisplay list view style: comfy, condensed, expanded
  * @param {Number} selectedNoteId id of currently selected note
  * @param {Function} onSelectNote used to change the current note selection
@@ -193,10 +204,9 @@ const getRowHeight = rowHeightCache(computeRowHeight);
 const renderNote = (
   notes,
   {
-    filter,
+    searchQuery,
     noteDisplay,
     selectedNoteId,
-    onNoteOpened,
     onSelectNote,
     onPinNote,
     isSmallScreen,
@@ -235,11 +245,10 @@ const renderNote = (
     'published-note': isPublished,
   });
 
-  const decorators = [checkboxDecorator, makeFilterDecorator(filter)];
+  const decorators = [checkboxDecorator, makeFilterDecorator(searchQuery)];
 
   const selectNote = () => {
     onSelectNote(note.id);
-    onNoteOpened();
   };
 
   return (
@@ -279,12 +288,12 @@ const renderNote = (
  * @see renderNote
  *
  * @param {Object[]} notes list of filtered notes
- * @param {String} filter search filter
+ * @param {String} searchQuery search filter
  * @param {Number} tagResultsFound number of tag matches to display
  * @returns {Object[]} modified notes list
  */
-const createCompositeNoteList = (notes, filter, tagResultsFound) => {
-  if (filter.length === 0 || tagResultsFound === 0) {
+const createCompositeNoteList = (notes, searchQuery, tagResultsFound) => {
+  if (searchQuery.length === 0 || tagResultsFound === 0) {
     return notes;
   }
 
@@ -295,19 +304,15 @@ const createCompositeNoteList = (notes, filter, tagResultsFound) => {
   ];
 };
 
-export class NoteList extends Component {
+export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
   list = createRef();
 
   static propTypes = {
-    closeNote: PropTypes.func.isRequired,
-    filter: PropTypes.string.isRequired,
     tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
     notes: PropTypes.array.isRequired,
-    selectedNoteId: PropTypes.any,
-    onNoteOpened: PropTypes.func.isRequired,
     onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
     noteDisplay: PropTypes.string.isRequired,
@@ -331,36 +336,15 @@ export class NoteList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      closeNote,
-      filter,
-      notes,
-      onSelectNote,
-      selectedNoteId,
-    } = this.props;
+    const { searchQuery, notes } = this.props;
 
     if (
-      prevProps.filter !== this.props.filter ||
+      prevProps.searchQuery !== searchQuery ||
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== notes ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent
     ) {
       this.recomputeHeights();
-    }
-
-    // Ensure that the note selected here is also selected in the editor
-    if (selectedNoteId !== prevProps.selectedNoteId) {
-      onSelectNote(selectedNoteId);
-    }
-
-    // Deselect the currently selected note if it doesn't match the search query
-    if (filter !== prevProps.filter) {
-      const selectedNotePassesFilter = notes.some(
-        note => note.id === selectedNoteId
-      );
-      if (!selectedNotePassesFilter) {
-        closeNote();
-      }
     }
   }
 
@@ -373,8 +357,11 @@ export class NoteList extends Component {
     const { ctrlKey, key, metaKey, shiftKey } = event;
 
     const cmdOrCtrl = ctrlKey || metaKey;
-
-    if (cmdOrCtrl && shiftKey && (key === 'ArrowUp' || key === 'k')) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      (key === 'ArrowUp' || key.toLowerCase() === 'k')
+    ) {
       this.props.onSelectNote(this.props.nextNote.id);
 
       event.stopPropagation();
@@ -382,7 +369,11 @@ export class NoteList extends Component {
       return false;
     }
 
-    if (cmdOrCtrl && shiftKey && (key === 'ArrowDown' || key === 'j')) {
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      (key === 'ArrowDown' || key.toLowerCase() === 'j')
+    ) {
       this.props.onSelectNote(this.props.prevNote.id);
 
       event.stopPropagation();
@@ -403,10 +394,9 @@ export class NoteList extends Component {
 
   render() {
     const {
-      filter,
+      searchQuery,
       hasLoaded,
       selectedNoteId,
-      onNoteOpened,
       onSelectNote,
       onEmptyTrash,
       noteDisplay,
@@ -419,9 +409,8 @@ export class NoteList extends Component {
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
     const renderNoteRow = renderNote(notes, {
-      filter,
+      searchQuery,
       noteDisplay,
-      onNoteOpened,
       onSelectNote,
       onPinNote: this.onPinNote,
       selectedNoteId,
@@ -464,7 +453,7 @@ export class NoteList extends Component {
                     notes={notes}
                     rowCount={notes.length}
                     rowHeight={getRowHeight(notes, {
-                      filter,
+                      searchQuery,
                       noteDisplay,
                       tagResultsFound,
                       width,
@@ -486,24 +475,16 @@ export class NoteList extends Component {
     this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
-const {
-  closeNote,
-  emptyTrash,
-  loadAndSelectNote,
-  pinNote,
-} = appState.actionCreators;
-const { recordEvent } = tracks;
+const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
 
-const mapStateToProps = ({
+const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes },
+  ui: { filteredNotes, note, searchQuery, showTrash },
   settings: { noteDisplay },
 }) => {
-  const tagResultsFound = getMatchingTags(state.tags, state.filter).length;
-
-  const noteIndex = Math.max(state.previousIndex, 0);
-  const selectedNote = state.note ? state.note : filteredNotes[noteIndex];
-  const selectedNoteId = get(selectedNote, 'id', state.selectedNoteId);
+  const tagResultsFound = getMatchingTags(state.tags, searchQuery).length;
+  const selectedNote = note;
+  const selectedNoteId = selectedNote?.id;
   const selectedNoteIndex = filteredNotes.findIndex(
     ({ id }) => id === selectedNoteId
   );
@@ -516,7 +497,7 @@ const mapStateToProps = ({
 
   const compositeNoteList = createCompositeNoteList(
     filteredNotes,
-    state.filter,
+    searchQuery,
     tagResultsFound
   );
 
@@ -544,16 +525,16 @@ const mapStateToProps = ({
     selectedNote && getNoteTitleAndPreview(selectedNote).preview;
 
   return {
-    filter: state.filter,
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
     notes: compositeNoteList,
     prevNote,
+    searchQuery,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
-    showTrash: state.showTrash,
+    showTrash,
     tagResultsFound,
   };
 };
@@ -564,7 +545,7 @@ const mapDispatchToProps = (dispatch, { noteBucket }) => ({
   onSelectNote: noteId => {
     if (noteId) {
       dispatch(loadAndSelectNote({ noteBucket, noteId }));
-      recordEvent('list_note_opened');
+      analytics.tracks.recordEvent('list_note_opened');
     }
   },
   onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),

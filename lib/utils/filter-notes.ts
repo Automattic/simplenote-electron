@@ -2,12 +2,15 @@
  * External dependencies
  */
 import { difference, escapeRegExp, get } from 'lodash';
-import { NoteEntity, TagEntity } from '../types';
+
+import * as S from '../state';
+import * as T from '../types';
 
 const tagPattern = () => /(?:\btag:)([^\s,]+)/g;
 
 export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
-export const filterHasText = (filter: string) => !!withoutTags(filter);
+export const filterHasText = (searchQuery: string) =>
+  !!withoutTags(searchQuery);
 
 const getTerms = (filterText: string) => {
   if (!filterText) {
@@ -44,8 +47,8 @@ const getTerms = (filterText: string) => {
   return [...literals, ...terms];
 };
 
-export const searchPattern = (filter: string) => {
-  const terms = getTerms(withoutTags(filter));
+export const searchPattern = (searchQuery: string) => {
+  const terms = getTerms(withoutTags(searchQuery));
 
   if (!terms.length) {
     return new RegExp('.+', 'g');
@@ -57,15 +60,17 @@ export const searchPattern = (filter: string) => {
   );
 };
 
-const matchesTrashView = (isViewingTrash: boolean) => (note: NoteEntity) =>
+const matchesTrashView = (isViewingTrash: boolean) => (note: T.NoteEntity) =>
   isViewingTrash === !!get(note, 'data.deleted', false);
 
-const makeMatchesTag = (tag: TagEntity, filter = '') => (note: NoteEntity) => {
+const makeMatchesTag = (tag: T.TagEntity | undefined, searchQuery = '') => (
+  note: T.NoteEntity
+) => {
   let filterTags = [];
   let match;
   const matcher = tagPattern();
 
-  while ((match = matcher.exec(filter)) !== null) {
+  while ((match = matcher.exec(searchQuery)) !== null) {
     filterTags.push(match[1]);
 
     if (filterTags.length > 100) {
@@ -82,8 +87,8 @@ const makeMatchesTag = (tag: TagEntity, filter = '') => (note: NoteEntity) => {
   return missingTags.length === 0;
 };
 
-const makeMatchesSearch = (filter = '') => (content: string) => {
-  if (!filter) {
+const makeMatchesSearch = (searchQuery = '') => (content: string) => {
+  if (!searchQuery) {
     return true;
   }
 
@@ -91,7 +96,7 @@ const makeMatchesSearch = (filter = '') => (content: string) => {
     return false;
   }
 
-  return getTerms(filter).every(term =>
+  return getTerms(searchQuery).every(term =>
     new RegExp(escapeRegExp(term), 'gi').test(content)
   );
 };
@@ -105,37 +110,35 @@ const emptyList = Object.freeze([]);
  * @TODO: Pre-index note title in domains/note
  */
 export default function filterNotes(
-  state,
-  notesArray: NoteEntity[] | null = null
+  state: S.State,
+  notesArray: T.NoteEntity[] | null = null
 ) {
   const {
-    filter, // {string} search query from input
-    notes, // {[note]} list of all available notes
-    showTrash, // {bool} whether we are looking at the trashed notes
-    tag, // {tag|null} whether we are looking at a specific tag
+    appState: { notes, tag },
+    ui: { searchQuery, showTrash },
   } = state;
 
   const notesToFilter = notesArray ? notesArray : notes;
 
   if (null === notesToFilter) {
     // share the reference so the app doesn't re-render on shallow-compare
-    return (emptyList as unknown) as NoteEntity[];
+    return (emptyList as unknown) as T.NoteEntity[];
   }
 
   // skip into some imperative code for performance-critical code
-  const titleMatches: NoteEntity[] = [];
-  const otherMatches: NoteEntity[] = [];
+  const titleMatches: T.NoteEntity[] = [];
+  const otherMatches: T.NoteEntity[] = [];
 
   // reuse these functions for each note
   const matchesTrash = matchesTrashView(showTrash);
-  const matchesTag = makeMatchesTag(tag, filter);
-  const matchesSearch = makeMatchesSearch(filter);
-  const matchesFilter = (note: NoteEntity) =>
+  const matchesTag = makeMatchesTag(tag, searchQuery);
+  const matchesSearch = makeMatchesSearch(searchQuery);
+  const matchesFilter = (note: T.NoteEntity) =>
     matchesTrash(note) &&
     matchesTag(note) &&
     matchesSearch(get(note, ['data', 'content']));
 
-  notesToFilter.forEach((note: NoteEntity) => {
+  notesToFilter.forEach((note: T.NoteEntity) => {
     if (!matchesFilter(note)) {
       return;
     }

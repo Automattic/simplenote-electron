@@ -5,29 +5,38 @@ import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
+import { toggleEditMode } from '../state/ui/actions';
 
-export class NoteEditor extends Component {
+import { closeNote } from '../state/ui/actions';
+
+import * as S from '../state';
+import * as T from '../types';
+
+type DispatchProps = {
+  toggleEditMode: () => any;
+};
+
+type StateProps = {
+  note: T.NoteEntity | null;
+};
+
+type Props = DispatchProps & StateProps;
+
+export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
 
   static propTypes = {
     allTags: PropTypes.array.isRequired,
-    closeNote: PropTypes.func.isRequired,
-    editorMode: PropTypes.oneOf(['edit', 'markdown']),
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
-    filter: PropTypes.string.isRequired,
-    note: PropTypes.object,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
-    onNoteClosed: PropTypes.func.isRequired,
     onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
-    setEditorMode: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    editorMode: 'edit',
     note: {
       data: {
         tags: [],
@@ -65,28 +74,27 @@ export class NoteEditor extends Component {
       'p' === key.toLowerCase() &&
       this.markdownEnabled
     ) {
-      const prevEditorMode = this.props.editorMode;
-      const nextEditorMode = prevEditorMode === 'edit' ? 'markdown' : 'edit';
-
-      this.props.setEditorMode({ mode: nextEditorMode });
-
+      this.props.toggleEditMode();
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
     // open note list - shift + n
-    if (this.props.isSmallScreen && cmdOrCtrl && shiftKey && 'n' === key) {
+    if (
+      this.props.isSmallScreen &&
+      cmdOrCtrl &&
+      shiftKey &&
+      'n' === key.toLowerCase()
+    ) {
       this.props.closeNote();
-      this.props.onNoteClosed();
-
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
     // toggle between tag editor and note editor
-    if (cmdOrCtrl && 't' === key && this.props.isEditorActive) {
+    if (cmdOrCtrl && 't' === key.toLowerCase() && this.props.isEditorActive) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
         this.focusNoteEditor && this.focusNoteEditor();
@@ -127,7 +135,7 @@ export class NoteEditor extends Component {
   };
 
   render() {
-    const { editorMode, note, noteBucket, fontSize } = this.props;
+    const { editMode, note, noteBucket, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -137,12 +145,8 @@ export class NoteEditor extends Component {
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
-          filter={this.props.filter}
-          note={revision}
           noteBucket={noteBucket}
-          previewingMarkdown={
-            this.markdownEnabled() && editorMode === 'markdown'
-          }
+          previewingMarkdown={this.markdownEnabled() && !editMode}
           onChangeContent={this.props.onUpdateContent}
           syncNote={this.props.syncNote}
           fontSize={fontSize}
@@ -161,20 +165,22 @@ export class NoteEditor extends Component {
   }
 }
 
-const mapStateToProps = ({ appState: state, settings }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  appState: state,
+  settings,
+  ui: { note, editMode, selectedRevision },
+}) => ({
   allTags: state.tags,
-  filter: state.filter,
   fontSize: settings.fontSize,
-  editorMode: state.editorMode,
+  editMode,
   isEditorActive: !state.showNavigation,
-  revision: state.revision,
+  note,
+  revision: selectedRevision,
 });
 
-const { closeNote, setEditorMode } = appState.actionCreators;
-
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeNote: () => dispatch(closeNote()),
-  setEditorMode: args => dispatch(setEditorMode(args)),
+  toggleEditMode: () => dispatch(toggleEditMode()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

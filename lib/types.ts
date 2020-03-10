@@ -25,10 +25,10 @@ export type Note = {
   tags: TagName[];
 };
 
-export type NoteEntity = Entity<Note>;
+export type NoteEntity = Entity<Note> & { hasRemoteUpdate?: boolean };
 
 export type Tag = {
-  index: number;
+  index?: number;
   name: TagName;
 };
 
@@ -40,7 +40,7 @@ export type Preferences = {
 
 export type PreferencesEntity = Entity<Preferences>;
 
-export type Bucket<T> = {
+export type Bucket<T = unknown> = {
   add(
     data: T,
     callback: (error: Error | null, data: Entity<T> | null) => any
@@ -61,6 +61,31 @@ export type Bucket<T> = {
 ///////////////////////////////////////
 // Application Types
 ///////////////////////////////////////
-
-export type EditorMode = 'edit' | 'markdown' | 'preview';
+export type LineLength = 'full' | 'narrow';
+export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
+export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
+export type Theme = 'system' | 'light' | 'dark';
 export type TranslatableString = string;
+
+///////////////////////////////////////
+// Language and Platform
+///////////////////////////////////////
+
+export type JSONValue =
+  | null
+  | boolean
+  | number
+  | string
+  | Array<JSONValue>
+  | { [key: string]: JSONValue };
+
+export type JSONSerializable = { [key: string]: JSONValue };
+
+// Returns a type with the properties in T not also present in U
+export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+
+// Either type T or type U, a powered-up union/sum type
+// useful when missing a discriminating property
+export type XOR<T, U> = T | U extends object
+  ? (Without<T, U> & U) | (Without<U, T> & T)
+  : T | U;

@@ -1,22 +1,28 @@
 import { clamp } from 'lodash';
 
+import * as A from '../action-types';
+import * as T from '../../types';
+
 export const initialState = {
-  accountName: null,
+  accountName: null as string | null,
   autoHideMenuBar: false,
   focusModeEnabled: false,
   fontSize: 16,
-  lineLength: 'narrow',
+  lineLength: 'narrow' as T.LineLength,
   markdownEnabled: false,
-  noteDisplay: 'comfy',
+  noteDisplay: 'comfy' as T.ListDisplayMode,
   sortReversed: false,
   sortTagsAlpha: false,
-  sortType: 'modificationDate',
+  sortType: 'modificationDate' as T.SortType,
   spellCheckEnabled: true,
-  theme: 'system',
-  wpToken: false,
+  theme: 'system' as T.Theme,
+  wpToken: false as string | boolean,
 };
 
-function reducer(state = initialState, action) {
+const reducer: A.Reducer<typeof initialState> = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
     case 'setAccountName':
       return { ...state, accountName: action.accountName };
@@ -50,6 +56,6 @@ function reducer(state = initialState, action) {
     default:
       return state;
   }
-}
+};
 
 export default reducer;

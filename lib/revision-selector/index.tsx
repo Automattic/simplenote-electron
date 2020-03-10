@@ -5,31 +5,46 @@ import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import Slider from '../components/slider';
-import appState from '../flux/app-state';
 import { updateNoteTags } from '../state/domain/notes';
+import { selectRevision, toggleRevisions } from '../state/ui/actions';
 
-import { NoteEntity } from '../types';
+import * as S from '../state';
+import * as T from '../types';
 
-const sortedRevisions = (revisions: NoteEntity[]) =>
+const sortedRevisions = (revisions: T.NoteEntity[]) =>
   orderBy(revisions, 'version', 'asc');
 
-type Props = {
-  isViewingRevisions: boolean;
-  note: NoteEntity;
-  revisions: NoteEntity[];
+type OwnProps = {
   onUpdateContent: Function;
-  setRevision: Function;
   resetIsViewingRevisions: Function;
   cancelRevision: Function;
   updateNoteTags: Function;
 };
 
-type State = {
-  revisions: NoteEntity[];
+type StateProps = {
+  isViewingRevisions: boolean;
+  note: T.NoteEntity | null;
+  revisions: T.NoteEntity[];
+};
+
+type DispatchProps = {
+  setRevision: (revision: T.NoteEntity | null) => any;
+  resetIsViewingRevisions: () => any;
+  cancelRevision: () => any;
+  updateNoteTags: (arg: {
+    note: T.NoteEntity | null;
+    tags: T.TagName[];
+  }) => any;
+};
+
+type ComponentState = {
+  revisions: T.NoteEntity[];
   selection: number;
 };
 
-export class RevisionSelector extends Component<Props, State> {
+type Props = OwnProps & StateProps & DispatchProps;
+
+export class RevisionSelector extends Component<Props, ComponentState> {
   constructor(props: Props, ...args: unknown[]) {
     super(props, ...args);
 
@@ -101,7 +116,7 @@ export class RevisionSelector extends Component<Props, State> {
     const revision = revisions[selection];
 
     this.setState({ selection });
-    this.props.setRevision(revision);
+    this.props.setRevision(revision || null);
   };
 
   onCancelRevision = () => {
@@ -167,21 +182,18 @@ export class RevisionSelector extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appState: state }) => ({
-  isViewingRevisions: state.isViewingRevisions,
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { note, noteRevisions, showRevisions },
+}) => ({
+  isViewingRevisions: showRevisions,
+  note: note,
+  revisions: noteRevisions,
 });
 
-const { setRevision, setIsViewingRevisions } = appState.actionCreators;
-
-const mapDispatchToProps = dispatch => ({
-  setRevision: revision => dispatch(setRevision({ revision })),
-  resetIsViewingRevisions: () => {
-    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
-  },
-  cancelRevision: () => {
-    dispatch(setRevision({ revision: null }));
-    dispatch(setIsViewingRevisions({ isViewingRevisions: false }));
-  },
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  setRevision: (revision: T.NoteEntity) => dispatch(selectRevision(revision)),
+  resetIsViewingRevisions: () => dispatch(toggleRevisions()),
+  cancelRevision: () => dispatch(toggleRevisions()),
   updateNoteTags: arg => dispatch(updateNoteTags(arg)),
 });
 

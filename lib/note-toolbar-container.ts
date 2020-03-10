@@ -6,38 +6,50 @@ import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import DialogTypes from '../shared/dialog-types';
 
+import * as S from './state';
 import * as T from './types';
-import { State } from './state';
 
-type ExternalProps = {
+type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
-  onNoteClosed: Function;
   toolbar: ReactElement;
 };
 
-type ConnectedProps = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
+type StateProps = {
+  isViewingRevisions: boolean;
+  notes: T.NoteEntity[];
+};
 
-type Props = ExternalProps & ConnectedProps;
+type NoteChanger = {
+  noteBucket: T.Bucket<T.Note>;
+  note: T.NoteEntity;
+};
+
+type ListChanger = NoteChanger & { previousIndex: number };
+
+type DispatchProps = {
+  deleteNoteForever: (args: ListChanger) => any;
+  restoreNote: (args: ListChanger) => any;
+  shareNote: () => any;
+  toggleFocusMode: () => any;
+  trashNote: (args: ListChanger) => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteToolbarContainer extends Component<Props> {
   // Gets the index of the note located before the currently selected one
   getPreviousNoteIndex = (note: T.NoteEntity) => {
-    const noteIndex = this.props.notes.findIndex(({ id }) => note.id === id);
+    const previousIndex = this.props.notes.findIndex(
+      ({ id }) => note.id === id
+    );
 
-    return Math.max(noteIndex - 1, 0);
-  };
-
-  onCloseNote = () => {
-    this.props.closeNote();
-    this.props.onNoteClosed();
+    return Math.max(previousIndex - 1, 0);
   };
 
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.trashNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
@@ -45,21 +57,13 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.deleteNoteForever({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
-    this.props.onNoteClosed();
     analytics.tracks.recordEvent('editor_note_restored');
-  };
-
-  onShowRevisions = (note: T.NoteEntity) => {
-    const { noteBucket } = this.props;
-    this.props.noteRevisions({ noteBucket, note });
-    analytics.tracks.recordEvent('editor_versions_accessed');
   };
 
   onShareNote = () => {
@@ -67,26 +71,14 @@ export class NoteToolbarContainer extends Component<Props> {
     analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
-  onSetEditorMode = (mode: T.EditorMode) => this.props.setEditorMode({ mode });
-
   render() {
-    const {
-      editorMode,
-      isViewingRevisions,
-      toolbar,
-      revisionOrNote,
-    } = this.props;
+    const { isViewingRevisions, toolbar } = this.props;
 
     const handlers = {
-      onCloseNote: this.onCloseNote,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
-      onSetEditorMode: this.onSetEditorMode,
-      onShowNoteInfo: this.props.toggleNoteInfo,
-      onShowRevisions: this.onShowRevisions,
       onShareNote: this.onShareNote,
       onTrashNote: this.onTrashNote,
-      setIsViewingRevisions: this.props.setIsViewingRevisions,
       toggleFocusMode: this.props.toggleFocusMode,
     };
 
@@ -94,48 +86,29 @@ export class NoteToolbarContainer extends Component<Props> {
       return null;
     }
 
-    const markdownEnabled = revisionOrNote
-      ? revisionOrNote.data.systemTags.includes('markdown')
-      : false;
-
-    return cloneElement(toolbar, { ...handlers, editorMode, markdownEnabled });
+    return cloneElement(toolbar, { ...handlers });
   }
 }
 
-const mapStateToProps = ({
-  appState: state,
-  ui: { filteredNotes },
-}: State) => ({
-  isViewingRevisions: state.isViewingRevisions,
-  editorMode: state.editorMode,
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { filteredNotes, showRevisions },
+}) => ({
+  isViewingRevisions: showRevisions,
   notes: filteredNotes,
-  revisionOrNote: state.revision || state.note,
 });
 
 const {
-  closeNote,
   deleteNoteForever,
-  noteRevisions,
   restoreNote,
-  setEditorMode,
-  setIsViewingRevisions,
   showDialog,
-  toggleNoteInfo,
   trashNote,
 } = appState.actionCreators;
 
-const mapDispatchToProps = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
-  noteRevisions: args => dispatch(noteRevisions(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  setEditorMode: args => dispatch(setEditorMode(args)),
-  setIsViewingRevisions: (isViewingRevisions: boolean) => {
-    dispatch(setIsViewingRevisions({ isViewingRevisions }));
-  },
   shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
-  toggleNoteInfo: () => dispatch(toggleNoteInfo()),
   trashNote: args => dispatch(trashNote(args)),
 });
 

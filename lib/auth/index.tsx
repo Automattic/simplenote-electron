@@ -71,12 +71,20 @@ export class Auth extends Component {
           <h1>{buttonLabel}</h1>
 
           {this.props.hasInvalidCredentials && (
-            <p className="login__auth-message is-error">
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
               Could not log in with the provided email address and password.
             </p>
           )}
           {this.props.hasLoginError && (
-            <p className="login__auth-message is-error">{errorMessage}</p>
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
+              {errorMessage}
+            </p>
           )}
           {passwordErrorMessage && (
             <p className="login__auth-message is-error">

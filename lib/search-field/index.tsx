@@ -1,12 +1,12 @@
 import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
-import appState from '../flux/app-state';
-import { tracks } from '../analytics';
+import analytics from '../analytics';
 import { State } from '../state';
+import { search } from '../state/ui/actions';
 
-const { search, setSearchFocus } = appState.actionCreators;
-const { recordEvent } = tracks;
+import { registerSearchField } from '../state/ui/search-field-middleware';
+
 const KEY_ESC = 27;
 
 type ConnectedProps = ReturnType<typeof mapStateToProps> &
@@ -17,36 +17,49 @@ export class SearchField extends Component<ConnectedProps> {
 
   inputField = createRef<HTMLInputElement>();
 
-  componentDidUpdate() {
-    const { searchFocus, onSearchFocused } = this.props;
-
-    if (searchFocus && this.inputField.current) {
-      this.inputField.current.select();
-      this.inputField.current.focus();
-      onSearchFocused();
-    }
+  componentDidMount() {
+    registerSearchField(this.focus);
   }
+
+  blur = () => {
+    if (!this.inputField.current) {
+      return;
+    }
+
+    this.inputField.current.blur();
+  };
+
+  focus = (operation = 'focus-only') => {
+    if (!this.inputField.current) {
+      return;
+    }
+
+    if ('select' === operation) {
+      this.inputField.current.select();
+    }
+    this.inputField.current.focus();
+  };
 
   interceptEsc = (event: KeyboardEvent) => {
     if (KEY_ESC === event.keyCode) {
-      if (this.props.filter === '' && this.inputField.current) {
-        this.inputField.current.blur();
+      if (this.props.searchQuery === '') {
+        this.blur();
       }
       this.clearQuery();
     }
   };
 
   update = ({
-    currentTarget: { value: filter },
+    currentTarget: { value: query },
   }: FormEvent<HTMLInputElement>) => {
-    this.props.onSearch(filter);
+    this.props.onSearch(query);
   };
 
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { filter, isTagSelected, placeholder } = this.props;
-    const hasQuery = filter.length > 0;
+    const { searchQuery, isTagSelected, placeholder } = this.props;
+    const hasQuery = searchQuery.length > 0;
 
     const screenReaderLabel =
       'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
@@ -60,7 +73,7 @@ export class SearchField extends Component<ConnectedProps> {
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
-          value={filter}
+          value={searchQuery}
           spellCheck={false}
         />
         <button
@@ -75,19 +88,20 @@ export class SearchField extends Component<ConnectedProps> {
   }
 }
 
-const mapStateToProps = ({ appState: state }: State) => ({
-  filter: state.filter,
+const mapStateToProps = ({
+  appState: state,
+  ui: { listTitle, searchQuery },
+}: State) => ({
   isTagSelected: !!state.tag,
-  placeholder: state.listTitle,
-  searchFocus: state.searchFocus,
+  placeholder: listTitle,
+  searchQuery,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSearch: (filter: string) => {
-    dispatch(search({ filter }));
-    recordEvent('list_notes_searched');
+  onSearch: (query: string) => {
+    dispatch(search(query));
+    analytics.tracks.recordEvent('list_notes_searched');
   },
-  onSearchFocused: () => dispatch(setSearchFocus({ searchFocus: false })),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

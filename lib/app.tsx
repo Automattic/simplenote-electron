@@ -30,10 +30,34 @@ import {
   pick,
   values,
 } from 'lodash';
+import {
+  createNote,
+  closeNote,
+  setUnsyncedNoteIds,
+  toggleNavigation,
+  toggleSimperiumConnectionStatus,
+} from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
 
+import actions from './state/actions';
+import * as S from './state';
+import * as T from './types';
+
 const ipc = getIpcRenderer();
+
+export type OwnProps = {
+  noteBucket: object;
+};
+
+export type DispatchProps = {
+  createNote: () => any;
+  closeNote: () => any;
+  focusSearchField: () => any;
+  selectNote: (note: T.NoteEntity) => any;
+};
+
+export type Props = DispatchProps;
 
 const mapStateToProps = state => ({
   ...state,
@@ -41,7 +65,10 @@ const mapStateToProps = state => ({
   isAuthorized: selectors.auth.isAuthorized(state),
 });
 
-function mapDispatchToProps(dispatch, { noteBucket }) {
+const mapDispatchToProps: S.MapDispatch<
+  DispatchProps,
+  OwnProps
+> = function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
   const thenReloadNotes = action => a => {
@@ -72,18 +99,23 @@ function mapDispatchToProps(dispatch, { noteBucket }) {
       ]),
       dispatch
     ),
+    closeNote: () => dispatch(closeNote()),
     loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
-
-    openTagList: () => dispatch(actionCreators.toggleNavigation()),
+    createNote: () => dispatch(createNote()),
+    openTagList: () => dispatch(toggleNavigation()),
     resetAuth: () => dispatch(reduxActions.auth.reset()),
+    selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
-    setSearchFocus: () =>
-      dispatch(actionCreators.setSearchFocus({ searchFocus: true })),
+    focusSearchField: () => dispatch(actions.ui.focusSearchField()),
+    setSimperiumConnectionStatus: connected =>
+      dispatch(toggleSimperiumConnectionStatus(connected)),
+    selectNote: note => dispatch(actions.ui.selectNote(note)),
+    setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
   };
-}
+};
 
 const isElectron = (() => {
   // https://github.com/atom/electron/issues/2288
@@ -99,7 +131,7 @@ export const App = connect(
   mapStateToProps,
   mapDispatchToProps
 )(
-  class extends Component {
+  class extends Component<Props> {
     static displayName = 'App';
 
     static propTypes = {
@@ -117,7 +149,6 @@ export const App = connect(
       openTagList: PropTypes.func.isRequired,
       onSignOut: PropTypes.func.isRequired,
       settings: PropTypes.object.isRequired,
-      noteBucket: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
@@ -129,10 +160,6 @@ export const App = connect(
       onAuthenticate: () => {},
       onCreateUser: () => {},
       onSignOut: () => {},
-    };
-
-    state = {
-      isNoteOpen: false,
     };
 
     UNSAFE_componentWillMount() {
@@ -166,18 +193,14 @@ export const App = connect(
         .on('update', debounce(this.props.loadTags, 200))
         .on('remove', this.props.loadTags);
 
-      const {
-        actions: { setConnectionStatus },
-      } = this.props;
-
       this.props.client
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
         .on('message', setLastSyncedTime)
         .on('message', this.syncActivityHooks)
         .on('send', this.syncActivityHooks)
-        .on('connect', () => setConnectionStatus({ isOffline: false }))
-        .on('disconnect', () => setConnectionStatus({ isOffline: true }));
+        .on('connect', () => this.props.setSimperiumConnectionStatus(true))
+        .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
@@ -185,6 +208,8 @@ export const App = connect(
       );
 
       this.toggleShortcuts(true);
+
+      __TEST__ && window.testEvents.push('booted');
     }
 
     componentWillUnmount() {
@@ -194,24 +219,10 @@ export const App = connect(
     }
 
     componentDidUpdate(prevProps) {
-      const { settings, isSmallScreen } = this.props;
+      const { settings } = this.props;
 
       if (settings !== prevProps.settings) {
         ipc.send('settingsUpdate', settings);
-      }
-
-      // If note has just been loaded
-      if (prevProps.appState.note === undefined && this.props.appState.note) {
-        this.setState({ isNoteOpen: true });
-      }
-
-      if (isSmallScreen !== prevProps.isSmallScreen) {
-        this.setState({
-          isNoteOpen: Boolean(
-            this.props.appState.note &&
-              (settings.focusModeEnabled || !isSmallScreen)
-          ),
-        });
       }
     }
 
@@ -222,7 +233,11 @@ export const App = connect(
       const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
       // open tag list
-      if (cmdOrCtrl && 'T' === key && !this.state.showNavigation) {
+      if (
+        cmdOrCtrl &&
+        't' === key.toLowerCase() &&
+        !this.props.showNavigation
+      ) {
         this.props.openTagList();
 
         event.stopPropagation();
@@ -238,6 +253,14 @@ export const App = connect(
         exportZipArchive();
       }
 
+      if ('printNote' === command.action) {
+        return window.print();
+      }
+
+      if ('focusSearchField' === command.action) {
+        return this.props.focusSearchField();
+      }
+
       const canRun = overEvery(
         isObject,
         o => o.action !== null,
@@ -247,6 +270,7 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
+          this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
@@ -273,7 +297,7 @@ export const App = connect(
       actions.authChanged();
 
       if (!client.isAuthorized()) {
-        actions.closeNote();
+        this.props.closeNote();
         return resetAuth();
       }
 
@@ -287,22 +311,36 @@ export const App = connect(
     };
 
     onNotesIndex = () => {
-      const { noteBucket } = this.props;
-      const { loadNotes, setUnsyncedNoteIds } = this.props.actions;
+      const { noteBucket, setUnsyncedNoteIds } = this.props;
+      const { loadNotes } = this.props.actions;
 
       loadNotes({ noteBucket });
-      setUnsyncedNoteIds({ noteIds: getUnsyncedNoteIds(noteBucket) });
+      setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
+
+      __TEST__ && window.testEvents.push('notesLoaded');
     };
 
     onNoteRemoved = () => this.onNotesIndex();
 
-    onNoteUpdate = (noteId, data, remoteUpdateInfo = {}) => {
-      if (remoteUpdateInfo.patch) {
-        this.props.actions.noteUpdatedRemotely({
-          noteBucket: this.props.noteBucket,
-          noteId,
-          data,
-          remoteUpdateInfo,
+    onNoteUpdate = (
+      noteId: T.EntityId,
+      data,
+      remoteUpdateInfo: { patch?: object } = {}
+    ) => {
+      const {
+        noteBucket,
+        selectNote,
+        ui: { note },
+      } = this.props;
+      if (note && noteId === note.id) {
+        noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
+          if (e) {
+            return;
+          }
+          const updatedNote = remoteUpdateInfo.patch
+            ? { ...storedNote, hasRemoteUpdate: true }
+            : storedNote;
+          selectNote(updatedNote);
         });
       }
     };
@@ -346,6 +384,8 @@ export const App = connect(
         },
       };
 
+      this.props.selectNote(updatedNote);
+
       const { noteBucket } = this.props;
       noteBucket.update(note.id, updatedNote.data, {}, { sync });
       if (sync) {
@@ -359,27 +399,25 @@ export const App = connect(
 
     // gets the index of the note located before the currently selected one
     getPreviousNoteIndex = note => {
-      const noteIndex = this.props.ui.filteredNotes.findIndex(
+      const previousIndex = this.props.ui.filteredNotes.findIndex(
         ({ id }) => note.id === id
       );
 
-      return Math.max(noteIndex - 1, 0);
+      return Math.max(previousIndex - 1, 0);
     };
 
     syncActivityHooks = data => {
       activityHooks(data, {
         onIdle: () => {
           const {
-            actions: { setUnsyncedNoteIds },
             appState: { notes },
             client,
             noteBucket,
+            setUnsyncedNoteIds,
           } = this.props;
 
           nudgeUnsynced({ client, noteBucket, notes });
-          setUnsyncedNoteIds({
-            noteIds: getUnsyncedNoteIds(noteBucket),
-          });
+          setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
         },
       });
     };
@@ -409,6 +447,7 @@ export const App = connect(
         settings,
         tagBucket,
         isSmallScreen,
+        ui: { showNavigation, showNoteInfo },
       } = this.props;
       const isMacApp = isElectronMac();
 
@@ -420,8 +459,8 @@ export const App = connect(
       });
 
       const mainClasses = classNames('simplenote-app', {
-        'note-info-open': state.showNoteInfo,
-        'navigation-open': state.showNavigation,
+        'note-info-open': showNoteInfo,
+        'navigation-open': showNavigation,
         'is-electron': isElectron(),
         'is-macos': isMacApp,
       });
@@ -431,24 +470,17 @@ export const App = connect(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {state.showNavigation && (
-                <NavigationBar isElectron={isElectron()} />
-              )}
+              {showNavigation && <NavigationBar isElectron={isElectron()} />}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
-                isNavigationOpen={state.showNavigation}
-                isNoteOpen={this.state.isNoteOpen}
-                isNoteInfoOpen={state.showNoteInfo}
+                isNavigationOpen={showNavigation}
+                isNoteInfoOpen={showNoteInfo}
                 isSmallScreen={isSmallScreen}
-                note={state.note}
                 noteBucket={noteBucket}
-                revisions={state.revisions}
-                onNoteClosed={() => this.setState({ isNoteOpen: false })}
-                onNoteOpened={() => this.setState({ isNoteOpen: true })}
                 onUpdateContent={this.onUpdateContent}
                 syncNote={this.syncNote}
               />
-              {state.showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
+              {showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
             </div>
           ) : (
             <Auth

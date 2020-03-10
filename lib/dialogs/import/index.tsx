@@ -8,12 +8,7 @@ import TransitionDelayEnter from '../../components/transition-delay-enter';
 import Spinner from '../../components/spinner';
 
 const SourceImporter = React.lazy(() =>
-  import(
-    /*
-    webpackChunkName: 'source-importer',
-    webpackPrefetch: true,
-  */ './source-importer'
-  )
+  import(/* webpackChunkName: 'source-importer' */ './source-importer')
 );
 
 class ImportDialog extends React.Component {
