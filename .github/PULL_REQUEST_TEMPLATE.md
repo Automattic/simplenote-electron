@@ -10,5 +10,3 @@
 ### Release
 ***(Required)*** Add a concise statement to `RELEASE-NOTES.txt` if the changes should be included in release notes. Include details about updating the notes in this section. For example:
 `RELEASE-NOTES.txt` was updated with:
-
-Added markdown support
