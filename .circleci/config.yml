@@ -204,11 +204,10 @@ jobs:
           command: |
             # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
             # Ref: https://travis-ci.community/t/codesigning-on-windows/
-            # 
-            # Fix: Import .p12 into the local certificate store. Sign Tool will use 
+            #
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use
             # package.json's `certificateSubjectName` to find the imported cert.
             Import-PfxCertificate -FilePath C:\Users\circleci\simplenote-electron\resources\certificates\win.p12 -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
-            make package-win32 IS_WINDOWS=true
             npx electron-builder --win -p onTag
       - persist_to_workspace:
           root: C:\Users\circleci\simplenote-electron
@@ -216,6 +215,38 @@ jobs:
             - release\*.exe
             - release\*.appx
             - release\*.yml
+  windowsstore:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\simplenote-electron
+    environment:
+      CSC_LINK: ''
+      WIN_CSC_LINK: ''
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\simplenote-electron
+      - run:
+          name: Install make
+          command: cinst make
+      - run:
+          name: Install node version
+          command: |
+            $NODE_VERSION = Get-Content .\.nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Npm install
+          command: |
+            npm ci
+      - run:
+          name: Build windows
+          command: |
+            npx electron-builder --win --config=./electron-builder-appx.json -p onTag
+      - persist_to_workspace:
+          root: C:\Users\circleci\simplenote-electron
+          paths:
+            - release\*.appx
   artifacts:
     docker:
       - image: buildpack-deps:trusty
@@ -246,9 +277,19 @@ workflows:
           requires:
             - build
           filters: *job_filters
+      - windowsstore:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - none
+            tags:
+              only: /.*/
       - artifacts:
           requires:
             - linux
             - mac
             - windows
+            - windowsstore
           filters: *job_filters
