@@ -1,4 +1,4 @@
-import SearchWorker from 'worker-loader!./worker';
+import SearchWorker from './worker';
 
 import actions from '../state/actions';
 
