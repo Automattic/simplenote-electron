@@ -1,8 +1,17 @@
 {
+  "productName": "Simplenote",
+  "appId": "com.automattic.simplenote",
+  "directories": {
+    "output": "release",
+    "buildResources": "resources"
+  },
+  "files": ["desktop", "dist", "shared"],
   "win": {
+    "icon": "resources/images/simplenote.ico",
     "target": [
       {
-        "target": "appx"
+        "target": "appx",
+        "arch": ["ia32", "x64"]
       }
     ]
   },
@@ -12,7 +21,8 @@
     "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
     "publisherDisplayName": "Automattic",
     "backgroundColor": "transparent",
-    "artifactName": "Simplenote-win-${version}-${arch}.${ext}"
+    "artifactName": "Simplenote-win-store-${version}-${arch}.${ext}"
   },
-  "extends": "./electron-builder.json"
+  "afterSign": "./after_sign_hook.js",
+  "afterAllArtifactBuild": "./after_sign_hook.js"
 }
