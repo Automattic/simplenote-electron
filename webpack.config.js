@@ -27,6 +27,14 @@ module.exports = () => {
     module: {
       rules: [
         {
+          test: /lib\/search\/worker\/index\.ts$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'worker-loader',
+            options: { inline: true, fallback: false },
+          },
+        },
+        {
           test: /\.[jt]sx?$/,
           exclude: /node_modules\/core-js/,
           use: [
