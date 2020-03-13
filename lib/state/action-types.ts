@@ -62,12 +62,16 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; previousIndex: number }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type RemoteNoteUpdate = Action<
+  'REMOTE_NOTE_UPDATE',
+  { noteId: T.EntityId; data: T.Note }
+>;
+export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
 >;
-export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
@@ -100,6 +104,7 @@ export type ActionType =
   | LegacyAction
   | FilterNotes
   | FocusSearchField
+  | RemoteNoteUpdate
   | RestoreNote
   | Search
   | SelectNote
