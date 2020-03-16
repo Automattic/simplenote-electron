@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.15.1]
+
+### Other Changes
+
+- Fix application signing to generate proper appx for Windows Store [#1960](https://github.com/Automattic/simplenote-electron/pull/1960)
+
 ## [v1.15.0]
 
 ### Enhancements
