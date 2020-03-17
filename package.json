@@ -150,7 +150,7 @@
     "react-dom": "16.13.0",
     "react-dropzone": "10.2.1",
     "react-modal": "3.11.2",
-    "react-overlays": "3.0.0",
+    "react-overlays": "2.1.0",
     "react-redux": "7.2.0",
     "react-tabs": "3.1.0",
     "react-transition-group": "4.3.0",
