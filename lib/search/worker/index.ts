@@ -18,6 +18,7 @@ self.onmessage = bootEvent => {
   let searchQuery = '';
   let searchTerms: string[] = [];
   let filterTags = new Set<T.TagName>();
+  let openedTag: string | null = null;
   let showTrash = false;
 
   const tagsFromSearch = (query: string) => {
@@ -111,14 +112,18 @@ self.onmessage = bootEvent => {
       }
 
       if ('string' === typeof event.data.openedTag) {
-        filterTags = tagsFromSearch(searchQuery);
-        filterTags.add(event.data.openedTag.toLocaleLowerCase());
+        openedTag = event.data.openedTag.toLocaleLowerCase();
       } else if (null === event.data.openedTag) {
         filterTags = tagsFromSearch(searchQuery);
+        openedTag = null;
       }
 
       if ('boolean' === typeof event.data.showTrash) {
         showTrash = event.data.showTrash;
+      }
+
+      if (openedTag) {
+        filterTags.add(openedTag);
       }
 
       queueUpdateFilter();
