@@ -29,6 +29,36 @@ export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
 });
 
+export const markdownNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  isMarkdown: boolean
+) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'markdown',
+  shouldHaveTag: isMarkdown,
+});
+
+export const pinNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  shouldPin: boolean
+) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'pinned',
+  shouldHaveTag: shouldPin,
+});
+
+export const publishNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  shoudlPublish: boolean
+) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'published',
+  shouldHaveTag: shoudlPublish,
+});
+
 export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
   type: 'OPEN_TAG',
   tag,

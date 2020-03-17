@@ -10,29 +10,6 @@ import * as T from '../types';
 
 const debug = Debug('appState');
 
-const toggleSystemTag = (
-  note: T.NoteEntity,
-  systemTag: T.SystemTag,
-  shouldHaveTag: boolean
-) => {
-  const {
-    data: { systemTags = [] },
-  } = note;
-  const hasTagAlready = systemTags.includes(systemTag);
-
-  return hasTagAlready !== shouldHaveTag
-    ? {
-        ...note,
-        data: {
-          ...note.data,
-          systemTags: shouldHaveTag
-            ? [...systemTags, systemTag]
-            : systemTags.filter(tag => tag !== systemTag),
-        },
-      }
-    : note;
-};
-
 const initialState: AppState = {
   notes: null,
   tags: [],
@@ -209,48 +186,6 @@ export const actionMap = new ActionMap({
             dispatch(actions.ui.selectNote(note, { hasRemoteUpdate }));
           });
         };
-      },
-    },
-
-    pinNote: {
-      creator({ noteBucket, note, pin: shouldPin }) {
-        const updated = toggleSystemTag(note, 'pinned', shouldPin);
-
-        if (note !== updated) {
-          noteBucket.update(note.id, updated.data);
-        }
-
-        return actions.ui.selectNote(updated);
-      },
-    },
-
-    markdownNote: {
-      creator({ noteBucket, note, markdown: shouldEnableMarkdown }) {
-        const updated = toggleSystemTag(note, 'markdown', shouldEnableMarkdown);
-
-        if (updated !== note) {
-          noteBucket.update(note.id, updated.data);
-        }
-
-        return actions.ui.selectNote(updated);
-      },
-    },
-
-    publishNote: {
-      creator({ noteBucket, note, publish: shouldPublish }) {
-        const updated = toggleSystemTag(note, 'published', shouldPublish);
-
-        if (updated !== note) {
-          noteBucket.update(note.id, updated.data);
-
-          if (shouldPublish) {
-            analytics.tracks.recordEvent('editor_note_published');
-          } else {
-            analytics.tracks.recordEvent('editor_note_unpublished');
-          }
-        }
-
-        return actions.ui.selectNote(updated);
       },
     },
 

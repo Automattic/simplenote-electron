@@ -1,6 +1,30 @@
 import { noteBucket } from './buckets';
 import isEmailTag from '../../utils/is-email-tag';
 import { createTag } from './tags';
+import * as T from '../../types';
+
+export const toggleSystemTag = (
+  note: T.NoteEntity,
+  systemTag: T.SystemTag,
+  shouldHaveTag: boolean
+) => {
+  const {
+    data: { systemTags = [] },
+  } = note;
+  const hasTagAlready = systemTags.includes(systemTag);
+
+  return hasTagAlready !== shouldHaveTag
+    ? {
+        ...note,
+        data: {
+          ...note.data,
+          systemTags: shouldHaveTag
+            ? [...systemTags, systemTag]
+            : systemTags.filter(tag => tag !== systemTag),
+        },
+      }
+    : note;
+};
 
 export const updateNoteTags = ({ note, tags }) => {
   return (dispatch, getState) => {

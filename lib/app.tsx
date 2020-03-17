@@ -91,7 +91,6 @@ const mapDispatchToProps: S.MapDispatch<
         'resetFontSize',
         'setLineLength',
         'setNoteDisplay',
-        'setMarkdown',
         'setAccountName',
         'toggleAutoHideMenuBar',
         'toggleFocusMode',
