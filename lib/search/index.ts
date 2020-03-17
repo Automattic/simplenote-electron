@@ -17,16 +17,17 @@ export const middleware: S.Middleware = store => {
 
   searchProcessor.onmessage = event => {
     switch (event.data.action) {
-      case 'filterNotes':
+      case 'filterNotes': {
+        const { appState, ui } = store.getState();
         store.dispatch(
           actions.ui.filterNotes(
-            store
-              .getState()
-              .appState.notes?.filter(({ id }) => event.data.noteIds.has(id)) ||
-              emptyList
+            appState.notes?.filter(({ id }) => event.data.noteIds.has(id)) ||
+              emptyList,
+            ui.previousIndex
           )
         );
         break;
+      }
     }
   };
 
