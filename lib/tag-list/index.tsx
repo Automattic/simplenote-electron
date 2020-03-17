@@ -5,25 +5,22 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import TagListInput from './input';
-import appState from '../flux/app-state';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
-import { toggleTagEditing } from '../state/ui/actions';
+import { openTag, toggleTagEditing } from '../state/ui/actions';
 import analytics from '../analytics';
 
 import * as S from '../state';
 import * as T from '../types';
 
-const { selectTagAndSelectFirstNote } = appState.actionCreators;
-
 type StateProps = {
   editingTags: boolean;
   tags: T.TagEntity[] | null;
-  selectedTag?: T.TagEntity;
+  openedTag?: T.TagEntity;
 };
 
 type DispatchProps = {
   onEditTags: () => any;
-  onSelectTag: (tag: T.TagEntity) => any;
+  openTag: (tag: T.TagEntity) => any;
   renameTag: (args: { tag: T.TagEntity; name: T.TagName }) => any;
   reorderTags: (args: { tags: T.TagEntity[] }) => any;
   trashTag: (args: { tag: T.TagEntity }) => any;
@@ -35,8 +32,8 @@ export class TagList extends Component<Props> {
   static displayName = 'TagList';
 
   renderItem = (tag: T.TagEntity) => {
-    const { editingTags, selectedTag } = this.props;
-    const isSelected = tag.data.name === get(selectedTag, 'data.name', '');
+    const { editingTags, openedTag } = this.props;
+    const isSelected = tag.data.name === get(openedTag, 'data.name', '');
 
     const handleRenameTag = ({
       target: { value },
@@ -47,7 +44,7 @@ export class TagList extends Component<Props> {
       <TagListInput
         editable={editingTags}
         isSelected={isSelected}
-        onClick={this.onSelectTag.bind(this, tag)}
+        onClick={this.openTag.bind(this, tag)}
         onDone={handleRenameTag}
         value={tag.data.name}
       />
@@ -56,11 +53,11 @@ export class TagList extends Component<Props> {
 
   onReorderTags = (tags: T.TagEntity[]) => this.props.reorderTags({ tags });
 
-  onSelectTag = (tag: T.TagEntity, event: MouseEvent<HTMLInputElement>) => {
+  openTag = (tag: T.TagEntity, event: MouseEvent<HTMLInputElement>) => {
     if (!this.props.editingTags) {
       event.preventDefault();
       event.currentTarget.blur();
-      this.props.onSelectTag(tag);
+      this.props.openTag(tag);
     }
   };
 
@@ -103,17 +100,17 @@ export class TagList extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { editingTags },
+  ui: { editingTags, openedTag },
 }) => ({
   editingTags,
   tags: state.tags,
-  selectedTag: state.tag,
+  openedTag,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onEditTags: () => dispatch(toggleTagEditing()),
-  onSelectTag: tag => {
-    dispatch(selectTagAndSelectFirstNote({ tag }));
+  openTag: tag => {
+    dispatch(openTag(tag));
     analytics.tracks.recordEvent('list_tag_viewed');
   },
   renameTag: arg => dispatch(renameTag(arg)),

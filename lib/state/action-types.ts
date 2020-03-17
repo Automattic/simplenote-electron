@@ -96,6 +96,7 @@ export type SelectNote = Action<
   'SELECT_NOTE',
   { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
 >;
+export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 
 export type ActionType =
   | CreateNote
@@ -105,6 +106,7 @@ export type ActionType =
   | FilterNotes
   | FocusSearchField
   | RemoteNoteUpdate
+  | OpenTag
   | RestoreNote
   | Search
   | SelectNote
@@ -215,8 +217,6 @@ type LegacyAction =
   | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
   | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
-  | Action<'App.selectTag', { tag: T.TagEntity }>
-  | Action<'App.selectTagAndSElectFirstNote'>
   | Action<'App.selectTrash'>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>

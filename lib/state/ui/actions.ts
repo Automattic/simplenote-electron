@@ -29,6 +29,11 @@ export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
 });
 
+export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
+  type: 'OPEN_TAG',
+  tag,
+});
+
 export const restoreNote: A.ActionCreator<A.RestoreNote> = (
   previousIndex: number
 ) => ({
