@@ -73,7 +73,7 @@ export const middleware: S.Middleware = store => {
         });
         break;
 
-      case 'App.selectTrash':
+      case 'SELECT_TRASH':
         searchProcessor.postMessage({
           action: 'filterNotes',
           openedTag: null,
@@ -81,7 +81,7 @@ export const middleware: S.Middleware = store => {
         });
         break;
 
-      case 'App.showAllNotes':
+      case 'SHOW_ALL_NOTES':
         searchProcessor.postMessage({
           action: 'filterNotes',
           openedTag: null,

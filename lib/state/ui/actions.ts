@@ -78,11 +78,19 @@ export const selectRevision: A.ActionCreator<A.SelectRevision> = (
   revision,
 });
 
+export const selectTrash: A.ActionCreator<A.SelectTrash> = () => ({
+  type: 'SELECT_TRASH',
+});
+
 export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
   noteIds: T.EntityId[]
 ) => ({
   type: 'SET_UNSYNCED_NOTE_IDS',
   noteIds,
+});
+
+export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
+  type: 'SHOW_ALL_NOTES',
 });
 
 export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (

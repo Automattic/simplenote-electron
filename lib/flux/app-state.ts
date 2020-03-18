@@ -33,7 +33,7 @@ export const actionMap = new ActionMap({
     showAllNotesAndSelectFirst: {
       creator() {
         return (dispatch, getState) => {
-          dispatch(this.action('showAllNotes'));
+          dispatch(actions.ui.showAllNotes());
           dispatch(
             this.action('notesLoaded', {
               notes: getState().appState.notes,
@@ -41,14 +41,6 @@ export const actionMap = new ActionMap({
           );
         };
       },
-    },
-
-    showAllNotes(state: AppState) {
-      return update(state, {});
-    },
-
-    selectTrash(state: AppState) {
-      return update(state, {});
     },
 
     showDialog(state: AppState, { dialog }) {

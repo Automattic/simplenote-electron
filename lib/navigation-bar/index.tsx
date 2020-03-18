@@ -13,7 +13,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
 
-import { toggleNavigation } from '../state/ui/actions';
+import { toggleNavigation, selectTrash } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -151,18 +151,14 @@ const mapStateToProps: S.MapState<StateProps> = ({
   showTrash,
 });
 
-const {
-  showAllNotesAndSelectFirst,
-  selectTrash,
-  showDialog,
-} = appState.actionCreators;
+const { showAllNotesAndSelectFirst, showDialog } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
   onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
-  selectTrash,
+  selectTrash: () => selectTrash(),
 };
 
 export default connect(

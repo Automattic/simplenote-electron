@@ -25,8 +25,8 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
       return !state;
     case 'SELECT_NOTE':
     case 'OPEN_TAG':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
     case 'NAVIGATION_TOGGLE':
     case 'App.toggleNoteInfo':
       return false;
@@ -45,9 +45,9 @@ const listTitle: A.Reducer<T.TranslatableString> = (
   action
 ) => {
   switch (action.type) {
-    case 'App.showAllNotes':
+    case 'SHOW_ALL_NOTES':
       return 'All Notes';
-    case 'App.selectTrash':
+    case 'SELECT_TRASH':
       return 'Trash';
     case 'OPEN_TAG':
       return action.tag.data.name;
@@ -73,8 +73,8 @@ const noteRevisions: A.Reducer<T.NoteEntity[]> = (
 
 const openedTag: A.Reducer<T.TagEntity | null> = (state = null, action) => {
   switch (action.type) {
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
       return null;
     case 'OPEN_TAG':
       return action.tag;
@@ -106,8 +106,8 @@ const previousIndex: A.Reducer<number> = (state = -1, action) => {
     case 'TRASH_NOTE':
       return action.previousIndex || state;
     case 'OPEN_TAG':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
       return -1;
     default:
       return state;
@@ -159,8 +159,8 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
       return !state;
 
     case 'OPEN_TAG':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
       return false;
     case 'App.showDialog':
       if (action.dialog && action.dialog.type === 'Settings') {
@@ -186,11 +186,11 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
 
 const showTrash: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'App.selectTrash':
+    case 'SELECT_TRASH':
       return true;
     case 'CREATE_NOTE':
     case 'OPEN_TAG':
-    case 'App.showAllNotes': {
+    case 'SHOW_ALL_NOTES': {
       return false;
     }
     default:
@@ -201,8 +201,8 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.emptyTrash':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
     case 'CLOSE_NOTE':
     case 'DELETE_NOTE_FOREVER':
     case 'RESTORE_NOTE':

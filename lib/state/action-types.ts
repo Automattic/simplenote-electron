@@ -68,6 +68,7 @@ export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
 >;
+export type SelectTrash = Action<'SELECT_TRASH'>;
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
@@ -77,6 +78,7 @@ export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
   { noteIds: T.EntityId[] }
 >;
+export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
 export type StoreRevisions = Action<
   'STORE_REVISIONS',
   { noteId: T.EntityId; revisions: T.NoteEntity[] }
@@ -111,6 +113,7 @@ export type ActionType =
   | Search
   | SelectNote
   | SelectRevision
+  | SelectTrash
   | SetAccountName
   | SetAuth
   | SetAutoHideMenuBar
@@ -126,6 +129,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | SetWPToken
+  | ShowAllNotes
   | StoreRevisions
   | ToggleEditMode
   | ToggleNavigation
@@ -205,10 +209,8 @@ type LegacyAction =
   | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
   | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
-  | Action<'App.selectTrash'>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
-  | Action<'App.showAllNotes'>
   | Action<'App.showAllNotesAndSelectFirst'>
   | Action<'App.showDialog', { dialog: object }>
   | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>;
