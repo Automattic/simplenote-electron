@@ -43,10 +43,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 export class NavigationBar extends Component<Props> {
   static displayName = 'NavigationBar';
 
-  static defaultProps = {
-    onShowAllNotes: function() {},
-  };
-
   // Used by onClickOutside wrapper
   handleClickOutside = () => {
     const { dialogs, onOutsideClick, showNavigation } = this.props;
@@ -158,7 +154,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
   onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
-  selectTrash: () => selectTrash(),
+  selectTrash,
 };
 
 export default connect(
