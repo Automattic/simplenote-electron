@@ -26,11 +26,7 @@ export class AboutDialog extends Component<Props> {
 
     return (
       <div className="about">
-        <Dialog
-          hideTitleBar
-          onDone={this.props.closeDialog}
-          title={dialog.title}
-        >
+        <Dialog hideTitleBar title={dialog.title}>
           <div className="about-top">
             <SimplenoteLogo />
 

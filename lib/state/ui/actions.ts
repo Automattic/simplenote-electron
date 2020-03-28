@@ -99,9 +99,7 @@ export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
   type: 'SHOW_ALL_NOTES',
 });
 
-export const showDialog: A.ActionCreator<A.ShowDialog> = (
-  dialog: T.DialogEntity
-) => ({
+export const showDialog: A.ActionCreator<A.ShowDialog> = (dialog: string) => ({
   type: 'SHOW_DIALOG',
   dialog,
 });

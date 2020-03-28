@@ -37,7 +37,6 @@ export class ShareDialog extends Component<Props> {
     dialog: PropTypes.object.isRequired,
     noteBucket: PropTypes.object.isRequired,
     appState: PropTypes.object.isRequired,
-    requestClose: PropTypes.func.isRequired,
     tagBucket: PropTypes.object.isRequired,
   };
 
@@ -96,13 +95,13 @@ export class ShareDialog extends Component<Props> {
   };
 
   render() {
-    const { dialog, note, requestClose } = this.props;
+    const { dialog, note } = this.props;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
     return (
-      <Dialog className="settings" title={dialog.title} onDone={requestClose}>
+      <Dialog className="settings" title={dialog.title}>
         <TabPanels tabNames={shareTabs}>
           <div>
             <div className="settings-group">

@@ -11,7 +11,6 @@ import SettingsIcon from '../icons/settings';
 import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
-import DialogTypes from '../../shared/dialog-types';
 import { showDialog } from '../state/ui/actions';
 
 import { toggleNavigation, selectTrash } from '../state/ui/actions';
@@ -151,10 +150,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const { showAllNotesAndSelectFirst } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog(DialogTypes.ABOUT),
+  onAbout: () => showDialog('ABOUT'),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog(DialogTypes.SETTINGS),
+  onSettings: () => showDialog('SETTINGS'),
   selectTrash,
 };
 

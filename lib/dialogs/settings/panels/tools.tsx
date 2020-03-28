@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import appState from '../../../flux/app-state';
-import { IMPORT } from '../../../../shared/dialog-types';
 import exportZipArchive from '../../../utils/export';
 
 import PanelTitle from '../../../components/panel-title';
@@ -50,7 +49,7 @@ ToolsPanel.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    showImportDialog: () => dispatch(showDialog(IMPORT)),
+    showImportDialog: () => dispatch(showDialog('IMPORT')),
   };
 };
 

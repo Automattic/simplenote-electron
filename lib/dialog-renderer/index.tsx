@@ -3,14 +3,17 @@ import { connect } from 'react-redux';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { get } from 'lodash';
+
+import DialogTypes from '../../shared/dialog-types';
+import * as Dialogs from '../dialogs';
 import { closeDialog } from '../state/ui/actions';
 
-import * as Dialogs from '../dialogs';
 import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  dialogs: T.DialogEntity[];
+  dialogs: string[];
 };
 
 type DispatchProps = {
@@ -30,7 +33,7 @@ export class DialogRenderer extends Component<Props> {
     isMacApp: PropTypes.bool.isRequired,
   };
 
-  renderDialog(dialog) {
+  renderDialog(dialogType: string) {
     const {
       appProps,
       buckets,
@@ -39,7 +42,13 @@ export class DialogRenderer extends Component<Props> {
       isMacApp,
       closeDialog,
     } = this.props;
-    const { key, title } = dialog;
+
+    const dialog = get(DialogTypes, dialogType);
+
+    if (dialog === null) {
+      throw new Error('Unknown dialog type.');
+    }
+
     const DialogComponent = Dialogs[dialog.type];
 
     if (DialogComponent === null) {
@@ -48,9 +57,9 @@ export class DialogRenderer extends Component<Props> {
 
     return (
       <Modal
-        key={key}
+        key={dialog.title}
         className="dialog-renderer__content"
-        contentLabel={title}
+        contentLabel={dialog.title}
         isOpen
         onRequestClose={closeDialog}
         overlayClassName="dialog-renderer__overlay"
@@ -75,7 +84,7 @@ export class DialogRenderer extends Component<Props> {
   }
 }
 
-const mapStateToProps = ({ ui: { dialogs } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { dialogs } }) => ({
   dialogs,
 });
 

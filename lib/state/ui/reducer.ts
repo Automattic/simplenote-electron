@@ -8,16 +8,13 @@ import * as T from '../../types';
 
 const emptyList: unknown[] = [];
 
-const dialogs: A.Reducer<T.DialogEntity[]> = (state = [], action) => {
-  console.log(action);
+const dialogs: A.Reducer<string[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
       return state.slice(0, -1);
 
     case 'SHOW_DIALOG':
-      const { type, title, ...dialogProps } = action.dialog;
-
-      return [...state, { type, title, key: title, ...dialogProps }];
+      return [...state, action.dialog];
 
     default:
       return state;
@@ -181,7 +178,7 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'SHOW_ALL_NOTES':
       return false;
     case 'SHOW_DIALOG':
-      if (action.dialog && action.dialog.type === 'Settings') {
+      if (action.dialog && action.dialog === 'SETTINGS') {
         return false;
       }
       return state;
