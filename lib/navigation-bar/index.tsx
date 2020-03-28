@@ -24,7 +24,7 @@ type OwnProps = {
 
 type StateProps = {
   autoHideMenuBar: boolean;
-  dialogs: string[];
+  dialogs: T.DialogType[];
   openedTag: T.TagEntity | null;
   showNavigation: boolean;
   showTrash: boolean;
