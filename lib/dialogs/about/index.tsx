@@ -23,12 +23,12 @@ export class AboutDialog extends Component<Props> {
   };
 
   render() {
-    const { dialog, closeDialog } = this.props;
+    const { closeDialog, dialog } = this.props;
     const thisYear = new Date().getFullYear();
 
     return (
       <div className="about">
-        <Dialog hideTitleBar title={dialog.title} onDone={closeDialog}>
+        <Dialog hideTitleBar onDone={closeDialog} title={dialog.title}>
           <div className="about-top">
             <SimplenoteLogo />
 
@@ -120,7 +120,7 @@ export class AboutDialog extends Component<Props> {
             type="button"
             aria-label="Close dialog"
             className="about-done button button-borderless"
-            onClick={this.props.closeDialog}
+            onClick={closeDialog}
           >
             <CrossIcon />
           </button>

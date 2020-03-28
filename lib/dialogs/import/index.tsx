@@ -34,7 +34,7 @@ class ImportDialog extends Component<Props> {
   };
 
   render() {
-    const { buckets, isElectron, closeDialog } = this.props;
+    const { buckets, closeDialog, isElectron } = this.props;
     const { title } = this.props.dialog;
     const { importStarted, selectedSource } = this.state;
 
