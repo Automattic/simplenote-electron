@@ -1,4 +1,5 @@
-import React, { Suspense } from 'react';
+import React, { Component, Suspense } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
@@ -6,19 +7,25 @@ import ImportSourceSelector from './source-selector';
 import TransitionFadeInOut from '../../components/transition-fade-in-out';
 import TransitionDelayEnter from '../../components/transition-delay-enter';
 import Spinner from '../../components/spinner';
+import { closeDialog } from '../../state/ui/actions';
 
 const SourceImporter = React.lazy(() =>
   import(/* webpackChunkName: 'source-importer' */ './source-importer')
 );
 
-class ImportDialog extends React.Component {
+type DispatchProps = {
+  closeDialog: () => any;
+};
+
+type Props = DispatchProps;
+
+class ImportDialog extends Component<Props> {
   static propTypes = {
     buckets: PropTypes.object,
     dialog: PropTypes.shape({
       title: PropTypes.string.isRequired,
     }),
     isElectron: PropTypes.bool.isRequired,
-    requestClose: PropTypes.func.isRequired,
   };
 
   state = {
@@ -27,7 +34,7 @@ class ImportDialog extends React.Component {
   };
 
   render() {
-    const { buckets, isElectron, requestClose } = this.props;
+    const { buckets, isElectron, closeDialog } = this.props;
     const { title } = this.props.dialog;
     const { importStarted, selectedSource } = this.state;
 
@@ -46,7 +53,7 @@ class ImportDialog extends React.Component {
       <Dialog
         className="import"
         closeBtnLabel={importStarted ? '' : 'Cancel'}
-        onDone={importStarted ? undefined : requestClose}
+        onDone={importStarted ? undefined : closeDialog}
         title={title}
       >
         <div className="import__inner">
@@ -65,7 +72,7 @@ class ImportDialog extends React.Component {
               <SourceImporter
                 buckets={buckets}
                 locked={importStarted}
-                onClose={requestClose}
+                onClose={closeDialog}
                 onStart={() => this.setState({ importStarted: true })}
                 source={selectedSource}
               />
@@ -77,4 +84,10 @@ class ImportDialog extends React.Component {
   }
 }
 
-export default ImportDialog;
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  closeDialog: () => {
+    dispatch(closeDialog());
+  },
+});
+
+export default connect(null, mapDispatchToProps)(ImportDialog);

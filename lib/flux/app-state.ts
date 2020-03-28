@@ -24,7 +24,6 @@ export const actionMap = new ActionMap({
       return update(state, {
         notes: { $set: null },
         tags: { $set: [] },
-        //dialogs: { $set: [] }, @todo
       });
     },
 

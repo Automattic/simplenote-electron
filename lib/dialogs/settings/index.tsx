@@ -13,7 +13,14 @@ import ToolsPanel from './panels/tools';
 import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
+import { closeDialog } from '../../state/ui/actions';
+
 const settingTabs = ['account', 'display', 'tools'];
+
+type DispatchProps = {
+  closeDialog: () => any;
+  setWPToken: () => any;
+};
 
 export class SettingsDialog extends Component {
   static propTypes = {
@@ -28,7 +35,6 @@ export class SettingsDialog extends Component {
     isElectron: PropTypes.bool.isRequired,
     isMacApp: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
-    requestClose: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
@@ -121,16 +127,16 @@ export class SettingsDialog extends Component {
   render() {
     const {
       buckets,
+      closeDialog,
       dialog,
       isElectron,
       isMacApp,
-      requestClose,
       settings,
     } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
-      <Dialog className="settings" title={dialog.title} onDone={requestClose}>
+      <Dialog className="settings" title={dialog.title} onDone={closeDialog}>
         <TabPanels tabNames={settingTabs}>
           <AccountPanel
             accountName={settings.accountName}
@@ -154,7 +160,10 @@ export class SettingsDialog extends Component {
 
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  closeDialog: () => {
+    dispatch(closeDialog());
+  },
   onSetWPToken: token => dispatch(setWPToken(token)),
   toggleShareAnalyticsPreference: args => {
     dispatch(toggleShareAnalyticsPreference(args));

@@ -7,6 +7,8 @@ import TopRightArrowIcon from '../../icons/arrow-top-right';
 import Dialog from '../../dialog';
 import { closeDialog } from '../../state/ui/actions';
 
+import * as S from '../../state';
+
 const appVersion = config.version; // eslint-disable-line no-undef
 
 type DispatchProps = {
@@ -21,12 +23,12 @@ export class AboutDialog extends Component<Props> {
   };
 
   render() {
-    const { dialog } = this.props;
+    const { dialog, closeDialog } = this.props;
     const thisYear = new Date().getFullYear();
 
     return (
       <div className="about">
-        <Dialog hideTitleBar title={dialog.title}>
+        <Dialog hideTitleBar title={dialog.title} onDone={closeDialog}>
           <div className="about-top">
             <SimplenoteLogo />
 

@@ -13,6 +13,7 @@ import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
 import actions from '../../state/actions';
+import { closeDialog } from '../../state/ui/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -25,6 +26,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  closeDialog: () => any;
   publishNote: (note: T.NoteEntity, shouldPublish: boolean) => any;
   updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagName[] }) => any;
 };
@@ -95,13 +97,13 @@ export class ShareDialog extends Component<Props> {
   };
 
   render() {
-    const { dialog, note } = this.props;
+    const { closeDialog, dialog, note } = this.props;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
     return (
-      <Dialog className="settings" title={dialog.title}>
+      <Dialog className="settings" title={dialog.title} onDone={closeDialog}>
         <TabPanels tabNames={shareTabs}>
           <div>
             <div className="settings-group">
@@ -223,6 +225,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  closeDialog: () => {
+    dispatch(closeDialog());
+  },
   publishNote: (note, shouldPublish) =>
     dispatch(actions.ui.publishNote(note, shouldPublish)),
   updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),

@@ -68,7 +68,6 @@ export class DialogRenderer extends Component<Props> {
         <DialogComponent
           buckets={buckets}
           dialog={dialog}
-          requestClose={closeDialog}
           isElectron={isElectron}
           isMacApp={isMacApp}
           {...appProps}

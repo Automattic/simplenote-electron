@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { some } from 'lodash';
 
 import { toggleSystemTag } from '../domain/notes';
 
@@ -15,6 +14,9 @@ const dialogs: A.Reducer<string[]> = (state = [], action) => {
 
     case 'SHOW_DIALOG':
       return [...state, action.dialog];
+
+    case 'App.authChanged':
+      return [];
 
     default:
       return state;
