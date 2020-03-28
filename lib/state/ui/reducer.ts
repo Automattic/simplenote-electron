@@ -15,29 +15,9 @@ const dialogs: A.Reducer<T.DialogEntity[]> = (state = [], action) => {
       return state.slice(0, -1);
 
     case 'SHOW_DIALOG':
-      const { type, multiple = false, title, ...dialogProps } = action.dialog;
+      const { type, title, ...dialogProps } = action.dialog;
 
-      // If there should only be one instance of the dialog in the stack
-      if (!multiple && some(state, { type })) {
-        return;
-      }
-
-      return [...state, { type, multiple, title, key: title, ...dialogProps }];
-
-    // const updateCommands = {
-    //   dialogs: {
-    //     $push: [
-    //       {
-    //         type,
-    //         multiple,
-    //         title,
-    //         key: state.nextDialogKey,
-    //         ...dialogProps,
-    //       },
-    //     ],
-    //   },
-    //   nextDialogKey: { $set: state.nextDialogKey + 1 },
-    // };
+      return [...state, { type, title, key: title, ...dialogProps }];
 
     default:
       return state;

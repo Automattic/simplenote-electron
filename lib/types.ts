@@ -65,7 +65,6 @@ export type DialogEntity = {
   key: number;
   title: string;
   type: 'About' | 'Import' | 'Settings' | 'Share';
-  multiple: boolean;
 };
 export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
