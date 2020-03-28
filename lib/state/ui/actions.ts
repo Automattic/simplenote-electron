@@ -1,9 +1,7 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
-export const closeDialog: A.ActionCreator<A.CloseDialog> = (
-  dialog: T.DialogEntity
-) => ({
+export const closeDialog: A.ActionCreator<A.CloseDialog> = () => ({
   type: 'CLOSE_DIALOG',
 });
 
@@ -99,7 +97,9 @@ export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
   type: 'SHOW_ALL_NOTES',
 });
 
-export const showDialog: A.ActionCreator<A.ShowDialog> = (dialog: string) => ({
+export const showDialog: A.ActionCreator<A.ShowDialog> = (
+  dialog: T.DialogType
+) => ({
   type: 'SHOW_DIALOG',
   dialog,
 });

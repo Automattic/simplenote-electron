@@ -17,7 +17,7 @@ const syncDelay = 2000;
 
 type StateProps = {
   showNoteInfo: boolean;
-  dialogs: string[];
+  dialogs: T.DialogType[];
 };
 
 type Props = StateProps;

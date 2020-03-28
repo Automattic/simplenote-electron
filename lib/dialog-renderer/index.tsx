@@ -13,7 +13,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  dialogs: string[];
+  dialogs: T.DialogType[];
 };
 
 type DispatchProps = {

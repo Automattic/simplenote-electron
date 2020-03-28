@@ -7,7 +7,7 @@ import * as T from '../../types';
 
 const emptyList: unknown[] = [];
 
-const dialogs: A.Reducer<string[]> = (state = [], action) => {
+const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
       return state.slice(0, -1);
