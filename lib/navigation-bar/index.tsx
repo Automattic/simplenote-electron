@@ -12,6 +12,7 @@ import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 import DialogTypes from '../../shared/dialog-types';
+import { showDialog } from '../state/ui/actions';
 
 import { toggleNavigation, selectTrash } from '../state/ui/actions';
 
@@ -24,7 +25,7 @@ type OwnProps = {
 
 type StateProps = {
   autoHideMenuBar: boolean;
-  dialogs: unknown[];
+  dialogs: string[];
   openedTag: T.TagEntity | null;
   showNavigation: boolean;
   showTrash: boolean;
@@ -138,22 +139,22 @@ export class NavigationBar extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   settings,
-  ui: { openedTag, showNavigation, showTrash },
+  ui: { dialogs, openedTag, showNavigation, showTrash },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
-  dialogs: state.dialogs,
+  dialogs: dialogs,
   openedTag,
   showNavigation,
   showTrash,
 });
 
-const { showAllNotesAndSelectFirst, showDialog } = appState.actionCreators;
+const { showAllNotesAndSelectFirst } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
+  onAbout: () => showDialog(DialogTypes.ABOUT),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
+  onSettings: () => showDialog(DialogTypes.SETTINGS),
   selectTrash,
 };
 

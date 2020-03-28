@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import appState from '../flux/app-state';
+
+import { showDialog } from '../state/ui/actions';
 import DialogTypes from '../../shared/dialog-types';
 
 export const EmailToolTip = ({ openShareDialog }) => (
@@ -20,8 +22,7 @@ export const EmailToolTip = ({ openShareDialog }) => (
 );
 
 const mapDispatchToProps = dispatch => ({
-  openShareDialog: () =>
-    dispatch(appState.actionCreators.showDialog({ dialog: DialogTypes.SHARE })),
+  openShareDialog: () => dispatch(showDialog(DialogTypes.SHARE)),
 });
 
 EmailToolTip.propTypes = {

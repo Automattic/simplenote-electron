@@ -9,6 +9,12 @@ import exportZipArchive from '../../../utils/export';
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
 
+import { showDialog } from '../../../state/ui/actions';
+
+type DispatchProps = {
+  showDialog: () => any;
+};
+
 const ToolsPanel = ({ showImportDialog }) => {
   const onSelectItem = item => {
     if (item.slug === 'import') {
@@ -43,9 +49,8 @@ ToolsPanel.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => {
-  const { showDialog } = appState.actionCreators;
   return {
-    showImportDialog: () => dispatch(showDialog({ dialog: IMPORT })),
+    showImportDialog: () => dispatch(showDialog(IMPORT)),
   };
 };
 

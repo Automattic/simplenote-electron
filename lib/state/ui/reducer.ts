@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { some } from 'lodash';
 
 import { toggleSystemTag } from '../domain/notes';
 
@@ -6,6 +7,42 @@ import * as A from '../action-types';
 import * as T from '../../types';
 
 const emptyList: unknown[] = [];
+
+const dialogs: A.Reducer<T.DialogEntity[]> = (state = [], action) => {
+  console.log(action);
+  switch (action.type) {
+    case 'CLOSE_DIALOG':
+      return state.slice(0, -1);
+
+    case 'SHOW_DIALOG':
+      const { type, multiple = false, title, ...dialogProps } = action.dialog;
+
+      // If there should only be one instance of the dialog in the stack
+      if (!multiple && some(state, { type })) {
+        return;
+      }
+
+      return [...state, { type, multiple, title, key: title, ...dialogProps }];
+
+    // const updateCommands = {
+    //   dialogs: {
+    //     $push: [
+    //       {
+    //         type,
+    //         multiple,
+    //         title,
+    //         key: state.nextDialogKey,
+    //         ...dialogProps,
+    //       },
+    //     ],
+    //   },
+    //   nextDialogKey: { $set: state.nextDialogKey + 1 },
+    // };
+
+    default:
+      return state;
+  }
+};
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
@@ -163,7 +200,7 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
       return false;
-    case 'App.showDialog':
+    case 'SHOW_DIALOG':
       if (action.dialog && action.dialog.type === 'Settings') {
         return false;
       }
@@ -230,6 +267,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 };
 
 export default combineReducers({
+  dialogs,
   editMode,
   editingTags,
   filteredNotes,

@@ -11,11 +11,13 @@ import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
 import * as S from '../state';
+import * as T from '../types';
 
 const syncDelay = 2000;
 
 type StateProps = {
   showNoteInfo: boolean;
+  dialogs: string[];
 };
 
 type Props = StateProps;
@@ -24,7 +26,6 @@ export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
-    dialogs: PropTypes.array.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
@@ -238,7 +239,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui,
   settings,
 }) => ({
-  dialogs: state.dialogs,
+  dialogs: ui.dialogs,
   note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
