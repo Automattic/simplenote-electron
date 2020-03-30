@@ -108,6 +108,7 @@ const previousIndex: A.Reducer<number> = (state = -1, action) => {
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
+    case 'FILTER_NOTES':
       return -1;
     default:
       return state;
