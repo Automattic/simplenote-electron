@@ -13,6 +13,14 @@ import ShareDialog from '../dialogs/share';
 import * as S from '../state';
 import * as T from '../types';
 
+type OwnProps = {
+  appProps: object;
+  buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
+  themeClass: string;
+  isElectron: boolean;
+  isMacApp: boolean;
+};
+
 type StateProps = {
   dialogs: T.DialogType[];
 };
@@ -21,18 +29,10 @@ type DispatchProps = {
   closeDialog: () => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class DialogRenderer extends Component<Props> {
   static displayName = 'DialogRenderer';
-
-  static propTypes = {
-    appProps: PropTypes.object.isRequired,
-    buckets: PropTypes.object,
-    themeClass: PropTypes.string,
-    isElectron: PropTypes.bool.isRequired,
-    isMacApp: PropTypes.bool.isRequired,
-  };
 
   render() {
     const {
