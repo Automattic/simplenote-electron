@@ -17,7 +17,7 @@ const syncDelay = 2000;
 
 type StateProps = {
   showNoteInfo: boolean;
-  dialogs: T.DialogType[];
+  isDialogOpen: boolean;
 };
 
 type Props = StateProps;
@@ -75,7 +75,7 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, previewingMarkdown } = this.props;
+    const { isDialogOpen, note, previewingMarkdown } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
@@ -102,7 +102,7 @@ export class NoteDetail extends Component<Props> {
     }
 
     // Only copy if not viewing the note info panel or a dialog
-    if (showNoteInfo || dialogs.length > 0) {
+    if (showNoteInfo || isDialogOpen) {
       return true;
     }
 
@@ -239,7 +239,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui,
   settings,
 }) => ({
-  dialogs: ui.dialogs,
+  isDialogOpen: ui.dialogs.length > 0,
   note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,

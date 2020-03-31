@@ -62,6 +62,7 @@ export class DialogRenderer extends Component<Props> {
               buckets={buckets}
               isElectron={isElectron}
               isMacApp={isMacApp}
+              themeClass={themeClass}
               {...appProps}
             />
           ) : 'SHARE' === dialog ? (

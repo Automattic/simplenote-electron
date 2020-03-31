@@ -180,7 +180,7 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'SHOW_ALL_NOTES':
       return false;
     case 'SHOW_DIALOG':
-      if (action.dialog && action.dialog === 'SETTINGS') {
+      if (action.dialog === 'SETTINGS') {
         return false;
       }
       return state;
