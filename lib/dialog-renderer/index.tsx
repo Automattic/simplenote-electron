@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { get } from 'lodash';
 
 import AboutDialog from '../dialogs/about';
 import ImportDialog from '../dialogs/import';

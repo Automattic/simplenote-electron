@@ -24,7 +24,7 @@ type OwnProps = {
 
 type StateProps = {
   autoHideMenuBar: boolean;
-  dialogs: T.DialogType[];
+  isDialogOpen: boolean;
   openedTag: T.TagEntity | null;
   showNavigation: boolean;
   showTrash: boolean;
@@ -45,9 +45,9 @@ export class NavigationBar extends Component<Props> {
 
   // Used by onClickOutside wrapper
   handleClickOutside = () => {
-    const { dialogs, onOutsideClick, showNavigation } = this.props;
+    const { isDialogOpen, onOutsideClick, showNavigation } = this.props;
 
-    if (dialogs.length > 0) {
+    if (isDialogOpen) {
       return;
     }
 
@@ -141,7 +141,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui: { dialogs, openedTag, showNavigation, showTrash },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
-  dialogs: dialogs,
+  isDialogOpen: dialogs.length > 0,
   openedTag,
   showNavigation,
   showTrash,
