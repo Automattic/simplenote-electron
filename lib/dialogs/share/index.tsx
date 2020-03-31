@@ -35,6 +35,10 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
+  static propTypes = {
+    themeClass: PropTypes.string.isRequired,
+  };
+
   onTogglePublished = (event: React.MouseEvent<HTMLInputElement>) => {
     this.props.publishNote(this.props.note, event.currentTarget.checked);
   };
