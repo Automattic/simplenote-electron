@@ -64,7 +64,7 @@ export type RemoteNoteUpdate = Action<
   { noteId: T.EntityId; data: T.Note }
 >;
 export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
-export type ShowDialog = Action<'SHOW_DIALOG', { dialog: string }>;
+export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectRevision = Action<
   'SELECT_REVISION',

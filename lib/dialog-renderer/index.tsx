@@ -5,9 +5,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get } from 'lodash';
 
-import DialogTypes from '../../shared/dialog-types';
-import * as Dialogs from '../dialogs';
-import { closeDialog } from '../state/ui/actions';
+import AboutDialog from '../dialogs/about';
+import ImportDialog from '../dialogs/import';
+import SettingsDialog from '../dialogs/settings';
+import ShareDialog from '../dialogs/share';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -33,7 +34,7 @@ export class DialogRenderer extends Component<Props> {
     isMacApp: PropTypes.bool.isRequired,
   };
 
-  renderDialog(dialogType: string) {
+  render() {
     const {
       appProps,
       buckets,
@@ -43,42 +44,31 @@ export class DialogRenderer extends Component<Props> {
       closeDialog,
     } = this.props;
 
-    const dialog = get(DialogTypes, dialogType);
-
-    if (dialog === null) {
-      throw new Error('Unknown dialog type.');
-    }
-
-    const DialogComponent = Dialogs[dialog.type];
-
-    if (DialogComponent === null) {
-      throw new Error('Unknown dialog type.');
-    }
-
     return (
-      <Modal
-        key={dialog.title}
-        className="dialog-renderer__content"
-        contentLabel={dialog.title}
-        isOpen
-        onRequestClose={closeDialog}
-        overlayClassName="dialog-renderer__overlay"
-        portalClassName={classNames('dialog-renderer__portal', themeClass)}
-      >
-        <DialogComponent
-          buckets={buckets}
-          dialog={dialog}
-          isElectron={isElectron}
-          isMacApp={isMacApp}
-          {...appProps}
-        />
-      </Modal>
-    );
-  }
-
-  render() {
-    return (
-      <Fragment>{this.props.dialogs.map(this.renderDialog, this)}</Fragment>
+      <Fragment>
+        {this.props.dialogs.map(dialog =>
+          'ABOUT' === dialog ? (
+            <AboutDialog key="dialog-renderer__about" themeClass={themeClass} />
+          ) : 'IMPORT' === dialog ? (
+            <ImportDialog
+              key="dialog-renderer__import"
+              buckets={buckets}
+              isElectron={isElectron}
+              themeClass={themeClass}
+            />
+          ) : 'SETTINGS' === dialog ? (
+            <SettingsDialog
+              key="dialog-renderer__settings"
+              buckets={buckets}
+              isElectron={isElectron}
+              isMacApp={isMacApp}
+              {...appProps}
+            />
+          ) : 'SHARE' === dialog ? (
+            <ShareDialog key="dialog-renderer__share" themeClass={themeClass} />
+          ) : null
+        )}
+      </Fragment>
     );
   }
 }

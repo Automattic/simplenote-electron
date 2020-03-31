@@ -1,6 +1,8 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
+import Modal from 'react-modal';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
@@ -22,10 +24,8 @@ type Props = DispatchProps;
 class ImportDialog extends Component<Props> {
   static propTypes = {
     buckets: PropTypes.object,
-    dialog: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-    }),
     isElectron: PropTypes.bool.isRequired,
+    themeClass: PropTypes.string.isRequired,
   };
 
   state = {
@@ -34,8 +34,7 @@ class ImportDialog extends Component<Props> {
   };
 
   render() {
-    const { buckets, closeDialog, isElectron } = this.props;
-    const { title } = this.props.dialog;
+    const { buckets, closeDialog, isElectron, themeClass } = this.props;
     const { importStarted, selectedSource } = this.state;
 
     const selectSource = source => this.setState({ selectedSource: source });
@@ -50,36 +49,46 @@ class ImportDialog extends Component<Props> {
     );
 
     return (
-      <Dialog
-        className="import"
-        closeBtnLabel={importStarted ? '' : 'Cancel'}
-        onDone={importStarted ? undefined : closeDialog}
-        title={title}
+      <Modal
+        key="dialog-renderer__content__import"
+        className="dialog-renderer__content"
+        contentLabel="Import Notes"
+        isOpen
+        onRequestClose={closeDialog}
+        overlayClassName="dialog-renderer__overlay"
+        portalClassName={classNames('dialog-renderer__portal', themeClass)}
       >
-        <div className="import__inner">
-          {!sourceIsSelected && (
-            <ImportSourceSelector
-              isElectron={isElectron}
-              locked={importStarted}
-              selectSource={selectSource}
-            />
-          )}
-          <TransitionFadeInOut
-            wrapperClassName="import__source-importer-wrapper"
-            shouldMount={sourceIsSelected}
-          >
-            <Suspense fallback={placeholder}>
-              <SourceImporter
-                buckets={buckets}
+        <Dialog
+          className="import"
+          closeBtnLabel={importStarted ? '' : 'Cancel'}
+          onDone={importStarted ? undefined : closeDialog}
+          title="Import Notes"
+        >
+          <div className="import__inner">
+            {!sourceIsSelected && (
+              <ImportSourceSelector
+                isElectron={isElectron}
                 locked={importStarted}
-                onClose={closeDialog}
-                onStart={() => this.setState({ importStarted: true })}
-                source={selectedSource}
+                selectSource={selectSource}
               />
-            </Suspense>
-          </TransitionFadeInOut>
-        </div>
-      </Dialog>
+            )}
+            <TransitionFadeInOut
+              wrapperClassName="import__source-importer-wrapper"
+              shouldMount={sourceIsSelected}
+            >
+              <Suspense fallback={placeholder}>
+                <SourceImporter
+                  buckets={buckets}
+                  locked={importStarted}
+                  onClose={closeDialog}
+                  onStart={() => this.setState({ importStarted: true })}
+                  source={selectedSource}
+                />
+              </Suspense>
+            </TransitionFadeInOut>
+          </div>
+        </Dialog>
+      </Modal>
     );
   }
 }
