@@ -33,9 +33,7 @@ import {
 import {
   createNote,
   closeNote,
-  focusSearchField,
   setUnsyncedNoteIds,
-  showDialog,
   toggleNavigation,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
@@ -260,6 +258,14 @@ export const App = connect(
 
       if ('printNote' === command.action) {
         return window.print();
+      }
+
+      if ('focusSearchField' === command.action) {
+        return this.props.focusSearchField();
+      }
+
+      if ('showDialog' === command.action) {
+        return this.props.showDialog(command.dialog);
       }
 
       const canRun = overEvery(
