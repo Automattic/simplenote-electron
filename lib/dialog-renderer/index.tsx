@@ -9,6 +9,7 @@ import AboutDialog from '../dialogs/about';
 import ImportDialog from '../dialogs/import';
 import SettingsDialog from '../dialogs/settings';
 import ShareDialog from '../dialogs/share';
+import { closeDialog } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -46,29 +47,37 @@ export class DialogRenderer extends Component<Props> {
 
     return (
       <Fragment>
-        {this.props.dialogs.map(dialog =>
-          'ABOUT' === dialog ? (
-            <AboutDialog key="about" themeClass={themeClass} />
-          ) : 'IMPORT' === dialog ? (
-            <ImportDialog
-              key="import"
-              buckets={buckets}
-              isElectron={isElectron}
-              themeClass={themeClass}
-            />
-          ) : 'SETTINGS' === dialog ? (
-            <SettingsDialog
-              key="settings"
-              buckets={buckets}
-              isElectron={isElectron}
-              isMacApp={isMacApp}
-              themeClass={themeClass}
-              {...appProps}
-            />
-          ) : 'SHARE' === dialog ? (
-            <ShareDialog key="share" themeClass={themeClass} />
-          ) : null
-        )}
+        {this.props.dialogs.map(dialog => (
+          <Modal
+            key={dialog}
+            className="dialog-renderer__content"
+            contentLabel={dialog}
+            isOpen
+            onRequestClose={closeDialog}
+            overlayClassName="dialog-renderer__overlay"
+            portalClassName={classNames('dialog-renderer__portal', themeClass)}
+          >
+            {'ABOUT' === dialog ? (
+              <AboutDialog key="about" />
+            ) : 'IMPORT' === dialog ? (
+              <ImportDialog
+                key="import"
+                buckets={buckets}
+                isElectron={isElectron}
+              />
+            ) : 'SETTINGS' === dialog ? (
+              <SettingsDialog
+                key="settings"
+                buckets={buckets}
+                isElectron={isElectron}
+                isMacApp={isMacApp}
+                {...appProps}
+              />
+            ) : 'SHARE' === dialog ? (
+              <ShareDialog key="share" />
+            ) : null}
+          </Modal>
+        ))}
       </Fragment>
     );
   }

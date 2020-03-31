@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
@@ -39,7 +37,6 @@ export class SettingsDialog extends Component {
     isMacApp: PropTypes.bool.isRequired,
     onSetWPToken: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
-    themeClass: PropTypes.string.isRequired,
     toggleShareAnalyticsPreference: PropTypes.func.isRequired,
   };
 
@@ -129,44 +126,28 @@ export class SettingsDialog extends Component {
   };
 
   render() {
-    const {
-      buckets,
-      closeDialog,
-      isElectron,
-      isMacApp,
-      settings,
-      themeClass,
-    } = this.props;
+    const { buckets, closeDialog, isElectron, isMacApp, settings } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
-      <Modal
-        className="dialog-renderer__content"
-        contentLabel="Settings"
-        isOpen
-        onRequestClose={closeDialog}
-        overlayClassName="dialog-renderer__overlay"
-        portalClassName={classNames('dialog-renderer__portal', themeClass)}
-      >
-        <Dialog className="settings" title="Settings" onDone={closeDialog}>
-          <TabPanels tabNames={settingTabs}>
-            <AccountPanel
-              accountName={settings.accountName}
-              analyticsEnabled={analyticsEnabled}
-              requestSignOut={this.onSignOutRequested}
-              toggleShareAnalyticsPreference={
-                this.onToggleShareAnalyticsPreference
-              }
-            />
-            <DisplayPanel
-              buckets={buckets}
-              isElectron={isElectron}
-              isMacApp={isMacApp}
-            />
-            <ToolsPanel />
-          </TabPanels>
-        </Dialog>
-      </Modal>
+      <Dialog className="settings" title="Settings" onDone={closeDialog}>
+        <TabPanels tabNames={settingTabs}>
+          <AccountPanel
+            accountName={settings.accountName}
+            analyticsEnabled={analyticsEnabled}
+            requestSignOut={this.onSignOutRequested}
+            toggleShareAnalyticsPreference={
+              this.onToggleShareAnalyticsPreference
+            }
+          />
+          <DisplayPanel
+            buckets={buckets}
+            isElectron={isElectron}
+            isMacApp={isMacApp}
+          />
+          <ToolsPanel />
+        </TabPanels>
+      </Dialog>
     );
   }
 }
