@@ -141,7 +141,6 @@ export class SettingsDialog extends Component {
 
     return (
       <Modal
-        key="dialog-renderer__content__settings"
         className="dialog-renderer__content"
         contentLabel="Settings"
         isOpen

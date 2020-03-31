@@ -48,17 +48,17 @@ export class DialogRenderer extends Component<Props> {
       <Fragment>
         {this.props.dialogs.map(dialog =>
           'ABOUT' === dialog ? (
-            <AboutDialog key="dialog-renderer__about" themeClass={themeClass} />
+            <AboutDialog key="about" themeClass={themeClass} />
           ) : 'IMPORT' === dialog ? (
             <ImportDialog
-              key="dialog-renderer__import"
+              key="import"
               buckets={buckets}
               isElectron={isElectron}
               themeClass={themeClass}
             />
           ) : 'SETTINGS' === dialog ? (
             <SettingsDialog
-              key="dialog-renderer__settings"
+              key="settings"
               buckets={buckets}
               isElectron={isElectron}
               isMacApp={isMacApp}
@@ -66,7 +66,7 @@ export class DialogRenderer extends Component<Props> {
               {...appProps}
             />
           ) : 'SHARE' === dialog ? (
-            <ShareDialog key="dialog-renderer__share" themeClass={themeClass} />
+            <ShareDialog key="share" themeClass={themeClass} />
           ) : null
         )}
       </Fragment>

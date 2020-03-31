@@ -50,7 +50,6 @@ class ImportDialog extends Component<Props> {
 
     return (
       <Modal
-        key="dialog-renderer__content__import"
         className="dialog-renderer__content"
         contentLabel="Import Notes"
         isOpen

@@ -101,7 +101,6 @@ export class ShareDialog extends Component<Props> {
 
     return (
       <Modal
-        key="dialog-renderer__content__share"
         className="dialog-renderer__content"
         contentLabel="About"
         isOpen

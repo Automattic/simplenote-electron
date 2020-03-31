@@ -30,7 +30,6 @@ export class AboutDialog extends Component<Props> {
 
     return (
       <Modal
-        key="dialog-renderer__content__about"
         className="dialog-renderer__content"
         contentLabel="About"
         isOpen
