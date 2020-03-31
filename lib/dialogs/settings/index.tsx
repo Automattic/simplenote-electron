@@ -132,7 +132,6 @@ export class SettingsDialog extends Component {
     const {
       buckets,
       closeDialog,
-      dialog,
       isElectron,
       isMacApp,
       settings,
