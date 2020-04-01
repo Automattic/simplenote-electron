@@ -9,6 +9,8 @@ import TransitionDelayEnter from '../../components/transition-delay-enter';
 import Spinner from '../../components/spinner';
 import { closeDialog } from '../../state/ui/actions';
 
+import * as S from '../../state';
+
 const SourceImporter = React.lazy(() =>
   import(/* webpackChunkName: 'source-importer' */ './source-importer')
 );
@@ -80,10 +82,8 @@ class ImportDialog extends Component<Props> {
   }
 }
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => {
-    dispatch(closeDialog());
-  },
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog,
+};
 
 export default connect(null, mapDispatchToProps)(ImportDialog);

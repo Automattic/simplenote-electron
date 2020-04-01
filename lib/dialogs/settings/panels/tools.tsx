@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -10,14 +10,18 @@ import ButtonGroup from '../../button-group';
 
 import { showDialog } from '../../../state/ui/actions';
 
+import * as S from '../../../state';
+
 type DispatchProps = {
   showDialog: () => any;
 };
 
-const ToolsPanel = ({ showImportDialog }) => {
+type Props = DispatchProps;
+
+const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
   const onSelectItem = item => {
     if (item.slug === 'import') {
-      showImportDialog();
+      showDialog();
     } else if (item.slug === 'export') {
       exportZipArchive();
     }
@@ -43,14 +47,8 @@ const ToolsPanel = ({ showImportDialog }) => {
   );
 };
 
-ToolsPanel.propTypes = {
-  showImportDialog: PropTypes.func.isRequired,
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    showImportDialog: () => dispatch(showDialog('IMPORT')),
-  };
-};
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  showDialog: () => dispatch(showDialog('IMPORT')),
+});
 
 export default connect(null, mapDispatchToProps)(ToolsPanel);

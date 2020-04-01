@@ -19,27 +19,25 @@ import * as S from '../../state';
 
 const settingTabs = ['account', 'display', 'tools'];
 
-type DispatchProps = {
-  closeDialog: () => any;
-  setWPToken: () => any;
+type OwnProps = {
+  actions: object;
+  appState: object;
+  buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
+  isElectron: boolean;
+  isMacApp: boolean;
+  onSignOut: () => any;
+  settings: object;
+  toggleShareAnalyticsPreference: (preferencesBucket: object) => any;
 };
 
-export class SettingsDialog extends Component {
-  static propTypes = {
-    actions: PropTypes.object.isRequired,
-    appState: PropTypes.object.isRequired,
-    buckets: PropTypes.shape({
-      noteBucket: PropTypes.object.isRequired,
-      preferencesBucket: PropTypes.object.isRequired,
-    }),
-    onSignOut: PropTypes.func.isRequired,
-    isElectron: PropTypes.bool.isRequired,
-    isMacApp: PropTypes.bool.isRequired,
-    onSetWPToken: PropTypes.func.isRequired,
-    settings: PropTypes.object.isRequired,
-    toggleShareAnalyticsPreference: PropTypes.func.isRequired,
-  };
+type DispatchProps = {
+  closeDialog: () => any;
+  setWPToken: (token: string) => any;
+};
 
+type Props = OwnProps & DispatchProps;
+
+export class SettingsDialog extends Component<Props> {
   onToggleShareAnalyticsPreference = () => {
     this.props.toggleShareAnalyticsPreference({
       preferencesBucket: this.props.buckets.preferencesBucket,
@@ -73,10 +71,10 @@ export class SettingsDialog extends Component {
   };
 
   signOut = () => {
-    const { onSignOut, onSetWPToken, isElectron } = this.props;
+    const { onSignOut, setWPToken, isElectron } = this.props;
 
     // Reset the WordPress Token
-    onSetWPToken(null);
+    setWPToken(null);
 
     onSignOut();
 
@@ -155,10 +153,8 @@ export class SettingsDialog extends Component {
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => {
-    dispatch(closeDialog());
-  },
-  onSetWPToken: token => dispatch(setWPToken(token)),
+  closeDialog: () => dispatch(closeDialog()),
+  setWPToken: token => dispatch(setWPToken(token)),
   toggleShareAnalyticsPreference: args => {
     dispatch(toggleShareAnalyticsPreference(args));
   },

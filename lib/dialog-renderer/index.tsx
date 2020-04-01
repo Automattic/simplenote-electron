@@ -86,10 +86,8 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui: { dialogs } }) => ({
   dialogs,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => {
-    dispatch(closeDialog());
-  },
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogRenderer);

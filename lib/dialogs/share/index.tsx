@@ -216,9 +216,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => {
-    dispatch(closeDialog());
-  },
+  closeDialog: () => dispatch(closeDialog()),
   publishNote: (note, shouldPublish) =>
     dispatch(publishNote(note, shouldPublish)),
   updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),

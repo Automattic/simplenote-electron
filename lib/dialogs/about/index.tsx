@@ -126,10 +126,8 @@ export class AboutDialog extends Component<Props> {
   }
 }
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => {
-    dispatch(closeDialog());
-  },
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog,
+};
 
 export default connect(null, mapDispatchToProps)(AboutDialog);
