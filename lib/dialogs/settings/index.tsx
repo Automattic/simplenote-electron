@@ -26,7 +26,7 @@ type OwnProps = {
   isElectron: boolean;
   isMacApp: boolean;
   onSignOut: () => any;
-  settings: object;
+  settings: S.State['settings'];
   toggleShareAnalyticsPreference: (preferencesBucket: object) => any;
 };
 
