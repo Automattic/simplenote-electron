@@ -1,0 +1,69 @@
+.keybindings {
+  .dialog {
+    position: relative;
+    max-height: 480px;
+    max-width: 1020px;
+    overflow-y: scroll;
+    margin: auto;
+
+    @media only screen and (max-width: 1050px) {
+      max-width: 720px;
+    }
+
+    @media only screen and (max-width: 780px) {
+      max-width: 480px;
+    }
+  }
+
+  .dialog-content {
+    padding: 10px 20px 20px 20px;
+  }
+
+  ul {
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: 6px;
+    list-style: none;
+  }
+
+  kbd {
+    border-radius: 5px;
+    margin: 4px;
+    padding: 0 5px;
+    font-size: 12px;
+    min-width: 8px;
+    text-align: center;
+    display: inline-block;
+    box-shadow: 0 1px 1px gray;
+
+    .theme-dark & {
+      border: 1px solid white;
+    }
+
+    .theme-light & {
+      border: 1px solid black;
+    }
+  }
+}
+
+.keybindings__key-list {
+  min-width: 80px;
+  display: inline-block;
+}
+
+.keybindings__sections {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  section {
+    margin-right: 2em;
+
+    h1 {
+      font-size: 18px;
+    }
+  }
+}

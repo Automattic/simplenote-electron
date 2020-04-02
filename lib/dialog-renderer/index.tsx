@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Modal from 'react-modal';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import AboutDialog from '../dialogs/about';
 import ImportDialog from '../dialogs/import';
+import KeybindingsDialog from '../dialogs/keybindings';
 import SettingsDialog from '../dialogs/settings';
 import ShareDialog from '../dialogs/share';
 import { closeDialog } from '../state/ui/actions';
@@ -63,6 +63,12 @@ export class DialogRenderer extends Component<Props> {
                 key="import"
                 buckets={buckets}
                 isElectron={isElectron}
+              />
+            ) : 'KEYBINDINGS' === dialog ? (
+              <KeybindingsDialog
+                key="keybindings"
+                isElectron={isElectron}
+                isMacApp={isMacApp}
               />
             ) : 'SETTINGS' === dialog ? (
               <SettingsDialog

@@ -38,7 +38,7 @@ const buildEditMenu = settings => {
       },
       {
         label: 'Search &Notes…',
-        accelerator: 'CommandOrControl+F',
+        accelerator: 'CommandOrControl+Shift+F',
         click: appCommandSender({ action: 'focusSearchField' }),
       },
       {

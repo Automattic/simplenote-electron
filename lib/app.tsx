@@ -55,7 +55,7 @@ export type DispatchProps = {
   closeNote: () => any;
   focusSearchField: () => any;
   selectNote: (note: T.NoteEntity) => any;
-  showDialog: () => any;
+  showDialog: (type: T.DialogType) => any;
 };
 
 export type Props = DispatchProps;
@@ -229,8 +229,8 @@ export const App = connect(
       }
     }
 
-    handleShortcut = event => {
-      const { ctrlKey, key, metaKey } = event;
+    handleShortcut = (event: KeyboardEvent) => {
+      const { code, ctrlKey, key, metaKey, shiftKey } = event;
 
       // Is either cmd or ctrl pressed? (But not both)
       const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
@@ -238,7 +238,8 @@ export const App = connect(
       // open tag list
       if (
         cmdOrCtrl &&
-        't' === key.toLowerCase() &&
+        shiftKey &&
+        'KeyT' === code &&
         !this.props.showNavigation
       ) {
         this.props.openTagList();
