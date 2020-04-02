@@ -1,4 +1,4 @@
-import { get, partition, some } from 'lodash';
+import { get, partition } from 'lodash';
 import update from 'react-addons-update';
 import Debug from 'debug';
 import ActionMap from './action-map';
@@ -13,8 +13,6 @@ const debug = Debug('appState');
 const initialState: AppState = {
   notes: null,
   tags: [],
-  dialogs: [],
-  nextDialogKey: 0,
   unsyncedNoteIds: [], // note bucket only
 };
 
@@ -26,7 +24,6 @@ export const actionMap = new ActionMap({
       return update(state, {
         notes: { $set: null },
         tags: { $set: [] },
-        dialogs: { $set: [] },
       });
     },
 
@@ -41,44 +38,6 @@ export const actionMap = new ActionMap({
           );
         };
       },
-    },
-
-    showDialog(state: AppState, { dialog }) {
-      const { type, multiple = false, title, ...dialogProps } = dialog;
-
-      // If there should only be one instance of the dialog in the stack
-      if (!multiple && some(state.dialogs, { type })) {
-        return;
-      }
-
-      const updateCommands = {
-        dialogs: {
-          $push: [
-            {
-              type,
-              multiple,
-              title,
-              key: state.nextDialogKey,
-              ...dialogProps,
-            },
-          ],
-        },
-        nextDialogKey: { $set: state.nextDialogKey + 1 },
-      };
-
-      return update(state, updateCommands);
-    },
-
-    closeDialog(state: AppState, { key }) {
-      var dialogs = state.dialogs;
-
-      for (let i = 0; i < dialogs.length; i++) {
-        if (dialogs[i].key === key) {
-          return update(state, {
-            dialogs: { $splice: [[i, 1]] },
-          });
-        }
-      }
     },
 
     newNote: {

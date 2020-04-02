@@ -1,12 +1,16 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
-export const createNote: A.ActionCreator<A.CreateNote> = () => ({
-  type: 'CREATE_NOTE',
+export const closeDialog: A.ActionCreator<A.CloseDialog> = () => ({
+  type: 'CLOSE_DIALOG',
 });
 
 export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
+});
+
+export const createNote: A.ActionCreator<A.CreateNote> = () => ({
+  type: 'CREATE_NOTE',
 });
 
 export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = (
@@ -91,6 +95,13 @@ export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
 
 export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
   type: 'SHOW_ALL_NOTES',
+});
+
+export const showDialog: A.ActionCreator<A.ShowDialog> = (
+  dialog: T.DialogType
+) => ({
+  type: 'SHOW_DIALOG',
+  dialog,
 });
 
 export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (

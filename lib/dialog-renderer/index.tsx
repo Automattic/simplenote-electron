@@ -1,64 +1,93 @@
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import Modal from 'react-modal';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import * as Dialogs from '../dialogs';
+import AboutDialog from '../dialogs/about';
+import ImportDialog from '../dialogs/import';
+import SettingsDialog from '../dialogs/settings';
+import ShareDialog from '../dialogs/share';
+import { closeDialog } from '../state/ui/actions';
 
-export const DialogRenderer = props => {
-  const {
-    appProps,
-    buckets,
-    themeClass,
-    closeDialog,
-    dialogs,
-    isElectron,
-    isMacApp,
-  } = props;
+import * as S from '../state';
+import * as T from '../types';
 
-  const renderDialog = dialog => {
-    const { key, title } = dialog;
-    const DialogComponent = Dialogs[dialog.type];
+type OwnProps = {
+  appProps: object;
+  buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
+  themeClass: string;
+  isElectron: boolean;
+  isMacApp: boolean;
+};
 
-    if (DialogComponent === null) {
-      throw new Error('Unknown dialog type.');
-    }
+type StateProps = {
+  dialogs: T.DialogType[];
+};
 
-    const closeThisDialog = () => closeDialog({ key });
+type DispatchProps = {
+  closeDialog: () => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+export class DialogRenderer extends Component<Props> {
+  static displayName = 'DialogRenderer';
+
+  render() {
+    const {
+      appProps,
+      buckets,
+      themeClass,
+      isElectron,
+      isMacApp,
+      closeDialog,
+    } = this.props;
 
     return (
-      <Modal
-        key={key}
-        className="dialog-renderer__content"
-        contentLabel={title}
-        isOpen
-        onRequestClose={closeThisDialog}
-        overlayClassName="dialog-renderer__overlay"
-        portalClassName={classNames('dialog-renderer__portal', themeClass)}
-      >
-        <DialogComponent
-          buckets={buckets}
-          dialog={dialog}
-          requestClose={closeThisDialog}
-          isElectron={isElectron}
-          isMacApp={isMacApp}
-          {...appProps}
-        />
-      </Modal>
+      <Fragment>
+        {this.props.dialogs.map(dialog => (
+          <Modal
+            key={dialog}
+            className="dialog-renderer__content"
+            contentLabel={dialog}
+            isOpen
+            onRequestClose={closeDialog}
+            overlayClassName="dialog-renderer__overlay"
+            portalClassName={classNames('dialog-renderer__portal', themeClass)}
+          >
+            {'ABOUT' === dialog ? (
+              <AboutDialog key="about" />
+            ) : 'IMPORT' === dialog ? (
+              <ImportDialog
+                key="import"
+                buckets={buckets}
+                isElectron={isElectron}
+              />
+            ) : 'SETTINGS' === dialog ? (
+              <SettingsDialog
+                key="settings"
+                buckets={buckets}
+                isElectron={isElectron}
+                isMacApp={isMacApp}
+                {...appProps}
+              />
+            ) : 'SHARE' === dialog ? (
+              <ShareDialog key="share" />
+            ) : null}
+          </Modal>
+        ))}
+      </Fragment>
     );
-  };
+  }
+}
 
-  return <Fragment>{dialogs.map(renderDialog)}</Fragment>;
+const mapStateToProps: S.MapState<StateProps> = ({ ui: { dialogs } }) => ({
+  dialogs,
+});
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog,
 };
 
-DialogRenderer.propTypes = {
-  appProps: PropTypes.object.isRequired,
-  buckets: PropTypes.object,
-  themeClass: PropTypes.string,
-  closeDialog: PropTypes.func.isRequired,
-  dialogs: PropTypes.array.isRequired,
-  isElectron: PropTypes.bool.isRequired,
-  isMacApp: PropTypes.bool.isRequired,
-};
-
-export default DialogRenderer;
+export default connect(mapStateToProps, mapDispatchToProps)(DialogRenderer);

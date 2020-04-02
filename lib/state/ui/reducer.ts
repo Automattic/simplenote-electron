@@ -7,6 +7,22 @@ import * as T from '../../types';
 
 const emptyList: unknown[] = [];
 
+const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
+  switch (action.type) {
+    case 'CLOSE_DIALOG':
+      return state.slice(0, -1);
+
+    case 'SHOW_DIALOG':
+      return [...state, action.dialog];
+
+    case 'App.authChanged':
+      return [];
+
+    default:
+      return state;
+  }
+};
+
 const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'TOGGLE_EDIT_MODE': {
@@ -163,8 +179,8 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
       return false;
-    case 'App.showDialog':
-      if (action.dialog && action.dialog.type === 'Settings') {
+    case 'SHOW_DIALOG':
+      if (action.dialog === 'SETTINGS') {
         return false;
       }
       return state;
@@ -230,6 +246,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
 };
 
 export default combineReducers({
+  dialogs,
   editMode,
   editingTags,
   filteredNotes,

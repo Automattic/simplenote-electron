@@ -55,6 +55,7 @@ export type DispatchProps = {
   closeNote: () => any;
   focusSearchField: () => any;
   selectNote: (note: T.NoteEntity) => any;
+  showDialog: () => any;
 };
 
 export type Props = DispatchProps;
@@ -115,6 +116,7 @@ const mapDispatchToProps: S.MapDispatch<
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),
     setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
+    showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
   };
 };
 
@@ -260,6 +262,10 @@ export const App = connect(
 
       if ('focusSearchField' === command.action) {
         return this.props.focusSearchField();
+      }
+
+      if ('showDialog' === command.action) {
+        return this.props.showDialog(command.dialog);
       }
 
       const canRun = overEvery(
@@ -501,8 +507,6 @@ export const App = connect(
             appProps={this.props}
             buckets={{ noteBucket, preferencesBucket, tagBucket }}
             themeClass={themeClass}
-            closeDialog={this.props.actions.closeDialog}
-            dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
             isMacApp={isMacApp}
           />

@@ -47,8 +47,9 @@ export type SetWPToken = Action<'setWPToken', { token: string }>;
 /*
  * Normal action types
  */
-export type CreateNote = Action<'CREATE_NOTE'>;
+export type CloseDialog = Action<'CLOSE_DIALOG'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
+export type CreateNote = Action<'CREATE_NOTE'>;
 export type DeleteNoteForever = Action<
   'DELETE_NOTE_FOREVER',
   { previousIndex: number }
@@ -63,6 +64,7 @@ export type RemoteNoteUpdate = Action<
   { noteId: T.EntityId; data: T.Note }
 >;
 export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
+export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
@@ -101,8 +103,9 @@ export type SelectNote = Action<
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 
 export type ActionType =
-  | CreateNote
   | CloseNote
+  | CloseDialog
+  | CreateNote
   | DeleteNoteForever
   | LegacyAction
   | FilterNotes
@@ -130,6 +133,7 @@ export type ActionType =
   | SetUnsyncedNoteIds
   | SetWPToken
   | ShowAllNotes
+  | ShowDialog
   | StoreRevisions
   | ToggleEditMode
   | ToggleNavigation
@@ -202,7 +206,6 @@ type LegacyAction =
       }
     >
   | Action<'App.authChanged'>
-  | Action<'App.closeDialog', { key: unknown }>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
@@ -212,5 +215,4 @@ type LegacyAction =
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
   | Action<'App.showAllNotesAndSelectFirst'>
-  | Action<'App.showDialog', { dialog: object }>
   | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>;

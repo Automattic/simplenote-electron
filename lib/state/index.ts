@@ -32,8 +32,6 @@ import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
-  dialogs: unknown[];
-  nextDialogKey: number;
   notes: T.NoteEntity[] | null;
   preferences?: T.Preferences;
   revision: T.NoteEntity | null;

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
-import DialogTypes from '../shared/dialog-types';
+import { showDialog } from './state/ui/actions';
 
 import * as S from './state';
 import * as T from './types';
@@ -30,6 +30,7 @@ type DispatchProps = {
   deleteNoteForever: (args: ListChanger) => any;
   restoreNote: (args: ListChanger) => any;
   shareNote: () => any;
+  showDialog: () => any;
   toggleFocusMode: () => any;
   trashNote: (args: ListChanger) => any;
 };
@@ -97,17 +98,12 @@ const mapStateToProps: S.MapState<StateProps> = ({
   notes: filteredNotes,
 });
 
-const {
-  deleteNoteForever,
-  restoreNote,
-  showDialog,
-  trashNote,
-} = appState.actionCreators;
+const { deleteNoteForever, restoreNote, trashNote } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
+  shareNote: () => dispatch(showDialog('SHARE')),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
   trashNote: args => dispatch(trashNote(args)),
 });

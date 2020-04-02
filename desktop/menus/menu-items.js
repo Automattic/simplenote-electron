@@ -2,13 +2,12 @@ const { app } = require('electron');
 
 const { appCommandSender } = require('./utils');
 const updater = require('../updater');
-const DialogTypes = require('../../shared/dialog-types');
 
 const about = {
   label: '&About ' + app.name,
   click: appCommandSender({
     action: 'showDialog',
-    dialog: DialogTypes.ABOUT,
+    dialog: 'ABOUT',
   }),
 };
 
@@ -22,7 +21,7 @@ const preferences = {
   accelerator: 'CommandOrControl+,',
   click: appCommandSender({
     action: 'showDialog',
-    dialog: DialogTypes.SETTINGS,
+    dialog: 'SETTINGS',
   }),
 };
 

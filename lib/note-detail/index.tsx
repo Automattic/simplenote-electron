@@ -11,11 +11,13 @@ import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
 import * as S from '../state';
+import * as T from '../types';
 
 const syncDelay = 2000;
 
 type StateProps = {
   showNoteInfo: boolean;
+  isDialogOpen: boolean;
 };
 
 type Props = StateProps;
@@ -24,7 +26,6 @@ export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
   static propTypes = {
-    dialogs: PropTypes.array.isRequired,
     fontSize: PropTypes.number,
     onChangeContent: PropTypes.func.isRequired,
     syncNote: PropTypes.func.isRequired,
@@ -74,7 +75,7 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
-    const { note, previewingMarkdown } = this.props;
+    const { isDialogOpen, note, previewingMarkdown } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
@@ -101,7 +102,7 @@ export class NoteDetail extends Component<Props> {
     }
 
     // Only copy if not viewing the note info panel or a dialog
-    if (showNoteInfo || dialogs.length > 0) {
+    if (showNoteInfo || isDialogOpen) {
       return true;
     }
 
@@ -238,7 +239,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui,
   settings,
 }) => ({
-  dialogs: state.dialogs,
+  isDialogOpen: ui.dialogs.length > 0,
   note: ui.selectedRevision || ui.note,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
