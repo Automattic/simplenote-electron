@@ -1,6 +1,5 @@
-import SearchWorker from './worker';
-
 import actions from '../state/actions';
+import { init, updateFilter } from './worker';
 
 import * as A from '../state/action-types';
 import * as S from '../state';
@@ -9,29 +8,34 @@ import * as T from '../types';
 const emptyList = [] as T.NoteEntity[];
 
 export const middleware: S.Middleware = store => {
-  const searchWorker = new SearchWorker();
   const {
     port1: searchProcessor,
     port2: _searchProcessor,
   } = new MessageChannel();
 
+  const setFilteredNotes = (
+    noteIds: Set<T.EntityId>,
+    previousIndex?: number
+  ) => {
+    const { appState } = store.getState();
+    store.dispatch(
+      actions.ui.filterNotes(
+        appState.notes?.filter(({ id }) => noteIds.has(id)) || emptyList,
+        previousIndex
+      )
+    );
+  };
+
   searchProcessor.onmessage = event => {
     switch (event.data.action) {
       case 'filterNotes': {
-        const { appState, ui } = store.getState();
-        store.dispatch(
-          actions.ui.filterNotes(
-            appState.notes?.filter(({ id }) => event.data.noteIds.has(id)) ||
-              emptyList,
-            ui.previousIndex
-          )
-        );
+        setFilteredNotes(event.data.noteIds);
         break;
       }
     }
   };
 
-  searchWorker.postMessage('boot', [_searchProcessor]);
+  init(_searchProcessor);
   let hasInitialized = false;
 
   return next => (action: A.ActionType) => {
@@ -40,18 +44,13 @@ export const middleware: S.Middleware = store => {
     switch (action.type) {
       case 'App.notesLoaded':
         if (!hasInitialized) {
-          const {
-            appState: { notes },
-          } = store.getState();
-          if (notes) {
-            notes.forEach(note =>
-              searchProcessor.postMessage({
-                action: 'updateNote',
-                noteId: note.id,
-                data: note.data,
-              })
-            );
-          }
+          action.notes.forEach(note =>
+            searchProcessor.postMessage({
+              action: 'updateNote',
+              noteId: note.id,
+              data: note.data,
+            })
+          );
 
           hasInitialized = true;
         }
@@ -99,9 +98,12 @@ export const middleware: S.Middleware = store => {
       case 'DELETE_NOTE_FOREVER':
       case 'RESTORE_NOTE':
       case 'TRASH_NOTE':
-      case 'App.authChanged':
       case 'App.trashNote':
-        searchProcessor.postMessage({ action: 'filterNotes' });
+        setFilteredNotes(updateFilter('fullSearch'), action.previousIndex);
+        break;
+
+      case 'App.authChanged':
+        setFilteredNotes(updateFilter('fullSearch'));
         break;
     }
 
