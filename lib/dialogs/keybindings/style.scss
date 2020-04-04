@@ -1,13 +1,10 @@
 .keybindings {
   .dialog {
-    position: relative;
-    max-height: 480px;
-    max-width: 1020px;
-    overflow-y: scroll;
+    max-width: 1120px;
     margin: auto;
 
-    @media only screen and (max-width: 1050px) {
-      max-width: 720px;
+    @media only screen and (max-width: 1150px) {
+      max-width: 760px;
     }
 
     @media only screen and (max-width: 780px) {
@@ -48,12 +45,26 @@
   }
 }
 
+.keybindings__key-item {
+  display: flex;
+  align-items: baseline;
+}
+
 .keybindings__key-list {
   min-width: 80px;
   display: inline-block;
 }
 
+.keybindings__key-description {
+  display: inline-block;
+  margin-left: 4px;
+}
+
 .keybindings__sections {
+  position: relative;
+  max-height: 480px;
+  overflow-y: scroll;
+
   width: 100%;
   display: flex;
   flex-direction: row;

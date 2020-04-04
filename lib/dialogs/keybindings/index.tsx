@@ -16,20 +16,30 @@ type DispatchProps = {
 
 type Props = OwnProps & DispatchProps;
 
-const Keys = ({ keys }: { keys: (string | [string, string])[] }) => (
-  <div className="keybindings__key-list">
-    {keys.map((key, i) => (
-      <Fragment key={i}>
-        {i > 0 && ' + '}
-        {'string' === typeof key ? (
-          <kbd key={key}>{key}</kbd>
-        ) : (
-          <>
-            <kbd>{key[0]}</kbd> / <kbd>{key[1]}</kbd>
-          </>
-        )}
-      </Fragment>
-    ))}
+const Keys = ({
+  keys,
+  children,
+}: {
+  keys: (string | [string, string])[];
+  children: React.ReactNode;
+}) => (
+  <div className="keybindings__key-item">
+    <div className="keybindings__key-list">
+      {keys.map((key, i) => (
+        <Fragment key={i}>
+          {i > 0 && ' + '}
+          {'string' === typeof key ? (
+            <kbd key={key}>{key}</kbd>
+          ) : (
+            <>
+              <kbd>{key[0]}</kbd> / <kbd>{key[1]}</kbd>
+            </>
+          )}
+        </Fragment>
+      ))}
+    </div>
+    {'\u2000-\u2000'}
+    <div className="keybindings__key-description">{children}</div>
   </div>
 );
 
@@ -47,17 +57,28 @@ export class AboutDialog extends Component<Props> {
               <h1>View</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'F']} /> - Focus search field
+                  <Keys keys={[CmdOrCtrl, '?']}>Show keyboard shortcuts</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, '+']} /> - Increase font size
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
+                    Focus search field
+                  </Keys>
                 </li>
-                <li>
-                  <Keys keys={[CmdOrCtrl, '-']} /> - Decrease font size
-                </li>
-                <li>
-                  <Keys keys={[CmdOrCtrl, '0']} /> - Reset font size
-                </li>
+                {isElectron && (
+                  <li>
+                    <Keys keys={[CmdOrCtrl, '+']}>Increase font size</Keys>
+                  </li>
+                )}
+                {isElectron && (
+                  <li>
+                    <Keys keys={[CmdOrCtrl, '-']}>Decrease font size</Keys>
+                  </li>
+                )}
+                {isElectron && (
+                  <li>
+                    <Keys keys={[CmdOrCtrl, '0']}>Reset font size</Keys>
+                  </li>
+                )}
               </ul>
             </section>
 
@@ -66,26 +87,38 @@ export class AboutDialog extends Component<Props> {
               <ul>
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, ',']} /> - Open app preferences
+                    <Keys keys={[CmdOrCtrl, ',']}>Open app preferences</Keys>
                   </li>
                 )}
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, 'Shift', 'E']} /> - Export all notes
+                    <Keys keys={[CmdOrCtrl, 'Shift', 'E']}>
+                      Export all notes
+                    </Keys>
                   </li>
                 )}
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'T']} /> - Toggle tag list
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'T']}>Toggle tag list</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'K']} /> - Select previous
-                  note
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'K']}>
+                    Select previous note
+                  </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']} /> - Select next note
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>Select next note</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'N']} /> - Show note list
+                  <Keys keys={[CmdOrCtrl, 'T']}>
+                    Toggle editing content/tags
+                  </Keys>
+                </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'L']}>
+                    Show note list
+                    <br />
+                    (on narrow screens)
+                  </Keys>
                 </li>
               </ul>
             </section>
@@ -94,21 +127,25 @@ export class AboutDialog extends Component<Props> {
               <h1>Note Editing</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'N']} /> - Create new note
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'P']} /> - Print note
+                  <Keys keys={[CmdOrCtrl, 'Delete']}>Trash note</Keys>
+                </li>
+                {isElectron && (
+                  <li>
+                    <Keys keys={[CmdOrCtrl, 'P']}>Print note</Keys>
+                  </li>
+                )}
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'P']}>
+                    Toggle Markdown preview
+                  </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'T']} /> - Toggle editing content/tags
-                </li>
-                <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'P']} /> - Toggle Markdown
-                  preview
-                </li>
-                <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'C']} /> - Insert checklist
-                  item
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'C']}>
+                    Insert checklist item
+                  </Keys>
                 </li>
               </ul>
             </section>

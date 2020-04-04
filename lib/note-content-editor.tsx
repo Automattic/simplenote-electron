@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, invoke, noop } from 'lodash';
+import { compact, get, has, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
@@ -30,6 +30,13 @@ import analytics from './analytics';
 import * as S from './state';
 
 const TEXT_DELIMITER = '\n';
+
+const isElectron = (() => {
+  // https://github.com/atom/electron/issues/2288
+  const foundElectron = has(window, 'process.type');
+
+  return () => foundElectron;
+})();
 
 type StateProps = {
   searchQuery: string;
@@ -105,8 +112,13 @@ class NoteContentEditor extends Component<Props> {
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
-    this.ipc.on('appCommand', this.onAppCommand);
     this.editor.blur();
+
+    if (isElectron()) {
+      this.ipc.on('appCommand', this.onAppCommand);
+    } else {
+      window.addEventListener('keydown', this.handleKeydown, false);
+    }
   }
 
   handleEditorStateChange = editorState => {
@@ -213,7 +225,11 @@ class NoteContentEditor extends Component<Props> {
   };
 
   componentWillUnmount() {
-    this.ipc.removeListener('appCommand', this.onAppCommand);
+    if (isElectron()) {
+      this.ipc.removeListener('appCommand', this.onAppCommand);
+    } else {
+      window.removeEventListener('keydown', this.handleKeydown, false);
+    }
   }
 
   focus = () => {
@@ -289,6 +305,25 @@ class NoteContentEditor extends Component<Props> {
     }
 
     return 'not-handled';
+  };
+
+  handleKeydown = (event: KeyboardEvent) => {
+    const { code, ctrlKey, metaKey, shiftKey } = event;
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (cmdOrCtrl && shiftKey && 'KeyC' === code) {
+      this.handleEditorStateChange(
+        insertOrRemoveCheckboxes(this.state.editorState)
+      );
+      analytics.tracks.recordEvent('editor_checklist_inserted');
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      return false;
+    }
+
+    return true;
   };
 
   onAppCommand = (event, command) => {

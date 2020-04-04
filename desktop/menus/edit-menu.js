@@ -33,17 +33,17 @@ const buildEditMenu = settings => {
         label: '&Select All',
         role: 'selectall',
       },
+      { type: 'separator' },
       {
-        type: 'separator',
+        label: '&Trash Note',
+        click: appCommandSender({ action: 'trashNote' }),
       },
+      { type: 'separator' },
       {
         label: 'Search &Notes…',
-        accelerator: 'CommandOrControl+Shift+F',
         click: appCommandSender({ action: 'focusSearchField' }),
       },
-      {
-        type: 'separator',
-      },
+      { type: 'separator' },
       {
         label: 'C&heck Spelling',
         type: 'checkbox',
