@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
 import analytics from '../analytics';
-import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
@@ -15,12 +14,18 @@ import * as T from '../types';
 
 const syncDelay = 2000;
 
-type StateProps = {
-  showNoteInfo: boolean;
-  isDialogOpen: boolean;
+type OwnProps = {
+  previewingMarkdown: boolean;
 };
 
-type Props = StateProps;
+type StateProps = {
+  isDialogOpen: boolean;
+  note: T.NoteEntity | null;
+  searchQuery: string;
+  showNoteInfo: boolean;
+};
+
+type Props = OwnProps & StateProps;
 
 export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
@@ -41,6 +46,8 @@ export class NoteDetail extends Component<Props> {
     storeFocusEditor: noop,
     storeHasFocus: noop,
   };
+
+  previewNode = createRef<HTMLDivElement>();
 
   componentWillMount() {
     this.queueNoteSync = debounce(this.syncNote, syncDelay);
@@ -75,14 +82,16 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
-    const { isDialogOpen, note, previewingMarkdown } = this.props;
+    const { note, previewingMarkdown, searchQuery } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
 
     if (
       (previewingMarkdown &&
-        (prevProps.note !== note || prevContent !== nextContent)) ||
+        (prevProps.note !== note ||
+          prevContent !== nextContent ||
+          prevProps.searchQuery !== searchQuery)) ||
       (!prevProps.previewingMarkdown && this.props.previewingMarkdown)
     ) {
       this.updateMarkdown();
@@ -95,7 +104,7 @@ export class NoteDetail extends Component<Props> {
   }
 
   copyRenderedNote = event => {
-    const { previewingMarkdown, showNoteInfo, dialogs } = this.props;
+    const { previewingMarkdown, showNoteInfo, isDialogOpen } = this.props;
     // Only copy the rendered content if we're in the preview mode
     if (!previewingMarkdown) {
       return true;
@@ -169,14 +178,20 @@ export class NoteDetail extends Component<Props> {
 
   storeFocusContentEditor = f => (this.focusContentEditor = f);
 
-  storePreview = ref => (this.previewNode = ref);
-
   updateMarkdown = () => {
-    if (!this.previewNode) {
+    if (
+      !this.props.previewingMarkdown ||
+      !this.props.note ||
+      !this.previewNode.current
+    ) {
       return;
     }
 
-    renderToNode(this.previewNode, this.props.note.data.content);
+    renderToNode(
+      this.previewNode.current,
+      this.props.note.data.content,
+      this.props.searchQuery
+    );
   };
 
   render() {
@@ -204,7 +219,7 @@ export class NoteDetail extends Component<Props> {
           <div className="note-detail">
             {previewingMarkdown && (
               <div
-                ref={this.storePreview}
+                ref={this.previewNode}
                 className="note-detail-markdown theme-color-bg theme-color-fg"
                 data-markdown-root
                 onClick={this.onPreviewClick}
@@ -234,13 +249,10 @@ export class NoteDetail extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  ui,
-  settings,
-}) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ ui, settings }) => ({
   isDialogOpen: ui.dialogs.length > 0,
   note: ui.selectedRevision || ui.note,
+  searchQuery: ui.searchQuery,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });
