@@ -23,12 +23,14 @@ const markMatches = (sourceNode: Text, terms: string[]): void => {
       // we have to remember the MATCH because we'll replace it
       const match = (node as Text).splitText(start);
 
-      match.splitText(term.length);
+      const after = match.splitText(term.length);
 
       const marked = document.createElement('span');
       marked.setAttribute('class', 'search-match');
       match.parentNode?.replaceChild(marked, match);
       marked.appendChild(match);
+
+      markMatches(after, terms);
     });
   });
 };
