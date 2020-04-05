@@ -47,6 +47,7 @@ export class NoteDetail extends Component<Props> {
     storeHasFocus: noop,
   };
 
+  noteDetail = createRef<HTMLDivElement>();
   previewNode = createRef<HTMLDivElement>();
 
   componentWillMount() {
@@ -61,6 +62,8 @@ export class NoteDetail extends Component<Props> {
 
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSync.flush);
+
+    window.addEventListener('keydown', this.handlePreviewKeydown, false);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -101,6 +104,7 @@ export class NoteDetail extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
+    window.removeEventListener('keydown', this.handlePreviewKeydown, false);
   }
 
   copyRenderedNote = event => {
@@ -194,6 +198,53 @@ export class NoteDetail extends Component<Props> {
     );
   };
 
+  handlePreviewKeydown = (event: KeyboardEvent) => {
+    const { ctrlKey, code, metaKey, shiftKey } = event;
+
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (
+      this.noteDetail.current &&
+      this.props.searchQuery.trim() &&
+      cmdOrCtrl &&
+      code === 'KeyG'
+    ) {
+      const matches = this.noteDetail.current.querySelectorAll(
+        'span.search-match'
+      );
+
+      if (!matches.length) {
+        return;
+      }
+
+      const selectedMatch = this.noteDetail.current.querySelector(
+        'span.search-match[data-current-match=true]'
+      );
+      let nextMatch = shiftKey ? matches[matches.length - 1] : matches[0];
+      if (selectedMatch) {
+        for (let i = 0; i < matches.length; i++) {
+          if (matches[i] !== selectedMatch) {
+            continue;
+          }
+
+          const direction = shiftKey ? -1 : 1;
+          const wrap = (index: number, length: number) => {
+            const next = index % length;
+            return next === -1 ? length - 1 : next;
+          };
+          nextMatch = matches[wrap(i + direction, matches.length)];
+          break;
+        }
+
+        selectedMatch.removeAttribute('data-current-match');
+      }
+      nextMatch.scrollIntoView({ block: 'center' });
+      nextMatch.setAttribute('data-current-match', 'true');
+
+      this.setState({ selectedMatch: nextMatch });
+    }
+  };
+
   render() {
     const {
       note,
@@ -216,7 +267,7 @@ export class NoteDetail extends Component<Props> {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className="note-detail">
+          <div ref={this.noteDetail} className="note-detail">
             {previewingMarkdown && (
               <div
                 ref={this.previewNode}
