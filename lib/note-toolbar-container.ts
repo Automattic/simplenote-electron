@@ -30,18 +30,11 @@ type DispatchProps = {
   shareNote: () => any;
   showDialog: () => any;
   toggleFocusMode: () => any;
-  trashNote: (args: NoteChanger) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteToolbarContainer extends Component<Props> {
-  onTrashNote = (note: T.NoteEntity) => {
-    const { noteBucket } = this.props;
-    this.props.trashNote({ noteBucket, note });
-    analytics.tracks.recordEvent('editor_note_deleted');
-  };
-
   onDeleteNoteForever = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
     this.props.deleteNoteForever({ noteBucket, note });
@@ -62,10 +55,10 @@ export class NoteToolbarContainer extends Component<Props> {
     const { isViewingRevisions, toolbar } = this.props;
 
     const handlers = {
+      noteBucket: this.props.noteBucket,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
       onShareNote: this.onShareNote,
-      onTrashNote: this.onTrashNote,
       toggleFocusMode: this.props.toggleFocusMode,
     };
 
@@ -84,14 +77,13 @@ const mapStateToProps: S.MapState<StateProps> = ({
   notes: filteredNotes,
 });
 
-const { deleteNoteForever, restoreNote, trashNote } = appState.actionCreators;
+const { deleteNoteForever, restoreNote } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   restoreNote: args => dispatch(restoreNote(args)),
   shareNote: () => dispatch(showDialog('SHARE')),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
-  trashNote: args => dispatch(trashNote(args)),
 });
 
 export default connect(

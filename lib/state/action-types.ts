@@ -56,6 +56,7 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
@@ -63,6 +64,10 @@ export type RemoteNoteUpdate = Action<
 export type RestoreNote = Action<'RESTORE_NOTE'>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
+export type SelectNote = Action<
+  'SELECT_NOTE',
+  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
+>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
@@ -96,12 +101,10 @@ export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
-export type TrashNote = Action<'TRASH_NOTE'>;
-export type SelectNote = Action<
-  'SELECT_NOTE',
-  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
+export type TrashNote = Action<
+  'TRASH_NOTE',
+  { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity }
 >;
-export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 
 export type ActionType =
   | CloseNote
@@ -149,7 +152,7 @@ export type ActionType =
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
 
-type LegacyAction =
+type LegacyAction = 
   | Action<
       'App.deleteNoteForever',
       {
@@ -196,13 +199,6 @@ type LegacyAction =
   | Action<
       'App.toggleShareAnalyticsPreference',
       { preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
-      'App.trashNote',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        note: T.NoteEntity;
-      }
     >
   | Action<'App.authChanged'>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>

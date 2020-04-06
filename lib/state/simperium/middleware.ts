@@ -60,6 +60,10 @@ export const middleware: S.Middleware = store => {
       case 'REVISIONS_TOGGLE':
         fetchRevisions(store, nextState);
         break;
+
+      case 'TRASH_NOTE':
+        buckets.note.update(action.note.id, action.note.data);
+        break;
     }
 
     return result;

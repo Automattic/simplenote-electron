@@ -118,11 +118,6 @@ export const middleware: S.Middleware = store => {
         break;
 
       case 'TRASH_NOTE':
-      case 'App.trashNote':
-        updateNote(prevState.ui.note.id, {
-          ...prevState.ui.note.data,
-          deleted: true,
-        });
         setFilteredNotes(updateFilter('fullSearch'));
         break;
 

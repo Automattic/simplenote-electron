@@ -13,37 +13,49 @@ import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
+import analytics from '../analytics';
+
 import {
   closeNote,
   toggleEditMode,
   toggleNoteInfo,
   toggleRevisions,
+  trashNote,
 } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+
+type OwnProps = {
+  noteBucket: T.Bucket<T.Note>;
+};
 
 type DispatchProps = {
   closeNote: () => any;
   toggleEditMode: () => any;
   toggleNoteInfo: () => any;
   toggleRevisions: () => any;
+  trashNote: (
+    noteBucket: T.Bucket<T.Note>,
+    note: T.NoteEntity,
+    previousIndex: number
+  ) => any;
 };
 
 type StateProps = {
   editMode: boolean;
+  notes: T.NoteEntity[];
   markdownEnabled: boolean;
   note: T.NoteEntity | null;
 };
 
-type Props = DispatchProps & StateProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   static propTypes = {
     onRestoreNote: PropTypes.func,
-    onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
     onShareNote: PropTypes.func,
     toggleFocusMode: PropTypes.func.isRequired,
@@ -53,8 +65,23 @@ export class NoteToolbar extends Component<Props> {
     onDeleteNoteForever: noop,
     onRestoreNote: noop,
     onShareNote: noop,
-    onTrashNote: noop,
     toggleFocusMode: noop,
+  };
+
+  // Gets the index of the note located before the currently selected one
+  getPreviousNoteIndex = (note: T.NoteEntity) => {
+    const previousIndex = this.props.notes.findIndex(
+      ({ id }) => note.id === id
+    );
+
+    return Math.max(previousIndex - 1, 0);
+  };
+
+  onTrashNote = (note: T.NoteEntity) => {
+    const { noteBucket } = this.props;
+    const previousIndex = this.getPreviousNoteIndex(note);
+    this.props.trashNote(noteBucket, note, previousIndex);
+    analytics.tracks.recordEvent('editor_note_deleted');
   };
 
   render() {
@@ -117,7 +144,8 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<TrashIcon />}
-              onClick={this.props.onTrashNote.bind(null, note)}
+              title="Trash • Ctrl+Delete"
+              onClick={this.onTrashNote.bind(null, note)}
               title="Trash • Ctrl+Delete"
             />
           </div>
@@ -169,14 +197,14 @@ export class NoteToolbar extends Component<Props> {
     );
   };
 }
-
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, editMode, selectedRevision },
+  ui: { editMode, filteredNotes, note, selectedRevision },
 }) => {
   const revisionOrNote = selectedRevision || note;
 
   return {
     editMode,
+    notes: filteredNotes,
     markdownEnabled: revisionOrNote
       ? revisionOrNote.data.systemTags.includes('markdown')
       : false,
@@ -189,6 +217,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   toggleEditMode,
   toggleNoteInfo,
   toggleRevisions,
+  trashNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);
