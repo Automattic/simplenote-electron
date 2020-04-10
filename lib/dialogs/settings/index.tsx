@@ -10,7 +10,6 @@ import AccountPanel from './panels/account';
 import DisplayPanel from './panels/display';
 import ToolsPanel from './panels/tools';
 
-import appState from '../../flux/app-state';
 import { setWPToken } from '../../state/settings/actions';
 
 import { closeDialog } from '../../state/ui/actions';
@@ -27,7 +26,6 @@ type OwnProps = {
   isMacApp: boolean;
   onSignOut: () => any;
   settings: S.State['settings'];
-  toggleShareAnalyticsPreference: (preferencesBucket: object) => any;
 };
 
 type DispatchProps = {
@@ -38,12 +36,6 @@ type DispatchProps = {
 type Props = OwnProps & DispatchProps;
 
 export class SettingsDialog extends Component<Props> {
-  onToggleShareAnalyticsPreference = () => {
-    this.props.toggleShareAnalyticsPreference({
-      preferencesBucket: this.props.buckets.preferencesBucket,
-    });
-  };
-
   onSignOutRequested = () => {
     // Safety first! Check for any unsynced notes before signing out.
     const { noteBucket } = this.props.buckets;
@@ -125,18 +117,13 @@ export class SettingsDialog extends Component<Props> {
 
   render() {
     const { buckets, closeDialog, isElectron, isMacApp, settings } = this.props;
-    const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
       <Dialog className="settings" title="Settings" onDone={closeDialog}>
         <TabPanels tabNames={settingTabs}>
           <AccountPanel
             accountName={settings.accountName}
-            analyticsEnabled={analyticsEnabled}
             requestSignOut={this.onSignOutRequested}
-            toggleShareAnalyticsPreference={
-              this.onToggleShareAnalyticsPreference
-            }
           />
           <DisplayPanel
             buckets={buckets}
@@ -150,14 +137,9 @@ export class SettingsDialog extends Component<Props> {
   }
 }
 
-const { toggleShareAnalyticsPreference } = appState.actionCreators;
-
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeDialog: () => dispatch(closeDialog()),
   setWPToken: token => dispatch(setWPToken(token)),
-  toggleShareAnalyticsPreference: args => {
-    dispatch(toggleShareAnalyticsPreference(args));
-  },
 });
 
 export default connect(null, mapDispatchToProps)(SettingsDialog);

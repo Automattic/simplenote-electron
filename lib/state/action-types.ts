@@ -54,6 +54,7 @@ export type DeleteNoteForever = Action<
   'DELETE_NOTE_FOREVER',
   { previousIndex: number }
 >;
+export type FetchPreferences = Action<'FETCH_PREFERENCES'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
   { notes: T.NoteEntity[]; previousIndex: number; tags: T.TagEntity[] }
@@ -63,6 +64,10 @@ export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
 >;
+export type RemotePreferencesUpdate = Action<
+  'ANALYTICS_REMOTE_UPDATE',
+  { sendAnalytics: boolean }
+>;
 export type RestoreNote = Action<'RESTORE_NOTE', { previousIndex: number }>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
@@ -71,6 +76,7 @@ export type SelectRevision = Action<
   { revision: T.NoteEntity }
 >;
 export type SelectTrash = Action<'SELECT_TRASH'>;
+
 export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
@@ -84,6 +90,10 @@ export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
 export type StoreRevisions = Action<
   'STORE_REVISIONS',
   { noteId: T.EntityId; revisions: T.NoteEntity[] }
+>;
+export type ToggleAnalytics = Action<
+  'TOGGLE_ANALYTICS',
+  { sendAnalytics: boolean }
 >;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
@@ -108,9 +118,11 @@ export type ActionType =
   | CreateNote
   | DeleteNoteForever
   | LegacyAction
+  | FetchPreferences
   | FilterNotes
   | FocusSearchField
   | RemoteNoteUpdate
+  | RemotePreferencesUpdate
   | OpenTag
   | RestoreNote
   | Search
@@ -135,6 +147,7 @@ export type ActionType =
   | ShowAllNotes
   | ShowDialog
   | StoreRevisions
+  | ToggleAnalytics
   | ToggleEditMode
   | ToggleNavigation
   | ToggleNoteInfo
@@ -194,10 +207,6 @@ type LegacyAction =
       }
     >
   | Action<
-      'App.toggleShareAnalyticsPreference',
-      { preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
       'App.trashNote',
       {
         noteBucket: T.Bucket<T.Note>;
@@ -211,7 +220,6 @@ type LegacyAction =
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
   | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
-  | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
   | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
   | Action<'App.showAllNotesAndSelectFirst'>

@@ -238,6 +238,7 @@ if (cookie.email && config.is_app_engine) {
 Modal.setAppElement('#root');
 simperiumMiddleware.storeBuckets({
   note: client.bucket('note'),
+  preferences: client.bucket('preferences'),
 });
 
 render(

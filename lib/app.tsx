@@ -189,7 +189,31 @@ export const App = connect(
           })
         );
 
-      this.props.preferencesBucket.on('update', this.onLoadPreferences);
+      const { preferencesBucket } = this.props;
+      preferencesBucket.on('index', () => {
+        debugger;
+        preferencesBucket.get('preferences-key', (error, preferences) => {
+          console.log('foo');
+          if (error || !preferences.data.hasOwnProperty('analytics_enabled')) {
+            return;
+          }
+
+          this.props.remotePreferencesUpdate(
+            preferences.data.analytics_enabled
+          );
+        });
+      });
+
+      preferencesBucket.on('update', (entityId, data) => {
+        if (
+          'preferences-key' !== entityId ||
+          !data.hasOwnProperty('analytics_enabled')
+        ) {
+          return;
+        }
+
+        this.props.remotePreferencesUpdate(data.analytics_enabled);
+      });
 
       this.props.tagBucket
         .on('index', this.props.loadTags)
@@ -204,11 +228,6 @@ export const App = connect(
         .on('send', this.syncActivityHooks)
         .on('connect', () => this.props.setSimperiumConnectionStatus(true))
         .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
-
-      this.onLoadPreferences(() =>
-        // Make sure that tracking starts only after preferences are loaded
-        analytics.tracks.recordEvent('application_opened')
-      );
 
       this.toggleShortcuts(true);
 
@@ -310,7 +329,6 @@ export const App = connect(
 
       setAuthorized();
       analytics.initialize(accountName);
-      this.onLoadPreferences();
 
       // 'Kick' the app to ensure content is loaded after signing in
       this.onNotesIndex();
@@ -354,12 +372,6 @@ export const App = connect(
         });
       }
     };
-
-    onLoadPreferences = callback =>
-      this.props.actions.loadPreferences({
-        callback,
-        preferencesBucket: this.props.preferencesBucket,
-      });
 
     getTheme = () => {
       const {
@@ -438,12 +450,6 @@ export const App = connect(
       } else {
         window.removeEventListener('keydown', this.handleShortcut, true);
       }
-    };
-
-    loadPreferences = () => {
-      this.props.actions.loadPreferences({
-        preferencesBucket: this.props.preferencesBucket,
-      });
     };
 
     render() {

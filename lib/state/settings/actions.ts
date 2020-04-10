@@ -4,6 +4,10 @@ import * as A from '../action-types';
 
 const ipc = getIpcRenderer();
 
+export const fetchPreferences: A.ActionCreator<A.FetchPreferences> = () => ({
+  type: 'FETCH_PREFERENCES',
+});
+
 export const setFontSize: A.ActionCreator<A.SetFontSize> = (
   fontSize?: number
 ) => ({
@@ -33,6 +37,13 @@ export const resetFontSize: A.ActionCreator<A.SetFontSize> = () =>
 export const activateTheme: A.ActionCreator<A.SetTheme> = theme => ({
   type: 'setTheme',
   theme,
+});
+
+export const remotePreferencesUpdate: A.ActionCreator<A.RemotePreferencesUpdate> = (
+  sendAnalytics: boolean
+) => ({
+  type: 'ANALYTICS_REMOTE_UPDATE',
+  sendAnalytics,
 });
 
 export const setNoteDisplay: A.ActionCreator<A.SetNoteDisplay> = noteDisplay => ({
@@ -72,6 +83,13 @@ export const setAccountName: A.ActionCreator<A.SetAccountName> = accountName => 
 export const setWPToken: A.ActionCreator<A.SetWPToken> = token => ({
   type: 'setWPToken',
   token,
+});
+
+export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = (
+  sendAnalytics: boolean
+) => ({
+  type: 'TOGGLE_ANALYTICS',
+  sendAnalytics,
 });
 
 export const toggleFocusMode = () => (dispatch, getState) => {
