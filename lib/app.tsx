@@ -112,6 +112,8 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
+    remotePreferencesUpdate: sendAnalytics =>
+      dispatch(actions.settings.remotePreferencesUpdate(sendAnalytics)),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),

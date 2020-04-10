@@ -115,7 +115,6 @@ export const middleware: S.Middleware = store => {
       //   break;
 
       case 'ANALYTICS_REMOTE_UPDATE':
-        debugger;
         window.analyticsEnabled = action.sendAnalytics;
         break;
     }

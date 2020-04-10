@@ -57,7 +57,10 @@ const reducer: A.Reducer<typeof initialState> = (
     case 'setWPToken':
       return { ...state, wpToken: action.token };
     case 'TOGGLE_ANALYTICS':
-      return { ...state, sendAnalytics: action.sendAnalytics || !state };
+      return {
+        ...state,
+        sendAnalytics: action.sendAnalytics || !state.sendAnalytics,
+      };
     case 'ANALYTICS_REMOTE_UPDATE':
       return { ...state, sendAnalytics: action.sendAnalytics };
     case 'LOGOUT':

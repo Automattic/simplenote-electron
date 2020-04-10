@@ -52,7 +52,7 @@ const AccountPanel = props => {
             slug="shareAnalytics"
             activeSlug={sendAnalytics ? 'enabled' : ''}
             description="Help us improve Simplenote by sharing usage data with our analytics tool."
-            onChange={toggleAnalytics}
+            onChange={() => toggleAnalytics()}
             learnMoreURL="https://automattic.com/cookies"
             renderer={ToggleGroup}
           >
