@@ -191,7 +191,6 @@ export const App = connect(
 
       const { preferencesBucket } = this.props;
       preferencesBucket.on('index', () => {
-        debugger;
         preferencesBucket.get('preferences-key', (error, preferences) => {
           console.log('foo');
           if (error || !preferences.data.hasOwnProperty('analytics_enabled')) {
