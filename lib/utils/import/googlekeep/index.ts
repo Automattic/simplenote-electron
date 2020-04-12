@@ -44,15 +44,24 @@ class GoogleKeepImporter extends EventEmitter {
         .then(content => {
           const importedNote = JSON.parse(content);
 
-          //TODO: checkboxes...
           const title = importedNote.title;
+          let textContent = title ? title + '\n' : '';
+          textContent += get(importedNote, 'textContent', '');
           const note = {
-            content: (title ? title + '\n\n' : '') + importedNote.textContent,
+            content: textContent,
             // note: the exported files don't tell us the creation date...
             modificationDate: importedNote.userEditedTimestampUsec / 1000000,
             pinned: importedNote.isPinned,
             tags: get(importedNote, 'labels', []).map(item => item.name),
           };
+
+          if (importedNote.listContent) {
+            note.content += importedNote.listContent
+              .map(item => {
+                return '- [' + (item.isChecked ? 'x' : ' ') + '] ' + item.text;
+              })
+              .join('\n');
+          }
 
           return coreImporter.importNote(note, {
             ...this.options,
