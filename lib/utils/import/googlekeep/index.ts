@@ -24,13 +24,6 @@ class GoogleKeepImporter extends EventEmitter {
       return;
     }
 
-    const file = filesArray[0];
-
-    if (!endsWith(file.name.toLowerCase(), '.zip')) {
-      this.emit('status', 'error', 'File name does not end in ".zip".');
-      return;
-    }
-
     const coreImporter = new CoreImporter({
       noteBucket: this.noteBucket,
       tagBucket: this.tagBucket,
@@ -54,6 +47,7 @@ class GoogleKeepImporter extends EventEmitter {
       };
 
       if (importedNote.listContent) {
+        // Note has checkboxes
         note.content += importedNote.listContent
           .map(item => `- [${item.isChecked ? 'x' : ' '}] ${item.text}`)
           .join('\n');
@@ -66,20 +60,39 @@ class GoogleKeepImporter extends EventEmitter {
       });
     };
 
-    fs.readFile(file.path, (err, data) => {
-      if (err) {
-        this.emit('status', 'error', 'Error reading file');
-        return;
-      }
-
-      JSZip.loadAsync(data).then(zip => {
-        const promises = zip.file(/.*\/Keep\/.*\.json/).map(zipObj => {
-          return zipObj.async('string').then(importJsonString);
-        });
-        Promise.all(promises).then(() => {
-          this.emit('status', 'complete', importedNoteCount);
-        });
+    const importZipFile = fileData =>
+      JSZip.loadAsync(fileData).then(zip => {
+        const promises = zip
+          .file(/.*\/Keep\/.*\.json/)
+          .map(zipObj => zipObj.async('string').then(importJsonString));
+        return Promise.all(promises);
       });
+
+    const importJsonFile = fileData => {
+      //TODO
+    };
+
+    const promises = filesArray.map(file =>
+      fs.promises
+        .readFile(file.path)
+        .then(data => {
+          if (endsWith(file.name.toLowerCase(), '.zip')) {
+            return importZipFile(data);
+          } else {
+            this.emit(
+              'status',
+              'error',
+              `Invalid file extension: ${file.name}`
+            );
+          }
+        })
+        .catch(err => {
+          this.emit('status', 'error', `Error reading file ${file.path}`);
+        })
+    );
+
+    return Promise.all(promises).then(() => {
+      this.emit('status', 'complete', importedNoteCount);
     });
   };
 }
