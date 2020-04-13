@@ -68,16 +68,15 @@ class GoogleKeepImporter extends EventEmitter {
         return Promise.all(promises);
       });
 
-    const importJsonFile = fileData => {
-      //TODO
-    };
-
     const promises = filesArray.map(file =>
       fs.promises
         .readFile(file.path)
         .then(data => {
           if (endsWith(file.name.toLowerCase(), '.zip')) {
             return importZipFile(data);
+          } else if (endsWith(file.name.toLowerCase(), '.json')) {
+            // The data is a string, import it directly
+            return importJsonString(data);
           } else {
             this.emit(
               'status',
