@@ -1,7 +1,5 @@
 import { noteBucket, tagBucket } from './buckets';
-import appState from '../../flux/app-state';
-
-const { tagsLoaded } = appState.actionCreators;
+import actions from '../actions';
 
 export const loadTags = () => (dispatch, getState) => {
   const sortTagsAlpha = getState().settings.sortTagsAlpha;
@@ -16,7 +14,7 @@ export const loadTags = () => (dispatch, getState) => {
         tags.push(cursor.value);
         cursor.continue();
       } else {
-        dispatch(tagsLoaded({ tags, sortTagsAlpha }));
+        dispatch(actions.tags.tagsLoaded(tags, sortTagsAlpha));
       }
     };
   });

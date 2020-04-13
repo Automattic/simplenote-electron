@@ -241,28 +241,6 @@ export const actionMap = new ActionMap({
       },
     },
 
-    tagsLoaded(
-      state: AppState,
-      { tags, sortTagsAlpha }: { tags: T.TagEntity[]; sortTagsAlpha: boolean }
-    ) {
-      tags = tags.slice();
-      if (sortTagsAlpha) {
-        // Sort tags alphabetically by 'name' value
-        tags.sort((a, b) => {
-          return get(a, 'data.name', '')
-            .toLowerCase()
-            .localeCompare(get(b, 'data.name', '').toLowerCase());
-        });
-      } else {
-        // Sort the tags by their 'index' value
-        tags.sort((a, b) => (a.data.index | 0) - (b.data.index | 0));
-      }
-
-      return update(state, {
-        tags: { $set: tags },
-      });
-    },
-
     loadPreferences: {
       creator({
         callback,

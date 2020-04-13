@@ -19,11 +19,11 @@ export const middleware: S.Middleware = store => {
     previousIndex?: number
   ) => {
     const {
-      appState,
+      tags,
       ui: { searchQuery },
     } = store.getState();
 
-    const tagSuggestions = filterTags(appState.tags, searchQuery);
+    const tagSuggestions = filterTags(tags, searchQuery);
 
     store.dispatch(
       actions.ui.filterNotes(

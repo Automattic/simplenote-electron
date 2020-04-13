@@ -1,8 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
-import appState from '../../../flux/app-state';
 import exportZipArchive from '../../../utils/export';
 
 import PanelTitle from '../../../components/panel-title';
