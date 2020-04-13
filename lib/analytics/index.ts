@@ -41,7 +41,6 @@ const analytics = {
       eventName: string,
       eventProperties: T.JSONSerializable = {}
     ) {
-      console.log(eventName);
       const prefix = analytics.getPlatformPrefix();
 
       const fullEventName = `${prefix}_${eventName}`;
