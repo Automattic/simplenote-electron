@@ -13,9 +13,11 @@ const sources = [
   {
     name: 'Google Keep',
     slug: 'googlekeep',
-    acceptedTypes: '.zip',
+    acceptedTypes: '.zip,.json',
     electronOnly: true,
-    instructions: 'Choose an archive file exported from Google Takeout (.zip)',
+    instructions:
+      'Choose an archive file exported from Google Takeout (.zip) or individual notes (.json)',
+    multiple: true,
   },
   {
     name: 'Simplenote',
