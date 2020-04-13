@@ -423,9 +423,16 @@ export class NoteList extends Component<Props> {
       noteDisplay,
       showTrash,
       tagResultsFound,
+      tags,
       notes,
       isSmallScreen,
     } = this.props;
+
+    const compositeNoteList = createCompositeNoteList(
+      notes,
+      searchQuery,
+      getMatchingTags(tags, searchQuery).length
+    );
 
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
