@@ -38,40 +38,34 @@ class GoogleKeepImporter extends EventEmitter {
 
     let importedNoteCount = 0;
 
-    const extractAndImport = zipObj => {
-      return zipObj
-        .async('string')
-        .then(content => {
-          const importedNote = JSON.parse(content);
+    const importJsonString = jsonString => {
+      const importedNote = JSON.parse(jsonString);
 
-          const title = importedNote.title;
-          let textContent = title ? title + '\n' : '';
-          textContent += get(importedNote, 'textContent', '');
-          const note = {
-            content: textContent,
-            // note: the exported files don't tell us the creation date...
-            modificationDate: importedNote.userEditedTimestampUsec / 1000000,
-            pinned: importedNote.isPinned,
-            tags: get(importedNote, 'labels', []).map(item => item.name),
-          };
+      const title = importedNote.title;
+      let textContent = title ? title + '\n' : '';
+      textContent += get(importedNote, 'textContent', '');
 
-          if (importedNote.listContent) {
-            note.content += importedNote.listContent
-              .map(item => {
-                return '- [' + (item.isChecked ? 'x' : ' ') + '] ' + item.text;
-              })
-              .join('\n');
-          }
+      const note = {
+        content: textContent,
+        // note: the exported files don't tell us the creation date...
+        modificationDate: importedNote.userEditedTimestampUsec / 1000000,
+        pinned: importedNote.isPinned,
+        tags: get(importedNote, 'labels', []).map(item => item.name),
+      };
 
-          return coreImporter.importNote(note, {
-            ...this.options,
-            isTrashed: importedNote.isTrashed,
-          });
-        })
-        .then(() => {
-          importedNoteCount++;
-          this.emit('status', 'progress', importedNoteCount);
-        });
+      if (importedNote.listContent) {
+        note.content += importedNote.listContent
+          .map(item => {
+            return '- [' + (item.isChecked ? 'x' : ' ') + '] ' + item.text;
+          })
+          .join('\n');
+      }
+
+      const opts = { ...this.options, isTrashed: importedNote.isTrashed };
+      return coreImporter.importNote(note, opts).then(() => {
+        importedNoteCount++;
+        this.emit('status', 'progress', importedNoteCount);
+      });
     };
 
     fs.readFile(file.path, (err, data) => {
@@ -81,7 +75,9 @@ class GoogleKeepImporter extends EventEmitter {
       }
 
       JSZip.loadAsync(data).then(zip => {
-        const promises = zip.file(/.*\/Keep\/.*\.json/).map(extractAndImport);
+        const promises = zip.file(/.*\/Keep\/.*\.json/).map(zipObj => {
+          return zipObj.async('string').then(importJsonString);
+        });
         Promise.all(promises).then(() => {
           this.emit('status', 'complete', importedNoteCount);
         });
