@@ -49,7 +49,7 @@ type StateProps = {
   selectedNotePreview: { title: string; preview: string };
   selectedNoteId?: T.EntityId;
   showTrash: boolean;
-  tagResultsFound: number;
+  tags: T.TagEntity[];
 };
 
 type DispatchProps = {
@@ -331,13 +331,12 @@ export class NoteList extends Component<Props> {
   list = createRef();
 
   static propTypes = {
-    tagResultsFound: PropTypes.number.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
+    noteDisplay: PropTypes.string.isRequired,
     notes: PropTypes.array.isRequired,
+    onEmptyTrash: PropTypes.any.isRequired,
     onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
-    noteDisplay: PropTypes.string.isRequired,
-    onEmptyTrash: PropTypes.any.isRequired,
     showTrash: PropTypes.bool,
   };
 
@@ -415,28 +414,29 @@ export class NoteList extends Component<Props> {
 
   render() {
     const {
-      searchQuery,
       hasLoaded,
-      selectedNoteId,
+      isSmallScreen,
+      noteDisplay,
+      notes,
       onSelectNote,
       onEmptyTrash,
-      noteDisplay,
+      searchQuery,
+      selectedNoteId,
       showTrash,
-      tagResultsFound,
       tags,
-      notes,
-      isSmallScreen,
     } = this.props;
+
+    const tagResultsFound = getMatchingTags(tags, searchQuery).length;
 
     const compositeNoteList = createCompositeNoteList(
       notes,
       searchQuery,
-      getMatchingTags(tags, searchQuery).length
+      tagResultsFound
     );
 
     const listItemsClasses = classNames('note-list-items', noteDisplay);
 
-    const renderNoteRow = renderNote(notes, {
+    const renderNoteRow = renderNote(compositeNoteList, {
       searchQuery,
       noteDisplay,
       onSelectNote,
@@ -445,7 +445,7 @@ export class NoteList extends Component<Props> {
       isSmallScreen,
     });
 
-    const isEmptyList = notes.length === 0;
+    const isEmptyList = compositeNoteList.length === 0;
 
     const emptyTrashButton = (
       <div className="note-list-empty-trash theme-color-border">
@@ -478,9 +478,9 @@ export class NoteList extends Component<Props> {
                     }
                     height={height}
                     noteDisplay={noteDisplay}
-                    notes={notes}
-                    rowCount={notes.length}
-                    rowHeight={getRowHeight(notes, {
+                    notes={compositeNoteList}
+                    rowCount={compositeNoteList.length}
+                    rowHeight={getRowHeight(compositeNoteList, {
                       searchQuery,
                       noteDisplay,
                       tagResultsFound,
@@ -510,7 +510,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui: { filteredNotes, note, searchQuery, showTrash },
   settings: { noteDisplay },
 }) => {
-  const tagResultsFound = getMatchingTags(state.tags, searchQuery).length;
   const selectedNote = note;
   const selectedNoteId = selectedNote?.id;
   const selectedNoteIndex = filteredNotes.findIndex(
@@ -522,12 +521,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
   const nextNote = filteredNotes[nextNoteId];
   const prevNote = filteredNotes[prevNoteId];
-
-  const compositeNoteList = createCompositeNoteList(
-    filteredNotes,
-    searchQuery,
-    tagResultsFound
-  );
 
   /**
    * Although not used directly in the React component this value
@@ -556,14 +549,14 @@ const mapStateToProps: S.MapState<StateProps> = ({
     hasLoaded: state.notes !== null,
     nextNote,
     noteDisplay,
-    notes: compositeNoteList,
+    notes: filteredNotes,
     prevNote,
     searchQuery,
     selectedNotePreview,
     selectedNoteContent: get(selectedNote, 'data.content'),
     selectedNoteId,
     showTrash,
-    tagResultsFound,
+    tags: state.tags,
   };
 };
 
