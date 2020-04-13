@@ -55,9 +55,7 @@ class GoogleKeepImporter extends EventEmitter {
 
       if (importedNote.listContent) {
         note.content += importedNote.listContent
-          .map(item => {
-            return '- [' + (item.isChecked ? 'x' : ' ') + '] ' + item.text;
-          })
+          .map(item => `- [${item.isChecked ? 'x' : ' '}] ${item.text}`)
           .join('\n');
       }
 
