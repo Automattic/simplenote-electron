@@ -11,7 +11,6 @@ export const initialState = {
   lineLength: 'narrow' as T.LineLength,
   markdownEnabled: false,
   noteDisplay: 'comfy' as T.ListDisplayMode,
-  sendAnalytics: null as boolean | null,
   sortReversed: false,
   sortTagsAlpha: false,
   sortType: 'modificationDate' as T.SortType,
@@ -56,15 +55,6 @@ const reducer: A.Reducer<typeof initialState> = (
       return { ...state, theme: action.theme };
     case 'setWPToken':
       return { ...state, wpToken: action.token };
-    case 'TOGGLE_ANALYTICS':
-      return {
-        ...state,
-        sendAnalytics: action.sendAnalytics || !state.sendAnalytics,
-      };
-    case 'ANALYTICS_REMOTE_UPDATE':
-      return { ...state, sendAnalytics: action.sendAnalytics };
-    case 'LOGOUT':
-      return { ...state, sendAnalytics: null };
     default:
       return state;
   }

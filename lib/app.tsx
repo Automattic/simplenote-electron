@@ -113,7 +113,7 @@ const mapDispatchToProps: S.MapDispatch<
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     remotePreferencesUpdate: sendAnalytics =>
-      dispatch(actions.settings.remotePreferencesUpdate(sendAnalytics)),
+      dispatch(actions.preferences.remotePreferencesUpdate(sendAnalytics)),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),
@@ -194,7 +194,6 @@ export const App = connect(
       const { preferencesBucket } = this.props;
       preferencesBucket.on('index', () => {
         preferencesBucket.get('preferences-key', (error, preferences) => {
-          console.log('foo');
           if (error || !preferences.data.hasOwnProperty('analytics_enabled')) {
             return;
           }

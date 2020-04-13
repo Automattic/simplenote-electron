@@ -16,11 +16,16 @@ type DispatchProps = {
 };
 
 type StateProps = {
-  sendAnalytics: boolean | null;
+  analytics_enabled: boolean | null;
 };
 
 const AccountPanel = props => {
-  const { accountName, sendAnalytics, requestSignOut, toggleAnalytics } = props;
+  const {
+    accountName,
+    analytics_enabled,
+    requestSignOut,
+    toggleAnalytics,
+  } = props;
 
   const onEditAccount = () => {
     viewExternalUrl(`https://app.simplenote.com/settings/?from=react`);
@@ -50,7 +55,7 @@ const AccountPanel = props => {
           <SettingsGroup
             title="Privacy"
             slug="shareAnalytics"
-            activeSlug={sendAnalytics ? 'enabled' : ''}
+            activeSlug={analytics_enabled ? 'enabled' : ''}
             description="Help us improve Simplenote by sharing usage data with our analytics tool."
             onChange={() => toggleAnalytics()}
             learnMoreURL="https://automattic.com/cookies"
@@ -79,13 +84,13 @@ AccountPanel.propTypes = {
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  settings: { sendAnalytics },
+  preferences: { analytics_enabled },
 }) => ({
-  sendAnalytics,
+  analytics_enabled,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  toggleAnalytics: actions.settings.toggleAnalytics,
+  toggleAnalytics: actions.preferences.toggleAnalytics,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountPanel);

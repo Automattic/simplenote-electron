@@ -25,6 +25,7 @@ import searchFieldMiddleware from './ui/search-field-middleware';
 import simperiumMiddleware from './simperium/middleware';
 
 import auth from './auth/reducer';
+import preferences from './preferences/reducer';
 import settings from './settings/reducer';
 import ui from './ui/reducer';
 
@@ -33,7 +34,6 @@ import * as T from '../types';
 
 export type AppState = {
   notes: T.NoteEntity[] | null;
-  preferences?: T.Preferences;
   revision: T.NoteEntity | null;
   showNavigation: boolean;
   tags: T.TagEntity[];
@@ -44,6 +44,7 @@ export type AppState = {
 export const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   auth,
+  preferences,
   settings,
   ui,
 });
@@ -51,6 +52,7 @@ export const reducers = combineReducers<State, A.ActionType>({
 export type State = {
   appState: AppState;
   auth: ReturnType<typeof auth>;
+  preferences: ReturnType<typeof preferences>;
   settings: ReturnType<typeof settings>;
   ui: ReturnType<typeof ui>;
 };
