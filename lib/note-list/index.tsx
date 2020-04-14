@@ -27,7 +27,7 @@ import {
   checkboxDecorator,
   makeFilterDecorator,
 } from './decorators';
-import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
+import TagSuggestions from '../tag-suggestions';
 
 import actions from '../state/actions';
 
@@ -47,7 +47,7 @@ type StateProps = {
   selectedNotePreview: { title: string; preview: string };
   selectedNoteId?: T.EntityId;
   showTrash: boolean;
-  tags: T.TagEntity[];
+  tagResultsFound: number;
 };
 
 type DispatchProps = {
@@ -431,10 +431,8 @@ export class NoteList extends Component<Props> {
       searchQuery,
       selectedNoteId,
       showTrash,
-      tags,
+      tagResultsFound,
     } = this.props;
-
-    const tagResultsFound = getMatchingTags(tags, searchQuery).length;
 
     const compositeNoteList = createCompositeNoteList(
       notes,
@@ -515,7 +513,7 @@ const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes, note, searchQuery, showTrash },
+  ui: { filteredNotes, note, searchQuery, showTrash, tagSuggestions },
   settings: { noteDisplay },
 }) => {
   /**
@@ -549,7 +547,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNoteContent: get(note, 'data.content'),
     selectedNoteId: note?.id,
     showTrash,
-    tags: state.tags,
+    tagResultsFound: tagSuggestions.length,
   };
 };
 

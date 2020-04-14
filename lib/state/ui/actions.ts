@@ -22,10 +22,12 @@ export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = (
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes: T.NoteEntity[],
+  tags: T.TagEntity[],
   previousIndex: number
 ) => ({
   type: 'FILTER_NOTES',
   notes,
+  tags,
   previousIndex,
 });
 
