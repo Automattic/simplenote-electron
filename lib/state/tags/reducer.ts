@@ -9,8 +9,8 @@ const tags: A.Reducer<T.TagEntity[]> = (state = [], action) => {
         // Sort tags alphabetically by 'name' value
         sortedTags.sort((a: T.TagEntity, b: T.TagEntity) => {
           return a?.data?.name
-            .toLowerCase()
-            .localeCompare(b.data?.name.toLowerCase());
+            .toLocaleLowerCase()
+            .localeCompare(b.data?.name.toLocaleLowerCase());
         });
       } else {
         // Sort the tags by their 'index' value
