@@ -100,11 +100,15 @@ const renderNote = (
 ): ListRowRenderer => ({ index, key, parent, style }) => {
   const note = notes[index];
 
-  if (
-    'tag-suggestions' === note ||
-    'notes-header' === note ||
-    'no-notes' === note
-  ) {
+  if ('no-notes' === note) {
+    return (
+      <div className="note-list is-empty" style={{ ...style, height: 200 }}>
+        <span className="note-list-placeholder">No Notes</span>
+      </div>
+    );
+  }
+
+  if ('tag-suggestions' === note || 'notes-header' === note) {
     return (
       <CellMeasurer
         cache={heightCache}
@@ -115,12 +119,8 @@ const renderNote = (
       >
         {'tag-suggestions' === note ? (
           <TagSuggestions />
-        ) : 'notes-header' === note ? (
-          <div className="note-list-header">Notes</div>
         ) : (
-          <div className="note-list is-empty">
-            <span className="note-list-placeholder">No Notes</span>
-          </div>
+          <div className="note-list-header">Notes</div>
         )}
       </CellMeasurer>
     );
