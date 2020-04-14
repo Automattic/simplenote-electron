@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
-import { includes, isEmpty } from 'lodash';
-import format from 'date-fns/format';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import onClickOutside from "react-onclickoutside";
+import { includes, isEmpty } from "lodash";
+import format from "date-fns/format";
 
-import PanelTitle from '../components/panel-title';
-import ToggleControl from '../controls/toggle';
-import CrossIcon from '../icons/cross';
+import PanelTitle from "../components/panel-title";
+import ToggleControl from "../controls/toggle";
+import CrossIcon from "../icons/cross";
 
-import actions from '../state/actions';
+import actions from "../state/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   markdownEnabled: boolean;
@@ -33,7 +33,7 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteInfo extends Component<Props> {
-  static displayName = 'NoteInfo';
+  static displayName = "NoteInfo";
 
   handleClickOutside = () => this.props.onOutsideClick();
 
@@ -41,7 +41,7 @@ export class NoteInfo extends Component<Props> {
     this.publishUrlElement.select();
 
     try {
-      document.execCommand('copy');
+      document.execCommand("copy");
     } catch (err) {
       return;
     }
@@ -58,7 +58,7 @@ export class NoteInfo extends Component<Props> {
     const data = (note && note.data) || {};
     const formattedDate =
       data.modificationDate && formatTimestamp(data.modificationDate);
-    const isPublished = includes(data.systemTags, 'published');
+    const isPublished = includes(data.systemTags, "published");
     const publishURL = this.getPublishURL(data.publishURL);
 
     return (
@@ -121,7 +121,7 @@ export class NoteInfo extends Component<Props> {
               <span className="note-info-name">Markdown</span>
               <br />
               <span className="note-info-detail">
-                Enable markdown formatting on this note.{' '}
+                Enable markdown formatting on this note.{" "}
                 <a
                   target="_blank"
                   href="http://simplenote.com/help/#markdown"
@@ -175,15 +175,15 @@ export class NoteInfo extends Component<Props> {
 }
 
 function formatTimestamp(unixTime: number) {
-  return format(unixTime * 1000, 'MMM d, yyyy h:mm a');
+  return format(unixTime * 1000, "MMM d, yyyy h:mm a");
 }
 
 // https://github.com/RadLikeWhoa/Countable
 function wordCount(content: string) {
-  const matches = (content || '')
-    .replace(/[\u200B]+/, '')
+  const matches = (content || "")
+    .replace(/[\u200B]+/, "")
     .trim()
-    .replace(/['";:,.?¿\-!¡]+/g, '')
+    .replace(/['";:,.?¿\-!¡]+/g, "")
     .match(/\S+/g);
 
   return (matches || []).length;
@@ -194,16 +194,16 @@ const surrogatePairs = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
 function characterCount(content: string) {
   return (
     // then get the length
-    (content || '')
+    (content || "")
       // replace every surrogate pair with a BMP symbol
-      .replace(surrogatePairs, '_').length
+      .replace(surrogatePairs, "_").length
   );
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   note,
-  isMarkdown: !!note && note.data.systemTags.includes('markdown'),
-  isPinned: !!note && note.data.systemTags.includes('pinned'),
+  isMarkdown: !!note && note.data.systemTags.includes("markdown"),
+  isPinned: !!note && note.data.systemTags.includes("pinned"),
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

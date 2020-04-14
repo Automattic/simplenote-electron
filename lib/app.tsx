@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import 'focus-visible/dist/focus-visible.js';
-import appState from './flux/app-state';
-import { loadTags } from './state/domain/tags';
-import reduxActions from './state/actions';
-import selectors from './state/selectors';
-import browserShell from './browser-shell';
-import NoteInfo from './note-info';
-import NavigationBar from './navigation-bar';
-import AppLayout from './app-layout';
-import Auth from './auth';
-import DevBadge from './components/dev-badge';
-import DialogRenderer from './dialog-renderer';
-import { getIpcRenderer } from './utils/electron';
-import exportZipArchive from './utils/export';
-import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
-import { setLastSyncedTime } from './utils/sync/last-synced-time';
-import analytics from './analytics';
-import classNames from 'classnames';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import "focus-visible/dist/focus-visible.js";
+import appState from "./flux/app-state";
+import { loadTags } from "./state/domain/tags";
+import reduxActions from "./state/actions";
+import selectors from "./state/selectors";
+import browserShell from "./browser-shell";
+import NoteInfo from "./note-info";
+import NavigationBar from "./navigation-bar";
+import AppLayout from "./app-layout";
+import Auth from "./auth";
+import DevBadge from "./components/dev-badge";
+import DialogRenderer from "./dialog-renderer";
+import { getIpcRenderer } from "./utils/electron";
+import exportZipArchive from "./utils/export";
+import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from "./utils/sync";
+import { setLastSyncedTime } from "./utils/sync/last-synced-time";
+import analytics from "./analytics";
+import classNames from "classnames";
 import {
   debounce,
   get,
@@ -29,20 +29,20 @@ import {
   overEvery,
   pick,
   values,
-} from 'lodash';
+} from "lodash";
 import {
   createNote,
   closeNote,
   setUnsyncedNoteIds,
   toggleNavigation,
   toggleSimperiumConnectionStatus,
-} from './state/ui/actions';
+} from "./state/ui/actions";
 
-import * as settingsActions from './state/settings/actions';
+import * as settingsActions from "./state/settings/actions";
 
-import actions from './state/actions';
-import * as S from './state';
-import * as T from './types';
+import actions from "./state/actions";
+import * as S from "./state";
+import * as T from "./types";
 
 const ipc = getIpcRenderer();
 
@@ -86,16 +86,16 @@ const mapDispatchToProps: S.MapDispatch<
     actions: bindActionCreators(actionCreators, dispatch),
     ...bindActionCreators(
       pick(settingsActions, [
-        'activateTheme',
-        'decreaseFontSize',
-        'increaseFontSize',
-        'resetFontSize',
-        'setLineLength',
-        'setNoteDisplay',
-        'setAccountName',
-        'toggleAutoHideMenuBar',
-        'toggleFocusMode',
-        'toggleSpellCheck',
+        "activateTheme",
+        "decreaseFontSize",
+        "increaseFontSize",
+        "resetFontSize",
+        "setLineLength",
+        "setNoteDisplay",
+        "setAccountName",
+        "toggleAutoHideMenuBar",
+        "toggleFocusMode",
+        "toggleSpellCheck",
       ]),
       dispatch
     ),
@@ -122,20 +122,20 @@ const mapDispatchToProps: S.MapDispatch<
 
 const isElectron = (() => {
   // https://github.com/atom/electron/issues/2288
-  const foundElectron = has(window, 'process.type');
+  const foundElectron = has(window, "process.type");
 
   return () => foundElectron;
 })();
 
 const isElectronMac = () =>
-  matchesProperty('process.platform', 'darwin')(window);
+  matchesProperty("process.platform", "darwin")(window);
 
 export const App = connect(
   mapStateToProps,
   mapDispatchToProps
 )(
   class extends Component<Props> {
-    static displayName = 'App';
+    static displayName = "App";
 
     static propTypes = {
       actions: PropTypes.object.isRequired,
@@ -174,58 +174,58 @@ export const App = connect(
     }
 
     componentDidMount() {
-      ipc.on('appCommand', this.onAppCommand);
-      ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
-      ipc.send('settingsUpdate', this.props.settings);
+      ipc.on("appCommand", this.onAppCommand);
+      ipc.send("setAutoHideMenuBar", this.props.settings.autoHideMenuBar);
+      ipc.send("settingsUpdate", this.props.settings);
 
       this.props.noteBucket
-        .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
-        .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
-        .on('remove', this.onNoteRemoved)
+        .on("index", this.onNotesIndex)
+        .on("update", this.onNoteUpdate)
+        .on("update", debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
+        .on("remove", this.onNoteRemoved)
         .beforeNetworkChange((noteId) =>
           this.props.actions.onNoteBeforeRemoteUpdate({
             noteId,
           })
         );
 
-      this.props.preferencesBucket.on('update', this.onLoadPreferences);
+      this.props.preferencesBucket.on("update", this.onLoadPreferences);
 
       this.props.tagBucket
-        .on('index', this.props.loadTags)
-        .on('update', debounce(this.props.loadTags, 200))
-        .on('remove', this.props.loadTags);
+        .on("index", this.props.loadTags)
+        .on("update", debounce(this.props.loadTags, 200))
+        .on("remove", this.props.loadTags);
 
       this.props.client
-        .on('authorized', this.onAuthChanged)
-        .on('unauthorized', this.onAuthChanged)
-        .on('message', setLastSyncedTime)
-        .on('message', this.syncActivityHooks)
-        .on('send', this.syncActivityHooks)
-        .on('connect', () => this.props.setSimperiumConnectionStatus(true))
-        .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
+        .on("authorized", this.onAuthChanged)
+        .on("unauthorized", this.onAuthChanged)
+        .on("message", setLastSyncedTime)
+        .on("message", this.syncActivityHooks)
+        .on("send", this.syncActivityHooks)
+        .on("connect", () => this.props.setSimperiumConnectionStatus(true))
+        .on("disconnect", () => this.props.setSimperiumConnectionStatus(false));
 
       this.onLoadPreferences(() =>
         // Make sure that tracking starts only after preferences are loaded
-        analytics.tracks.recordEvent('application_opened')
+        analytics.tracks.recordEvent("application_opened")
       );
 
       this.toggleShortcuts(true);
 
-      __TEST__ && window.testEvents.push('booted');
+      __TEST__ && window.testEvents.push("booted");
     }
 
     componentWillUnmount() {
       this.toggleShortcuts(false);
 
-      ipc.removeListener('appCommand', this.onAppCommand);
+      ipc.removeListener("appCommand", this.onAppCommand);
     }
 
     componentDidUpdate(prevProps) {
       const { settings } = this.props;
 
       if (settings !== prevProps.settings) {
-        ipc.send('settingsUpdate', settings);
+        ipc.send("settingsUpdate", settings);
       }
     }
 
@@ -238,7 +238,7 @@ export const App = connect(
       // open tag list
       if (
         cmdOrCtrl &&
-        't' === key.toLowerCase() &&
+        "t" === key.toLowerCase() &&
         !this.props.showNavigation
       ) {
         this.props.openTagList();
@@ -252,19 +252,19 @@ export const App = connect(
     };
 
     onAppCommand = (event, command) => {
-      if ('exportZipArchive' === get(command, 'action')) {
+      if ("exportZipArchive" === get(command, "action")) {
         exportZipArchive();
       }
 
-      if ('printNote' === command.action) {
+      if ("printNote" === command.action) {
         return window.print();
       }
 
-      if ('focusSearchField' === command.action) {
+      if ("focusSearchField" === command.action) {
         return this.props.focusSearchField();
       }
 
-      if ('showDialog' === command.action) {
+      if ("showDialog" === command.action) {
         return this.props.showDialog(command.dialog);
       }
 
@@ -276,12 +276,12 @@ export const App = connect(
 
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
-        if (command.action === 'newNote') {
+        if (command.action === "newNote") {
           this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
-          analytics.tracks.recordEvent('list_note_created');
+          analytics.tracks.recordEvent("list_note_created");
         } else if (has(this.props, command.action)) {
           const { action, ...args } = command;
 
@@ -324,7 +324,7 @@ export const App = connect(
       loadNotes({ noteBucket });
       setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
 
-      __TEST__ && window.testEvents.push('notesLoaded');
+      __TEST__ && window.testEvents.push("notesLoaded");
     };
 
     onNoteRemoved = () => this.onNotesIndex();
@@ -366,11 +366,11 @@ export const App = connect(
         settings: { theme },
         systemTheme,
       } = this.props;
-      return 'system' === theme ? systemTheme : theme;
+      return "system" === theme ? systemTheme : theme;
     };
 
     initializeElectron = () => {
-      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
+      const { remote } = __non_webpack_require__("electron"); // eslint-disable-line no-undef
 
       this.setState({
         electron: {
@@ -434,9 +434,9 @@ export const App = connect(
 
     toggleShortcuts = (doEnable) => {
       if (doEnable) {
-        window.addEventListener('keydown', this.handleShortcut, true);
+        window.addEventListener("keydown", this.handleShortcut, true);
       } else {
-        window.removeEventListener('keydown', this.handleShortcut, true);
+        window.removeEventListener("keydown", this.handleShortcut, true);
       }
     };
 
@@ -463,16 +463,16 @@ export const App = connect(
 
       const themeClass = `theme-${this.getTheme()}`;
 
-      const appClasses = classNames('app', themeClass, {
-        'is-line-length-full': settings.lineLength === 'full',
-        'touch-enabled': 'ontouchstart' in document.body,
+      const appClasses = classNames("app", themeClass, {
+        "is-line-length-full": settings.lineLength === "full",
+        "touch-enabled": "ontouchstart" in document.body,
       });
 
-      const mainClasses = classNames('simplenote-app', {
-        'note-info-open': showNoteInfo,
-        'navigation-open': showNavigation,
-        'is-electron': isElectron(),
-        'is-macos': isMacApp,
+      const mainClasses = classNames("simplenote-app", {
+        "note-info-open": showNoteInfo,
+        "navigation-open": showNavigation,
+        "is-electron": isElectron(),
+        "is-macos": isMacApp,
       });
 
       return (

@@ -8,7 +8,7 @@ export class BucketStore {
   withBucket = (callback) =>
     this.setup
       .then((db) => callback.call(this, db, this.bucket.name))
-      .catch((e) => console.log('Failed', e)); // eslint-disable-line no-console
+      .catch((e) => console.log("Failed", e)); // eslint-disable-line no-console
 
   get = (id, callback) =>
     this.withBucket((db, bucket) => {
@@ -21,7 +21,7 @@ export class BucketStore {
   update = (id, data, isIndexing, callback) =>
     this.withBucket((db, bucket) => {
       const req = db
-        .transaction(bucket, 'readwrite')
+        .transaction(bucket, "readwrite")
         .objectStore(bucket)
         .put(this.beforeIndex({ id, data }));
 
@@ -33,7 +33,7 @@ export class BucketStore {
     this.withBucket(
       (db, bucket) =>
         (db
-          .transaction(bucket, 'readwrite')
+          .transaction(bucket, "readwrite")
           .objectStore(bucket)
           .delete(id).onsuccess = ({ target: { result } }) =>
           callback(null, result))

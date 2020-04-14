@@ -32,9 +32,6 @@
     "> 1%",
     "ie >= 11"
   ],
-  "prettier": {
-    "singleQuote": true
-  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"

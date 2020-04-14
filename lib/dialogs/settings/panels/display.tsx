@@ -1,15 +1,15 @@
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import React, { Fragment } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import PropTypes from "prop-types";
 
-import RadioGroup from '../../radio-settings-group';
-import SettingsGroup, { Item } from '../../settings-group';
-import ToggleGroup from '../../toggle-settings-group';
+import RadioGroup from "../../radio-settings-group";
+import SettingsGroup, { Item } from "../../settings-group";
+import ToggleGroup from "../../toggle-settings-group";
 
-import appState from '../../../flux/app-state';
-import * as settingsActions from '../../../state/settings/actions';
-import { loadTags } from '../../../state/domain/tags';
+import appState from "../../../flux/app-state";
+import * as settingsActions from "../../../state/settings/actions";
+import { loadTags } from "../../../state/domain/tags";
 
 const DisplayPanel = (props) => {
   const {
@@ -75,7 +75,7 @@ const DisplayPanel = (props) => {
       <SettingsGroup
         title="Sort order"
         slug="sortOrder"
-        activeSlug={sortIsReversed ? 'reversed' : ''}
+        activeSlug={sortIsReversed ? "reversed" : ""}
         onChange={withCallback({
           action: actions.toggleSortOrder,
           callback: () => loadNotes(noteBucket),
@@ -88,7 +88,7 @@ const DisplayPanel = (props) => {
       <SettingsGroup
         title="Tags"
         slug="sortTagsAlpha"
-        activeSlug={sortTagsAlpha ? 'alpha' : ''}
+        activeSlug={sortTagsAlpha ? "alpha" : ""}
         onChange={withCallback({
           action: actions.toggleSortTagsAlpha,
           callback: props.loadTags,
@@ -105,7 +105,7 @@ const DisplayPanel = (props) => {
         onChange={actions.activateTheme}
         renderer={RadioGroup}
       >
-        {navigator.userAgent.toLowerCase().indexOf(' electron/') === -1 && (
+        {navigator.userAgent.toLowerCase().indexOf(" electron/") === -1 && (
           <Item title="System" slug="system" />
         )}
         <Item title="Light" slug="light" />
@@ -116,7 +116,7 @@ const DisplayPanel = (props) => {
         <SettingsGroup
           title="Menu Bar"
           slug="autoHideMenuBar"
-          activeSlug={autoHideMenuBar ? 'autoHide' : ''}
+          activeSlug={autoHideMenuBar ? "autoHide" : ""}
           description="When set to auto-hide, press the Alt key to toggle."
           onChange={actions.toggleAutoHideMenuBar}
           renderer={ToggleGroup}

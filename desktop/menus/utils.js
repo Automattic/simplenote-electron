@@ -3,7 +3,7 @@ const buildRadioGroup = ({ action, propName, settings }) => {
     const { id, ...props } = item;
 
     return {
-      type: 'radio',
+      type: "radio",
       checked: id === settings[propName],
       click: appCommandSender({
         action,
@@ -17,7 +17,7 @@ const buildRadioGroup = ({ action, propName, settings }) => {
 const appCommandSender = (arg) => {
   return (item, focusedWindow) => {
     if (focusedWindow) {
-      focusedWindow.webContents.send('appCommand', arg);
+      focusedWindow.webContents.send("appCommand", arg);
     }
   };
 };

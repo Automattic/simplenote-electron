@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import CheckmarkIcon from '../../icons/checkmark';
-import CircleIcon from '../../icons/circle';
+import CheckmarkIcon from "../../icons/checkmark";
+import CircleIcon from "../../icons/circle";
 
 const Checkbox = ({ checked = false, onChange }) => {
   // A custom checkbox with an ARIA role is used here to work around a bug in

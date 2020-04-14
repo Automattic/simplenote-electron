@@ -1,7 +1,7 @@
-import getIndexInText from './get-index-in-text';
+import getIndexInText from "./get-index-in-text";
 
-describe('getIndexInText', () => {
-  it('should return the in-text index when there are code fences', () => {
+describe("getIndexInText", () => {
+  it("should return the in-text index when there are code fences", () => {
     // The *first* actually rendered task is the *third* occurrence of
     // task-like syntax.
     const noteContent = `
@@ -20,7 +20,7 @@ describe('getIndexInText', () => {
     });
   });
 
-  it('should return the in-text index when there are indented code blocks', () => {
+  it("should return the in-text index when there are indented code blocks", () => {
     // The *first* actually rendered task is the *second* occurrence of
     // task-like syntax.
     const noteContent = `

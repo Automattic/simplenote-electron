@@ -1,16 +1,16 @@
-import React, { FunctionComponent } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import appState from '../../../flux/app-state';
-import exportZipArchive from '../../../utils/export';
+import appState from "../../../flux/app-state";
+import exportZipArchive from "../../../utils/export";
 
-import PanelTitle from '../../../components/panel-title';
-import ButtonGroup from '../../button-group';
+import PanelTitle from "../../../components/panel-title";
+import ButtonGroup from "../../button-group";
 
-import { showDialog } from '../../../state/ui/actions';
+import { showDialog } from "../../../state/ui/actions";
 
-import * as S from '../../../state';
+import * as S from "../../../state";
 
 type DispatchProps = {
   showDialog: () => any;
@@ -20,9 +20,9 @@ type Props = DispatchProps;
 
 const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
   const onSelectItem = (item) => {
-    if (item.slug === 'import') {
+    if (item.slug === "import") {
       showDialog();
-    } else if (item.slug === 'export') {
+    } else if (item.slug === "export") {
       exportZipArchive();
     }
   };
@@ -33,12 +33,12 @@ const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
       <ButtonGroup
         items={[
           {
-            name: 'Import Notes',
-            slug: 'import',
+            name: "Import Notes",
+            slug: "import",
           },
           {
-            name: 'Export Notes',
-            slug: 'export',
+            name: "Export Notes",
+            slug: "export",
           },
         ]}
         onClickItem={onSelectItem}
@@ -48,7 +48,7 @@ const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  showDialog: () => dispatch(showDialog('IMPORT')),
+  showDialog: () => dispatch(showDialog("IMPORT")),
 });
 
 export default connect(null, mapDispatchToProps)(ToolsPanel);

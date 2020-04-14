@@ -1,27 +1,27 @@
-const EventEmitter = require('events').EventEmitter;
-const { app, dialog, shell } = require('electron');
-const platform = require('../../detect/platform');
+const EventEmitter = require("events").EventEmitter;
+const { app, dialog, shell } = require("electron");
+const platform = require("../../detect/platform");
 
 class Updater extends EventEmitter {
   constructor(changelogUrl, options) {
     super();
 
     this.changelogUrl = changelogUrl;
-    this.confirmLabel = options.confirmLabel || 'Update & Restart';
+    this.confirmLabel = options.confirmLabel || "Update & Restart";
     this.dialogTitle =
-      options.dialogTitle || 'A new version of {name} is available!';
+      options.dialogTitle || "A new version of {name} is available!";
     this.dialogMessage =
       options.dialogMessage ||
-      '{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
+      "{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?";
 
-    this._version = '';
+    this._version = "";
     this._hasPrompted = false;
   }
 
   ping() {}
 
   onDownloaded(event) {
-    console.log('Update downloaded'); // eslint-disable-line no-console
+    console.log("Update downloaded"); // eslint-disable-line no-console
 
     // electron-updater provides us with new version
     if (event.version) {
@@ -32,11 +32,11 @@ class Updater extends EventEmitter {
   }
 
   onNotAvailable() {
-    console.log('Update is not available'); // eslint-disable-line no-console
+    console.log("Update is not available"); // eslint-disable-line no-console
   }
 
   onError(event) {
-    console.log('Update error', event); // eslint-disable-line no-console
+    console.log("Update error", event); // eslint-disable-line no-console
   }
 
   onConfirm() {}
@@ -51,10 +51,10 @@ class Updater extends EventEmitter {
     const updateDialogOptions = {
       buttons: [
         this.sanitizeButtonLabel(this.confirmLabel),
-        'Cancel',
-        'Release notes',
+        "Cancel",
+        "Release notes",
       ],
-      title: 'Update Available',
+      title: "Update Available",
       message: this.expandMacros(this.dialogTitle),
       detail: this.expandMacros(this.dialogMessage),
     };
@@ -75,7 +75,7 @@ class Updater extends EventEmitter {
           this.onCancel();
         }
 
-        this.emit('end');
+        this.emit("end");
       });
     }
   }
@@ -95,7 +95,7 @@ class Updater extends EventEmitter {
 
     for (const key in macros) {
       if (Object.prototype.hasOwnProperty.call(macros, key)) {
-        text = text.replace(new RegExp(`{${key}}`, 'ig'), macros[key]);
+        text = text.replace(new RegExp(`{${key}}`, "ig"), macros[key]);
       }
     }
 
@@ -104,7 +104,7 @@ class Updater extends EventEmitter {
 
   sanitizeButtonLabel(value) {
     if (platform.isWindows()) {
-      return value.replace('&', '&&');
+      return value.replace("&", "&&");
     }
 
     return value;

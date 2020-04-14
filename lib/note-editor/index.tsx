@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import appState from '../flux/app-state';
-import TagField from '../tag-field';
-import { property } from 'lodash';
-import NoteDetail from '../note-detail';
-import { toggleEditMode } from '../state/ui/actions';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import appState from "../flux/app-state";
+import TagField from "../tag-field";
+import { property } from "lodash";
+import NoteDetail from "../note-detail";
+import { toggleEditMode } from "../state/ui/actions";
 
-import { closeNote } from '../state/ui/actions';
+import { closeNote } from "../state/ui/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type DispatchProps = {
   toggleEditMode: () => any;
@@ -23,7 +23,7 @@ type StateProps = {
 type Props = DispatchProps & StateProps;
 
 export class NoteEditor extends Component<Props> {
-  static displayName = 'NoteEditor';
+  static displayName = "NoteEditor";
 
   static propTypes = {
     allTags: PropTypes.array.isRequired,
@@ -58,7 +58,7 @@ export class NoteEditor extends Component<Props> {
       revision &&
       revision.data &&
       revision.data.systemTags &&
-      revision.data.systemTags.indexOf('markdown') !== -1
+      revision.data.systemTags.indexOf("markdown") !== -1
     );
   };
 
@@ -71,7 +71,7 @@ export class NoteEditor extends Component<Props> {
     if (
       cmdOrCtrl &&
       shiftKey &&
-      'p' === key.toLowerCase() &&
+      "p" === key.toLowerCase() &&
       this.markdownEnabled
     ) {
       this.props.toggleEditMode();
@@ -85,7 +85,7 @@ export class NoteEditor extends Component<Props> {
       this.props.isSmallScreen &&
       cmdOrCtrl &&
       shiftKey &&
-      'n' === key.toLowerCase()
+      "n" === key.toLowerCase()
     ) {
       this.props.closeNote();
       event.stopPropagation();
@@ -94,7 +94,7 @@ export class NoteEditor extends Component<Props> {
     }
 
     // toggle between tag editor and note editor
-    if (cmdOrCtrl && 't' === key.toLowerCase() && this.props.isEditorActive) {
+    if (cmdOrCtrl && "t" === key.toLowerCase() && this.props.isEditorActive) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
         this.focusNoteEditor && this.focusNoteEditor();
@@ -128,9 +128,9 @@ export class NoteEditor extends Component<Props> {
 
   toggleShortcuts = (doEnable) => {
     if (doEnable) {
-      window.addEventListener('keydown', this.handleShortcut, true);
+      window.addEventListener("keydown", this.handleShortcut, true);
     } else {
-      window.removeEventListener('keydown', this.handleShortcut, true);
+      window.removeEventListener("keydown", this.handleShortcut, true);
     }
   };
 
@@ -155,7 +155,7 @@ export class NoteEditor extends Component<Props> {
           <TagField
             storeFocusTagField={this.storeFocusTagField}
             storeHasFocus={this.storeTagFieldHasFocus}
-            allTags={this.props.allTags.map(property('data.name'))}
+            allTags={this.props.allTags.map(property("data.name"))}
             note={this.props.note}
             tags={tags}
           />

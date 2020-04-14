@@ -1,6 +1,6 @@
-import { getTerms } from '../utils/filter-notes';
+import { getTerms } from "../utils/filter-notes";
 
-import * as T from '../types';
+import * as T from "../types";
 
 const notes: Map<
   T.EntityId,
@@ -9,7 +9,7 @@ const notes: Map<
 
 let mainApp: MessagePort | undefined;
 
-let searchQuery = '';
+let searchQuery = "";
 let searchTerms: string[] = [];
 let filterTags = new Set<T.TagName>();
 let openedTag: string | null = null;
@@ -25,10 +25,10 @@ const tagsFromSearch = (query: string) => {
   return searchTags;
 };
 
-type FilterScope = 'quickSearch' | 'fullSearch';
+type FilterScope = "quickSearch" | "fullSearch";
 
 export const updateFilter = (
-  scope: FilterScope = 'quickSearch'
+  scope: FilterScope = "quickSearch"
 ): Set<T.EntityId> => {
   const tic = performance.now();
   const matches = new Set<T.EntityId>();
@@ -41,8 +41,8 @@ export const updateFilter = (
     // in testing this was rare and may only happen in unexpected
     // circumstances such as when performing a garbage-collection
     const toc = performance.now();
-    if (scope === 'quickSearch' && toc - tic > 10) {
-      queueUpdateFilter(0, 'fullSearch');
+    if (scope === "quickSearch" && toc - tic > 10) {
+      queueUpdateFilter(0, "fullSearch");
       return matches;
     }
 
@@ -77,7 +77,7 @@ export const updateFilter = (
 let updateHandle: ReturnType<typeof setTimeout> | null = null;
 const queueUpdateFilter = (
   delay = 0,
-  searchScope: FilterScope = 'quickSearch'
+  searchScope: FilterScope = "quickSearch"
 ) => {
   if (updateHandle) {
     clearTimeout(updateHandle);
@@ -86,7 +86,7 @@ const queueUpdateFilter = (
   updateHandle = setTimeout(() => {
     updateHandle = null;
     mainApp.postMessage({
-      action: 'filterNotes',
+      action: "filterNotes",
       noteIds: updateFilter(searchScope),
     });
   }, delay);
@@ -96,7 +96,7 @@ export const init = (port: MessagePort) => {
   mainApp = port;
 
   mainApp.onmessage = (event) => {
-    if (event.data.action === 'updateNote') {
+    if (event.data.action === "updateNote") {
       const { noteId, data } = event.data;
 
       const noteTags = new Set(data.tags.map((tag) => tag.toLocaleLowerCase()));
@@ -110,21 +110,21 @@ export const init = (port: MessagePort) => {
       ]);
 
       queueUpdateFilter(1000);
-    } else if (event.data.action === 'filterNotes') {
-      if ('string' === typeof event.data.searchQuery) {
+    } else if (event.data.action === "filterNotes") {
+      if ("string" === typeof event.data.searchQuery) {
         searchQuery = event.data.searchQuery.trim().toLocaleLowerCase();
         searchTerms = getTerms(searchQuery);
         filterTags = tagsFromSearch(searchQuery);
       }
 
-      if ('string' === typeof event.data.openedTag) {
+      if ("string" === typeof event.data.openedTag) {
         openedTag = event.data.openedTag.toLocaleLowerCase();
       } else if (null === event.data.openedTag) {
         filterTags = tagsFromSearch(searchQuery);
         openedTag = null;
       }
 
-      if ('boolean' === typeof event.data.showTrash) {
+      if ("boolean" === typeof event.data.showTrash) {
         showTrash = event.data.showTrash;
       }
 

@@ -1,16 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { throttle } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { throttle } from "lodash";
 
-import analytics from '../../../../analytics';
+import analytics from "../../../../analytics";
 
-import PanelTitle from '../../../../components/panel-title';
-import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
-import ImportProgress from '../progress';
+import PanelTitle from "../../../../components/panel-title";
+import TransitionFadeInOut from "../../../../components/transition-fade-in-out";
+import ImportProgress from "../progress";
 
-import EvernoteImporter from '../../../../utils/import/evernote';
-import SimplenoteImporter from '../../../../utils/import/simplenote';
-import TextFileImporter from '../../../../utils/import/text-files';
+import EvernoteImporter from "../../../../utils/import/evernote";
+import SimplenoteImporter from "../../../../utils/import/simplenote";
+import TextFileImporter from "../../../../utils/import/text-files";
 
 const importers = {
   evernote: EvernoteImporter,
@@ -60,22 +60,22 @@ class ImportExecutor extends React.Component {
       this.setState({ importedNoteCount: arg });
     }, 20);
 
-    thisImporter.on('status', (type, arg) => {
+    thisImporter.on("status", (type, arg) => {
       switch (type) {
-        case 'progress':
+        case "progress":
           updateProgress(arg);
           break;
-        case 'complete':
+        case "complete":
           this.setState({
             finalNoteCount: arg,
             isDone: true,
           });
-          analytics.tracks.recordEvent('importer_import_completed', {
+          analytics.tracks.recordEvent("importer_import_completed", {
             source: sourceSlug,
             note_count: arg,
           });
           break;
-        case 'error':
+        case "error":
           this.setState({
             errorMessage: arg,
             shouldShowProgress: false,

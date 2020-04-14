@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import SmallCrossOutlineIcon from '../icons/cross-outline-small';
-import ReorderIcon from '../icons/reorder';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import classNames from "classnames";
+import SmallCrossOutlineIcon from "../icons/cross-outline-small";
+import ReorderIcon from "../icons/reorder";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   className: string;
@@ -24,7 +24,7 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 export class EditableList extends Component<Props> {
-  static displayName = 'EditableList';
+  static displayName = "EditableList";
 
   reorderingElement: HTMLElement | null = null;
   reorderingClientY: number = 0;
@@ -65,27 +65,27 @@ export class EditableList extends Component<Props> {
 
   bindReorderingListeners = () => {
     this.unbindReorderingListeners();
-    window.addEventListener('mouseup', this.onReorderEnd);
-    window.addEventListener('touchend', this.onReorderEnd);
-    window.addEventListener('touchcancel', this.onReorderCancel);
-    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener("mouseup", this.onReorderEnd);
+    window.addEventListener("touchend", this.onReorderEnd);
+    window.addEventListener("touchcancel", this.onReorderCancel);
+    window.addEventListener("keydown", this.onKeyDown);
   };
 
   unbindReorderingListeners = () => {
-    window.removeEventListener('mouseup', this.onReorderEnd);
-    window.removeEventListener('touchend', this.onReorderEnd);
-    window.removeEventListener('touchcancel', this.onReorderCancel);
-    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener("mouseup", this.onReorderEnd);
+    window.removeEventListener("touchend", this.onReorderEnd);
+    window.removeEventListener("touchcancel", this.onReorderCancel);
+    window.removeEventListener("keydown", this.onKeyDown);
   };
 
   render() {
     const { editing, onRemove, onReorder, sortTagsAlpha } = this.props;
     const { reorderedItems, reorderingId } = this.state;
-    const classes = classNames('editable-list', this.props.className, {
-      'editable-list-editing': this.props.editing,
-      'editable-list-removable': onRemove,
-      'editable-list-reorderable': onReorder,
-      'editable-list-reordering': reorderingId,
+    const classes = classNames("editable-list", this.props.className, {
+      "editable-list-editing": this.props.editing,
+      "editable-list-removable": onRemove,
+      "editable-list-reorderable": onReorder,
+      "editable-list-reordering": reorderingId,
     });
 
     return (
@@ -97,8 +97,8 @@ export class EditableList extends Component<Props> {
             <li
               key={itemId}
               ref={this.setReorderingElementRef.bind(this, itemId)}
-              className={classNames('editable-list-item', {
-                'editable-list-item-reordering': itemId === reorderingId,
+              className={classNames("editable-list-item", {
+                "editable-list-item-reordering": itemId === reorderingId,
               })}
               onMouseMove={this.onReorderMove.bind(this, itemId)}
               onTouchMove={this.onReorderMove.bind(this, itemId)}
@@ -186,9 +186,9 @@ export class EditableList extends Component<Props> {
       return;
     }
 
-    this.reorderingElement.style.transform = '';
-    this.reorderingElement.style.msTransform = '';
-    this.reorderingElement.style.webkitTransform = '';
+    this.reorderingElement.style.transform = "";
+    this.reorderingElement.style.msTransform = "";
+    this.reorderingElement.style.webkitTransform = "";
     this.reorderingElement = null;
   };
 
@@ -323,10 +323,10 @@ export class EditableList extends Component<Props> {
     reorderingId: T.EntityId,
     event: React.KeyboardEvent<HTMLSpanElement>
   ) => {
-    if (event.key === 'ArrowUp') {
+    if (event.key === "ArrowUp") {
       event.preventDefault();
       this.reorderItemById(reorderingId, -1);
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.key === "ArrowDown") {
       event.preventDefault();
       this.reorderItemById(reorderingId, 1);
     }

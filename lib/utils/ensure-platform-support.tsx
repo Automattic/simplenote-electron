@@ -1,12 +1,12 @@
-import React from 'react';
-import { render } from 'react-dom';
+import React from "react";
+import { render } from "react-dom";
 
-import BootWarning from '../components/boot-warning';
+import BootWarning from "../components/boot-warning";
 
 const hasLocalStorage = (): boolean => {
   try {
-    localStorage.setItem('__localStorageSentinel__', 'present');
-    localStorage.removeItem('__localStorageSentinel__');
+    localStorage.setItem("__localStorageSentinel__", "present");
+    localStorage.removeItem("__localStorageSentinel__");
     return true;
   } catch (e) {
     return false;
@@ -15,11 +15,11 @@ const hasLocalStorage = (): boolean => {
 
 const hasIndexedDB = (): boolean => {
   try {
-    const opener = indexedDB.open('simplenote_sentinel');
+    const opener = indexedDB.open("simplenote_sentinel");
     if (!(opener instanceof IDBOpenDBRequest)) {
       return false;
     }
-    const closer = () => indexedDB.deleteDatabase('simplenote_sentinel');
+    const closer = () => indexedDB.deleteDatabase("simplenote_sentinel");
     opener.onerror = closer;
     opener.onsuccess = closer;
     return true;
@@ -29,8 +29,8 @@ const hasIndexedDB = (): boolean => {
 };
 
 const deps = [
-  ['localStorage', hasLocalStorage()],
-  ['indexedDB', hasIndexedDB()],
+  ["localStorage", hasLocalStorage()],
+  ["indexedDB", hasIndexedDB()],
 ] as const;
 
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
@@ -45,7 +45,7 @@ if (missingDeps.length) {
       <ul>
         {deps.map(([name, hasIt]) => (
           <li key={name}>
-            {hasIt ? '✅' : '⚠️'} {name} - {hasIt ? 'working' : 'missing'}
+            {hasIt ? "✅" : "⚠️"} {name} - {hasIt ? "working" : "missing"}
           </li>
         ))}
       </ul>
@@ -54,9 +54,9 @@ if (missingDeps.length) {
         does not currently support running in Private Mode.
       </p>
     </BootWarning>,
-    document.getElementById('root')
+    document.getElementById("root")
   );
   throw new Error(
-    `Simplenote is missing required dependencies: ${missingDeps.join(', ')}`
+    `Simplenote is missing required dependencies: ${missingDeps.join(", ")}`
   );
 }

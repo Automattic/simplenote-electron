@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import Clipboard from 'clipboard';
+import React, { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import Clipboard from "clipboard";
 
 function ClipboardButton({ text }) {
   const buttonRef = useRef();
@@ -32,14 +32,14 @@ function ClipboardButton({ text }) {
     const clipboard = new Clipboard(buttonRef.current, {
       text: () => textCallback.current(),
     });
-    clipboard.on('success', () => successCallback.current());
+    clipboard.on("success", () => successCallback.current());
 
     return () => clipboard.destroy();
   }, []);
 
   return (
     <button ref={buttonRef} type="button" className="button button-borderless">
-      {isCopied ? 'Copied!' : 'Copy'}
+      {isCopied ? "Copied!" : "Copy"}
     </button>
   );
 }

@@ -1,4 +1,4 @@
-const { SpellCheckHandler } = require('electron-spellchecker');
+const { SpellCheckHandler } = require("electron-spellchecker");
 
 class CustomSpellCheckHandler extends SpellCheckHandler {
   constructor(correctionsLimit) {

@@ -1,13 +1,13 @@
-import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
-import { connect } from 'react-redux';
-import SmallCrossIcon from '../icons/cross-small';
-import analytics from '../analytics';
-import { State } from '../state';
-import { search } from '../state/ui/actions';
+import React, { Component, createRef, FormEvent, KeyboardEvent } from "react";
+import { connect } from "react-redux";
+import SmallCrossIcon from "../icons/cross-small";
+import analytics from "../analytics";
+import { State } from "../state";
+import { search } from "../state/ui/actions";
 
-import { registerSearchField } from '../state/ui/search-field-middleware';
+import { registerSearchField } from "../state/ui/search-field-middleware";
 
-import * as S from '../state';
+import * as S from "../state";
 
 const KEY_ESC = 27;
 
@@ -24,7 +24,7 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps;
 
 export class SearchField extends Component<Props> {
-  static displayName = 'SearchField';
+  static displayName = "SearchField";
 
   inputField = createRef<HTMLInputElement>();
 
@@ -40,12 +40,12 @@ export class SearchField extends Component<Props> {
     this.inputField.current.blur();
   };
 
-  focus = (operation = 'focus-only') => {
+  focus = (operation = "focus-only") => {
     if (!this.inputField.current) {
       return;
     }
 
-    if ('select' === operation) {
+    if ("select" === operation) {
       this.inputField.current.select();
     }
     this.inputField.current.focus();
@@ -53,7 +53,7 @@ export class SearchField extends Component<Props> {
 
   interceptEsc = (event: KeyboardEvent) => {
     if (KEY_ESC === event.keyCode) {
-      if (this.props.searchQuery === '') {
+      if (this.props.searchQuery === "") {
         this.blur();
       }
       this.clearQuery();
@@ -66,14 +66,14 @@ export class SearchField extends Component<Props> {
     this.props.onSearch(query);
   };
 
-  clearQuery = () => this.props.onSearch('');
+  clearQuery = () => this.props.onSearch("");
 
   render() {
     const { searchQuery, isTagSelected, placeholder } = this.props;
     const hasQuery = searchQuery.length > 0;
 
     const screenReaderLabel =
-      'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
+      "Search " + (isTagSelected ? "notes with tag " : "") + placeholder;
 
     return (
       <div className="search-field">
@@ -110,7 +110,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
+    analytics.tracks.recordEvent("list_notes_searched");
   },
 });
 

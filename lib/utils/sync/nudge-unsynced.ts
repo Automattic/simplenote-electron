@@ -12,9 +12,9 @@
  * have already been caught in version 0 limbo. This function finds those notes
  * and explicitly re-pushes them to the note bucket.
  */
-import Debug from 'debug';
+import Debug from "debug";
 
-const debug = Debug('sync:nudgeUnsynced');
+const debug = Debug("sync:nudgeUnsynced");
 
 const nudgeUnsynced = ({ noteBucket, notes, client }) => {
   if (!client.isAuthorized()) {

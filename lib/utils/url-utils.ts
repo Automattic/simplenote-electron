@@ -1,14 +1,14 @@
-import { has } from 'lodash';
+import { has } from "lodash";
 
-const allowedProtocols = ['http:', 'https:', 'mailto:'];
+const allowedProtocols = ["http:", "https:", "mailto:"];
 
 const state = (() => {
   const getBoundElectronOpener = () => {
-    const shell = window.require('electron').shell;
+    const shell = window.require("electron").shell;
     return shell.openExternal.bind(shell);
   };
 
-  const isRunningElectron = window && has(window, 'process.versions.electron');
+  const isRunningElectron = window && has(window, "process.versions.electron");
   const openExternalUrl = isRunningElectron
     ? getBoundElectronOpener()
     : window.open.bind(window);

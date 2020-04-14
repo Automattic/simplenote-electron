@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get, debounce, noop } from 'lodash';
-import analytics from '../analytics';
-import appState from '../flux/app-state';
-import { viewExternalUrl } from '../utils/url-utils';
-import NoteContentEditor from '../note-content-editor';
-import SimplenoteCompactLogo from '../icons/simplenote-compact';
-import renderToNode from './render-to-node';
-import toggleTask from './toggle-task';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { get, debounce, noop } from "lodash";
+import analytics from "../analytics";
+import appState from "../flux/app-state";
+import { viewExternalUrl } from "../utils/url-utils";
+import NoteContentEditor from "../note-content-editor";
+import SimplenoteCompactLogo from "../icons/simplenote-compact";
+import renderToNode from "./render-to-node";
+import toggleTask from "./toggle-task";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 const syncDelay = 2000;
 
@@ -23,7 +23,7 @@ type StateProps = {
 type Props = StateProps;
 
 export class NoteDetail extends Component<Props> {
-  static displayName = 'NoteDetail';
+  static displayName = "NoteDetail";
 
   static propTypes = {
     fontSize: PropTypes.number,
@@ -44,7 +44,7 @@ export class NoteDetail extends Component<Props> {
 
   componentWillMount() {
     this.queueNoteSync = debounce(this.syncNote, syncDelay);
-    document.addEventListener('copy', this.copyRenderedNote, false);
+    document.addEventListener("copy", this.copyRenderedNote, false);
   }
 
   componentDidMount() {
@@ -53,7 +53,7 @@ export class NoteDetail extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
 
     // Ensures note gets saved if user abruptly quits the app
-    window.addEventListener('beforeunload', this.queueNoteSync.flush);
+    window.addEventListener("beforeunload", this.queueNoteSync.flush);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -65,11 +65,11 @@ export class NoteDetail extends Component<Props> {
   isValidNote = (note) => note && note.id;
 
   componentWillReceiveProps(nextProps) {
-    const isEditingNote = get(this.props, ['note', 'id'], false);
+    const isEditingNote = get(this.props, ["note", "id"], false);
     if (isEditingNote === false) {
       return;
     }
-    if (get(nextProps, ['note', 'id']) !== isEditingNote) {
+    if (get(nextProps, ["note", "id"]) !== isEditingNote) {
       this.queueNoteSync.flush();
     }
   }
@@ -77,8 +77,8 @@ export class NoteDetail extends Component<Props> {
   componentDidUpdate(prevProps) {
     const { isDialogOpen, note, previewingMarkdown } = this.props;
 
-    const prevContent = get(prevProps, 'note.data.content', '');
-    const nextContent = get(this.props, 'note.data.content', '');
+    const prevContent = get(prevProps, "note.data.content", "");
+    const nextContent = get(this.props, "note.data.content", "");
 
     if (
       (previewingMarkdown &&
@@ -90,8 +90,8 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.queueNoteSync.flush);
-    document.removeEventListener('copy', this.copyRenderedNote, false);
+    window.removeEventListener("beforeunload", this.queueNoteSync.flush);
+    document.removeEventListener("copy", this.copyRenderedNote, false);
   }
 
   copyRenderedNote = (event) => {
@@ -112,11 +112,11 @@ export class NoteDetail extends Component<Props> {
     }
 
     const node = document.createDocumentFragment();
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     renderToNode(div, this.props.note.data.content);
     node.appendChild(div);
 
-    event.clipboardData.setData('text/plain', div.innerHTML);
+    event.clipboardData.setData("text/plain", div.innerHTML);
     event.preventDefault();
   };
 
@@ -127,14 +127,14 @@ export class NoteDetail extends Component<Props> {
 
     for (let node = event.target; node !== null; node = node.parentNode) {
       // open markdown preview links in a new window
-      if (node.tagName === 'A') {
+      if (node.tagName === "A") {
         event.preventDefault();
         viewExternalUrl(node.href);
         break;
       }
 
       // handle task list items
-      if (node.className === 'task-list-item') {
+      if (node.className === "task-list-item") {
         event.preventDefault();
         toggleTask({ taskNode: node, text: note.data.content }).then(
           (newContent) => {
@@ -154,7 +154,7 @@ export class NoteDetail extends Component<Props> {
 
     this.props.onChangeContent(note, content);
     this.queueNoteSync();
-    analytics.tracks.recordEvent('editor_note_edited');
+    analytics.tracks.recordEvent("editor_note_edited");
   };
 
   syncNote = () => {
@@ -188,9 +188,9 @@ export class NoteDetail extends Component<Props> {
     } = this.props;
 
     const content = {
-      text: get(note, 'data.content', ''),
-      hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
-      version: get(note, 'version', undefined),
+      text: get(note, "data.content", ""),
+      hasRemoteUpdate: get(note, "hasRemoteUpdate", false),
+      version: get(note, "version", undefined),
     };
     const divStyle = { fontSize: `${fontSize}px` };
 
@@ -221,7 +221,7 @@ export class NoteDetail extends Component<Props> {
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
-                  noteId={get(note, 'id', null)}
+                  noteId={get(note, "id", null)}
                   content={content}
                   onChangeContent={this.saveNote}
                 />

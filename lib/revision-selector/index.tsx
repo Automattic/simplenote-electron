@@ -1,18 +1,18 @@
-import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
-import { connect } from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
-import format from 'date-fns/format';
-import { orderBy } from 'lodash';
-import classNames from 'classnames';
-import Slider from '../components/slider';
-import { updateNoteTags } from '../state/domain/notes';
-import { selectRevision, toggleRevisions } from '../state/ui/actions';
+import React, { CSSProperties, Component, ChangeEventHandler } from "react";
+import { connect } from "react-redux";
+import onClickOutside from "react-onclickoutside";
+import format from "date-fns/format";
+import { orderBy } from "lodash";
+import classNames from "classnames";
+import Slider from "../components/slider";
+import { updateNoteTags } from "../state/domain/notes";
+import { selectRevision, toggleRevisions } from "../state/ui/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 const sortedRevisions = (revisions: T.NoteEntity[]) =>
-  orderBy(revisions, 'version', 'asc');
+  orderBy(revisions, "version", "asc");
 
 type OwnProps = {
   onUpdateContent: Function;
@@ -138,17 +138,17 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 
     const revisionDate =
       !revisions.length || selection === max
-        ? 'Latest'
+        ? "Latest"
         : format(
             revisions[selection].data.modificationDate * 1000,
-            'MMM d, yyyy h:mm a'
+            "MMM d, yyyy h:mm a"
           );
 
     const revisionButtonStyle: CSSProperties =
-      selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
+      selection === max ? { opacity: "0.5", pointerEvents: "none" } : {};
 
-    const mainClasses = classNames('revision-selector', {
-      'is-visible': isViewingRevisions,
+    const mainClasses = classNames("revision-selector", {
+      "is-visible": isViewingRevisions,
     });
 
     return (

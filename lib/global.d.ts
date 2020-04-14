@@ -1,4 +1,4 @@
-import { TKQItem, TracksAPI } from './analytics/types';
+import { TKQItem, TracksAPI } from "./analytics/types";
 
 declare global {
   const __TEST__: boolean;

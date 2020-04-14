@@ -1,25 +1,25 @@
-import { buildRadioGroup } from '../utils';
+import { buildRadioGroup } from "../utils";
 
-describe('Menu Utils', () => {
-  describe('buildRadioGroup', () => {
+describe("Menu Utils", () => {
+  describe("buildRadioGroup", () => {
     const menuItems = [
       {
-        id: 'myValue',
-        passThroughProp: 'passThroughValue',
+        id: "myValue",
+        passThroughProp: "passThroughValue",
       },
       {
-        id: 'myUnselectedValue',
+        id: "myUnselectedValue",
       },
     ];
     const args = {
-      action: 'myAction',
-      propName: 'myProp',
-      settings: { myProp: 'myValue' },
+      action: "myAction",
+      propName: "myProp",
+      settings: { myProp: "myValue" },
     };
     const result = menuItems.map(buildRadioGroup(args));
 
-    test('should pass through any props', () => {
-      expect(result[0].passThroughProp).toBe('passThroughValue');
+    test("should pass through any props", () => {
+      expect(result[0].passThroughProp).toBe("passThroughValue");
     });
 
     test('should set the correct item as "checked"', () => {

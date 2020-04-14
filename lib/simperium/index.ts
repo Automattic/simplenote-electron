@@ -1,16 +1,16 @@
-import simperium, { Client } from 'simperium';
-import store_provider from './store-provider';
-import ghost_store from './ghost-store';
-import localQueueStore from './local-queue-store';
-import util from 'util';
-import events from 'events';
+import simperium, { Client } from "simperium";
+import store_provider from "./store-provider";
+import ghost_store from "./ghost-store";
+import localQueueStore from "./local-queue-store";
+import util from "util";
+import events from "events";
 
 export const Auth = simperium.Auth;
 
 export default function (settings) {
   const browserClient = new BrowserClient(settings);
 
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener("beforeunload", () => {
     Object.values(browserClient.buckets).forEach(localQueueStore.persist);
   });
 
@@ -22,7 +22,7 @@ Client.Bucket.prototype.query = function (fn) {
 };
 
 function BrowserClient({ appID, token, bucketConfig, database, version }) {
-  this.databaseName = database || 'simperium-objects';
+  this.databaseName = database || "simperium-objects";
   this.databaseVersion = version || 1;
   let config = (this.bucketConfig = bucketConfig);
   this.bucketDB = store_provider(this.configureDb.bind(this));
@@ -43,12 +43,12 @@ function BrowserClient({ appID, token, bucketConfig, database, version }) {
   });
 
   [
-    'send',
-    'message',
-    'connect',
-    'reconnect',
-    'disconnect',
-    'unauthorized',
+    "send",
+    "message",
+    "connect",
+    "reconnect",
+    "disconnect",
+    "unauthorized",
   ].forEach(
     function (event) {
       this.client.on(
@@ -86,17 +86,17 @@ BrowserClient.prototype.configureDb = function (resolve) {
 
     for (let name in this.bucketConfig) {
       let setup = this.bucketConfig[name];
-      if (typeof setup !== 'function') {
+      if (typeof setup !== "function") {
         setup = setup.configure;
       }
       if (stores.contains(name)) db.deleteObjectStore(name);
-      objectStore = db.createObjectStore(name, { keyPath: 'id' });
+      objectStore = db.createObjectStore(name, { keyPath: "id" });
       setup(objectStore);
     }
   }.bind(this);
 
   openRequest.onerror = function (e) {
-    console.log('So failed', e); // eslint-disable-line no-console
+    console.log("So failed", e); // eslint-disable-line no-console
   };
 
   openRequest.onsuccess = function (e) {
@@ -124,7 +124,7 @@ BrowserClient.prototype.reset = function () {
       return ghost_store.reset();
     },
     (e) => {
-      console.error('Failed to reset', e); // eslint-disable-line no-console
+      console.error("Failed to reset", e); // eslint-disable-line no-console
     }
   );
 };
@@ -135,12 +135,12 @@ BrowserClient.prototype.bucket = function (name) {
 
 BrowserClient.prototype.setUser = function (user) {
   this.client.setAccessToken(user.access_token);
-  this.emit('authorized');
+  this.emit("authorized");
 };
 
 BrowserClient.prototype.deauthorize = function () {
   this.client.setAccessToken(null);
-  this.emit('unauthorized');
+  this.emit("unauthorized");
   this.client.end();
   this.reset();
 };

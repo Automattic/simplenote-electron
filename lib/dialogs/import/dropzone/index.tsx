@@ -1,11 +1,11 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
+import React, { Fragment, useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import classnames from "classnames";
 
-import GridiconUpload from 'gridicons/dist/cloud-upload';
-import GridiconWarn from 'gridicons/dist/notice-outline';
-import FileIcon from '../../../icons/file';
-import { useDropzone } from 'react-dropzone';
+import GridiconUpload from "gridicons/dist/cloud-upload";
+import GridiconWarn from "gridicons/dist/notice-outline";
+import FileIcon from "../../../icons/file";
+import { useDropzone } from "react-dropzone";
 
 function ImporterDropzone({
   acceptedTypes,
@@ -26,9 +26,9 @@ function ImporterDropzone({
 
   const handleReject = (rejectedFiles) => {
     if (!multiple && rejectedFiles.length > 1) {
-      setErrorMessage('Choose a single file');
+      setErrorMessage("Choose a single file");
     } else {
-      setErrorMessage('File type is incorrect');
+      setErrorMessage("File type is incorrect");
     }
     setAcceptedFile(undefined);
     onReset();
@@ -57,12 +57,12 @@ function ImporterDropzone({
     return () => clearTimeout(timer);
   }, [errorMessage]);
 
-  const text = errorMessage ? errorMessage : 'Drag a file, or click to choose';
+  const text = errorMessage ? errorMessage : "Drag a file, or click to choose";
 
   const DropzonePlaceholder = () => (
     <Fragment>
       {errorMessage ? <GridiconWarn /> : <GridiconUpload />}
-      {isDragActive ? 'Drop files here' : text}
+      {isDragActive ? "Drop files here" : text}
     </Fragment>
   );
 
@@ -77,8 +77,8 @@ function ImporterDropzone({
     <div
       {...getRootProps()}
       className={classnames(
-        { 'is-accepted': acceptedFile },
-        'importer-dropzone theme-color-border'
+        { "is-accepted": acceptedFile },
+        "importer-dropzone theme-color-border"
       )}
     >
       <input {...getInputProps()} />

@@ -1,14 +1,14 @@
-import { get, partition } from 'lodash';
-import update from 'react-addons-update';
-import Debug from 'debug';
-import ActionMap from './action-map';
-import analytics from '../analytics';
-import actions from '../state/actions';
+import { get, partition } from "lodash";
+import update from "react-addons-update";
+import Debug from "debug";
+import ActionMap from "./action-map";
+import analytics from "../analytics";
+import actions from "../state/actions";
 
-import { AppState, State } from '../state';
-import * as T from '../types';
+import { AppState, State } from "../state";
+import * as T from "../types";
 
-const debug = Debug('appState');
+const debug = Debug("appState");
 
 const initialState: AppState = {
   notes: null,
@@ -17,7 +17,7 @@ const initialState: AppState = {
 };
 
 export const actionMap = new ActionMap({
-  namespace: 'App',
+  namespace: "App",
   initialState,
   handlers: {
     authChanged(state: AppState) {
@@ -32,7 +32,7 @@ export const actionMap = new ActionMap({
         return (dispatch, getState) => {
           dispatch(actions.ui.showAllNotes());
           dispatch(
-            this.action('notesLoaded', {
+            this.action("notesLoaded", {
               notes: getState().appState.notes,
             })
           );
@@ -43,7 +43,7 @@ export const actionMap = new ActionMap({
     newNote: {
       creator({
         noteBucket,
-        content = '',
+        content = "",
       }: {
         noteBucket: T.Bucket<T.Note>;
         content: string;
@@ -60,11 +60,11 @@ export const actionMap = new ActionMap({
             {
               content,
               deleted: false,
-              systemTags: settings.markdownEnabled ? ['markdown'] : [],
+              systemTags: settings.markdownEnabled ? ["markdown"] : [],
               creationDate: timestamp,
               modificationDate: timestamp,
-              shareURL: '',
-              publishURL: '',
+              shareURL: "",
+              publishURL: "",
               tags: openedTag ? [openedTag.data.name] : [],
             },
             (e, note) => {
@@ -72,7 +72,7 @@ export const actionMap = new ActionMap({
                 return debug(`newNote: could not create note - ${e.message}`);
               }
               dispatch(
-                this.action('loadAndSelectNote', {
+                this.action("loadAndSelectNote", {
                   noteBucket,
                   noteId: note.id,
                 })
@@ -88,20 +88,20 @@ export const actionMap = new ActionMap({
         return (dispatch, getState: () => State) => {
           const settings = getState().settings;
           const { sortType, sortReversed } = settings;
-          var sortOrder: 'prev' | 'next';
-          debug('loadNotes');
+          var sortOrder: "prev" | "next";
+          debug("loadNotes");
 
-          if (sortType === 'alphabetical') {
-            sortOrder = sortReversed ? 'prev' : 'next';
+          if (sortType === "alphabetical") {
+            sortOrder = sortReversed ? "prev" : "next";
           } else {
-            sortOrder = sortReversed ? 'next' : 'prev';
+            sortOrder = sortReversed ? "next" : "prev";
           }
 
           noteBucket.query((db) => {
             var notes: T.NoteEntity[] = [];
             db
-              .transaction('note')
-              .objectStore('note')
+              .transaction("note")
+              .objectStore("note")
               .index(sortType)
               .openCursor(null, sortOrder).onsuccess = (e) => {
               var cursor = e.target.result;
@@ -111,7 +111,7 @@ export const actionMap = new ActionMap({
               } else {
                 debug(`noteCount: ${notes.length}`);
                 if (notes.length) {
-                  dispatch(this.action('notesLoaded', { notes: notes }));
+                  dispatch(this.action("notesLoaded", { notes: notes }));
                 }
               }
             };
@@ -122,7 +122,7 @@ export const actionMap = new ActionMap({
 
     notesLoaded(state: AppState, { notes }: { notes: T.NoteEntity[] }) {
       const [pinned, notPinned] = partition(notes, (note) =>
-        note.data.systemTags.includes('pinned')
+        note.data.systemTags.includes("pinned")
       );
       const pinSortedNotes = [...pinned, ...notPinned];
       return update(state, {
@@ -221,7 +221,7 @@ export const actionMap = new ActionMap({
       }) {
         return (dispatch) => {
           noteBucket.remove(note.id);
-          dispatch(this.action('loadNotes', { noteBucket }));
+          dispatch(this.action("loadNotes", { noteBucket }));
           dispatch(actions.ui.deleteNoteForever(previousIndex));
         };
       },
@@ -236,7 +236,7 @@ export const actionMap = new ActionMap({
             (note) => note.data.deleted
           );
           deleted.forEach((note) => noteBucket.remove(note.id));
-          dispatch(this.action('notesLoaded', { notes }));
+          dispatch(this.action("notesLoaded", { notes }));
         };
       },
     },
@@ -249,9 +249,9 @@ export const actionMap = new ActionMap({
       if (sortTagsAlpha) {
         // Sort tags alphabetically by 'name' value
         tags.sort((a, b) => {
-          return get(a, 'data.name', '')
+          return get(a, "data.name", "")
             .toLowerCase()
-            .localeCompare(get(b, 'data.name', '').toLowerCase());
+            .localeCompare(get(b, "data.name", "").toLowerCase());
         });
       } else {
         // Sort the tags by their 'index' value
@@ -272,12 +272,12 @@ export const actionMap = new ActionMap({
         preferencesBucket: T.Bucket<T.Preferences>;
       }) {
         return (dispatch) => {
-          const objectKey = 'preferences-key';
+          const objectKey = "preferences-key";
 
           preferencesBucket.get(objectKey, (e, preferences) => {
             let analyticsEnabled = get(
               preferences,
-              'data.analytics_enabled',
+              "data.analytics_enabled",
               true
             );
 
@@ -294,10 +294,10 @@ export const actionMap = new ActionMap({
 
             // By deferring recordEvent() to this callback, we can make sure
             // that tracking starts only after preferences are loaded
-            if (typeof callback === 'function') callback();
+            if (typeof callback === "function") callback();
 
             dispatch(
-              this.action('preferencesLoaded', {
+              this.action("preferencesLoaded", {
                 analyticsEnabled: analyticsEnabled,
               })
             );
@@ -331,7 +331,7 @@ export const actionMap = new ActionMap({
         preferencesBucket: T.Bucket<T.Preferences>;
       }
     ) {
-      const objectKey = 'preferences-key';
+      const objectKey = "preferences-key";
 
       preferencesBucket.get(objectKey, (e, preferences) => {
         preferencesBucket.update(objectKey, {
@@ -355,8 +355,8 @@ export const actionMap = new ActionMap({
           } = getState();
 
           dispatch(
-            this.action('setPreference', {
-              key: 'analytics_enabled',
+            this.action("setPreference", {
+              key: "analytics_enabled",
               value: !analyticsEnabled,
               preferencesBucket,
             })

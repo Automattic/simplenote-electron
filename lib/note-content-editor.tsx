@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, invoke, noop } from 'lodash';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { ContentState, Editor, EditorState, Modifier } from "draft-js";
+import MultiDecorator from "draft-js-multidecorators";
+import { compact, get, invoke, noop } from "lodash";
 
 import {
   getCurrentBlock,
   getEquivalentSelectionState,
   getSelectedText,
   plainTextContent,
-} from './editor/utils';
+} from "./editor/utils";
 import {
   continueList,
   finishList,
   indentCurrentBlock,
   outdentCurrentBlock,
   isLonelyBullet,
-} from './editor/text-manipulation-helpers';
-import { filterHasText, searchPattern } from './utils/filter-notes';
-import matchingTextDecorator from './editor/matching-text-decorator';
-import checkboxDecorator from './editor/checkbox-decorator';
-import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
-import { taskRegex } from './note-detail/toggle-task/constants';
-import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
-import { getIpcRenderer } from './utils/electron';
-import analytics from './analytics';
+} from "./editor/text-manipulation-helpers";
+import { filterHasText, searchPattern } from "./utils/filter-notes";
+import matchingTextDecorator from "./editor/matching-text-decorator";
+import checkboxDecorator from "./editor/checkbox-decorator";
+import { removeCheckbox, shouldRemoveCheckbox } from "./editor/checkbox-utils";
+import { taskRegex } from "./note-detail/toggle-task/constants";
+import insertOrRemoveCheckboxes from "./editor/insert-or-remove-checkboxes";
+import { getIpcRenderer } from "./utils/electron";
+import analytics from "./analytics";
 
-import * as S from './state';
+import * as S from "./state";
 
-const TEXT_DELIMITER = '\n';
+const TEXT_DELIMITER = "\n";
 
 type StateProps = {
   searchQuery: string;
@@ -66,7 +66,7 @@ class NoteContentEditor extends Component<Props> {
       newText
     );
     this.handleEditorStateChange(
-      EditorState.push(editorState, newContentState, 'replace-text')
+      EditorState.push(editorState, newContentState, "replace-text")
     );
   };
 
@@ -87,7 +87,7 @@ class NoteContentEditor extends Component<Props> {
     );
 
     // Focus the editor for a new, empty note when not searching
-    if (text === '' && searchQuery === '') {
+    if (text === "" && searchQuery === "") {
       return EditorState.moveFocusToEnd(newEditorState);
     }
     return newEditorState;
@@ -105,7 +105,7 @@ class NoteContentEditor extends Component<Props> {
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
-    this.ipc.on('appCommand', this.onAppCommand);
+    this.ipc.on("appCommand", this.onAppCommand);
     this.editor.blur();
   }
 
@@ -123,7 +123,7 @@ class NoteContentEditor extends Component<Props> {
       newEditorState = EditorState.push(
         editorState,
         newContentState,
-        'remove-range'
+        "remove-range"
       );
     }
 
@@ -142,7 +142,7 @@ class NoteContentEditor extends Component<Props> {
     let newEditorState = EditorState.push(
       oldEditorState,
       ContentState.createFromText(content, TEXT_DELIMITER),
-      'replace-text'
+      "replace-text"
     );
 
     // Handle transfer of focus from oldEditorState to newEditorState
@@ -186,7 +186,7 @@ class NoteContentEditor extends Component<Props> {
         () =>
           __TEST__ &&
           window.testEvents.push([
-            'editorNewNote',
+            "editorNewNote",
             plainTextContent(this.state.editorState),
           ])
       );
@@ -213,11 +213,11 @@ class NoteContentEditor extends Component<Props> {
   };
 
   componentWillUnmount() {
-    this.ipc.removeListener('appCommand', this.onAppCommand);
+    this.ipc.removeListener("appCommand", this.onAppCommand);
   }
 
   focus = () => {
-    invoke(this, 'editor.focus');
+    invoke(this, "editor.focus");
   };
 
   /**
@@ -226,7 +226,7 @@ class NoteContentEditor extends Component<Props> {
    * @returns {boolean} whether the editor area is focused
    */
   hasFocus = () => {
-    return document.activeElement === get(this.editor, 'editor');
+    return document.activeElement === get(this.editor, "editor");
   };
 
   onTab = (e) => {
@@ -268,35 +268,35 @@ class NoteContentEditor extends Component<Props> {
       caretIsCollapsedAt(0) || caretIsCollapsedAt(firstCharIndex);
 
     if (atBeginningOfLine) {
-      return 'not-handled';
+      return "not-handled";
     }
 
     if (isLonelyBullet(line)) {
       this.handleEditorStateChange(finishList(editorState));
-      return 'handled';
+      return "handled";
     }
 
     const listItemMatch = line.match(listItemRe);
     const taskItemMatch = line.match(taskRegex);
 
     if (taskItemMatch) {
-      const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
+      const nextTaskPrefix = line.replace(taskRegex, "$1- [ ] ");
       this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
-      return 'handled';
+      return "handled";
     } else if (listItemMatch) {
       this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
-      return 'handled';
+      return "handled";
     }
 
-    return 'not-handled';
+    return "not-handled";
   };
 
   onAppCommand = (event, command) => {
-    if (get(command, 'action') === 'insertChecklist') {
+    if (get(command, "action") === "insertChecklist") {
       this.handleEditorStateChange(
         insertOrRemoveCheckboxes(this.state.editorState)
       );
-      analytics.tracks.recordEvent('editor_checklist_inserted');
+      analytics.tracks.recordEvent("editor_checklist_inserted");
     }
   };
 
@@ -312,7 +312,7 @@ class NoteContentEditor extends Component<Props> {
     if (!textToCopy) {
       return;
     }
-    event.clipboardData.setData('text/plain', textToCopy);
+    event.clipboardData.setData("text/plain", textToCopy);
     event.preventDefault();
   };
 
@@ -321,7 +321,7 @@ class NoteContentEditor extends Component<Props> {
       <div
         onCopy={this.copyPlainText}
         onCut={this.copyPlainText}
-        style={{ height: '100%' }}
+        style={{ height: "100%" }}
       >
         <Editor
           key={this.editorKey}

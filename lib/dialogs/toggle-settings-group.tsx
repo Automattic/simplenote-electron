@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import ToggleControl from '../controls/toggle';
+import ToggleControl from "../controls/toggle";
 
 const ToggleGroup = ({ groupSlug, slug, isEnabled, onChange }) => (
   <ToggleControl

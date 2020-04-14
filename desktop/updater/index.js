@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
 /**
  * Internal dependencies
  */
-const platform = require('../detect/platform');
-const config = require('../config');
-const AutoUpdater = require('./auto-updater');
-const ManualUpdater = require('./manual-updater');
+const platform = require("../detect/platform");
+const config = require("../config");
+const AutoUpdater = require("./auto-updater");
+const ManualUpdater = require("./manual-updater");
 
 let updater = false;
 
@@ -21,8 +21,8 @@ if (platform.isOSX() || platform.isWindows() || process.env.APPIMAGE) {
     changelogUrl: config.updater.changelogUrl,
     options: {
       dialogMessage:
-        '{name} {newVersion} is now available — you have {currentVersion}. Would you like to download it now?',
-      confirmLabel: 'Download',
+        "{name} {newVersion} is now available — you have {currentVersion}. Would you like to download it now?",
+      confirmLabel: "Download",
     },
   });
 }

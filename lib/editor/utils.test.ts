@@ -1,7 +1,7 @@
-import { ContentState, EditorState, SelectionState } from 'draft-js';
-import { getEquivalentSelectionState, getSelectedText } from './utils';
+import { ContentState, EditorState, SelectionState } from "draft-js";
+import { getEquivalentSelectionState, getSelectedText } from "./utils";
 
-describe('getSelectedText', () => {
+describe("getSelectedText", () => {
   const sourceText = `
 # My note
 
@@ -15,7 +15,7 @@ describe('getSelectedText', () => {
     contentState = editorState.getCurrentContent();
   });
 
-  it('should return the selected content as text', () => {
+  it("should return the selected content as text", () => {
     const lastBlock = contentState.getLastBlock();
     const selectionState = SelectionState.createEmpty(
       contentState.getFirstBlock().key
@@ -30,7 +30,7 @@ describe('getSelectedText', () => {
     expect(getSelectedText(stateWithSelection)).toBe(sourceText);
   });
 
-  it('should handle partial selection', () => {
+  it("should handle partial selection", () => {
     const lastBlock = contentState.getLastBlock();
     const firstBlock = contentState.getFirstBlock();
     const selectionState = SelectionState.createEmpty(firstBlock.key).merge({
@@ -49,13 +49,13 @@ describe('getSelectedText', () => {
   });
 });
 
-describe('getEquivalentSelectionState', () => {
+describe("getEquivalentSelectionState", () => {
   const createEditorState = (text) =>
     EditorState.createWithContent(ContentState.createFromText(text));
 
-  it('should preserve the offsets of the old state', () => {
-    let oldEditorState = createEditorState('foo');
-    const newEditorState = createEditorState('foo');
+  it("should preserve the offsets of the old state", () => {
+    let oldEditorState = createEditorState("foo");
+    const newEditorState = createEditorState("foo");
     const anchorOffset = 0;
     const focusOffset = 3;
     oldEditorState = EditorState.forceSelection(
@@ -68,9 +68,9 @@ describe('getEquivalentSelectionState', () => {
     expect(result.focusOffset).toBe(focusOffset);
   });
 
-  it('should preserve the hasFocus and isBackward of the old state', () => {
-    let oldEditorState = createEditorState('foo');
-    const newEditorState = createEditorState('foo');
+  it("should preserve the hasFocus and isBackward of the old state", () => {
+    let oldEditorState = createEditorState("foo");
+    const newEditorState = createEditorState("foo");
     const hasFocus = true;
     const isBackward = true;
     oldEditorState = EditorState.forceSelection(
@@ -83,9 +83,9 @@ describe('getEquivalentSelectionState', () => {
     expect(result.isBackward).toBe(isBackward);
   });
 
-  it('should have an anchor & focus key that corresponds to their indices in the old state', () => {
-    let oldEditorState = createEditorState('foo\nbar\nbaz');
-    const newEditorState = createEditorState('foo\nbar\nbaz');
+  it("should have an anchor & focus key that corresponds to their indices in the old state", () => {
+    let oldEditorState = createEditorState("foo\nbar\nbaz");
+    const newEditorState = createEditorState("foo\nbar\nbaz");
     const anchorBlockIndex = 1;
     const focusBlockIndex = 2;
     const oldBlocks = oldEditorState.getCurrentContent().getBlocksAsArray();
@@ -103,9 +103,9 @@ describe('getEquivalentSelectionState', () => {
     expect(result.focusKey).toBe(newBlocks[focusBlockIndex].key);
   });
 
-  it('should not go out of bounds if the offsets are invalid in the new state', () => {
-    let oldEditorState = createEditorState('foo');
-    const newEditorState = createEditorState('f');
+  it("should not go out of bounds if the offsets are invalid in the new state", () => {
+    let oldEditorState = createEditorState("foo");
+    const newEditorState = createEditorState("f");
     const anchorOffset = 3;
     const focusOffset = 3;
     oldEditorState = EditorState.forceSelection(
@@ -118,9 +118,9 @@ describe('getEquivalentSelectionState', () => {
     expect(result.focusOffset).toBe(1);
   });
 
-  it('should not go out of bounds if the block indices are invalid in the new state', () => {
-    let oldEditorState = createEditorState('foo\nbar');
-    const newEditorState = createEditorState('foo');
+  it("should not go out of bounds if the block indices are invalid in the new state", () => {
+    let oldEditorState = createEditorState("foo\nbar");
+    const newEditorState = createEditorState("foo");
     const anchorBlockIndex = 1;
     const focusBlockIndex = 1;
     const oldBlocks = oldEditorState.getCurrentContent().getBlocksAsArray();

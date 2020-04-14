@@ -1,16 +1,16 @@
-import React, { Component, FocusEvent, MouseEvent } from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import PanelTitle from '../components/panel-title';
-import EditableList from '../editable-list';
-import { get } from 'lodash';
-import TagListInput from './input';
-import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
-import { openTag, toggleTagEditing } from '../state/ui/actions';
-import analytics from '../analytics';
+import React, { Component, FocusEvent, MouseEvent } from "react";
+import { connect } from "react-redux";
+import classNames from "classnames";
+import PanelTitle from "../components/panel-title";
+import EditableList from "../editable-list";
+import { get } from "lodash";
+import TagListInput from "./input";
+import { renameTag, reorderTags, trashTag } from "../state/domain/tags";
+import { openTag, toggleTagEditing } from "../state/ui/actions";
+import analytics from "../analytics";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type StateProps = {
   editingTags: boolean;
@@ -29,11 +29,11 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps;
 
 export class TagList extends Component<Props> {
-  static displayName = 'TagList';
+  static displayName = "TagList";
 
   renderItem = (tag: T.TagEntity) => {
     const { editingTags, openedTag } = this.props;
-    const isSelected = tag.data.name === get(openedTag, 'data.name', '');
+    const isSelected = tag.data.name === get(openedTag, "data.name", "");
 
     const handleRenameTag = ({
       target: { value },
@@ -63,14 +63,14 @@ export class TagList extends Component<Props> {
 
   onTrashTag = (tag: T.TagEntity) => {
     this.props.trashTag({ tag });
-    analytics.tracks.recordEvent('list_tag_deleted');
+    analytics.tracks.recordEvent("list_tag_deleted");
   };
 
   render() {
     const { editingTags, onEditTags, tags } = this.props;
 
-    const classes = classNames('tag-list', {
-      'tag-list-editing': this.props.editingTags,
+    const classes = classNames("tag-list", {
+      "tag-list-editing": this.props.editingTags,
     });
 
     return (
@@ -83,7 +83,7 @@ export class TagList extends Component<Props> {
               tabIndex={0}
               onClick={onEditTags}
             >
-              {editingTags ? 'Done' : 'Edit'}
+              {editingTags ? "Done" : "Edit"}
             </button>
           )}
         </div>
@@ -111,7 +111,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onEditTags: () => dispatch(toggleTagEditing()),
   openTag: (tag) => {
     dispatch(openTag(tag));
-    analytics.tracks.recordEvent('list_tag_viewed');
+    analytics.tracks.recordEvent("list_tag_viewed");
   },
   renameTag: (arg) => dispatch(renameTag(arg)),
   reorderTags: (arg) => dispatch(reorderTags(arg)),

@@ -1,13 +1,13 @@
-import getIndexInText from './get-index-in-text';
-import { selectors, taskRegex } from './constants';
+import getIndexInText from "./get-index-in-text";
+import { selectors, taskRegex } from "./constants";
 
 export const toggleInLine = (line) => {
   const uncheckedRegex = /- \[\s?\]/;
   const checkedRegex = /- \[[xX]\]/;
 
   return checkedRegex.test(line)
-    ? line.replace(checkedRegex, '- [ ]')
-    : line.replace(uncheckedRegex, '- [x]');
+    ? line.replace(checkedRegex, "- [ ]")
+    : line.replace(uncheckedRegex, "- [x]");
 };
 
 export const toggleInText = ({ text, index: targetIndex }) => {

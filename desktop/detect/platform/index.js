@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Module variables
@@ -10,15 +10,15 @@ function Platform() {
 }
 
 Platform.prototype.isOSX = function () {
-  return process.platform === 'darwin';
+  return process.platform === "darwin";
 };
 
 Platform.prototype.isWindows = function () {
-  return process.platform === 'win32';
+  return process.platform === "win32";
 };
 
 Platform.prototype.isLinux = function () {
-  return process.platform === 'linux';
+  return process.platform === "linux";
 };
 
 if (!platform) {

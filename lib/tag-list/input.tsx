@@ -1,5 +1,5 @@
-import React, { Component, FocusEvent, MouseEvent } from 'react';
-import classNames from 'classnames';
+import React, { Component, FocusEvent, MouseEvent } from "react";
+import classNames from "classnames";
 
 type OwnProps = {
   editable: boolean;
@@ -24,8 +24,8 @@ export class TagListInput extends Component<Props, OwnState> {
   render() {
     const { editable, isSelected, onClick, onDone } = this.props;
     const { value } = this.state;
-    const classes = classNames('tag-list-input', 'theme-color-fg', {
-      'is-selected': isSelected,
+    const classes = classNames("tag-list-input", "theme-color-fg", {
+      "is-selected": isSelected,
     });
 
     return (

@@ -1,54 +1,54 @@
-const { appCommandSender } = require('./utils');
+const { appCommandSender } = require("./utils");
 
 const buildEditMenu = (settings) => {
   settings = settings || {};
 
   return {
-    label: '&Edit',
+    label: "&Edit",
     submenu: [
       {
-        label: '&Undo',
-        role: 'undo',
+        label: "&Undo",
+        role: "undo",
       },
       {
-        label: '&Redo',
-        role: 'redo',
+        label: "&Redo",
+        role: "redo",
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: '&Cut',
-        role: 'cut',
+        label: "&Cut",
+        role: "cut",
       },
       {
-        label: 'C&opy',
-        role: 'copy',
+        label: "C&opy",
+        role: "copy",
       },
       {
-        label: '&Paste',
-        role: 'paste',
+        label: "&Paste",
+        role: "paste",
       },
       {
-        label: '&Select All',
-        role: 'selectall',
+        label: "&Select All",
+        role: "selectall",
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: 'Search &Notes…',
-        accelerator: 'CommandOrControl+F',
-        click: appCommandSender({ action: 'focusSearchField' }),
+        label: "Search &Notes…",
+        accelerator: "CommandOrControl+F",
+        click: appCommandSender({ action: "focusSearchField" }),
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: 'C&heck Spelling',
-        type: 'checkbox',
+        label: "C&heck Spelling",
+        type: "checkbox",
         checked: settings.spellCheckEnabled,
-        click: appCommandSender({ action: 'toggleSpellCheck' }),
+        click: appCommandSender({ action: "toggleSpellCheck" }),
       },
     ],
   };

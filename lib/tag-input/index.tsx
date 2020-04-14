@@ -4,10 +4,10 @@ import React, {
   CompositionEvent,
   KeyboardEvent,
   RefObject,
-} from 'react';
-import { get, identity, invoke, noop } from 'lodash';
+} from "react";
+import { get, identity, invoke, noop } from "lodash";
 
-import * as T from '../types';
+import * as T from "../types";
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
@@ -33,7 +33,7 @@ export class TagInput extends Component<Props> {
   inputField?: RefObject<HTMLDivElement> | null;
   inputObserver?: MutationObserver;
 
-  static displayName = 'TagInput';
+  static displayName = "TagInput";
 
   static defaultProps = {
     inputRef: identity,
@@ -64,8 +64,8 @@ export class TagInput extends Component<Props> {
   componentWillUnmount() {
     invoke(
       this,
-      'inputField.removeEventListener',
-      'paste',
+      "inputField.removeEventListener",
+      "paste",
       this.removePastedFormatting,
       false
     );
@@ -145,10 +145,10 @@ export class TagInput extends Component<Props> {
 
   onInputMutation = (mutationList: MutationRecord[]) => {
     mutationList.forEach((mutation) => {
-      let value = get(mutation, 'target.data', '');
+      let value = get(mutation, "target.data", "");
 
-      if (mutation.type === 'childList' && mutation.addedNodes.length) {
-        value = get(mutation, 'target.innerText', '');
+      if (mutation.type === "childList" && mutation.addedNodes.length) {
+        value = get(mutation, "target.innerText", "");
       }
 
       this.onInput(value);
@@ -171,10 +171,10 @@ export class TagInput extends Component<Props> {
   removePastedFormatting = (event: ClipboardEvent) => {
     let clipboardText;
 
-    if (get(event, 'clipboardData.getData')) {
-      clipboardText = event.clipboardData.getData('text/plain');
-    } else if (get(window, 'clipboardData.getData')) {
-      clipboardText = window.clipboardData.getData('Text'); // IE11
+    if (get(event, "clipboardData.getData")) {
+      clipboardText = event.clipboardData.getData("text/plain");
+    } else if (get(window, "clipboardData.getData")) {
+      clipboardText = window.clipboardData.getData("Text"); // IE11
     }
 
     this.onInput(clipboardText);
@@ -188,8 +188,8 @@ export class TagInput extends Component<Props> {
     this.props.inputRef(ref);
     invoke(
       this,
-      'inputField.addEventListener',
-      'paste',
+      "inputField.addEventListener",
+      "paste",
       this.removePastedFormatting,
       false
     );
@@ -201,15 +201,15 @@ export class TagInput extends Component<Props> {
     value.trim().length && onSelect(value.trim());
 
     // safe invoke since event could be empty
-    invoke(event, 'preventDefault');
-    invoke(event, 'stopPropagation');
+    invoke(event, "preventDefault");
+    invoke(event, "stopPropagation");
   };
 
   render() {
     const { value, tagNames } = this.props;
 
     const suggestion = value.length && tagNames.find(startsWith(value));
-    const shouldShowPlaceholder = value === '' && !this.state.isComposing;
+    const shouldShowPlaceholder = value === "" && !this.state.isComposing;
 
     return (
       <div className="tag-input" onClick={this.focusInput}>
@@ -232,7 +232,7 @@ export class TagInput extends Component<Props> {
           {value}
         </div>
         <div className="tag-input__suggestion" disabled type="text">
-          {suggestion ? suggestion.substring(value.length) : ''}
+          {suggestion ? suggestion.substring(value.length) : ""}
         </div>
       </div>
     );

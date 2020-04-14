@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import PanelTitle from '../components/panel-title';
-import { viewExternalUrl } from '../utils/url-utils';
+import React from "react";
+import PropTypes from "prop-types";
+import PanelTitle from "../components/panel-title";
+import { viewExternalUrl } from "../utils/url-utils";
 
 export const Item = () => null;
 

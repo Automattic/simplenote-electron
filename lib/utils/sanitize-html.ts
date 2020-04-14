@@ -1,6 +1,6 @@
-import isemail from 'isemail';
-import validUrl from 'valid-url';
-import { filter } from 'lodash';
+import isemail from "isemail";
+import validUrl from "valid-url";
+import { filter } from "lodash";
 
 /**
  * Determine if a given tag is allowed
@@ -11,52 +11,52 @@ import { filter } from 'lodash';
 const isAllowedTag = (node: Element) => {
   const tagName = node.nodeName.toLowerCase();
 
-  if ('input' === tagName) {
-    return 'checkbox' === node.getAttribute('type');
+  if ("input" === tagName) {
+    return "checkbox" === node.getAttribute("type");
   }
 
   switch (tagName) {
-    case '#text':
-    case 'a':
-    case 'article':
-    case 'b':
-    case 'br':
-    case 'blockquote':
-    case 'cite':
-    case 'code':
-    case 'dd':
-    case 'del':
-    case 'div':
-    case 'dt':
-    case 'em':
-    case 'h1':
-    case 'h2':
-    case 'h3':
-    case 'h4':
-    case 'h5':
-    case 'h6':
-    case 'hr':
-    case 'i':
-    case 'img':
-    case 'ins':
-    case 'kbd':
-    case 'li':
-    case 'ol':
-    case 'p':
-    case 'pre':
-    case 's':
-    case 'span':
-    case 'strong':
-    case 'sub':
-    case 'sup':
-    case 'table':
-    case 'tbody':
-    case 'td':
-    case 'th':
-    case 'thead':
-    case 'tr':
-    case 'tt':
-    case 'ul':
+    case "#text":
+    case "a":
+    case "article":
+    case "b":
+    case "br":
+    case "blockquote":
+    case "cite":
+    case "code":
+    case "dd":
+    case "del":
+    case "div":
+    case "dt":
+    case "em":
+    case "h1":
+    case "h2":
+    case "h3":
+    case "h4":
+    case "h5":
+    case "h6":
+    case "hr":
+    case "i":
+    case "img":
+    case "ins":
+    case "kbd":
+    case "li":
+    case "ol":
+    case "p":
+    case "pre":
+    case "s":
+    case "span":
+    case "strong":
+    case "sub":
+    case "sup":
+    case "table":
+    case "tbody":
+    case "td":
+    case "th":
+    case "thead":
+    case "tr":
+    case "tt":
+    case "ul":
       return true;
     default:
       return false;
@@ -78,50 +78,50 @@ const isAllowedTag = (node: Element) => {
  */
 const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
   switch (tagName) {
-    case 'a':
+    case "a":
       switch (attrName) {
-        case 'href':
+        case "href":
           // No javascript Uris allowed
-          if (value.toLowerCase().trim().startsWith('javascript')) {
+          if (value.toLowerCase().trim().startsWith("javascript")) {
             return false;
           }
 
           return true;
-        case 'alt':
-        case 'rel':
-        case 'title':
+        case "alt":
+        case "rel":
+        case "title":
           return true;
         default:
           return false;
       }
 
-    case 'img':
+    case "img":
       switch (attrName) {
-        case 'alt':
-        case 'src':
-        case 'title':
-        case 'width':
+        case "alt":
+        case "src":
+        case "title":
+        case "width":
           return true;
         default:
           return false;
       }
 
-    case 'input':
+    case "input":
       switch (attrName) {
-        case 'disabled':
-        case 'checked':
-        case 'type':
+        case "disabled":
+        case "checked":
+        case "type":
           return true;
         default:
           return false;
       }
 
     // allow 'task-list-item' class for List items according to GFM
-    case 'li':
+    case "li":
       switch (attrName) {
-        case 'class':
+        case "class":
           switch (value) {
-            case 'task-list-item':
+            case "task-list-item":
               return true;
             default:
               return false;
@@ -130,9 +130,9 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
           return false;
       }
 
-    case 'ol':
+    case "ol":
       switch (attrName) {
-        case 'start':
+        case "start":
           return true;
         default:
           return false;
@@ -154,14 +154,14 @@ const isForbidden = (node: Element) => {
   const tagName = node.nodeName.toLowerCase();
 
   switch (tagName) {
-    case 'head':
-    case 'html':
-    case 'iframe':
-    case 'link':
-    case 'meta':
-    case 'object':
-    case 'script':
-    case 'style':
+    case "head":
+    case "html":
+    case "iframe":
+    case "link":
+    case "meta":
+    case "object":
+    case "script":
+    case "style":
       return true;
     default:
       return false;
@@ -176,7 +176,7 @@ const isForbidden = (node: Element) => {
  */
 export const sanitizeHtml = (content: string) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(content, 'text/html');
+  const doc = parser.parseFromString(content, "text/html");
 
   // this will let us visit every single DOM node programmatically
   const walker = doc.createTreeWalker(
@@ -236,14 +236,14 @@ export const sanitizeHtml = (content: string) => {
       }
 
       // only valid http(s) URLs are allowed
-      if (('href' === name || 'src' === name) && validUrl.isWebUri(value)) {
+      if (("href" === name || "src" === name) && validUrl.isWebUri(value)) {
         return false;
       }
 
       // emails must be reasonably-verifiable email addresses
       if (
-        'href' === name &&
-        value.startsWith('mailto:') &&
+        "href" === name &&
+        value.startsWith("mailto:") &&
         isemail.validate(value.slice(7))
       ) {
         return false;
@@ -254,19 +254,19 @@ export const sanitizeHtml = (content: string) => {
 
     // of course, all links need to be normalized since
     // they now exist inside of our new context
-    const hrefAttribute = 'a' === tagName && node.getAttribute('href');
+    const hrefAttribute = "a" === tagName && node.getAttribute("href");
     if (
-      'a' === tagName &&
-      'string' === typeof hrefAttribute &&
-      !hrefAttribute.startsWith('mailto:')
+      "a" === tagName &&
+      "string" === typeof hrefAttribute &&
+      !hrefAttribute.startsWith("mailto:")
     ) {
-      node.setAttribute('target', '_blank');
-      node.setAttribute('rel', 'external noopener noreferrer');
+      node.setAttribute("target", "_blank");
+      node.setAttribute("rel", "external noopener noreferrer");
     }
 
     // add `list-style:none` for 'task-list-item's
-    if ('li' === tagName && node.getAttribute('class') === 'task-list-item') {
-      node.setAttribute('style', 'list-style: none;');
+    if ("li" === tagName && node.getAttribute("class") === "task-list-item") {
+      node.setAttribute("style", "list-style: none;");
     }
   }
 

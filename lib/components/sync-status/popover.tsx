@@ -1,14 +1,14 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import classnames from 'classnames';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { Popover } from '@material-ui/core';
+import React from "react";
+import { connect } from "react-redux";
+import classnames from "classnames";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { Popover } from "@material-ui/core";
 
-import { getLastSyncedTime } from '../../utils/sync/last-synced-time';
-import getNoteTitles from './get-note-titles';
+import { getLastSyncedTime } from "../../utils/sync/last-synced-time";
+import getNoteTitles from "./get-note-titles";
 
-import * as S from '../../state';
-import * as T from '../../types';
+import * as S from "../../state";
+import * as T from "../../types";
 
 type StateProps = {
   notes: T.NoteEntity[] | null;
@@ -36,31 +36,31 @@ class SyncStatusPopover extends React.Component<Props> {
       ? getNoteTitles(unsyncedNoteIds, notes, QUERY_LIMIT)
       : [];
     const overflowCount = unsyncedNoteIds.length - noteTitles.length;
-    const unit = overflowCount === 1 ? 'note' : 'notes';
+    const unit = overflowCount === 1 ? "note" : "notes";
     const lastSyncedTime = getLastSyncedTime();
 
     return (
       <Popover
         id={id}
-        className={classnames('sync-status-popover', themeClass)}
+        className={classnames("sync-status-popover", themeClass)}
         classes={{
           paper: classnames(
-            'sync-status-popover__paper',
-            'theme-color-bg',
-            'theme-color-border',
-            'theme-color-fg-dim',
-            { 'has-unsynced-changes': hasUnsyncedChanges }
+            "sync-status-popover__paper",
+            "theme-color-bg",
+            "theme-color-border",
+            "theme-color-fg-dim",
+            { "has-unsynced-changes": hasUnsyncedChanges }
           ),
         }}
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'left',
+          vertical: "center",
+          horizontal: "left",
         }}
         transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
+          vertical: "bottom",
+          horizontal: "center",
         }}
         onBlur={onClose}
         onClose={onClose}
@@ -90,7 +90,7 @@ class SyncStatusPopover extends React.Component<Props> {
         )}
         {lastSyncedTime > -Infinity ? (
           <span>
-            Last synced:{' '}
+            Last synced:{" "}
             {formatDistanceToNow(lastSyncedTime, { addSuffix: true })}
           </span>
         ) : (

@@ -1,7 +1,7 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import React from "react";
+import { shallow } from "enzyme";
 
-import App from './app';
+import App from "./app";
 
 window.matchMedia = jest.fn().mockImplementation((query) => {
   return {
@@ -16,8 +16,8 @@ window.matchMedia = jest.fn().mockImplementation((query) => {
   };
 });
 
-describe('App', () => {
-  it('should render', () => {
+describe("App", () => {
+  it("should render", () => {
     const app = shallow(<App />);
     expect(app.exists()).toBe(true);
   });

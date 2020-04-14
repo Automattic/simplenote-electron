@@ -1,15 +1,15 @@
-const { appCommandSender } = require('./utils');
+const { appCommandSender } = require("./utils");
 
 const submenu = [
   {
-    label: 'Insert &Checklist',
-    accelerator: 'CommandOrControl+Shift+C',
-    click: appCommandSender({ action: 'insertChecklist' }),
+    label: "Insert &Checklist",
+    accelerator: "CommandOrControl+Shift+C",
+    click: appCommandSender({ action: "insertChecklist" }),
   },
 ];
 
 const formatMenu = {
-  label: 'F&ormat',
+  label: "F&ormat",
   submenu,
 };
 

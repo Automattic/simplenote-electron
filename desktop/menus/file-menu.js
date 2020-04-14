@@ -1,45 +1,45 @@
-const menuItems = require('./menu-items');
-const platform = require('../detect/platform');
-const { appCommandSender } = require('./utils');
+const menuItems = require("./menu-items");
+const platform = require("../detect/platform");
+const { appCommandSender } = require("./utils");
 
 const submenu = [
   {
-    label: '&New Note',
-    accelerator: 'CommandOrControl+N',
-    click: appCommandSender({ action: 'newNote' }),
+    label: "&New Note",
+    accelerator: "CommandOrControl+N",
+    click: appCommandSender({ action: "newNote" }),
   },
-  { type: 'separator' },
+  { type: "separator" },
   {
-    label: '&Import Notes…',
+    label: "&Import Notes…",
     click: appCommandSender({
-      action: 'showDialog',
-      dialog: 'IMPORT',
+      action: "showDialog",
+      dialog: "IMPORT",
     }),
   },
   {
-    label: '&Export Notes…',
-    accelerator: 'CommandOrControl+Shift+E',
+    label: "&Export Notes…",
+    accelerator: "CommandOrControl+Shift+E",
     click: appCommandSender({
-      action: 'exportZipArchive',
+      action: "exportZipArchive",
     }),
   },
-  { type: 'separator' },
+  { type: "separator" },
   {
-    label: '&Print…',
-    accelerator: 'CommandOrControl+P',
-    click: appCommandSender({ action: 'printNote' }),
+    label: "&Print…",
+    accelerator: "CommandOrControl+P",
+    click: appCommandSender({ action: "printNote" }),
   },
 ];
 
 const defaultSubmenuAdditions = [
-  { type: 'separator' },
+  { type: "separator" },
   menuItems.preferences,
-  { type: 'separator' },
-  { role: 'quit' },
+  { type: "separator" },
+  { role: "quit" },
 ];
 
 const fileMenu = {
-  label: '&File',
+  label: "&File",
   submenu: platform.isOSX() ? submenu : submenu.concat(defaultSubmenuAdditions),
 };
 

@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { includes, isEmpty } from 'lodash';
-import MD5 from 'md5.js';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { includes, isEmpty } from "lodash";
+import MD5 from "md5.js";
 
-import analytics from '../../analytics';
-import ClipboardButton from '../../components/clipboard-button';
-import isEmailTag from '../../utils/is-email-tag';
-import { updateNoteTags } from '../../state/domain/notes';
-import Dialog from '../../dialog';
-import TabPanels from '../../components/tab-panels';
-import PanelTitle from '../../components/panel-title';
-import ToggleControl from '../../controls/toggle';
-import { closeDialog, publishNote } from '../../state/ui/actions';
+import analytics from "../../analytics";
+import ClipboardButton from "../../components/clipboard-button";
+import isEmailTag from "../../utils/is-email-tag";
+import { updateNoteTags } from "../../state/domain/notes";
+import Dialog from "../../dialog";
+import TabPanels from "../../components/tab-panels";
+import PanelTitle from "../../components/panel-title";
+import ToggleControl from "../../controls/toggle";
+import { closeDialog, publishNote } from "../../state/ui/actions";
 
-import * as S from '../../state';
-import * as T from '../../types';
+import * as S from "../../state";
+import * as T from "../../types";
 
-const shareTabs = ['collaborate', 'publish'];
+const shareTabs = ["collaborate", "publish"];
 
 type StateProps = {
-  settings: S.State['settings'];
+  settings: S.State["settings"];
   note: T.NoteEntity;
 };
 
@@ -46,16 +46,16 @@ export class ShareDialog extends Component<Props> {
     const collaborator = this.collaboratorElement.value.trim();
 
     event.preventDefault();
-    this.collaboratorElement.value = '';
+    this.collaboratorElement.value = "";
 
     const isSelf = this.props.settings.accountName === collaborator;
 
-    if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
+    if (collaborator !== "" && tags.indexOf(collaborator) === -1 && !isSelf) {
       this.props.updateNoteTags({
         note,
         tags: [...tags, collaborator],
       });
-      analytics.tracks.recordEvent('editor_note_collaborator_added');
+      analytics.tracks.recordEvent("editor_note_collaborator_added");
     }
   };
 
@@ -66,7 +66,7 @@ export class ShareDialog extends Component<Props> {
     tags = tags.filter((tag) => tag !== collaborator);
 
     this.props.updateNoteTags({ note, tags });
-    analytics.tracks.recordEvent('editor_note_collaborator_removed');
+    analytics.tracks.recordEvent("editor_note_collaborator_removed");
   };
 
   collaborators = () => {
@@ -82,7 +82,7 @@ export class ShareDialog extends Component<Props> {
   gravatarURL = (email) => {
     const hash = new MD5()
       .update(email.trim().toLowerCase())
-      .digest('hex')
+      .digest("hex")
       .toLowerCase();
 
     return `https://secure.gravatar.com/avatar/${hash}.jpg?s=68`;
@@ -91,7 +91,7 @@ export class ShareDialog extends Component<Props> {
   render() {
     const { closeDialog, note } = this.props;
     const data = (note && note.data) || {};
-    const isPublished = includes(data.systemTags, 'published');
+    const isPublished = includes(data.systemTags, "published");
     const publishURL = this.getPublishURL(data.publishURL);
 
     return (
@@ -188,7 +188,7 @@ export class ShareDialog extends Component<Props> {
                       ref={(e) => (this.publishUrlElement = e)}
                       className="settings-item-text-input transparent-input"
                       placeholder={
-                        isPublished ? 'Publishing note…' : 'Note not published'
+                        isPublished ? "Publishing note…" : "Note not published"
                       }
                       value={publishURL}
                       spellCheck={false}

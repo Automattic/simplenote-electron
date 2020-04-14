@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
 export class Dialog extends Component {
   static propTypes = {
@@ -15,7 +15,7 @@ export class Dialog extends Component {
   render() {
     const {
       className,
-      closeBtnLabel = 'Done',
+      closeBtnLabel = "Done",
       hideTitleBar,
       title,
       children,
@@ -26,7 +26,7 @@ export class Dialog extends Component {
       <div
         className={classNames(
           className,
-          'dialog theme-color-bg theme-color-fg theme-color-border'
+          "dialog theme-color-bg theme-color-fg theme-color-border"
         )}
       >
         {!hideTitleBar && (

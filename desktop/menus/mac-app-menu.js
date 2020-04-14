@@ -1,26 +1,26 @@
-const { app } = require('electron');
+const { app } = require("electron");
 
-const menuItems = require('./menu-items');
-const build = require('../detect/build');
+const menuItems = require("./menu-items");
+const build = require("../detect/build");
 
 const macAppMenu = {
   label: app.name,
   submenu: [
     menuItems.about,
     ...(build.isMAS() ? [] : [menuItems.checkForUpdates]),
-    { type: 'separator' },
+    { type: "separator" },
     menuItems.preferences,
-    { type: 'separator' },
+    { type: "separator" },
     {
-      role: 'services',
+      role: "services",
       submenu: [],
     },
-    { type: 'separator' },
-    { role: 'hide' },
-    { role: 'hideothers' },
-    { role: 'unhide' },
-    { type: 'separator' },
-    { role: 'quit' },
+    { type: "separator" },
+    { role: "hide" },
+    { role: "hideothers" },
+    { role: "unhide" },
+    { type: "separator" },
+    { role: "quit" },
   ],
 };
 

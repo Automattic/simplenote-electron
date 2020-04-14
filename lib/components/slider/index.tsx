@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, FunctionComponent } from 'react';
+import React, { ChangeEventHandler, FunctionComponent } from "react";
 
 type Props = {
   onChange: ChangeEventHandler<HTMLInputElement>;

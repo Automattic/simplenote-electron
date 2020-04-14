@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {
   app,
@@ -7,28 +7,28 @@ const {
   shell,
   Menu,
   session,
-} = require('electron');
+} = require("electron");
 
-const path = require('path');
-const windowStateKeeper = require('electron-window-state');
+const path = require("path");
+const windowStateKeeper = require("electron-window-state");
 
-const config = require('./config');
-const createMenuTemplate = require('./menus');
-const platform = require('./detect/platform');
-const updater = require('./updater');
-const { isDev } = require('./env');
+const config = require("./config");
+const createMenuTemplate = require("./menus");
+const platform = require("./detect/platform");
+const updater = require("./updater");
+const { isDev } = require("./env");
 
-require('module').globalPaths.push(path.resolve(path.join(__dirname)));
+require("module").globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
-  app.on('will-finish-launching', function () {
+  app.on("will-finish-launching", function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
   });
 
   const url =
     isDev && process.env.DEV_SERVER
-      ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
-      : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
+      ? "http://localhost:4000" // TODO: find a solution to use host and port based on make config.
+      : "file://" + path.join(__dirname, "..", "dist", "index.html");
 
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is GCed.
@@ -49,7 +49,7 @@ module.exports = function main() {
     // Create the browser window.
     const iconPath = path.join(
       __dirname,
-      '../lib/icons/app-icon/icon_256x256.png'
+      "../lib/icons/app-icon/icon_256x256.png"
     );
     mainWindow = new BrowserWindow({
       x: mainWindowState.x,
@@ -59,26 +59,26 @@ module.exports = function main() {
       minWidth: 370,
       minHeight: 520,
       icon: iconPath,
-      titleBarStyle: 'hidden',
+      titleBarStyle: "hidden",
       show: false,
       webPreferences: {
         nodeIntegration: true,
-        preload: path.join(__dirname, './preload.js'),
+        preload: path.join(__dirname, "./preload.js"),
       },
     });
 
     // and load the index of the app.
-    if (typeof mainWindow.loadURL === 'function') {
+    if (typeof mainWindow.loadURL === "function") {
       mainWindow.loadURL(url);
     } else {
       mainWindow.loadUrl(url);
     }
 
     if (
-      'test' !== process.env.NODE_ENV &&
-      (isDev || process.argv.includes('--devtools'))
+      "test" !== process.env.NODE_ENV &&
+      (isDev || process.argv.includes("--devtools"))
     ) {
-      mainWindow.openDevTools({ mode: 'detach' });
+      mainWindow.openDevTools({ mode: "detach" });
     }
 
     // Configure and set the application menu
@@ -86,21 +86,21 @@ module.exports = function main() {
     const appMenu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(appMenu);
 
-    ipcMain.on('settingsUpdate', function (event, settings) {
+    ipcMain.on("settingsUpdate", function (event, settings) {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );
     });
 
-    ipcMain.on('clearCookies', function () {
+    ipcMain.on("clearCookies", function () {
       // Removes any cookies stored in the app. We're particularly interested in
       // removing the WordPress.com cookies that may have been set during sign in.
       session.defaultSession.cookies.get({}, (error, cookies) => {
         cookies.forEach((cookie) => {
           // Reconstruct the url to pass to the cookies.remove function
-          let cookieUrl = '';
-          cookieUrl += cookie.secure ? 'https://' : 'http://';
-          cookieUrl += cookie.domain.charAt(0) === '.' ? 'www' : '';
+          let cookieUrl = "";
+          cookieUrl += cookie.secure ? "https://" : "http://";
+          cookieUrl += cookie.domain.charAt(0) === "." ? "www" : "";
           cookieUrl += cookie.domain;
           cookieUrl += cookie.path;
 
@@ -113,26 +113,26 @@ module.exports = function main() {
       });
     });
 
-    ipcMain.on('setAutoHideMenuBar', function (event, autoHideMenuBar) {
+    ipcMain.on("setAutoHideMenuBar", function (event, autoHideMenuBar) {
       mainWindow.setAutoHideMenuBar(autoHideMenuBar || false);
       mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
     mainWindowState.manage(mainWindow);
 
-    mainWindow.webContents.on('new-window', function (event, linkUrl) {
+    mainWindow.webContents.on("new-window", function (event, linkUrl) {
       event.preventDefault();
       shell.openExternal(linkUrl);
     });
 
     // Disables navigation for app window drag and drop
-    mainWindow.webContents.on('will-navigate', (event) =>
+    mainWindow.webContents.on("will-navigate", (event) =>
       event.preventDefault()
     );
 
     // Fullscreen should be disabled on launch
     if (platform.isOSX()) {
-      mainWindow.on('close', () => {
+      mainWindow.on("close", () => {
         mainWindow.setFullScreen(false);
       });
     } else {
@@ -140,7 +140,7 @@ module.exports = function main() {
     }
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
+    mainWindow.on("closed", function () {
       // Dereference the window object, usually you would store windows
       // in an array if your app supports multi windows, this is the time
       // when you should delete the corresponding element.
@@ -148,12 +148,12 @@ module.exports = function main() {
     });
 
     // wait until window is presentable
-    mainWindow.once('ready-to-show', mainWindow.show);
+    mainWindow.once("ready-to-show", mainWindow.show);
   };
 
   const gotTheLock = app.requestSingleInstanceLock();
 
-  app.on('second-instance', () => {
+  app.on("second-instance", () => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
@@ -168,16 +168,16 @@ module.exports = function main() {
   }
 
   // Quit when all windows are closed.
-  app.on('window-all-closed', function () {
+  app.on("window-all-closed", function () {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if (process.platform !== "darwin") {
       app.quit();
     }
   });
 
-  app.on('browser-window-created', function (event, window) {
-    window.webContents.on('did-finish-load', () => {
+  app.on("browser-window-created", function (event, window) {
+    window.webContents.on("did-finish-load", () => {
       // Disable drag and drop operations on the window
       window.webContents.executeJavaScript(
         "document.addEventListener('dragover', event => event.preventDefault());"
@@ -190,6 +190,6 @@ module.exports = function main() {
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
-  app.on('ready', activateWindow);
-  app.on('activate', activateWindow);
+  app.on("ready", activateWindow);
+  app.on("activate", activateWindow);
 };

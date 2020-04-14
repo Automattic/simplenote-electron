@@ -1,17 +1,17 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import cryptoRandomString from '../utils/crypto-random-string';
-import { get } from 'lodash';
-import getConfig from '../../get-config';
-import SimplenoteLogo from '../icons/simplenote';
-import Spinner from '../components/spinner';
+import React, { Component, Fragment } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import classNames from "classnames";
+import cryptoRandomString from "../utils/crypto-random-string";
+import { get } from "lodash";
+import getConfig from "../../get-config";
+import SimplenoteLogo from "../icons/simplenote";
+import Spinner from "../components/spinner";
 
-import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
-import { reset } from '../state/auth/actions';
-import { setWPToken } from '../state/settings/actions';
-import { viewExternalUrl } from '../utils/url-utils';
+import { hasInvalidCredentials, hasLoginError } from "../state/auth/selectors";
+import { reset } from "../state/auth/actions";
+import { setWPToken } from "../state/settings/actions";
+import { viewExternalUrl } from "../utils/url-utils";
 
 export class Auth extends Component {
   static propTypes = {
@@ -48,20 +48,20 @@ export class Auth extends Component {
 
     const { isMacApp, isElectron } = this.props;
     const { isCreatingAccount, passwordErrorMessage } = this.state;
-    const submitClasses = classNames('button', 'button-primary', {
+    const submitClasses = classNames("button", "button-primary", {
       pending: this.props.authPending,
     });
 
-    const signUpText = 'Sign up';
-    const logInText = 'Log in';
+    const signUpText = "Sign up";
+    const logInText = "Log in";
     const buttonLabel = isCreatingAccount ? signUpText : logInText;
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
     const helpMessage = isCreatingAccount
-      ? 'Already have an account?'
+      ? "Already have an account?"
       : "Don't have an account?";
     const errorMessage = isCreatingAccount
-      ? 'Could not create account. Please try again.'
-      : 'Could not log in with the provided email address and password.';
+      ? "Could not create account. Please try again."
+      : "Could not log in with the provided email address and password.";
 
     return (
       <div className="login">
@@ -160,7 +160,7 @@ export class Auth extends Component {
                 href="https://simplenote.com/terms/"
                 onClick={(event) => {
                   event.preventDefault();
-                  viewExternalUrl('https://simplenote.com/terms/');
+                  viewExternalUrl("https://simplenote.com/terms/");
                 }}
               >
                 Terms of Service
@@ -169,7 +169,7 @@ export class Auth extends Component {
             </div>
           )}
           <p className="login__signup">
-            {helpMessage}{' '}
+            {helpMessage}{" "}
             <a href="#" onClick={this.toggleSignUp}>
               {helpLinkLabel}
             </a>
@@ -180,10 +180,10 @@ export class Auth extends Component {
   }
 
   onInput = (event) => {
-    if (event.type === 'keydown' && event.keyCode !== 13) {
+    if (event.type === "keydown" && event.keyCode !== 13) {
       this.props.resetErrors();
       this.setState({
-        passwordErrorMessage: '',
+        passwordErrorMessage: "",
       });
       return;
     }
@@ -192,19 +192,19 @@ export class Auth extends Component {
   onLogin = (event) => {
     event.preventDefault();
 
-    const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
+    const username = get(this.usernameInput, "value");
+    const password = get(this.passwordInput, "value");
 
     if (!(username && password)) {
       this.setState({
-        passwordErrorMessage: 'Please fill out email and password.',
+        passwordErrorMessage: "Please fill out email and password.",
       });
       return;
     }
 
     if (password.length < 4) {
       this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        passwordErrorMessage: "Passwords must contain at least 4 characters.",
       });
       return;
     }
@@ -227,7 +227,7 @@ export class Auth extends Component {
   setupAuthWindow = () => {
     // eslint-disable-next-line no-undef
     const { BrowserWindow, session } = __non_webpack_require__(
-      'electron'
+      "electron"
     ).remote;
 
     this.authWindow = new BrowserWindow({
@@ -240,13 +240,13 @@ export class Auth extends Component {
       },
     });
 
-    this.authWindow.on('closed', () => {
+    this.authWindow.on("closed", () => {
       // make sure to release this from memory
       this.authWindow = null;
     });
 
     this.authWindow.webContents.session.protocol.registerHttpProtocol(
-      'simplenote',
+      "simplenote",
       (req, callback) => {
         const { searchParams } = new URL(req.url);
 
@@ -255,28 +255,28 @@ export class Auth extends Component {
         // information we received in args of the simplenote://auth URL
         callback();
 
-        const errorCode = searchParams.get('error')
-          ? searchParams.get('code')
+        const errorCode = searchParams.get("error")
+          ? searchParams.get("code")
           : false;
-        const authState = searchParams.get('state');
-        const userEmail = searchParams.get('user');
-        const simpToken = searchParams.get('token');
-        const wpccToken = searchParams.get('wp_token');
+        const authState = searchParams.get("state");
+        const userEmail = searchParams.get("user");
+        const simpToken = searchParams.get("token");
+        const wpccToken = searchParams.get("wp_token");
 
         // Display an error message if authorization failed.
         switch (errorCode) {
           case false:
             break;
-          case '1':
+          case "1":
             return this.authError(
-              'Please activate your WordPress.com account via email and try again.'
+              "Please activate your WordPress.com account via email and try again."
             );
-          case '2':
+          case "2":
             return this.authError(
-              'Please confirm your account with the confirmation email before signing in to Simplenote.'
+              "Please confirm your account with the confirmation email before signing in to Simplenote."
             );
           default:
-            return this.authError('An error was encountered while signing in.');
+            return this.authError("An error was encountered while signing in.");
         }
 
         this.closeAuthWindow();
@@ -309,26 +309,26 @@ export class Auth extends Component {
     window.open(
       event.currentTarget.href,
       null,
-      'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes'
+      "width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes"
     );
   };
 
   onSignUp = (event) => {
     event.preventDefault();
 
-    const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
+    const username = get(this.usernameInput, "value");
+    const password = get(this.passwordInput, "value");
 
     if (!(username && password)) {
       this.setState({
-        passwordErrorMessage: 'Please fill out email and password.',
+        passwordErrorMessage: "Please fill out email and password.",
       });
       return;
     }
 
     if (password.length < 4) {
       this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        passwordErrorMessage: "Passwords must contain at least 4 characters.",
       });
       return;
     }
@@ -341,7 +341,7 @@ export class Auth extends Component {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({
-      passwordErrorMessage: '',
+      passwordErrorMessage: "",
     });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };

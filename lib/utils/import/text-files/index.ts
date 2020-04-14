@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
-import CoreImporter from '../';
-import { endsWith, startsWith } from 'lodash';
+import { EventEmitter } from "events";
+import CoreImporter from "../";
+import { endsWith, startsWith } from "lodash";
 
 class TextFileImporter extends EventEmitter {
   constructor({ noteBucket, tagBucket, options }) {
@@ -16,15 +16,15 @@ class TextFileImporter extends EventEmitter {
       tagBucket: this.tagBucket,
     });
     let importedNoteCount = 0;
-    let lastFileName = '';
+    let lastFileName = "";
 
     if (!filesArray) {
-      this.emit('status', 'error', 'No text files to import.');
+      this.emit("status", "error", "No text files to import.");
       return;
     }
 
     const importTextFile = (file) => {
-      if (!file || !endsWith(file.name.toLowerCase(), '.txt')) {
+      if (!file || !endsWith(file.name.toLowerCase(), ".txt")) {
         return;
       }
 
@@ -41,7 +41,7 @@ class TextFileImporter extends EventEmitter {
         const fileTitle = file.name.slice(0, -4);
         if (!startsWith(noteContent, fileTitle)) {
           // Add the file title to the top of the note content
-          noteContent = fileTitle + '\n\n' + noteContent;
+          noteContent = fileTitle + "\n\n" + noteContent;
         }
 
         if (!noteContent) {
@@ -61,9 +61,9 @@ class TextFileImporter extends EventEmitter {
 
         importedNoteCount++;
         if (file.name === lastFileName) {
-          this.emit('status', 'complete', importedNoteCount);
+          this.emit("status", "complete", importedNoteCount);
         } else {
-          this.emit('status', 'progress', importedNoteCount);
+          this.emit("status", "progress", importedNoteCount);
         }
       };
 

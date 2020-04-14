@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import analytics from '../analytics';
-import { search } from '../state/ui/actions';
-import filterAtMost from '../utils/filter-at-most';
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import analytics from "../analytics";
+import { search } from "../state/ui/actions";
+import filterAtMost from "../utils/filter-at-most";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type StateProps = {
   filteredTags: T.TagEntity[];
@@ -19,18 +19,18 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps;
 
 export class TagSuggestions extends Component<Props> {
-  static displayName = 'TagSuggestions';
+  static displayName = "TagSuggestions";
 
   updateSearch = (nextSearch: string) => {
     const { searchQuery, onSearch } = this.props;
 
     // replace last word in current searchQuery with requested tag match
-    let newQuery = searchQuery.trim().split(' ');
+    let newQuery = searchQuery.trim().split(" ");
     newQuery.splice(-1, 1, nextSearch);
-    let querystring = newQuery.join(' ');
+    let querystring = newQuery.join(" ");
 
     // add a space at the end so the user can immediately start typing
-    querystring += ' ';
+    querystring += " ";
     onSearch(querystring);
   };
 
@@ -67,7 +67,7 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
-  const tagTerm = query.trim().toLowerCase().split(' ').pop();
+  const tagTerm = query.trim().toLowerCase().split(" ").pop();
 
   if (!tagTerm) {
     return tags;
@@ -76,7 +76,7 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   // with `tag:` we don't want to suggest tags which have already been added
   // to the search bar, so we make it an explicit prefix match, meaning we
   // don't match inside the tag and we don't match full-text matches
-  const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
+  const isPrefixMatch = tagTerm.startsWith("tag:") && tagTerm.length > 4;
   const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
 
   const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
@@ -98,7 +98,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
+    analytics.tracks.recordEvent("list_notes_searched");
   },
 });
 

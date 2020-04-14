@@ -2,50 +2,50 @@ if (__TEST__) {
   window.testEvents = [];
 }
 
-import './utils/ensure-platform-support';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import 'unorm';
+import "./utils/ensure-platform-support";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import "unorm";
 
-import React from 'react';
-import App from './app';
-import Modal from 'react-modal';
-import Debug from 'debug';
-import { initClient } from './client';
-import getConfig from '../get-config';
-import store from './state';
-import * as simperiumMiddleware from './state/simperium/middleware';
+import React from "react";
+import App from "./app";
+import Modal from "react-modal";
+import Debug from "debug";
+import { initClient } from "./client";
+import getConfig from "../get-config";
+import store from "./state";
+import * as simperiumMiddleware from "./state/simperium/middleware";
 import {
   reset as resetAuth,
   setAuthorized,
   setInvalidCredentials,
   setLoginError,
   setPending as setPendingAuth,
-} from './state/auth/actions';
-import { setAccountName } from './state/settings/actions';
-import analytics from './analytics';
-import { Auth } from 'simperium';
-import { parse } from 'cookie';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { get, some } from 'lodash';
+} from "./state/auth/actions";
+import { setAccountName } from "./state/settings/actions";
+import analytics from "./analytics";
+import { Auth } from "simperium";
+import { parse } from "cookie";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { get, some } from "lodash";
 
-import '../scss/style.scss';
+import "../scss/style.scss";
 
-import { content as welcomeMessage } from './welcome-message';
+import { content as welcomeMessage } from "./welcome-message";
 
-import appState from './flux/app-state';
-import isDevConfig from './utils/is-dev-config';
-import { normalizeForSorting } from './utils/note-utils';
+import appState from "./flux/app-state";
+import isDevConfig from "./utils/is-dev-config";
+import { normalizeForSorting } from "./utils/note-utils";
 const { newNote } = appState.actionCreators;
 
-import * as T from './types';
+import * as T from "./types";
 
 const config = getConfig();
 
 const cookie = parse(document.cookie);
 const auth = new Auth(config.app_id, config.app_key);
-const appProvider = 'simplenote.com';
+const appProvider = "simplenote.com";
 
 const appID = config.app_id;
 let token = cookie.token || localStorage.access_token;
@@ -74,7 +74,7 @@ const client = initClient({
   bucketConfig: {
     note: {
       beforeIndex: function (note: T.NoteEntity) {
-        var content = (note.data && note.data.content) || '';
+        var content = (note.data && note.data.content) || "";
 
         return {
           ...note,
@@ -82,33 +82,33 @@ const client = initClient({
         };
       },
       configure: function (objectStore) {
-        objectStore.createIndex('modificationDate', 'data.modificationDate');
-        objectStore.createIndex('creationDate', 'data.creationDate');
-        objectStore.createIndex('alphabetical', 'contentKey');
+        objectStore.createIndex("modificationDate", "data.modificationDate");
+        objectStore.createIndex("creationDate", "data.creationDate");
+        objectStore.createIndex("alphabetical", "contentKey");
       },
     },
     preferences: function (objectStore) {
-      console.log('Configure preferences', objectStore); // eslint-disable-line no-console
+      console.log("Configure preferences", objectStore); // eslint-disable-line no-console
     },
     tag: function (objectStore) {
-      console.log('Configure tag', objectStore); // eslint-disable-line no-console
+      console.log("Configure tag", objectStore); // eslint-disable-line no-console
     },
   },
-  database: 'simplenote',
+  database: "simplenote",
   version: 42,
 });
 
-const debug = Debug('client');
+const debug = Debug("client");
 const l = (msg: string) => (...args: unknown[]) => debug(msg, ...args);
 
 client
-  .on('connect', l('Connected'))
-  .on('disconnect', l('Not connected'))
-  .on('message', l('<='))
-  .on('send', l('=>'))
-  .on('unauthorized', l('Not authorized'));
+  .on("connect", l("Connected"))
+  .on("disconnect", l("Not connected"))
+  .on("message", l("<="))
+  .on("send", l("=>"))
+  .on("unauthorized", l("Not authorized"));
 
-client.on('unauthorized', () => {
+client.on("unauthorized", () => {
   // If a token exists, we probaly reached this point from a password change.
   // The client should sign out the user, but preserve db content in case
   // some data has not synced yet.
@@ -119,15 +119,15 @@ client.on('unauthorized', () => {
   }
 
   client.reset().then(() => {
-    console.log('Reset complete'); // eslint-disable-line no-console
+    console.log("Reset complete"); // eslint-disable-line no-console
   });
 });
 
 let props = {
   client: client,
-  noteBucket: client.bucket('note'),
-  preferencesBucket: client.bucket('preferences'),
-  tagBucket: client.bucket('tag'),
+  noteBucket: client.bucket("note"),
+  preferencesBucket: client.bucket("preferences"),
+  tagBucket: client.bucket("tag"),
   isDevConfig: isDevConfig(config?.development),
   onAuthenticate: (username: string, password: string) => {
     if (!(username && password)) {
@@ -148,13 +148,13 @@ let props = {
         localStorage.access_token = user.access_token;
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_signed_in');
+        analytics.tracks.recordEvent("user_signed_in");
       })
       .catch(({ message }: { message: string }) => {
         if (
           some([
-            'invalid password' === message,
-            message.startsWith('unknown username:'),
+            "invalid password" === message,
+            message.startsWith("unknown username:"),
           ])
         ) {
           store.dispatch(setInvalidCredentials());
@@ -179,16 +179,16 @@ let props = {
 
         store.dispatch(setAccountName(username));
         store.dispatch(setAuthorized());
-        localStorage.setItem('access_token', user.access_token);
+        localStorage.setItem("access_token", user.access_token);
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_account_created');
-        analytics.tracks.recordEvent('user_signed_in');
+        analytics.tracks.recordEvent("user_account_created");
+        analytics.tracks.recordEvent("user_signed_in");
       })
       .then(() =>
         store.dispatch(
           newNote({
-            noteBucket: client.bucket('note'),
+            noteBucket: client.bucket("note"),
             content: welcomeMessage,
           })
         )
@@ -203,11 +203,11 @@ let props = {
     store.dispatch(setAccountName(null));
     client.deauthorize();
     redirectToWebSigninIfNecessary();
-    analytics.tracks.recordEvent('user_signed_out');
+    analytics.tracks.recordEvent("user_signed_out");
   },
   authorizeUserWithToken: (accountName: string, userToken: string) => {
     resetStorageIfAccountChanged(accountName);
-    localStorage.setItem('access_token', userToken);
+    localStorage.setItem("access_token", userToken);
     token = userToken;
     store.dispatch(setAccountName(accountName));
     store.dispatch(setAuthorized());
@@ -215,13 +215,13 @@ let props = {
     const user = { access_token: userToken };
     client.setUser(user);
 
-    analytics.tracks.recordEvent('user_signed_in');
+    analytics.tracks.recordEvent("user_signed_in");
   },
 };
 
 // If we sign in with a different username, ensure storage is reset
 function resetStorageIfAccountChanged(newAccountName: string) {
-  const accountName = get(store.getState(), 'settings.accountName', '');
+  const accountName = get(store.getState(), "settings.accountName", "");
   if (accountName !== newAccountName) {
     client.reset();
   }
@@ -235,12 +235,12 @@ if (cookie.email && config.is_app_engine) {
   store.dispatch(setAccountName(cookie.email));
 }
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 simperiumMiddleware.storeBuckets({
-  note: client.bucket('note'),
+  note: client.bucket("note"),
 });
 
 render(
   React.createElement(Provider, { store }, React.createElement(App, props)),
-  document.getElementById('root')
+  document.getElementById("root")
 );

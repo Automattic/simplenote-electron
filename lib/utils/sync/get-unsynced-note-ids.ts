@@ -1,13 +1,13 @@
-import Debug from 'debug';
-import { uniq } from 'lodash';
+import Debug from "debug";
+import { uniq } from "lodash";
 
-import { getLocalQueue } from '../../simperium/local-queue-store';
+import { getLocalQueue } from "../../simperium/local-queue-store";
 
 const getUnsyncedNoteIds = (bucket) => {
   const { queues, sent } = getLocalQueue(bucket);
   const unsyncedNoteIds = uniq([...Object.keys(queues), ...Object.keys(sent)]);
 
-  Debug('sync:getUnsyncedNoteIds')(unsyncedNoteIds);
+  Debug("sync:getUnsyncedNoteIds")(unsyncedNoteIds);
   return unsyncedNoteIds;
 };
 

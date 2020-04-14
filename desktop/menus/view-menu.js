@@ -1,153 +1,153 @@
-const { buildRadioGroup, appCommandSender } = require('./utils');
-const platform = require('../detect/platform');
+const { buildRadioGroup, appCommandSender } = require("./utils");
+const platform = require("../detect/platform");
 
 const buildViewMenu = (settings) => {
   settings = settings || {};
 
   const menu = {
-    label: '&View',
+    label: "&View",
     submenu: [
       {
-        label: '&Sort Type',
+        label: "&Sort Type",
         submenu: [
           {
-            label: 'Date &modified',
-            id: 'modificationDate',
+            label: "Date &modified",
+            id: "modificationDate",
           },
           {
-            label: 'Date &created',
-            id: 'creationDate',
+            label: "Date &created",
+            id: "creationDate",
           },
           {
-            label: '&Alphabetical',
-            id: 'alphabetical',
+            label: "&Alphabetical",
+            id: "alphabetical",
           },
         ]
           .map(
             buildRadioGroup({
-              action: 'setSortType',
-              propName: 'sortType',
+              action: "setSortType",
+              propName: "sortType",
               settings,
             })
           )
           .concat([
             {
-              type: 'separator',
+              type: "separator",
             },
             {
-              label: '&Reversed',
-              type: 'checkbox',
+              label: "&Reversed",
+              type: "checkbox",
               checked: settings.sortReversed,
-              click: appCommandSender({ action: 'toggleSortOrder' }),
+              click: appCommandSender({ action: "toggleSortOrder" }),
             },
           ]),
       },
       {
-        label: '&Note Display',
+        label: "&Note Display",
         submenu: [
           {
-            label: '&Comfy',
-            id: 'comfy',
+            label: "&Comfy",
+            id: "comfy",
           },
           {
-            label: 'C&ondensed',
-            id: 'condensed',
+            label: "C&ondensed",
+            id: "condensed",
           },
           {
-            label: '&Expanded',
-            id: 'expanded',
+            label: "&Expanded",
+            id: "expanded",
           },
         ].map(
           buildRadioGroup({
-            action: 'setNoteDisplay',
-            propName: 'noteDisplay',
+            action: "setNoteDisplay",
+            propName: "noteDisplay",
             settings,
           })
         ),
       },
       {
-        label: '&Line Length',
+        label: "&Line Length",
         submenu: [
           {
-            label: '&Narrow',
-            id: 'narrow',
+            label: "&Narrow",
+            id: "narrow",
           },
           {
-            label: '&Full',
-            id: 'full',
+            label: "&Full",
+            id: "full",
           },
         ].map(
           buildRadioGroup({
-            action: 'setLineLength',
-            propName: 'lineLength',
+            action: "setLineLength",
+            propName: "lineLength",
             settings,
           })
         ),
       },
       {
-        label: '&Tags',
+        label: "&Tags",
         submenu: [
           {
-            label: '&Sort Alphabetically',
-            type: 'checkbox',
+            label: "&Sort Alphabetically",
+            type: "checkbox",
             checked: settings.sortTagsAlpha,
-            click: appCommandSender({ action: 'toggleSortTagsAlpha' }),
+            click: appCommandSender({ action: "toggleSortTagsAlpha" }),
           },
         ],
       },
       {
-        label: 'T&heme',
+        label: "T&heme",
         submenu: [
           {
-            label: '&Light',
-            id: 'light',
+            label: "&Light",
+            id: "light",
           },
           {
-            label: '&Dark',
-            id: 'dark',
+            label: "&Dark",
+            id: "dark",
           },
         ].map(
           buildRadioGroup({
-            action: 'activateTheme',
-            propName: 'theme',
+            action: "activateTheme",
+            propName: "theme",
             settings,
           })
         ),
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: 'Zoom &In',
-        accelerator: 'CommandOrControl+=',
-        click: appCommandSender({ action: 'increaseFontSize' }),
+        label: "Zoom &In",
+        accelerator: "CommandOrControl+=",
+        click: appCommandSender({ action: "increaseFontSize" }),
       },
       {
-        label: 'Zoom &Out',
-        accelerator: 'CommandOrControl+-',
-        click: appCommandSender({ action: 'decreaseFontSize' }),
+        label: "Zoom &Out",
+        accelerator: "CommandOrControl+-",
+        click: appCommandSender({ action: "decreaseFontSize" }),
       },
       {
-        label: '&Actual Size',
-        accelerator: 'CommandOrControl+0',
-        click: appCommandSender({ action: 'resetFontSize' }),
+        label: "&Actual Size",
+        accelerator: "CommandOrControl+0",
+        click: appCommandSender({ action: "resetFontSize" }),
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: 'Focus Mode',
-        accelerator: 'CommandOrControl+Shift+F',
-        type: 'checkbox',
+        label: "Focus Mode",
+        accelerator: "CommandOrControl+Shift+F",
+        type: "checkbox",
         checked: settings.focusModeEnabled,
-        click: appCommandSender({ action: 'toggleFocusMode' }),
+        click: appCommandSender({ action: "toggleFocusMode" }),
       },
       {
-        type: 'separator',
+        type: "separator",
       },
       {
-        label: 'Toggle &Full Screen',
-        accelerator: platform.isOSX() ? 'Ctrl+Command+F' : 'F11',
+        label: "Toggle &Full Screen",
+        accelerator: platform.isOSX() ? "Ctrl+Command+F" : "F11",
         click(item, focusedWindow) {
           if (focusedWindow) {
             focusedWindow.setFullScreen(!focusedWindow.isFullScreen());

@@ -1,12 +1,12 @@
-const debug = require('debug')('analytics');
+const debug = require("debug")("analytics");
 
 /**
  * Internal dependencies
  */
-import './tracks';
+import "./tracks";
 let user: string;
 
-import * as T from '../types';
+import * as T from "../types";
 
 declare const config: { version: string };
 
@@ -18,15 +18,15 @@ const analytics = {
 
   // Return a valid platform prefix when on a platform that should be tracked
   getPlatformPrefix: function () {
-    if (!navigator.appVersion.includes('Electron')) {
-      return 'spweb';
+    if (!navigator.appVersion.includes("Electron")) {
+      return "spweb";
     }
 
-    if (navigator.appVersion.includes('Win')) {
-      return 'spwindows';
+    if (navigator.appVersion.includes("Win")) {
+      return "spwindows";
     }
-    if (navigator.appVersion.includes('Linux')) {
-      return 'splinux';
+    if (navigator.appVersion.includes("Linux")) {
+      return "splinux";
     }
 
     return null;
@@ -55,16 +55,16 @@ const analytics = {
       if (
         window.analyticsEnabled &&
         prefix &&
-        process.env.NODE_ENV !== 'development'
+        process.env.NODE_ENV !== "development"
       ) {
-        window._tkq.push(['recordEvent', fullEventName, fullEventProperties]);
+        window._tkq.push(["recordEvent", fullEventName, fullEventProperties]);
       }
     },
     validateEvent: function (
       fullEventName: string,
       fullEventProperties: T.JSONSerializable
     ) {
-      if (process.env.NODE_ENV !== 'development') {
+      if (process.env.NODE_ENV !== "development") {
         return;
       }
 
@@ -87,12 +87,12 @@ const analytics = {
   identifyUser: function () {
     // Don't identify the user if we don't have one
     if (undefined !== user) {
-      window._tkq.push(['identifyUser', user, user]);
+      window._tkq.push(["identifyUser", user, user]);
     }
   },
 
   clearedIdentity: function () {
-    window._tkq.push(['clearIdentity']);
+    window._tkq.push(["clearIdentity"]);
   },
 };
 

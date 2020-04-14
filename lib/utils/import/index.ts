@@ -1,15 +1,15 @@
-import Bottleneck from 'bottleneck';
-import { EventEmitter } from 'events';
-import { isEmpty, get, pick } from 'lodash';
+import Bottleneck from "bottleneck";
+import { EventEmitter } from "events";
+import { isEmpty, get, pick } from "lodash";
 
 const propertyWhitelist = [
-  'content',
-  'creationDate',
-  'deleted',
-  'markdown',
-  'modificationDate',
-  'pinned',
-  'tags',
+  "content",
+  "creationDate",
+  "deleted",
+  "markdown",
+  "modificationDate",
+  "pinned",
+  "tags",
 ];
 
 const MAX_REQUESTS_PER_SEC = 50;
@@ -32,20 +32,20 @@ class CoreImporter extends EventEmitter {
   importNote = (note, { isTrashed = false, isMarkdown = false } = {}) => {
     const importedNote = pick(note, propertyWhitelist);
     // We don't want to allow these properties to be imported, but they need to be set
-    importedNote.publishURL = '';
-    importedNote.shareURL = '';
+    importedNote.publishURL = "";
+    importedNote.shareURL = "";
 
     importedNote.deleted = isTrashed;
 
-    importedNote.tags = get(importedNote, 'tags', []);
-    importedNote.systemTags = get(importedNote, 'systemTags', []);
+    importedNote.tags = get(importedNote, "tags", []);
+    importedNote.systemTags = get(importedNote, "systemTags", []);
     if (importedNote.pinned) {
-      importedNote.systemTags.push('pinned');
+      importedNote.systemTags.push("pinned");
       delete importedNote.pinned;
     }
 
     if (importedNote.markdown || isMarkdown) {
-      importedNote.systemTags.push('markdown');
+      importedNote.systemTags.push("markdown");
       delete importedNote.markdown;
     }
 
@@ -61,8 +61,8 @@ class CoreImporter extends EventEmitter {
       importedNote.modificationDate || importedNote.creationDate || Date.now();
 
     // Make sure that content property exists
-    if (!Object.prototype.hasOwnProperty.call(importedNote, 'content')) {
-      importedNote.content = '';
+    if (!Object.prototype.hasOwnProperty.call(importedNote, "content")) {
+      importedNote.content = "";
     }
 
     // Add the tags to the tag bucket
@@ -84,23 +84,23 @@ class CoreImporter extends EventEmitter {
 
   importNotes = (notes = {}, options) => {
     if (isEmpty(notes)) {
-      this.emit('status', 'error', 'No notes to import.');
+      this.emit("status", "error", "No notes to import.");
       return;
     }
 
     if (!notes.activeNotes && !notes.trashedNotes) {
       this.emit(
-        'status',
-        'error',
-        'Invalid import format: No active or trashed notes found.'
+        "status",
+        "error",
+        "Invalid import format: No active or trashed notes found."
       );
       return;
     }
 
-    const activeNotesPromises = get(notes, 'activeNotes', []).map((note) =>
+    const activeNotesPromises = get(notes, "activeNotes", []).map((note) =>
       this.importNote(note, options)
     );
-    const trashedNotesPromises = get(notes, 'trashedNotes', []).map((note) =>
+    const trashedNotesPromises = get(notes, "trashedNotes", []).map((note) =>
       this.importNote(note, { ...options, isTrashed: true })
     );
 

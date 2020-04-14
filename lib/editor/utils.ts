@@ -1,5 +1,5 @@
 export function plainTextContent(editorState) {
-  return editorState.getCurrentContent().getPlainText('\n');
+  return editorState.getCurrentContent().getPlainText("\n");
 }
 
 export function getCurrentBlock(editorState) {
@@ -21,8 +21,8 @@ export function getSelectedText(editorState) {
     return startBlock.getText().slice(start, end);
   }
 
-  let selectedText = '';
-  selectedText += startBlock.getText().slice(start) + '\n';
+  let selectedText = "";
+  selectedText += startBlock.getText().slice(start) + "\n";
 
   const endBlock = editorState.getCurrentContent().getBlockForKey(endKey);
 
@@ -32,7 +32,7 @@ export function getSelectedText(editorState) {
     if (thisBlock.key === endKey) {
       break;
     }
-    selectedText += thisBlock.getText() + '\n';
+    selectedText += thisBlock.getText() + "\n";
   }
 
   selectedText += endBlock.getText().slice(0, end);

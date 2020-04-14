@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import PanelTitle from '../../../components/panel-title';
-import SettingsGroup, { Item } from '../../settings-group';
-import ToggleGroup from '../../toggle-settings-group';
-import TopRightArrowIcon from '../../../icons/arrow-top-right';
-import { viewExternalUrl } from '../../../utils/url-utils';
+import React from "react";
+import PropTypes from "prop-types";
+import PanelTitle from "../../../components/panel-title";
+import SettingsGroup, { Item } from "../../settings-group";
+import ToggleGroup from "../../toggle-settings-group";
+import TopRightArrowIcon from "../../../icons/arrow-top-right";
+import { viewExternalUrl } from "../../../utils/url-utils";
 
 const AccountPanel = (props) => {
   const {
@@ -42,7 +42,7 @@ const AccountPanel = (props) => {
           <SettingsGroup
             title="Privacy"
             slug="shareAnalytics"
-            activeSlug={analyticsEnabled ? 'enabled' : ''}
+            activeSlug={analyticsEnabled ? "enabled" : ""}
             description="Help us improve Simplenote by sharing usage data with our analytics tool."
             onChange={toggleShareAnalyticsPreference}
             learnMoreURL="https://automattic.com/cookies"

@@ -1,22 +1,22 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import onClickOutside from "react-onclickoutside";
 
-import analytics from '../analytics';
-import NavigationBarItem from './item';
-import TagList from '../tag-list';
-import NotesIcon from '../icons/notes';
-import TrashIcon from '../icons/trash';
-import SettingsIcon from '../icons/settings';
-import SyncStatus from '../components/sync-status';
-import { viewExternalUrl } from '../utils/url-utils';
-import appState from '../flux/app-state';
-import { showDialog } from '../state/ui/actions';
+import analytics from "../analytics";
+import NavigationBarItem from "./item";
+import TagList from "../tag-list";
+import NotesIcon from "../icons/notes";
+import TrashIcon from "../icons/trash";
+import SettingsIcon from "../icons/settings";
+import SyncStatus from "../components/sync-status";
+import { viewExternalUrl } from "../utils/url-utils";
+import appState from "../flux/app-state";
+import { showDialog } from "../state/ui/actions";
 
-import { toggleNavigation, selectTrash } from '../state/ui/actions';
+import { toggleNavigation, selectTrash } from "../state/ui/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   isElectron: boolean;
@@ -41,7 +41,7 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NavigationBar extends Component<Props> {
-  static displayName = 'NavigationBar';
+  static displayName = "NavigationBar";
 
   // Used by onClickOutside wrapper
   handleClickOutside = () => {
@@ -56,11 +56,11 @@ export class NavigationBar extends Component<Props> {
     }
   };
 
-  onHelpClicked = () => viewExternalUrl('http://simplenote.com/help');
+  onHelpClicked = () => viewExternalUrl("http://simplenote.com/help");
 
   onSelectTrash = () => {
     this.props.selectTrash();
-    analytics.tracks.recordEvent('list_trash_viewed');
+    analytics.tracks.recordEvent("list_trash_viewed");
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
@@ -150,10 +150,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const { showAllNotesAndSelectFirst } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog('ABOUT'),
+  onAbout: () => showDialog("ABOUT"),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog('SETTINGS'),
+  onSettings: () => showDialog("SETTINGS"),
   selectTrash,
 };
 

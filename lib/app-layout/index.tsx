@@ -1,23 +1,23 @@
-import React, { FunctionComponent, Suspense } from 'react';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
+import React, { FunctionComponent, Suspense } from "react";
+import classNames from "classnames";
+import { connect } from "react-redux";
 
-import NoteToolbarContainer from '../note-toolbar-container';
-import NoteToolbar from '../note-toolbar';
-import RevisionSelector from '../revision-selector';
-import SearchBar from '../search-bar';
-import SimplenoteCompactLogo from '../icons/simplenote-compact';
-import TransitionDelayEnter from '../components/transition-delay-enter';
+import NoteToolbarContainer from "../note-toolbar-container";
+import NoteToolbar from "../note-toolbar";
+import RevisionSelector from "../revision-selector";
+import SearchBar from "../search-bar";
+import SimplenoteCompactLogo from "../icons/simplenote-compact";
+import TransitionDelayEnter from "../components/transition-delay-enter";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 const NoteList = React.lazy(() =>
-  import(/* webpackChunkName: 'note-list' */ '../note-list')
+  import(/* webpackChunkName: 'note-list' */ "../note-list")
 );
 
 const NoteEditor = React.lazy(() =>
-  import(/* webpackChunkName: 'note-editor' */ '../note-editor')
+  import(/* webpackChunkName: 'note-editor' */ "../note-editor")
 );
 
 type OwnProps = {
@@ -47,11 +47,11 @@ export const AppLayout: FunctionComponent<Props> = ({
   onUpdateContent,
   syncNote,
 }) => {
-  const mainClasses = classNames('app-layout', {
-    'is-focus-mode': isFocusMode,
-    'is-navigation-open': isNavigationOpen,
-    'is-note-open': isNoteOpen,
-    'is-showing-note-info': isNoteInfoOpen,
+  const mainClasses = classNames("app-layout", {
+    "is-focus-mode": isFocusMode,
+    "is-navigation-open": isNavigationOpen,
+    "is-note-open": isNoteOpen,
+    "is-showing-note-info": isNoteInfoOpen,
   });
 
   const placeholder = (

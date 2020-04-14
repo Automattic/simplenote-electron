@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
 /**
  * External Dependencies
  */
-const { app, shell } = require('electron');
-const fetch = require('electron-fetch').default;
-const yaml = require('js-yaml');
-const semver = require('semver');
+const { app, shell } = require("electron");
+const fetch = require("electron-fetch").default;
+const yaml = require("js-yaml");
+const semver = require("semver");
 
 /**
  * Internal dependencies
  */
-const Updater = require('../lib/Updater');
-const setupProgressUpdates = require('../lib/setup-progress-updates');
+const Updater = require("../lib/Updater");
+const setupProgressUpdates = require("../lib/setup-progress-updates");
 
 class ManualUpdater extends Updater {
   constructor({ apiUrl, downloadUrl, changelogUrl, options = {} }) {
@@ -32,7 +32,7 @@ class ManualUpdater extends Updater {
   async ping() {
     const options = {
       headers: {
-        'User-Agent': `Simplenote/${app.getVersion()}`,
+        "User-Agent": `Simplenote/${app.getVersion()}`,
       },
     };
 
@@ -40,7 +40,7 @@ class ManualUpdater extends Updater {
       const releaseResp = await fetch(this.apiUrl, options);
 
       if (releaseResp.status !== 200) {
-        this.emit('error');
+        this.emit("error");
         console.log(releaseResp); // eslint-disable-line no-console
         return;
       }
@@ -48,7 +48,7 @@ class ManualUpdater extends Updater {
       const releaseBody = await releaseResp.json();
 
       const releaseAsset = releaseBody.assets.find(
-        (release) => release.name === 'latest.yml'
+        (release) => release.name === "latest.yml"
       );
       if (releaseAsset) {
         const configResp = await fetch(
@@ -57,7 +57,7 @@ class ManualUpdater extends Updater {
         );
 
         if (configResp.status !== 200) {
-          this.emit('error');
+          this.emit("error");
           console.log(configResp); // eslint-disable-line no-console
           return;
         }
@@ -68,18 +68,18 @@ class ManualUpdater extends Updater {
         if (semver.lt(app.getVersion(), releaseConfig.version)) {
           // eslint-disable-next-line no-console
           console.log(
-            'New update is available, prompting user to update to',
+            "New update is available, prompting user to update to",
             releaseConfig.version
           );
           this.setVersion(releaseConfig.version);
-          this.emit('update-available');
+          this.emit("update-available");
         } else {
-          this.emit('update-not-available');
+          this.emit("update-not-available");
           return;
         }
       }
     } catch (err) {
-      this.emit('error');
+      this.emit("error");
       console.log(err.message); // eslint-disable-line no-console
     }
   }

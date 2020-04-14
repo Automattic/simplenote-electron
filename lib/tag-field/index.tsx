@@ -4,16 +4,16 @@ import React, {
   KeyboardEventHandler,
   MouseEvent,
   RefObject,
-} from 'react';
-import { connect } from 'react-redux';
-import { Overlay } from 'react-overlays';
-import isEmailTag from '../utils/is-email-tag';
-import { updateNoteTags } from '../state/domain/notes';
-import EmailToolTip from '../tag-email-tooltip';
-import TagChip from '../components/tag-chip';
-import TagInput from '../tag-input';
-import classNames from 'classnames';
-import analytics from '../analytics';
+} from "react";
+import { connect } from "react-redux";
+import { Overlay } from "react-overlays";
+import isEmailTag from "../utils/is-email-tag";
+import { updateNoteTags } from "../state/domain/notes";
+import EmailToolTip from "../tag-email-tooltip";
+import TagChip from "../components/tag-chip";
+import TagInput from "../tag-input";
+import classNames from "classnames";
+import analytics from "../analytics";
 import {
   differenceBy,
   intersectionBy,
@@ -21,10 +21,10 @@ import {
   negate,
   noop,
   union,
-} from 'lodash';
+} from "lodash";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   allTags: T.TagName[];
@@ -58,7 +58,7 @@ export class TagField extends Component<Props, OwnState> {
   inputHasFocus?: () => boolean;
   tagInput?: RefObject<HTMLDivElement> | null;
 
-  static displayName = 'TagField';
+  static displayName = "TagField";
 
   static defaultProps = {
     storeFocusTagField: noop,
@@ -67,19 +67,19 @@ export class TagField extends Component<Props, OwnState> {
   };
 
   state = {
-    selectedTag: '',
-    tagInput: '',
+    selectedTag: "",
+    tagInput: "",
   };
 
   componentDidMount() {
     this.props.storeFocusTagField(this.focusTagField);
     this.props.storeHasFocus(this.hasFocus);
 
-    document.addEventListener('click', this.unselect, true);
+    document.addEventListener("click", this.unselect, true);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.unselect, true);
+    document.removeEventListener("click", this.unselect, true);
   }
 
   componentDidUpdate() {
@@ -91,7 +91,7 @@ export class TagField extends Component<Props, OwnState> {
   addTag = (tags: string) => {
     const { allTags, tags: existingTags } = this.props;
 
-    const newTags = tags.trim().replace(/\s+/g, ',').split(',');
+    const newTags = tags.trim().replace(/\s+/g, ",").split(",");
 
     if (newTags.some(isEmailTag)) {
       this.showEmailTooltip();
@@ -103,9 +103,9 @@ export class TagField extends Component<Props, OwnState> {
       differenceBy(newTags, allTags, (s) => s.toLocaleLowerCase()) // add completely new tags
     );
     this.updateTags(nextTagList);
-    this.storeTagInput('');
-    invoke(this, 'tagInput.focus');
-    analytics.tracks.recordEvent('editor_tag_added');
+    this.storeTagInput("");
+    invoke(this, "tagInput.focus");
+    analytics.tracks.recordEvent("editor_tag_added");
   };
 
   hasSelection = () =>
@@ -120,12 +120,12 @@ export class TagField extends Component<Props, OwnState> {
     );
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' }, () => {
-        invoke(this, 'tagInput.focus');
+      this.setState({ selectedTag: "" }, () => {
+        invoke(this, "tagInput.focus");
       });
     }
 
-    analytics.tracks.recordEvent('editor_tag_removed');
+    analytics.tracks.recordEvent("editor_tag_removed");
   };
 
   deleteSelection = () => {
@@ -146,7 +146,7 @@ export class TagField extends Component<Props, OwnState> {
         this.deleteSelection();
       }
 
-      if ('' !== this.state.tagInput) {
+      if ("" !== this.state.tagInput) {
         return;
       }
 
@@ -215,7 +215,7 @@ export class TagField extends Component<Props, OwnState> {
     }
 
     if (this.hiddenTag !== event.relatedTarget) {
-      this.setState({ selectedTag: '' });
+      this.setState({ selectedTag: "" });
     }
   };
 
@@ -226,8 +226,8 @@ export class TagField extends Component<Props, OwnState> {
     return (
       <div className="tag-field">
         <div
-          className={classNames('tag-editor', {
-            'has-selection': this.hasSelection(),
+          className={classNames("tag-editor", {
+            "has-selection": this.hasSelection(),
           })}
           tabIndex="-1"
           onKeyDown={this.onKeyDown}

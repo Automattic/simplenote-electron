@@ -1,11 +1,11 @@
-import { debounce, startsWith } from 'lodash';
+import { debounce, startsWith } from "lodash";
 
 const debounceWait = 500;
-const key = 'lastSyncedTime';
+const key = "lastSyncedTime";
 
 export const setLastSyncedTime = debounce((data) => {
   // Ignore if heartbeat
-  if (startsWith(data, 'h:')) {
+  if (startsWith(data, "h:")) {
     return;
   }
   try {

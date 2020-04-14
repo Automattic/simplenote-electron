@@ -12,27 +12,27 @@
  * row height calculations should be double-checked
  * against performance regressions.
  */
-import React, { Component, Fragment, createRef } from 'react';
-import PropTypes from 'prop-types';
-import { AutoSizer, List } from 'react-virtualized';
-import PublishIcon from '../icons/feed';
-import classNames from 'classnames';
-import { debounce, get, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-import appState from '../flux/app-state';
-import analytics from '../analytics';
-import getNoteTitleAndPreview from './get-note-title-and-preview';
+import React, { Component, Fragment, createRef } from "react";
+import PropTypes from "prop-types";
+import { AutoSizer, List } from "react-virtualized";
+import PublishIcon from "../icons/feed";
+import classNames from "classnames";
+import { debounce, get, isEmpty } from "lodash";
+import { connect } from "react-redux";
+import appState from "../flux/app-state";
+import analytics from "../analytics";
+import getNoteTitleAndPreview from "./get-note-title-and-preview";
 import {
   decorateWith,
   checkboxDecorator,
   makeFilterDecorator,
-} from './decorators';
-import TagSuggestions from '../tag-suggestions';
+} from "./decorators";
+import TagSuggestions from "../tag-suggestions";
 
-import actions from '../state/actions';
+import actions from "../state/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
@@ -59,8 +59,8 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-AutoSizer.displayName = 'AutoSizer';
-List.displayName = 'List';
+AutoSizer.displayName = "AutoSizer";
+List.displayName = "List";
 
 /**
  * Delay for preventing row height calculation thrashing
@@ -121,10 +121,10 @@ const EMPTY_DIV_HEIGHT = 200;
 function getTextWidth(text, width) {
   const canvas =
     getTextWidth.canvas ||
-    (getTextWidth.canvas = document.createElement('canvas'));
+    (getTextWidth.canvas = document.createElement("canvas"));
   canvas.width = width;
-  const context = canvas.getContext('2d');
-  context.font = '16px arial';
+  const context = canvas.getContext("2d");
+  context.font = "16px arial";
   return context.measureText(text).width;
 }
 
@@ -145,11 +145,11 @@ const rowHeightCache = (f) => (
 
   // handle special sections
   switch (note) {
-    case 'notes-header':
+    case "notes-header":
       return HEADER_HEIGHT;
-    case 'tag-suggestions':
+    case "tag-suggestions":
       return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
-    case 'no-notes':
+    case "no-notes":
       return EMPTY_DIV_HEIGHT;
   }
 
@@ -158,7 +158,7 @@ const rowHeightCache = (f) => (
   const key = note.id;
   const cached = previewCache.get(key);
 
-  if ('undefined' !== typeof cached) {
+  if ("undefined" !== typeof cached) {
     const [cWidth, cNoteDisplay, cPreview, cHeight] = cached;
 
     if (
@@ -186,7 +186,7 @@ const rowHeightCache = (f) => (
  * @returns {Number} height of the row in the list
  */
 const computeRowHeight = (width, noteDisplay, preview) => {
-  if ('condensed' === noteDisplay) {
+  if ("condensed" === noteDisplay) {
     return ROW_HEIGHT_BASE;
   }
 
@@ -231,23 +231,23 @@ const renderNote = (
     isSmallScreen,
   }
 ) => ({ index, rowIndex, key, style }) => {
-  const note = notes['undefined' === typeof index ? rowIndex : index];
+  const note = notes["undefined" === typeof index ? rowIndex : index];
 
   // handle special sections
   switch (note) {
-    case 'notes-header':
+    case "notes-header":
       return (
         <div key={key} style={style} className="note-list-header">
           Notes
         </div>
       );
-    case 'tag-suggestions':
+    case "tag-suggestions":
       return (
         <div key={key} style={style}>
           <TagSuggestions />
         </div>
       );
-    case 'no-notes':
+    case "no-notes":
       return (
         <div key={key} style={style} className="note-list is-empty">
           <span className="note-list-placeholder">No Notes</span>
@@ -258,10 +258,10 @@ const renderNote = (
   const { title, preview } = getNoteTitleAndPreview(note);
   const isPublished = !isEmpty(note.data.publishURL);
 
-  const classes = classNames('note-list-item', {
-    'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
-    'note-list-item-pinned': note.data.systemTags.includes('pinned'),
-    'published-note': isPublished,
+  const classes = classNames("note-list-item", {
+    "note-list-item-selected": !isSmallScreen && selectedNoteId === note.id,
+    "note-list-item-pinned": note.data.systemTags.includes("pinned"),
+    "published-note": isPublished,
   });
 
   const decorators = [checkboxDecorator, makeFilterDecorator(searchQuery)];
@@ -290,7 +290,7 @@ const renderNote = (
             </div>
           )}
         </div>
-        {'condensed' !== noteDisplay && preview.trim() && (
+        {"condensed" !== noteDisplay && preview.trim() && (
           <div className="note-list-item-excerpt">
             {decorateWith(decorators, preview)}
           </div>
@@ -317,14 +317,14 @@ const createCompositeNoteList = (notes, searchQuery, tagResultsFound) => {
   }
 
   return [
-    'tag-suggestions',
-    'notes-header',
-    ...(notes.length > 0 ? notes : ['no-notes']),
+    "tag-suggestions",
+    "notes-header",
+    ...(notes.length > 0 ? notes : ["no-notes"]),
   ];
 };
 
 export class NoteList extends Component<Props> {
-  static displayName = 'NoteList';
+  static displayName = "NoteList";
 
   list = createRef();
 
@@ -350,7 +350,7 @@ export class NoteList extends Component<Props> {
     );
 
     this.toggleShortcuts(true);
-    window.addEventListener('resize', this.recomputeHeights);
+    window.addEventListener("resize", this.recomputeHeights);
   }
 
   componentDidUpdate(prevProps) {
@@ -368,7 +368,7 @@ export class NoteList extends Component<Props> {
 
   componentWillUnmount() {
     this.toggleShortcuts(false);
-    window.removeEventListener('resize', this.recomputeHeights);
+    window.removeEventListener("resize", this.recomputeHeights);
   }
 
   handleShortcut = (event) => {
@@ -384,7 +384,7 @@ export class NoteList extends Component<Props> {
     if (
       cmdOrCtrl &&
       shiftKey &&
-      (key === 'ArrowUp' || key.toLowerCase() === 'k')
+      (key === "ArrowUp" || key.toLowerCase() === "k")
     ) {
       if (selectedIndex > 0) {
         this.props.onSelectNote(notes[selectedIndex - 1].id);
@@ -398,7 +398,7 @@ export class NoteList extends Component<Props> {
     if (
       cmdOrCtrl &&
       shiftKey &&
-      (key === 'ArrowDown' || key.toLowerCase() === 'j')
+      (key === "ArrowDown" || key.toLowerCase() === "j")
     ) {
       if (selectedIndex < notes.length - 1) {
         this.props.onSelectNote(notes[selectedIndex + 1].id);
@@ -414,9 +414,9 @@ export class NoteList extends Component<Props> {
 
   toggleShortcuts = (doEnable) => {
     if (doEnable) {
-      window.addEventListener('keydown', this.handleShortcut, true);
+      window.addEventListener("keydown", this.handleShortcut, true);
     } else {
-      window.removeEventListener('keydown', this.handleShortcut, true);
+      window.removeEventListener("keydown", this.handleShortcut, true);
     }
   };
 
@@ -440,7 +440,7 @@ export class NoteList extends Component<Props> {
       tagResultsFound
     );
 
-    const listItemsClasses = classNames('note-list-items', noteDisplay);
+    const listItemsClasses = classNames("note-list-items", noteDisplay);
 
     const renderNoteRow = renderNote(compositeNoteList, {
       searchQuery,
@@ -466,10 +466,10 @@ export class NoteList extends Component<Props> {
     );
 
     return (
-      <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
+      <div className={classNames("note-list", { "is-empty": isEmptyList })}>
         {isEmptyList ? (
           <span className="note-list-placeholder">
-            {hasLoaded ? 'No Notes' : 'Loading Notes'}
+            {hasLoaded ? "No Notes" : "Loading Notes"}
           </span>
         ) : (
           <Fragment>
@@ -506,7 +506,7 @@ export class NoteList extends Component<Props> {
   }
 
   onPinNote = (note: T.NoteEntity) =>
-    this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
+    this.props.onPinNote(note, !note.data.systemTags.includes("pinned"));
 }
 
 const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
@@ -544,7 +544,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     notes: filteredNotes,
     searchQuery,
     selectedNotePreview,
-    selectedNoteContent: get(note, 'data.content'),
+    selectedNoteContent: get(note, "data.content"),
     selectedNoteId: note?.id,
     showTrash,
     tagResultsFound: tagSuggestions.length,
@@ -560,7 +560,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   onSelectNote: (noteId) => {
     if (noteId) {
       dispatch(loadAndSelectNote({ noteBucket, noteId }));
-      analytics.tracks.recordEvent('list_note_opened');
+      analytics.tracks.recordEvent("list_note_opened");
     }
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),

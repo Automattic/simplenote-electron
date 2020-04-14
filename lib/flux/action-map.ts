@@ -1,6 +1,6 @@
-import { Action, Reducer } from 'redux';
+import { Action, Reducer } from "redux";
 
-import * as A from '../state/action-types';
+import * as A from "../state/action-types";
 
 type ActionHandler<State> =
   | { creator: Function }
@@ -37,13 +37,13 @@ export class ActionMap<
     this.actionCreators = {} as ActionCreators<State, Handlers>;
     this.actionReducers = {};
 
-    namespace = namespace ? `${namespace}.` : '';
+    namespace = namespace ? `${namespace}.` : "";
 
     (Object.getOwnPropertyNames(handlers) as (keyof Handlers)[]).forEach(
       <T extends keyof Handlers>(name: T) => {
         const handler = handlers[name];
 
-        if (typeof handler === 'function') {
+        if (typeof handler === "function") {
           this.actionCreators[name] = actionCreator.bind(`${namespace}${name}`);
           this.actionReducers[`${namespace}${name}`] = handler as Reducer<
             State,
@@ -66,7 +66,7 @@ export class ActionMap<
     const oldState = state || this.initialState;
 
     const fn = this.actionReducers[action.type];
-    return typeof fn === 'function'
+    return typeof fn === "function"
       ? fn(oldState, action) || oldState
       : oldState;
   }

@@ -1,13 +1,13 @@
-import { getIpcRenderer } from '../../utils/electron';
+import { getIpcRenderer } from "../../utils/electron";
 
-import * as A from '../action-types';
+import * as A from "../action-types";
 
 const ipc = getIpcRenderer();
 
 export const setFontSize: A.ActionCreator<A.SetFontSize> = (
   fontSize?: number
 ) => ({
-  type: 'setFontSize',
+  type: "setFontSize",
   fontSize,
 });
 
@@ -31,39 +31,39 @@ export const resetFontSize: A.ActionCreator<A.SetFontSize> = () =>
   setFontSize(undefined);
 
 export const activateTheme: A.ActionCreator<A.SetTheme> = (theme) => ({
-  type: 'setTheme',
+  type: "setTheme",
   theme,
 });
 
 export const setNoteDisplay: A.ActionCreator<A.SetNoteDisplay> = (
   noteDisplay
 ) => ({
-  type: 'setNoteDisplay',
+  type: "setNoteDisplay",
   noteDisplay,
 });
 
 export const setLineLength: A.ActionCreator<A.SetLineLength> = (
   lineLength
 ) => ({
-  type: 'setLineLength',
+  type: "setLineLength",
   lineLength,
 });
 
 export const toggleSortOrder = () => (dispatch, getState) => {
   dispatch({
-    type: 'setSortReversed',
+    type: "setSortReversed",
     sortReversed: !getState().settings.sortReversed,
   });
 };
 
 export const setSortType: A.ActionCreator<A.SetSortType> = (sortType) => ({
-  type: 'setSortType',
+  type: "setSortType",
   sortType,
 });
 
 export const toggleSortTagsAlpha = () => (dispatch, getState) => {
   dispatch({
-    type: 'setSortTagsAlpha',
+    type: "setSortTagsAlpha",
     sortTagsAlpha: !getState().settings.sortTagsAlpha,
   });
 };
@@ -71,25 +71,25 @@ export const toggleSortTagsAlpha = () => (dispatch, getState) => {
 export const setAccountName: A.ActionCreator<A.SetAccountName> = (
   accountName
 ) => ({
-  type: 'setAccountName',
+  type: "setAccountName",
   accountName,
 });
 
 export const setWPToken: A.ActionCreator<A.SetWPToken> = (token) => ({
-  type: 'setWPToken',
+  type: "setWPToken",
   token,
 });
 
 export const toggleFocusMode = () => (dispatch, getState) => {
   dispatch({
-    type: 'setFocusMode',
+    type: "setFocusMode",
     focusModeEnabled: !getState().settings.focusModeEnabled,
   });
 };
 
 export const toggleSpellCheck = () => (dispatch, getState) => {
   dispatch({
-    type: 'setSpellCheck',
+    type: "setSpellCheck",
     spellCheckEnabled: !getState().settings.spellCheckEnabled,
   });
 };
@@ -97,10 +97,10 @@ export const toggleSpellCheck = () => (dispatch, getState) => {
 export const toggleAutoHideMenuBar = () => (dispatch, getState) => {
   const newValue = !getState().settings.autoHideMenuBar;
 
-  ipc.send('setAutoHideMenuBar', newValue);
+  ipc.send("setAutoHideMenuBar", newValue);
 
   dispatch({
-    type: 'setAutoHideMenuBar',
+    type: "setAutoHideMenuBar",
     autoHideMenuBar: newValue,
   });
 };

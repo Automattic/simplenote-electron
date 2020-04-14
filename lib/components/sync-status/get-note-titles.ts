@@ -1,7 +1,7 @@
-import filterAtMost from '../../utils/filter-at-most';
-import noteTitleAndPreview from '../../utils/note-utils';
+import filterAtMost from "../../utils/filter-at-most";
+import noteTitleAndPreview from "../../utils/note-utils";
 
-import * as T from '../../types';
+import * as T from "../../types";
 
 type NoteTitle = {
   id: T.EntityId;

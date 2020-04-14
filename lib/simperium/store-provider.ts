@@ -1,4 +1,4 @@
-import { BucketStore } from './bucket-store';
+import { BucketStore } from "./bucket-store";
 
 export class StoreProvider {
   constructor(config) {
@@ -15,7 +15,7 @@ export class StoreProvider {
             db.objectStoreNames,
             (name) =>
               new Promise((resolve, reject) => {
-                const tx = db.transaction(name, 'readwrite');
+                const tx = db.transaction(name, "readwrite");
                 const request = tx.objectStore(name).clear();
 
                 request.onsuccess = () => resolve(name);
@@ -24,7 +24,7 @@ export class StoreProvider {
           )
         )
       )
-      .catch((e) => console.error('Failed to reset stores', e)); // eslint-disable-line no-console
+      .catch((e) => console.error("Failed to reset stores", e)); // eslint-disable-line no-console
 }
 
 export default (config) => new StoreProvider(config);

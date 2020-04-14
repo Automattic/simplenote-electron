@@ -1,13 +1,13 @@
-import debugFactory from 'debug';
-import actions from '../actions';
+import debugFactory from "debug";
+import actions from "../actions";
 
-import { toggleSystemTag } from '../domain/notes';
+import { toggleSystemTag } from "../domain/notes";
 
-import * as A from '../action-types';
-import * as S from '../';
-import * as T from '../../types';
+import * as A from "../action-types";
+import * as S from "../";
+import * as T from "../../types";
 
-const debug = debugFactory('simperium-middleware');
+const debug = debugFactory("simperium-middleware");
 
 type Buckets = {
   note: T.Bucket<T.Note>;
@@ -49,7 +49,7 @@ export const middleware: S.Middleware = (store) => {
     const nextState = store.getState();
 
     switch (action.type) {
-      case 'SET_SYSTEM_TAG':
+      case "SET_SYSTEM_TAG":
         buckets.note.update(
           action.note.id,
           toggleSystemTag(action.note, action.tagName, action.shouldHaveTag)
@@ -57,7 +57,7 @@ export const middleware: S.Middleware = (store) => {
         );
         break;
 
-      case 'REVISIONS_TOGGLE':
+      case "REVISIONS_TOGGLE":
         fetchRevisions(store, nextState);
         break;
     }

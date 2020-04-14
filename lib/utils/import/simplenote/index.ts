@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
-import CoreImporter from '../';
-import { endsWith, isEmpty } from 'lodash';
+import { EventEmitter } from "events";
+import CoreImporter from "../";
+import { endsWith, isEmpty } from "lodash";
 
 class SimplenoteImporter extends EventEmitter {
   constructor({ noteBucket, tagBucket, options }) {
@@ -17,20 +17,20 @@ class SimplenoteImporter extends EventEmitter {
     });
 
     if (isEmpty(filesArray)) {
-      this.emit('status', 'error', 'No file to import.');
+      this.emit("status", "error", "No file to import.");
       return;
     }
 
     const file = filesArray[0];
 
-    if (!endsWith(file.name.toLowerCase(), '.json')) {
-      this.emit('status', 'error', 'File name does not end in ".json".');
+    if (!endsWith(file.name.toLowerCase(), ".json")) {
+      this.emit("status", "error", 'File name does not end in ".json".');
       return;
     }
 
     // Limit file size we will read to 5mb
     if (file.size > 5000000) {
-      this.emit('status', 'error', 'File should be less than 5 MB.');
+      this.emit("status", "error", "File should be less than 5 MB.");
       return;
     }
 
@@ -40,7 +40,7 @@ class SimplenoteImporter extends EventEmitter {
       const fileContent = event.target.result;
 
       if (!fileContent) {
-        this.emit('status', 'error', 'File was empty.');
+        this.emit("status", "error", "File was empty.");
         return;
       }
 
@@ -53,7 +53,7 @@ class SimplenoteImporter extends EventEmitter {
       };
 
       coreImporter.importNotes(processedNotes, this.options).then(() => {
-        this.emit('status', 'complete', noteCount);
+        this.emit("status", "complete", noteCount);
       });
     };
 

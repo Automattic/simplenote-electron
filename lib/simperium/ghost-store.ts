@@ -1,24 +1,24 @@
 /* eslint-disable no-shadow */
-var Promise = require('promise');
+var Promise = require("promise");
 
 var db = window.indexedDB,
   setup = new Promise(function (resolve, reject) {
-    var open = db.open('ghost', 200);
+    var open = db.open("ghost", 200);
 
     open.onupgradeneeded = function (e) {
       var db = e.target.result;
 
       var stores = db.objectStoreNames;
 
-      if (stores.contains('cv')) db.deleteObjectStore('cv');
+      if (stores.contains("cv")) db.deleteObjectStore("cv");
 
-      let cv = db.createObjectStore('cv', { keyPath: 'bucket' });
-      cv.createIndex('bucket', 'bucket', { unique: true });
+      let cv = db.createObjectStore("cv", { keyPath: "bucket" });
+      cv.createIndex("bucket", "bucket", { unique: true });
 
-      if (stores.contains('ghosts')) db.deleteObjectStore('ghosts');
-      let ghosts = db.createObjectStore('ghosts', { keyPath: 'full_key' });
-      ghosts.createIndex('bucket', 'bucket');
-      ghosts.createIndex('full_key', 'full_key', { unique: true });
+      if (stores.contains("ghosts")) db.deleteObjectStore("ghosts");
+      let ghosts = db.createObjectStore("ghosts", { keyPath: "full_key" });
+      ghosts.createIndex("bucket", "bucket");
+      ghosts.createIndex("full_key", "full_key", { unique: true });
     };
 
     open.onsuccess = function (e) {
@@ -44,13 +44,13 @@ setup.catch(function (e) {
   Would you like to try again using a limited version of the app?
   `);
   if (oldApp) {
-    window.location = 'https://app.simplenote.com/old';
+    window.location = "https://app.simplenote.com/old";
   }
   console.error(e); // eslint-disable-line no-console
 });
 
 db.onerror = function (e) {
-  console.log('Some kind of error', e); // eslint-disable-line no-console
+  console.log("Some kind of error", e); // eslint-disable-line no-console
 };
 
 function GhostStore(bucket) {
@@ -61,7 +61,7 @@ GhostStore.prototype.getChangeVersion = function () {
   var bucket = this.bucket;
   return new Promise(function (resolve) {
     setup.then(function (db) {
-      var tx = db.transaction('cv').objectStore('cv').get(bucket.name);
+      var tx = db.transaction("cv").objectStore("cv").get(bucket.name);
       tx.onsuccess = function (e) {
         var record = e.target.result,
           cv = null;
@@ -80,8 +80,8 @@ GhostStore.prototype.setChangeVersion = function (cv) {
   return new Promise(function (resolve) {
     setup.then(function (db) {
       var tx = db
-        .transaction('cv', 'readwrite')
-        .objectStore('cv')
+        .transaction("cv", "readwrite")
+        .objectStore("cv")
         .put({ bucket: bucket.name, cv: cv });
       tx.onsuccess = resolve;
     });
@@ -92,9 +92,9 @@ GhostStore.prototype.put = function (id, version, data) {
   var bucket = this.bucket,
     promise = new Promise(function (resolve) {
       setup.then(function (db) {
-        var tx = db.transaction(['ghosts'], 'readwrite'),
-          ghosts = tx.objectStore('ghosts'),
-          full_key = bucket.name + '.' + id,
+        var tx = db.transaction(["ghosts"], "readwrite"),
+          ghosts = tx.objectStore("ghosts"),
+          full_key = bucket.name + "." + id,
           ghost = {
             key: id,
             version: version,
@@ -115,8 +115,8 @@ GhostStore.prototype.get = function (id) {
   var bucket = this.bucket,
     promise = new Promise(function (resolve, reject) {
       setup.then(function (db) {
-        var ghosts = db.transaction('ghosts').objectStore('ghosts');
-        var key = bucket.name + '.' + id;
+        var ghosts = db.transaction("ghosts").objectStore("ghosts");
+        var key = bucket.name + "." + id;
 
         var request = ghosts.get(key);
         request.onsuccess = function (e) {
@@ -127,7 +127,7 @@ GhostStore.prototype.get = function (id) {
           resolve(ghost);
         };
         request.onerror = function (e) {
-          var error = new Error('failed to get ghost ' + key);
+          var error = new Error("failed to get ghost " + key);
           error.objectStoreEvent = e;
           reject(error);
         };
@@ -142,9 +142,9 @@ GhostStore.prototype.remove = function (id) {
     promise = new Promise(function (resolve, reject) {
       setup.then(function (db) {
         var ghosts = db
-          .transaction('ghosts', 'readwrite')
-          .objectStore('ghosts');
-        var key = bucket.name + '.' + id;
+          .transaction("ghosts", "readwrite")
+          .objectStore("ghosts");
+        var key = bucket.name + "." + id;
         var request = ghosts.delete(key);
 
         request.onsuccess = function () {
@@ -152,7 +152,7 @@ GhostStore.prototype.remove = function (id) {
         };
 
         request.onerror = function () {
-          reject(new Error('Failed to delete ghost ' + key));
+          reject(new Error("Failed to delete ghost " + key));
         };
       });
     });
@@ -166,9 +166,9 @@ GhostStore.prototype.eachGhost = function (onGhost) {
   setup.then(
     function (db) {
       var request = db
-        .transaction('ghosts')
-        .objectStore('ghosts')
-        .index('bucket')
+        .transaction("ghosts")
+        .objectStore("ghosts")
+        .index("bucket")
         .openCursor(IDBKeyRange.only(bucket.name));
       request.onsuccess = function (e) {
         var cursor = e.target.result;
@@ -179,7 +179,7 @@ GhostStore.prototype.eachGhost = function (onGhost) {
       };
     },
     function () {
-      console.log('Failed!'); // eslint-disable-line no-console
+      console.log("Failed!"); // eslint-disable-line no-console
     }
   );
 };
@@ -195,7 +195,7 @@ module.exports.reset = function () {
       [].map.call(db.objectStoreNames, (name) => {
         return new Promise((resolve, reject) => {
           var request = db
-            .transaction(name, 'readwrite')
+            .transaction(name, "readwrite")
             .objectStore(name)
             .clear();
           request.onsuccess = () => {

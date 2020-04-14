@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
-import AlertIcon from '../../icons/alert';
-import SyncIcon from '../../icons/sync';
-import SyncStatusPopover from './popover';
+import AlertIcon from "../../icons/alert";
+import SyncIcon from "../../icons/sync";
+import SyncStatusPopover from "./popover";
 
-import * as S from '../../state';
-import * as T from '../../types';
+import * as S from "../../state";
+import * as T from "../../types";
 
 type StateProps = {
   simperiumConnected: boolean;
@@ -31,15 +31,15 @@ class SyncStatus extends Component<StateProps> {
     const { simperiumConnected, unsyncedNoteIds } = this.props;
     const { anchorEl } = this.state;
 
-    const popoverId = 'sync-status__popover';
+    const popoverId = "sync-status__popover";
 
     const unsyncedChangeCount = unsyncedNoteIds.length;
-    const unit = unsyncedChangeCount === 1 ? 'change' : 'changes';
+    const unit = unsyncedChangeCount === 1 ? "change" : "changes";
     const text = unsyncedChangeCount
       ? `${unsyncedChangeCount} unsynced ${unit}`
       : simperiumConnected
-      ? 'All changes synced'
-      : 'No connection';
+      ? "All changes synced"
+      : "No connection";
 
     return (
       <div>

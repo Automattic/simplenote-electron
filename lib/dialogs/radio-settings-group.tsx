@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import CheckboxControl from '../controls/checkbox';
+import CheckboxControl from "../controls/checkbox";
 
 const RadioGroup = ({ groupSlug, slug, isEnabled, onChange }) => (
   <CheckboxControl

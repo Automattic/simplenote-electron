@@ -1,27 +1,27 @@
-const autoprefixer = require('autoprefixer');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const getConfig = require('./get-config');
-const spawnSync = require('child_process').spawnSync;
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const autoprefixer = require("autoprefixer");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const getConfig = require("./get-config");
+const spawnSync = require("child_process").spawnSync;
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = () => {
-  const isDevMode = process.env.NODE_ENV === 'development';
+  const isDevMode = process.env.NODE_ENV === "development";
   const config = getConfig();
 
   return {
-    context: __dirname + '/lib',
-    mode: isDevMode ? 'development' : 'production',
+    context: __dirname + "/lib",
+    mode: isDevMode ? "development" : "production",
     devtool:
-      process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
+      process.env.SOURCEMAP || (isDevMode && "cheap-module-eval-source-map"),
     devServer: { inline: true },
-    entry: ['./boot'],
+    entry: ["./boot"],
     output: {
-      path: __dirname + '/dist',
-      filename: 'app.[hash].js',
-      chunkFilename: '[name].[chunkhash].js',
+      path: __dirname + "/dist",
+      filename: "app.[hash].js",
+      chunkFilename: "[name].[chunkhash].js",
       ...(config.is_app_engine && {
-        publicPath: config.web_app_url + '/',
+        publicPath: config.web_app_url + "/",
       }),
     },
     module: {
@@ -31,32 +31,32 @@ module.exports = () => {
           exclude: /node_modules\/core-js/,
           use: [
             {
-              loader: 'babel-loader',
+              loader: "babel-loader",
             },
           ],
         },
         {
           test: /\.(sa|sc|c)ss$/,
           use: [
-            isDevMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+            isDevMode ? "style-loader" : MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 sourceMap: isDevMode,
               },
             },
             {
-              loader: 'postcss-loader',
+              loader: "postcss-loader",
               options: {
                 plugins: [autoprefixer()],
                 sourceMap: isDevMode,
               },
             },
             {
-              loader: 'sass-loader',
+              loader: "sass-loader",
               options: {
                 sassOptions: {
-                  includePaths: [__dirname + '/lib'],
+                  includePaths: [__dirname + "/lib"],
                 },
                 sourceMap: isDevMode,
               },
@@ -66,26 +66,26 @@ module.exports = () => {
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.ts', '.tsx'],
-      modules: ['node_modules'],
+      extensions: [".js", ".jsx", ".json", ".scss", ".css", ".ts", ".tsx"],
+      modules: ["node_modules"],
     },
     plugins: [
       new HtmlWebpackPlugin({
-        'build-platform': process.platform,
-        'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
-          .stdout.toString('utf8')
-          .replace('\n', ''),
-        favicon: process.cwd() + '/public_html/favicon.ico',
-        'node-version': process.version,
-        template: 'index.ejs',
-        title: 'Simplenote',
+        "build-platform": process.platform,
+        "build-reference": spawnSync("git", ["describe", "--always", "--dirty"])
+          .stdout.toString("utf8")
+          .replace("\n", ""),
+        favicon: process.cwd() + "/public_html/favicon.ico",
+        "node-version": process.version,
+        template: "index.ejs",
+        title: "Simplenote",
       }),
       new MiniCssExtractPlugin({
-        filename: isDevMode ? '[name].css' : '[name].[hash].css',
-        chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
+        filename: isDevMode ? "[name].css" : "[name].[hash].css",
+        chunkFilename: isDevMode ? "[id].css" : "[id].[hash].css",
       }),
       new webpack.DefinePlugin({
-        __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),
+        __TEST__: JSON.stringify(process.env.NODE_ENV === "test"),
         config: JSON.stringify(config),
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),

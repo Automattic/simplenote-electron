@@ -1,6 +1,6 @@
-import SimpleDecorator from 'draft-js-simpledecorator';
+import SimpleDecorator from "draft-js-simpledecorator";
 
-import CssClassWrapper from './css-class-wrapper';
+import CssClassWrapper from "./css-class-wrapper";
 
 const matchIndices = (text, matcher) => {
   const chunks = [];
@@ -14,7 +14,7 @@ const matchIndices = (text, matcher) => {
 };
 
 const dispatch = (callback) => ([start, end]) =>
-  callback(start, end, { className: 'search-match' });
+  callback(start, end, { className: "search-match" });
 
 export const findMatchingText = (matcher) => (contentBlock, callback) => {
   const text = contentBlock.getText();

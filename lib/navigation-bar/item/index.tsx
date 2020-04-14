@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
 export const NavigationBarItem = ({
   icon,
@@ -8,13 +8,13 @@ export const NavigationBarItem = ({
   label,
   onClick,
 }) => {
-  const classes = classNames('navigation-bar-item', {
-    'is-selected': isSelected,
+  const classes = classNames("navigation-bar-item", {
+    "is-selected": isSelected,
   });
   const buttonClasses = classNames(
-    'button',
-    'button-borderless',
-    'theme-color-fg'
+    "button",
+    "button-borderless",
+    "theme-color-fg"
   );
 
   return (

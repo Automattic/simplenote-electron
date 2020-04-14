@@ -1,10 +1,10 @@
-import { SelectionState } from 'draft-js';
-import SimpleDecorator from 'draft-js-simpledecorator';
-import { get } from 'lodash';
+import { SelectionState } from "draft-js";
+import SimpleDecorator from "draft-js-simpledecorator";
+import { get } from "lodash";
 
-import Checkbox from '../components/checkbox';
-import { toggleInLine } from '../note-detail/toggle-task';
-import { taskRegex } from '../note-detail/toggle-task/constants';
+import Checkbox from "../components/checkbox";
+import { toggleInLine } from "../note-detail/toggle-task";
+import { taskRegex } from "../note-detail/toggle-task/constants";
 
 const checkboxDecorator = (replaceRangeWithText) => {
   const strategy = (contentBlock, callback) => {
@@ -15,7 +15,7 @@ const checkboxDecorator = (replaceRangeWithText) => {
       const leadingWhitespace = match[1];
       const taskPrefix = match[2];
 
-      const start = match.index + get(leadingWhitespace, 'length', 0);
+      const start = match.index + get(leadingWhitespace, "length", 0);
       const end = start + taskPrefix.length;
 
       const checked = /[xX]/.test(taskPrefix);

@@ -1,7 +1,7 @@
-import { isEmpty } from 'lodash';
-import Debug from 'debug';
+import { isEmpty } from "lodash";
+import Debug from "debug";
 
-const debug = Debug('localQueueStore');
+const debug = Debug("localQueueStore");
 
 function persist(bucket) {
   const { queues, sent } = getLocalQueue(bucket);

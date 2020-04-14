@@ -1,5 +1,5 @@
-import * as T from '../types';
-import { TKQItem, TracksAPI } from './types';
+import * as T from "../types";
+import { TKQItem, TracksAPI } from "./types";
 
 declare const TRACKS_COOKIE_DOMAIN: string | undefined;
 
@@ -31,25 +31,25 @@ function buildTracks() {
   let userLogin: string | null | undefined;
   const localCache: { [key: string]: string } = {};
   let context = {};
-  let pixel = 'https://pixel.wp.com/t.gif';
+  let pixel = "https://pixel.wp.com/t.gif";
   let cookieDomain: string | null = null;
-  const cookiePrefix = 'tk_';
-  const testCookie = 'tc';
-  const userNameCookie = 'ni';
-  const userAnonCookie = 'ai';
-  const queriesCookie = 'qs';
+  const cookiePrefix = "tk_";
+  const testCookie = "tc";
+  const userNameCookie = "ni";
+  const userAnonCookie = "ai";
+  const queriesCookie = "qs";
   const queriesTTL = 1800;
   const queriesPending: { [key: string]: boolean } = {};
 
   const getCookie = function (key: string) {
     const name = `${cookiePrefix}${encodeURIComponent(key).replace(
       /[-.+*]/g,
-      '\\$&'
+      "\\$&"
     )}`;
     const pattern = new RegExp(
       `(?:(?:^|.*;)\\s*${name}\\s*\\=\\s*([^;]*).*$)|^.*$`
     );
-    return decodeURIComponent(document.cookie.replace(pattern, '$1')) || null;
+    return decodeURIComponent(document.cookie.replace(pattern, "$1")) || null;
   };
 
   const checkCookieDomain = function (domain: string) {
@@ -61,23 +61,23 @@ function buildTracks() {
 
   const getCookieDomain = function () {
     if (cookieDomain === null) {
-      cookieDomain = '';
-      const host = document.location.host.toLowerCase().split(':')[0];
-      const tokens = host.split('.');
+      cookieDomain = "";
+      const host = document.location.host.toLowerCase().split(":")[0];
+      const tokens = host.split(".");
       let tryDomain: string;
-      if (typeof TRACKS_COOKIE_DOMAIN !== 'undefined') {
+      if (typeof TRACKS_COOKIE_DOMAIN !== "undefined") {
         cookieDomain = TRACKS_COOKIE_DOMAIN; // eslint-disable-line no-undef
       } else {
         for (let i = 1; i <= tokens.length; ++i) {
-          tryDomain = '.' + tokens.slice(-i).join('.');
+          tryDomain = "." + tokens.slice(-i).join(".");
           if (checkCookieDomain(tryDomain)) {
             cookieDomain = tryDomain;
             break;
           }
         }
       }
-      if (cookieDomain !== '') {
-        cookieDomain = '; domain=' + cookieDomain;
+      if (cookieDomain !== "") {
+        cookieDomain = "; domain=" + cookieDomain;
       }
     }
     return cookieDomain;
@@ -90,10 +90,10 @@ function buildTracks() {
     date.setTime(date.getTime() + seconds * 1e3);
     document.cookie =
       name +
-      '=' +
+      "=" +
       encodeURIComponent(value) +
       getCookieDomain() +
-      '; path=/; expires=' +
+      "; path=/; expires=" +
       date.toUTCString();
   };
 
@@ -108,9 +108,9 @@ function buildTracks() {
 
   const loadWpcomIdentity = function () {
     const wpcomCookie =
-      getCookie('wordpress') ||
-      getCookie('wordpress_sec') ||
-      getCookie('wordpress_loggedin');
+      getCookie("wordpress") ||
+      getCookie("wordpress_sec") ||
+      getCookie("wordpress_loggedin");
     if (wpcomCookie) {
       return get(userNameCookie);
     }
@@ -138,9 +138,9 @@ function buildTracks() {
     }
     userId = loadWpcomIdentity();
     if (userId) {
-      userIdType = 'wpcom:user_id';
+      userIdType = "wpcom:user_id";
     } else {
-      userIdType = 'anon';
+      userIdType = "anon";
       userId = get(userAnonCookie);
       if (!userId) {
         userId = newAnonId();
@@ -151,7 +151,7 @@ function buildTracks() {
 
   const getQueries = function () {
     var queries = get(queriesCookie);
-    return queries ? queries.split(' ') : [];
+    return queries ? queries.split(" ") : [];
   };
 
   const bot = function () {
@@ -162,10 +162,10 @@ function buildTracks() {
   };
 
   const saveQueries = function (queries: string[]) {
-    while (queries.join(' ').length > 2048) {
+    while (queries.join(" ").length > 2048) {
       queries = queries.slice(1);
     }
-    set(queriesCookie, queries.join(' '), queriesTTL);
+    set(queriesCookie, queries.join(" "), queriesTTL);
   };
 
   const removeQuery = function (query: string) {
@@ -203,7 +203,7 @@ function buildTracks() {
         }
       };
       // Add request timestamp just before the request
-      img.src = pixel + '?' + query + '&_rt=' + new Date().getTime() + '&_=_';
+      img.src = pixel + "?" + query + "&_rt=" + new Date().getTime() + "&_=_";
     }
   };
 
@@ -213,8 +213,8 @@ function buildTracks() {
 
   // Deep copy, optionally into another object
   const clone = function (obj: any, target?: any) {
-    if (obj === null || 'object' !== typeof obj) return obj;
-    if (target === null || 'object' !== typeof target)
+    if (obj === null || "object" !== typeof obj) return obj;
+    if (target === null || "object" !== typeof target)
       target = obj.constructor();
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -229,11 +229,11 @@ function buildTracks() {
     for (const p in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, p)) {
         str.push(
-          encodeURIComponent(p) + '=' + encodeURIComponent((obj as any)[p])
+          encodeURIComponent(p) + "=" + encodeURIComponent((obj as any)[p])
         );
       }
     }
-    return str.join('&');
+    return str.join("&");
   };
 
   const send = function (query: Query) {
@@ -287,7 +287,7 @@ function buildTracks() {
     eventName: string,
     eventProps: T.JSONSerializable
   ) {
-    if ('_setProperties' === eventName) {
+    if ("_setProperties" === eventName) {
       return;
     }
 
@@ -303,8 +303,8 @@ function buildTracks() {
     }
 
     if (
-      '0' === newUserId ||
-      '' === newUserId ||
+      "0" === newUserId ||
+      "" === newUserId ||
       null === newUserId ||
       userId === newUserId
     ) {
@@ -312,34 +312,34 @@ function buildTracks() {
     }
 
     userId = newUserId;
-    userIdType = 'wpcom:user_id';
+    userIdType = "wpcom:user_id";
     set(userNameCookie, userId);
     const anonId = get(userAnonCookie);
     if (anonId) {
       send({
-        _en: '_aliasUser',
+        _en: "_aliasUser",
         anonId: anonId,
       });
     }
-    set(userAnonCookie, '', -1);
+    set(userAnonCookie, "", -1);
   };
 
   const clearIdentity = function () {
     userId = null;
     userLogin = null;
-    set(userNameCookie, '', -1);
-    set(userAnonCookie, '', -1);
+    set(userNameCookie, "", -1);
+    set(userAnonCookie, "", -1);
     loadIdentity();
   };
 
   const setProperties = function (properties: Query) {
-    properties._en = '_setProperties';
+    properties._en = "_setProperties";
 
     send(properties);
   };
 
   const storeContext = function (c: object) {
-    if ('object' !== typeof c) {
+    if ("object" !== typeof c) {
       return;
     }
     context = c;
@@ -375,11 +375,11 @@ function buildTracks() {
 
   TKQ.prototype.push = function (args: TKQItem) {
     if (args) {
-      if ('object' === typeof args && args.length) {
+      if ("object" === typeof args && args.length) {
         const cmd = args.splice(0, 1);
         // @ts-ignore
         if (API[cmd]) API[cmd].apply(null, args);
-      } else if ('function' === typeof args) {
+      } else if ("function" === typeof args) {
         args();
       }
     }

@@ -1,13 +1,13 @@
-import { createElement } from 'react';
-import { range } from 'lodash';
-import PropTypes from 'prop-types';
+import { createElement } from "react";
+import { range } from "lodash";
+import PropTypes from "prop-types";
 
 const PanelTitle = (props) => {
   const { children, headingLevel = 3 } = props;
 
   return createElement(
     `h${headingLevel}`,
-    { className: 'panel-title theme-color-fg-dim' },
+    { className: "panel-title theme-color-fg-dim" },
     children
   );
 };

@@ -1,4 +1,4 @@
-import simperium from './simperium';
+import simperium from "./simperium";
 
 let client;
 

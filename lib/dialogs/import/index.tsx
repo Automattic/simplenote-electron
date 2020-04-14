@@ -1,18 +1,18 @@
-import React, { Component, Suspense } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { Component, Suspense } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import Dialog from '../../dialog';
-import ImportSourceSelector from './source-selector';
-import TransitionFadeInOut from '../../components/transition-fade-in-out';
-import TransitionDelayEnter from '../../components/transition-delay-enter';
-import Spinner from '../../components/spinner';
-import { closeDialog } from '../../state/ui/actions';
+import Dialog from "../../dialog";
+import ImportSourceSelector from "./source-selector";
+import TransitionFadeInOut from "../../components/transition-fade-in-out";
+import TransitionDelayEnter from "../../components/transition-delay-enter";
+import Spinner from "../../components/spinner";
+import { closeDialog } from "../../state/ui/actions";
 
-import * as S from '../../state';
+import * as S from "../../state";
 
 const SourceImporter = React.lazy(() =>
-  import(/* webpackChunkName: 'source-importer' */ './source-importer')
+  import(/* webpackChunkName: 'source-importer' */ "./source-importer")
 );
 
 type DispatchProps = {
@@ -50,7 +50,7 @@ class ImportDialog extends Component<Props> {
     return (
       <Dialog
         className="import"
-        closeBtnLabel={importStarted ? '' : 'Cancel'}
+        closeBtnLabel={importStarted ? "" : "Cancel"}
         onDone={importStarted ? undefined : closeDialog}
         title="Import Notes"
       >

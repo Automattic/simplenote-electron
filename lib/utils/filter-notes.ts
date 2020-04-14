@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { difference, escapeRegExp, get } from 'lodash';
+import { difference, escapeRegExp, get } from "lodash";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 const tagPattern = () => /(?:\btag:)([^\s,]+)/g;
 
-export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
+export const withoutTags = (s: string) => s.replace(tagPattern(), "").trim();
 export const filterHasText = (searchQuery: string) =>
   !!withoutTags(searchQuery);
 
@@ -21,7 +21,7 @@ export const getTerms = (filterText: string): string[] => {
   const boundaryPattern = /[\b\s]/g;
 
   let match;
-  let withoutLiterals = '';
+  let withoutLiterals = "";
 
   const filter = withoutTags(filterText);
 
@@ -51,19 +51,19 @@ export const searchPattern = (searchQuery: string) => {
   const terms = getTerms(withoutTags(searchQuery));
 
   if (!terms.length) {
-    return new RegExp('.+', 'g');
+    return new RegExp(".+", "g");
   }
 
   return new RegExp(
-    `(?:${terms.map((word) => `(?:${escapeRegExp(word)})`).join('|')})`,
-    'gi'
+    `(?:${terms.map((word) => `(?:${escapeRegExp(word)})`).join("|")})`,
+    "gi"
   );
 };
 
 const matchesTrashView = (isViewingTrash: boolean) => (note: T.NoteEntity) =>
-  isViewingTrash === !!get(note, 'data.deleted', false);
+  isViewingTrash === !!get(note, "data.deleted", false);
 
-const makeMatchesTag = (tag: T.TagEntity | null, searchQuery = '') => (
+const makeMatchesTag = (tag: T.TagEntity | null, searchQuery = "") => (
   note: T.NoteEntity
 ) => {
   let filterTags = [];
@@ -78,16 +78,16 @@ const makeMatchesTag = (tag: T.TagEntity | null, searchQuery = '') => (
     }
   }
 
-  const givenTag = tag ? [get(tag, 'data.name', '')] : [];
+  const givenTag = tag ? [get(tag, "data.name", "")] : [];
 
-  const noteTags = get(note, 'data.tags', []);
+  const noteTags = get(note, "data.tags", []);
 
   const missingTags = difference([...filterTags, ...givenTag], noteTags);
 
   return missingTags.length === 0;
 };
 
-const makeMatchesSearch = (searchQuery = '') => (content: string) => {
+const makeMatchesSearch = (searchQuery = "") => (content: string) => {
   if (!searchQuery) {
     return true;
   }
@@ -97,7 +97,7 @@ const makeMatchesSearch = (searchQuery = '') => (content: string) => {
   }
 
   return getTerms(searchQuery).every((term) =>
-    new RegExp(escapeRegExp(term), 'gi').test(content)
+    new RegExp(escapeRegExp(term), "gi").test(content)
   );
 };
 
@@ -136,7 +136,7 @@ export default function filterNotes(
   const matchesFilter = (note: T.NoteEntity) =>
     matchesTrash(note) &&
     matchesTag(note) &&
-    matchesSearch(get(note, ['data', 'content']));
+    matchesSearch(get(note, ["data", "content"]));
 
   notesToFilter.forEach((note: T.NoteEntity) => {
     if (!matchesFilter(note)) {
@@ -145,7 +145,7 @@ export default function filterNotes(
 
     // the search matches the note but we want to prioritize
     // results that match the search query in the "title"
-    const title = get(note, ['data', 'content'], '').split('\n')[0];
+    const title = get(note, ["data", "content"], "").split("\n")[0];
 
     if (matchesSearch(title)) {
       titleMatches.push(note);

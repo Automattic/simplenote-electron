@@ -1,10 +1,10 @@
-import { EditorState, Modifier } from 'draft-js';
-import { includes } from 'lodash';
+import { EditorState, Modifier } from "draft-js";
+import { includes } from "lodash";
 
-import { getCurrentBlock } from './utils';
+import { getCurrentBlock } from "./utils";
 
 export const isLonelyBullet = (line) =>
-  includes(['-', '*', '+', '- [ ]', '- [x]', '\u2022'], line.trim());
+  includes(["-", "*", "+", "- [ ]", "- [x]", "\u2022"], line.trim());
 
 export function indentCurrentBlock(editorState) {
   const selection = editorState.getSelection();
@@ -25,9 +25,9 @@ export function indentCurrentBlock(editorState) {
             focusOffset: offset,
           })
         : selection,
-      '\t'
+      "\t"
     ),
-    'insert-characters'
+    "insert-characters"
   );
 
   // move selection to where it was
@@ -51,7 +51,7 @@ export function outdentCurrentBlock(editorState) {
 
   const prevChar = line.slice(rangeStart, rangeEnd);
   // there's no indentation to remove
-  if (prevChar !== '\t') {
+  if (prevChar !== "\t") {
     return editorState;
   }
 
@@ -65,7 +65,7 @@ export function outdentCurrentBlock(editorState) {
         focusOffset: rangeEnd,
       })
     ),
-    'remove-range'
+    "remove-range"
   );
 
   // move selection to where it was
@@ -89,7 +89,7 @@ export function finishList(editorState) {
         focusOffset: getCurrentBlock(editorState).getLength(),
       })
     ),
-    'remove-range'
+    "remove-range"
   );
 
   // move selection to the start of the line
@@ -107,7 +107,7 @@ export function continueList(editorState, itemPrefix) {
       editorState.getCurrentContent(),
       editorState.getSelection()
     ),
-    'split-block'
+    "split-block"
   );
 
   // insert `- ` in the new line
@@ -118,7 +118,7 @@ export function continueList(editorState, itemPrefix) {
       withNewLine.getCurrentContent().getSelectionAfter(),
       itemPrefix
     ),
-    'insert-characters'
+    "insert-characters"
   );
 
   // move selection to the end of the new line

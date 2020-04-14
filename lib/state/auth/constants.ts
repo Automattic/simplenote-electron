@@ -1,6 +1,6 @@
 export type AuthState =
-  | 'authorized'
-  | 'authorizing'
-  | 'invalid-credentials'
-  | 'login-error'
-  | 'not-authorized';
+  | "authorized"
+  | "authorizing"
+  | "invalid-credentials"
+  | "login-error"
+  | "not-authorized";

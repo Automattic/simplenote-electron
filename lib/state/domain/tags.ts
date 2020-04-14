@@ -1,5 +1,5 @@
-import { noteBucket, tagBucket } from './buckets';
-import appState from '../../flux/app-state';
+import { noteBucket, tagBucket } from "./buckets";
+import appState from "../../flux/app-state";
 
 const { tagsLoaded } = appState.actionCreators;
 
@@ -8,9 +8,9 @@ export const loadTags = () => (dispatch, getState) => {
   tagBucket().query((db) => {
     var tags = [];
     db
-      .transaction('tag')
-      .objectStore('tag')
-      .openCursor(null, 'prev').onsuccess = (e) => {
+      .transaction("tag")
+      .objectStore("tag")
+      .openCursor(null, "prev").onsuccess = (e) => {
       var cursor = e.target.result;
       if (cursor) {
         tags.push(cursor.value);

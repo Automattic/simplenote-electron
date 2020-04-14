@@ -1,11 +1,11 @@
-import { Modifier } from 'draft-js';
-import { get, includes } from 'lodash';
+import { Modifier } from "draft-js";
+import { get, includes } from "lodash";
 
-import { getCurrentBlock } from './utils';
-import { taskRegex } from '../note-detail/toggle-task/constants';
+import { getCurrentBlock } from "./utils";
+import { taskRegex } from "../note-detail/toggle-task/constants";
 
 const getBlockText = (editorState, key) =>
-  get(editorState.getCurrentContent().getBlockForKey(key), 'text', null);
+  get(editorState.getCurrentContent().getBlockForKey(key), "text", null);
 
 /**
  * Determine whether there is a checkbox remnant that should be removed.
@@ -18,12 +18,12 @@ export const shouldRemoveCheckbox = (editorState, prevEditorState) => {
   const prevBlockText = getBlockText(prevEditorState, currentBlock.getKey());
   const contentHasChanged = currentBlockText !== prevBlockText;
 
-  if (!contentHasChanged || currentBlockText === '') {
+  if (!contentHasChanged || currentBlockText === "") {
     return false;
   }
 
   const backspaced = includes(
-    ['backspace-character', 'remove-range'],
+    ["backspace-character", "remove-range"],
     editorState.getLastChangeType()
   );
   const ceasedToBeTask =
@@ -53,16 +53,16 @@ export const removeCheckbox = (editorState, prevEditorState) => {
     return Modifier.insertText(
       editorState.getCurrentContent(),
       editorState.getSelection(),
-      ' '
+      " "
     );
   }
 
-  const firstHyphenOffset = get(currentBlockText.match('-'), 'index', 0);
+  const firstHyphenOffset = get(currentBlockText.match("-"), "index", 0);
   return Modifier.removeRange(
     editorState.getCurrentContent(),
     editorState.getSelection().merge({
       anchorOffset: firstHyphenOffset,
     }),
-    'backward'
+    "backward"
   );
 };

@@ -1,21 +1,21 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import Modal from 'react-modal';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import Modal from "react-modal";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
-import AboutDialog from '../dialogs/about';
-import ImportDialog from '../dialogs/import';
-import SettingsDialog from '../dialogs/settings';
-import ShareDialog from '../dialogs/share';
-import { closeDialog } from '../state/ui/actions';
+import AboutDialog from "../dialogs/about";
+import ImportDialog from "../dialogs/import";
+import SettingsDialog from "../dialogs/settings";
+import ShareDialog from "../dialogs/share";
+import { closeDialog } from "../state/ui/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type OwnProps = {
   appProps: object;
-  buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
+  buckets: Record<"noteBucket" | "tagBucket" | "preferencesBucket", T.Bucket>;
   themeClass: string;
   isElectron: boolean;
   isMacApp: boolean;
@@ -32,7 +32,7 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class DialogRenderer extends Component<Props> {
-  static displayName = 'DialogRenderer';
+  static displayName = "DialogRenderer";
 
   render() {
     const {
@@ -54,17 +54,17 @@ export class DialogRenderer extends Component<Props> {
             isOpen
             onRequestClose={closeDialog}
             overlayClassName="dialog-renderer__overlay"
-            portalClassName={classNames('dialog-renderer__portal', themeClass)}
+            portalClassName={classNames("dialog-renderer__portal", themeClass)}
           >
-            {'ABOUT' === dialog ? (
+            {"ABOUT" === dialog ? (
               <AboutDialog key="about" />
-            ) : 'IMPORT' === dialog ? (
+            ) : "IMPORT" === dialog ? (
               <ImportDialog
                 key="import"
                 buckets={buckets}
                 isElectron={isElectron}
               />
-            ) : 'SETTINGS' === dialog ? (
+            ) : "SETTINGS" === dialog ? (
               <SettingsDialog
                 key="settings"
                 buckets={buckets}
@@ -72,7 +72,7 @@ export class DialogRenderer extends Component<Props> {
                 isMacApp={isMacApp}
                 {...appProps}
               />
-            ) : 'SHARE' === dialog ? (
+            ) : "SHARE" === dialog ? (
               <ShareDialog key="share" />
             ) : null}
           </Modal>

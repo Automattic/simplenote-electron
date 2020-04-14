@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 const ImportProgressText = (props) => {
   const { currentValue, isDone } = props;
 
-  const unit = currentValue === 1 ? 'note' : 'notes';
+  const unit = currentValue === 1 ? "note" : "notes";
   let text;
 
   if (isDone) {
@@ -12,7 +12,7 @@ const ImportProgressText = (props) => {
   } else {
     text = currentValue
       ? `${currentValue} ${unit} imported...`
-      : 'Importing...';
+      : "Importing...";
   }
 
   return (

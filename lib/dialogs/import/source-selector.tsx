@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { reject } from 'lodash';
+import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+import { reject } from "lodash";
 
-import PanelTitle from '../../components/panel-title';
-import ButtonGroup from '../button-group';
+import PanelTitle from "../../components/panel-title";
+import ButtonGroup from "../button-group";
 
-import sources from './sources';
+import sources from "./sources";
 
 const ImportSourceSelector = ({ isElectron, selectSource }) => {
   return (

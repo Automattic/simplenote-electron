@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import ProgressBar from '../../../../components/progress-bar';
+import ProgressBar from "../../../../components/progress-bar";
 
 class ImportProgressBar extends React.Component {
   static propTypes = {

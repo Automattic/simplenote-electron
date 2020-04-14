@@ -1,10 +1,10 @@
-import actions from '../state/actions';
-import { init, updateFilter } from './worker';
-import { filterTags } from '../tag-suggestions';
+import actions from "../state/actions";
+import { init, updateFilter } from "./worker";
+import { filterTags } from "../tag-suggestions";
 
-import * as A from '../state/action-types';
-import * as S from '../state';
-import * as T from '../types';
+import * as A from "../state/action-types";
+import * as S from "../state";
+import * as T from "../types";
 
 const emptyList = [] as T.NoteEntity[];
 
@@ -36,7 +36,7 @@ export const middleware: S.Middleware = (store) => {
 
   searchProcessor.onmessage = (event) => {
     switch (event.data.action) {
-      case 'filterNotes': {
+      case "filterNotes": {
         setFilteredNotes(event.data.noteIds);
         break;
       }
@@ -50,11 +50,11 @@ export const middleware: S.Middleware = (store) => {
     const result = next(action);
 
     switch (action.type) {
-      case 'App.notesLoaded':
+      case "App.notesLoaded":
         if (!hasInitialized) {
           action.notes.forEach((note) =>
             searchProcessor.postMessage({
-              action: 'updateNote',
+              action: "updateNote",
               noteId: note.id,
               data: note.data,
             })
@@ -62,56 +62,56 @@ export const middleware: S.Middleware = (store) => {
 
           hasInitialized = true;
         }
-        searchProcessor.postMessage({ action: 'filterNotes' });
+        searchProcessor.postMessage({ action: "filterNotes" });
         break;
 
-      case 'REMOTE_NOTE_UPDATE':
+      case "REMOTE_NOTE_UPDATE":
         searchProcessor.postMessage({
-          action: 'updateNote',
+          action: "updateNote",
           noteId: action.noteId,
           data: action.data,
         });
         break;
 
-      case 'OPEN_TAG':
+      case "OPEN_TAG":
         searchProcessor.postMessage({
-          action: 'filterNotes',
+          action: "filterNotes",
           openedTag: action.tag.data.name,
         });
         break;
 
-      case 'SELECT_TRASH':
+      case "SELECT_TRASH":
         searchProcessor.postMessage({
-          action: 'filterNotes',
+          action: "filterNotes",
           openedTag: null,
           showTrash: true,
         });
         break;
 
-      case 'SHOW_ALL_NOTES':
+      case "SHOW_ALL_NOTES":
         searchProcessor.postMessage({
-          action: 'filterNotes',
+          action: "filterNotes",
           openedTag: null,
           showTrash: false,
         });
         break;
 
-      case 'SEARCH':
+      case "SEARCH":
         searchProcessor.postMessage({
-          action: 'filterNotes',
+          action: "filterNotes",
           searchQuery: action.searchQuery,
         });
         break;
 
-      case 'DELETE_NOTE_FOREVER':
-      case 'RESTORE_NOTE':
-      case 'TRASH_NOTE':
-      case 'App.trashNote':
-        setFilteredNotes(updateFilter('fullSearch'), action.previousIndex);
+      case "DELETE_NOTE_FOREVER":
+      case "RESTORE_NOTE":
+      case "TRASH_NOTE":
+      case "App.trashNote":
+        setFilteredNotes(updateFilter("fullSearch"), action.previousIndex);
         break;
 
-      case 'App.authChanged':
-        setFilteredNotes(updateFilter('fullSearch'));
+      case "App.authChanged":
+        setFilteredNotes(updateFilter("fullSearch"));
         break;
     }
 

@@ -1,15 +1,15 @@
-import { EventEmitter } from 'events';
-import { createStream } from 'sax';
-import parseISO from 'date-fns/parseISO';
-import { endsWith, get, has } from 'lodash';
+import { EventEmitter } from "events";
+import { createStream } from "sax";
+import parseISO from "date-fns/parseISO";
+import { endsWith, get, has } from "lodash";
 
-import CoreImporter from '../';
-import enmlToMarkdown from './enml-to-markdown';
+import CoreImporter from "../";
+import enmlToMarkdown from "./enml-to-markdown";
 
 let fs = null;
-const isElectron = has(window, 'process.type');
+const isElectron = has(window, "process.type");
 if (isElectron) {
-  fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
+  fs = __non_webpack_require__("fs"); // eslint-disable-line no-undef
 }
 
 class EvernoteImporter extends EventEmitter {
@@ -22,17 +22,17 @@ class EvernoteImporter extends EventEmitter {
 
   importNotes = (filesArray) => {
     if (!filesArray || filesArray.length === 0) {
-      this.emit('status', 'error', 'Invalid Evernote export file.');
+      this.emit("status", "error", "Invalid Evernote export file.");
     }
 
     // We will always process only the first item in the array
     const file = filesArray[0];
     if (!file || !file.path) {
-      this.emit('status', 'error', 'Could not find Evernote export file.');
+      this.emit("status", "error", "Could not find Evernote export file.");
     }
 
-    if (!file.path || !endsWith(file.path.toLowerCase(), '.enex')) {
-      this.emit('status', 'error', 'An Evernote .enex file is required.');
+    if (!file.path || !endsWith(file.path.toLowerCase(), ".enex")) {
+      this.emit("status", "error", "An Evernote .enex file is required.");
       return;
     }
 
@@ -45,71 +45,71 @@ class EvernoteImporter extends EventEmitter {
     let currentNote = {}; // The current note we are parsing
     let importedNoteCount = 0;
 
-    saxStream.on('error', function () {
-      this.emit('status', 'error', 'Error processing Evernote data.');
+    saxStream.on("error", function () {
+      this.emit("status", "error", "Error processing Evernote data.");
     });
 
-    saxStream.on('opentag', (node) => {
+    saxStream.on("opentag", (node) => {
       // The <note> tag signifies that we should parse another note
-      if (node.name === 'note') {
+      if (node.name === "note") {
         currentNote = { tags: [] };
       }
     });
 
-    saxStream.on('cdata', (text) => {
+    saxStream.on("cdata", (text) => {
       // Note content in evernote exports lives in CDATA
-      const htmlDoc = parser.parseFromString(text, 'text/html');
+      const htmlDoc = parser.parseFromString(text, "text/html");
 
       // We're only interested in 'note' doctypes, like 'en-note'
-      if (!endsWith(get(htmlDoc, 'doctype.name', ''), 'note')) {
+      if (!endsWith(get(htmlDoc, "doctype.name", ""), "note")) {
         return;
       }
 
       const strippedText = enmlToMarkdown(htmlDoc.body.innerHTML);
-      if (strippedText !== '') {
-        currentNote.content += '\n' + strippedText;
+      if (strippedText !== "") {
+        currentNote.content += "\n" + strippedText;
       }
     });
 
-    saxStream.on('text', (text) => {
+    saxStream.on("text", (text) => {
       if (!text) {
         return;
       }
 
       const tagName = saxStream._parser.tagName;
       switch (tagName) {
-        case 'title':
+        case "title":
           // Evernote titles appear to be plain text only, we can take it as-is
           currentNote.content = text;
           break;
         // We need to convert the date to a Unix timestamp
-        case 'created':
+        case "created":
           currentNote.creationDate = this.getConvertedDate(text);
           break;
-        case 'updated':
+        case "updated":
           currentNote.modificationDate = this.getConvertedDate(text);
           break;
-        case 'tag':
+        case "tag":
           currentNote.tags.push(text);
       }
     });
 
-    saxStream.on('closetag', (node) => {
+    saxStream.on("closetag", (node) => {
       // Add the currentNote to the array
-      if (node === 'note') {
+      if (node === "note") {
         coreImporter.importNote(currentNote, this.options);
         importedNoteCount++;
-        this.emit('status', 'progress', importedNoteCount);
+        this.emit("status", "progress", importedNoteCount);
       }
     });
 
-    saxStream.on('end', () => {
+    saxStream.on("end", () => {
       if (importedNoteCount === 0) {
-        this.emit('status', 'error', 'No notes were found to import.');
+        this.emit("status", "error", "No notes were found to import.");
         return;
       }
 
-      this.emit('status', 'complete', importedNoteCount);
+      this.emit("status", "complete", importedNoteCount);
     });
 
     // Read the file via stream

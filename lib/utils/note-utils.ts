@@ -1,7 +1,7 @@
-import removeMarkdown from 'remove-markdown';
-import { isFunction } from 'lodash';
+import removeMarkdown from "remove-markdown";
+import { isFunction } from "lodash";
 
-import * as T from '../types';
+import * as T from "../types";
 
 export interface TitleAndPreview {
   title: string;
@@ -12,7 +12,7 @@ export const maxTitleChars = 64;
 export const maxPreviewChars = 200;
 const maxPreviewLines = 4; // probably need to adjust if we're in the comfy view
 
-const matchUntilLimit = (pattern, source, preview = '', lines = 0) => {
+const matchUntilLimit = (pattern, source, preview = "", lines = 0) => {
   const match = pattern.exec(source);
   // must match, must have no more than four lines, must not be longer than N=10 characters
   if (!match || lines > maxPreviewLines || preview.length > maxPreviewChars) {
@@ -32,16 +32,16 @@ const matchUntilLimit = (pattern, source, preview = '', lines = 0) => {
 const removeMarkdownWithFix = (inputString) => {
   // Workaround for a bug in `remove-markdown`
   // See https://github.com/stiang/remove-markdown/issues/35
-  return removeMarkdown(inputString.replace(/(\s)\s+/g, '$1'), {
+  return removeMarkdown(inputString.replace(/(\s)\s+/g, "$1"), {
     stripListLeaders: false,
   });
 };
 
 const getTitle = (content) => {
-  const titlePattern = new RegExp(`\\s*([^\n]{1,${maxTitleChars}})`, 'g');
+  const titlePattern = new RegExp(`\\s*([^\n]{1,${maxTitleChars}})`, "g");
   const titleMatch = titlePattern.exec(content);
   if (!titleMatch) {
-    return 'New Note…';
+    return "New Note…";
   }
   const [, title] = titleMatch;
   return title;
@@ -50,7 +50,7 @@ const getTitle = (content) => {
 const getPreview = (content) => {
   const previewPattern = new RegExp(
     `[^\n]*\n+[ \t]*([^]{0,${maxPreviewChars}})`,
-    'g'
+    "g"
   );
   return matchUntilLimit(previewPattern, content);
 };
@@ -65,7 +65,7 @@ const formatPreview = (stripMarkdown: boolean, s: string): string =>
  * @returns {Object} title and excerpt (if available)
  */
 export const noteTitleAndPreview = (note: T.NoteEntity): TitleAndPreview => {
-  const content = (note && note.data && note.data.content) || '';
+  const content = (note && note.data && note.data.content) || "";
   const stripMarkdown = isMarkdown(note);
   const title = formatPreview(stripMarkdown, getTitle(content));
   const preview = formatPreview(stripMarkdown, getPreview(content));
@@ -73,7 +73,7 @@ export const noteTitleAndPreview = (note: T.NoteEntity): TitleAndPreview => {
 };
 
 function isMarkdown(note: T.NoteEntity): boolean {
-  return note && note.data && note.data.systemTags.includes('markdown');
+  return note && note.data && note.data.systemTags.includes("markdown");
 }
 
 /**
@@ -86,8 +86,8 @@ export const normalizeForSorting = (text) => {
   const maxLength = 200;
 
   let normalizedText = text
-    .replace(/^\s*#+\s*/, '') // Remove leading whitespace and Markdown heading
-    .replace(/\s+/g, ' ')
+    .replace(/^\s*#+\s*/, "") // Remove leading whitespace and Markdown heading
+    .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength)
     .toLowerCase();
@@ -96,8 +96,8 @@ export const normalizeForSorting = (text) => {
   // if `normalize()` is available.
   if (isFunction(normalizedText.normalize)) {
     normalizedText = normalizedText
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   }
 
   return normalizedText;

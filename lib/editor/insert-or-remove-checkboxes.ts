@@ -1,7 +1,7 @@
-import { EditorState, Modifier, SelectionState } from 'draft-js';
-import { get } from 'lodash';
+import { EditorState, Modifier, SelectionState } from "draft-js";
+import { get } from "lodash";
 
-import { taskRegex } from '../note-detail/toggle-task/constants';
+import { taskRegex } from "../note-detail/toggle-task/constants";
 
 /**
  * Insert/remove checkbox on current line(s)
@@ -29,7 +29,7 @@ export default function insertOrRemoveCheckboxes(editorState) {
   const newEditorState = EditorState.push(
     editorState,
     newContentState,
-    'insert-characters'
+    "insert-characters"
   );
   const adjustedSelection = adjustSelectionState(
     selection,
@@ -67,7 +67,7 @@ export function insertOrRemoveForBlock(blockKey, contentState) {
     newContentState = Modifier.removeRange(
       contentState,
       rangeToRemove,
-      'backward'
+      "backward"
     );
   } else {
     // Insert task prefix (preserving leading whitespace)
@@ -76,7 +76,7 @@ export function insertOrRemoveForBlock(blockKey, contentState) {
       anchorOffset: leadingWhitespaceLength,
       focusOffset: leadingWhitespaceLength,
     });
-    newContentState = Modifier.insertText(contentState, targetRange, '- [ ] ');
+    newContentState = Modifier.insertText(contentState, targetRange, "- [ ] ");
   }
 
   return newContentState;
@@ -99,7 +99,7 @@ export function adjustSelectionState(
   // Workaround for inconsistencies in whether `focusKey` returns a string or block
   const focusBlockKey = get(
     selectionState.focusKey,
-    'key',
+    "key",
     selectionState.focusKey
   );
 

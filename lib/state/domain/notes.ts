@@ -1,7 +1,7 @@
-import { noteBucket } from './buckets';
-import isEmailTag from '../../utils/is-email-tag';
-import { createTag } from './tags';
-import * as T from '../../types';
+import { noteBucket } from "./buckets";
+import isEmailTag from "../../utils/is-email-tag";
+import { createTag } from "./tags";
+import * as T from "../../types";
 
 export const toggleSystemTag = (
   note: T.NoteEntity,

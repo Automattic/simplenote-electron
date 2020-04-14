@@ -12,7 +12,7 @@ type Entity<T> = {
 };
 
 export type TagName = string;
-export type SystemTag = 'markdown' | 'pinned' | 'published' | 'shared';
+export type SystemTag = "markdown" | "pinned" | "published" | "shared";
 
 export type Note = {
   content: string;
@@ -61,11 +61,11 @@ export type Bucket<T = unknown> = {
 ///////////////////////////////////////
 // Application Types
 ///////////////////////////////////////
-export type DialogType = 'ABOUT' | 'IMPORT' | 'SETTINGS' | 'SHARE';
-export type LineLength = 'full' | 'narrow';
-export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
-export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
-export type Theme = 'system' | 'light' | 'dark';
+export type DialogType = "ABOUT" | "IMPORT" | "SETTINGS" | "SHARE";
+export type LineLength = "full" | "narrow";
+export type ListDisplayMode = "expanded" | "comfy" | "condensed";
+export type SortType = "alphabetical" | "creationDate" | "modificationDate";
+export type Theme = "system" | "light" | "dark";
 export type TranslatableString = string;
 
 ///////////////////////////////////////

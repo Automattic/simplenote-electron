@@ -1,7 +1,7 @@
-import sanitize from 'sanitize-filename';
-import { identity, update } from 'lodash';
+import sanitize from "sanitize-filename";
+import { identity, update } from "lodash";
 
-import { LF_ONLY_NEWLINES } from './export-notes';
+import { LF_ONLY_NEWLINES } from "./export-notes";
 
 const FILENAME_LENGTH = 40;
 const TAG_LINE_LENGTH = 75;
@@ -19,11 +19,11 @@ const TAG_LINE_LENGTH = 75;
 const addFilename = (note) => ({
   ...note,
   fileName: note.content
-    .split('\n') // base filename off of a single line
+    .split("\n") // base filename off of a single line
     .map((line) => line.trim()) // and ignore leading/trailing spaces
     .map(sanitize) // strip away any invalid characters for a filename (such as `/`)
     .filter(identity) // remove blank lines
-    .concat('untitled') // use this as a default if there are no non-blank lines
+    .concat("untitled") // use this as a default if there are no non-blank lines
     .shift() // take the first remaining line
     .slice(0, FILENAME_LENGTH), // and truncate to some reasonable number of characters
 });
@@ -63,14 +63,14 @@ const appendTags = (note) => {
         lastLine.length + tag.length > TAG_LINE_LENGTH // is line full (width)?
           ? [[...lines, lastLine], tag] // if so, then start a new line
           : [lines, `${lastLine}, ${tag}`], // else continue the previous line
-      [[], '']
+      [[], ""]
     )
     .reduce((a, b) => [...a, b]) // join trailing line from reduction
-    .map((line) => line.replace(/^, /, '')); // remove leading commas
+    .map((line) => line.replace(/^, /, "")); // remove leading commas
 
   return {
     ...note,
-    content: `${note.content}\n\nTags:\n  ${tagLines.join('\n  ')}`,
+    content: `${note.content}\n\nTags:\n  ${tagLines.join("\n  ")}`,
   };
 };
 
@@ -96,13 +96,13 @@ const toUniqueNames = ([notes, nameCounts], note) => {
 };
 
 export const noteExportToZip = (notes) => {
-  return import(/* webpackChunkName: 'jszip' */ 'jszip')
+  return import(/* webpackChunkName: 'jszip' */ "jszip")
     .then(({ default: JSZip }) => {
       const zip = new JSZip();
 
       zip.file(
-        'source/notes.json',
-        JSON.stringify(notes, null, 2).replace(LF_ONLY_NEWLINES, '\r\n')
+        "source/notes.json",
+        JSON.stringify(notes, null, 2).replace(LF_ONLY_NEWLINES, "\r\n")
       );
 
       notes.activeNotes

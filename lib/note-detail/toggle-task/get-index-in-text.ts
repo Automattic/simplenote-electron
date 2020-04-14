@@ -1,10 +1,10 @@
-import cryptoRandomString from '../../utils/crypto-random-string';
-import { renderNoteToHtml } from '../../utils/render-note-to-html';
-import { selectors, taskRegex } from './constants';
+import cryptoRandomString from "../../utils/crypto-random-string";
+import { renderNoteToHtml } from "../../utils/render-note-to-html";
+import { selectors, taskRegex } from "./constants";
 
 const uniquelyIdTasks = (text) => {
   const textWithIds = {
-    text: '',
+    text: "",
     ids: [],
   };
 
@@ -13,7 +13,7 @@ const uniquelyIdTasks = (text) => {
     textWithIds.ids.push(id);
 
     // $1 is the leading whitespace
-    return match.replace(taskRegex, '$1' + `- [ ] ${id}`);
+    return match.replace(taskRegex, "$1" + `- [ ] ${id}`);
   });
 
   return textWithIds;
@@ -21,7 +21,7 @@ const uniquelyIdTasks = (text) => {
 
 const getIdOfTaskWithIndex = ({ html, taskNodeIndex }) => {
   const allTaskNodes = new DOMParser()
-    .parseFromString(html, 'text/html')
+    .parseFromString(html, "text/html")
     .querySelectorAll(selectors.taskNode);
   return Array.from(allTaskNodes)[taskNodeIndex].textContent.trim();
 };

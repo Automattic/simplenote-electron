@@ -1,27 +1,27 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { noop } from "lodash";
 
-import IconButton from '../icon-button';
-import BackIcon from '../icons/back';
-import InfoIcon from '../icons/info';
-import PreviewIcon from '../icons/preview';
-import PreviewStopIcon from '../icons/preview-stop';
-import RevisionsIcon from '../icons/revisions';
-import TrashIcon from '../icons/trash';
-import ShareIcon from '../icons/share';
-import SidebarIcon from '../icons/sidebar';
+import IconButton from "../icon-button";
+import BackIcon from "../icons/back";
+import InfoIcon from "../icons/info";
+import PreviewIcon from "../icons/preview";
+import PreviewStopIcon from "../icons/preview-stop";
+import RevisionsIcon from "../icons/revisions";
+import TrashIcon from "../icons/trash";
+import ShareIcon from "../icons/share";
+import SidebarIcon from "../icons/sidebar";
 
 import {
   closeNote,
   toggleEditMode,
   toggleNoteInfo,
   toggleRevisions,
-} from '../state/ui/actions';
+} from "../state/ui/actions";
 
-import * as S from '../state';
-import * as T from '../types';
+import * as S from "../state";
+import * as T from "../types";
 
 type DispatchProps = {
   closeNote: () => any;
@@ -39,7 +39,7 @@ type StateProps = {
 type Props = DispatchProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
-  static displayName = 'NoteToolbar';
+  static displayName = "NoteToolbar";
 
   static propTypes = {
     onRestoreNote: PropTypes.func,
@@ -178,7 +178,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   return {
     editMode,
     markdownEnabled: revisionOrNote
-      ? revisionOrNote.data.systemTags.includes('markdown')
+      ? revisionOrNote.data.systemTags.includes("markdown")
       : false,
     note,
   };

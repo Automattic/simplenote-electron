@@ -1,6 +1,6 @@
 export const selectors = {
-  taskNode: '.task-list-item',
-  markdownRoot: '[data-markdown-root]',
+  taskNode: ".task-list-item",
+  markdownRoot: "[data-markdown-root]",
 };
 
 export const taskPrefixRegex = /^(\s*)(-[ \t]+\[[xX\s]?\])/gm;

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 
 export class TabPanels extends Component {
   static propTypes = {

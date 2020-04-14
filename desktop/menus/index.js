@@ -1,20 +1,20 @@
-const platform = require('../detect/platform');
+const platform = require("../detect/platform");
 
-const macAppMenu = require('./mac-app-menu');
-const fileMenu = require('./file-menu');
-const buildEditMenu = require('./edit-menu');
-const buildViewMenu = require('./view-menu');
-const formatMenu = require('./format-menu');
-const helpMenu = require('./help-menu');
+const macAppMenu = require("./mac-app-menu");
+const fileMenu = require("./file-menu");
+const buildEditMenu = require("./edit-menu");
+const buildViewMenu = require("./view-menu");
+const formatMenu = require("./format-menu");
+const helpMenu = require("./help-menu");
 
 function createMenuTemplate(settings) {
   const windowMenu = {
-    role: 'window',
+    role: "window",
     submenu: [
-      { role: 'minimize' },
-      { role: 'close' },
-      { type: 'separator' },
-      { role: 'front' },
+      { role: "minimize" },
+      { role: "close" },
+      { type: "separator" },
+      { role: "front" },
     ],
   };
 

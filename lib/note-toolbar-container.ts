@@ -1,13 +1,13 @@
-import { Component, ReactElement, cloneElement } from 'react';
-import { connect } from 'react-redux';
+import { Component, ReactElement, cloneElement } from "react";
+import { connect } from "react-redux";
 
-import analytics from './analytics';
-import appState from './flux/app-state';
-import { toggleFocusMode } from './state/settings/actions';
-import { showDialog } from './state/ui/actions';
+import analytics from "./analytics";
+import appState from "./flux/app-state";
+import { toggleFocusMode } from "./state/settings/actions";
+import { showDialog } from "./state/ui/actions";
 
-import * as S from './state';
-import * as T from './types';
+import * as S from "./state";
+import * as T from "./types";
 
 type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
@@ -51,7 +51,7 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.trashNote({ noteBucket, note, previousIndex });
-    analytics.tracks.recordEvent('editor_note_deleted');
+    analytics.tracks.recordEvent("editor_note_deleted");
   };
 
   onDeleteNoteForever = (note: T.NoteEntity) => {
@@ -64,12 +64,12 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
-    analytics.tracks.recordEvent('editor_note_restored');
+    analytics.tracks.recordEvent("editor_note_restored");
   };
 
   onShareNote = () => {
     this.props.shareNote();
-    analytics.tracks.recordEvent('editor_share_dialog_viewed');
+    analytics.tracks.recordEvent("editor_share_dialog_viewed");
   };
 
   render() {
@@ -103,7 +103,7 @@ const { deleteNoteForever, restoreNote, trashNote } = appState.actionCreators;
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   deleteNoteForever: (args) => dispatch(deleteNoteForever(args)),
   restoreNote: (args) => dispatch(restoreNote(args)),
-  shareNote: () => dispatch(showDialog('SHARE')),
+  shareNote: () => dispatch(showDialog("SHARE")),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
   trashNote: (args) => dispatch(trashNote(args)),
 });

@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import PanelTitle from '../../../components/panel-title';
-import ImporterDropzone from '../dropzone';
-import TransitionFadeInOut from '../../../components/transition-fade-in-out';
-import ImportExecutor from './executor';
+import PanelTitle from "../../../components/panel-title";
+import ImporterDropzone from "../dropzone";
+import TransitionFadeInOut from "../../../components/transition-fade-in-out";
+import ImportExecutor from "./executor";
 
 class SourceImporter extends React.Component {
   static propTypes = {
@@ -32,7 +32,7 @@ class SourceImporter extends React.Component {
 
     return (
       <div className="source-importer">
-        <PanelTitle headingLevel="3">Import file{multiple && 's'}</PanelTitle>
+        <PanelTitle headingLevel="3">Import file{multiple && "s"}</PanelTitle>
         <ImporterDropzone
           acceptedTypes={acceptedTypes}
           locked={locked}

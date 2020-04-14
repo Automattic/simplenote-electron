@@ -1,5 +1,5 @@
-const { remote } = require('electron');
-const { ContextMenuBuilder } = require('electron-spellchecker');
+const { remote } = require("electron");
+const { ContextMenuBuilder } = require("electron-spellchecker");
 
 const { MenuItem } = remote;
 
@@ -22,7 +22,7 @@ class CustomContextMenuBuilder extends ContextMenuBuilder {
     let target = this.getWebContents();
 
     const undoMenuItem = new MenuItem({
-      label: 'Undo',
+      label: "Undo",
       enabled: menuInfo.editFlags.canUndo,
       click() {
         target.undo();
@@ -36,7 +36,7 @@ class CustomContextMenuBuilder extends ContextMenuBuilder {
     let target = this.getWebContents();
 
     const redoMenuItem = new MenuItem({
-      label: 'Redo',
+      label: "Redo",
       enabled: menuInfo.editFlags.canRedo,
       click() {
         target.redo();

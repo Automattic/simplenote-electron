@@ -1,26 +1,26 @@
-import { sanitizeHtml } from './sanitize-html';
+import { sanitizeHtml } from "./sanitize-html";
 
 const enableCheckboxes = {
-  type: 'output',
+  type: "output",
   regex: '<input type="checkbox" disabled',
   replace: '<input type="checkbox" ',
 };
 
 export const renderNoteToHtml = (content: string) => {
-  return import(/* webpackChunkName: 'showdown' */ 'showdown').then(
+  return import(/* webpackChunkName: 'showdown' */ "showdown").then(
     ({ default: showdown }) => {
-      showdown.extension('enableCheckboxes', enableCheckboxes);
+      showdown.extension("enableCheckboxes", enableCheckboxes);
       const markdownConverter = new showdown.Converter({
-        extensions: ['enableCheckboxes'],
+        extensions: ["enableCheckboxes"],
       });
-      markdownConverter.setFlavor('github');
-      markdownConverter.setOption('simpleLineBreaks', false); // override GFM
-      markdownConverter.setOption('ghMentions', false);
-      markdownConverter.setOption('smoothLivePreview', true);
+      markdownConverter.setFlavor("github");
+      markdownConverter.setOption("simpleLineBreaks", false); // override GFM
+      markdownConverter.setOption("ghMentions", false);
+      markdownConverter.setOption("smoothLivePreview", true);
 
       const withNormalizedBullets = content.replace(
         /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
-        '$1-$2'
+        "$1-$2"
       );
 
       return sanitizeHtml(markdownConverter.makeHtml(withNormalizedBullets));

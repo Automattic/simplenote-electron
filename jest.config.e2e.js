@@ -1,9 +1,9 @@
 module.exports = {
   globals: {
     config: {
-      appVersion: 'foo',
+      appVersion: "foo",
     },
   },
-  roots: ['e2e'],
-  testRegex: '(/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
+  roots: ["e2e"],
+  testRegex: "(/.*\\.[jt]sx?)|(test\\.[jt]sx?)$",
 };

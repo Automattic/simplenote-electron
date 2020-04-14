@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import SimplenoteLogo from '../../icons/simplenote';
-import CrossIcon from '../../icons/cross';
-import TopRightArrowIcon from '../../icons/arrow-top-right';
-import Dialog from '../../dialog';
-import { closeDialog } from '../../state/ui/actions';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import SimplenoteLogo from "../../icons/simplenote";
+import CrossIcon from "../../icons/cross";
+import TopRightArrowIcon from "../../icons/arrow-top-right";
+import Dialog from "../../dialog";
+import { closeDialog } from "../../state/ui/actions";
 
-import * as S from '../../state';
+import * as S from "../../state";
 
 const appVersion = config.version; // eslint-disable-line no-undef
 
@@ -91,8 +91,8 @@ export class AboutDialog extends Component<Props> {
                 rel="noopener noreferrer"
               >
                 Privacy Policy
-              </a>{' '}
-              &nbsp;&bull;&nbsp;{' '}
+              </a>{" "}
+              &nbsp;&bull;&nbsp;{" "}
               <a
                 target="_blank"
                 href="https://simplenote.com/terms/"

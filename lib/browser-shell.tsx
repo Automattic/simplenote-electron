@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 /**
  * Get window-related attributes
@@ -11,9 +11,9 @@ import React, { Component } from 'react';
 const getState = () => {
   const windowWidth = window.innerWidth;
 
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 
   return {
     windowWidth,
@@ -35,21 +35,21 @@ const getState = () => {
  */
 export const browserShell = (Wrapped) =>
   class extends Component {
-    static displayName = 'BrowserShell';
+    static displayName = "BrowserShell";
 
     state = getState();
 
     componentDidMount() {
-      window.addEventListener('resize', this.updateWindowSize);
+      window.addEventListener("resize", this.updateWindowSize);
       window
-        .matchMedia('(prefers-color-scheme: dark)')
+        .matchMedia("(prefers-color-scheme: dark)")
         .addListener(this.updateSystemTheme);
     }
 
     componentWillUnmount() {
-      window.removeEventListener('resize', this.updateWindowSize);
+      window.removeEventListener("resize", this.updateWindowSize);
       window
-        .matchMedia('(prefers-color-scheme: dark)')
+        .matchMedia("(prefers-color-scheme: dark)")
         .removeListener(this.updateSystemTheme);
     }
 
