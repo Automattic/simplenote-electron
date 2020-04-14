@@ -245,6 +245,11 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   }
 };
 
+const tagSuggestions: A.Reducer<T.TagEntity[]> = (
+  state = emptyList as T.TagEntity[],
+  action
+) => ('FILTER_NOTES' === action.type ? action.tags : state);
+
 export default combineReducers({
   dialogs,
   editMode,
@@ -263,5 +268,6 @@ export default combineReducers({
   showRevisions,
   showTrash,
   simperiumConnected,
+  tagSuggestions,
   unsyncedNoteIds,
 });

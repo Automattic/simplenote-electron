@@ -1,5 +1,6 @@
 import actions from '../state/actions';
 import { init, updateFilter } from './worker';
+import { filterTags } from '../tag-suggestions';
 
 import * as A from '../state/action-types';
 import * as S from '../state';
@@ -17,10 +18,17 @@ export const middleware: S.Middleware = store => {
     noteIds: Set<T.EntityId>,
     previousIndex?: number
   ) => {
-    const { appState } = store.getState();
+    const {
+      appState,
+      ui: { searchQuery },
+    } = store.getState();
+
+    const tagSuggestions = filterTags(appState.tags, searchQuery);
+
     store.dispatch(
       actions.ui.filterNotes(
         appState.notes?.filter(({ id }) => noteIds.has(id)) || emptyList,
+        tagSuggestions.length > 0 ? tagSuggestions : emptyList,
         previousIndex
       )
     );

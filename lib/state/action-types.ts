@@ -56,7 +56,7 @@ export type DeleteNoteForever = Action<
 >;
 export type FilterNotes = Action<
   'FILTER_NOTES',
-  { notes: T.NoteEntity[]; previousIndex: number }
+  { notes: T.NoteEntity[]; previousIndex: number; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type RemoteNoteUpdate = Action<
