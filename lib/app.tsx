@@ -446,12 +446,7 @@ export const App = connect(
     syncActivityHooks = data => {
       activityHooks(data, {
         onIdle: () => {
-          const {
-            appState: { notes },
-            client,
-            noteBucket,
-            setUnsyncedNoteIds,
-          } = this.props;
+          const { notes, client, noteBucket, setUnsyncedNoteIds } = this.props;
 
           nudgeUnsynced({ client, noteBucket, notes });
           setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
@@ -475,7 +470,6 @@ export const App = connect(
 
     render() {
       const {
-        appState: state,
         authIsPending,
         isAuthorized,
         isDevConfig,

@@ -56,6 +56,7 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type NotesLoaded = Action<'NOTES_LOADED', { notes: T.NoteEntity[] }>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
@@ -112,6 +113,7 @@ export type ActionType =
   | FilterNotes
   | FocusSearchField
   | RemoteNoteUpdate
+  | NotesLoaded
   | OpenTag
   | RestoreNote
   | Search
@@ -208,7 +210,6 @@ type LegacyAction =
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
-  | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
   | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
   | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
   | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>

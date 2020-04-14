@@ -102,11 +102,11 @@ class SyncStatusPopover extends React.Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState,
+  notes,
   settings,
   ui: { unsyncedNoteIds },
 }) => ({
-  notes: appState.notes,
+  notes,
   theme: settings.theme,
   unsyncedNoteIds,
 });

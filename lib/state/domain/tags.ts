@@ -32,7 +32,7 @@ export const reorderTags = ({ tags }) => () =>
   );
 
 export const renameTag = ({ tag, name: newName }) => (dispatch, getState) => {
-  const { notes } = getState().appState;
+  const { notes } = getState();
   const tagName = tag.data.name;
 
   if (tagName === newName) {
@@ -56,7 +56,7 @@ export const renameTag = ({ tag, name: newName }) => (dispatch, getState) => {
 };
 
 export const trashTag = ({ tag }) => (dispatch, getState) => {
-  const { notes } = getState().appState;
+  const { notes } = getState();
   const tagName = tag.data.name;
 
   notes
