@@ -5,26 +5,26 @@ export class StoreProvider {
     this.setup = new Promise((resolve, reject) => config(resolve, reject));
   }
 
-  provider = () => bucket => new BucketStore(bucket, this.setup);
+  provider = () => (bucket) => new BucketStore(bucket, this.setup);
 
   reset = () =>
     this.setup
-      .then(db =>
+      .then((db) =>
         Promise.all(
           Array.prototype.map.call(
             db.objectStoreNames,
-            name =>
+            (name) =>
               new Promise((resolve, reject) => {
                 const tx = db.transaction(name, 'readwrite');
                 const request = tx.objectStore(name).clear();
 
                 request.onsuccess = () => resolve(name);
-                request.onerror = e => reject(e);
+                request.onerror = (e) => reject(e);
               })
           )
         )
       )
-      .catch(e => console.error('Failed to reset stores', e)); // eslint-disable-line no-console
+      .catch((e) => console.error('Failed to reset stores', e)); // eslint-disable-line no-console
 }
 
-export default config => new StoreProvider(config);
+export default (config) => new StoreProvider(config);

@@ -37,7 +37,7 @@ class SourceImporter extends React.Component {
           acceptedTypes={acceptedTypes}
           locked={locked}
           multiple={multiple}
-          onAccept={files => this.setState({ acceptedFiles: files })}
+          onAccept={(files) => this.setState({ acceptedFiles: files })}
           onReset={() => this.setState({ acceptedFiles: undefined })}
         />
         {!hasAcceptedFile && (

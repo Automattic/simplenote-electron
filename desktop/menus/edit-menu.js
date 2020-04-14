@@ -1,6 +1,6 @@
 const { appCommandSender } = require('./utils');
 
-const buildEditMenu = settings => {
+const buildEditMenu = (settings) => {
   settings = settings || {};
 
   return {

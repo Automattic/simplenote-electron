@@ -16,11 +16,11 @@ const TAG_LINE_LENGTH = 75;
  * @param {Object} note object
  * @returns {Object} augmented note object with new filename
  */
-const addFilename = note => ({
+const addFilename = (note) => ({
   ...note,
   fileName: note.content
     .split('\n') // base filename off of a single line
-    .map(line => line.trim()) // and ignore leading/trailing spaces
+    .map((line) => line.trim()) // and ignore leading/trailing spaces
     .map(sanitize) // strip away any invalid characters for a filename (such as `/`)
     .filter(identity) // remove blank lines
     .concat('untitled') // use this as a default if there are no non-blank lines
@@ -52,7 +52,7 @@ const addFilename = note => ({
  * @param {Object} note note object
  * @returns {Object} augmented note whose
  */
-const appendTags = note => {
+const appendTags = (note) => {
   if (!note.tags) {
     return note;
   }
@@ -66,7 +66,7 @@ const appendTags = note => {
       [[], '']
     )
     .reduce((a, b) => [...a, b]) // join trailing line from reduction
-    .map(line => line.replace(/^, /, '')); // remove leading commas
+    .map((line) => line.replace(/^, /, '')); // remove leading commas
 
   return {
     ...note,
@@ -86,7 +86,7 @@ const appendTags = note => {
  * @returns {[Array, Object]} final note list and accumulating filename counts
  */
 const toUniqueNames = ([notes, nameCounts], note) => {
-  const newNameCounts = update(nameCounts, note.fileName, n =>
+  const newNameCounts = update(nameCounts, note.fileName, (n) =>
     n || 0 === n ? n + 1 : 0
   );
   const count = newNameCounts[note.fileName];
@@ -95,7 +95,7 @@ const toUniqueNames = ([notes, nameCounts], note) => {
   return [[...notes, { ...note, fileName }], newNameCounts];
 };
 
-export const noteExportToZip = notes => {
+export const noteExportToZip = (notes) => {
   return import(/* webpackChunkName: 'jszip' */ 'jszip')
     .then(({ default: JSZip }) => {
       const zip = new JSZip();

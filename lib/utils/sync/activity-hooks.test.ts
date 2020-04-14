@@ -14,7 +14,7 @@ describe('sync:activityHooks', () => {
   });
 
   it('should call the appropriate hook when syncing becomes active/idle', () => {
-    return new Promise(done => {
+    return new Promise((done) => {
       const myActivityHooks = activityHooks('0:mockdata', hooks);
       times(3, myActivityHooks);
       window.setTimeout(() => {
@@ -27,7 +27,7 @@ describe('sync:activityHooks', () => {
   });
 
   it('should ignore heartbeats', () => {
-    return new Promise(done => {
+    return new Promise((done) => {
       const myActivityHooks = activityHooks('h:1', hooks);
       times(3, myActivityHooks);
       window.setTimeout(() => {

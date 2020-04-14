@@ -30,17 +30,21 @@ export const decreaseFontSize = () => (dispatch, getState) => {
 export const resetFontSize: A.ActionCreator<A.SetFontSize> = () =>
   setFontSize(undefined);
 
-export const activateTheme: A.ActionCreator<A.SetTheme> = theme => ({
+export const activateTheme: A.ActionCreator<A.SetTheme> = (theme) => ({
   type: 'setTheme',
   theme,
 });
 
-export const setNoteDisplay: A.ActionCreator<A.SetNoteDisplay> = noteDisplay => ({
+export const setNoteDisplay: A.ActionCreator<A.SetNoteDisplay> = (
+  noteDisplay
+) => ({
   type: 'setNoteDisplay',
   noteDisplay,
 });
 
-export const setLineLength: A.ActionCreator<A.SetLineLength> = lineLength => ({
+export const setLineLength: A.ActionCreator<A.SetLineLength> = (
+  lineLength
+) => ({
   type: 'setLineLength',
   lineLength,
 });
@@ -52,7 +56,7 @@ export const toggleSortOrder = () => (dispatch, getState) => {
   });
 };
 
-export const setSortType: A.ActionCreator<A.SetSortType> = sortType => ({
+export const setSortType: A.ActionCreator<A.SetSortType> = (sortType) => ({
   type: 'setSortType',
   sortType,
 });
@@ -64,12 +68,14 @@ export const toggleSortTagsAlpha = () => (dispatch, getState) => {
   });
 };
 
-export const setAccountName: A.ActionCreator<A.SetAccountName> = accountName => ({
+export const setAccountName: A.ActionCreator<A.SetAccountName> = (
+  accountName
+) => ({
   type: 'setAccountName',
   accountName,
 });
 
-export const setWPToken: A.ActionCreator<A.SetWPToken> = token => ({
+export const setWPToken: A.ActionCreator<A.SetWPToken> = (token) => ({
   type: 'setWPToken',
   token,
 });

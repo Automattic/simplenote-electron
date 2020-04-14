@@ -33,7 +33,7 @@ const getState = () => {
  * @param {Element} Wrapped React component dependent on window attributes
  * @returns {Component} wrapped React component with window attributes as props
  */
-export const browserShell = Wrapped =>
+export const browserShell = (Wrapped) =>
   class extends Component {
     static displayName = 'BrowserShell';
 

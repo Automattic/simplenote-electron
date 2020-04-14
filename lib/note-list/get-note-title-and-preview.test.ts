@@ -2,7 +2,7 @@ import { clearCache, withCache } from './get-note-title-and-preview';
 
 describe('getNoteTitleAndPreview', () => {
   describe('withCache', () => {
-    const getKey = note => note.mockKey;
+    const getKey = (note) => note.mockKey;
 
     afterEach(() => {
       clearCache();

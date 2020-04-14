@@ -60,7 +60,7 @@ export type DispatchProps = {
 
 export type Props = DispatchProps;
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
   isAuthorized: selectors.auth.isAuthorized(state),
@@ -72,12 +72,12 @@ const mapDispatchToProps: S.MapDispatch<
 > = function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
-  const thenReloadNotes = action => a => {
+  const thenReloadNotes = (action) => (a) => {
     dispatch(action(a));
     dispatch(actionCreators.loadNotes({ noteBucket }));
   };
 
-  const thenReloadTags = action => a => {
+  const thenReloadTags = (action) => (a) => {
     dispatch(action(a));
     dispatch(loadTags());
   };
@@ -112,11 +112,11 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
-    setSimperiumConnectionStatus: connected =>
+    setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: note => dispatch(actions.ui.selectNote(note)),
-    setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
-    showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
+    selectNote: (note) => dispatch(actions.ui.selectNote(note)),
+    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
+    showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
   };
 };
 
@@ -183,7 +183,7 @@ export const App = connect(
         .on('update', this.onNoteUpdate)
         .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
         .on('remove', this.onNoteRemoved)
-        .beforeNetworkChange(noteId =>
+        .beforeNetworkChange((noteId) =>
           this.props.actions.onNoteBeforeRemoteUpdate({
             noteId,
           })
@@ -229,7 +229,7 @@ export const App = connect(
       }
     }
 
-    handleShortcut = event => {
+    handleShortcut = (event) => {
       const { ctrlKey, key, metaKey } = event;
 
       // Is either cmd or ctrl pressed? (But not both)
@@ -270,8 +270,8 @@ export const App = connect(
 
       const canRun = overEvery(
         isObject,
-        o => o.action !== null,
-        o => has(this.props.actions, o.action) || has(this.props, o.action)
+        (o) => o.action !== null,
+        (o) => has(this.props.actions, o.action) || has(this.props, o.action)
       );
 
       if (canRun(command)) {
@@ -355,7 +355,7 @@ export const App = connect(
       }
     };
 
-    onLoadPreferences = callback =>
+    onLoadPreferences = (callback) =>
       this.props.actions.loadPreferences({
         callback,
         preferencesBucket: this.props.preferencesBucket,
@@ -403,12 +403,12 @@ export const App = connect(
       }
     };
 
-    syncNote = noteId => {
+    syncNote = (noteId) => {
       this.props.noteBucket.touch(noteId);
     };
 
     // gets the index of the note located before the currently selected one
-    getPreviousNoteIndex = note => {
+    getPreviousNoteIndex = (note) => {
       const previousIndex = this.props.ui.filteredNotes.findIndex(
         ({ id }) => note.id === id
       );
@@ -416,7 +416,7 @@ export const App = connect(
       return Math.max(previousIndex - 1, 0);
     };
 
-    syncActivityHooks = data => {
+    syncActivityHooks = (data) => {
       activityHooks(data, {
         onIdle: () => {
           const {
@@ -432,7 +432,7 @@ export const App = connect(
       });
     };
 
-    toggleShortcuts = doEnable => {
+    toggleShortcuts = (doEnable) => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
       } else {

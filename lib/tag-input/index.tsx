@@ -15,10 +15,7 @@ const KEY_RIGHT = 39;
 const KEY_COMMA = 188;
 
 const startsWith = (prefix: string) => (text: string): boolean =>
-  text
-    .trim()
-    .toLowerCase()
-    .startsWith(prefix.trim().toLowerCase());
+  text.trim().toLowerCase().startsWith(prefix.trim().toLowerCase());
 
 type OwnProps = {
   inputRef: (ref: RefObject<HTMLDivElement>) => any;
@@ -147,7 +144,7 @@ export class TagInput extends Component<Props> {
   };
 
   onInputMutation = (mutationList: MutationRecord[]) => {
-    mutationList.forEach(mutation => {
+    mutationList.forEach((mutation) => {
       let value = get(mutation, 'target.data', '');
 
       if (mutation.type === 'childList' && mutation.addedNodes.length) {

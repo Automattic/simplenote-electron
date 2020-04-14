@@ -13,9 +13,9 @@ describe('SimplenoteImporter', () => {
     });
     importer.emit = jest.spyOn(importer, 'emit');
     CoreImporter.mockClear();
-    CoreImporter.mockImplementation(function() {
+    CoreImporter.mockImplementation(function () {
       this.importNotes = jest.fn(() => ({
-        then: callback => callback(),
+        then: (callback) => callback(),
       }));
     });
   });
@@ -30,7 +30,7 @@ describe('SimplenoteImporter', () => {
   });
 
   it('should call coreImporter.importNotes with all notes and options', () => {
-    return new Promise(done => {
+    return new Promise((done) => {
       const notes = {
         activeNotes: [{}, {}],
         trashedNotes: [{}],

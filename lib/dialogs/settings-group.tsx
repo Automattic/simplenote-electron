@@ -18,7 +18,7 @@ export const SettingsGroup = ({
   const learnMoreLink = (
     <a
       href={learnMoreURL}
-      onClick={event => {
+      onClick={(event) => {
         event.preventDefault();
         viewExternalUrl(learnMoreURL);
       }}
@@ -27,7 +27,7 @@ export const SettingsGroup = ({
     </a>
   );
 
-  const childElements = React.Children.toArray(children).filter(o => o);
+  const childElements = React.Children.toArray(children).filter((o) => o);
 
   return (
     <div className="settings-group">

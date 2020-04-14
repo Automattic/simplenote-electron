@@ -82,12 +82,7 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
       switch (attrName) {
         case 'href':
           // No javascript Uris allowed
-          if (
-            value
-              .toLowerCase()
-              .trim()
-              .startsWith('javascript')
-          ) {
+          if (value.toLowerCase().trim().startsWith('javascript')) {
             return false;
           }
 
@@ -276,7 +271,7 @@ export const sanitizeHtml = (content: string) => {
   }
 
   // eliminate the forbidden tags and drop their children
-  forbiddenList.forEach(node => {
+  forbiddenList.forEach((node) => {
     try {
       node?.parentNode?.removeChild(node);
     } catch (e) {
@@ -289,7 +284,7 @@ export const sanitizeHtml = (content: string) => {
 
   // remove the unwanted tags and transfer
   // their children up a level in their place
-  removeList.forEach(node => {
+  removeList.forEach((node) => {
     const parent = node.parentNode;
     let child;
 

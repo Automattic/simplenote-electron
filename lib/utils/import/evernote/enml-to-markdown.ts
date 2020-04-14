@@ -1,13 +1,13 @@
 import TurndownService from 'turndown';
 import { identity, startsWith } from 'lodash';
 
-const mediaPlaceholderFor = node => {
+const mediaPlaceholderFor = (node) => {
   const alt = node.getAttribute('alt');
   const type = node.getAttribute('type') || 'media';
   return alt ? `${alt} (${type})` : `(${type})`;
 };
 
-const enmlToMarkdown = enml => {
+const enmlToMarkdown = (enml) => {
   // Do not escape Markdown characters
   // https://github.com/domchristie/turndown#escaping-markdown-characters
   TurndownService.prototype.escape = identity;
@@ -64,7 +64,7 @@ const enmlToMarkdown = enml => {
       },
     })
     .addRule('svgImages', {
-      filter: node =>
+      filter: (node) =>
         node.nodeName === 'IMG' &&
         startsWith(node.getAttribute('src'), 'data:image/svg'),
       replacement: (content, node) => {

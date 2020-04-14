@@ -62,7 +62,7 @@ export class NoteDetail extends Component<Props> {
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  isValidNote = note => note && note.id;
+  isValidNote = (note) => note && note.id;
 
   componentWillReceiveProps(nextProps) {
     const isEditingNote = get(this.props, ['note', 'id'], false);
@@ -94,7 +94,7 @@ export class NoteDetail extends Component<Props> {
     document.removeEventListener('copy', this.copyRenderedNote, false);
   }
 
-  copyRenderedNote = event => {
+  copyRenderedNote = (event) => {
     const { previewingMarkdown, showNoteInfo, dialogs } = this.props;
     // Only copy the rendered content if we're in the preview mode
     if (!previewingMarkdown) {
@@ -122,7 +122,7 @@ export class NoteDetail extends Component<Props> {
 
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onPreviewClick = event => {
+  onPreviewClick = (event) => {
     const { note, onChangeContent, syncNote } = this.props;
 
     for (let node = event.target; node !== null; node = node.parentNode) {
@@ -137,7 +137,7 @@ export class NoteDetail extends Component<Props> {
       if (node.className === 'task-list-item') {
         event.preventDefault();
         toggleTask({ taskNode: node, text: note.data.content }).then(
-          newContent => {
+          (newContent) => {
             onChangeContent(note, newContent);
             syncNote(note.id);
           }
@@ -147,7 +147,7 @@ export class NoteDetail extends Component<Props> {
     }
   };
 
-  saveNote = content => {
+  saveNote = (content) => {
     const { note } = this.props;
 
     if (!this.isValidNote(note)) return;
@@ -165,11 +165,11 @@ export class NoteDetail extends Component<Props> {
     this.props.syncNote(note.id);
   };
 
-  storeEditorHasFocus = f => (this.editorHasFocus = f);
+  storeEditorHasFocus = (f) => (this.editorHasFocus = f);
 
-  storeFocusContentEditor = f => (this.focusContentEditor = f);
+  storeFocusContentEditor = (f) => (this.focusContentEditor = f);
 
-  storePreview = ref => (this.previewNode = ref);
+  storePreview = (ref) => (this.previewNode = ref);
 
   updateMarkdown = () => {
     if (!this.previewNode) {

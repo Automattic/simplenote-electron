@@ -28,6 +28,6 @@ const naiveEmailPattern = /^(?:[^@]+)@(?:.+)(?:\.[^.]{2,})$/;
  * @param {String} tagName name of tag which might be an email address
  * @returns {Boolean} whether or not the tag is considered an email address
  */
-export const isEmailTag = tagName => naiveEmailPattern.test(tagName);
+export const isEmailTag = (tagName) => naiveEmailPattern.test(tagName);
 
 export default isEmailTag;

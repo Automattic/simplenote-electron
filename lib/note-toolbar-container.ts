@@ -100,12 +100,12 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const { deleteNoteForever, restoreNote, trashNote } = appState.actionCreators;
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  deleteNoteForever: args => dispatch(deleteNoteForever(args)),
-  restoreNote: args => dispatch(restoreNote(args)),
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+  deleteNoteForever: (args) => dispatch(deleteNoteForever(args)),
+  restoreNote: (args) => dispatch(restoreNote(args)),
   shareNote: () => dispatch(showDialog('SHARE')),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
-  trashNote: args => dispatch(trashNote(args)),
+  trashNote: (args) => dispatch(trashNote(args)),
 });
 
 export default connect(

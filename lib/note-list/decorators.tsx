@@ -25,15 +25,15 @@ export const decorateWith = (decorators, text) =>
 
 export const checkboxDecorator = {
   filter: taskPrefixRegex,
-  replacer: match => {
+  replacer: (match) => {
     const isChecked = /x/i.test(match);
     return <Checkbox checked={isChecked} />;
   },
 };
 
-export const makeFilterDecorator = filter => ({
+export const makeFilterDecorator = (filter) => ({
   filter,
-  replacer: match => {
+  replacer: (match) => {
     if (match.length) {
       return <span className="search-match">{match}</span>;
     }

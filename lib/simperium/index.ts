@@ -7,7 +7,7 @@ import events from 'events';
 
 export const Auth = simperium.Auth;
 
-export default function(settings) {
+export default function (settings) {
   const browserClient = new BrowserClient(settings);
 
   window.addEventListener('beforeunload', () => {
@@ -17,7 +17,7 @@ export default function(settings) {
   return browserClient;
 }
 
-Client.Bucket.prototype.query = function(fn) {
+Client.Bucket.prototype.query = function (fn) {
   this.store.setup.then(fn);
 };
 
@@ -33,7 +33,7 @@ function BrowserClient({ appID, token, bucketConfig, database, version }) {
 
   this.client = simperium(appID, token, {
     ghostStoreProvider: ghost_store,
-    objectStoreProvider: function(bucket) {
+    objectStoreProvider: function (bucket) {
       var store = objectStoreProvider.apply(null, arguments);
       if (config[bucket.name].beforeIndex) {
         store.beforeIndex = config[bucket.name].beforeIndex;
@@ -50,10 +50,10 @@ function BrowserClient({ appID, token, bucketConfig, database, version }) {
     'disconnect',
     'unauthorized',
   ].forEach(
-    function(event) {
+    function (event) {
       this.client.on(
         event,
-        function() {
+        function () {
           let args = [].slice.call(arguments);
           this.emit.apply(this, [event].concat(args));
         }.bind(this)
@@ -70,14 +70,14 @@ function BrowserClient({ appID, token, bucketConfig, database, version }) {
 
 util.inherits(BrowserClient, events.EventEmitter);
 
-BrowserClient.prototype.configureDb = function(resolve) {
+BrowserClient.prototype.configureDb = function (resolve) {
   var openRequest = window.indexedDB.open(
     this.databaseName,
     this.databaseVersion
   );
   var upgraded = false;
 
-  openRequest.onupgradeneeded = function(e) {
+  openRequest.onupgradeneeded = function (e) {
     upgraded = true;
     let db = e.target.result;
 
@@ -95,11 +95,11 @@ BrowserClient.prototype.configureDb = function(resolve) {
     }
   }.bind(this);
 
-  openRequest.onerror = function(e) {
+  openRequest.onerror = function (e) {
     console.log('So failed', e); // eslint-disable-line no-console
   };
 
-  openRequest.onsuccess = function(e) {
+  openRequest.onsuccess = function (e) {
     // if we upgraded we want to refresh object stores with the ghost stores
     global.bucketDB = e.target.result;
     resolve(e.target.result);
@@ -113,39 +113,39 @@ BrowserClient.prototype.configureDb = function(resolve) {
   }.bind(this);
 };
 
-BrowserClient.prototype.isAuthorized = function() {
+BrowserClient.prototype.isAuthorized = function () {
   return !!this.client.accessToken;
 };
 
-BrowserClient.prototype.reset = function() {
+BrowserClient.prototype.reset = function () {
   // loop through each known bucket and generate a promise to reset the bucket
   return this.bucketDB.reset().then(
     () => {
       return ghost_store.reset();
     },
-    e => {
+    (e) => {
       console.error('Failed to reset', e); // eslint-disable-line no-console
     }
   );
 };
 
-BrowserClient.prototype.bucket = function(name) {
+BrowserClient.prototype.bucket = function (name) {
   return this.buckets[name];
 };
 
-BrowserClient.prototype.setUser = function(user) {
+BrowserClient.prototype.setUser = function (user) {
   this.client.setAccessToken(user.access_token);
   this.emit('authorized');
 };
 
-BrowserClient.prototype.deauthorize = function() {
+BrowserClient.prototype.deauthorize = function () {
   this.client.setAccessToken(null);
   this.emit('unauthorized');
   this.client.end();
   this.reset();
 };
 
-BrowserClient.prototype.clearAuthorization = function() {
+BrowserClient.prototype.clearAuthorization = function () {
   this.client.setAccessToken(null);
   this.client.end();
 };

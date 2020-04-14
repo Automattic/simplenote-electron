@@ -20,7 +20,7 @@ export const toggleSystemTag = (
           ...note.data,
           systemTags: shouldHaveTag
             ? [...systemTags, systemTag]
-            : systemTags.filter(tag => tag !== systemTag),
+            : systemTags.filter((tag) => tag !== systemTag),
         },
       }
     : note;
@@ -39,12 +39,12 @@ export const updateNoteTags = ({ note, tags }) => {
     });
 
     const existingTagNames = new Set(
-      getState().appState.tags.map(tag => tag.data.name)
+      getState().appState.tags.map((tag) => tag.data.name)
     );
 
     tags
-      .filter(name => !existingTagNames.has(name))
-      .filter(name => !isEmailTag(name))
-      .forEach(name => createTag({ name }));
+      .filter((name) => !existingTagNames.has(name))
+      .filter((name) => !isEmailTag(name))
+      .forEach((name) => createTag({ name }));
   };
 };

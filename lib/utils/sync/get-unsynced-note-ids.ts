@@ -3,7 +3,7 @@ import { uniq } from 'lodash';
 
 import { getLocalQueue } from '../../simperium/local-queue-store';
 
-const getUnsyncedNoteIds = bucket => {
+const getUnsyncedNoteIds = (bucket) => {
   const { queues, sent } = getLocalQueue(bucket);
   const unsyncedNoteIds = uniq([...Object.keys(queues), ...Object.keys(sent)]);
 

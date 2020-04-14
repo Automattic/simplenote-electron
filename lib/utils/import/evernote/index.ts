@@ -20,7 +20,7 @@ class EvernoteImporter extends EventEmitter {
     this.options = options;
   }
 
-  importNotes = filesArray => {
+  importNotes = (filesArray) => {
     if (!filesArray || filesArray.length === 0) {
       this.emit('status', 'error', 'Invalid Evernote export file.');
     }
@@ -45,18 +45,18 @@ class EvernoteImporter extends EventEmitter {
     let currentNote = {}; // The current note we are parsing
     let importedNoteCount = 0;
 
-    saxStream.on('error', function() {
+    saxStream.on('error', function () {
       this.emit('status', 'error', 'Error processing Evernote data.');
     });
 
-    saxStream.on('opentag', node => {
+    saxStream.on('opentag', (node) => {
       // The <note> tag signifies that we should parse another note
       if (node.name === 'note') {
         currentNote = { tags: [] };
       }
     });
 
-    saxStream.on('cdata', text => {
+    saxStream.on('cdata', (text) => {
       // Note content in evernote exports lives in CDATA
       const htmlDoc = parser.parseFromString(text, 'text/html');
 
@@ -71,7 +71,7 @@ class EvernoteImporter extends EventEmitter {
       }
     });
 
-    saxStream.on('text', text => {
+    saxStream.on('text', (text) => {
       if (!text) {
         return;
       }
@@ -94,7 +94,7 @@ class EvernoteImporter extends EventEmitter {
       }
     });
 
-    saxStream.on('closetag', node => {
+    saxStream.on('closetag', (node) => {
       // Add the currentNote to the array
       if (node === 'note') {
         coreImporter.importNote(currentNote, this.options);
@@ -116,7 +116,7 @@ class EvernoteImporter extends EventEmitter {
     fs.createReadStream(file.path).pipe(saxStream);
   };
 
-  getConvertedDate = dateString => {
+  getConvertedDate = (dateString) => {
     let convertedDate = parseISO(dateString).getTime() / 1000;
     if (isNaN(convertedDate)) {
       // Fall back to current date

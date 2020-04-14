@@ -34,7 +34,7 @@ export class TagListInput extends Component<Props, OwnState> {
         readOnly={!editable}
         onClick={onClick}
         value={value}
-        onChange={e => this.setState({ value: e.target.value })}
+        onChange={(e) => this.setState({ value: e.target.value })}
         onBlur={onDone}
         spellCheck={false}
       />

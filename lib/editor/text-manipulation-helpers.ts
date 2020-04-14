@@ -3,7 +3,7 @@ import { includes } from 'lodash';
 
 import { getCurrentBlock } from './utils';
 
-export const isLonelyBullet = line =>
+export const isLonelyBullet = (line) =>
   includes(['-', '*', '+', '- [ ]', '- [x]', '\u2022'], line.trim());
 
 export function indentCurrentBlock(editorState) {

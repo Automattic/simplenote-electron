@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
-const TransitionFadeInOut = props => {
+const TransitionFadeInOut = (props) => {
   const { children, wrapperClassName, shouldMount } = props;
   return (
     <CSSTransition

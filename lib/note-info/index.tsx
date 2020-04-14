@@ -49,7 +49,7 @@ export class NoteInfo extends Component<Props> {
     this.copyUrlElement.focus();
   };
 
-  getPublishURL = url => {
+  getPublishURL = (url) => {
     return isEmpty(url) ? null : `http://simp.ly/p/${url}`;
   };
 
@@ -146,13 +146,13 @@ export class NoteInfo extends Component<Props> {
               <span className="note-info-name">Public link</span>
               <div className="note-info-form">
                 <input
-                  ref={e => (this.publishUrlElement = e)}
+                  ref={(e) => (this.publishUrlElement = e)}
                   className="note-info-detail note-info-link-text"
                   value={publishURL}
                   spellCheck={false}
                 />
                 <button
-                  ref={e => (this.copyUrlElement = e)}
+                  ref={(e) => (this.copyUrlElement = e)}
                   type="button"
                   className="button button-borderless note-info-copy-button"
                   onClick={this.copyPublishURL}
@@ -167,10 +167,10 @@ export class NoteInfo extends Component<Props> {
     );
   }
 
-  onPinChanged = event =>
+  onPinChanged = (event) =>
     this.props.onPinNote(this.props.note, event.currentTarget.checked);
 
-  onMarkdownChanged = event =>
+  onMarkdownChanged = (event) =>
     this.props.onMarkdownNote(this.props.note, event.currentTarget.checked);
 }
 
@@ -206,7 +206,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   isPinned: !!note && note.data.systemTags.includes('pinned'),
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onMarkdownNote: (note, markdown = true) =>
     dispatch(actions.ui.markdownNote(note, markdown)),
   onOutsideClick: () => dispatch(actions.ui.toggleNoteInfo()),

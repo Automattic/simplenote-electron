@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { range } from 'lodash';
 import PropTypes from 'prop-types';
 
-const PanelTitle = props => {
+const PanelTitle = (props) => {
   const { children, headingLevel = 3 } = props;
 
   return createElement(

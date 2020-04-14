@@ -56,7 +56,7 @@ class ImportExecutor extends React.Component {
       ...this.props.buckets,
       options: { isMarkdown: this.state.setMarkdown },
     });
-    const updateProgress = throttle(arg => {
+    const updateProgress = throttle((arg) => {
       this.setState({ importedNoteCount: arg });
     }, 20);
 

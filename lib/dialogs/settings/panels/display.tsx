@@ -11,7 +11,7 @@ import appState from '../../../flux/app-state';
 import * as settingsActions from '../../../state/settings/actions';
 import { loadTags } from '../../../state/domain/tags';
 
-const DisplayPanel = props => {
+const DisplayPanel = (props) => {
   const {
     actions,
     activeTheme,
@@ -27,7 +27,7 @@ const DisplayPanel = props => {
     sortType,
   } = props;
 
-  const withCallback = ({ action, callback }) => arg => {
+  const withCallback = ({ action, callback }) => (arg) => {
     action(arg);
     callback();
   };
@@ -158,11 +158,11 @@ const mapStateToProps = ({ settings }) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   const { loadNotes } = appState.actionCreators;
   return {
     actions: bindActionCreators(settingsActions, dispatch),
-    loadNotes: noteBucket => dispatch(loadNotes({ noteBucket })),
+    loadNotes: (noteBucket) => dispatch(loadNotes({ noteBucket })),
     loadTags: () => dispatch(loadTags()),
   };
 };

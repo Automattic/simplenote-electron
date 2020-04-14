@@ -38,9 +38,7 @@
     "prettier/prettier": [
       "error",
       {
-        "bracketSpacing": true,
-        "singleQuote": true,
-        "trailingComma": "es5"
+        "singleQuote": true
       }
     ],
     "react/display-name": "warn",

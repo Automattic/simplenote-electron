@@ -1,7 +1,7 @@
 import getIndexInText from './get-index-in-text';
 import { selectors, taskRegex } from './constants';
 
-export const toggleInLine = line => {
+export const toggleInLine = (line) => {
   const uncheckedRegex = /- \[\s?\]/;
   const checkedRegex = /- \[[xX]\]/;
 
@@ -13,7 +13,7 @@ export const toggleInLine = line => {
 export const toggleInText = ({ text, index: targetIndex }) => {
   let matchIndex = 0;
 
-  return text.replace(taskRegex, match => {
+  return text.replace(taskRegex, (match) => {
     if (matchIndex++ === targetIndex) {
       return toggleInLine(match);
     }
@@ -45,7 +45,7 @@ export const toggleTask = ({ taskNode, text }) => {
     return getIndexInText({
       text,
       taskNodeIndex,
-    }).then(indexInText =>
+    }).then((indexInText) =>
       toggleInText({
         text,
         index: indexInText,

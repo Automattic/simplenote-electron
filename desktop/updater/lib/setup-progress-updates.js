@@ -56,7 +56,7 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
     }, 500); // Allow time for preDownloadProgressBar to close
   };
 
-  const initProgressBar = totalBytes => {
+  const initProgressBar = (totalBytes) => {
     progressBar = new ProgressBar({
       indeterminate: false,
       title,
@@ -65,7 +65,7 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
       browserWindow: { closable: true },
       style,
     });
-    progressBar.on('progress', value => {
+    progressBar.on('progress', (value) => {
       progressBar.detail =
         prettyBytes(value) + ` of ${prettyBytes(totalBytes)} downloaded…`;
     });
@@ -74,7 +74,7 @@ const setupProgressUpdates = ({ updater, willAutoDownload }) => {
     );
   };
 
-  const updateProgress = progress => {
+  const updateProgress = (progress) => {
     if (!progressBar) {
       preDownloadProgressBar.setCompleted();
       initProgressBar(progress.total);

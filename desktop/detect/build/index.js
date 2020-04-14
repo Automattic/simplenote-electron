@@ -11,11 +11,11 @@ function Build() {
 
 // These process properties can either be true or undefined
 
-Build.prototype.isMAS = function() {
+Build.prototype.isMAS = function () {
   return Boolean(process.mas);
 };
 
-Build.prototype.isWindowsStore = function() {
+Build.prototype.isWindowsStore = function () {
   return Boolean(process.windowsStore);
 };
 

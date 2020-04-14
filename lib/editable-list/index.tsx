@@ -90,7 +90,7 @@ export class EditableList extends Component<Props> {
 
     return (
       <ul className={classes}>
-        {reorderedItems.map(item => {
+        {reorderedItems.map((item) => {
           const itemId = this.props.getItemKey(item);
 
           return (
@@ -123,7 +123,7 @@ export class EditableList extends Component<Props> {
                 <span
                   className="editable-list-reorder"
                   tabIndex={editing ? 0 : -1}
-                  onDragStart={e => e.preventDefault()}
+                  onDragStart={(e) => e.preventDefault()}
                   onMouseDown={this.onReorderStart.bind(this, itemId)}
                   onTouchStart={this.onReorderStart.bind(this, itemId)}
                   onKeyDown={this.onReorderKeyDown.bind(this, itemId)}

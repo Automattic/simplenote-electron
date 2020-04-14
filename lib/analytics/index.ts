@@ -11,13 +11,13 @@ import * as T from '../types';
 declare const config: { version: string };
 
 const analytics = {
-  initialize: function(initUser: string) {
+  initialize: function (initUser: string) {
     analytics.setUser(initUser);
     analytics.identifyUser();
   },
 
   // Return a valid platform prefix when on a platform that should be tracked
-  getPlatformPrefix: function() {
+  getPlatformPrefix: function () {
     if (!navigator.appVersion.includes('Electron')) {
       return 'spweb';
     }
@@ -32,12 +32,12 @@ const analytics = {
     return null;
   },
 
-  setUser: function(newUser: string) {
+  setUser: function (newUser: string) {
     user = newUser;
   },
 
   tracks: {
-    recordEvent: function(
+    recordEvent: function (
       eventName: string,
       eventProperties: T.JSONSerializable = {}
     ) {
@@ -60,7 +60,7 @@ const analytics = {
         window._tkq.push(['recordEvent', fullEventName, fullEventProperties]);
       }
     },
-    validateEvent: function(
+    validateEvent: function (
       fullEventName: string,
       fullEventProperties: T.JSONSerializable
     ) {
@@ -84,14 +84,14 @@ const analytics = {
     },
   },
 
-  identifyUser: function() {
+  identifyUser: function () {
     // Don't identify the user if we don't have one
     if (undefined !== user) {
       window._tkq.push(['identifyUser', user, user]);
     }
   },
 
-  clearedIdentity: function() {
+  clearedIdentity: function () {
     window._tkq.push(['clearIdentity']);
   },
 };

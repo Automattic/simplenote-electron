@@ -9,14 +9,14 @@ const filename = 'notes.zip';
 const exportZipArchive = () => {
   return exportNotes()
     .then(exportToZip)
-    .then(zip =>
+    .then((zip) =>
       zip.generateAsync({
         compression: 'DEFLATE',
         platform: get(window, 'process.platform', 'DOS'),
         type: 'blob',
       })
     )
-    .then(blob => saveAs(blob, filename))
+    .then((blob) => saveAs(blob, filename))
     .catch(console.log); // eslint-disable-line no-console
 };
 

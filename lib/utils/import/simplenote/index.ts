@@ -10,7 +10,7 @@ class SimplenoteImporter extends EventEmitter {
     this.options = options;
   }
 
-  importNotes = filesArray => {
+  importNotes = (filesArray) => {
     const coreImporter = new CoreImporter({
       noteBucket: this.noteBucket,
       tagBucket: this.tagBucket,
@@ -36,7 +36,7 @@ class SimplenoteImporter extends EventEmitter {
 
     const fileReader = new FileReader();
 
-    fileReader.onload = event => {
+    fileReader.onload = (event) => {
       const fileContent = event.target.result;
 
       if (!fileContent) {

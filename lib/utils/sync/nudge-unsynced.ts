@@ -21,7 +21,7 @@ const nudgeUnsynced = ({ noteBucket, notes, client }) => {
     return Promise.resolve(); // not an error, just resolve and move on
   }
 
-  return noteBucket.hasLocalChanges().then(hasChanges => {
+  return noteBucket.hasLocalChanges().then((hasChanges) => {
     if (hasChanges) {
       return Promise.resolve(); // let the local queue be processed first
     }
@@ -34,8 +34,8 @@ function updateUnsyncedNotes({ noteBucket, notes }) {
     return;
   }
 
-  const noteHasSynced = note =>
-    new Promise(resolve =>
+  const noteHasSynced = (note) =>
+    new Promise((resolve) =>
       noteBucket.getVersion(note.id, (e, v) => {
         const result = {
           id: note.id,
@@ -46,11 +46,11 @@ function updateUnsyncedNotes({ noteBucket, notes }) {
       })
     );
 
-  return Promise.all(notes.map(noteHasSynced)).then(result => {
-    const unsyncedNotes = result.filter(note => note.unsynced);
+  return Promise.all(notes.map(noteHasSynced)).then((result) => {
+    const unsyncedNotes = result.filter((note) => note.unsynced);
 
     debug(`${unsyncedNotes.length} unsynced notes`);
-    unsyncedNotes.forEach(note => noteBucket.update(note.id, note.data));
+    unsyncedNotes.forEach((note) => noteBucket.update(note.id, note.data));
   });
 }
 

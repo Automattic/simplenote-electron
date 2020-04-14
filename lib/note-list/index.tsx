@@ -137,7 +137,7 @@ const previewCache = new Map();
  * @param {Function} f produces the row height
  * @returns {Number} row height for note in list
  */
-const rowHeightCache = f => (
+const rowHeightCache = (f) => (
   notes,
   { noteDisplay, tagResultsFound, width }
 ) => ({ index }) => {
@@ -371,7 +371,7 @@ export class NoteList extends Component<Props> {
     window.removeEventListener('resize', this.recomputeHeights);
   }
 
-  handleShortcut = event => {
+  handleShortcut = (event) => {
     const { ctrlKey, key, metaKey, shiftKey } = event;
     const { notes, selectedNoteId } = this.props;
 
@@ -412,7 +412,7 @@ export class NoteList extends Component<Props> {
     return true;
   };
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -557,7 +557,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
 ) => ({
   closeNote: () => dispatch(actions.ui.closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
-  onSelectNote: noteId => {
+  onSelectNote: (noteId) => {
     if (noteId) {
       dispatch(loadAndSelectNote({ noteBucket, noteId }));
       analytics.tracks.recordEvent('list_note_opened');

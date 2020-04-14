@@ -4,8 +4,8 @@ import enmlToMarkdown from '../enml-to-markdown';
 
 describe('enmlToMarkdown', () => {
   it('should render the correct Markdown', () => {
-    return new Promise(done => {
-      const testResult = result => {
+    return new Promise((done) => {
+      const testResult = (result) => {
         fs.readFile(
           path.join(__dirname, './correct-markdown.txt'),
           'utf8',

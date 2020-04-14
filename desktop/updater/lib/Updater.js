@@ -62,7 +62,7 @@ class Updater extends EventEmitter {
     if (!this._hasPrompted) {
       this._hasPrompted = true;
 
-      dialog.showMessageBox(updateDialogOptions, button => {
+      dialog.showMessageBox(updateDialogOptions, (button) => {
         this._hasPrompted = false;
 
         if (button === 0) {

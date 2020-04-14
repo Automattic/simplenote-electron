@@ -56,7 +56,7 @@ export class SettingsDialog extends Component<Props> {
       }
 
       // Also check persisted store for any notes with version 0
-      const noteHasSynced = note =>
+      const noteHasSynced = (note) =>
         new Promise((resolve, reject) =>
           noteBucket.getVersion(note.id, (e, v) =>
             e || v === 0 ? reject() : resolve()
@@ -100,7 +100,7 @@ export class SettingsDialog extends Component<Props> {
           'Logging out will delete any unsynced notes. You can verify your ' +
           'synced notes by logging in to the Web App.',
       },
-      response => {
+      (response) => {
         if (response === 0) {
           this.signOut();
         } else if (response === 2) {
@@ -152,10 +152,10 @@ export class SettingsDialog extends Component<Props> {
 
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   closeDialog: () => dispatch(closeDialog()),
-  setWPToken: token => dispatch(setWPToken(token)),
-  toggleShareAnalyticsPreference: args => {
+  setWPToken: (token) => dispatch(setWPToken(token)),
+  toggleShareAnalyticsPreference: (args) => {
     dispatch(toggleShareAnalyticsPreference(args));
   },
 });

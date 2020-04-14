@@ -48,7 +48,7 @@ class ManualUpdater extends Updater {
       const releaseBody = await releaseResp.json();
 
       const releaseAsset = releaseBody.assets.find(
-        release => release.name === 'latest.yml'
+        (release) => release.name === 'latest.yml'
       );
       if (releaseAsset) {
         const configResp = await fetch(
