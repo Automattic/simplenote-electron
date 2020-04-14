@@ -168,9 +168,10 @@ export class NoteEditor extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   settings,
+  tags,
   ui: { note, editMode, selectedRevision },
 }) => ({
-  allTags: state.tags,
+  allTags: tags,
   fontSize: settings.fontSize,
   editMode,
   isEditorActive: !state.showNavigation,
