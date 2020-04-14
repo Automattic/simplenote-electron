@@ -19,6 +19,7 @@ export const middleware: S.Middleware = store => {
     previousIndex?: number
   ) => {
     const {
+      appState,
       tags,
       ui: { searchQuery },
     } = store.getState();

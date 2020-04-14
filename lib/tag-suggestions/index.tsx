@@ -91,11 +91,12 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   return filterAtMost(tags, matcher, 5);
 };
 
-const mapStateToProps: S.MapState<StateProps> = {
-  appState: state,
+const mapStateToProps: S.MapState<StateProps> = ({
   ui: { searchQuery, tagSuggestions },
+}) => ({
+  filteredTags: tagSuggestions,
   searchQuery,
-};
+});
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onSearch: query => {
