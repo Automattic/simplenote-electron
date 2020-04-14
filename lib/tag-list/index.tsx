@@ -99,11 +99,11 @@ export class TagList extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
+  tags,
   ui: { editingTags, openedTag },
 }) => ({
   editingTags,
-  tags: state.tags,
+  tags,
   openedTag,
 });
 

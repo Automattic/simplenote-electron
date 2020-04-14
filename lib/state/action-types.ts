@@ -85,6 +85,10 @@ export type StoreRevisions = Action<
   'STORE_REVISIONS',
   { noteId: T.EntityId; revisions: T.NoteEntity[] }
 >;
+export type TagsLoaded = Action<
+  'TAGS_LOADED',
+  { tags: T.TagEntity[]; sortTagsAlpha: boolean }
+>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
@@ -135,6 +139,7 @@ export type ActionType =
   | ShowAllNotes
   | ShowDialog
   | StoreRevisions
+  | TagsLoaded
   | ToggleEditMode
   | ToggleNavigation
   | ToggleNoteInfo

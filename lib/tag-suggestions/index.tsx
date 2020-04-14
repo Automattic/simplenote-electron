@@ -92,7 +92,6 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
   ui: { searchQuery, tagSuggestions },
 }) => ({
   filteredTags: tagSuggestions,

@@ -38,9 +38,7 @@ export const updateNoteTags = ({ note, tags }) => {
       modificationDate: Math.floor(Date.now() / 1000),
     });
 
-    const existingTagNames = new Set(
-      getState().appState.tags.map(tag => tag.data.name)
-    );
+    const existingTagNames = new Set(getState().tags.map(tag => tag.data.name));
 
     tags
       .filter(name => !existingTagNames.has(name))
