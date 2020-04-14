@@ -40,10 +40,8 @@ type OwnProps = {
 
 type StateProps = {
   hasLoaded: boolean;
-  nextNote: T.NoteEntity;
   noteDisplay: T.ListDisplayMode;
   notes: T.NoteEntity[];
-  prevNote: T.NoteEntity;
   searchQuery: string;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
