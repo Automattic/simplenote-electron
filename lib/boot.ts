@@ -148,7 +148,6 @@ let props = {
         localStorage.access_token = user.access_token;
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_signed_in');
       })
       .catch(({ message }: { message: string }) => {
         if (
@@ -183,7 +182,6 @@ let props = {
         token = user.access_token;
         client.setUser(user);
         analytics.tracks.recordEvent('user_account_created');
-        analytics.tracks.recordEvent('user_signed_in');
       })
       .then(() =>
         store.dispatch(
@@ -214,8 +212,6 @@ let props = {
 
     const user = { access_token: userToken };
     client.setUser(user);
-
-    analytics.tracks.recordEvent('user_signed_in');
   },
 };
 

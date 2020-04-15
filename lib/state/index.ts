@@ -20,6 +20,7 @@ import { omit } from 'lodash';
 
 import appState from '../flux/app-state';
 
+import { middleware as analyticsMiddleware } from './analytics/middleware';
 import { middleware as searchMiddleware } from '../search';
 import searchFieldMiddleware from './ui/search-field-middleware';
 import simperiumMiddleware from './simperium/middleware';
@@ -71,6 +72,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
     }),
     applyMiddleware(
       thunk,
+      analyticsMiddleware,
       searchMiddleware,
       searchFieldMiddleware,
       simperiumMiddleware

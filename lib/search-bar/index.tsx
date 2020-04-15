@@ -71,7 +71,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
     dispatch(createNote());
     dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
-    analytics.tracks.recordEvent('list_note_created');
   },
   toggleNavigation: () => {
     dispatch(toggleNavigation());

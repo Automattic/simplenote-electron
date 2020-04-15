@@ -111,7 +111,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onEditTags: () => dispatch(toggleTagEditing()),
   openTag: tag => {
     dispatch(openTag(tag));
-    analytics.tracks.recordEvent('list_tag_viewed');
   },
   renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),

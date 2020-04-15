@@ -281,7 +281,6 @@ export const App = connect(
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
-          analytics.tracks.recordEvent('list_note_created');
         } else if (has(this.props, command.action)) {
           const { action, ...args } = command;
 

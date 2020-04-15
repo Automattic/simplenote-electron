@@ -1,7 +1,6 @@
 import { Component, ReactElement, cloneElement } from 'react';
 import { connect } from 'react-redux';
 
-import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
 import { showDialog } from './state/ui/actions';
@@ -51,7 +50,6 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.trashNote({ noteBucket, note, previousIndex });
-    analytics.tracks.recordEvent('editor_note_deleted');
   };
 
   onDeleteNoteForever = (note: T.NoteEntity) => {
@@ -64,12 +62,10 @@ export class NoteToolbarContainer extends Component<Props> {
     const { noteBucket } = this.props;
     const previousIndex = this.getPreviousNoteIndex(note);
     this.props.restoreNote({ noteBucket, note, previousIndex });
-    analytics.tracks.recordEvent('editor_note_restored');
   };
 
   onShareNote = () => {
     this.props.shareNote();
-    analytics.tracks.recordEvent('editor_share_dialog_viewed');
   };
 
   render() {
