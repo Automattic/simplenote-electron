@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
 import analytics from '../analytics';
-import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
@@ -15,12 +14,18 @@ import * as T from '../types';
 
 const syncDelay = 2000;
 
-type StateProps = {
-  showNoteInfo: boolean;
-  isDialogOpen: boolean;
+type OwnProps = {
+  previewingMarkdown: boolean;
 };
 
-type Props = StateProps;
+type StateProps = {
+  isDialogOpen: boolean;
+  note: T.NoteEntity | null;
+  searchQuery: string;
+  showNoteInfo: boolean;
+};
+
+type Props = OwnProps & StateProps;
 
 export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
@@ -42,6 +47,9 @@ export class NoteDetail extends Component<Props> {
     storeHasFocus: noop,
   };
 
+  noteDetail = createRef<HTMLDivElement>();
+  previewNode = createRef<HTMLDivElement>();
+
   componentWillMount() {
     this.queueNoteSync = debounce(this.syncNote, syncDelay);
     document.addEventListener('copy', this.copyRenderedNote, false);
@@ -54,6 +62,8 @@ export class NoteDetail extends Component<Props> {
 
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSync.flush);
+
+    window.addEventListener('keydown', this.handlePreviewKeydown, false);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -75,14 +85,16 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentDidUpdate(prevProps) {
-    const { isDialogOpen, note, previewingMarkdown } = this.props;
+    const { note, previewingMarkdown, searchQuery } = this.props;
 
     const prevContent = get(prevProps, 'note.data.content', '');
     const nextContent = get(this.props, 'note.data.content', '');
 
     if (
       (previewingMarkdown &&
-        (prevProps.note !== note || prevContent !== nextContent)) ||
+        (prevProps.note !== note ||
+          prevContent !== nextContent ||
+          prevProps.searchQuery !== searchQuery)) ||
       (!prevProps.previewingMarkdown && this.props.previewingMarkdown)
     ) {
       this.updateMarkdown();
@@ -92,10 +104,11 @@ export class NoteDetail extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
+    window.removeEventListener('keydown', this.handlePreviewKeydown, false);
   }
 
   copyRenderedNote = event => {
-    const { previewingMarkdown, showNoteInfo, dialogs } = this.props;
+    const { previewingMarkdown, showNoteInfo, isDialogOpen } = this.props;
     // Only copy the rendered content if we're in the preview mode
     if (!previewingMarkdown) {
       return true;
@@ -169,14 +182,67 @@ export class NoteDetail extends Component<Props> {
 
   storeFocusContentEditor = f => (this.focusContentEditor = f);
 
-  storePreview = ref => (this.previewNode = ref);
-
   updateMarkdown = () => {
-    if (!this.previewNode) {
+    if (
+      !this.props.previewingMarkdown ||
+      !this.props.note ||
+      !this.previewNode.current
+    ) {
       return;
     }
 
-    renderToNode(this.previewNode, this.props.note.data.content);
+    renderToNode(
+      this.previewNode.current,
+      this.props.note.data.content,
+      this.props.searchQuery
+    );
+  };
+
+  handlePreviewKeydown = (event: KeyboardEvent) => {
+    const { ctrlKey, code, metaKey, shiftKey } = event;
+
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (
+      this.noteDetail.current &&
+      this.props.searchQuery.trim() &&
+      cmdOrCtrl &&
+      code === 'KeyG'
+    ) {
+      const matches = this.noteDetail.current.querySelectorAll(
+        'span.search-match'
+      );
+
+      if (!matches.length) {
+        return;
+      }
+
+      const selectedMatch = this.noteDetail.current.querySelector(
+        'span.search-match[data-current-match=true]'
+      );
+      let nextMatch = shiftKey ? matches[matches.length - 1] : matches[0];
+      if (selectedMatch) {
+        for (let i = 0; i < matches.length; i++) {
+          if (matches[i] !== selectedMatch) {
+            continue;
+          }
+
+          const direction = shiftKey ? -1 : 1;
+          const wrap = (index: number, length: number) => {
+            const next = index % length;
+            return next === -1 ? length - 1 : next;
+          };
+          nextMatch = matches[wrap(i + direction, matches.length)];
+          break;
+        }
+
+        selectedMatch.removeAttribute('data-current-match');
+      }
+      nextMatch.scrollIntoView({ block: 'center' });
+      nextMatch.setAttribute('data-current-match', 'true');
+
+      this.setState({ selectedMatch: nextMatch });
+    }
   };
 
   render() {
@@ -201,10 +267,10 @@ export class NoteDetail extends Component<Props> {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div className="note-detail">
+          <div ref={this.noteDetail} className="note-detail">
             {previewingMarkdown && (
               <div
-                ref={this.storePreview}
+                ref={this.previewNode}
                 className="note-detail-markdown theme-color-bg theme-color-fg"
                 data-markdown-root
                 onClick={this.onPreviewClick}
@@ -234,13 +300,10 @@ export class NoteDetail extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  ui,
-  settings,
-}) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ ui, settings }) => ({
   isDialogOpen: ui.dialogs.length > 0,
   note: ui.selectedRevision || ui.note,
+  searchQuery: ui.searchQuery,
   showNoteInfo: ui.showNoteInfo,
   spellCheckEnabled: settings.spellCheckEnabled,
 });

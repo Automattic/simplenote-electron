@@ -33,6 +33,7 @@ import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+import { getTerms } from '../utils/filter-notes';
 
 type OwnProps = {
   noteBucket: T.Bucket<T.Note>;
@@ -264,7 +265,8 @@ const renderNote = (
     'published-note': isPublished,
   });
 
-  const decorators = [checkboxDecorator, makeFilterDecorator(searchQuery)];
+  const terms = getTerms(searchQuery).map(makeFilterDecorator);
+  const decorators = [checkboxDecorator, ...terms];
 
   const selectNote = () => {
     onSelectNote(note.id);
