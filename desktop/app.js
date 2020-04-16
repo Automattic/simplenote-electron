@@ -52,6 +52,7 @@ module.exports = function main() {
       '../lib/icons/app-icon/icon_256x256.png'
     );
     mainWindow = new BrowserWindow({
+      backgroundColor: '#fff',
       x: mainWindowState.x,
       y: mainWindowState.y,
       width: mainWindowState.width,
