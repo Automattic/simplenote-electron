@@ -55,6 +55,11 @@ const reducer: A.Reducer<typeof initialState> = (
       return { ...state, theme: action.theme };
     case 'setWPToken':
       return { ...state, wpToken: action.token };
+    case 'AUTH_SET':
+      if (action.status === 'not-authorized') {
+        return { ...state, accountName: null, wpToken: false };
+      }
+      return state;
     default:
       return state;
   }

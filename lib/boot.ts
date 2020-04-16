@@ -200,8 +200,8 @@ let props = {
   onSignOut: () => {
     delete localStorage.access_token;
     token = null;
-    store.dispatch(setAccountName(null));
     client.deauthorize();
+    store.dispatch(resetAuth());
     redirectToWebSigninIfNecessary();
     analytics.tracks.recordEvent('user_signed_out');
   },

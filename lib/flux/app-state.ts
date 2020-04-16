@@ -20,13 +20,6 @@ export const actionMap = new ActionMap({
   namespace: 'App',
   initialState,
   handlers: {
-    authChanged(state: AppState) {
-      return update(state, {
-        notes: { $set: null },
-        tags: { $set: [] },
-      });
-    },
-
     showAllNotesAndSelectFirst: {
       creator() {
         return (dispatch, getState) => {

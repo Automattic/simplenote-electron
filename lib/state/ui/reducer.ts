@@ -11,13 +11,10 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
       return state.slice(0, -1);
-
     case 'SHOW_DIALOG':
       return [...state, action.dialog];
-
-    case 'App.authChanged':
-      return [];
-
+    case 'AUTH_SET':
+      return action.status === 'not-authorized' ? [] : state;
     default:
       return state;
   }
@@ -226,6 +223,8 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
     case 'TRASH_NOTE':
     case 'OPEN_TAG':
       return null;
+    case 'AUTH_SET':
+      return action.status === 'not-authorized' ? null : state;
     case 'SELECT_NOTE':
       return action.options
         ? {

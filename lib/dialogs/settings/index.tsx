@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
@@ -11,11 +10,10 @@ import DisplayPanel from './panels/display';
 import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
-import { setWPToken } from '../../state/settings/actions';
-
-import { closeDialog } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
+import * as T from '../../types';
 
 const settingTabs = ['account', 'display', 'tools'];
 
@@ -25,14 +23,13 @@ type OwnProps = {
   buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
   isElectron: boolean;
   isMacApp: boolean;
-  onSignOut: () => any;
   settings: S.State['settings'];
   toggleShareAnalyticsPreference: (preferencesBucket: object) => any;
 };
 
 type DispatchProps = {
   closeDialog: () => any;
-  setWPToken: (token: string) => any;
+  logOut: () => any;
 };
 
 type Props = OwnProps & DispatchProps;
@@ -71,17 +68,8 @@ export class SettingsDialog extends Component<Props> {
   };
 
   signOut = () => {
-    const { onSignOut, setWPToken, isElectron } = this.props;
-
-    // Reset the WordPress Token
-    setWPToken(null);
-
-    onSignOut();
-
-    if (isElectron) {
-      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-      ipcRenderer.send('clearCookies');
-    }
+    const { logOut, isElectron } = this.props;
+    logOut();
   };
 
   showUnsyncedWarning = () => {
@@ -153,8 +141,8 @@ export class SettingsDialog extends Component<Props> {
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeDialog: () => dispatch(closeDialog()),
-  setWPToken: token => dispatch(setWPToken(token)),
+  closeDialog: () => dispatch(actions.ui.closeDialog()),
+  logOut: () => dispatch(actions.auth.reset()),
   toggleShareAnalyticsPreference: args => {
     dispatch(toggleShareAnalyticsPreference(args));
   },

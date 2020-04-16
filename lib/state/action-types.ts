@@ -210,7 +210,6 @@ type LegacyAction =
         previousIndex: number;
       }
     >
-  | Action<'App.authChanged'>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>

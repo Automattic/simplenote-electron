@@ -110,10 +110,6 @@ export const middleware: S.Middleware = store => {
       case 'App.trashNote':
         setFilteredNotes(updateFilter('fullSearch'), action.previousIndex);
         break;
-
-      case 'App.authChanged':
-        setFilteredNotes(updateFilter('fullSearch'));
-        break;
     }
 
     return result;

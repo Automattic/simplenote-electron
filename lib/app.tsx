@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
-import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import NoteInfo from './note-info';
@@ -108,9 +107,9 @@ const mapDispatchToProps: S.MapDispatch<
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
     createNote: () => dispatch(createNote()),
     openTagList: () => dispatch(toggleNavigation()),
-    resetAuth: () => dispatch(reduxActions.auth.reset()),
+    resetAuth: () => dispatch(actions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
-    setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
+    setAuthorized: () => dispatch(actions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
@@ -294,17 +293,13 @@ export const App = connect(
 
     onAuthChanged = () => {
       const {
-        actions,
         appState: { accountName },
         client,
         resetAuth,
         setAuthorized,
       } = this.props;
 
-      actions.authChanged();
-
       if (!client.isAuthorized()) {
-        this.props.closeNote();
         return resetAuth();
       }
 
