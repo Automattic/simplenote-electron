@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 
 import analytics from '../analytics';
+import { isElectron } from '../utils/platform';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
@@ -16,10 +17,6 @@ import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
-
-type OwnProps = {
-  isElectron: boolean;
-};
 
 type StateProps = {
   autoHideMenuBar: boolean;
@@ -38,7 +35,7 @@ type DispatchProps = {
   showKeyboardShortcuts: () => any;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 export class NavigationBar extends Component<Props> {
   static displayName = 'NavigationBar';
@@ -72,13 +69,7 @@ export class NavigationBar extends Component<Props> {
   };
 
   render() {
-    const {
-      autoHideMenuBar,
-      isElectron,
-      onAbout,
-      onSettings,
-      onShowAllNotes,
-    } = this.props;
+    const { autoHideMenuBar, onAbout, onSettings, onShowAllNotes } = this.props;
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders">

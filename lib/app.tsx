@@ -16,20 +16,12 @@ import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
+import { isElectron, isMac } from './utils/platform';
 import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
 import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
 import classNames from 'classnames';
-import {
-  debounce,
-  get,
-  has,
-  isObject,
-  matchesProperty,
-  overEvery,
-  pick,
-  values,
-} from 'lodash';
+import { debounce, get, has, isObject, overEvery, pick, values } from 'lodash';
 import {
   createNote,
   closeNote,
@@ -127,16 +119,6 @@ const mapDispatchToProps: S.MapDispatch<
   };
 };
 
-const isElectron = (() => {
-  // https://github.com/atom/electron/issues/2288
-  const foundElectron = has(window, 'process.type');
-
-  return () => foundElectron;
-})();
-
-const isElectronMac = () =>
-  matchesProperty('process.platform', 'darwin')(window);
-
 export const App = connect(
   mapStateToProps,
   mapDispatchToProps
@@ -173,7 +155,7 @@ export const App = connect(
     };
 
     UNSAFE_componentWillMount() {
-      if (isElectron()) {
+      if (isElectron) {
         this.initializeElectron();
       }
 
@@ -515,7 +497,6 @@ export const App = connect(
         isSmallScreen,
         ui: { showNavigation, showNoteInfo },
       } = this.props;
-      const isMacApp = isElectronMac();
 
       const themeClass = `theme-${this.getTheme()}`;
 
@@ -527,8 +508,8 @@ export const App = connect(
       const mainClasses = classNames('simplenote-app', {
         'note-info-open': showNoteInfo,
         'navigation-open': showNavigation,
-        'is-electron': isElectron(),
-        'is-macos': isMacApp,
+        'is-electron': isElectron,
+        'is-macos': isMac,
       });
 
       return (
@@ -536,7 +517,7 @@ export const App = connect(
           {isDevConfig && <DevBadge />}
           {isAuthorized ? (
             <div className={mainClasses}>
-              {showNavigation && <NavigationBar isElectron={isElectron()} />}
+              {showNavigation && <NavigationBar />}
               <AppLayout
                 isFocusMode={settings.focusModeEnabled}
                 isNavigationOpen={showNavigation}
@@ -555,16 +536,12 @@ export const App = connect(
               onAuthenticate={this.props.onAuthenticate}
               onCreateUser={this.props.onCreateUser}
               authorizeUserWithToken={this.props.authorizeUserWithToken}
-              isMacApp={isMacApp}
-              isElectron={isElectron()}
             />
           )}
           <DialogRenderer
             appProps={this.props}
             buckets={{ noteBucket, preferencesBucket, tagBucket }}
             themeClass={themeClass}
-            isElectron={isElectron()}
-            isMacApp={isMacApp}
           />
         </div>
       );

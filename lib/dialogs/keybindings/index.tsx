@@ -2,19 +2,13 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Dialog from '../../dialog';
 import { closeDialog } from '../../state/ui/actions';
+import { isElectron, isMac } from '../../utils/platform';
 
 import * as S from '../../state';
-
-type OwnProps = {
-  isElectron: boolean;
-  isMacApp: boolean;
-};
 
 type DispatchProps = {
   closeDialog: () => any;
 };
-
-type Props = OwnProps & DispatchProps;
 
 const Keys = ({
   keys,
@@ -43,11 +37,11 @@ const Keys = ({
   </div>
 );
 
-export class AboutDialog extends Component<Props> {
+export class AboutDialog extends Component<DispatchProps> {
   render() {
-    const { closeDialog, isElectron, isMacApp } = this.props;
+    const { closeDialog } = this.props;
 
-    const CmdOrCtrl = isMacApp ? 'Cmd' : 'Ctrl';
+    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
     return (
       <div className="keybindings">

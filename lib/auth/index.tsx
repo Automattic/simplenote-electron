@@ -9,6 +9,7 @@ import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
+import { isElectron, isMac } from '../utils/platform';
 import { reset } from '../state/auth/actions';
 import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
@@ -20,8 +21,6 @@ export class Auth extends Component {
     hasInvalidCredentials: PropTypes.bool,
     hasLoginError: PropTypes.bool,
     isAuthenticated: PropTypes.bool,
-    isElectron: PropTypes.bool,
-    isMacApp: PropTypes.bool,
     onAuthenticate: PropTypes.func.isRequired,
     onCreateUser: PropTypes.func.isRequired,
     resetErrors: PropTypes.func.isRequired,
@@ -46,7 +45,6 @@ export class Auth extends Component {
       return null;
     }
 
-    const { isMacApp, isElectron } = this.props;
     const { isCreatingAccount, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
@@ -65,7 +63,7 @@ export class Auth extends Component {
 
     return (
       <div className="login">
-        {isMacApp && <div className="login__draggable-area" />}
+        {isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onLogin}>
           <h1>{buttonLabel}</h1>

@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { createStream } from 'sax';
+import { isElectron } from '../../platform';
 import parseISO from 'date-fns/parseISO';
 import { endsWith, get, has } from 'lodash';
 
@@ -7,7 +8,7 @@ import CoreImporter from '../';
 import enmlToMarkdown from './enml-to-markdown';
 
 let fs = null;
-const isElectron = has(window, 'process.type');
+
 if (isElectron) {
   fs = __non_webpack_require__('fs'); // eslint-disable-line no-undef
 }

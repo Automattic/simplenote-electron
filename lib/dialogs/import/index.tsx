@@ -24,7 +24,6 @@ type Props = DispatchProps;
 class ImportDialog extends Component<Props> {
   static propTypes = {
     buckets: PropTypes.object,
-    isElectron: PropTypes.bool.isRequired,
   };
 
   state = {
@@ -33,7 +32,7 @@ class ImportDialog extends Component<Props> {
   };
 
   render() {
-    const { buckets, closeDialog, isElectron } = this.props;
+    const { buckets, closeDialog } = this.props;
     const { importStarted, selectedSource } = this.state;
 
     const selectSource = source => this.setState({ selectedSource: source });
@@ -57,7 +56,6 @@ class ImportDialog extends Component<Props> {
         <div className="import__inner">
           {!sourceIsSelected && (
             <ImportSourceSelector
-              isElectron={isElectron}
               locked={importStarted}
               selectSource={selectSource}
             />
