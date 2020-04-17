@@ -1,7 +1,7 @@
 import React from 'react';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress, LinearProgressProps } from '@material-ui/core';
 
-const ProgressBar = (props) => {
+const ProgressBar: React.FunctionComponent<LinearProgressProps> = (props) => {
   return (
     <LinearProgress
       classes={{
