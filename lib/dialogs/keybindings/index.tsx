@@ -64,6 +64,9 @@ export class AboutDialog extends Component<Props> {
                     Focus search field
                   </Keys>
                 </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'G']}>Search within note</Keys>
+                </li>
                 {isElectron && (
                   <li>
                     <Keys keys={[CmdOrCtrl, '+']}>Increase font size</Keys>

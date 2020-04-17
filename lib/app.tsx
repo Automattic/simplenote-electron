@@ -265,7 +265,6 @@ export const App = connect(
       }
 
       if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
-        this.props.createNote();
         this.props.actions.newNote({
           noteBucket: this.props.noteBucket,
         });
@@ -333,7 +332,6 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
-          this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
@@ -461,15 +459,6 @@ export const App = connect(
 
     syncNote = noteId => {
       this.props.noteBucket.touch(noteId);
-    };
-
-    // gets the index of the note located before the currently selected one
-    getPreviousNoteIndex = note => {
-      const previousIndex = this.props.ui.filteredNotes.findIndex(
-        ({ id }) => note.id === id
-      );
-
-      return Math.max(previousIndex - 1, 0);
     };
 
     syncActivityHooks = data => {

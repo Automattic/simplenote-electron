@@ -61,6 +61,10 @@ export const updateFilter = (
       continue;
     }
 
+    if (openedTag && !note.tags.has(openedTag)) {
+      continue;
+    }
+
     if (
       searchTerms.length > 0 &&
       !searchTerms.every(term => note.content.includes(term))
@@ -92,6 +96,18 @@ const queueUpdateFilter = (
   }, delay);
 };
 
+export const updateNote = (noteId: T.EntityId, data) => {
+  const noteTags = new Set(data.tags.map(tag => tag.toLocaleLowerCase()));
+  notes.set(noteId, [
+    noteId,
+    {
+      ...data,
+      content: data.content.toLocaleLowerCase(),
+      tags: noteTags,
+    },
+  ]);
+};
+
 export const init = (port: MessagePort) => {
   mainApp = port;
 
@@ -99,16 +115,7 @@ export const init = (port: MessagePort) => {
     if (event.data.action === 'updateNote') {
       const { noteId, data } = event.data;
 
-      const noteTags = new Set(data.tags.map(tag => tag.toLocaleLowerCase()));
-      notes.set(noteId, [
-        noteId,
-        {
-          ...data,
-          content: data.content.toLocaleLowerCase(),
-          tags: noteTags,
-        },
-      ]);
-
+      updateNote(noteId, data);
       queueUpdateFilter(1000);
     } else if (event.data.action === 'filterNotes') {
       if ('string' === typeof event.data.searchQuery) {
@@ -126,10 +133,6 @@ export const init = (port: MessagePort) => {
 
       if ('boolean' === typeof event.data.showTrash) {
         showTrash = event.data.showTrash;
-      }
-
-      if (openedTag) {
-        filterTags.add(openedTag);
       }
 
       queueUpdateFilter();

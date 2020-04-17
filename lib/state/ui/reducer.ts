@@ -115,22 +115,6 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
   }
 };
 
-const previousIndex: A.Reducer<number> = (state = -1, action) => {
-  switch (action.type) {
-    case 'DELETE_NOTE_FOREVER':
-    case 'RESTORE_NOTE':
-    case 'TRASH_NOTE':
-      return action.previousIndex || state;
-    case 'OPEN_TAG':
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
-    case 'FILTER_NOTES':
-      return -1;
-    default:
-      return state;
-  }
-};
-
 const showNoteList: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'CLOSE_NOTE':
@@ -149,8 +133,16 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   action
 ) => ('SET_UNSYNCED_NOTE_IDS' === action.type ? action.noteIds : state);
 
-const searchQuery: A.Reducer<string> = (state = '', action) =>
-  'SEARCH' === action.type ? action.searchQuery : state;
+const searchQuery: A.Reducer<string> = (state = '', action) => {
+  switch (action.type) {
+    case 'CREATE_NOTE':
+      return '';
+    case 'SEARCH':
+      return action.searchQuery;
+    default:
+      return state;
+  }
+};
 
 const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
@@ -235,11 +227,6 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
         : action.note;
     case 'SET_SYSTEM_TAG':
       return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
-    case 'FILTER_NOTES':
-      // keep note if still in new filtered list otherwise try to choose first note in list
-      return state && action.notes.some(({ id }) => id === state.id)
-        ? state
-        : action.notes[Math.max(action.previousIndex, 0)] || null;
     default:
       return state;
   }
@@ -259,7 +246,6 @@ export default combineReducers({
   note,
   noteRevisions,
   openedTag,
-  previousIndex,
   searchQuery,
   selectedRevision,
   showNavigation,
