@@ -21,6 +21,11 @@ const tags: A.Reducer<T.TagEntity[]> = (state = [], action) => {
       }
       return sortedTags;
     }
+    case 'AUTH_SET':
+      if (action.status === 'not-authorized') {
+        return [];
+      }
+      return state;
     default:
       return state;
   }
