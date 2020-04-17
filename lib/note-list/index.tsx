@@ -209,9 +209,7 @@ const createCompositeNoteList = (
 export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
-  state = {
-    selected: { noteId: null, index: null },
-  };
+  state = { selectedIndex: null };
 
   list = createRef<List>();
 
@@ -238,9 +236,7 @@ export class NoteList extends Component<Props> {
       showTrash,
       tagResultsFound,
     } = nextProps;
-    const {
-      selected: { noteId, index },
-    } = this.state;
+    const { selectedIndex } = this.state;
 
     if (
       noteDisplay !== this.props.noteDisplay ||
@@ -252,9 +248,9 @@ export class NoteList extends Component<Props> {
     }
 
     if (
-      index &&
+      selectedIndex &&
       selectedNote &&
-      notes[index]?.id === selectedNote.id &&
+      notes[selectedIndex]?.id === selectedNote.id &&
       showTrash === this.props.showTrash &&
       openedTag === this.props.openedTag
     ) {
@@ -264,19 +260,20 @@ export class NoteList extends Component<Props> {
     const nextIndex = this.getHighlightedIndex(nextProps);
 
     if (null === nextIndex) {
-      return this.setState({
-        selected: { noteId: null, index: null },
-      });
+      return this.setState({ selectedIndex: null });
     }
 
-    if (!selectedNote || selectedNote.id !== notes[nextIndex].id) {
+    if (
+      notes.length &&
+      (!selectedNote || selectedNote.id !== notes[nextIndex]?.id)
+    ) {
       // select the note that should be selected, if it isn't already
-      this.props.onSelectNote(notes[nextIndex].id);
+      this.props.onSelectNote(
+        notes[Math.max(0, Math.min(notes.length - 1, nextIndex))].id
+      );
     }
 
-    this.setState({
-      selected: { noteId: notes[nextIndex].id, index: nextIndex },
-    });
+    this.setState({ selectedIndex: nextIndex });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -297,9 +294,7 @@ export class NoteList extends Component<Props> {
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
     const { notes } = this.props;
-    const {
-      selected: { index },
-    } = this.state;
+    const { selectedIndex: index } = this.state;
 
     const highlightedIndex = this.getHighlightedIndex(this.props);
 
@@ -343,9 +338,7 @@ export class NoteList extends Component<Props> {
 
   getHighlightedIndex = (props: Props) => {
     const { notes, selectedNote } = props;
-    const {
-      selected: { noteId, index },
-    } = this.state;
+    const { selectedIndex: index } = this.state;
 
     // Cases:
     //   - the notes list is empty
@@ -396,9 +389,7 @@ export class NoteList extends Component<Props> {
       showTrash,
       tagResultsFound,
     } = this.props;
-    const {
-      selected: { index: highlightedIndex },
-    } = this.state;
+    const { selectedIndex: highlightedIndex } = this.state;
 
     const compositeNoteList = createCompositeNoteList(
       notes,

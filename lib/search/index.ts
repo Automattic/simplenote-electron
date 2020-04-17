@@ -75,6 +75,7 @@ export const middleware: S.Middleware = store => {
         searchProcessor.postMessage({
           action: 'filterNotes',
           openedTag: action.tag.data.name,
+          showTrash: false,
         });
         break;
 
