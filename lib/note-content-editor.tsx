@@ -116,9 +116,9 @@ class NoteContentEditor extends Component<Props> {
 
     if (isElectron()) {
       this.ipc.on('appCommand', this.onAppCommand);
-    } else {
-      window.addEventListener('keydown', this.handleKeydown, false);
     }
+
+    window.addEventListener('keydown', this.handleKeydown, false);
   }
 
   handleEditorStateChange = editorState => {
@@ -227,9 +227,9 @@ class NoteContentEditor extends Component<Props> {
   componentWillUnmount() {
     if (isElectron()) {
       this.ipc.removeListener('appCommand', this.onAppCommand);
-    } else {
-      window.removeEventListener('keydown', this.handleKeydown, false);
     }
+
+    window.removeEventListener('keydown', this.handleKeydown, false);
   }
 
   focus = () => {
