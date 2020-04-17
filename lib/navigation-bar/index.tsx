@@ -11,9 +11,8 @@ import SettingsIcon from '../icons/settings';
 import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
-import { showDialog } from '../state/ui/actions';
 
-import { toggleNavigation, selectTrash } from '../state/ui/actions';
+import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -36,6 +35,7 @@ type DispatchProps = {
   onSettings: () => any;
   onShowAllNotes: () => any;
   selectTrash: () => any;
+  showKeyboardShortcuts: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -112,6 +112,15 @@ export class NavigationBar extends Component<Props> {
               <button
                 type="button"
                 className="navigation-bar__footer-item theme-color-fg-dim"
+                onClick={this.props.showKeyboardShortcuts}
+              >
+                Keyboard Shortcuts
+              </button>
+            </div>
+            <div className="navigation-bar__footer">
+              <button
+                type="button"
+                className="navigation-bar__footer-item theme-color-fg-dim"
                 onClick={this.onHelpClicked}
               >
                 Help &amp; Support
@@ -136,7 +145,6 @@ export class NavigationBar extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
   settings,
   ui: { dialogs, openedTag, showNavigation, showTrash },
 }) => ({
@@ -155,6 +163,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onShowAllNotes: showAllNotesAndSelectFirst,
   onSettings: () => showDialog('SETTINGS'),
   selectTrash,
+  showKeyboardShortcuts: () => showDialog('KEYBINDINGS'),
 };
 
 export default connect(

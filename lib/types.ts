@@ -61,7 +61,12 @@ export type Bucket<T = unknown> = {
 ///////////////////////////////////////
 // Application Types
 ///////////////////////////////////////
-export type DialogType = 'ABOUT' | 'IMPORT' | 'SETTINGS' | 'SHARE';
+export type DialogType =
+  | 'ABOUT'
+  | 'KEYBINDINGS'
+  | 'IMPORT'
+  | 'SETTINGS'
+  | 'SHARE';
 export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';

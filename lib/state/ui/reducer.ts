@@ -13,7 +13,7 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
       return state.slice(0, -1);
 
     case 'SHOW_DIALOG':
-      return [...state, action.dialog];
+      return state.includes(action.dialog) ? state : [...state, action.dialog];
 
     case 'App.authChanged':
       return [];

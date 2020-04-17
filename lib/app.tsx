@@ -50,17 +50,23 @@ export type OwnProps = {
   noteBucket: object;
 };
 
+export type StateProps = S.State & {
+  authIsPending: boolean;
+  isAuthorized: boolean;
+};
+
 export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
   focusSearchField: () => any;
   selectNote: (note: T.NoteEntity) => any;
-  showDialog: () => any;
+  showDialog: (type: T.DialogType) => any;
+  trashNote: (previousIndex: number) => any;
 };
 
-export type Props = DispatchProps;
+export type Props = OwnProps & StateProps & DispatchProps;
 
-const mapStateToProps = state => ({
+const mapStateToProps: S.MapState<StateProps> = state => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
   isAuthorized: selectors.auth.isAuthorized(state),
@@ -117,6 +123,7 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: note => dispatch(actions.ui.selectNote(note)),
     setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
     showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
+    trashNote: previousIndex => dispatch(actions.ui.trashNote(previousIndex)),
   };
 };
 
@@ -229,8 +236,8 @@ export const App = connect(
       }
     }
 
-    handleShortcut = event => {
-      const { ctrlKey, key, metaKey } = event;
+    handleShortcut = (event: KeyboardEvent) => {
+      const { code, ctrlKey, metaKey, shiftKey } = event;
 
       // Is either cmd or ctrl pressed? (But not both)
       const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
@@ -238,10 +245,49 @@ export const App = connect(
       // open tag list
       if (
         cmdOrCtrl &&
-        't' === key.toLowerCase() &&
+        shiftKey &&
+        'KeyT' === code &&
         !this.props.showNavigation
       ) {
         this.props.openTagList();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+        this.props.focusSearchField();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
+        this.props.createNote();
+        this.props.actions.newNote({
+          noteBucket: this.props.noteBucket,
+        });
+        analytics.tracks.recordEvent('list_note_created');
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (
+        this.props.ui.note &&
+        cmdOrCtrl &&
+        ('Delete' === code || 'Backspace' === code)
+      ) {
+        this.props.actions.trashNote({
+          noteBucket: this.props.noteBucket,
+          note: this.props.ui.note,
+          previousIndex: this.props.appState.notes.findIndex(
+            ({ id }) => this.props.ui.note.id === id
+          ),
+        });
 
         event.stopPropagation();
         event.preventDefault();
@@ -266,6 +312,16 @@ export const App = connect(
 
       if ('showDialog' === command.action) {
         return this.props.showDialog(command.dialog);
+      }
+
+      if ('trashNote' === command.action && this.props.ui.note) {
+        return this.props.actions.trashNote({
+          noteBucket: this.props.noteBucket,
+          note: this.props.ui.note,
+          previousIndex: this.props.appState.notes.findIndex(
+            ({ id }) => this.props.ui.note.id === id
+          ),
+        });
       }
 
       const canRun = overEvery(
