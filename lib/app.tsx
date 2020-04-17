@@ -265,7 +265,6 @@ export const App = connect(
       }
 
       if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
-        this.props.createNote();
         this.props.actions.newNote({
           noteBucket: this.props.noteBucket,
         });
@@ -333,7 +332,6 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
-          this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });

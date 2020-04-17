@@ -64,10 +64,16 @@ export const middleware: S.Middleware = store => {
         break;
 
       case 'REMOTE_NOTE_UPDATE':
+        updateNote(action.noteId, action.data);
         searchProcessor.postMessage({
-          action: 'updateNote',
-          noteId: action.noteId,
-          data: action.data,
+          action: 'filterNotes',
+        });
+        break;
+
+      case 'CREATE_NOTE':
+        searchProcessor.postMessage({
+          action: 'filterNotes',
+          searchQuery: '',
         });
         break;
 

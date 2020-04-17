@@ -1,5 +1,4 @@
 import React, { Component, Fragment, createRef } from 'react';
-import PropTypes from 'prop-types';
 import {
   AutoSizer,
   CellMeasurer,
@@ -48,7 +47,7 @@ type StateProps = {
 type DispatchProps = {
   closeNote: () => any;
   onEmptyTrash: () => any;
-  onSelectNote: (noteId: T.EntityId | null) => any;
+  onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
 };
 
@@ -139,7 +138,7 @@ const renderNote = (
   const terms = getTerms(searchQuery).map(makeFilterDecorator);
   const decorators = [checkboxDecorator, ...terms];
 
-  const selectNote = () => onSelectNote(note.id);
+  const selectNote = () => onSelectNote(note);
 
   return (
     <CellMeasurer
@@ -213,15 +212,6 @@ export class NoteList extends Component<Props> {
 
   list = createRef<List>();
 
-  static propTypes = {
-    isSmallScreen: PropTypes.bool.isRequired,
-    noteDisplay: PropTypes.string.isRequired,
-    onEmptyTrash: PropTypes.any.isRequired,
-    onPinNote: PropTypes.func.isRequired,
-    onSelectNote: PropTypes.func.isRequired,
-    showTrash: PropTypes.bool,
-  };
-
   componentDidMount() {
     this.toggleShortcuts(true);
   }
@@ -247,6 +237,23 @@ export class NoteList extends Component<Props> {
       heightCache.clearAll();
     }
 
+    // jump to top of note list
+    if (
+      openedTag !== this.props.openedTag ||
+      showTrash !== this.props.showTrash
+    ) {
+      const hasNotes = notes.length > 0;
+      this.setState({ selectedIndex: hasNotes ? 0 : null });
+      this.props.onSelectNote(hasNotes ? notes[0] : null);
+      return;
+    }
+
+    if (notes.length === 0 && selectedNote) {
+      this.props.closeNote();
+      this.setState({ selectedIndex: null });
+    }
+
+    // nothing has changed, so don't change anything
     if (
       selectedIndex &&
       selectedNote &&
@@ -269,7 +276,7 @@ export class NoteList extends Component<Props> {
     ) {
       // select the note that should be selected, if it isn't already
       this.props.onSelectNote(
-        notes[Math.max(0, Math.min(notes.length - 1, nextIndex))].id
+        notes[Math.max(0, Math.min(notes.length - 1, nextIndex))]
       );
     }
 
@@ -304,7 +311,7 @@ export class NoteList extends Component<Props> {
         return true;
       }
 
-      this.props.onSelectNote(notes[index - 1].id);
+      this.props.onSelectNote(notes[index - 1]);
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -319,7 +326,7 @@ export class NoteList extends Component<Props> {
         return true;
       }
 
-      this.props.onSelectNote(notes[index + 1].id);
+      this.props.onSelectNote(notes[index + 1]);
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -369,7 +376,6 @@ export class NoteList extends Component<Props> {
 
     if (selectedNote) {
       return Math.min(index, notes.length - 1); // different note, same index
-      // throw new Error('selected note not in list');
     }
 
     // we have no selected note here, but we do have a previous index
@@ -389,7 +395,7 @@ export class NoteList extends Component<Props> {
       showTrash,
       tagResultsFound,
     } = this.props;
-    const { selectedIndex: highlightedIndex } = this.state;
+    const { selectedIndex } = this.state;
 
     const compositeNoteList = createCompositeNoteList(
       notes,
@@ -398,11 +404,12 @@ export class NoteList extends Component<Props> {
     );
 
     const specialRows = compositeNoteList.length - notes.length;
+    const highlightedIndex =
+      selectedIndex !== null ? selectedIndex + specialRows : null;
 
     const renderNoteRow = renderNote(compositeNoteList, {
       searchQuery,
-      highlightedIndex:
-        highlightedIndex !== null ? highlightedIndex + specialRows : null,
+      highlightedIndex,
       noteDisplay,
       onSelectNote,
       onPinNote,
@@ -512,11 +519,9 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
 ) => ({
   closeNote: () => dispatch(actions.ui.closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
-  onSelectNote: noteId => {
-    if (noteId) {
-      dispatch(loadAndSelectNote({ noteBucket, noteId }));
-      analytics.tracks.recordEvent('list_note_opened');
-    }
+  onSelectNote: (note: T.NoteEntity | null) => {
+    dispatch(actions.ui.selectNote(note));
+    analytics.tracks.recordEvent('list_note_opened');
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
 });

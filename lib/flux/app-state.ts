@@ -70,12 +70,8 @@ export const actionMap = new ActionMap({
               if (e) {
                 return debug(`newNote: could not create note - ${e.message}`);
               }
-              dispatch(
-                this.action('loadAndSelectNote', {
-                  noteBucket,
-                  noteId: note.id,
-                })
-              );
+              dispatch(actions.ui.createNote());
+              setTimeout(() => dispatch(actions.ui.selectNote(note)), 500);
             }
           );
         };
