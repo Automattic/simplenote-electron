@@ -57,7 +57,7 @@ export class AboutDialog extends Component<Props> {
               <h1>View</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, '?']}>Show keyboard shortcuts</Keys>
+                  <Keys keys={[CmdOrCtrl, '/']}>Show keyboard shortcuts</Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
