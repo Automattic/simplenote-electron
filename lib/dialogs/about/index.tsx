@@ -4,7 +4,7 @@ import SimplenoteLogo from '../../icons/simplenote';
 import CrossIcon from '../../icons/cross';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
 import Dialog from '../../dialog';
-import { closeDialog } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 
@@ -126,7 +126,7 @@ export class AboutDialog extends Component<Props> {
 }
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
+  closeDialog: actions.ui.closeDialog,
 };
 
 export default connect(null, mapDispatchToProps)(AboutDialog);

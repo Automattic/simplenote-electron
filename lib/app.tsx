@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
-import reduxActions from './state/actions';
 import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import NoteInfo from './note-info';
@@ -22,16 +21,6 @@ import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
 import classNames from 'classnames';
 import { debounce, get, has, isObject, overEvery, pick, values } from 'lodash';
-import {
-  createNote,
-  closeNote,
-  setUnsyncedNoteIds,
-  toggleNavigation,
-  toggleSimperiumConnectionStatus,
-} from './state/ui/actions';
-
-import * as settingsActions from './state/settings/actions';
-
 import actions from './state/actions';
 import * as S from './state';
 import * as T from './types';
@@ -83,7 +72,7 @@ const mapDispatchToProps: S.MapDispatch<
   return {
     actions: bindActionCreators(actionCreators, dispatch),
     ...bindActionCreators(
-      pick(settingsActions, [
+      pick(actions.settings, [
         'activateTheme',
         'decreaseFontSize',
         'increaseFontSize',
@@ -97,23 +86,23 @@ const mapDispatchToProps: S.MapDispatch<
       ]),
       dispatch
     ),
-    closeNote: () => dispatch(closeNote()),
+    closeNote: () => dispatch(actions.ui.closeNote()),
     remoteNoteUpdate: (noteId, data) =>
       dispatch(actions.simperium.remoteNoteUpdate(noteId, data)),
     loadTags: () => dispatch(loadTags()),
-    setSortType: thenReloadNotes(settingsActions.setSortType),
-    toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
-    toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
-    createNote: () => dispatch(createNote()),
-    openTagList: () => dispatch(toggleNavigation()),
-    resetAuth: () => dispatch(reduxActions.auth.reset()),
+    setSortType: thenReloadNotes(actions.settings.setSortType),
+    toggleSortOrder: thenReloadNotes(actions.settings.toggleSortOrder),
+    toggleSortTagsAlpha: thenReloadTags(actions.settings.toggleSortTagsAlpha),
+    createNote: () => dispatch(actions.ui.createNote()),
+    openTagList: () => dispatch(actions.ui.toggleNavigation()),
+    resetAuth: () => dispatch(actions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
-    setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
+    setAuthorized: () => dispatch(actions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     setSimperiumConnectionStatus: (connected) =>
-      dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: (note) => dispatch(actions.ui.selectNote(note)),
-    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
+      dispatch(actions.ui.toggleSimperiumConnectionStatus(connected)),
+    setUnsyncedNoteIds: (noteIds) =>
+      dispatch(actions.ui.setUnsyncedNoteIds(noteIds)),
     showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
     trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
   };

@@ -12,13 +12,7 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-
-import {
-  closeNote,
-  toggleEditMode,
-  toggleNoteInfo,
-  toggleRevisions,
-} from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -185,10 +179,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeNote,
-  toggleEditMode,
-  toggleNoteInfo,
-  toggleRevisions,
+  closeNote: actions.ui.closeNote,
+  toggleEditMode: actions.ui.toggleEditMode,
+  toggleNoteInfo: actions.ui.toggleNoteInfo,
+  toggleRevisions: actions.ui.toggleRevisions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

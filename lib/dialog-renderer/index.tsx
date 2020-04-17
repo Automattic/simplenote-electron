@@ -8,8 +8,7 @@ import ImportDialog from '../dialogs/import';
 import KeybindingsDialog from '../dialogs/keybindings';
 import SettingsDialog from '../dialogs/settings';
 import ShareDialog from '../dialogs/share';
-import { closeDialog } from '../state/ui/actions';
-
+import actions from '../state/actions';
 import * as S from '../state';
 import * as T from '../types';
 
@@ -70,7 +69,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui: { dialogs } }) => ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
+  closeDialog: actions.ui.closeDialog,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogRenderer);

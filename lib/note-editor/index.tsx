@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
-import { toggleEditMode } from '../state/ui/actions';
-
-import { closeNote, markdownNote } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -184,10 +182,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  closeNote: () => dispatch(closeNote()),
+  closeNote: () => dispatch(actions.ui.closeNote()),
   toggleMarkdown: (note, enableMarkdown) =>
-    dispatch(markdownNote(note, enableMarkdown)),
-  toggleEditMode: () => dispatch(toggleEditMode()),
+    dispatch(actions.ui.markdownNote(note, enableMarkdown)),
+  toggleEditMode: () => dispatch(actions.ui.toggleEditMode()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

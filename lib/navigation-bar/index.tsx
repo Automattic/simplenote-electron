@@ -13,7 +13,7 @@ import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
 
-import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -149,12 +149,12 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const { showAllNotesAndSelectFirst } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog('ABOUT'),
-  onOutsideClick: toggleNavigation,
+  onAbout: () => actions.ui.showDialog('ABOUT'),
+  onOutsideClick: actions.ui.toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog('SETTINGS'),
-  selectTrash,
-  showKeyboardShortcuts: () => showDialog('KEYBINDINGS'),
+  onSettings: () => actions.ui.showDialog('SETTINGS'),
+  selectTrash: actions.ui.selectTrash,
+  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
 };
 
 export default connect(

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import analytics from '../analytics';
-import { search } from '../state/ui/actions';
+import actions from '../state/actions';
 import filterAtMost from '../utils/filter-at-most';
 
 import * as S from '../state';
@@ -96,7 +96,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query) => {
-    dispatch(search(query));
+    dispatch(actions.ui.search(query));
     analytics.tracks.recordEvent('list_notes_searched');
   },
 });

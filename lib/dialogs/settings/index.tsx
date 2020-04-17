@@ -12,9 +12,7 @@ import DisplayPanel from './panels/display';
 import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
-import { setWPToken } from '../../state/settings/actions';
-
-import { closeDialog } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 
@@ -147,8 +145,8 @@ export class SettingsDialog extends Component<Props> {
 const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  closeDialog: () => dispatch(closeDialog()),
-  setWPToken: (token) => dispatch(setWPToken(token)),
+  closeDialog: () => dispatch(actions.ui.closeDialog()),
+  setWPToken: (token) => dispatch(actions.settings.setWPToken(token)),
   toggleShareAnalyticsPreference: (args) => {
     dispatch(toggleShareAnalyticsPreference(args));
   },

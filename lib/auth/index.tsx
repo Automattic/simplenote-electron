@@ -10,8 +10,8 @@ import Spinner from '../components/spinner';
 
 import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
 import { isElectron, isMac } from '../utils/platform';
-import { reset } from '../state/auth/actions';
-import { setWPToken } from '../state/settings/actions';
+import actions from '../state/actions';
+
 import { viewExternalUrl } from '../utils/url-utils';
 
 export class Auth extends Component {
@@ -346,8 +346,8 @@ export class Auth extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  resetErrors: () => dispatch(reset()),
-  saveWPToken: (token) => dispatch(setWPToken(token)),
+  resetErrors: () => dispatch(actions.auth.reset()),
+  saveWPToken: (token) => dispatch(actions.settings.setWPToken(token)),
 });
 
 const mapStateToProps = (state) => ({

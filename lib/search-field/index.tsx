@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
 import analytics from '../analytics';
 import { State } from '../state';
-import { search } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
@@ -109,7 +109,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
-    dispatch(search(query));
+    dispatch(actions.ui.search(query));
     analytics.tracks.recordEvent('list_notes_searched');
   },
 });

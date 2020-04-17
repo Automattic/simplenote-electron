@@ -9,20 +9,13 @@ import 'unorm';
 
 import React from 'react';
 import App from './app';
+import actions from './state/actions';
 import Modal from 'react-modal';
 import Debug from 'debug';
 import { initClient } from './client';
 import getConfig from '../get-config';
 import store from './state';
 import * as simperiumMiddleware from './state/simperium/middleware';
-import {
-  reset as resetAuth,
-  setAuthorized,
-  setInvalidCredentials,
-  setLoginError,
-  setPending as setPendingAuth,
-} from './state/auth/actions';
-import { setAccountName } from './state/settings/actions';
 import analytics from './analytics';
 import { Auth } from 'simperium';
 import { parse } from 'cookie';
@@ -134,17 +127,19 @@ let props = {
       return;
     }
 
-    store.dispatch(setPendingAuth());
+    store.dispatch(actions.auth.setPending());
     auth
       .authorize(username, password)
       .then((user) => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
-          return store.dispatch(resetAuth());
+          return store.dispatch(actions.auth.reset());
         }
 
-        store.dispatch(setAccountName(username));
-        store.dispatch(setAuthorized());
+        store.dispatch(
+          actions.settings.actions.settings.setAccountName(username)
+        );
+        store.dispatch(actions.auth.setAuthorized());
         localStorage.access_token = user.access_token;
         token = user.access_token;
         client.setUser(user);
@@ -157,9 +152,9 @@ let props = {
             message.startsWith('unknown username:'),
           ])
         ) {
-          store.dispatch(setInvalidCredentials());
+          store.dispatch(actions.auth.setInvalidCredentials());
         } else {
-          store.dispatch(setLoginError());
+          store.dispatch(actions.auth.setLoginError());
         }
       });
   },
@@ -168,17 +163,17 @@ let props = {
       return;
     }
 
-    store.dispatch(setPendingAuth());
+    store.dispatch(actions.auth.setPending());
     auth
       .create(username, password, appProvider)
       .then((user) => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
-          return store.dispatch(resetAuth());
+          return store.dispatch(actions.auth.reset());
         }
 
-        store.dispatch(setAccountName(username));
-        store.dispatch(setAuthorized());
+        store.dispatch(actions.settings.setAccountName(username));
+        store.dispatch(actions.auth.setAuthorized());
         localStorage.setItem('access_token', user.access_token);
         token = user.access_token;
         client.setUser(user);
@@ -194,13 +189,13 @@ let props = {
         )
       )
       .catch(() => {
-        store.dispatch(setLoginError());
+        store.dispatch(actions.auth.setLoginError());
       });
   },
   onSignOut: () => {
     delete localStorage.access_token;
     token = null;
-    store.dispatch(setAccountName(null));
+    store.dispatch(actions.settings.setAccountName(null));
     client.deauthorize();
     redirectToWebSigninIfNecessary();
     analytics.tracks.recordEvent('user_signed_out');
@@ -209,8 +204,8 @@ let props = {
     resetStorageIfAccountChanged(accountName);
     localStorage.setItem('access_token', userToken);
     token = userToken;
-    store.dispatch(setAccountName(accountName));
-    store.dispatch(setAuthorized());
+    store.dispatch(actions.settings.setAccountName(accountName));
+    store.dispatch(actions.auth.setAuthorized());
 
     const user = { access_token: userToken };
     client.setUser(user);
@@ -232,7 +227,7 @@ if (cookie.email && config.is_app_engine) {
   // If the stored email doesn't match, we should reset the app storage
   resetStorageIfAccountChanged(cookie.email);
 
-  store.dispatch(setAccountName(cookie.email));
+  store.dispatch(actions.settings.setAccountName(cookie.email));
 }
 
 Modal.setAppElement('#root');

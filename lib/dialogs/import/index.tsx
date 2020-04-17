@@ -7,7 +7,7 @@ import ImportSourceSelector from './source-selector';
 import TransitionFadeInOut from '../../components/transition-fade-in-out';
 import TransitionDelayEnter from '../../components/transition-delay-enter';
 import Spinner from '../../components/spinner';
-import { closeDialog } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 
@@ -81,7 +81,7 @@ class ImportDialog extends Component<Props> {
 }
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
+  closeDialog: actions.ui.closeDialog,
 };
 
 export default connect(null, mapDispatchToProps)(ImportDialog);

@@ -12,7 +12,7 @@ import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
-import { closeDialog, publishNote } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -217,9 +217,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  closeDialog: () => dispatch(closeDialog()),
+  closeDialog: () => dispatch(actions.ui.closeDialog()),
   publishNote: (note, shouldPublish) =>
-    dispatch(publishNote(note, shouldPublish)),
+    dispatch(actions.ui.publishNote(note, shouldPublish)),
   updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),
 });
 

@@ -6,7 +6,7 @@ import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import Slider from '../components/slider';
 import { updateNoteTags } from '../state/domain/notes';
-import { selectRevision, toggleRevisions } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -191,9 +191,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  setRevision: (revision: T.NoteEntity) => dispatch(selectRevision(revision)),
-  resetIsViewingRevisions: () => dispatch(toggleRevisions()),
-  cancelRevision: () => dispatch(toggleRevisions()),
+  setRevision: (revision: T.NoteEntity) =>
+    dispatch(actions.ui.selectRevision(revision)),
+  resetIsViewingRevisions: () => dispatch(actions.ui.toggleRevisions()),
+  cancelRevision: () => dispatch(actions.ui.toggleRevisions()),
   updateNoteTags: (arg) => dispatch(updateNoteTags(arg)),
 });
 

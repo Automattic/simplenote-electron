@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Dialog from '../../dialog';
-import { closeDialog } from '../../state/ui/actions';
 import { isElectron, isMac } from '../../utils/platform';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 
@@ -154,7 +154,7 @@ export class AboutDialog extends Component<DispatchProps> {
 }
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
+  closeDialog: actions.ui.closeDialog,
 };
 
 export default connect(null, mapDispatchToProps)(AboutDialog);

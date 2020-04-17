@@ -6,7 +6,7 @@ import EditableList from '../editable-list';
 import { get } from 'lodash';
 import TagListInput from './input';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
-import { openTag, toggleTagEditing } from '../state/ui/actions';
+import actions from '../state/actions';
 import analytics from '../analytics';
 
 import * as S from '../state';
@@ -108,9 +108,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  onEditTags: () => dispatch(toggleTagEditing()),
+  onEditTags: () => dispatch(actions.ui.toggleTagEditing()),
   openTag: (tag) => {
-    dispatch(openTag(tag));
+    dispatch(actions.ui.openTag(tag));
     analytics.tracks.recordEvent('list_tag_viewed');
   },
   renameTag: (arg) => dispatch(renameTag(arg)),

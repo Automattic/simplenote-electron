@@ -6,7 +6,7 @@ import exportZipArchive from '../../../utils/export';
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
 
-import { showDialog } from '../../../state/ui/actions';
+import actions from '../../../state/actions';
 
 import * as S from '../../../state';
 
@@ -46,7 +46,7 @@ const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  showDialog: () => dispatch(showDialog('IMPORT')),
+  showDialog: () => dispatch(actions.ui.showDialog('IMPORT')),
 });
 
 export default connect(null, mapDispatchToProps)(ToolsPanel);
