@@ -276,7 +276,11 @@ export const App = connect(
         return false;
       }
 
-      if (this.props.ui.note && cmdOrCtrl && 'Delete' === code) {
+      if (
+        this.props.ui.note &&
+        cmdOrCtrl &&
+        ('Delete' === code || 'Backspace' === code)
+      ) {
         this.props.actions.trashNote({
           noteBucket: this.props.noteBucket,
           note: this.props.ui.note,
