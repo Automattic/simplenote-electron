@@ -24,46 +24,32 @@ type NoteChanger = {
   note: T.NoteEntity;
 };
 
-type ListChanger = NoteChanger & { previousIndex: number };
-
 type DispatchProps = {
-  deleteNoteForever: (args: ListChanger) => any;
-  restoreNote: (args: ListChanger) => any;
+  deleteNoteForever: (args: NoteChanger) => any;
+  restoreNote: (args: NoteChanger) => any;
   shareNote: () => any;
   showDialog: () => any;
   toggleFocusMode: () => any;
-  trashNote: (args: ListChanger) => any;
+  trashNote: (args: NoteChanger) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteToolbarContainer extends Component<Props> {
-  // Gets the index of the note located before the currently selected one
-  getPreviousNoteIndex = (note: T.NoteEntity) => {
-    const previousIndex = this.props.notes.findIndex(
-      ({ id }) => note.id === id
-    );
-
-    return Math.max(previousIndex - 1, 0);
-  };
-
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.trashNote({ noteBucket, note, previousIndex });
+    this.props.trashNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
   onDeleteNoteForever = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.deleteNoteForever({ noteBucket, note, previousIndex });
+    this.props.deleteNoteForever({ noteBucket, note });
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.restoreNote({ noteBucket, note, previousIndex });
+    this.props.restoreNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_restored');
   };
 

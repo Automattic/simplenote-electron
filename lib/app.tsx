@@ -463,15 +463,6 @@ export const App = connect(
       this.props.noteBucket.touch(noteId);
     };
 
-    // gets the index of the note located before the currently selected one
-    getPreviousNoteIndex = note => {
-      const previousIndex = this.props.ui.filteredNotes.findIndex(
-        ({ id }) => note.id === id
-      );
-
-      return Math.max(previousIndex - 1, 0);
-    };
-
     syncActivityHooks = data => {
       activityHooks(data, {
         onIdle: () => {

@@ -36,10 +36,11 @@ type StateProps = {
   hasLoaded: boolean;
   noteDisplay: T.ListDisplayMode;
   notes: T.NoteEntity[];
+  openedTag: T.TagEntity | null;
   searchQuery: string;
+  selectedNote: T.NoteEntity | null;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
-  selectedNoteId?: T.EntityId;
   showTrash: boolean;
   tagResultsFound: number;
 };
@@ -51,7 +52,7 @@ type DispatchProps = {
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = Readonly<OwnProps & StateProps & DispatchProps>;
 
 type NoteListItem =
   | T.NoteEntity
@@ -85,14 +86,14 @@ const renderNote = (
   {
     searchQuery,
     noteDisplay,
-    selectedNoteId,
+    highlightedIndex,
     onSelectNote,
     onPinNote,
     isSmallScreen,
   }: {
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
-    selectedNoteId?: T.EntityId;
+    highlightedIndex: number;
     onSelectNote: DispatchProps['onSelectNote'];
     onPinNote: DispatchProps['onPinNote'];
     isSmallScreen: boolean;
@@ -130,7 +131,7 @@ const renderNote = (
   const isPinned = note.data.systemTags.includes('pinned');
   const isPublished = !!note.data.publishURL;
   const classes = classNames('note-list-item', {
-    'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
+    'note-list-item-selected': !isSmallScreen && highlightedIndex === index,
     'note-list-item-pinned': isPinned,
     'published-note': isPublished,
   });
@@ -208,15 +209,18 @@ const createCompositeNoteList = (
 export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
+  state = {
+    selected: { noteId: null, index: null },
+  };
+
   list = createRef<List>();
 
   static propTypes = {
     isSmallScreen: PropTypes.bool.isRequired,
     noteDisplay: PropTypes.string.isRequired,
-    notes: PropTypes.array.isRequired,
     onEmptyTrash: PropTypes.any.isRequired,
-    onSelectNote: PropTypes.func.isRequired,
     onPinNote: PropTypes.func.isRequired,
+    onSelectNote: PropTypes.func.isRequired,
     showTrash: PropTypes.bool,
   };
 
@@ -224,18 +228,58 @@ export class NoteList extends Component<Props> {
     this.toggleShortcuts(true);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: Readonly<Props>): void {
+  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
+    const {
+      notes,
+      noteDisplay,
+      openedTag,
+      selectedNote,
+      selectedNoteContent,
+      showTrash,
+      tagResultsFound,
+    } = nextProps;
+    const {
+      selected: { noteId, index },
+    } = this.state;
+
     if (
-      nextProps.noteDisplay !== this.props.noteDisplay ||
-      nextProps.notes !== this.props.notes ||
-      nextProps.tagResultsFound !== this.props.tagResultsFound ||
-      nextProps.selectedNoteContent !== this.props.selectedNoteContent
+      noteDisplay !== this.props.noteDisplay ||
+      notes !== this.props.notes ||
+      tagResultsFound !== this.props.tagResultsFound ||
+      selectedNoteContent !== this.props.selectedNoteContent
     ) {
       heightCache.clearAll();
     }
+
+    if (
+      index &&
+      selectedNote &&
+      notes[index]?.id === selectedNote.id &&
+      showTrash === this.props.showTrash &&
+      openedTag === this.props.openedTag
+    ) {
+      return;
+    }
+
+    const nextIndex = this.getHighlightedIndex(nextProps);
+
+    if (null === nextIndex) {
+      return this.setState({
+        selected: { noteId: null, index: null },
+      });
+    }
+
+    if (!selectedNote || selectedNote.id !== notes[nextIndex].id) {
+      // select the note that should be selected, if it isn't already
+      this.props.onSelectNote(notes[nextIndex].id);
+    }
+
+    this.setState({
+      selected: { noteId: notes[nextIndex].id, index: nextIndex },
+    });
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>) {
+  componentDidUpdate(prevProps: Props) {
     if (
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== this.props.notes ||
@@ -252,29 +296,35 @@ export class NoteList extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { notes, selectedNoteId } = this.props;
+    const { notes } = this.props;
+    const {
+      selected: { index },
+    } = this.state;
 
-    const selectedIndex =
-      selectedNoteId && notes
-        ? notes.findIndex(({ id }) => id === selectedNoteId)
-        : -1;
+    const highlightedIndex = this.getHighlightedIndex(this.props);
 
     const cmdOrCtrl = ctrlKey || metaKey;
     if (cmdOrCtrl && shiftKey && code === 'KeyK') {
-      if (selectedIndex > 0) {
-        this.props.onSelectNote(notes[selectedIndex - 1].id);
+      if (-1 === highlightedIndex || index < 0 || !notes[index - 1]?.id) {
+        return true;
       }
 
+      this.props.onSelectNote(notes[index - 1].id);
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
     if (cmdOrCtrl && shiftKey && code === 'KeyJ') {
-      if (selectedIndex < notes.length - 1) {
-        this.props.onSelectNote(notes[selectedIndex + 1].id);
+      if (
+        -1 === highlightedIndex ||
+        index >= notes.length ||
+        !notes[index + 1]?.id
+      ) {
+        return true;
       }
 
+      this.props.onSelectNote(notes[index + 1].id);
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -291,6 +341,48 @@ export class NoteList extends Component<Props> {
     }
   };
 
+  getHighlightedIndex = (props: Props) => {
+    const { notes, selectedNote } = props;
+    const {
+      selected: { noteId, index },
+    } = this.state;
+
+    // Cases:
+    //   - the notes list is empty
+    //   - nothing has been selected -> select the first item if it exists
+    //   - the selected note matches the index -> use the index
+    //   - selected note is in the list -> use the index where it's found
+    //   - selected note isn't in the list -> previous index?
+
+    if (notes.length === 0) {
+      return null;
+    }
+
+    if (!selectedNote && !index) {
+      const firstNote = notes.findIndex(item => item?.id);
+
+      return firstNote > -1 ? firstNote : null;
+    }
+
+    if (selectedNote && selectedNote.id === notes[index]?.id) {
+      return index;
+    }
+
+    const noteAt = notes.findIndex(item => item?.id === selectedNote?.id);
+
+    if (selectedNote && noteAt > -1) {
+      return noteAt;
+    }
+
+    if (selectedNote) {
+      return Math.min(index, notes.length - 1); // different note, same index
+      // throw new Error('selected note not in list');
+    }
+
+    // we have no selected note here, but we do have a previous index
+    return index;
+  };
+
   render() {
     const {
       hasLoaded,
@@ -301,10 +393,12 @@ export class NoteList extends Component<Props> {
       onEmptyTrash,
       onPinNote,
       searchQuery,
-      selectedNoteId,
       showTrash,
       tagResultsFound,
     } = this.props;
+    const {
+      selected: { index: highlightedIndex },
+    } = this.state;
 
     const compositeNoteList = createCompositeNoteList(
       notes,
@@ -312,12 +406,15 @@ export class NoteList extends Component<Props> {
       tagResultsFound
     );
 
+    const specialRows = compositeNoteList.length - notes.length;
+
     const renderNoteRow = renderNote(compositeNoteList, {
       searchQuery,
+      highlightedIndex:
+        highlightedIndex !== null ? highlightedIndex + specialRows : null,
       noteDisplay,
       onSelectNote,
       onPinNote,
-      selectedNoteId,
       isSmallScreen,
     });
 
@@ -372,7 +469,14 @@ const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes, note, searchQuery, showTrash, tagSuggestions },
+  ui: {
+    filteredNotes,
+    note,
+    openedTag,
+    searchQuery,
+    showTrash,
+    tagSuggestions,
+  },
   settings: { noteDisplay },
 }) => {
   /**
@@ -401,10 +505,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
     hasLoaded: state.notes !== null,
     noteDisplay,
     notes: filteredNotes,
+    openedTag,
     searchQuery,
+    selectedNote: note,
     selectedNotePreview,
     selectedNoteContent: get(note, 'data.content'),
-    selectedNoteId: note?.id,
     showTrash,
     tagResultsFound: tagSuggestions.length,
   };

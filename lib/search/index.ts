@@ -1,5 +1,5 @@
 import actions from '../state/actions';
-import { init, updateFilter } from './worker';
+import { init, updateFilter, updateNote } from './worker';
 import { filterTags } from '../tag-suggestions';
 
 import * as A from '../state/action-types';
@@ -14,10 +14,7 @@ export const middleware: S.Middleware = store => {
     port2: _searchProcessor,
   } = new MessageChannel();
 
-  const setFilteredNotes = (
-    noteIds: Set<T.EntityId>,
-    previousIndex?: number
-  ) => {
+  const setFilteredNotes = (noteIds: Set<T.EntityId>) => {
     const {
       appState,
       tags,
@@ -29,8 +26,7 @@ export const middleware: S.Middleware = store => {
     store.dispatch(
       actions.ui.filterNotes(
         appState.notes?.filter(({ id }) => noteIds.has(id)) || emptyList,
-        tagSuggestions.length > 0 ? tagSuggestions : emptyList,
-        previousIndex
+        tagSuggestions.length > 0 ? tagSuggestions : emptyList
       )
     );
   };
@@ -48,6 +44,7 @@ export const middleware: S.Middleware = store => {
   let hasInitialized = false;
 
   return next => (action: A.ActionType) => {
+    const prevState = store.getState();
     const result = next(action);
 
     switch (action.type) {
@@ -106,9 +103,20 @@ export const middleware: S.Middleware = store => {
 
       case 'DELETE_NOTE_FOREVER':
       case 'RESTORE_NOTE':
+        updateNote(prevState.ui.note.id, {
+          ...prevState.ui.note.data,
+          deleted: false,
+        });
+        setFilteredNotes(updateFilter('fullSearch'));
+        break;
+
       case 'TRASH_NOTE':
       case 'App.trashNote':
-        setFilteredNotes(updateFilter('fullSearch'), action.previousIndex);
+        updateNote(prevState.ui.note.id, {
+          ...prevState.ui.note.data,
+          deleted: true,
+        });
+        setFilteredNotes(updateFilter('fullSearch'));
         break;
 
       case 'App.authChanged':
