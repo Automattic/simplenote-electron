@@ -49,7 +49,7 @@ find . -maxdepth 1 ! -name '.git' ! -name 'dist' ! -name 'vip' -exec rm -rf {} \
 # Copy vip files to base path
 cp -r vip/* ./
 
-# Delete uneeded vip folder
+# Delete unneeded vip folder
 rm -rf vip
 
 # Push to deploy
