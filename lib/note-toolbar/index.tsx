@@ -36,7 +36,6 @@ type DispatchProps = {
 
 type StateProps = {
   editMode: boolean;
-  notes: T.NoteEntity[];
   markdownEnabled: boolean;
   note: T.NoteEntity | null;
 };
@@ -178,13 +177,12 @@ export class NoteToolbar extends Component<Props> {
   };
 }
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { editMode, filteredNotes, note, selectedRevision },
+  ui: { editMode, note, selectedRevision },
 }) => {
   const revisionOrNote = selectedRevision || note;
 
   return {
     editMode,
-    notes: filteredNotes,
     markdownEnabled: revisionOrNote
       ? revisionOrNote.data.systemTags.includes('markdown')
       : false,
