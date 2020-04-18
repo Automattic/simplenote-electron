@@ -56,7 +56,6 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
-export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
@@ -64,10 +63,6 @@ export type RemoteNoteUpdate = Action<
 export type RestoreNote = Action<'RESTORE_NOTE'>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
-export type SelectNote = Action<
-  'SELECT_NOTE',
-  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
->;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
@@ -102,6 +97,11 @@ export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE', { note: T.NoteEntity }>;
+export type SelectNote = Action<
+  'SELECT_NOTE',
+  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
+>;
+export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 
 export type ActionType =
   | CloseNote
