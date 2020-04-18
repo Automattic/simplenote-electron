@@ -101,10 +101,7 @@ export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
-export type TrashNote = Action<
-  'TRASH_NOTE',
-  { noteBucket: T.Bucket<T.Note>; note: T.NoteEntity }
->;
+export type TrashNote = Action<'TRASH_NOTE', { note: T.NoteEntity }>;
 
 export type ActionType =
   | CloseNote
@@ -152,7 +149,7 @@ export type ActionType =
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
 
-type LegacyAction = 
+type LegacyAction =
   | Action<
       'App.deleteNoteForever',
       {

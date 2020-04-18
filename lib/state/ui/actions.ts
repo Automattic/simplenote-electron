@@ -151,10 +151,8 @@ export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
 });
 
 export const trashNote: A.ActionCreator<A.TrashNote> = (
-  noteBucket: T.Bucket<T.Note>,
   note: T.NoteEntity
 ) => ({
   type: 'TRASH_NOTE',
-  noteBucket,
   note,
 });

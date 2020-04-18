@@ -26,20 +26,12 @@ import {
 import * as S from '../state';
 import * as T from '../types';
 
-type OwnProps = {
-  noteBucket: T.Bucket<T.Note>;
-};
-
 type DispatchProps = {
   closeNote: () => any;
   toggleEditMode: () => any;
   toggleNoteInfo: () => any;
   toggleRevisions: () => any;
-  trashNote: (
-    noteBucket: T.Bucket<T.Note>,
-    note: T.NoteEntity,
-    previousIndex: number
-  ) => any;
+  trashNote: (note: T.NoteEntity) => any;
 };
 
 type StateProps = {
@@ -49,7 +41,7 @@ type StateProps = {
   note: T.NoteEntity | null;
 };
 
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = DispatchProps & StateProps;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
@@ -69,8 +61,7 @@ export class NoteToolbar extends Component<Props> {
   };
 
   onTrashNote = (note: T.NoteEntity) => {
-    const { noteBucket } = this.props;
-    this.props.trashNote(noteBucket, note);
+    this.props.trashNote(note);
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
