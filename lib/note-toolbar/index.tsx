@@ -68,19 +68,9 @@ export class NoteToolbar extends Component<Props> {
     toggleFocusMode: noop,
   };
 
-  // Gets the index of the note located before the currently selected one
-  getPreviousNoteIndex = (note: T.NoteEntity) => {
-    const previousIndex = this.props.notes.findIndex(
-      ({ id }) => note.id === id
-    );
-
-    return Math.max(previousIndex - 1, 0);
-  };
-
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.trashNote(noteBucket, note, previousIndex);
+    this.props.trashNote(noteBucket, note);
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
@@ -144,7 +134,6 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<TrashIcon />}
-              title="Trash • Ctrl+Delete"
               onClick={this.onTrashNote.bind(null, note)}
               title="Trash • Ctrl+Delete"
             />

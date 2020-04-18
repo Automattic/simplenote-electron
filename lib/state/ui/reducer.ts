@@ -208,7 +208,6 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 };
 
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
-  console.log(action);
   switch (action.type) {
     case 'App.emptyTrash':
     case 'SELECT_TRASH':

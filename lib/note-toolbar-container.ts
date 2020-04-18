@@ -55,7 +55,6 @@ export class NoteToolbarContainer extends Component<Props> {
     const { isViewingRevisions, toolbar } = this.props;
 
     const handlers = {
-      noteBucket: this.props.noteBucket,
       onDeleteNoteForever: this.onDeleteNoteForever,
       onRestoreNote: this.onRestoreNote,
       onShareNote: this.onShareNote,
