@@ -7,9 +7,25 @@
     border: 0;
   }
 
+  .dev-badge {
+    display: none;
+  }
+
   .tag-field,
   .note-toolbar-wrapper {
     display: none;
+  }
+
+  /* Firefox only prints the first page if any divs are display: flex */
+  .app,
+  .simplenote-app,
+  .app-layout,
+  .app-layout__note-column,
+  .note-editor,
+  .note-detail-wrapper,
+  .note-detail {
+    display: block;
+    overflow: visible;
   }
 
   .note-detail-wrapper {
@@ -20,7 +36,7 @@
     overflow: visible;
   }
 
-  [class^="note-detail-"] {
+  [class^='note-detail-'] {
     max-width: 100%;
     width: 100%;
     color: $studio-black;
