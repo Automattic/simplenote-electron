@@ -35,7 +35,7 @@ class GoogleKeepImporter extends EventEmitter {
       const importedNote = JSON.parse(jsonString);
 
       const title = importedNote.title;
-      let textContent = title ? title + '\n' : '';
+      let textContent = title ? title + '\n\n' : '';
       textContent += get(importedNote, 'textContent', '');
 
       const note = {
