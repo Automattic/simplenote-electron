@@ -38,26 +38,28 @@ class GoogleKeepImporter extends EventEmitter {
       let textContent = title ? title + '\n\n' : '';
       textContent += get(importedNote, 'textContent', '');
 
-      const note = {
-        content: textContent,
-        // note: the exported files don't tell us the creation date...
-        modificationDate: importedNote.userEditedTimestampUsec / 1e6,
-        pinned: importedNote.isPinned,
-        tags: get(importedNote, 'labels', []).map(item => item.name),
-      };
-
       if (importedNote.listContent) {
         // Note has checkboxes
-        note.content += importedNote.listContent
+        textContent += importedNote.listContent
           .map(item => `- [${item.isChecked ? 'x' : ' '}] ${item.text}`)
           .join('\n');
       }
 
-      const opts = { ...this.options, isTrashed: importedNote.isTrashed };
-      return coreImporter.importNote(note, opts).then(() => {
-        importedNoteCount++;
-        this.emit('status', 'progress', importedNoteCount);
-      });
+      return coreImporter
+        .importNote(
+          {
+            content: textContent,
+            // note: the exported files don't tell us the creation date...
+            modificationDate: importedNote.userEditedTimestampUsec / 1e6,
+            pinned: importedNote.isPinned,
+            tags: get(importedNote, 'labels', []).map(item => item.name),
+          },
+          { ...this.options, isTrashed: importedNote.isTrashed }
+        )
+        .then(() => {
+          importedNoteCount++;
+          this.emit('status', 'progress', importedNoteCount);
+        });
     };
 
     const importZipFile = fileData =>
