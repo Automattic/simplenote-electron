@@ -2,12 +2,13 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { reject } from 'lodash';
 
+import { isElectron } from '../../utils/platform';
 import PanelTitle from '../../components/panel-title';
 import ButtonGroup from '../button-group';
 
 import sources from './sources';
 
-const ImportSourceSelector = ({ isElectron, selectSource }) => {
+const ImportSourceSelector = ({ selectSource }) => {
   return (
     <Fragment>
       <PanelTitle headingLevel="3">Import from</PanelTitle>
@@ -22,7 +23,6 @@ const ImportSourceSelector = ({ isElectron, selectSource }) => {
 };
 
 ImportSourceSelector.propTypes = {
-  isElectron: PropTypes.bool.isRequired,
   selectSource: PropTypes.func.isRequired,
 };
 

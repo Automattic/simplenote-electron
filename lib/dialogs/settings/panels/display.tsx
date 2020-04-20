@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
+import { isElectron, isMac } from '../../../utils/platform';
 import RadioGroup from '../../radio-settings-group';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
@@ -17,8 +18,6 @@ const DisplayPanel = props => {
     activeTheme,
     autoHideMenuBar,
     buckets: { noteBucket },
-    isElectron,
-    isMacApp,
     lineLength,
     loadNotes,
     noteDisplay,
@@ -112,7 +111,7 @@ const DisplayPanel = props => {
         <Item title="Dark" slug="dark" />
       </SettingsGroup>
 
-      {isElectron && !isMacApp && (
+      {isElectron && !isMac && (
         <SettingsGroup
           title="Menu Bar"
           slug="autoHideMenuBar"
@@ -135,8 +134,6 @@ DisplayPanel.propTypes = {
   buckets: PropTypes.shape({
     noteBucket: PropTypes.object.isRequired,
   }),
-  isElectron: PropTypes.bool.isRequired,
-  isMacApp: PropTypes.bool.isRequired,
   lineLength: PropTypes.string.isRequired,
   loadNotes: PropTypes.func.isRequired,
   loadTags: PropTypes.func.isRequired,

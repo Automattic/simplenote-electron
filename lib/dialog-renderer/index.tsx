@@ -17,8 +17,6 @@ type OwnProps = {
   appProps: object;
   buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
   themeClass: string;
-  isElectron: boolean;
-  isMacApp: boolean;
 };
 
 type StateProps = {
@@ -35,14 +33,7 @@ export class DialogRenderer extends Component<Props> {
   static displayName = 'DialogRenderer';
 
   render() {
-    const {
-      appProps,
-      buckets,
-      themeClass,
-      isElectron,
-      isMacApp,
-      closeDialog,
-    } = this.props;
+    const { appProps, buckets, themeClass, closeDialog } = this.props;
 
     return (
       <Fragment>
@@ -59,25 +50,11 @@ export class DialogRenderer extends Component<Props> {
             {'ABOUT' === dialog ? (
               <AboutDialog key="about" />
             ) : 'IMPORT' === dialog ? (
-              <ImportDialog
-                key="import"
-                buckets={buckets}
-                isElectron={isElectron}
-              />
+              <ImportDialog key="import" buckets={buckets} />
             ) : 'KEYBINDINGS' === dialog ? (
-              <KeybindingsDialog
-                key="keybindings"
-                isElectron={isElectron}
-                isMacApp={isMacApp}
-              />
+              <KeybindingsDialog key="keybindings" />
             ) : 'SETTINGS' === dialog ? (
-              <SettingsDialog
-                key="settings"
-                buckets={buckets}
-                isElectron={isElectron}
-                isMacApp={isMacApp}
-                {...appProps}
-              />
+              <SettingsDialog key="settings" buckets={buckets} {...appProps} />
             ) : 'SHARE' === dialog ? (
               <ShareDialog key="share" />
             ) : null}

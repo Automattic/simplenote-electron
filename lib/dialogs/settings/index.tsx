@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
+import { isElectron } from '../../utils/platform';
 import TabPanels from '../../components/tab-panels';
 import { viewExternalUrl } from '../../utils/url-utils';
 
@@ -23,8 +24,6 @@ type OwnProps = {
   actions: object;
   appState: object;
   buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
-  isElectron: boolean;
-  isMacApp: boolean;
   onSignOut: () => any;
   settings: S.State['settings'];
   toggleShareAnalyticsPreference: (preferencesBucket: object) => any;
@@ -71,7 +70,7 @@ export class SettingsDialog extends Component<Props> {
   };
 
   signOut = () => {
-    const { onSignOut, setWPToken, isElectron } = this.props;
+    const { onSignOut, setWPToken } = this.props;
 
     // Reset the WordPress Token
     setWPToken(null);
@@ -85,7 +84,6 @@ export class SettingsDialog extends Component<Props> {
   };
 
   showUnsyncedWarning = () => {
-    const { isElectron } = this.props;
     isElectron ? this.showElectronWarningDialog() : this.showWebWarningDialog();
   };
 
@@ -124,7 +122,7 @@ export class SettingsDialog extends Component<Props> {
   };
 
   render() {
-    const { buckets, closeDialog, isElectron, isMacApp, settings } = this.props;
+    const { buckets, closeDialog, settings } = this.props;
     const { analyticsEnabled } = this.props.appState.preferences;
 
     return (
@@ -138,11 +136,7 @@ export class SettingsDialog extends Component<Props> {
               this.onToggleShareAnalyticsPreference
             }
           />
-          <DisplayPanel
-            buckets={buckets}
-            isElectron={isElectron}
-            isMacApp={isMacApp}
-          />
+          <DisplayPanel buckets={buckets} />
           <ToolsPanel />
         </TabPanels>
       </Dialog>
