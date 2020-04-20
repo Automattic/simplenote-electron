@@ -14,6 +14,7 @@
 
 ## Other Changes
 
+- Renamed RELEASE-NOTES to fix integrations broken by #1576 [#2018](https://github.com/Automattic/simplenote-electron/pull/2018)
 - Extensive refactoring to move more code into Redux state:
   [#1920](https://github.com/Automattic/simplenote-electron/pull/1920) (tag selection),
   [#1928](https://github.com/Automattic/simplenote-electron/pull/1928) (system tag),
@@ -37,6 +38,7 @@
 ## [v1.15.0]
 
 ### Enhancements
+
 - Stop erasing the copy buffer if copying empty editor selections [#1847](https://github.com/Automattic/simplenote-electron/pull/1847)
 - Allow for un-selecting a tag by tab or right arrow [#1853](https://github.com/Automattic/simplenote-electron/pull/1853) @qualitymanifest
 
@@ -78,11 +80,13 @@
 ## [v1.14.0]
 
 ### Enhancements
+
 - Keep note open when transitioning to small screen in focus mode [#1763](https://github.com/Automattic/simplenote-electron/pull/1763)
 - Added GenericName (description) field for app on Linux [#1761](https://github.com/Automattic/simplenote-electron/pull/1761)
 - Allow width attribute on img tags [#1833](https://github.com/Automattic/simplenote-electron/pull/1833)
 
 ### Fixes
+
 - Makes settings scrollable on shorter smaller view ports [#1767](https://github.com/Automattic/simplenote-electron/pull/1767)
 - After selecting a revision to restore ensure that choice is sync'd [#1774](https://github.com/Automattic/simplenote-electron/pull/1774)
 - Added indication that publish url has been copied [#1743](https://github.com/Automattic/simplenote-electron/pull/1743)
@@ -132,9 +136,9 @@
 
 ### Enhancements
 
- - Updated menu icon to use the new icon set [#1694](https://github.com/Automattic/simplenote-electron/pull/1694)
- - Added script to deploy web app [#1723](https://github.com/Automattic/simplenote-electron/pull/1723)
- - Prioritize search results where title matches query [#1705](https://github.com/Automattic/simplenote-electron/pull/1705)
+- Updated menu icon to use the new icon set [#1694](https://github.com/Automattic/simplenote-electron/pull/1694)
+- Added script to deploy web app [#1723](https://github.com/Automattic/simplenote-electron/pull/1723)
+- Prioritize search results where title matches query [#1705](https://github.com/Automattic/simplenote-electron/pull/1705)
 
 ### Fixes
 
@@ -154,7 +158,7 @@
 
 ### Fixes
 
- - Fixed bug that only shows the first line of text in note list preview [#1647](https://github.com/Automattic/simplenote-electron/pull/1647)
+- Fixed bug that only shows the first line of text in note list preview [#1647](https://github.com/Automattic/simplenote-electron/pull/1647)
 
 ### Other Changes
 
@@ -162,26 +166,26 @@
 
 ### Enhancements
 
- - Add ability to select system as a theme option and make it the default
- - Added support for the unicode bullet • in list items
- - Display a notice that notes are loading when notes are loading
- - In dev mode open Chrome Dev Tools in a separate window
+- Add ability to select system as a theme option and make it the default
+- Added support for the unicode bullet • in list items
+- Display a notice that notes are loading when notes are loading
+- In dev mode open Chrome Dev Tools in a separate window
 
 ### Fixes
 
- - Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
- - Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
- - Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
+- Rework WordPress.com signin to prevent infinite looping and login failures [#1627](https://github.com/Automattic/simplenote-electron/pull/1627)
+- Update link to release-notes in updater config: CHANGELOG -> RELEASE_NOTES
+- Stop showing that there are no notes when initially loading notes from the server. [#1680](https://github.com/Automattic/simplenote-electron/pull/1680)
 
- ### Other changes
+### Other changes
 
- - Updated dependencies
+- Updated dependencies
 
 ## [v1.9.1]
 
 ### Fixes
 
- - Prevent ulimited duplication of changes after signing out and signing in [#1664](https://github.com/Automattic/simplenote-electron/pull/1664)
+- Prevent ulimited duplication of changes after signing out and signing in [#1664](https://github.com/Automattic/simplenote-electron/pull/1664)
 
 ## [v1.9.0]
 
@@ -189,8 +193,8 @@
 
 - Open new note automatically upon creation [1582](https://github.com/Automattic/simplenote-electron/pull/1582)
 - Updated colors to use Color Studio, the color palette for Automattic products
-   - [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
-   - [#1612](https://github.com/Automattic/simplenote-electron/pull/1612)
+  - [#1565](https://github.com/Automattic/simplenote-electron/pull/1565)
+  - [#1612](https://github.com/Automattic/simplenote-electron/pull/1612)
 
 ### Fixes
 
@@ -198,8 +202,8 @@
 - Fixes vertical spacing with nested markdown lists
 - Fixes sort order on revision slider when the timestamps don't match the change sequence [#1605](https://github.com/Automattic/simplenote-electron/pull/1605)
 - Prevents note corruption when receiving remote updates when local updates are pending
-   - [#1598](https://github.com/Automattic/simplenote-electron/pull/1598)
-   - [#1599](https://github.com/Automattic/simplenote-electron/pull/1599)
+  - [#1598](https://github.com/Automattic/simplenote-electron/pull/1598)
+  - [#1599](https://github.com/Automattic/simplenote-electron/pull/1599)
 
 ### Other changes
 
