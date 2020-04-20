@@ -1,5 +1,33 @@
 # Changelog
 
+## [v1.16]
+
+### Enhancements
+
+- Added keyboard shortcuts help dialog [#1983](https://github.com/Automattic/simplenote-electron/pull/1983)
+- Improve search performance [#1941](https://github.com/Automattic/simplenote-electron/pull/1941), [#1966](https://github.com/Automattic/simplenote-electron/pull/1966), [#1979](https://github.com/Automattic/simplenote-electron/pull/1979), [#1982](https://github.com/Automattic/simplenote-electron/pull/1982)
+
+### Fixes
+
+- Highlight all search matches in Markdown previews and in note list [#1987](https://github.com/Automattic/simplenote-electron/pull/1987)
+- Fix for blurry fonts on LCD screens [#2003](https://github.com/Automattic/simplenote-electron/pull/2003)
+
+## Other Changes
+
+- Extensive refactoring to move more code into Redux state:
+  [#1920](https://github.com/Automattic/simplenote-electron/pull/1920) (tag selection),
+  [#1928](https://github.com/Automattic/simplenote-electron/pull/1928) (system tag),
+  [#1971](https://github.com/Automattic/simplenote-electron/pull/1971) (select trash and show all notes),
+  [#1981](https://github.com/Automattic/simplenote-electron/pull/1981) (dialog renderer),
+  [#1989](https://github.com/Automattic/simplenote-electron/pull/1989) (previous index),
+  [#1991](https://github.com/Automattic/simplenote-electron/pull/1991) (tagsLoaded),
+  [#1995](https://github.com/Automattic/simplenote-electron/pull/1995) (compositeNoteList),
+  [#1996](https://github.com/Automattic/simplenote-electron/pull/1996) (tag suggestions),
+  [#1999](https://github.com/Automattic/simplenote-electron/pull/1999) (load tags),
+  [#2004](https://github.com/Automattic/simplenote-electron/pull/2004) (isElectron and isMac utils),
+- Replace custom height cache with one provided by react-virtualized [#1829](https://github.com/Automattic/simplenote-electron/pull/1829)
+- Dependencies updated [#1951](https://github.com/Automattic/simplenote-electron/pull/1951), [#1993](https://github.com/Automattic/simplenote-electron/pull/1993)
+
 ## [v1.15.1]
 
 ### Other Changes
