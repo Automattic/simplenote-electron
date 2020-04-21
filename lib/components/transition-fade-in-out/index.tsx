@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
-const TransitionFadeInOut = props => {
-  const { children, wrapperClassName, shouldMount } = props;
+type OwnProps = {
+  shouldMount: boolean;
+  wrapperClassName: string;
+};
+
+const TransitionFadeInOut: FunctionComponent<OwnProps> = ({
+  children,
+  shouldMount,
+  wrapperClassName,
+}) => {
   return (
     <CSSTransition
       in={shouldMount}
@@ -15,12 +23,6 @@ const TransitionFadeInOut = props => {
       <div className={wrapperClassName}>{children}</div>
     </CSSTransition>
   );
-};
-
-TransitionFadeInOut.propTypes = {
-  children: PropTypes.node.isRequired,
-  wrapperClassName: PropTypes.string,
-  shouldMount: PropTypes.bool.isRequired,
 };
 
 export default TransitionFadeInOut;
