@@ -1,20 +1,19 @@
-import { createElement } from 'react';
-import { range } from 'lodash';
-import PropTypes from 'prop-types';
+import { createElement, FunctionComponent } from 'react';
 
-const PanelTitle = props => {
-  const { children, headingLevel = 3 } = props;
+type OwnProps = {
+  children: string;
+  headingLevel: 1 | 2 | 3 | 4 | 5 | 6;
+};
 
+const PanelTitle: FunctionComponent<OwnProps> = ({
+  children,
+  headingLevel = 3,
+}) => {
   return createElement(
     `h${headingLevel}`,
     { className: 'panel-title theme-color-fg-dim' },
     children
   );
-};
-
-PanelTitle.proptypes = {
-  children: PropTypes.string.isRequired,
-  headingLevel: PropTypes.oneOf(range(1, 6)),
 };
 
 export default PanelTitle;
