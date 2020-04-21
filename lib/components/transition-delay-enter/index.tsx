@@ -2,12 +2,12 @@ import React, {
   FunctionComponent,
   useEffect,
   useState,
-  ReactChild,
+  ReactNode,
 } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 type OwnProps = {
-  children: ReactChild;
+  children: ReactNode;
   delay: number;
 };
 
