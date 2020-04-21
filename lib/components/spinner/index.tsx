@@ -1,12 +1,11 @@
 import React, { FunctionComponent } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, CircularProgressProps } from '@material-ui/core';
 import classnames from 'classnames';
 
-type OwnProps = typeof CircularProgress & {
-  isWhite: boolean;
-};
-
-const Spinner: FunctionComponent<OwnProps> = ({ isWhite, ...props }) => {
+const Spinner = ({
+  isWhite,
+  ...props
+}: CircularProgressProps & { isWhite?: boolean }) => {
   return (
     <CircularProgress
       classes={{
