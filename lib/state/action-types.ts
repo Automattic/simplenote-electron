@@ -56,13 +56,17 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
 >;
 export type RestoreNote = Action<'RESTORE_NOTE'>;
-export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
+export type SelectNote = Action<
+  'SELECT_NOTE',
+  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
+>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
@@ -78,6 +82,7 @@ export type SetUnsyncedNoteIds = Action<
   { noteIds: T.EntityId[] }
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
+export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type StoreRevisions = Action<
   'STORE_REVISIONS',
   { noteId: T.EntityId; revisions: T.NoteEntity[] }
@@ -86,22 +91,17 @@ export type TagsLoaded = Action<
   'TAGS_LOADED',
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
 >;
+export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
+export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
 >;
-export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
-export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
-export type SelectNote = Action<
-  'SELECT_NOTE',
-  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
->;
-export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 
 export type ActionType =
   | CloseNote
