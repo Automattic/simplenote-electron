@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-- Added possibility to import notes from Google Keep [#2015](https://github.com/Automattic/simplenote-electron/pull/2015)???
+- Added possibility to import notes from Google Keep [#2015](https://github.com/Automattic/simplenote-electron/pull/2015)
 
 ### Other Changes
 
