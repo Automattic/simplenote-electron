@@ -1,8 +1,9 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 
 type OwnProps = {
+  children: ReactNode;
   shouldMount: boolean;
   wrapperClassName: string;
 };
@@ -10,7 +11,7 @@ type OwnProps = {
 const TransitionFadeInOut: FunctionComponent<OwnProps> = ({
   children,
   shouldMount,
-  wrapperClassName,
+  wrapperClassName = '',
 }) => {
   return (
     <CSSTransition
