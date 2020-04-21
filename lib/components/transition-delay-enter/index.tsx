@@ -1,6 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  ReactChild,
+} from 'react';
 import { CSSTransition } from 'react-transition-group';
+
+type OwnProps = {
+  children: ReactChild;
+  delay: number;
+};
 
 /**
  * A wrapper to delay the mounting of children.
@@ -8,7 +17,10 @@ import { CSSTransition } from 'react-transition-group';
  * Useful for progress bars and spinners, that should generally have about a
  * 1000 ms delay before displaying to the user.
  */
-const TransitionDelayEnter = ({ children, delay = 1000 }) => {
+const TransitionDelayEnter: FunctionComponent<OwnProps> = ({
+  children,
+  delay = 1000,
+}) => {
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
@@ -30,11 +42,6 @@ const TransitionDelayEnter = ({ children, delay = 1000 }) => {
       {children}
     </CSSTransition>
   );
-};
-
-TransitionDelayEnter.propTypes = {
-  delay: PropTypes.number,
-  children: PropTypes.node.isRequired,
 };
 
 export default TransitionDelayEnter;
