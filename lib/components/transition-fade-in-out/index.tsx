@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group';
 type OwnProps = {
   children: ReactNode;
   shouldMount: boolean;
-  wrapperClassName: string;
+  wrapperClassName?: string;
 };
 
 const TransitionFadeInOut: FunctionComponent<OwnProps> = ({
