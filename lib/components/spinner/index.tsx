@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 type OwnProps = typeof CircularProgress & {
