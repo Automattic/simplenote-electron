@@ -5,9 +5,9 @@ import PanelTitle from '../components/panel-title';
 import EditableList from '../editable-list';
 import { get } from 'lodash';
 import TagListInput from './input';
+import { recordEvent } from '../state/analytics/actions';
 import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
-import analytics from '../analytics';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -21,6 +21,7 @@ type StateProps = {
 type DispatchProps = {
   onEditTags: () => any;
   openTag: (tag: T.TagEntity) => any;
+  recordEvent: (eventName: string) => any;
   renameTag: (args: { tag: T.TagEntity; name: T.TagName }) => any;
   reorderTags: (args: { tags: T.TagEntity[] }) => any;
   trashTag: (args: { tag: T.TagEntity }) => any;
@@ -63,7 +64,7 @@ export class TagList extends Component<Props> {
 
   onTrashTag = (tag: T.TagEntity) => {
     this.props.trashTag({ tag });
-    analytics.tracks.recordEvent('list_tag_deleted');
+    this.props.recordEvent('list_tag_deleted');
   };
 
   render() {
@@ -112,6 +113,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   openTag: tag => {
     dispatch(openTag(tag));
   },
+  recordEvent: arg => dispatch(recordEvent(arg)),
   renameTag: arg => dispatch(renameTag(arg)),
   reorderTags: arg => dispatch(reorderTags(arg)),
   trashTag: arg => dispatch(trashTag(arg)),

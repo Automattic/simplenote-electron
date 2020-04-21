@@ -23,9 +23,9 @@ import {
   setPending as setPendingAuth,
 } from './state/auth/actions';
 import { setAccountName } from './state/settings/actions';
-import analytics from './analytics';
 import { Auth } from 'simperium';
 import { parse } from 'cookie';
+import { recordEvent } from './state/analytics/actions';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { get, some } from 'lodash';
@@ -181,7 +181,7 @@ let props = {
         localStorage.setItem('access_token', user.access_token);
         token = user.access_token;
         client.setUser(user);
-        analytics.tracks.recordEvent('user_account_created');
+        store.dispatch(recordEvent('user_account_created'));
       })
       .then(() =>
         store.dispatch(
@@ -201,7 +201,6 @@ let props = {
     store.dispatch(setAccountName(null));
     client.deauthorize();
     redirectToWebSigninIfNecessary();
-    analytics.tracks.recordEvent('user_signed_out');
   },
   authorizeUserWithToken: (accountName: string, userToken: string) => {
     resetStorageIfAccountChanged(accountName);

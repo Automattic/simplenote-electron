@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, debounce, noop } from 'lodash';
-import analytics from '../analytics';
 import appState from '../flux/app-state';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
+import { recordEvent } from '../state/analytics/actions';
 import renderToNode from './render-to-node';
 import toggleTask from './toggle-task';
 
@@ -15,12 +15,16 @@ import * as T from '../types';
 
 const syncDelay = 2000;
 
+type DispatchProps = {
+  recordEvent: (eventName: string) => any;
+};
+
 type StateProps = {
   showNoteInfo: boolean;
   isDialogOpen: boolean;
 };
 
-type Props = StateProps;
+type Props = DispatchProps & StateProps;
 
 export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
@@ -154,7 +158,7 @@ export class NoteDetail extends Component<Props> {
 
     this.props.onChangeContent(note, content);
     this.queueNoteSync();
-    analytics.tracks.recordEvent('editor_note_edited');
+    this.props.recordEvent('editor_note_edited');
   };
 
   syncNote = () => {
@@ -245,4 +249,8 @@ const mapStateToProps: S.MapState<StateProps> = ({
   spellCheckEnabled: settings.spellCheckEnabled,
 });
 
-export default connect(mapStateToProps)(NoteDetail);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  recordEvent,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteDetail);

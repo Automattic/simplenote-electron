@@ -8,35 +8,45 @@ import * as T from '../../types';
 export const middleware: S.Middleware = store => {
   return next => (action: A.ActionType) => {
     const result = next(action);
-    const nextState = store.getState();
 
-    // @todo events throughout the app that don't have a corresponding action
-    // analytics.tracks.recordEvent('user_account_created');
-    // analytics.tracks.recordEvent('editor_checklist_inserted');
-    // analytics.tracks.recordEvent('importer_import_completed', {
-    // analytics.tracks.recordEvent('editor_note_collaborator_added');
-    // analytics.tracks.recordEvent('editor_note_collaborator_removed');
-    // analytics.tracks.recordEvent('editor_note_edited');
-    // analytics.tracks.recordEvent('list_tag_deleted');
+    // @todo uncomment to ship, this breaks debugging :)
+    // if (!window.sendAnalytics) {
+    //   return result;
+    // }
+
+    // const nextState = store.getState();
+
+    // @todo events that don't have a corresponding action and aren't in redux
+    // - editor_checklist_inserted
+    // - importer_import_completed
 
     switch (action.type) {
+      /* catch-all action used by redux components for these events:
+         - editor_note_collaborator_added
+         - editor_note_collaborator_removed
+         - editor_note_edited
+         - list_tag_deleted
+         - user_account_created
+      */
+      case 'RECORD_EVENT':
+        if (action.eventName) {
+          analytics.tracks.recordEvent(action.eventName);
+        }
+
+      /* events that map to an action directly */
       case 'AUTH_SET':
         if (action.status === 'authorized') {
-          // @todo called twice for some reason
           analytics.tracks.recordEvent('user_signed_in');
         }
-        // @todo this might need to be App.setAccountName
-        // if (action.status === 'not-authorized') {
-        //   analytics.tracks.recordEvent('user_signed_out');
-        // }
-        break;
-      case 'App.loadPreferences':
-        // @todo not getting called
-        analytics.tracks.recordEvent('application_opened');
-        break;
-      // case 'DELETE_NOTE_FOREVER': @todo not sure if?
-      case 'TRASH_NOTE':
-        analytics.tracks.recordEvent('editor_note_deleted');
+      // @todo figure out proper user_signed_out action
+      // AUTH_SET 'not-authorized' is called with every
+      // character typed on the login screen
+      // if (action.status === 'not-authorized') {
+      // case 'App.setAccountName': ??
+      case 'App.authChanged':
+        console.log('auth changed');
+        // if setAccount w/account of null ??
+        // analytics.tracks.recordEvent('user_signed_out');
         break;
       case 'CREATE_NOTE':
         analytics.tracks.recordEvent('list_note_created');
@@ -49,14 +59,12 @@ export const middleware: S.Middleware = store => {
         break;
       case 'SEARCH':
         if (action.searchQuery) {
-          // @todo this gets called for each character typed,
-          // possibly also happening in develop?
+          // @todo this gets called for each character typed
+          // in search field, possibly also happening in develop?
           analytics.tracks.recordEvent('list_notes_searched');
         }
         break;
       case 'SELECT_NOTE':
-        // @todo this is getting called whenever the note is re-selected
-        // e.g. when adding/deleting tags
         analytics.tracks.recordEvent('list_note_opened');
         break;
       case 'SELECT_TRASH':
@@ -73,6 +81,10 @@ export const middleware: S.Middleware = store => {
         if (action.dialog === 'SHARE') {
           analytics.tracks.recordEvent('editor_share_dialog_viewed');
         }
+        break;
+      // case 'DELETE_NOTE_FOREVER': @todo not sure if we should track this too?
+      case 'TRASH_NOTE':
+        analytics.tracks.recordEvent('editor_note_deleted');
         break;
     }
     return result;

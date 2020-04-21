@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
-import analytics from '../../analytics';
 import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import { updateNoteTags } from '../../state/domain/notes';
@@ -13,6 +12,7 @@ import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
 import { closeDialog, publishNote } from '../../state/ui/actions';
+import { recordEvent } from '../../state/analytics/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -27,6 +27,7 @@ type StateProps = {
 type DispatchProps = {
   closeDialog: () => any;
   publishNote: (note: T.NoteEntity, shouldPublish: boolean) => any;
+  recordEvent: (eventName: string) => any;
   updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagName[] }) => any;
 };
 
@@ -54,7 +55,7 @@ export class ShareDialog extends Component<Props> {
         note,
         tags: [...tags, collaborator],
       });
-      analytics.tracks.recordEvent('editor_note_collaborator_added');
+      this.props.recordEvent('editor_note_collaborator_added');
     }
   };
 
@@ -65,7 +66,7 @@ export class ShareDialog extends Component<Props> {
     tags = tags.filter(tag => tag !== collaborator);
 
     this.props.updateNoteTags({ note, tags });
-    analytics.tracks.recordEvent('editor_note_collaborator_removed');
+    this.props.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
@@ -219,6 +220,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   closeDialog: () => dispatch(closeDialog()),
   publishNote: (note, shouldPublish) =>
     dispatch(publishNote(note, shouldPublish)),
+  recordEvent: eventName => dispatch(recordEvent(eventName)),
   updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),
 });
 

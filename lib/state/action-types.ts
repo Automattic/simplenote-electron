@@ -59,6 +59,7 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; previousIndex: number; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type RecordEvent = Action<'RECORD_EVENT', { eventName: string }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
@@ -116,6 +117,7 @@ export type ActionType =
   | FocusSearchField
   | RemoteNoteUpdate
   | OpenTag
+  | RecordEvent
   | RestoreNote
   | Search
   | SelectNote

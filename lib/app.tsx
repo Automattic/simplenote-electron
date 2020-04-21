@@ -19,6 +19,7 @@ import exportZipArchive from './utils/export';
 import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
 import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
+import { recordEvent } from './state/analytics/actions';
 import classNames from 'classnames';
 import {
   debounce,
@@ -54,6 +55,7 @@ export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
   focusSearchField: () => any;
+  recordEvent: (eventName: string) => any;
   selectNote: (note: T.NoteEntity) => any;
   showDialog: () => any;
 };
@@ -112,9 +114,9 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
+    recordEvent: (eventName: string) => dispatch(recordEvent(eventName)),
     setSimperiumConnectionStatus: connected =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: note => dispatch(actions.ui.selectNote(note)),
     setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
     showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
   };
@@ -206,8 +208,9 @@ export const App = connect(
         .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
 
       this.onLoadPreferences(() =>
+        // @todo what problem was this even trying to solve?
         // Make sure that tracking starts only after preferences are loaded
-        analytics.tracks.recordEvent('application_opened')
+        this.props.recordEvent('application_opened')
       );
 
       this.toggleShortcuts(true);
