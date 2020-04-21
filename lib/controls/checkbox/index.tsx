@@ -1,8 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 
-function CheckboxControl({ className, ...props }) {
+type OwnProps = {
+  className?: string;
+  checked: boolean;
+  id: string;
+  name: string;
+  onChange: () => {};
+  type: 'radio';
+  value: string;
+};
+
+function CheckboxControl({ className, ...props }: OwnProps) {
   return (
     <span className={classNames('checkbox-control', className)}>
       <input type="checkbox" {...props} />
@@ -12,9 +21,5 @@ function CheckboxControl({ className, ...props }) {
     </span>
   );
 }
-
-CheckboxControl.propTypes = {
-  className: PropTypes.string,
-};
 
 export default CheckboxControl;
