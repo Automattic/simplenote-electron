@@ -26,9 +26,9 @@
 - [ ] Can delete note forever from trash screen
 - [ ] Can restore note from trash screen
 - [ ] Can trash note
-- [ ] Selects note above recently-trashed note
-- [ ] Selects note above recently-restored note in trash view
-- [ ] Selects note above recently-deleted-forever note in trash view
+- [ ] Selects note below recently-trashed note
+- [ ] Selects note below recently-restored note in trash view
+- [ ] Selects note below recently-deleted-forever note in trash view
 - [ ] Can preview markdown with 👁 button
 - [ ] Can flip to edit mode with 👁 button
 - [ ] Markdown rendered in note list when markdown enabled
