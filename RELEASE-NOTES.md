@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.16]
+## [v1.16.0]
 
 ### Enhancements
 
@@ -12,7 +12,7 @@
 - Highlight all search matches in Markdown previews and in note list [#1987](https://github.com/Automattic/simplenote-electron/pull/1987)
 - Fix for blurry fonts on LCD screens [#2003](https://github.com/Automattic/simplenote-electron/pull/2003)
 
-## Other Changes
+### Other Changes
 
 - Renamed RELEASE-NOTES to fix integrations broken by #1576 [#2018](https://github.com/Automattic/simplenote-electron/pull/2018)
 - Extensive refactoring to move more code into Redux state:
