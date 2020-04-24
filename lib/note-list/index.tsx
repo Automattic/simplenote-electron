@@ -40,7 +40,6 @@ type StateProps = {
   selectedNote: T.NoteEntity | null;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
-  showNoteList: boolean;
   showTrash: boolean;
   tagResultsFound: number;
 };
@@ -50,7 +49,6 @@ type DispatchProps = {
   onEmptyTrash: () => any;
   onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
-  toggleNoteList: () => any;
 };
 
 type Props = Readonly<OwnProps & StateProps & DispatchProps>;
@@ -300,7 +298,7 @@ export class NoteList extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { notes, showNoteList, toggleNoteList } = this.props;
+    const { notes } = this.props;
     const { selectedIndex: index } = this.state;
 
     const highlightedIndex = this.getHighlightedIndex(this.props);
@@ -312,9 +310,6 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index - 1]);
-      if (showNoteList) {
-        toggleNoteList();
-      }
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -330,9 +325,6 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index + 1]);
-      if (showNoteList) {
-        toggleNoteList();
-      }
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -476,7 +468,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
     note,
     openedTag,
     searchQuery,
-    showNoteList,
     showTrash,
     tagSuggestions,
   },
@@ -513,7 +504,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNote: note,
     selectedNotePreview,
     selectedNoteContent: get(note, 'data.content'),
-    showNoteList,
     showTrash,
     tagResultsFound: tagSuggestions.length,
   };
@@ -530,7 +520,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
     analytics.tracks.recordEvent('list_note_opened');
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
-  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);
