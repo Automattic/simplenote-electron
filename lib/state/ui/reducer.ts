@@ -117,8 +117,8 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
 
 const showNoteList: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'CLOSE_NOTE':
-      return true;
+    case 'NOTE_LIST_TOGGLE':
+      return !state;
 
     case 'SELECT_NOTE':
       return false;

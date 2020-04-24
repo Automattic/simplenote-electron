@@ -87,6 +87,7 @@ export type TagsLoaded = Action<
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
 >;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
+export type ToggleNoteList = Action<'NOTE_LIST_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
@@ -139,6 +140,7 @@ export type ActionType =
   | TagsLoaded
   | ToggleEditMode
   | ToggleNavigation
+  | ToggleNoteList
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus

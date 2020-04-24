@@ -130,7 +130,7 @@ const renderNote = (
   const isPinned = note.data.systemTags.includes('pinned');
   const isPublished = !!note.data.publishURL;
   const classes = classNames('note-list-item', {
-    'note-list-item-selected': !isSmallScreen && highlightedIndex === index,
+    'note-list-item-selected': highlightedIndex === index,
     'note-list-item-pinned': isPinned,
     'published-note': isPublished,
   });
@@ -249,6 +249,7 @@ export class NoteList extends Component<Props> {
     }
 
     if (notes.length === 0 && selectedNote) {
+      // unselect active note if it doesn't match search
       this.props.closeNote();
       this.setState({ selectedIndex: null });
     }
@@ -344,7 +345,7 @@ export class NoteList extends Component<Props> {
   };
 
   getHighlightedIndex = (props: Props) => {
-    const { notes, selectedNote } = props;
+    const { isSmallScreen, notes, selectedNote } = props;
     const { selectedIndex: index } = this.state;
 
     // Cases:
