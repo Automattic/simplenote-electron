@@ -40,6 +40,7 @@ type StateProps = {
   selectedNote: T.NoteEntity | null;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
+  showNoteList: boolean;
   showTrash: boolean;
   tagResultsFound: number;
 };
@@ -78,7 +79,6 @@ const heightCache = new CellMeasurerCache({
  * @param selectedNoteId id of currently selected note
  * @param onSelectNote used to change the current note selection
  * @param onPinNote used to pin a note to the top of the list
- * @param isSmallScreen whether we're in a narrow view
  * @returns does the actual rendering for the List
  */
 const renderNote = (
@@ -89,14 +89,12 @@ const renderNote = (
     highlightedIndex,
     onSelectNote,
     onPinNote,
-    isSmallScreen,
   }: {
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
     highlightedIndex: number;
     onSelectNote: DispatchProps['onSelectNote'];
     onPinNote: DispatchProps['onPinNote'];
-    isSmallScreen: boolean;
   }
 ): ListRowRenderer => ({ index, key, parent, style }) => {
   const note = notes[index];
@@ -352,7 +350,7 @@ export class NoteList extends Component<Props> {
   };
 
   getHighlightedIndex = (props: Props) => {
-    const { isSmallScreen, notes, selectedNote } = props;
+    const { notes, selectedNote } = props;
     const { selectedIndex: index } = this.state;
 
     // Cases:
@@ -393,7 +391,6 @@ export class NoteList extends Component<Props> {
   render() {
     const {
       hasLoaded,
-      isSmallScreen,
       noteDisplay,
       notes,
       onSelectNote,
@@ -421,7 +418,6 @@ export class NoteList extends Component<Props> {
       noteDisplay,
       onSelectNote,
       onPinNote,
-      isSmallScreen,
     });
 
     const isEmptyList = compositeNoteList.length === 0;
@@ -463,7 +459,7 @@ export class NoteList extends Component<Props> {
                 )}
               </AutoSizer>
             </div>
-            {!!showTrash && emptyTrashButton}
+            {showTrash && emptyTrashButton}
           </Fragment>
         )}
       </div>
@@ -471,7 +467,7 @@ export class NoteList extends Component<Props> {
   }
 }
 
-const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
+const { emptyTrash } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
