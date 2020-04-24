@@ -11,6 +11,7 @@
 
 - Highlight all search matches in Markdown previews and in note list [#1987](https://github.com/Automattic/simplenote-electron/pull/1987)
 - Fix for blurry fonts on LCD screens [#2003](https://github.com/Automattic/simplenote-electron/pull/2003)
+- Prevent duplicate writes/changes while multiple WebSockets are open [#2039](https://github.com/Automattic/simplenote-electron/pull/2039)
 
 ### Other Changes
 
