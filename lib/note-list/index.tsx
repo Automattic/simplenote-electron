@@ -302,7 +302,7 @@ export class NoteList extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { notes, toggleNoteList } = this.props;
+    const { notes, showNoteList, toggleNoteList } = this.props;
     const { selectedIndex: index } = this.state;
 
     const highlightedIndex = this.getHighlightedIndex(this.props);
@@ -314,7 +314,9 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index - 1]);
-      toggleNoteList();
+      if (showNoteList) {
+        toggleNoteList();
+      }
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -330,7 +332,9 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index + 1]);
-      toggleNoteList();
+      if (showNoteList) {
+        toggleNoteList();
+      }
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -476,6 +480,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     note,
     openedTag,
     searchQuery,
+    showNoteList,
     showTrash,
     tagSuggestions,
   },
@@ -512,6 +517,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNote: note,
     selectedNotePreview,
     selectedNoteContent: get(note, 'data.content'),
+    showNoteList,
     showTrash,
     tagResultsFound: tagSuggestions.length,
   };
