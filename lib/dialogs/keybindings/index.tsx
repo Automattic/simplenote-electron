@@ -118,7 +118,7 @@ export class AboutDialog extends Component<Props> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'L']}>
-                    Show note list
+                    Toggle note list
                     <br />
                     (on narrow screens)
                   </Keys>
