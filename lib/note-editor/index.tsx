@@ -106,7 +106,7 @@ export class NoteEditor extends Component<Props> {
         event.stopPropagation();
         event.preventDefault();
         return false;
-      } else if (!this.tagFieldHasFocus()) {
+      } else {
         this.focusTagField && this.focusTagField();
 
         event.stopPropagation();
