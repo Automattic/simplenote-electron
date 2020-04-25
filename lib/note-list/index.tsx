@@ -49,6 +49,7 @@ type DispatchProps = {
   onEmptyTrash: () => any;
   onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
+  openNote: (note: T.NoteEntity) => any;
 };
 
 type Props = Readonly<OwnProps & StateProps & DispatchProps>;
@@ -74,8 +75,8 @@ const heightCache = new CellMeasurerCache({
  * @param notes list of filtered notes
  * @param searchQuery search searchQuery
  * @param noteDisplay list view style: comfy, condensed, expanded
+ * @param openNote used to select a note and open it in the editor
  * @param selectedNoteId id of currently selected note
- * @param onSelectNote used to change the current note selection
  * @param onPinNote used to pin a note to the top of the list
  * @returns does the actual rendering for the List
  */
@@ -85,14 +86,15 @@ const renderNote = (
     searchQuery,
     noteDisplay,
     highlightedIndex,
-    onSelectNote,
     onPinNote,
+    openNote,
   }: {
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
     highlightedIndex: number;
     onSelectNote: DispatchProps['onSelectNote'];
     onPinNote: DispatchProps['onPinNote'];
+    openNote: DispatchProps['openNote'];
   }
 ): ListRowRenderer => ({ index, key, parent, style }) => {
   const note = notes[index];
@@ -135,8 +137,6 @@ const renderNote = (
   const terms = getTerms(searchQuery).map(makeFilterDecorator);
   const decorators = [checkboxDecorator, ...terms];
 
-  const selectNote = () => onSelectNote(note);
-
   return (
     <CellMeasurer
       cache={heightCache}
@@ -154,7 +154,7 @@ const renderNote = (
         <div
           className="note-list-item-text theme-color-border"
           tabIndex={0}
-          onClick={selectNote}
+          onClick={() => openNote(note)}
         >
           <div className="note-list-item-title">
             <span>{decorateWith(decorators, title)}</span>
@@ -385,7 +385,7 @@ export class NoteList extends Component<Props> {
       hasLoaded,
       noteDisplay,
       notes,
-      onSelectNote,
+      openNote,
       onEmptyTrash,
       onPinNote,
       searchQuery,
@@ -408,8 +408,8 @@ export class NoteList extends Component<Props> {
       searchQuery,
       highlightedIndex,
       noteDisplay,
-      onSelectNote,
       onPinNote,
+      openNote,
     });
 
     const isEmptyList = compositeNoteList.length === 0;
@@ -520,6 +520,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
     analytics.tracks.recordEvent('list_note_opened');
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
+  openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

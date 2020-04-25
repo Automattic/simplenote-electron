@@ -60,6 +60,11 @@ export const publishNote: A.ActionCreator<A.SetSystemTag> = (
   shouldHaveTag: shoudlPublish,
 });
 
+export const openNote: A.ActionCreator<A.OpenNote> = (note: T.NoteEntity) => ({
+  type: 'OPEN_NOTE',
+  note,
+});
+
 export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
   type: 'OPEN_TAG',
   tag,
