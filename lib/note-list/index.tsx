@@ -40,6 +40,7 @@ type StateProps = {
   selectedNote: T.NoteEntity | null;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
+  showNoteList: boolean;
   showTrash: boolean;
   tagResultsFound: number;
 };
@@ -92,7 +93,6 @@ const renderNote = (
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
     highlightedIndex: number;
-    onSelectNote: DispatchProps['onSelectNote'];
     onPinNote: DispatchProps['onPinNote'];
     openNote: DispatchProps['openNote'];
   }
@@ -298,7 +298,7 @@ export class NoteList extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { notes } = this.props;
+    const { isSmallScreen, notes, showNoteList } = this.props;
     const { selectedIndex: index } = this.state;
 
     const highlightedIndex = this.getHighlightedIndex(this.props);
@@ -325,6 +325,19 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index + 1]);
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (
+      isSmallScreen &&
+      showNoteList &&
+      code === 'Enter' &&
+      highlightedIndex !== null
+    ) {
+      this.props.openNote(notes[highlightedIndex]);
+
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -468,6 +481,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     note,
     openedTag,
     searchQuery,
+    showNoteList,
     showTrash,
     tagSuggestions,
   },
@@ -504,6 +518,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNote: note,
     selectedNotePreview,
     selectedNoteContent: get(note, 'data.content'),
+    showNoteList,
     showTrash,
     tagResultsFound: tagSuggestions.length,
   };

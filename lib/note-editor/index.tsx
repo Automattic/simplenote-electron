@@ -140,7 +140,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note, noteBucket, fontSize } = this.props;
+    const { editMode, isSmallScreen, note, noteBucket, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -148,6 +148,7 @@ export class NoteEditor extends Component<Props> {
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
         <NoteDetail
+          isSmallScreen={isSmallScreen}
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
           noteBucket={noteBucket}
