@@ -1,18 +1,11 @@
 import React, {
-  ClipboardEvent,
   Component,
   CompositionEvent,
   KeyboardEvent,
-  RefObject,
+  forwardRef,
 } from 'react';
-import { get, identity, invoke, noop } from 'lodash';
 
 import * as T from '../types';
-
-const KEY_TAB = 9;
-const KEY_ENTER = 13;
-const KEY_RIGHT = 39;
-const KEY_COMMA = 188;
 
 const startsWith = (prefix: string) => (text: string): boolean =>
   text
@@ -21,43 +14,41 @@ const startsWith = (prefix: string) => (text: string): boolean =>
     .startsWith(prefix.trim().toLowerCase());
 
 type OwnProps = {
-  inputRef: (ref: RefObject<HTMLDivElement>) => any;
+  inputRef: React.RefObject<HTMLDivElement>;
   onChange: (tagName: string, callback: () => any) => any;
   onSelect: (tagName: string) => any;
-  storeFocusInput: (focusSetter: () => any) => any;
-  storeHasFocus: (focusGetter: () => boolean) => any;
   tagNames: T.TagName[];
   value: string;
 };
 
 type Props = OwnProps;
 
-export class TagInput extends Component<Props> {
-  inputField?: RefObject<HTMLDivElement> | null;
+type OwnState = {
+  isComposing: boolean;
+};
+
+export class TagInput extends Component<Props, OwnState> {
   inputObserver?: MutationObserver;
 
   static displayName = 'TagInput';
-
-  static defaultProps = {
-    inputRef: identity,
-    onChange: identity,
-    onSelect: identity,
-    storeFocusInput: noop,
-    storeHasFocus: noop,
-  };
 
   state = {
     isComposing: false,
   };
 
   componentDidMount() {
-    this.props.storeFocusInput(this.focusInput);
-    this.props.storeHasFocus(this.hasFocus);
+    const { inputRef } = this.props;
+
+    inputRef.current!.addEventListener(
+      'paste',
+      this.removePastedFormatting,
+      false
+    );
 
     // Necessary for IE11 support, because contenteditable elements
     // do not fire input or change events in IE11.
     this.inputObserver = new MutationObserver(this.onInputMutation);
-    this.inputObserver.observe(this.inputField, {
+    this.inputObserver.observe(inputRef.current!, {
       characterData: true,
       childList: true,
       subtree: true,
@@ -65,17 +56,15 @@ export class TagInput extends Component<Props> {
   }
 
   componentWillUnmount() {
-    invoke(
-      this,
-      'inputField.removeEventListener',
+    this.props.inputRef.current?.removeEventListener(
       'paste',
       this.removePastedFormatting,
       false
     );
-    this.inputObserver.disconnect();
+    this.inputObserver!.disconnect();
   }
 
-  completeSuggestion = (andThen: (...args: any[]) => any = identity) => {
+  completeSuggestion = (andThen?: Function) => {
     const { onChange, tagNames, value } = this.props;
 
     if (!value.length) {
@@ -86,41 +75,46 @@ export class TagInput extends Component<Props> {
 
     if (suggestion) {
       onChange(suggestion, () => {
-        andThen(suggestion);
+        andThen?.(suggestion);
         this.focusInput();
       });
     }
   };
 
   focusInput = () => {
-    if (!this.inputField) {
+    const { inputRef } = this.props;
+
+    if (!inputRef.current) {
       return;
     }
 
-    const input = this.inputField;
-
-    input.focus();
+    inputRef.current.focus();
     const range = document.createRange();
-    range.selectNodeContents(input);
+    range.selectNodeContents(inputRef.current);
     range.collapse(false);
     const selection = window.getSelection();
+
+    if (!selection) {
+      return;
+    }
+
     selection.removeAllRanges();
     selection.addRange(range);
   };
 
-  hasFocus = () => document.activeElement === this.inputField;
+  interceptKeys = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case 'Enter':
+      case 'Comma':
+        return this.submitTag(event);
 
-  interceptKeys = (event: KeyboardEvent) =>
-    invoke(
-      {
-        [KEY_ENTER]: this.submitTag,
-        [KEY_COMMA]: this.submitTag,
-        [KEY_TAB]: this.interceptTabPress,
-        [KEY_RIGHT]: this.interceptRightArrow,
-      },
-      event.keyCode,
-      event
-    );
+      case 'Tab':
+        return this.interceptTabPress(event);
+
+      case 'ArrowRight':
+        return this.interceptRightArrow(event);
+    }
+  };
 
   interceptRightArrow = (event: KeyboardEvent) => {
     const { value } = this.props;
@@ -128,7 +122,7 @@ export class TagInput extends Component<Props> {
     // if we aren't already at the right-most extreme
     // then don't complete the suggestion; we could
     // be moving the cursor around inside the input
-    const caretPosition = window.getSelection().getRangeAt(0).endOffset;
+    const caretPosition = window.getSelection()?.getRangeAt(0).endOffset;
     if (caretPosition !== value.length) {
       return;
     }
@@ -148,13 +142,14 @@ export class TagInput extends Component<Props> {
 
   onInputMutation = (mutationList: MutationRecord[]) => {
     mutationList.forEach(mutation => {
-      let value = get(mutation, 'target.data', '');
+      const isNodeList =
+        mutation.type === 'childList' && mutation.addedNodes.length;
 
-      if (mutation.type === 'childList' && mutation.addedNodes.length) {
-        value = get(mutation, 'target.innerText', '');
-      }
+      const value = isNodeList
+        ? (mutation.target as Node).innerText
+        : (mutation.target as CharacterData).data;
 
-      this.onInput(value);
+      this.onInput(value || '');
     });
   };
 
@@ -172,30 +167,14 @@ export class TagInput extends Component<Props> {
   };
 
   removePastedFormatting = (event: ClipboardEvent) => {
-    let clipboardText;
-
-    if (get(event, 'clipboardData.getData')) {
-      clipboardText = event.clipboardData.getData('text/plain');
-    } else if (get(window, 'clipboardData.getData')) {
-      clipboardText = window.clipboardData.getData('Text'); // IE11
-    }
+    const clipboardText =
+      event.clipboardData?.getData('text/plain') ??
+      window.clipboardData?.getData?.('Text');
 
     this.onInput(clipboardText);
 
     event.preventDefault();
     event.stopPropagation();
-  };
-
-  storeInput = (ref: RefObject<HTMLDivElement> | null) => {
-    this.inputField = ref;
-    this.props.inputRef(ref);
-    invoke(
-      this,
-      'inputField.addEventListener',
-      'paste',
-      this.removePastedFormatting,
-      false
-    );
   };
 
   submitTag = (event?: KeyboardEvent) => {
@@ -204,8 +183,8 @@ export class TagInput extends Component<Props> {
     value.trim().length && onSelect(value.trim());
 
     // safe invoke since event could be empty
-    invoke(event, 'preventDefault');
-    invoke(event, 'stopPropagation');
+    event?.preventDefault();
+    event?.stopPropagation();
   };
 
   render() {
@@ -223,7 +202,7 @@ export class TagInput extends Component<Props> {
         )}
         <div
           aria-label="Add a tag…"
-          ref={this.storeInput}
+          ref={this.props.inputRef}
           className="tag-input__entry"
           contentEditable="true"
           onCompositionStart={() => this.setState({ isComposing: true })}
@@ -242,4 +221,6 @@ export class TagInput extends Component<Props> {
   }
 }
 
-export default TagInput;
+export default forwardRef<HTMLDivElement, Props>((props, ref) => (
+  <TagInput inputRef={ref} {...props} />
+));

@@ -66,6 +66,8 @@ export class NoteEditor extends Component<Props> {
     const { code, ctrlKey, metaKey, shiftKey } = event;
     const { note, revision, toggleMarkdown } = this.props;
 
+    console.log(document.activeElement);
+
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle Markdown enabled

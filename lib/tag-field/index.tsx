@@ -1,10 +1,4 @@
-import React, {
-  Component,
-  KeyboardEvent,
-  KeyboardEventHandler,
-  MouseEvent,
-  RefObject,
-} from 'react';
+import React, { Component, RefObject, createRef } from 'react';
 import { connect } from 'react-redux';
 import { Overlay } from 'react-overlays';
 import isEmailTag from '../utils/is-email-tag';
@@ -54,9 +48,9 @@ const KEY_RIGHT = 39;
 
 export class TagField extends Component<Props, OwnState> {
   focusInput?: () => any;
-  hiddenTag?: RefObject<HTMLInputElement> | null;
+  hiddenTag = createRef<HTMLInputElement>();
   inputHasFocus?: () => boolean;
-  tagInput?: RefObject<HTMLDivElement> | null;
+  tagInput = createRef<HTMLDivElement>();
 
   static displayName = 'TagField';
 
@@ -84,7 +78,9 @@ export class TagField extends Component<Props, OwnState> {
 
   componentDidUpdate() {
     if (this.hasSelection()) {
-      this.hiddenTag.focus();
+      console.log(this.state);
+      // console.log('stealing focus');
+      // this.hiddenTag.current?.focus();
     }
   }
 
@@ -141,7 +137,7 @@ export class TagField extends Component<Props, OwnState> {
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys: KeyboardEventHandler = e => {
+  interceptKeys = (e: React.KeyboardEvent) => {
     if (KEY_BACKSPACE === e.which) {
       if (this.hasSelection()) {
         this.deleteSelection();
@@ -164,6 +160,8 @@ export class TagField extends Component<Props, OwnState> {
       this.unselect(e);
       return;
     }
+
+    return true;
   };
 
   updateTags = tags =>
@@ -191,7 +189,7 @@ export class TagField extends Component<Props, OwnState> {
     setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
   };
 
-  onKeyDown = (e: KeyboardEvent) => {
+  onKeyDown: React.KeyboardEventHandler = e => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
     }
@@ -203,19 +201,15 @@ export class TagField extends Component<Props, OwnState> {
 
   storeHasFocus = f => (this.inputHasFocus = f);
 
-  storeHiddenTag = r => (this.hiddenTag = r);
-
-  storeInputRef = r => (this.tagInput = r);
-
   storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
 
-  unselect = (event: KeyboardEvent) => {
+  unselect = (event: React.KeyboardEvent | MouseEvent) => {
     if (!this.state.selectedTag) {
       return;
     }
 
-    if (this.hiddenTag !== event.relatedTarget) {
+    if (this.hiddenTag.current !== event.relatedTarget) {
       this.setState({ selectedTag: '' });
     }
   };
@@ -233,11 +227,7 @@ export class TagField extends Component<Props, OwnState> {
           tabIndex="-1"
           onKeyDown={this.onKeyDown}
         >
-          <input
-            className="hidden-tag"
-            tabIndex="-1"
-            ref={this.storeHiddenTag}
-          />
+          <input className="hidden-tag" tabIndex="-1" ref={this.hiddenTag} />
           {tags.filter(negate(isEmailTag)).map(tag => (
             <TagChip
               key={tag}
@@ -248,7 +238,7 @@ export class TagField extends Component<Props, OwnState> {
           ))}
           <TagInput
             allTags={allTags}
-            inputRef={this.storeInputRef}
+            ref={this.tagInput}
             value={tagInput}
             onChange={this.storeTagInput}
             onSelect={this.addTag}
