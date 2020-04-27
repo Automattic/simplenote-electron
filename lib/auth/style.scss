@@ -52,7 +52,7 @@
   }
 
   button[type='submit'] {
-    background-color: $studio-blue-50;
+    background-color: $studio-simplenote-blue-50;
     border: none;
     color: $studio-white;
     font-weight: 500;
@@ -65,7 +65,9 @@
     text-decoration: none;
   }
 
-  .login__forgot, .login__signup, .terms {
+  .login__forgot,
+  .login__signup,
+  .terms {
     color: $studio-gray-60;
     display: block;
     font-size: 14px;
@@ -74,8 +76,9 @@
     text-align: center;
   }
 
-  .login__signup a, .terms a {
-    color: $studio-blue-60;
+  .login__signup a,
+  .terms a {
+    color: $studio-simplenote-blue-60;
     margin-left: 5px;
     text-decoration: none;
   }
@@ -130,12 +133,15 @@
     color: $studio-gray-20;
   }
 
-  .login__forgot, .login__signup, .terms {
+  .login__forgot,
+  .login__signup,
+  .terms {
     color: $studio-gray-20;
   }
 
-  .login__signup a, .terms a {
-    color: $studio-blue-20;
+  .login__signup a,
+  .terms a {
+    color: $studio-simplenote-blue-20;
   }
 
   .login__auth-message.is-error {

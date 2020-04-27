@@ -28,10 +28,10 @@ button {
   transition: $anim-fast;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
-  border-color: $studio-blue-50;
+  border-color: $studio-simplenote-blue-50;
   border-style: solid;
   border-width: 2px;
-  color: $studio-blue-50;
+  color: $studio-simplenote-blue-50;
   font-size: 14px;
   line-height: 1.5;
   font-weight: $bold;
@@ -40,7 +40,7 @@ button {
 
   &:active,
   &.active {
-    background: $studio-blue-50;
+    background: $studio-simplenote-blue-50;
     color: $studio-white;
   }
   &[disabled],
@@ -51,7 +51,7 @@ button {
 
 // Primary buttons. Solid buttons.
 .button-primary {
-  background: $studio-blue-50;
+  background: $studio-simplenote-blue-50;
   color: white;
 }
 

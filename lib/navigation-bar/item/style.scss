@@ -8,23 +8,23 @@
 
   &.is-selected {
     .button {
-      color: $studio-blue-50;
+      color: $studio-simplenote-blue-50;
     }
 
     svg[class^='icon-'] {
-      fill: $studio-blue-50;
+      fill: $studio-simplenote-blue-50;
     }
   }
 }
 
 .navigation-bar-item__icon {
   display: inline-block;
-  margin-right: .5em;
+  margin-right: 0.5em;
   vertical-align: middle;
 
   svg {
     vertical-align: middle;
     position: relative;
-    top: -.2em;
+    top: -0.2em;
   }
 }
