@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 
 type OwnProps = {
-  onSelect: () => {};
+  onSelect: () => any;
   selected: boolean;
   tag: string;
 };
