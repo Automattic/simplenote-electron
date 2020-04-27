@@ -29,7 +29,7 @@ const matchUntilLimit = (pattern, source, preview = '', lines = 0) => {
  * @param {String} inputString string for which to remove markdown
  * @returns {String} string with markdown removed
  */
-const removeMarkdownWithFix = inputString => {
+const removeMarkdownWithFix = (inputString) => {
   // Workaround for a bug in `remove-markdown`
   // See https://github.com/stiang/remove-markdown/issues/35
   return removeMarkdown(inputString.replace(/(\s)\s+/g, '$1'), {
@@ -37,7 +37,7 @@ const removeMarkdownWithFix = inputString => {
   });
 };
 
-const getTitle = content => {
+const getTitle = (content) => {
   const titlePattern = new RegExp(`\\s*([^\n]{1,${maxTitleChars}})`, 'g');
   const titleMatch = titlePattern.exec(content);
   if (!titleMatch) {
@@ -47,7 +47,7 @@ const getTitle = content => {
   return title;
 };
 
-const getPreview = content => {
+const getPreview = (content) => {
   const previewPattern = new RegExp(
     `[^\n]*\n+[ \t]*([^]{0,${maxPreviewChars}})`,
     'g'
@@ -82,7 +82,7 @@ function isMarkdown(note: T.NoteEntity): boolean {
  * @param {string} text - The string to be normalized.
  * @returns {string} The normalized string.
  */
-export const normalizeForSorting = text => {
+export const normalizeForSorting = (text) => {
   const maxLength = 200;
 
   let normalizedText = text

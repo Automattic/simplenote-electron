@@ -99,7 +99,7 @@ export class Auth extends Component {
             id="login__field-username"
             onKeyDown={this.onInput}
             placeholder="Email"
-            ref={ref => (this.usernameInput = ref)}
+            ref={(ref) => (this.usernameInput = ref)}
             spellCheck={false}
             type="email"
           />
@@ -113,7 +113,7 @@ export class Auth extends Component {
             id="login__field-password"
             onKeyDown={this.onInput}
             placeholder="Password"
-            ref={ref => (this.passwordInput = ref)}
+            ref={(ref) => (this.passwordInput = ref)}
             spellCheck={false}
             type="password"
           />
@@ -156,7 +156,7 @@ export class Auth extends Component {
               By creating an account you agree to our
               <a
                 href="https://simplenote.com/terms/"
-                onClick={event => {
+                onClick={(event) => {
                   event.preventDefault();
                   viewExternalUrl('https://simplenote.com/terms/');
                 }}
@@ -177,7 +177,7 @@ export class Auth extends Component {
     );
   }
 
-  onInput = event => {
+  onInput = (event) => {
     if (event.type === 'keydown' && event.keyCode !== 13) {
       this.props.resetErrors();
       this.setState({
@@ -187,7 +187,7 @@ export class Auth extends Component {
     }
   };
 
-  onLogin = event => {
+  onLogin = (event) => {
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
@@ -292,7 +292,7 @@ export class Auth extends Component {
     );
   };
 
-  authError = errorMessage => {
+  authError = (errorMessage) => {
     this.closeAuthWindow();
 
     this.setState({
@@ -302,7 +302,7 @@ export class Auth extends Component {
 
   closeAuthWindow = () => this.authWindow && this.authWindow.close();
 
-  onForgot = event => {
+  onForgot = (event) => {
     event.preventDefault();
     window.open(
       event.currentTarget.href,
@@ -311,7 +311,7 @@ export class Auth extends Component {
     );
   };
 
-  onSignUp = event => {
+  onSignUp = (event) => {
     event.preventDefault();
 
     const username = get(this.usernameInput, 'value');
@@ -335,7 +335,7 @@ export class Auth extends Component {
     this.setState({ passwordErrorMessage: null });
   };
 
-  toggleSignUp = event => {
+  toggleSignUp = (event) => {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({
@@ -345,12 +345,12 @@ export class Auth extends Component {
   };
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   resetErrors: () => dispatch(reset()),
-  saveWPToken: token => dispatch(setWPToken(token)),
+  saveWPToken: (token) => dispatch(setWPToken(token)),
 });
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   hasInvalidCredentials: hasInvalidCredentials(state),
   hasLoginError: hasLoginError(state),
 });

@@ -21,8 +21,8 @@ function restoreTo(bucket) {
   // Offline changes may be enqueued to `sent`, if it happens before
   // the channel realizes it has been disconnected.
   Object.values(sent)
-    .filter(change => isEmpty(queues[change.id])) // avoid duplicate conflicting changes
-    .forEach(change => {
+    .filter((change) => isEmpty(queues[change.id])) // avoid duplicate conflicting changes
+    .forEach((change) => {
       localQueue.queues[change.id] = [change];
     });
 

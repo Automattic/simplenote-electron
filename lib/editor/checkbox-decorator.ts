@@ -6,7 +6,7 @@ import Checkbox from '../components/checkbox';
 import { toggleInLine } from '../note-detail/toggle-task';
 import { taskRegex } from '../note-detail/toggle-task/constants';
 
-const checkboxDecorator = replaceRangeWithText => {
+const checkboxDecorator = (replaceRangeWithText) => {
   const strategy = (contentBlock, callback) => {
     const text = contentBlock.getText();
     let match;

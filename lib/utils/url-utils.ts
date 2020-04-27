@@ -20,7 +20,7 @@ export const viewExternalUrl = (url: string) => {
   try {
     const protocol = new URL(url).protocol;
 
-    if (!allowedProtocols.some(allowed => allowed === protocol)) {
+    if (!allowedProtocols.some((allowed) => allowed === protocol)) {
       return;
     }
   } catch (e) {

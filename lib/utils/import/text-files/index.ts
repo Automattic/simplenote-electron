@@ -10,7 +10,7 @@ class TextFileImporter extends EventEmitter {
     this.options = options;
   }
 
-  importNotes = filesArray => {
+  importNotes = (filesArray) => {
     const coreImporter = new CoreImporter({
       noteBucket: this.noteBucket,
       tagBucket: this.tagBucket,
@@ -23,7 +23,7 @@ class TextFileImporter extends EventEmitter {
       return;
     }
 
-    const importTextFile = file => {
+    const importTextFile = (file) => {
       if (!file || !endsWith(file.name.toLowerCase(), '.txt')) {
         return;
       }
@@ -34,7 +34,7 @@ class TextFileImporter extends EventEmitter {
       }
 
       const fileReader = new FileReader();
-      fileReader.onload = event => {
+      fileReader.onload = (event) => {
         let noteContent = event.target.result;
 
         // Trim the .txt extension from the file name

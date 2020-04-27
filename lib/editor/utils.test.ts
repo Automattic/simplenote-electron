@@ -50,7 +50,7 @@ describe('getSelectedText', () => {
 });
 
 describe('getEquivalentSelectionState', () => {
-  const createEditorState = text =>
+  const createEditorState = (text) =>
     EditorState.createWithContent(ContentState.createFromText(text));
 
   it('should preserve the offsets of the old state', () => {

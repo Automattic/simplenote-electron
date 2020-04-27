@@ -359,7 +359,7 @@ export class NoteList extends Component<Props> {
     }
 
     if (!selectedNote && !index) {
-      const firstNote = notes.findIndex(item => item?.id);
+      const firstNote = notes.findIndex((item) => item?.id);
 
       return firstNote > -1 ? firstNote : null;
     }
@@ -368,7 +368,7 @@ export class NoteList extends Component<Props> {
       return index;
     }
 
-    const noteAt = notes.findIndex(item => item?.id === selectedNote?.id);
+    const noteAt = notes.findIndex((item) => item?.id === selectedNote?.id);
 
     if (selectedNote && noteAt > -1) {
       return noteAt;

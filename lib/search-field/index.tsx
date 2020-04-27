@@ -107,7 +107,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   searchQuery,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
     dispatch(search(query));
     analytics.tracks.recordEvent('list_notes_searched');

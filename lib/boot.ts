@@ -57,7 +57,7 @@ const redirectToWebSigninIfNecessary = () => {
   }
 
   if (window.webConfig && window.webConfig.signout) {
-    window.webConfig.signout(function() {
+    window.webConfig.signout(function () {
       window.location = `${config.app_engine_url}/`;
     });
   }
@@ -73,7 +73,7 @@ const client = initClient({
   token,
   bucketConfig: {
     note: {
-      beforeIndex: function(note: T.NoteEntity) {
+      beforeIndex: function (note: T.NoteEntity) {
         var content = (note.data && note.data.content) || '';
 
         return {
@@ -81,16 +81,16 @@ const client = initClient({
           contentKey: normalizeForSorting(content),
         };
       },
-      configure: function(objectStore) {
+      configure: function (objectStore) {
         objectStore.createIndex('modificationDate', 'data.modificationDate');
         objectStore.createIndex('creationDate', 'data.creationDate');
         objectStore.createIndex('alphabetical', 'contentKey');
       },
     },
-    preferences: function(objectStore) {
+    preferences: function (objectStore) {
       console.log('Configure preferences', objectStore); // eslint-disable-line no-console
     },
-    tag: function(objectStore) {
+    tag: function (objectStore) {
       console.log('Configure tag', objectStore); // eslint-disable-line no-console
     },
   },
@@ -137,7 +137,7 @@ let props = {
     store.dispatch(setPendingAuth());
     auth
       .authorize(username, password)
-      .then(user => {
+      .then((user) => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
           return store.dispatch(resetAuth());
@@ -171,7 +171,7 @@ let props = {
     store.dispatch(setPendingAuth());
     auth
       .create(username, password, appProvider)
-      .then(user => {
+      .then((user) => {
         resetStorageIfAccountChanged(username);
         if (!user.access_token) {
           return store.dispatch(resetAuth());

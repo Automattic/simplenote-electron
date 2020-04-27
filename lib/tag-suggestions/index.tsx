@@ -43,7 +43,7 @@ export class TagSuggestions extends Component<Props> {
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
             <ul className="tag-suggestions-list">
-              {filteredTags.map(tag => (
+              {filteredTags.map((tag) => (
                 <li
                   key={tag.id}
                   id={tag.id}
@@ -67,11 +67,7 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
-  const tagTerm = query
-    .trim()
-    .toLowerCase()
-    .split(' ')
-    .pop();
+  const tagTerm = query.trim().toLowerCase().split(' ').pop();
 
   if (!tagTerm) {
     return tags;
@@ -98,8 +94,8 @@ const mapStateToProps: S.MapState<StateProps> = ({
   searchQuery,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  onSearch: query => {
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+  onSearch: (query) => {
     dispatch(search(query));
     analytics.tracks.recordEvent('list_notes_searched');
   },

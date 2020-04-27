@@ -9,7 +9,7 @@ function AppQuit() {
   this.canQuit = false;
 }
 
-AppQuit.prototype.shouldQuitToBackground = function() {
+AppQuit.prototype.shouldQuitToBackground = function () {
   if (this.canQuit === false) {
     return true;
   }
@@ -18,7 +18,7 @@ AppQuit.prototype.shouldQuitToBackground = function() {
   return false;
 };
 
-AppQuit.prototype.allowQuit = function() {
+AppQuit.prototype.allowQuit = function () {
   this.canQuit = true;
 };
 

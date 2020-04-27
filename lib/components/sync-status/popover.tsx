@@ -73,7 +73,7 @@ class SyncStatusPopover extends React.Component<Props> {
               Notes with unsynced changes
             </h2>
             <ul className="sync-status-popover__notes theme-color-fg">
-              {noteTitles.map(note => (
+              {noteTitles.map((note) => (
                 <li key={note.id}>{note.title}</li>
               ))}
             </ul>

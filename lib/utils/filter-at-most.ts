@@ -11,7 +11,7 @@
  * @param predicate filtering function
  * @param maxResults maximum number of returned matching items
  */
-export default function<I>(
+export default function <I>(
   items: I[],
   predicate: (item: I) => boolean,
   maxResults: number

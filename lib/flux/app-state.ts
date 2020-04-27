@@ -92,13 +92,13 @@ export const actionMap = new ActionMap({
             sortOrder = sortReversed ? 'next' : 'prev';
           }
 
-          noteBucket.query(db => {
+          noteBucket.query((db) => {
             var notes: T.NoteEntity[] = [];
             db
               .transaction('note')
               .objectStore('note')
               .index(sortType)
-              .openCursor(null, sortOrder).onsuccess = e => {
+              .openCursor(null, sortOrder).onsuccess = (e) => {
               var cursor = e.target.result;
               if (cursor) {
                 notes.push(cursor.value);
@@ -116,7 +116,7 @@ export const actionMap = new ActionMap({
     },
 
     notesLoaded(state: AppState, { notes }: { notes: T.NoteEntity[] }) {
-      const [pinned, notPinned] = partition(notes, note =>
+      const [pinned, notPinned] = partition(notes, (note) =>
         note.data.systemTags.includes('pinned')
       );
       const pinSortedNotes = [...pinned, ...notPinned];
@@ -127,7 +127,7 @@ export const actionMap = new ActionMap({
 
     loadAndSelectNote: {
       creator({ noteBucket, noteId, hasRemoteUpdate = false }) {
-        return dispatch => {
+        return (dispatch) => {
           noteBucket.get(noteId, (e, note) => {
             dispatch(actions.ui.selectNote(note, { hasRemoteUpdate }));
           });
@@ -175,7 +175,7 @@ export const actionMap = new ActionMap({
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
       }) {
-        return dispatch => {
+        return (dispatch) => {
           if (note) {
             note.data.deleted = true;
             noteBucket.update(note.id, note.data);
@@ -193,7 +193,7 @@ export const actionMap = new ActionMap({
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
       }) {
-        return dispatch => {
+        return (dispatch) => {
           if (note) {
             note.data.deleted = false;
             noteBucket.update(note.id, note.data);
@@ -211,7 +211,7 @@ export const actionMap = new ActionMap({
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
       }) {
-        return dispatch => {
+        return (dispatch) => {
           noteBucket.remove(note.id);
           dispatch(this.action('loadNotes', { noteBucket }));
           dispatch(actions.ui.deleteNoteForever());
@@ -225,9 +225,9 @@ export const actionMap = new ActionMap({
           const state = getState().appState;
           const [deleted, notes] = partition(
             state.notes,
-            note => note.data.deleted
+            (note) => note.data.deleted
           );
-          deleted.forEach(note => noteBucket.remove(note.id));
+          deleted.forEach((note) => noteBucket.remove(note.id));
           dispatch(this.action('notesLoaded', { notes }));
         };
       },
@@ -241,7 +241,7 @@ export const actionMap = new ActionMap({
         callback?: Function;
         preferencesBucket: T.Bucket<T.Preferences>;
       }) {
-        return dispatch => {
+        return (dispatch) => {
           const objectKey = 'preferences-key';
 
           preferencesBucket.get(objectKey, (e, preferences) => {

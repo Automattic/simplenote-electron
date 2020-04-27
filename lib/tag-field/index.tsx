@@ -91,10 +91,7 @@ export class TagField extends Component<Props, OwnState> {
   addTag = (tags: string) => {
     const { allTags, tags: existingTags } = this.props;
 
-    const newTags = tags
-      .trim()
-      .replace(/\s+/g, ',')
-      .split(',');
+    const newTags = tags.trim().replace(/\s+/g, ',').split(',');
 
     if (newTags.some(isEmailTag)) {
       this.showEmailTooltip();
@@ -102,8 +99,8 @@ export class TagField extends Component<Props, OwnState> {
 
     const nextTagList = union(
       existingTags, // tags already in note
-      intersectionBy(allTags, newTags, s => s.toLocaleLowerCase()), // use existing case if tag known
-      differenceBy(newTags, allTags, s => s.toLocaleLowerCase()) // add completely new tags
+      intersectionBy(allTags, newTags, (s) => s.toLocaleLowerCase()), // use existing case if tag known
+      differenceBy(newTags, allTags, (s) => s.toLocaleLowerCase()) // add completely new tags
     );
     this.updateTags(nextTagList);
     this.storeTagInput('');
@@ -118,7 +115,9 @@ export class TagField extends Component<Props, OwnState> {
     const { tags } = this.props;
     const { selectedTag } = this.state;
 
-    this.updateTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
+    this.updateTags(
+      differenceBy(tags, [tagName], (s) => s.toLocaleLowerCase())
+    );
 
     if (selectedTag === tagName) {
       this.setState({ selectedTag: '' }, () => {
@@ -141,7 +140,7 @@ export class TagField extends Component<Props, OwnState> {
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys: KeyboardEventHandler = e => {
+  interceptKeys: KeyboardEventHandler = (e) => {
     if (KEY_BACKSPACE === e.which) {
       if (this.hasSelection()) {
         this.deleteSelection();
@@ -166,7 +165,7 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
-  updateTags = tags =>
+  updateTags = (tags) =>
     this.props.updateNoteTags({ note: this.props.note, tags });
 
   selectLastTag = () =>
@@ -199,13 +198,13 @@ export class TagField extends Component<Props, OwnState> {
     return this.interceptKeys(e);
   };
 
-  storeFocusInput = f => (this.focusInput = f);
+  storeFocusInput = (f) => (this.focusInput = f);
 
-  storeHasFocus = f => (this.inputHasFocus = f);
+  storeHasFocus = (f) => (this.inputHasFocus = f);
 
-  storeHiddenTag = r => (this.hiddenTag = r);
+  storeHiddenTag = (r) => (this.hiddenTag = r);
 
-  storeInputRef = r => (this.tagInput = r);
+  storeInputRef = (r) => (this.tagInput = r);
 
   storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
@@ -238,7 +237,7 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex="-1"
             ref={this.storeHiddenTag}
           />
-          {tags.filter(negate(isEmailTag)).map(tag => (
+          {tags.filter(negate(isEmailTag)).map((tag) => (
             <TagChip
               key={tag}
               tag={tag}
@@ -254,7 +253,7 @@ export class TagField extends Component<Props, OwnState> {
             onSelect={this.addTag}
             storeFocusInput={this.storeFocusInput}
             storeHasFocus={this.storeHasFocus}
-            tagNames={differenceBy(allTags, tags, s => s.toLocaleLowerCase())}
+            tagNames={differenceBy(allTags, tags, (s) => s.toLocaleLowerCase())}
           />
           <Overlay
             container={this}

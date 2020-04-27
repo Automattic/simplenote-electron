@@ -35,7 +35,7 @@ class ImportDialog extends Component<Props> {
     const { buckets, closeDialog } = this.props;
     const { importStarted, selectedSource } = this.state;
 
-    const selectSource = source => this.setState({ selectedSource: source });
+    const selectSource = (source) => this.setState({ selectedSource: source });
     const sourceIsSelected = Boolean(selectedSource);
 
     const placeholder = (

@@ -30,7 +30,7 @@ describe('insertOrRemoveCheckboxes', () => {
 });
 
 describe('insertOrRemoveForBlock', () => {
-  const argsFromText = string => {
+  const argsFromText = (string) => {
     const contentState = ContentState.createFromText(string);
     const blockKey = contentState.getFirstBlock().key;
     return [blockKey, contentState];

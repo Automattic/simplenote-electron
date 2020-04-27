@@ -67,7 +67,7 @@ export const updateFilter = (
 
     if (
       searchTerms.length > 0 &&
-      !searchTerms.every(term => note.content.includes(term))
+      !searchTerms.every((term) => note.content.includes(term))
     ) {
       continue;
     }
@@ -97,7 +97,7 @@ const queueUpdateFilter = (
 };
 
 export const updateNote = (noteId: T.EntityId, data) => {
-  const noteTags = new Set(data.tags.map(tag => tag.toLocaleLowerCase()));
+  const noteTags = new Set(data.tags.map((tag) => tag.toLocaleLowerCase()));
   notes.set(noteId, [
     noteId,
     {
@@ -111,7 +111,7 @@ export const updateNote = (noteId: T.EntityId, data) => {
 export const init = (port: MessagePort) => {
   mainApp = port;
 
-  mainApp.onmessage = event => {
+  mainApp.onmessage = (event) => {
     if (event.data.action === 'updateNote') {
       const { noteId, data } = event.data;
 

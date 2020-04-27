@@ -120,17 +120,17 @@ export class NoteEditor extends Component<Props> {
 
   editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  storeEditorHasFocus = f => (this.editorHasFocus = f);
+  storeEditorHasFocus = (f) => (this.editorHasFocus = f);
 
-  storeFocusEditor = f => (this.focusNoteEditor = f);
+  storeFocusEditor = (f) => (this.focusNoteEditor = f);
 
-  storeFocusTagField = f => (this.focusTagField = f);
+  storeFocusTagField = (f) => (this.focusTagField = f);
 
-  storeTagFieldHasFocus = f => (this.tagFieldHasFocus = f);
+  storeTagFieldHasFocus = (f) => (this.tagFieldHasFocus = f);
 
   tagFieldHasFocus = () => this.tagFieldHasFocus && this.tagFieldHasFocus();
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -183,7 +183,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   revision: selectedRevision,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   closeNote: () => dispatch(closeNote()),
   toggleMarkdown: (note, enableMarkdown) =>
     dispatch(markdownNote(note, enableMarkdown)),

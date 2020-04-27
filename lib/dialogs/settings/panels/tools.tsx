@@ -17,7 +17,7 @@ type DispatchProps = {
 type Props = DispatchProps;
 
 const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
-  const onSelectItem = item => {
+  const onSelectItem = (item) => {
     if (item.slug === 'import') {
       showDialog();
     } else if (item.slug === 'export') {
@@ -45,7 +45,7 @@ const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
   );
 };
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   showDialog: () => dispatch(showDialog('IMPORT')),
 });
 

@@ -14,7 +14,7 @@ window.spellCheckHandler.switchLanguage(navigator.language);
 
 let contextMenuBuilder = new ContextMenuBuilder(window.spellCheckHandler);
 // eslint-disable-next-line no-unused-vars
-let contextMenuListener = new ContextMenuListener(info => {
+let contextMenuListener = new ContextMenuListener((info) => {
   if (info.inputFieldType === 'none' && !info.isEditable) return;
 
   contextMenuBuilder.showPopupMenu(info);
