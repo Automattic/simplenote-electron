@@ -1,6 +1,5 @@
 import React, {
   Component,
-  KeyboardEvent,
   KeyboardEventHandler,
   MouseEvent,
   RefObject,
@@ -76,10 +75,12 @@ export class TagField extends Component<Props, OwnState> {
     this.props.storeHasFocus(this.hasFocus);
 
     document.addEventListener('click', this.unselect, true);
+    window.addEventListener('keydown', this.preventStealingFocus, true);
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.unselect, true);
+    window.removeEventListener('keydown', this.preventStealingFocus, true);
   }
 
   componentDidUpdate() {
@@ -121,9 +122,7 @@ export class TagField extends Component<Props, OwnState> {
     this.updateTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' }, () => {
-        invoke(this, 'tagInput.focus');
-      });
+      this.setState({ selectedTag: '' }, () => this.tagInput?.focus());
     }
 
     analytics.tracks.recordEvent('editor_tag_removed');
@@ -166,6 +165,16 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
+  preventStealingFocus = ({ ctrlKey, metaKey, code }: KeyboardEvent) => {
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (cmdOrCtrl && 'KeyT' === code) {
+      this.setState({ selectedTag: '' });
+    }
+
+    return true;
+  };
+
   updateTags = tags =>
     this.props.updateNoteTags({ note: this.props.note, tags });
 
@@ -191,7 +200,7 @@ export class TagField extends Component<Props, OwnState> {
     setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
   };
 
-  onKeyDown = (e: KeyboardEvent) => {
+  onKeyDown = (e: React.KeyboardEvent) => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
     }
@@ -210,7 +219,7 @@ export class TagField extends Component<Props, OwnState> {
   storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
 
-  unselect = (event: KeyboardEvent) => {
+  unselect = (event: React.KeyboardEvent) => {
     if (!this.state.selectedTag) {
       return;
     }
