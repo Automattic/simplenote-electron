@@ -15,7 +15,7 @@ describe('getIndexInText', () => {
       taskNodeIndex: 0,
     };
 
-    return getIndexInText(arg).then(indexInText => {
+    return getIndexInText(arg).then((indexInText) => {
       expect(indexInText).toBe(2);
     });
   });
@@ -32,7 +32,7 @@ describe('getIndexInText', () => {
       taskNodeIndex: 0,
     };
 
-    return getIndexInText(arg).then(indexInText => {
+    return getIndexInText(arg).then((indexInText) => {
       expect(indexInText).toBe(1);
     });
   });

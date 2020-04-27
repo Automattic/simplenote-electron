@@ -19,7 +19,7 @@ class SyncStatus extends Component<StateProps> {
     anchorEl: null,
   };
 
-  handlePopoverOpen = event => {
+  handlePopoverOpen = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 

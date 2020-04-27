@@ -67,7 +67,7 @@ class CoreImporter extends EventEmitter {
 
     // Add the tags to the tag bucket
     if (importedNote.tags) {
-      importedNote.tags.map(tagName => {
+      importedNote.tags.map((tagName) => {
         if (isEmpty(tagName)) {
           return;
         }
@@ -97,10 +97,10 @@ class CoreImporter extends EventEmitter {
       return;
     }
 
-    const activeNotesPromises = get(notes, 'activeNotes', []).map(note =>
+    const activeNotesPromises = get(notes, 'activeNotes', []).map((note) =>
       this.importNote(note, options)
     );
-    const trashedNotesPromises = get(notes, 'trashedNotes', []).map(note =>
+    const trashedNotesPromises = get(notes, 'trashedNotes', []).map((note) =>
       this.importNote(note, { ...options, isTrashed: true })
     );
 

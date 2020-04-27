@@ -1,5 +1,5 @@
 const buildRadioGroup = ({ action, propName, settings }) => {
-  return item => {
+  return (item) => {
     const { id, ...props } = item;
 
     return {
@@ -14,7 +14,7 @@ const buildRadioGroup = ({ action, propName, settings }) => {
   };
 };
 
-const appCommandSender = arg => {
+const appCommandSender = (arg) => {
   return (item, focusedWindow) => {
     if (focusedWindow) {
       focusedWindow.webContents.send('appCommand', arg);

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ImportProgressText = props => {
+const ImportProgressText = (props) => {
   const { currentValue, isDone } = props;
 
   const unit = currentValue === 1 ? 'note' : 'notes';

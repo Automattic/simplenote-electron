@@ -16,7 +16,7 @@ it('only filters if given a query', () => {
   expect(filterTags(tags, '    ')).toBe(tags);
 });
 
-it.each(animals)('finds full-tag matches', animal => {
+it.each(animals)('finds full-tag matches', (animal) => {
   expect(filterTags(animals, animal.data.name)).toEqual([animal]);
 });
 
@@ -52,7 +52,7 @@ it('returns at-most five results', () => {
   expect(filterTags([...infixen, ...infixen, ...infixen], 'd')).toHaveLength(5);
 });
 
-it.each(animals)('ignores full matches with the tag: prefix', animal => {
+it.each(animals)('ignores full matches with the tag: prefix', (animal) => {
   expect(filterTags(animals, `tag:${animal.data.name}`)).toEqual([]);
 });
 

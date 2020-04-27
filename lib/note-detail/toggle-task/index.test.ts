@@ -22,7 +22,7 @@ describe('toggleTask', () => {
 - [ ] task item
 - [ ] task item`;
 
-    return toggleTask({ taskNode, text }).then(newText => {
+    return toggleTask({ taskNode, text }).then((newText) => {
       expect(newText).toBe(`
 - [ ] task item
 - [x] task item`);
@@ -38,7 +38,7 @@ describe('toggleTask', () => {
 - [ ] task item
 - [ ] task item`;
 
-    return toggleTask({ taskNode, text }).then(newText => {
+    return toggleTask({ taskNode, text }).then((newText) => {
       expect(newText).toBe(`
 ~~~
 - [ ] task item
@@ -67,7 +67,7 @@ describe('taskRegex', () => {
       '- [x] task',
       '- [X] task',
     ];
-    validStrings.forEach(string => {
+    validStrings.forEach((string) => {
       expect(string.match(taskRegex)).not.toBeNull();
     });
   });
@@ -80,7 +80,7 @@ describe('taskRegex', () => {
       '- [ ]',
       '- [   ] task',
     ];
-    invalidStrings.forEach(string => {
+    invalidStrings.forEach((string) => {
       expect(string.match(taskRegex)).toBeNull();
     });
   });

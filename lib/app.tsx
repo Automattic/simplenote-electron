@@ -58,7 +58,7 @@ export type DispatchProps = {
 
 export type Props = OwnProps & StateProps & DispatchProps;
 
-const mapStateToProps: S.MapState<StateProps> = state => ({
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
   isAuthorized: selectors.auth.isAuthorized(state),
@@ -70,12 +70,12 @@ const mapDispatchToProps: S.MapDispatch<
 > = function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
-  const thenReloadNotes = action => a => {
+  const thenReloadNotes = (action) => (a) => {
     dispatch(action(a));
     dispatch(actionCreators.loadNotes({ noteBucket }));
   };
 
-  const thenReloadTags = action => a => {
+  const thenReloadTags = (action) => (a) => {
     dispatch(action(a));
     dispatch(loadTags());
   };
@@ -110,12 +110,12 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
-    setSimperiumConnectionStatus: connected =>
+    setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: note => dispatch(actions.ui.selectNote(note)),
-    setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
-    showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
-    trashNote: previousIndex => dispatch(actions.ui.trashNote(previousIndex)),
+    selectNote: (note) => dispatch(actions.ui.selectNote(note)),
+    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
+    showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
+    trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
   };
 };
 
@@ -172,7 +172,7 @@ export const App = connect(
         .on('update', this.onNoteUpdate)
         .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
         .on('remove', this.onNoteRemoved)
-        .beforeNetworkChange(noteId =>
+        .beforeNetworkChange((noteId) =>
           this.props.actions.onNoteBeforeRemoteUpdate({
             noteId,
           })
@@ -307,8 +307,8 @@ export const App = connect(
 
       const canRun = overEvery(
         isObject,
-        o => o.action !== null,
-        o => has(this.props.actions, o.action) || has(this.props, o.action)
+        (o) => o.action !== null,
+        (o) => has(this.props.actions, o.action) || has(this.props, o.action)
       );
 
       if (canRun(command)) {
@@ -391,7 +391,7 @@ export const App = connect(
       }
     };
 
-    onLoadPreferences = callback =>
+    onLoadPreferences = (callback) =>
       this.props.actions.loadPreferences({
         callback,
         preferencesBucket: this.props.preferencesBucket,
@@ -439,11 +439,11 @@ export const App = connect(
       }
     };
 
-    syncNote = noteId => {
+    syncNote = (noteId) => {
       this.props.noteBucket.touch(noteId);
     };
 
-    syncActivityHooks = data => {
+    syncActivityHooks = (data) => {
       activityHooks(data, {
         onIdle: () => {
           const {
@@ -459,7 +459,7 @@ export const App = connect(
       });
     };
 
-    toggleShortcuts = doEnable => {
+    toggleShortcuts = (doEnable) => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
       } else {

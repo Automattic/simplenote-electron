@@ -6,7 +6,7 @@ import ToggleGroup from '../../toggle-settings-group';
 import TopRightArrowIcon from '../../../icons/arrow-top-right';
 import { viewExternalUrl } from '../../../utils/url-utils';
 
-const AccountPanel = props => {
+const AccountPanel = (props) => {
   const {
     accountName,
     analyticsEnabled,

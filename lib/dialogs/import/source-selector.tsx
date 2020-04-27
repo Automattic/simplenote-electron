@@ -14,9 +14,9 @@ const ImportSourceSelector = ({ selectSource }) => {
       <PanelTitle headingLevel="3">Import from</PanelTitle>
       <ButtonGroup
         items={
-          isElectron ? sources : reject(sources, item => item.electronOnly)
+          isElectron ? sources : reject(sources, (item) => item.electronOnly)
         }
-        onClickItem={source => selectSource(source)}
+        onClickItem={(source) => selectSource(source)}
       />
     </Fragment>
   );

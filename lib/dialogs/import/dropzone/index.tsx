@@ -17,14 +17,14 @@ function ImporterDropzone({
   const [acceptedFile, setAcceptedFile] = useState();
   const [errorMessage, setErrorMessage] = useState();
 
-  const handleAccept = acceptedFiles => {
+  const handleAccept = (acceptedFiles) => {
     const fileCount = acceptedFiles.length;
     const label = fileCount > 1 ? `${fileCount} files` : acceptedFiles[0].name;
     setAcceptedFile(label);
     onAccept(acceptedFiles);
   };
 
-  const handleReject = rejectedFiles => {
+  const handleReject = (rejectedFiles) => {
     if (!multiple && rejectedFiles.length > 1) {
       setErrorMessage('Choose a single file');
     } else {

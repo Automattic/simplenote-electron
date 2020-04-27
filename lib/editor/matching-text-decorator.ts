@@ -13,10 +13,10 @@ const matchIndices = (text, matcher) => {
   return chunks;
 };
 
-const dispatch = callback => ([start, end]) =>
+const dispatch = (callback) => ([start, end]) =>
   callback(start, end, { className: 'search-match' });
 
-export const findMatchingText = matcher => (contentBlock, callback) => {
+export const findMatchingText = (matcher) => (contentBlock, callback) => {
   const text = contentBlock.getText();
 
   if (!matcher || !text) {
@@ -32,7 +32,7 @@ export const findMatchingText = matcher => (contentBlock, callback) => {
  * @param {string} search text to search for
  * @returns {null|Object} decoration for draft-js
  */
-export const matchingTextDecorator = search => {
+export const matchingTextDecorator = (search) => {
   if (!search) {
     return null;
   }

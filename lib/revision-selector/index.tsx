@@ -190,11 +190,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
   revisions: noteRevisions,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   setRevision: (revision: T.NoteEntity) => dispatch(selectRevision(revision)),
   resetIsViewingRevisions: () => dispatch(toggleRevisions()),
   cancelRevision: () => dispatch(toggleRevisions()),
-  updateNoteTags: arg => dispatch(updateNoteTags(arg)),
+  updateNoteTags: (arg) => dispatch(updateNoteTags(arg)),
 });
 
 export default connect(

@@ -4,10 +4,10 @@ import { renderNoteToHtml } from '../utils/render-note-to-html';
 const markMatches = (sourceNode: Text, terms: string[]): void => {
   const parent = sourceNode.parentNode as Node;
 
-  terms.forEach(term => {
+  terms.forEach((term) => {
     // we only want to mark TEXT_NODE matches
     // it wouldn't work well to match "pan" inside of "<span>"
-    parent.childNodes.forEach(node => {
+    parent.childNodes.forEach((node) => {
       if (
         node.nodeType !== Node.TEXT_NODE ||
         !node.textContent?.toLocaleLowerCase().includes(term)
@@ -41,16 +41,16 @@ export const renderToNode = (
   searchQuery: string
 ) => {
   renderNoteToHtml(content)
-    .then(html => {
+    .then((html) => {
       node.innerHTML = html;
       return node;
     })
-    .then(node => {
+    .then((node) => {
       if (!searchQuery) {
         return node.querySelectorAll('pre code');
       }
 
-      const terms = getTerms(searchQuery).map(s => s.toLocaleLowerCase());
+      const terms = getTerms(searchQuery).map((s) => s.toLocaleLowerCase());
       if (!terms.length) {
         return node.querySelectorAll('pre code');
       }
@@ -59,8 +59,8 @@ export const renderToNode = (
         node,
         NodeFilter.SHOW_TEXT,
         {
-          acceptNode: function(textNode: Text) {
-            return terms.some(term =>
+          acceptNode: function (textNode: Text) {
+            return terms.some((term) =>
               textNode.textContent?.toLocaleLowerCase().includes(term)
             )
               ? NodeFilter.FILTER_ACCEPT
@@ -78,11 +78,11 @@ export const renderToNode = (
         currentNode = treeWalker.nextNode();
       }
 
-      nodes.forEach(textNode => markMatches(textNode, terms));
+      nodes.forEach((textNode) => markMatches(textNode, terms));
 
       return node.querySelectorAll('pre code');
     })
-    .then(codeElements => {
+    .then((codeElements) => {
       // Only load syntax highlighter if code blocks exist
       if (codeElements.length) {
         return import(/* webpackChunkName: 'highlight' */ 'highlight.js')

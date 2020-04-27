@@ -14,9 +14,9 @@ import isEmailTag from '../is-email-tag';
 
 export const LF_ONLY_NEWLINES = /(?!\r)\n/g;
 
-const mapNote = note => {
+const mapNote = (note) => {
   const [collaboratorEmails, tags] = partition(
-    sortBy(get(note, 'data.tags', []), a => a.toLocaleLowerCase()),
+    sortBy(get(note, 'data.tags', []), (a) => a.toLocaleLowerCase()),
     isEmailTag
   );
 
@@ -45,11 +45,11 @@ const nonEmptyByRecentEdits = compose(
   partialRight(filter, property('data.content'))
 );
 
-const mapNotes = notes => {
+const mapNotes = (notes) => {
   const [trashedNotes, activeNotes] = partition(
     nonEmptyByRecentEdits(notes),
-    note => !!get(note, 'data.deleted', false)
-  ).map(list => list.map(mapNote));
+    (note) => !!get(note, 'data.deleted', false)
+  ).map((list) => list.map(mapNote));
 
   return Promise.resolve({
     activeNotes,
@@ -57,12 +57,9 @@ const mapNotes = notes => {
   });
 };
 
-const readNotes = db =>
+const readNotes = (db) =>
   new Promise((resolve, reject) => {
-    const request = db
-      .transaction('note')
-      .objectStore('note')
-      .openCursor();
+    const request = db.transaction('note').objectStore('note').openCursor();
 
     const notes = [];
     request.onsuccess = ({ target: { result: cursor } }) =>
@@ -79,9 +76,6 @@ const openDatabase = () =>
     idb.onerror = reject;
   });
 
-export const exportNotes = () =>
-  openDatabase()
-    .then(readNotes)
-    .then(mapNotes);
+export const exportNotes = () => openDatabase().then(readNotes).then(mapNotes);
 
 export default exportNotes;

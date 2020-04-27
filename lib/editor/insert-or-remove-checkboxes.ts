@@ -103,7 +103,7 @@ export function adjustSelectionState(
     selectionState.focusKey
   );
 
-  const getFocusBlockLength = content =>
+  const getFocusBlockLength = (content) =>
     content.getBlockForKey(focusBlockKey).getText().length;
   const lengthDifference =
     getFocusBlockLength(newContentState) - getFocusBlockLength(contentState);

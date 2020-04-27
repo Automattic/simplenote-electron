@@ -43,8 +43,8 @@ const fetchRevisions = (store: S.Store, state: S.State) => {
   );
 };
 
-export const middleware: S.Middleware = store => {
-  return next => (action: A.ActionType) => {
+export const middleware: S.Middleware = (store) => {
+  return (next) => (action: A.ActionType) => {
     const result = next(action);
     const nextState = store.getState();
 

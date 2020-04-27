@@ -8,7 +8,7 @@ import * as T from '../types';
 
 const emptyList = [] as T.NoteEntity[];
 
-export const middleware: S.Middleware = store => {
+export const middleware: S.Middleware = (store) => {
   const {
     port1: searchProcessor,
     port2: _searchProcessor,
@@ -31,7 +31,7 @@ export const middleware: S.Middleware = store => {
     );
   };
 
-  searchProcessor.onmessage = event => {
+  searchProcessor.onmessage = (event) => {
     switch (event.data.action) {
       case 'filterNotes': {
         setFilteredNotes(event.data.noteIds);
@@ -43,14 +43,14 @@ export const middleware: S.Middleware = store => {
   init(_searchProcessor);
   let hasInitialized = false;
 
-  return next => (action: A.ActionType) => {
+  return (next) => (action: A.ActionType) => {
     const prevState = store.getState();
     const result = next(action);
 
     switch (action.type) {
       case 'App.notesLoaded':
         if (!hasInitialized) {
-          action.notes.forEach(note =>
+          action.notes.forEach((note) =>
             searchProcessor.postMessage({
               action: 'updateNote',
               noteId: note.id,

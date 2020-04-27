@@ -41,8 +41,8 @@ export const getTerms = (filterText: string): string[] => {
 
   const terms = withoutLiterals
     .split(boundaryPattern)
-    .map(a => a.trim())
-    .filter(a => a);
+    .map((a) => a.trim())
+    .filter((a) => a);
 
   return [...literals, ...terms];
 };
@@ -55,7 +55,7 @@ export const searchPattern = (searchQuery: string) => {
   }
 
   return new RegExp(
-    `(?:${terms.map(word => `(?:${escapeRegExp(word)})`).join('|')})`,
+    `(?:${terms.map((word) => `(?:${escapeRegExp(word)})`).join('|')})`,
     'gi'
   );
 };
@@ -96,7 +96,7 @@ const makeMatchesSearch = (searchQuery = '') => (content: string) => {
     return false;
   }
 
-  return getTerms(searchQuery).every(term =>
+  return getTerms(searchQuery).every((term) =>
     new RegExp(escapeRegExp(term), 'gi').test(content)
   );
 };

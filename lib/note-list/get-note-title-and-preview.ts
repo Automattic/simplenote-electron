@@ -10,7 +10,7 @@ const noteCache = new Map();
  * @param {Function} getValue Get the value for the cache
  * @returns {Object} note title and preview excerpt
  */
-export const withCache = (getKey, getValue) => note => {
+export const withCache = (getKey, getValue) => (note) => {
   let cached = noteCache.get(note.id);
   const key = getKey(note);
 
@@ -25,7 +25,7 @@ export const withCache = (getKey, getValue) => note => {
 export const clearCache = () => noteCache.clear();
 
 const getNoteTitleAndPreview = withCache(
-  note => note.data.modificationDate,
+  (note) => note.data.modificationDate,
   getNoteExcerpt
 );
 

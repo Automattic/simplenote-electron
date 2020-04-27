@@ -11,7 +11,7 @@ console.info(
 );
 
 const el = (app: Application, selector: string) => app.client.$(selector);
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const waitFor = async (app: Application, selector: string, msTimeout = 10000) =>
   expect(await app.client.waitForExist(selector, msTimeout)).toBe(true);
 const waitForEvent = async (
@@ -23,7 +23,7 @@ const waitForEvent = async (
 
   return new Promise((resolve, reject) => {
     const f = async () => {
-      const result = await app.client.execute(function() {
+      const result = await app.client.execute(function () {
         var events = window.testEvents;
 
         if (!events.length) {
@@ -73,7 +73,7 @@ beforeAll(async () => {
 
 describe('E2E', () => {
   beforeEach(async () => {
-    await new Promise(resolve => rimraf(userData, () => resolve()));
+    await new Promise((resolve) => rimraf(userData, () => resolve()));
     await app.start();
     await app.client.waitUntilWindowLoaded();
   }, 10000);

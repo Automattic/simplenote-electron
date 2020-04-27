@@ -64,7 +64,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
   composeEnhancers(
     persistState('settings', {
       key: 'simpleNote',
-      slicer: path => state => ({
+      slicer: (path) => (state) => ({
         // Omit property from persisting
         [path]: omit(state[path], 'focusModeEnabled'),
       }),

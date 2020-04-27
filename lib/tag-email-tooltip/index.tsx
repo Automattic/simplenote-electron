@@ -20,7 +20,7 @@ export const EmailToolTip = ({ openShareDialog }) => (
   </div>
 );
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   openShareDialog: () => dispatch(showDialog('SHARE')),
 });
 

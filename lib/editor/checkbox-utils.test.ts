@@ -2,10 +2,7 @@ import { ContentState, EditorState, Modifier, SelectionState } from 'draft-js';
 import { removeCheckbox, shouldRemoveCheckbox } from './checkbox-utils';
 
 const removeChars = (editorState, { start, end, type }) => {
-  const blockKey = editorState
-    .getCurrentContent()
-    .getFirstBlock()
-    .getKey();
+  const blockKey = editorState.getCurrentContent().getFirstBlock().getKey();
   const rangeToRemove = SelectionState.createEmpty(blockKey).merge({
     anchorOffset: start,
     focusOffset: end,
@@ -21,7 +18,7 @@ const removeChars = (editorState, { start, end, type }) => {
   );
 };
 
-const getCurrentText = editorState =>
+const getCurrentText = (editorState) =>
   editorState.getCurrentContent().getPlainText();
 
 describe('checkbox-utils', () => {

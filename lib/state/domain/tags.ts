@@ -3,12 +3,12 @@ import actions from '../actions';
 
 export const loadTags = () => (dispatch, getState) => {
   const sortTagsAlpha = getState().settings.sortTagsAlpha;
-  tagBucket().query(db => {
+  tagBucket().query((db) => {
     var tags = [];
     db
       .transaction('tag')
       .objectStore('tag')
-      .openCursor(null, 'prev').onsuccess = e => {
+      .openCursor(null, 'prev').onsuccess = (e) => {
       var cursor = e.target.result;
       if (cursor) {
         tags.push(cursor.value);
@@ -43,16 +43,16 @@ export const renameTag = ({ tag, name: newName }) => (dispatch, getState) => {
 
   notes
     .filter(({ data: { tags } }) => (tags || []).includes(tagName))
-    .map(note => ({
+    .map((note) => ({
       ...note,
       data: {
         ...note.data,
-        tags: note.data.tags.map(noteTag =>
+        tags: note.data.tags.map((noteTag) =>
           noteTag === tagName ? newName : noteTag
         ),
       },
     }))
-    .forEach(note => noteBucket().update(note.id, note.data));
+    .forEach((note) => noteBucket().update(note.id, note.data));
 };
 
 export const trashTag = ({ tag }) => (dispatch, getState) => {
@@ -61,14 +61,14 @@ export const trashTag = ({ tag }) => (dispatch, getState) => {
 
   notes
     .filter(({ data: { tags } }) => (tags || []).includes(tagName))
-    .map(note => ({
+    .map((note) => ({
       ...note,
       data: {
         ...note.data,
-        tags: note.data.tags.filter(noteTag => noteTag !== tagName),
+        tags: note.data.tags.filter((noteTag) => noteTag !== tagName),
       },
     }))
-    .forEach(note => noteBucket().update(note.id, note.data));
+    .forEach((note) => noteBucket().update(note.id, note.data));
 
   tagBucket().remove(tag.id, () => dispatch(loadTags()));
 };

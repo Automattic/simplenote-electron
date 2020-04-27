@@ -37,9 +37,10 @@ export class ShareDialog extends Component<Props> {
     this.props.publishNote(this.props.note, event.currentTarget.checked);
   };
 
-  getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
+  getPublishURL = (url) =>
+    isEmpty(url) ? undefined : `http://simp.ly/p/${url}`;
 
-  onAddCollaborator = event => {
+  onAddCollaborator = (event) => {
     const { note } = this.props;
     const tags = (note.data && note.data.tags) || [];
     const collaborator = this.collaboratorElement.value.trim();
@@ -58,11 +59,11 @@ export class ShareDialog extends Component<Props> {
     }
   };
 
-  onRemoveCollaborator = collaborator => {
+  onRemoveCollaborator = (collaborator) => {
     const { note } = this.props;
 
     let tags = (note.data && note.data.tags) || [];
-    tags = tags.filter(tag => tag !== collaborator);
+    tags = tags.filter((tag) => tag !== collaborator);
 
     this.props.updateNoteTags({ note, tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
@@ -78,7 +79,7 @@ export class ShareDialog extends Component<Props> {
     return collaborators;
   };
 
-  gravatarURL = email => {
+  gravatarURL = (email) => {
     const hash = new MD5()
       .update(email.trim().toLowerCase())
       .digest('hex')
@@ -112,7 +113,7 @@ export class ShareDialog extends Component<Props> {
                     // Regex to detect valid email
                     pattern="^[^@]+@.+"
                     placeholder="email@example.com"
-                    ref={e => (this.collaboratorElement = e)}
+                    ref={(e) => (this.collaboratorElement = e)}
                     spellCheck={false}
                     title="Please enter a valid email"
                   />
@@ -129,7 +130,7 @@ export class ShareDialog extends Component<Props> {
                 <PanelTitle headingLevel="3">Collaborators</PanelTitle>
               </div>
               <ul className="share-collaborators">
-                {this.collaborators().map(collaborator => (
+                {this.collaborators().map((collaborator) => (
                   <li key={collaborator} className="share-collaborator">
                     <span className="share-collaborator-photo">
                       <img
@@ -184,7 +185,7 @@ export class ShareDialog extends Component<Props> {
                 <div className="settings-items theme-color-border">
                   <div className="settings-item theme-color-border">
                     <input
-                      ref={e => (this.publishUrlElement = e)}
+                      ref={(e) => (this.publishUrlElement = e)}
                       className="settings-item-text-input transparent-input"
                       placeholder={
                         isPublished ? 'Publishing note…' : 'Note not published'
@@ -215,7 +216,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   closeDialog: () => dispatch(closeDialog()),
   publishNote: (note, shouldPublish) =>
     dispatch(publishNote(note, shouldPublish)),

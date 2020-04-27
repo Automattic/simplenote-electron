@@ -21,7 +21,7 @@ const { isDev } = require('./env');
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
-  app.on('will-finish-launching', function() {
+  app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
   });
 
@@ -34,7 +34,7 @@ module.exports = function main() {
   // be closed automatically when the JavaScript object is GCed.
   let mainWindow = null;
 
-  const activateWindow = function() {
+  const activateWindow = function () {
     // Only allow a single window
     // to be open at any given time
     if (mainWindow) {
@@ -87,17 +87,17 @@ module.exports = function main() {
     const appMenu = Menu.buildFromTemplate(menuTemplate);
     Menu.setApplicationMenu(appMenu);
 
-    ipcMain.on('settingsUpdate', function(event, settings) {
+    ipcMain.on('settingsUpdate', function (event, settings) {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(settings))
       );
     });
 
-    ipcMain.on('clearCookies', function() {
+    ipcMain.on('clearCookies', function () {
       // Removes any cookies stored in the app. We're particularly interested in
       // removing the WordPress.com cookies that may have been set during sign in.
       session.defaultSession.cookies.get({}, (error, cookies) => {
-        cookies.forEach(cookie => {
+        cookies.forEach((cookie) => {
           // Reconstruct the url to pass to the cookies.remove function
           let cookieUrl = '';
           cookieUrl += cookie.secure ? 'https://' : 'http://';
@@ -114,20 +114,22 @@ module.exports = function main() {
       });
     });
 
-    ipcMain.on('setAutoHideMenuBar', function(event, autoHideMenuBar) {
+    ipcMain.on('setAutoHideMenuBar', function (event, autoHideMenuBar) {
       mainWindow.setAutoHideMenuBar(autoHideMenuBar || false);
       mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
     mainWindowState.manage(mainWindow);
 
-    mainWindow.webContents.on('new-window', function(event, linkUrl) {
+    mainWindow.webContents.on('new-window', function (event, linkUrl) {
       event.preventDefault();
       shell.openExternal(linkUrl);
     });
 
     // Disables navigation for app window drag and drop
-    mainWindow.webContents.on('will-navigate', event => event.preventDefault());
+    mainWindow.webContents.on('will-navigate', (event) =>
+      event.preventDefault()
+    );
 
     // Fullscreen should be disabled on launch
     if (platform.isOSX()) {
@@ -139,7 +141,7 @@ module.exports = function main() {
     }
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function() {
+    mainWindow.on('closed', function () {
       // Dereference the window object, usually you would store windows
       // in an array if your app supports multi windows, this is the time
       // when you should delete the corresponding element.
@@ -167,7 +169,7 @@ module.exports = function main() {
   }
 
   // Quit when all windows are closed.
-  app.on('window-all-closed', function() {
+  app.on('window-all-closed', function () {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
@@ -175,7 +177,7 @@ module.exports = function main() {
     }
   });
 
-  app.on('browser-window-created', function(event, window) {
+  app.on('browser-window-created', function (event, window) {
     window.webContents.on('did-finish-load', () => {
       // Disable drag and drop operations on the window
       window.webContents.executeJavaScript(

@@ -121,7 +121,7 @@ class NoteContentEditor extends Component<Props> {
     window.addEventListener('keydown', this.handleKeydown, false);
   }
 
-  handleEditorStateChange = editorState => {
+  handleEditorStateChange = (editorState) => {
     const { editorState: prevEditorState } = this.state;
 
     if (editorState === prevEditorState) {
@@ -220,7 +220,7 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  saveEditorRef = ref => {
+  saveEditorRef = (ref) => {
     this.editor = ref;
   };
 
@@ -245,7 +245,7 @@ class NoteContentEditor extends Component<Props> {
     return document.activeElement === get(this.editor, 'editor');
   };
 
-  onTab = e => {
+  onTab = (e) => {
     const { editorState } = this.state;
 
     // prevent moving focus to next input
@@ -276,7 +276,7 @@ class NoteContentEditor extends Component<Props> {
     const line = getCurrentBlock(editorState).getText();
 
     const firstCharIndex = line.search(/\S/);
-    const caretIsCollapsedAt = index => {
+    const caretIsCollapsedAt = (index) => {
       const { anchorOffset, focusOffset } = editorState.getSelection();
       return anchorOffset === index && focusOffset === index;
     };
@@ -342,7 +342,7 @@ class NoteContentEditor extends Component<Props> {
    * selection, this allows for the clipboard data to more accurately reflect
    * the internal plain text data.
    */
-  copyPlainText = event => {
+  copyPlainText = (event) => {
     const textToCopy = getSelectedText(this.state.editorState);
     if (!textToCopy) {
       return;

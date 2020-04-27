@@ -9,15 +9,15 @@ function Platform() {
   this.platform = false;
 }
 
-Platform.prototype.isOSX = function() {
+Platform.prototype.isOSX = function () {
   return process.platform === 'darwin';
 };
 
-Platform.prototype.isWindows = function() {
+Platform.prototype.isWindows = function () {
   return process.platform === 'win32';
 };
 
-Platform.prototype.isLinux = function() {
+Platform.prototype.isLinux = function () {
   return process.platform === 'linux';
 };
 

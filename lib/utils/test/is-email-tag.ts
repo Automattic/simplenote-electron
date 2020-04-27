@@ -22,15 +22,18 @@ describe('Utils', () => {
     });
 
     it('should not match when no `@` present', () => {
-      ['test', 'test.at.test.com', 'tester.com'].forEach(tag =>
+      ['test', 'test.at.test.com', 'tester.com'].forEach((tag) =>
         expect(tag).not.toBeAnEmail()
       );
     });
 
     it('should not match when no domain is present', () => {
-      ['test@', 'test@host', 'test.com@host.', 'test@host.test.'].forEach(tag =>
-        expect(tag).not.toBeAnEmail()
-      );
+      [
+        'test@',
+        'test@host',
+        'test.com@host.',
+        'test@host.test.',
+      ].forEach((tag) => expect(tag).not.toBeAnEmail());
     });
 
     it('should require at least a two-letter TLD', () => {
@@ -38,7 +41,7 @@ describe('Utils', () => {
     });
 
     it('should match valid email addresses', () => {
-      ['test@test.com', 'test@test.server.local.com', 'a@b.io'].forEach(tag =>
+      ['test@test.com', 'test@test.server.local.com', 'a@b.io'].forEach((tag) =>
         expect(tag).toBeAnEmail()
       );
     });
