@@ -1,14 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-type OwnProps = {
+type OwnProps = React.HTMLProps<HTMLInputElement> & {
   className?: string;
-  checked: boolean;
-  id: string;
-  name: string;
   onChange: () => {};
-  type: 'radio';
-  value: string;
 };
 
 function CheckboxControl({ className, ...props }: OwnProps) {
