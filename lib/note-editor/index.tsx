@@ -101,13 +101,13 @@ export class NoteEditor extends Component<Props> {
     ) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
-        this.focusNoteEditor && this.focusNoteEditor();
+        this.focusNoteEditor?.();
 
         event.stopPropagation();
         event.preventDefault();
         return false;
-      } else if (!this.tagFieldHasFocus()) {
-        this.focusTagField && this.focusTagField();
+      } else {
+        this.focusTagField?.();
 
         event.stopPropagation();
         event.preventDefault();
