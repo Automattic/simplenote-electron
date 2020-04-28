@@ -57,16 +57,9 @@ export type FilterNotes = Action<
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
-export type RemoteNoteUpdate = Action<
-  'REMOTE_NOTE_UPDATE',
-  { noteId: T.EntityId; data: T.Note }
->;
 export type RestoreNote = Action<'RESTORE_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
-export type SelectNote = Action<
-  'SELECT_NOTE',
-  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
->;
+export type SelectNote = Action<'SELECT_NOTE', { noteId: T.EntityId }>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
@@ -102,6 +95,14 @@ export type ToggleSimperiumConnectionStatus = Action<
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
+
+/*
+ * Simperium actions
+ */
+export type RemoteNoteUpdate = Action<
+  'REMOTE_NOTE_UPDATE',
+  { noteId: T.EntityId; data: T.Note }
+>;
 
 export type ActionType =
   | CloseNote

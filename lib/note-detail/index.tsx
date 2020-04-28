@@ -1,8 +1,7 @@
 import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, debounce, noop } from 'lodash';
-import analytics from '../analytics';
+import { get, noop } from 'lodash';
 import { viewExternalUrl } from '../utils/url-utils';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
@@ -11,8 +10,6 @@ import toggleTask from './toggle-task';
 
 import * as S from '../state';
 import * as T from '../types';
-
-const syncDelay = 2000;
 
 type OwnProps = {
   previewingMarkdown: boolean;
@@ -32,10 +29,7 @@ export class NoteDetail extends Component<Props> {
 
   static propTypes = {
     fontSize: PropTypes.number,
-    onChangeContent: PropTypes.func.isRequired,
-    syncNote: PropTypes.func.isRequired,
     note: PropTypes.object,
-    noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
@@ -51,7 +45,6 @@ export class NoteDetail extends Component<Props> {
   previewNode = createRef<HTMLDivElement>();
 
   componentWillMount() {
-    this.queueNoteSync = debounce(this.syncNote, syncDelay);
     document.addEventListener('copy', this.copyRenderedNote, false);
   }
 
@@ -59,9 +52,6 @@ export class NoteDetail extends Component<Props> {
     const { previewingMarkdown } = this.props;
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
-
-    // Ensures note gets saved if user abruptly quits the app
-    window.addEventListener('beforeunload', this.queueNoteSync.flush);
 
     window.addEventListener('keydown', this.handlePreviewKeydown, false);
 
@@ -71,18 +61,6 @@ export class NoteDetail extends Component<Props> {
   }
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
-
-  isValidNote = (note) => note && note.id;
-
-  componentWillReceiveProps(nextProps) {
-    const isEditingNote = get(this.props, ['note', 'id'], false);
-    if (isEditingNote === false) {
-      return;
-    }
-    if (get(nextProps, ['note', 'id']) !== isEditingNote) {
-      this.queueNoteSync.flush();
-    }
-  }
 
   componentDidUpdate(prevProps) {
     const { note, previewingMarkdown, searchQuery } = this.props;
@@ -136,7 +114,7 @@ export class NoteDetail extends Component<Props> {
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
   onPreviewClick = (event) => {
-    const { note, onChangeContent, syncNote } = this.props;
+    const { note } = this.props;
 
     for (let node = event.target; node !== null; node = node.parentNode) {
       // open markdown preview links in a new window
@@ -151,31 +129,12 @@ export class NoteDetail extends Component<Props> {
         event.preventDefault();
         toggleTask({ taskNode: node, text: note.data.content }).then(
           (newContent) => {
-            onChangeContent(note, newContent);
-            syncNote(note.id);
+            console.log('HANDLE TASK LIST!');
           }
         );
         break;
       }
     }
-  };
-
-  saveNote = (content) => {
-    const { note } = this.props;
-
-    if (!this.isValidNote(note)) return;
-
-    this.props.onChangeContent(note, content);
-    this.queueNoteSync();
-    analytics.tracks.recordEvent('editor_note_edited');
-  };
-
-  syncNote = () => {
-    const { note } = this.props;
-
-    if (!this.isValidNote(note)) return;
-
-    this.props.syncNote(note.id);
   };
 
   storeEditorHasFocus = (f) => (this.editorHasFocus = f);
@@ -253,11 +212,6 @@ export class NoteDetail extends Component<Props> {
       spellCheckEnabled,
     } = this.props;
 
-    const content = {
-      text: get(note, 'data.content', ''),
-      hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
-      version: get(note, 'version', undefined),
-    };
     const divStyle = { fontSize: `${fontSize}px` };
 
     return (
@@ -287,9 +241,6 @@ export class NoteDetail extends Component<Props> {
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}
-                  noteId={get(note, 'id', null)}
-                  content={content}
-                  onChangeContent={this.saveNote}
                 />
               </div>
             )}

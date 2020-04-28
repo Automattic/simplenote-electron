@@ -17,7 +17,6 @@ import DialogRenderer from './dialog-renderer';
 import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
-import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
 import { setLastSyncedTime } from './utils/sync/last-synced-time';
 import analytics from './analytics';
 import classNames from 'classnames';
@@ -25,7 +24,6 @@ import { debounce, get, has, isObject, overEvery, pick, values } from 'lodash';
 import {
   createNote,
   closeNote,
-  setUnsyncedNoteIds,
   toggleNavigation,
   toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
@@ -113,7 +111,6 @@ const mapDispatchToProps: S.MapDispatch<
     setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: (note) => dispatch(actions.ui.selectNote(note)),
-    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
     showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
     trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
   };
@@ -167,17 +164,6 @@ export const App = connect(
       ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
       ipc.send('settingsUpdate', this.props.settings);
 
-      this.props.noteBucket
-        .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
-        .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
-        .on('remove', this.onNoteRemoved)
-        .beforeNetworkChange((noteId) =>
-          this.props.actions.onNoteBeforeRemoteUpdate({
-            noteId,
-          })
-        );
-
       this.props.preferencesBucket.on('update', this.onLoadPreferences);
 
       this.props.tagBucket
@@ -189,8 +175,6 @@ export const App = connect(
         .on('authorized', this.onAuthChanged)
         .on('unauthorized', this.onAuthChanged)
         .on('message', setLastSyncedTime)
-        .on('message', this.syncActivityHooks)
-        .on('send', this.syncActivityHooks)
         .on('connect', () => this.props.setSimperiumConnectionStatus(true))
         .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
 
@@ -262,13 +246,7 @@ export const App = connect(
         cmdOrCtrl &&
         ('Delete' === code || 'Backspace' === code)
       ) {
-        this.props.actions.trashNote({
-          noteBucket: this.props.noteBucket,
-          note: this.props.ui.note,
-          previousIndex: this.props.appState.notes.findIndex(
-            ({ id }) => this.props.ui.note.id === id
-          ),
-        });
+        console.log('TRASH NOTE!');
 
         event.stopPropagation();
         event.preventDefault();
@@ -296,13 +274,7 @@ export const App = connect(
       }
 
       if ('trashNote' === command.action && this.props.ui.note) {
-        return this.props.actions.trashNote({
-          noteBucket: this.props.noteBucket,
-          note: this.props.ui.note,
-          previousIndex: this.props.appState.notes.findIndex(
-            ({ id }) => this.props.ui.note.id === id
-          ),
-        });
+        console.log('TRASH NOTE!');
       }
 
       const canRun = overEvery(
@@ -314,9 +286,7 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
-          this.props.actions.newNote({
-            noteBucket: this.props.noteBucket,
-          });
+          console.log('CREATE NEW NOTE!');
           analytics.tracks.recordEvent('list_note_created');
         } else if (has(this.props, command.action)) {
           const { action, ...args } = command;
@@ -349,46 +319,7 @@ export const App = connect(
       this.onLoadPreferences();
 
       // 'Kick' the app to ensure content is loaded after signing in
-      this.onNotesIndex();
       this.props.loadTags();
-    };
-
-    onNotesIndex = () => {
-      const { noteBucket, setUnsyncedNoteIds } = this.props;
-      const { loadNotes } = this.props.actions;
-
-      loadNotes({ noteBucket });
-      setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
-
-      __TEST__ && window.testEvents.push('notesLoaded');
-    };
-
-    onNoteRemoved = () => this.onNotesIndex();
-
-    onNoteUpdate = (
-      noteId: T.EntityId,
-      data,
-      remoteUpdateInfo: { patch?: object } = {}
-    ) => {
-      const {
-        noteBucket,
-        selectNote,
-        ui: { note },
-      } = this.props;
-
-      this.props.remoteNoteUpdate(noteId, data);
-
-      if (note && noteId === note.id) {
-        noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
-          if (e) {
-            return;
-          }
-          const updatedNote = remoteUpdateInfo.patch
-            ? { ...storedNote, hasRemoteUpdate: true }
-            : storedNote;
-          selectNote(updatedNote);
-        });
-      }
     };
 
     onLoadPreferences = (callback) =>
@@ -412,49 +343,6 @@ export const App = connect(
         electron: {
           currentWindow: remote.getCurrentWindow(),
           Menu: remote.Menu,
-        },
-      });
-    };
-
-    onUpdateContent = (note, content, sync = false) => {
-      if (!note) {
-        return;
-      }
-
-      const updatedNote = {
-        ...note,
-        data: {
-          ...note.data,
-          content,
-          modificationDate: Math.floor(Date.now() / 1000),
-        },
-      };
-
-      this.props.selectNote(updatedNote);
-
-      const { noteBucket } = this.props;
-      noteBucket.update(note.id, updatedNote.data, {}, { sync });
-      if (sync) {
-        this.syncNote(note.id);
-      }
-    };
-
-    syncNote = (noteId) => {
-      this.props.noteBucket.touch(noteId);
-    };
-
-    syncActivityHooks = (data) => {
-      activityHooks(data, {
-        onIdle: () => {
-          const {
-            appState: { notes },
-            client,
-            noteBucket,
-            setUnsyncedNoteIds,
-          } = this.props;
-
-          nudgeUnsynced({ client, noteBucket, notes });
-          setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
         },
       });
     };
@@ -512,11 +400,8 @@ export const App = connect(
                 isNavigationOpen={showNavigation}
                 isNoteInfoOpen={showNoteInfo}
                 isSmallScreen={isSmallScreen}
-                noteBucket={noteBucket}
-                onUpdateContent={this.onUpdateContent}
-                syncNote={this.syncNote}
               />
-              {showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
+              {showNoteInfo && <NoteInfo />}
             </div>
           ) : (
             <Auth
@@ -529,7 +414,7 @@ export const App = connect(
           )}
           <DialogRenderer
             appProps={this.props}
-            buckets={{ noteBucket, preferencesBucket, tagBucket }}
+            buckets={{ preferencesBucket, tagBucket }}
             themeClass={themeClass}
           />
         </div>

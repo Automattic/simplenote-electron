@@ -77,7 +77,6 @@ export class AppLayout extends Component<Props> {
       isNoteInfoOpen,
       isNoteOpen,
       isSmallScreen,
-      noteBucket,
       onUpdateContent,
       syncNote,
     } = this.props;
@@ -101,21 +100,13 @@ export class AppLayout extends Component<Props> {
       <div className={mainClasses}>
         <Suspense fallback={placeholder}>
           <div className="app-layout__source-column theme-color-bg theme-color-fg">
-            <SearchBar noteBucket={noteBucket} />
-            <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
+            <SearchBar />
+            <NoteList isSmallScreen={isSmallScreen} />
           </div>
           <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
             <RevisionSelector onUpdateContent={onUpdateContent} />
-            <NoteToolbarContainer
-              noteBucket={noteBucket}
-              toolbar={<NoteToolbar />}
-            />
-            <NoteEditor
-              isSmallScreen={isSmallScreen}
-              noteBucket={noteBucket}
-              onUpdateContent={onUpdateContent}
-              syncNote={syncNote}
-            />
+            <NoteToolbar />
+            <NoteEditor isSmallScreen={isSmallScreen} />
           </div>
         </Suspense>
       </div>

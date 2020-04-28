@@ -29,11 +29,8 @@ export class NoteEditor extends Component<Props> {
     allTags: PropTypes.array.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
     isSmallScreen: PropTypes.bool.isRequired,
-    noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
-    onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
-    syncNote: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -139,7 +136,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note, noteBucket, fontSize } = this.props;
+    const { editMode, note, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -149,10 +146,7 @@ export class NoteEditor extends Component<Props> {
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
-          noteBucket={noteBucket}
           previewingMarkdown={this.markdownEnabled() && !editMode}
-          onChangeContent={this.props.onUpdateContent}
-          syncNote={this.props.syncNote}
           fontSize={fontSize}
         />
         {note && !isTrashed && (

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
@@ -63,6 +63,7 @@ class NoteContentEditor extends Component<Props> {
     storeHasFocus: noop,
   };
 
+  editor = createRef<Editor>();
   ipc = getIpcRenderer();
 
   replaceRangeWithText = (rangeToReplace, newText) => {
@@ -112,7 +113,7 @@ class NoteContentEditor extends Component<Props> {
   componentDidMount() {
     this.props.storeFocusEditor(this.focus);
     this.props.storeHasFocus(this.hasFocus);
-    this.editor.blur();
+    this.editor.current!.blur();
 
     if (isElectron()) {
       this.ipc.on('appCommand', this.onAppCommand);
@@ -220,10 +221,6 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  saveEditorRef = (ref) => {
-    this.editor = ref;
-  };
-
   componentWillUnmount() {
     if (isElectron()) {
       this.ipc.removeListener('appCommand', this.onAppCommand);
@@ -242,7 +239,7 @@ class NoteContentEditor extends Component<Props> {
    * @returns {boolean} whether the editor area is focused
    */
   hasFocus = () => {
-    return document.activeElement === get(this.editor, 'editor');
+    return document.activeElement === this.editor.current?.editor;
   };
 
   onTab = (e) => {
@@ -360,7 +357,7 @@ class NoteContentEditor extends Component<Props> {
       >
         <Editor
           key={this.editorKey}
-          ref={this.saveEditorRef}
+          ref={this.editor}
           spellCheck={this.props.spellCheckEnabled}
           stripPastedStyles
           onChange={this.handleEditorStateChange}

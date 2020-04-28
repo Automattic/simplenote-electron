@@ -44,8 +44,6 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
     case 'NAVIGATION_TOGGLE':
-    case 'App.toggleNoteInfo':
-      return false;
     default:
       return state;
   }
@@ -207,7 +205,7 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
+const openedNoteId: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.emptyTrash':
     case 'SELECT_TRASH':
@@ -219,14 +217,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
     case 'OPEN_TAG':
       return null;
     case 'SELECT_NOTE':
-      return action.options
-        ? {
-            ...action.note,
-            hasRemoteUpdate: action.options.hasRemoteUpdate,
-          }
-        : action.note;
-    case 'SET_SYSTEM_TAG':
-      return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
+      return action.note.id;
     default:
       return state;
   }
@@ -243,7 +234,7 @@ export default combineReducers({
   editingTags,
   filteredNotes,
   listTitle,
-  note,
+  openedNoteId,
   noteRevisions,
   openedTag,
   searchQuery,

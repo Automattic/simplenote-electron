@@ -26,6 +26,7 @@ import simperiumMiddleware from './simperium/middleware';
 
 import auth from './auth/reducer';
 import settings from './settings/reducer';
+import simperium from './simperium/reducer';
 import tags from './tags/reducer';
 import ui from './ui/reducer';
 
@@ -33,7 +34,6 @@ import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
-  notes: T.NoteEntity[] | null;
   preferences?: T.Preferences;
   revision: T.NoteEntity | null;
   showNavigation: boolean;
@@ -45,6 +45,7 @@ export const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   auth,
   settings,
+  simperium,
   tags,
   ui,
 });
@@ -53,6 +54,7 @@ export type State = {
   appState: AppState;
   auth: ReturnType<typeof auth>;
   settings: ReturnType<typeof settings>;
+  simperium: ReturnType<typeof simperium>;
   tags: ReturnType<typeof tags>;
   ui: ReturnType<typeof ui>;
 };

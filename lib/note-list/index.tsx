@@ -28,7 +28,6 @@ import { getTerms } from '../utils/filter-notes';
 
 type OwnProps = {
   isSmallScreen: boolean;
-  noteBucket: T.Bucket<T.Note>;
 };
 
 type StateProps = {
@@ -463,8 +462,6 @@ export class NoteList extends Component<Props> {
   }
 }
 
-const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
-
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   ui: {
@@ -475,6 +472,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     showTrash,
     tagSuggestions,
   },
+  simperium: { notes },
   settings: { noteDisplay },
 }) => {
   /**
@@ -500,7 +498,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   const selectedNotePreview = note && getNoteTitleAndPreview(note).preview;
 
   return {
-    hasLoaded: state.notes !== null,
+    hasLoaded: notes !== null,
     noteDisplay,
     notes: filteredNotes,
     openedTag,
@@ -514,11 +512,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
-  dispatch,
-  { noteBucket }
+  dispatch
 ) => ({
   closeNote: () => dispatch(actions.ui.closeNote()),
-  onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
+  onEmptyTrash: () => console.log('EMPTY TRASH!'),
   onSelectNote: (note: T.NoteEntity | null) => {
     dispatch(actions.ui.selectNote(note));
     analytics.tracks.recordEvent('list_note_opened');
