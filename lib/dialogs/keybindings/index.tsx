@@ -143,7 +143,15 @@ export class AboutDialog extends Component<Props> {
                   <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Delete']}>Trash note</Keys>
+                  <Keys
+                    keys={
+                      isMacApp
+                        ? ['fn', CmdOrCtrl, 'Delete']
+                        : [CmdOrCtrl, 'Delete']
+                    }
+                  >
+                    Trash note
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>
