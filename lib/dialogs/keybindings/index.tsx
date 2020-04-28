@@ -46,7 +46,7 @@ const Keys = ({
 export class AboutDialog extends Component<Props> {
   render() {
     const { closeDialog, isElectron, isMacApp } = this.props;
-
+    const isMac = isMacApp || navigator.userAgent.indexOf('Mac OS X');
     const CmdOrCtrl = isMacApp ? 'Cmd' : 'Ctrl';
 
     return (
@@ -61,11 +61,21 @@ export class AboutDialog extends Component<Props> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
-                    Focus search field
+                    Toggle focus mode
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'G']}>Search within note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'F']}>Focus search field</Keys>
+                </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'G']}>
+                    Jump to next match in note
+                  </Keys>
+                </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'G']}>
+                    Jump to previous match in note
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>
@@ -105,11 +115,13 @@ export class AboutDialog extends Component<Props> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'K']}>
-                    Select previous note
+                    Open note above current one
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>Select next note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>
+                    Open note below current one
+                  </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'T']}>
@@ -118,9 +130,7 @@ export class AboutDialog extends Component<Props> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'L']}>
-                    Toggle note list
-                    <br />
-                    (on narrow screens)
+                    Toggle note list (on narrow screens)
                   </Keys>
                 </li>
               </ul>
@@ -133,7 +143,15 @@ export class AboutDialog extends Component<Props> {
                   <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Delete']}>Trash note</Keys>
+                  <Keys
+                    keys={
+                      isMac
+                        ? ['fn', CmdOrCtrl, 'Delete']
+                        : [CmdOrCtrl, 'Delete']
+                    }
+                  >
+                    Trash note
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>

@@ -51,6 +51,7 @@ type DispatchProps = {
   onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
   openNote: (note: T.NoteEntity) => any;
+  toggleNoteList: () => any;
 };
 
 type Props = Readonly<OwnProps & StateProps & DispatchProps>;
@@ -220,6 +221,7 @@ export class NoteList extends Component<Props> {
       openedTag,
       selectedNote,
       selectedNoteContent,
+      showNoteList,
       showTrash,
       tagResultsFound,
     } = nextProps;
@@ -229,7 +231,8 @@ export class NoteList extends Component<Props> {
       noteDisplay !== this.props.noteDisplay ||
       notes !== this.props.notes ||
       tagResultsFound !== this.props.tagResultsFound ||
-      selectedNoteContent !== this.props.selectedNoteContent
+      selectedNoteContent !== this.props.selectedNoteContent ||
+      showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
     }
@@ -286,7 +289,8 @@ export class NoteList extends Component<Props> {
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== this.props.notes ||
       prevProps.tagResultsFound !== this.props.tagResultsFound ||
-      prevProps.selectedNoteContent !== this.props.selectedNoteContent
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent ||
+      prevProps.showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
     }
@@ -306,7 +310,7 @@ export class NoteList extends Component<Props> {
     const cmdOrCtrl = ctrlKey || metaKey;
     if (cmdOrCtrl && shiftKey && code === 'KeyK') {
       if (-1 === highlightedIndex || index < 0 || !notes[index - 1]?.id) {
-        return true;
+        return false;
       }
 
       this.props.onSelectNote(notes[index - 1]);
@@ -321,10 +325,18 @@ export class NoteList extends Component<Props> {
         index >= notes.length ||
         !notes[index + 1]?.id
       ) {
-        return true;
+        return false;
       }
 
       this.props.onSelectNote(notes[index + 1]);
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (isSmallScreen && code === 'KeyL') {
+      this.props.toggleNoteList();
+
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -537,6 +549,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
   openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
+  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

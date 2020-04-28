@@ -68,6 +68,9 @@ export class AppLayout extends Component<Props> {
       keyboardShortcutsAreOpen
         ? hideKeyboardShortcuts()
         : showKeyboardShortcuts();
+
+      event.stopPropagation();
+      event.preventDefault();
     }
   };
 

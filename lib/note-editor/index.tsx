@@ -88,14 +88,6 @@ export class NoteEditor extends Component<Props> {
       return false;
     }
 
-    // open note list
-    if (this.props.isSmallScreen && cmdOrCtrl && shiftKey && 'KeyL' === code) {
-      this.props.toggleNoteList();
-      event.stopPropagation();
-      event.preventDefault();
-      return false;
-    }
-
     // toggle between tag editor and note editor
     if (
       !shiftKey &&
