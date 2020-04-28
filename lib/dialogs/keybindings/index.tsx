@@ -47,7 +47,7 @@ export class AboutDialog extends Component<Props> {
   render() {
     const { closeDialog, isElectron, isMacApp } = this.props;
     const isMac = isMacApp || navigator.userAgent.indexOf('Mac OS X');
-    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
+    const CmdOrCtrl = isMacApp ? 'Cmd' : 'Ctrl';
 
     return (
       <div className="keybindings">
