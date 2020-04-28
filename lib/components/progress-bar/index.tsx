@@ -1,7 +1,7 @@
 import React from 'react';
 import { LinearProgress } from '@material-ui/core';
 
-const ProgressBar = (props) => {
+const ProgressBar: typeof LinearProgress = (props) => {
   return (
     <LinearProgress
       classes={{
