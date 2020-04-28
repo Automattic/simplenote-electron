@@ -39,6 +39,7 @@ const isElectron = (() => {
 })();
 
 type StateProps = {
+  editingEnabled: boolean;
   searchQuery: string;
 };
 
@@ -373,7 +374,9 @@ class NoteContentEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { searchQuery } }) => ({
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { searchQuery, showNoteList },
+}) => ({
   searchQuery,
 });
 

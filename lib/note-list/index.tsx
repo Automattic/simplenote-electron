@@ -40,6 +40,7 @@ type StateProps = {
   selectedNote: T.NoteEntity | null;
   selectedNoteContent: string;
   selectedNotePreview: { title: string; preview: string };
+  showNoteList: boolean;
   showTrash: boolean;
   tagResultsFound: number;
 };
@@ -49,6 +50,7 @@ type DispatchProps = {
   onEmptyTrash: () => any;
   onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
+  openNote: (note: T.NoteEntity) => any;
 };
 
 type Props = Readonly<OwnProps & StateProps & DispatchProps>;
@@ -74,10 +76,9 @@ const heightCache = new CellMeasurerCache({
  * @param notes list of filtered notes
  * @param searchQuery search searchQuery
  * @param noteDisplay list view style: comfy, condensed, expanded
+ * @param openNote used to select a note and open it in the editor
  * @param selectedNoteId id of currently selected note
- * @param onSelectNote used to change the current note selection
  * @param onPinNote used to pin a note to the top of the list
- * @param isSmallScreen whether we're in a narrow view
  * @returns does the actual rendering for the List
  */
 const renderNote = (
@@ -86,16 +87,14 @@ const renderNote = (
     searchQuery,
     noteDisplay,
     highlightedIndex,
-    onSelectNote,
     onPinNote,
-    isSmallScreen,
+    openNote,
   }: {
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
     highlightedIndex: number;
-    onSelectNote: DispatchProps['onSelectNote'];
     onPinNote: DispatchProps['onPinNote'];
-    isSmallScreen: boolean;
+    openNote: DispatchProps['openNote'];
   }
 ): ListRowRenderer => ({ index, key, parent, style }) => {
   const note = notes[index];
@@ -130,15 +129,13 @@ const renderNote = (
   const isPinned = note.data.systemTags.includes('pinned');
   const isPublished = !!note.data.publishURL;
   const classes = classNames('note-list-item', {
-    'note-list-item-selected': !isSmallScreen && highlightedIndex === index,
+    'note-list-item-selected': highlightedIndex === index,
     'note-list-item-pinned': isPinned,
     'published-note': isPublished,
   });
 
   const terms = getTerms(searchQuery).map(makeFilterDecorator);
   const decorators = [checkboxDecorator, ...terms];
-
-  const selectNote = () => onSelectNote(note);
 
   return (
     <CellMeasurer
@@ -157,7 +154,7 @@ const renderNote = (
         <div
           className="note-list-item-text theme-color-border"
           tabIndex={0}
-          onClick={selectNote}
+          onClick={() => openNote(note)}
         >
           <div className="note-list-item-title">
             <span>{decorateWith(decorators, title)}</span>
@@ -249,6 +246,7 @@ export class NoteList extends Component<Props> {
     }
 
     if (notes.length === 0 && selectedNote) {
+      // unselect active note if it doesn't match search
       this.props.closeNote();
       this.setState({ selectedIndex: null });
     }
@@ -300,7 +298,7 @@ export class NoteList extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { notes } = this.props;
+    const { isSmallScreen, notes, showNoteList } = this.props;
     const { selectedIndex: index } = this.state;
 
     const highlightedIndex = this.getHighlightedIndex(this.props);
@@ -327,6 +325,19 @@ export class NoteList extends Component<Props> {
       }
 
       this.props.onSelectNote(notes[index + 1]);
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (
+      isSmallScreen &&
+      showNoteList &&
+      code === 'Enter' &&
+      highlightedIndex !== null
+    ) {
+      this.props.openNote(notes[highlightedIndex]);
+
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -385,10 +396,9 @@ export class NoteList extends Component<Props> {
   render() {
     const {
       hasLoaded,
-      isSmallScreen,
       noteDisplay,
       notes,
-      onSelectNote,
+      openNote,
       onEmptyTrash,
       onPinNote,
       searchQuery,
@@ -411,9 +421,8 @@ export class NoteList extends Component<Props> {
       searchQuery,
       highlightedIndex,
       noteDisplay,
-      onSelectNote,
       onPinNote,
-      isSmallScreen,
+      openNote,
     });
 
     const isEmptyList = compositeNoteList.length === 0;
@@ -450,12 +459,13 @@ export class NoteList extends Component<Props> {
                     rowCount={compositeNoteList.length}
                     rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
+                    scrollToIndex={highlightedIndex}
                     width={width}
                   />
                 )}
               </AutoSizer>
             </div>
-            {!!showTrash && emptyTrashButton}
+            {showTrash && emptyTrashButton}
           </Fragment>
         )}
       </div>
@@ -463,7 +473,7 @@ export class NoteList extends Component<Props> {
   }
 }
 
-const { emptyTrash, loadAndSelectNote } = appState.actionCreators;
+const { emptyTrash } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
@@ -472,6 +482,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     note,
     openedTag,
     searchQuery,
+    showNoteList,
     showTrash,
     tagSuggestions,
   },
@@ -508,6 +519,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNote: note,
     selectedNotePreview,
     selectedNoteContent: get(note, 'data.content'),
+    showNoteList,
     showTrash,
     tagResultsFound: tagSuggestions.length,
   };
@@ -524,6 +536,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
     analytics.tracks.recordEvent('list_note_opened');
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
+  openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

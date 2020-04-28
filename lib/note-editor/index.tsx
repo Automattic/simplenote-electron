@@ -6,10 +6,14 @@ import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 import { toggleEditMode } from '../state/ui/actions';
 
-import { closeNote, markdownNote } from '../state/ui/actions';
+import { markdownNote, toggleNoteList } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+
+type OwnProps = {
+  isSmallScreen: boolean;
+};
 
 type StateProps = {
   note: T.NoteEntity | null;
@@ -17,10 +21,11 @@ type StateProps = {
 
 type DispatchProps = {
   toggleMarkdown: (note: T.NoteEntity, enableMarkdown: boolean) => any;
+  toggleNoteList: () => any;
   toggleEditMode: () => any;
 };
 
-type Props = DispatchProps & StateProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
@@ -28,7 +33,6 @@ export class NoteEditor extends Component<Props> {
   static propTypes = {
     allTags: PropTypes.array.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onUpdateContent: PropTypes.func.isRequired,
@@ -86,7 +90,7 @@ export class NoteEditor extends Component<Props> {
 
     // open note list
     if (this.props.isSmallScreen && cmdOrCtrl && shiftKey && 'KeyL' === code) {
-      this.props.closeNote();
+      this.props.toggleNoteList();
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -184,7 +188,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
+  toggleNoteList: () => dispatch(toggleNoteList()),
   toggleMarkdown: (note, enableMarkdown) =>
     dispatch(markdownNote(note, enableMarkdown)),
   toggleEditMode: () => dispatch(toggleEditMode()),
