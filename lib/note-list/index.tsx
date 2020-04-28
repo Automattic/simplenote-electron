@@ -51,6 +51,7 @@ type DispatchProps = {
   onSelectNote: (note: T.NoteEntity | null) => any;
   onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
   openNote: (note: T.NoteEntity) => any;
+  toggleNoteList: () => any;
 };
 
 type Props = Readonly<OwnProps & StateProps & DispatchProps>;
@@ -330,10 +331,18 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
+    if (isSmallScreen && code === 'KeyL') {
+      this.props.toggleNoteList();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
     if (
       isSmallScreen &&
       showNoteList &&
-      (code === 'Enter' || code === 'KeyL') &&
+      code === 'Enter' &&
       highlightedIndex !== null
     ) {
       this.props.openNote(notes[highlightedIndex]);
@@ -537,6 +546,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
   openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
+  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);
