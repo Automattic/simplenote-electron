@@ -459,6 +459,7 @@ export class NoteList extends Component<Props> {
                     rowCount={compositeNoteList.length}
                     rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
+                    scrollToIndex={highlightedIndex}
                     width={width}
                   />
                 )}
