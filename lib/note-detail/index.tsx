@@ -63,7 +63,7 @@ export class NoteDetail extends Component<Props> {
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSync.flush);
 
-    window.addEventListener('keydown', this.handlePreviewKeydown, false);
+    window.addEventListener('keydown', this.handlePreviewKeydown, true);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -104,7 +104,7 @@ export class NoteDetail extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
-    window.removeEventListener('keydown', this.handlePreviewKeydown, false);
+    window.removeEventListener('keydown', this.handlePreviewKeydown, true);
   }
 
   copyRenderedNote = event => {
@@ -209,6 +209,9 @@ export class NoteDetail extends Component<Props> {
       cmdOrCtrl &&
       code === 'KeyG'
     ) {
+      event.stopPropagation();
+      event.preventDefault();
+
       const matches = this.noteDetail.current.querySelectorAll(
         'span.search-match'
       );
