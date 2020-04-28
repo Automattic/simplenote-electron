@@ -307,7 +307,7 @@ export class NoteList extends Component<Props> {
     const cmdOrCtrl = ctrlKey || metaKey;
     if (cmdOrCtrl && shiftKey && code === 'KeyK') {
       if (-1 === highlightedIndex || index < 0 || !notes[index - 1]?.id) {
-        return true;
+        return false;
       }
 
       this.props.onSelectNote(notes[index - 1]);
@@ -322,7 +322,7 @@ export class NoteList extends Component<Props> {
         index >= notes.length ||
         !notes[index + 1]?.id
       ) {
-        return true;
+        return false;
       }
 
       this.props.onSelectNote(notes[index + 1]);
