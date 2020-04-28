@@ -357,7 +357,6 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    console.log(this.props.editingEnabled);
     return (
       <div
         onCopy={this.copyPlainText}

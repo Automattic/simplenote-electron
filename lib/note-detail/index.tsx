@@ -249,7 +249,6 @@ export class NoteDetail extends Component<Props> {
     const {
       note,
       fontSize,
-      isSmallScreen,
       previewingMarkdown,
       spellCheckEnabled,
     } = this.props;
@@ -285,7 +284,6 @@ export class NoteDetail extends Component<Props> {
                 style={divStyle}
               >
                 <NoteContentEditor
-                  isSmallScreen={isSmallScreen}
                   spellCheckEnabled={spellCheckEnabled}
                   storeFocusEditor={this.storeFocusContentEditor}
                   storeHasFocus={this.storeEditorHasFocus}

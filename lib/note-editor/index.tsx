@@ -11,6 +11,10 @@ import { markdownNote, toggleNoteList } from '../state/ui/actions';
 import * as S from '../state';
 import * as T from '../types';
 
+type OwnProps = {
+  isSmallScreen: boolean;
+};
+
 type StateProps = {
   note: T.NoteEntity | null;
 };
@@ -21,7 +25,7 @@ type DispatchProps = {
   toggleEditMode: () => any;
 };
 
-type Props = DispatchProps & StateProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
@@ -29,7 +33,6 @@ export class NoteEditor extends Component<Props> {
   static propTypes = {
     allTags: PropTypes.array.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onUpdateContent: PropTypes.func.isRequired,
@@ -140,7 +143,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, isSmallScreen, note, noteBucket, fontSize } = this.props;
+    const { editMode, note, noteBucket, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -148,7 +151,6 @@ export class NoteEditor extends Component<Props> {
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
         <NoteDetail
-          isSmallScreen={isSmallScreen}
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
           noteBucket={noteBucket}
