@@ -46,8 +46,8 @@ const Keys = ({
 export class AboutDialog extends Component<Props> {
   render() {
     const { closeDialog, isElectron, isMacApp } = this.props;
-
-    const CmdOrCtrl = isMacApp ? 'Cmd' : 'Ctrl';
+    const isMac = isMacApp || navigator.userAgent.indexOf('Mac OS X');
+    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
     return (
       <div className="keybindings">
@@ -145,7 +145,7 @@ export class AboutDialog extends Component<Props> {
                 <li>
                   <Keys
                     keys={
-                      isMacApp
+                      isMac
                         ? ['fn', CmdOrCtrl, 'Delete']
                         : [CmdOrCtrl, 'Delete']
                     }
