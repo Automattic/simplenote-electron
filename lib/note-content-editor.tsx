@@ -38,16 +38,12 @@ const isElectron = (() => {
   return () => foundElectron;
 })();
 
-type OwnProps = {
-  isSmallScreen: boolean;
-};
-
 type StateProps = {
   editingEnabled: boolean;
   searchQuery: string;
 };
 
-type Props = OwnProps & StateProps;
+type Props = StateProps;
 
 class NoteContentEditor extends Component<Props> {
   static propTypes = {
@@ -366,7 +362,6 @@ class NoteContentEditor extends Component<Props> {
         <Editor
           key={this.editorKey}
           ref={this.saveEditorRef}
-          readOnly={!this.props.editingEnabled}
           spellCheck={this.props.spellCheckEnabled}
           stripPastedStyles
           onChange={this.handleEditorStateChange}
@@ -379,11 +374,9 @@ class NoteContentEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps, OwnProps> = (
-  { ui: { searchQuery, showNoteList } },
-  { isSmallScreen }
-) => ({
-  editingEnabled: !(isSmallScreen && showNoteList),
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { searchQuery, showNoteList },
+}) => ({
   searchQuery,
 });
 
