@@ -221,6 +221,7 @@ export class NoteList extends Component<Props> {
       openedTag,
       selectedNote,
       selectedNoteContent,
+      showNoteList,
       showTrash,
       tagResultsFound,
     } = nextProps;
@@ -230,7 +231,8 @@ export class NoteList extends Component<Props> {
       noteDisplay !== this.props.noteDisplay ||
       notes !== this.props.notes ||
       tagResultsFound !== this.props.tagResultsFound ||
-      selectedNoteContent !== this.props.selectedNoteContent
+      selectedNoteContent !== this.props.selectedNoteContent ||
+      showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
     }
@@ -287,7 +289,8 @@ export class NoteList extends Component<Props> {
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== this.props.notes ||
       prevProps.tagResultsFound !== this.props.tagResultsFound ||
-      prevProps.selectedNoteContent !== this.props.selectedNoteContent
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent ||
+      prevProps.showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
     }
