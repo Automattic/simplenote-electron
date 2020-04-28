@@ -333,7 +333,7 @@ export class NoteList extends Component<Props> {
     if (
       isSmallScreen &&
       showNoteList &&
-      code === 'Enter' &&
+      (code === 'Enter' || code === 'KeyL') &&
       highlightedIndex !== null
     ) {
       this.props.openNote(notes[highlightedIndex]);

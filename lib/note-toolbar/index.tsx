@@ -88,7 +88,7 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<BackIcon />}
               onClick={this.props.toggleNoteList}
-              title="Back"
+              title="Back • Ctrl+Shift+L"
             />
           </div>
           {markdownEnabled && (
@@ -142,7 +142,7 @@ export class NoteToolbar extends Component<Props> {
           <IconButton
             icon={<BackIcon />}
             onClick={this.props.toggleNoteList}
-            title="Back"
+            title="Back • Ctrl+Shift+L"
           />
         </div>
         <div className="note-toolbar__column-right">
