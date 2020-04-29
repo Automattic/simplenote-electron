@@ -47,12 +47,12 @@ export const renderToNode = (
     })
     .then((node) => {
       if (!searchQuery) {
-        return node.querySelectorAll('pre code');
+        return node.querySelectorAll('code');
       }
 
       const terms = getTerms(searchQuery).map((s) => s.toLocaleLowerCase());
       if (!terms.length) {
-        return node.querySelectorAll('pre code');
+        return node.querySelectorAll('code');
       }
 
       const treeWalker = document.createTreeWalker(
@@ -80,14 +80,22 @@ export const renderToNode = (
 
       nodes.forEach((textNode) => markMatches(textNode, terms));
 
-      return node.querySelectorAll('pre code');
+      return node.querySelectorAll('code');
     })
     .then((codeElements) => {
       // Only load syntax highlighter if code blocks exist
       if (codeElements.length) {
         return import(/* webpackChunkName: 'highlight' */ 'highlight.js')
           .then(({ default: highlight }) => {
-            codeElements.forEach(highlight.highlightBlock);
+            codeElements.forEach((codeElement) => {
+              highlight.highlightBlock(codeElement);
+              if (
+                !codeElement.parentNode ||
+                codeElement.parentNode.nodeName !== 'pre'
+              ) {
+                codeElement.setAttribute('style', 'display:inline');
+              }
+            });
           })
           .catch();
       }
