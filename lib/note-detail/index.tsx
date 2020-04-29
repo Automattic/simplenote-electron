@@ -39,12 +39,12 @@ export class NoteDetail extends Component<Props> {
     previewingMarkdown: PropTypes.bool,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
-    storeHasFocus: PropTypes.func,
+    storeHasFocus: PropTypes.func
   };
 
   static defaultProps = {
     storeFocusEditor: noop,
-    storeHasFocus: noop,
+    storeHasFocus: noop
   };
 
   noteDetail = createRef<HTMLDivElement>();
@@ -63,7 +63,7 @@ export class NoteDetail extends Component<Props> {
     // Ensures note gets saved if user abruptly quits the app
     window.addEventListener('beforeunload', this.queueNoteSync.flush);
 
-    window.addEventListener('keydown', this.handlePreviewKeydown, false);
+    window.addEventListener('keydown', this.handlePreviewKeydown, true);
 
     if (previewingMarkdown) {
       this.updateMarkdown();
@@ -72,7 +72,7 @@ export class NoteDetail extends Component<Props> {
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  isValidNote = (note) => note && note.id;
+  isValidNote = note => note && note.id;
 
   componentWillReceiveProps(nextProps) {
     const isEditingNote = get(this.props, ['note', 'id'], false);
@@ -104,10 +104,10 @@ export class NoteDetail extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
-    window.removeEventListener('keydown', this.handlePreviewKeydown, false);
+    window.removeEventListener('keydown', this.handlePreviewKeydown, true);
   }
 
-  copyRenderedNote = (event) => {
+  copyRenderedNote = event => {
     const { previewingMarkdown, showNoteInfo, isDialogOpen } = this.props;
     // Only copy the rendered content if we're in the preview mode
     if (!previewingMarkdown) {
@@ -135,7 +135,7 @@ export class NoteDetail extends Component<Props> {
 
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onPreviewClick = (event) => {
+  onPreviewClick = event => {
     const { note, onChangeContent, syncNote } = this.props;
 
     for (let node = event.target; node !== null; node = node.parentNode) {
@@ -150,7 +150,7 @@ export class NoteDetail extends Component<Props> {
       if (node.className === 'task-list-item') {
         event.preventDefault();
         toggleTask({ taskNode: node, text: note.data.content }).then(
-          (newContent) => {
+          newContent => {
             onChangeContent(note, newContent);
             syncNote(note.id);
           }
@@ -160,7 +160,7 @@ export class NoteDetail extends Component<Props> {
     }
   };
 
-  saveNote = (content) => {
+  saveNote = content => {
     const { note } = this.props;
 
     if (!this.isValidNote(note)) return;
@@ -178,9 +178,9 @@ export class NoteDetail extends Component<Props> {
     this.props.syncNote(note.id);
   };
 
-  storeEditorHasFocus = (f) => (this.editorHasFocus = f);
+  storeEditorHasFocus = f => (this.editorHasFocus = f);
 
-  storeFocusContentEditor = (f) => (this.focusContentEditor = f);
+  storeFocusContentEditor = f => (this.focusContentEditor = f);
 
   updateMarkdown = () => {
     if (
@@ -209,6 +209,9 @@ export class NoteDetail extends Component<Props> {
       cmdOrCtrl &&
       code === 'KeyG'
     ) {
+      event.stopPropagation();
+      event.preventDefault();
+
       const matches = this.noteDetail.current.querySelectorAll(
         'span.search-match'
       );
@@ -250,13 +253,13 @@ export class NoteDetail extends Component<Props> {
       note,
       fontSize,
       previewingMarkdown,
-      spellCheckEnabled,
+      spellCheckEnabled
     } = this.props;
 
     const content = {
       text: get(note, 'data.content', ''),
       hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
-      version: get(note, 'version', undefined),
+      version: get(note, 'version', undefined)
     };
     const divStyle = { fontSize: `${fontSize}px` };
 
@@ -305,7 +308,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui, settings }) => ({
   note: ui.selectedRevision || ui.note,
   searchQuery: ui.searchQuery,
   showNoteInfo: ui.showNoteInfo,
-  spellCheckEnabled: settings.spellCheckEnabled,
+  spellCheckEnabled: settings.spellCheckEnabled
 });
 
 export default connect(mapStateToProps)(NoteDetail);

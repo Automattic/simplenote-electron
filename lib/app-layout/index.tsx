@@ -35,6 +35,7 @@ type OwnProps = {
 type StateProps = {
   isNoteOpen: boolean;
   keyboardShortcutsAreOpen: boolean;
+  showNoteList: boolean;
 };
 
 type DispatchProps = {
@@ -57,7 +58,7 @@ export class AppLayout extends Component<Props> {
     const {
       hideKeyboardShortcuts,
       keyboardShortcutsAreOpen,
-      showKeyboardShortcuts,
+      showKeyboardShortcuts
     } = this.props;
     const { ctrlKey, code, metaKey } = event;
 
@@ -67,11 +68,15 @@ export class AppLayout extends Component<Props> {
       keyboardShortcutsAreOpen
         ? hideKeyboardShortcuts()
         : showKeyboardShortcuts();
+
+      event.stopPropagation();
+      event.preventDefault();
     }
   };
 
   render = () => {
     const {
+      showNoteList,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
@@ -79,15 +84,17 @@ export class AppLayout extends Component<Props> {
       isSmallScreen,
       noteBucket,
       onUpdateContent,
-      syncNote,
+      syncNote
     } = this.props;
 
     const mainClasses = classNames('app-layout', {
       'is-focus-mode': isFocusMode,
       'is-navigation-open': isNavigationOpen,
       'is-note-open': isNoteOpen,
-      'is-showing-note-info': isNoteInfoOpen,
+      'is-showing-note-info': isNoteInfoOpen
     });
+
+    const editorVisible = !(showNoteList && isSmallScreen);
 
     const placeholder = (
       <TransitionDelayEnter delay={1000}>
@@ -104,19 +111,21 @@ export class AppLayout extends Component<Props> {
             <SearchBar noteBucket={noteBucket} />
             <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
           </div>
-          <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-            <RevisionSelector onUpdateContent={onUpdateContent} />
-            <NoteToolbarContainer
-              noteBucket={noteBucket}
-              toolbar={<NoteToolbar />}
-            />
-            <NoteEditor
-              isSmallScreen={isSmallScreen}
-              noteBucket={noteBucket}
-              onUpdateContent={onUpdateContent}
-              syncNote={syncNote}
-            />
-          </div>
+          {editorVisible && (
+            <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
+              <RevisionSelector onUpdateContent={onUpdateContent} />
+              <NoteToolbarContainer
+                noteBucket={noteBucket}
+                toolbar={<NoteToolbar />}
+              />
+              <NoteEditor
+                isSmallScreen={isSmallScreen}
+                noteBucket={noteBucket}
+                onUpdateContent={onUpdateContent}
+                syncNote={syncNote}
+              />
+            </div>
+          )}
         </Suspense>
       </div>
     );
@@ -124,15 +133,16 @@ export class AppLayout extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { dialogs, showNoteList },
+  ui: { dialogs, showNoteList }
 }) => ({
   keyboardShortcutsAreOpen: dialogs.includes('KEYBINDINGS'),
   isNoteOpen: !showNoteList,
+  showNoteList
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   hideKeyboardShortcuts: () => actions.ui.closeDialog('KEYBINDINGS'),
-  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
+  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS')
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppLayout);

@@ -14,19 +14,19 @@ import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
 import {
-  closeNote,
   toggleEditMode,
   toggleNoteInfo,
-  toggleRevisions,
+  toggleNoteList,
+  toggleRevisions
 } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type DispatchProps = {
-  closeNote: () => any;
   toggleEditMode: () => any;
   toggleNoteInfo: () => any;
+  toggleNoteList: () => any;
   toggleRevisions: () => any;
 };
 
@@ -46,7 +46,7 @@ export class NoteToolbar extends Component<Props> {
     onTrashNote: PropTypes.func,
     onDeleteNoteForever: PropTypes.func,
     onShareNote: PropTypes.func,
-    toggleFocusMode: PropTypes.func.isRequired,
+    toggleFocusMode: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -54,7 +54,7 @@ export class NoteToolbar extends Component<Props> {
     onRestoreNote: noop,
     onShareNote: noop,
     onTrashNote: noop,
-    toggleFocusMode: noop,
+    toggleFocusMode: noop
   };
 
   render() {
@@ -87,8 +87,8 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
-              onClick={this.props.closeNote}
-              title="Back"
+              onClick={this.props.toggleNoteList}
+              title="Back • Ctrl+Shift+L"
             />
           </div>
           {markdownEnabled && (
@@ -141,8 +141,8 @@ export class NoteToolbar extends Component<Props> {
         <div className="note-toolbar__column-left">
           <IconButton
             icon={<BackIcon />}
-            onClick={this.props.closeNote}
-            title="Back"
+            onClick={this.props.toggleNoteList}
+            title="Back • Ctrl+Shift+L"
           />
         </div>
         <div className="note-toolbar__column-right">
@@ -171,7 +171,7 @@ export class NoteToolbar extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, editMode, selectedRevision },
+  ui: { note, editMode, selectedRevision }
 }) => {
   const revisionOrNote = selectedRevision || note;
 
@@ -180,15 +180,15 @@ const mapStateToProps: S.MapState<StateProps> = ({
     markdownEnabled: revisionOrNote
       ? revisionOrNote.data.systemTags.includes('markdown')
       : false,
-    note,
+    note
   };
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeNote,
   toggleEditMode,
   toggleNoteInfo,
-  toggleRevisions,
+  toggleNoteList,
+  toggleRevisions
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

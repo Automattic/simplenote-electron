@@ -9,14 +9,14 @@ import {
   getCurrentBlock,
   getEquivalentSelectionState,
   getSelectedText,
-  plainTextContent,
+  plainTextContent
 } from './editor/utils';
 import {
   continueList,
   finishList,
   indentCurrentBlock,
   outdentCurrentBlock,
-  isLonelyBullet,
+  isLonelyBullet
 } from './editor/text-manipulation-helpers';
 import { filterHasText, searchPattern } from './utils/filter-notes';
 import matchingTextDecorator from './editor/matching-text-decorator';
@@ -39,6 +39,7 @@ const isElectron = (() => {
 })();
 
 type StateProps = {
+  editingEnabled: boolean;
   searchQuery: string;
 };
 
@@ -49,18 +50,18 @@ class NoteContentEditor extends Component<Props> {
     content: PropTypes.shape({
       text: PropTypes.string.isRequired,
       hasRemoteUpdate: PropTypes.bool.isRequired,
-      version: PropTypes.number,
+      version: PropTypes.number
     }),
     noteId: PropTypes.string,
     onChangeContent: PropTypes.func.isRequired,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
-    storeHasFocus: PropTypes.func,
+    storeHasFocus: PropTypes.func
   };
 
   static defaultProps = {
     storeFocusEditor: noop,
-    storeHasFocus: noop,
+    storeHasFocus: noop
   };
 
   ipc = getIpcRenderer();
@@ -82,7 +83,7 @@ class NoteContentEditor extends Component<Props> {
       compact([
         filterHasText(searchQuery) &&
           matchingTextDecorator(searchPattern(searchQuery)),
-        checkboxDecorator(this.replaceRangeWithText),
+        checkboxDecorator(this.replaceRangeWithText)
       ])
     );
   };
@@ -104,7 +105,7 @@ class NoteContentEditor extends Component<Props> {
     editorState: this.createNewEditorState(
       this.props.content.text,
       this.props.searchQuery
-    ),
+    )
   };
 
   editorKey = 0;
@@ -121,7 +122,7 @@ class NoteContentEditor extends Component<Props> {
     window.addEventListener('keydown', this.handleKeydown, false);
   }
 
-  handleEditorStateChange = (editorState) => {
+  handleEditorStateChange = editorState => {
     const { editorState: prevEditorState } = this.state;
 
     if (editorState === prevEditorState) {
@@ -193,13 +194,13 @@ class NoteContentEditor extends Component<Props> {
     ) {
       this.setState(
         {
-          editorState: this.createNewEditorState(content.text, searchQuery),
+          editorState: this.createNewEditorState(content.text, searchQuery)
         },
         () =>
           __TEST__ &&
           window.testEvents.push([
             'editorNewNote',
-            plainTextContent(this.state.editorState),
+            plainTextContent(this.state.editorState)
           ])
       );
       return;
@@ -209,8 +210,8 @@ class NoteContentEditor extends Component<Props> {
     if (searchQuery !== prevProps.searchQuery) {
       this.setState({
         editorState: EditorState.set(editorState, {
-          decorator: this.generateDecorators(searchQuery),
-        }),
+          decorator: this.generateDecorators(searchQuery)
+        })
       });
     }
 
@@ -220,7 +221,7 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  saveEditorRef = (ref) => {
+  saveEditorRef = ref => {
     this.editor = ref;
   };
 
@@ -245,7 +246,7 @@ class NoteContentEditor extends Component<Props> {
     return document.activeElement === get(this.editor, 'editor');
   };
 
-  onTab = (e) => {
+  onTab = e => {
     const { editorState } = this.state;
 
     // prevent moving focus to next input
@@ -276,7 +277,7 @@ class NoteContentEditor extends Component<Props> {
     const line = getCurrentBlock(editorState).getText();
 
     const firstCharIndex = line.search(/\S/);
-    const caretIsCollapsedAt = (index) => {
+    const caretIsCollapsedAt = index => {
       const { anchorOffset, focusOffset } = editorState.getSelection();
       return anchorOffset === index && focusOffset === index;
     };
@@ -342,7 +343,7 @@ class NoteContentEditor extends Component<Props> {
    * selection, this allows for the clipboard data to more accurately reflect
    * the internal plain text data.
    */
-  copyPlainText = (event) => {
+  copyPlainText = event => {
     const textToCopy = getSelectedText(this.state.editorState);
     if (!textToCopy) {
       return;
@@ -373,8 +374,10 @@ class NoteContentEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { searchQuery } }) => ({
-  searchQuery,
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { searchQuery, showNoteList }
+}) => ({
+  searchQuery
 });
 
 export default connect(mapStateToProps)(NoteContentEditor);

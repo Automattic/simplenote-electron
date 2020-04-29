@@ -1,9 +1,8 @@
 import React, {
   Component,
-  KeyboardEvent,
   KeyboardEventHandler,
   MouseEvent,
-  RefObject,
+  RefObject
 } from 'react';
 import { connect } from 'react-redux';
 import { Overlay } from 'react-overlays';
@@ -20,7 +19,7 @@ import {
   invoke,
   negate,
   noop,
-  union,
+  union
 } from 'lodash';
 
 import * as S from '../state';
@@ -63,12 +62,12 @@ export class TagField extends Component<Props, OwnState> {
   static defaultProps = {
     storeFocusTagField: noop,
     storeHasFocus: noop,
-    tags: [],
+    tags: []
   };
 
   state = {
     selectedTag: '',
-    tagInput: '',
+    tagInput: ''
   };
 
   componentDidMount() {
@@ -76,10 +75,12 @@ export class TagField extends Component<Props, OwnState> {
     this.props.storeHasFocus(this.hasFocus);
 
     document.addEventListener('click', this.unselect, true);
+    window.addEventListener('keydown', this.preventStealingFocus, true);
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.unselect, true);
+    window.removeEventListener('keydown', this.preventStealingFocus, true);
   }
 
   componentDidUpdate() {
@@ -91,7 +92,10 @@ export class TagField extends Component<Props, OwnState> {
   addTag = (tags: string) => {
     const { allTags, tags: existingTags } = this.props;
 
-    const newTags = tags.trim().replace(/\s+/g, ',').split(',');
+    const newTags = tags
+      .trim()
+      .replace(/\s+/g, ',')
+      .split(',');
 
     if (newTags.some(isEmailTag)) {
       this.showEmailTooltip();
@@ -99,8 +103,8 @@ export class TagField extends Component<Props, OwnState> {
 
     const nextTagList = union(
       existingTags, // tags already in note
-      intersectionBy(allTags, newTags, (s) => s.toLocaleLowerCase()), // use existing case if tag known
-      differenceBy(newTags, allTags, (s) => s.toLocaleLowerCase()) // add completely new tags
+      intersectionBy(allTags, newTags, s => s.toLocaleLowerCase()), // use existing case if tag known
+      differenceBy(newTags, allTags, s => s.toLocaleLowerCase()) // add completely new tags
     );
     this.updateTags(nextTagList);
     this.storeTagInput('');
@@ -115,14 +119,10 @@ export class TagField extends Component<Props, OwnState> {
     const { tags } = this.props;
     const { selectedTag } = this.state;
 
-    this.updateTags(
-      differenceBy(tags, [tagName], (s) => s.toLocaleLowerCase())
-    );
+    this.updateTags(differenceBy(tags, [tagName], s => s.toLocaleLowerCase()));
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' }, () => {
-        invoke(this, 'tagInput.focus');
-      });
+      this.setState({ selectedTag: '' }, () => this.tagInput?.focus());
     }
 
     analytics.tracks.recordEvent('editor_tag_removed');
@@ -140,7 +140,7 @@ export class TagField extends Component<Props, OwnState> {
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys: KeyboardEventHandler = (e) => {
+  interceptKeys: KeyboardEventHandler = e => {
     if (KEY_BACKSPACE === e.which) {
       if (this.hasSelection()) {
         this.deleteSelection();
@@ -165,7 +165,17 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
-  updateTags = (tags) =>
+  preventStealingFocus = ({ ctrlKey, metaKey, code }: KeyboardEvent) => {
+    const cmdOrCtrl = ctrlKey || metaKey;
+
+    if (cmdOrCtrl && 'KeyT' === code) {
+      this.setState({ selectedTag: '' });
+    }
+
+    return true;
+  };
+
+  updateTags = tags =>
     this.props.updateNoteTags({ note: this.props.note, tags });
 
   selectLastTag = () =>
@@ -174,8 +184,8 @@ export class TagField extends Component<Props, OwnState> {
   selectTag = (event: MouseEvent<HTMLDivElement>) => {
     const {
       target: {
-        dataset: { tagName },
-      },
+        dataset: { tagName }
+      }
     } = event;
 
     event.preventDefault();
@@ -190,7 +200,7 @@ export class TagField extends Component<Props, OwnState> {
     setTimeout(() => this.setState({ showEmailTooltip: false }), 5000);
   };
 
-  onKeyDown = (e: KeyboardEvent) => {
+  onKeyDown = (e: React.KeyboardEvent) => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
     }
@@ -198,18 +208,18 @@ export class TagField extends Component<Props, OwnState> {
     return this.interceptKeys(e);
   };
 
-  storeFocusInput = (f) => (this.focusInput = f);
+  storeFocusInput = f => (this.focusInput = f);
 
-  storeHasFocus = (f) => (this.inputHasFocus = f);
+  storeHasFocus = f => (this.inputHasFocus = f);
 
-  storeHiddenTag = (r) => (this.hiddenTag = r);
+  storeHiddenTag = r => (this.hiddenTag = r);
 
-  storeInputRef = (r) => (this.tagInput = r);
+  storeInputRef = r => (this.tagInput = r);
 
   storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
 
-  unselect = (event: KeyboardEvent) => {
+  unselect = (event: React.KeyboardEvent) => {
     if (!this.state.selectedTag) {
       return;
     }
@@ -227,7 +237,7 @@ export class TagField extends Component<Props, OwnState> {
       <div className="tag-field">
         <div
           className={classNames('tag-editor', {
-            'has-selection': this.hasSelection(),
+            'has-selection': this.hasSelection()
           })}
           tabIndex="-1"
           onKeyDown={this.onKeyDown}
@@ -237,7 +247,7 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex="-1"
             ref={this.storeHiddenTag}
           />
-          {tags.filter(negate(isEmailTag)).map((tag) => (
+          {tags.filter(negate(isEmailTag)).map(tag => (
             <TagChip
               key={tag}
               tag={tag}
@@ -253,7 +263,7 @@ export class TagField extends Component<Props, OwnState> {
             onSelect={this.addTag}
             storeFocusInput={this.storeFocusInput}
             storeHasFocus={this.storeHasFocus}
-            tagNames={differenceBy(allTags, tags, (s) => s.toLocaleLowerCase())}
+            tagNames={differenceBy(allTags, tags, s => s.toLocaleLowerCase())}
           />
           <Overlay
             container={this}

@@ -12,7 +12,7 @@ type DispatchProps = {
 
 const Keys = ({
   keys,
-  children,
+  children
 }: {
   keys: (string | [string, string])[];
   children: React.ReactNode;
@@ -41,7 +41,8 @@ export class AboutDialog extends Component<DispatchProps> {
   render() {
     const { closeDialog } = this.props;
 
-    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
+    const CmdOrCtrl =
+      isMac || navigator.userAgent.indexOf('Mac OS X') ? 'Cmd' : 'Ctrl';
 
     return (
       <div className="keybindings">
@@ -55,11 +56,21 @@ export class AboutDialog extends Component<DispatchProps> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
-                    Focus search field
+                    Toggle focus mode
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'G']}>Search within note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'F']}>Focus search field</Keys>
+                </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'G']}>
+                    Jump to next match in note
+                  </Keys>
+                </li>
+                <li>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'G']}>
+                    Jump to previous match in note
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>
@@ -99,11 +110,13 @@ export class AboutDialog extends Component<DispatchProps> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'K']}>
-                    Select previous note
+                    Open note above current one
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>Select next note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>
+                    Open note below current one
+                  </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'T']}>
@@ -112,9 +125,7 @@ export class AboutDialog extends Component<DispatchProps> {
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'L']}>
-                    Show note list
-                    <br />
-                    (on narrow screens)
+                    Toggle note list (on narrow screens)
                   </Keys>
                 </li>
               </ul>
@@ -127,7 +138,15 @@ export class AboutDialog extends Component<DispatchProps> {
                   <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Delete']}>Trash note</Keys>
+                  <Keys
+                    keys={
+                      isMac
+                        ? ['fn', CmdOrCtrl, 'Delete']
+                        : [CmdOrCtrl, 'Delete']
+                    }
+                  >
+                    Trash note
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>
@@ -154,7 +173,7 @@ export class AboutDialog extends Component<DispatchProps> {
 }
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
+  closeDialog
 };
 
 export default connect(null, mapDispatchToProps)(AboutDialog);

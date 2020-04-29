@@ -39,12 +39,12 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'TAG_EDITING_TOGGLE':
       return !state;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
     case 'NAVIGATION_TOGGLE':
-    case 'App.toggleNoteInfo':
       return false;
     default:
       return state;
@@ -80,6 +80,7 @@ const noteRevisions: A.Reducer<T.NoteEntity[]> = (
     case 'STORE_REVISIONS':
       return action.revisions;
     case 'CREATE_NOTE':
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
       return emptyList as T.NoteEntity[];
     default:
@@ -107,6 +108,7 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
     case 'SELECT_REVISION':
       return action.revision;
     case 'CREATE_NOTE':
+    case 'OPEN_NOTE':
     case 'REVISIONS_TOGGLE':
     case 'SELECT_NOTE':
       return null;
@@ -115,12 +117,12 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
   }
 };
 
-const showNoteList: A.Reducer<boolean> = (state = false, action) => {
+const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
-    case 'CLOSE_NOTE':
-      return true;
+    case 'NOTE_LIST_TOGGLE':
+      return !state;
 
-    case 'SELECT_NOTE':
+    case 'OPEN_NOTE':
       return false;
 
     default:
@@ -185,6 +187,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'REVISIONS_TOGGLE':
       return !state;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'CREATE_NOTE':
       return false;
@@ -218,11 +221,12 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
     case 'TRASH_NOTE':
     case 'OPEN_TAG':
       return null;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
       return action.options
         ? {
             ...action.note,
-            hasRemoteUpdate: action.options.hasRemoteUpdate,
+            hasRemoteUpdate: action.options.hasRemoteUpdate
           }
         : action.note;
     case 'SET_SYSTEM_TAG':
@@ -255,5 +259,5 @@ export default combineReducers({
   showTrash,
   simperiumConnected,
   tagSuggestions,
-  unsyncedNoteIds,
+  unsyncedNoteIds
 });
