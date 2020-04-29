@@ -91,7 +91,7 @@ export const renderToNode = (
               highlight.highlightBlock(codeElement);
               if (
                 !codeElement.parentNode ||
-                codeElement.parentNode.nodeName !== 'pre'
+                codeElement.parentNode.nodeName !== 'PRE'
               ) {
                 codeElement.setAttribute('style', 'display:inline');
               }
