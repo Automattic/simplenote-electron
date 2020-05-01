@@ -27,7 +27,7 @@ import {
   closeNote,
   setUnsyncedNoteIds,
   toggleNavigation,
-  toggleSimperiumConnectionStatus
+  toggleSimperiumConnectionStatus,
 } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
@@ -58,10 +58,10 @@ export type DispatchProps = {
 
 export type Props = OwnProps & StateProps & DispatchProps;
 
-const mapStateToProps: S.MapState<StateProps> = state => ({
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
-  isAuthorized: selectors.auth.isAuthorized(state)
+  isAuthorized: selectors.auth.isAuthorized(state),
 });
 
 const mapDispatchToProps: S.MapDispatch<
@@ -70,12 +70,12 @@ const mapDispatchToProps: S.MapDispatch<
 > = function mapDispatchToProps(dispatch, { noteBucket }) {
   const actionCreators = Object.assign({}, appState.actionCreators);
 
-  const thenReloadNotes = action => a => {
+  const thenReloadNotes = (action) => (a) => {
     dispatch(action(a));
     dispatch(actionCreators.loadNotes({ noteBucket }));
   };
 
-  const thenReloadTags = action => a => {
+  const thenReloadTags = (action) => (a) => {
     dispatch(action(a));
     dispatch(loadTags());
   };
@@ -93,7 +93,7 @@ const mapDispatchToProps: S.MapDispatch<
         'setAccountName',
         'toggleAutoHideMenuBar',
         'toggleFocusMode',
-        'toggleSpellCheck'
+        'toggleSpellCheck',
       ]),
       dispatch
     ),
@@ -110,12 +110,12 @@ const mapDispatchToProps: S.MapDispatch<
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
     setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
-    setSimperiumConnectionStatus: connected =>
+    setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: note => dispatch(actions.ui.selectNote(note)),
-    setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
-    showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
-    trashNote: previousIndex => dispatch(actions.ui.trashNote(previousIndex))
+    selectNote: (note) => dispatch(actions.ui.selectNote(note)),
+    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
+    showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
+    trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
   };
 };
 
@@ -145,13 +145,13 @@ export const App = connect(
       resetAuth: PropTypes.func.isRequired,
       setAuthorized: PropTypes.func.isRequired,
       systemTheme: PropTypes.string.isRequired,
-      tagBucket: PropTypes.object.isRequired
+      tagBucket: PropTypes.object.isRequired,
     };
 
     static defaultProps = {
       onAuthenticate: () => {},
       onCreateUser: () => {},
-      onSignOut: () => {}
+      onSignOut: () => {},
     };
 
     UNSAFE_componentWillMount() {
@@ -172,9 +172,9 @@ export const App = connect(
         .on('update', this.onNoteUpdate)
         .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
         .on('remove', this.onNoteRemoved)
-        .beforeNetworkChange(noteId =>
+        .beforeNetworkChange((noteId) =>
           this.props.actions.onNoteBeforeRemoteUpdate({
-            noteId
+            noteId,
           })
         );
 
@@ -247,7 +247,7 @@ export const App = connect(
 
       if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
         this.props.actions.newNote({
-          noteBucket: this.props.noteBucket
+          noteBucket: this.props.noteBucket,
         });
         analytics.tracks.recordEvent('list_note_created');
 
@@ -266,7 +266,7 @@ export const App = connect(
           note: this.props.ui.note,
           previousIndex: this.props.appState.notes.findIndex(
             ({ id }) => this.props.ui.note.id === id
-          )
+          ),
         });
 
         event.stopPropagation();
@@ -300,21 +300,21 @@ export const App = connect(
           note: this.props.ui.note,
           previousIndex: this.props.appState.notes.findIndex(
             ({ id }) => this.props.ui.note.id === id
-          )
+          ),
         });
       }
 
       const canRun = overEvery(
         isObject,
-        o => o.action !== null,
-        o => has(this.props.actions, o.action) || has(this.props, o.action)
+        (o) => o.action !== null,
+        (o) => has(this.props.actions, o.action) || has(this.props, o.action)
       );
 
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
           this.props.actions.newNote({
-            noteBucket: this.props.noteBucket
+            noteBucket: this.props.noteBucket,
           });
           analytics.tracks.recordEvent('list_note_created');
         } else if (has(this.props, command.action)) {
@@ -333,7 +333,7 @@ export const App = connect(
         appState: { accountName },
         client,
         resetAuth,
-        setAuthorized
+        setAuthorized,
       } = this.props;
 
       actions.authChanged();
@@ -372,7 +372,7 @@ export const App = connect(
       const {
         noteBucket,
         selectNote,
-        ui: { note }
+        ui: { note },
       } = this.props;
 
       this.props.remoteNoteUpdate(noteId, data);
@@ -390,16 +390,16 @@ export const App = connect(
       }
     };
 
-    onLoadPreferences = callback =>
+    onLoadPreferences = (callback) =>
       this.props.actions.loadPreferences({
         callback,
-        preferencesBucket: this.props.preferencesBucket
+        preferencesBucket: this.props.preferencesBucket,
       });
 
     getTheme = () => {
       const {
         settings: { theme },
-        systemTheme
+        systemTheme,
       } = this.props;
       return 'system' === theme ? systemTheme : theme;
     };
@@ -410,8 +410,8 @@ export const App = connect(
       this.setState({
         electron: {
           currentWindow: remote.getCurrentWindow(),
-          Menu: remote.Menu
-        }
+          Menu: remote.Menu,
+        },
       });
     };
 
@@ -425,8 +425,8 @@ export const App = connect(
         data: {
           ...note.data,
           content,
-          modificationDate: Math.floor(Date.now() / 1000)
-        }
+          modificationDate: Math.floor(Date.now() / 1000),
+        },
       };
 
       this.props.selectNote(updatedNote);
@@ -438,27 +438,27 @@ export const App = connect(
       }
     };
 
-    syncNote = noteId => {
+    syncNote = (noteId) => {
       this.props.noteBucket.touch(noteId);
     };
 
-    syncActivityHooks = data => {
+    syncActivityHooks = (data) => {
       activityHooks(data, {
         onIdle: () => {
           const {
             appState: { notes },
             client,
             noteBucket,
-            setUnsyncedNoteIds
+            setUnsyncedNoteIds,
           } = this.props;
 
           nudgeUnsynced({ client, noteBucket, notes });
           setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
-        }
+        },
       });
     };
 
-    toggleShortcuts = doEnable => {
+    toggleShortcuts = (doEnable) => {
       if (doEnable) {
         window.addEventListener('keydown', this.handleShortcut, true);
       } else {
@@ -468,7 +468,7 @@ export const App = connect(
 
     loadPreferences = () => {
       this.props.actions.loadPreferences({
-        preferencesBucket: this.props.preferencesBucket
+        preferencesBucket: this.props.preferencesBucket,
       });
     };
 
@@ -483,21 +483,21 @@ export const App = connect(
         settings,
         tagBucket,
         isSmallScreen,
-        ui: { showNavigation, showNoteInfo }
+        ui: { showNavigation, showNoteInfo },
       } = this.props;
 
       const themeClass = `theme-${this.getTheme()}`;
 
       const appClasses = classNames('app', themeClass, {
         'is-line-length-full': settings.lineLength === 'full',
-        'touch-enabled': 'ontouchstart' in document.body
+        'touch-enabled': 'ontouchstart' in document.body,
       });
 
       const mainClasses = classNames('simplenote-app', {
         'note-info-open': showNoteInfo,
         'navigation-open': showNavigation,
         'is-electron': isElectron,
-        'is-macos': isMac
+        'is-macos': isMac,
       });
 
       return (
