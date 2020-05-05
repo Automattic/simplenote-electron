@@ -9,11 +9,13 @@ import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
 import ImportProgress from '../progress';
 
 import EvernoteImporter from '../../../../utils/import/evernote';
+import GoogleKeepImporter from '../../../../utils/import/googlekeep';
 import SimplenoteImporter from '../../../../utils/import/simplenote';
 import TextFileImporter from '../../../../utils/import/text-files';
 
 const importers = {
   evernote: EvernoteImporter,
+  googlekeep: GoogleKeepImporter,
   plaintext: TextFileImporter,
   simplenote: SimplenoteImporter,
 };

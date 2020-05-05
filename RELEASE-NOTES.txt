@@ -2,6 +2,10 @@
 
 ## [v1.15.1]
 
+### Enhancements
+
+- Added possibility to import notes from Google Keep [#2015](https://github.com/Automattic/simplenote-electron/pull/2015)
+
 ### Other Changes
 
 - Fix application signing to generate proper appx for Windows Store [#1960](https://github.com/Automattic/simplenote-electron/pull/1960)

@@ -11,6 +11,16 @@ const sources = [
     optionsHint: 'Images and other media will not be imported.',
   },
   {
+    name: 'Google Keep',
+    slug: 'googlekeep',
+    acceptedTypes: '.zip,.json',
+    electronOnly: true,
+    instructions:
+      'Choose an archive file exported from Google Takeout (.zip) or individual notes (.json)',
+    optionsHint: 'Images and other media will not be imported.',
+    multiple: true,
+  },
+  {
     name: 'Simplenote',
     slug: 'simplenote',
     acceptedTypes: '.json',
