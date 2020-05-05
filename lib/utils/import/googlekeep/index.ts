@@ -37,6 +37,15 @@ class GoogleKeepImporter extends EventEmitter {
       // by the next progress update anyway.
       const importedNote = JSON.parse(jsonString);
 
+      if (
+        !importedNote.title &&
+        !importedNote.textContent &&
+        !importedNote.listContent
+      ) {
+        // empty note, skip
+        return;
+      }
+
       const title = importedNote.title;
       let textContent = title ? title + '\n\n' : '';
       textContent += get(importedNote, 'textContent', '');
