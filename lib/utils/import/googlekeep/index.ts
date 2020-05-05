@@ -62,7 +62,8 @@ class GoogleKeepImporter extends EventEmitter {
         .importNote(
           {
             content: textContent,
-            // note: the exported files don't tell us the creation date...
+            // Keep doesn't store the creation date...
+            creationDate: importedNote.userEditedTimestampUsec / 1e6,
             modificationDate: importedNote.userEditedTimestampUsec / 1e6,
             pinned: importedNote.isPinned,
             tags: get(importedNote, 'labels', []).map(item => item.name),
