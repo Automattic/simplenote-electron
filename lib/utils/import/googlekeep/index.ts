@@ -32,6 +32,9 @@ class GoogleKeepImporter extends EventEmitter {
     let importedNoteCount = 0;
 
     const importJsonString = jsonString => {
+      // note: If importing the note fails, it is silently ignored by the
+      // promise below. This is okay since the warning message would be hidden
+      // by the next progress update anyway.
       const importedNote = JSON.parse(jsonString);
 
       const title = importedNote.title;
