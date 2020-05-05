@@ -334,7 +334,7 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (isSmallScreen && code === 'KeyL') {
+    if (isSmallScreen && cmdOrCtrl && shiftKey && code === 'KeyL') {
       this.props.toggleNoteList();
 
       event.stopPropagation();
