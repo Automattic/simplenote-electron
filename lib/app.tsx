@@ -238,8 +238,16 @@ export const App = connect(
         return false;
       }
 
-      if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+      if (cmdOrCtrl && !shiftKey && 'KeyF' === code) {
         this.props.focusSearchField();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+        this.props.toggleFocusMode();
 
         event.stopPropagation();
         event.preventDefault();
@@ -257,11 +265,7 @@ export const App = connect(
         return false;
       }
 
-      if (
-        this.props.ui.note &&
-        cmdOrCtrl &&
-        ('Delete' === code || 'Backspace' === code)
-      ) {
+      if (this.props.ui.note && cmdOrCtrl && 'Delete' === code) {
         this.props.actions.trashNote({
           noteBucket: this.props.noteBucket,
           note: this.props.ui.note,
@@ -273,6 +277,13 @@ export const App = connect(
         event.stopPropagation();
         event.preventDefault();
         return false;
+      }
+
+      // prevent default browser behavior for search
+      // will bubble up from note-detail
+      if (cmdOrCtrl && 'KeyG' === code) {
+        event.stopPropagation();
+        event.preventDefault();
       }
 
       return true;

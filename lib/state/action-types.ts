@@ -56,6 +56,7 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type OpenNote = Action<'OPEN_NOTE', { note: T.NoteEntity }>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
@@ -93,6 +94,7 @@ export type TagsLoaded = Action<
 >;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
+export type ToggleNoteList = Action<'NOTE_LIST_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
@@ -112,6 +114,7 @@ export type ActionType =
   | FilterNotes
   | FocusSearchField
   | RemoteNoteUpdate
+  | OpenNote
   | OpenTag
   | RestoreNote
   | Search
@@ -139,6 +142,7 @@ export type ActionType =
   | TagsLoaded
   | ToggleEditMode
   | ToggleNavigation
+  | ToggleNoteList
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
