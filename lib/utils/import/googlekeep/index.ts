@@ -47,15 +47,16 @@ class GoogleKeepImporter extends EventEmitter {
       }
 
       const title = importedNote.title;
-      let textContent = title ? title + '\n\n' : '';
-      textContent += get(importedNote, 'textContent', '');
 
-      if (importedNote.listContent) {
-        // Note has checkboxes
-        textContent += importedNote.listContent
-          .map(item => `- [${item.isChecked ? 'x' : ' '}] ${item.text}`)
-          .join('\n');
-      }
+      const importedContent = importedNote.listContent
+        ? importedNote.listContent // Note has checkboxes, no text content
+            .map(item => `- [${item.isChecked ? 'x' : ' '}] ${item.text}`)
+            .join('\n')
+        : importedNote.textContent;
+
+      const textContent = title
+        ? `${title}\n\n${importedContent}`
+        : importedContent;
 
       return coreImporter
         .importNote(
