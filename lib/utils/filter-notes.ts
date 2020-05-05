@@ -12,7 +12,7 @@ export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
 export const filterHasText = (searchQuery: string) =>
   !!withoutTags(searchQuery);
 
-const getTerms = (filterText: string) => {
+export const getTerms = (filterText: string): string[] => {
   if (!filterText) {
     return [];
   }
@@ -63,7 +63,7 @@ export const searchPattern = (searchQuery: string) => {
 const matchesTrashView = (isViewingTrash: boolean) => (note: T.NoteEntity) =>
   isViewingTrash === !!get(note, 'data.deleted', false);
 
-const makeMatchesTag = (tag: T.TagEntity | undefined, searchQuery = '') => (
+const makeMatchesTag = (tag: T.TagEntity | null, searchQuery = '') => (
   note: T.NoteEntity
 ) => {
   let filterTags = [];
@@ -114,8 +114,8 @@ export default function filterNotes(
   notesArray: T.NoteEntity[] | null = null
 ) {
   const {
-    appState: { notes, tag },
-    ui: { searchQuery, showTrash },
+    appState: { notes },
+    ui: { openedTag, searchQuery, showTrash },
   } = state;
 
   const notesToFilter = notesArray ? notesArray : notes;
@@ -131,7 +131,7 @@ export default function filterNotes(
 
   // reuse these functions for each note
   const matchesTrash = matchesTrashView(showTrash);
-  const matchesTag = makeMatchesTag(tag, searchQuery);
+  const matchesTag = makeMatchesTag(openedTag, searchQuery);
   const matchesSearch = makeMatchesSearch(searchQuery);
   const matchesFilter = (note: T.NoteEntity) =>
     matchesTrash(note) &&

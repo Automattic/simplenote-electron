@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
-import appState from '../../../flux/app-state';
-import { IMPORT } from '../../../../shared/dialog-types';
 import exportZipArchive from '../../../utils/export';
 
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
 
-const ToolsPanel = ({ showImportDialog }) => {
+import { showDialog } from '../../../state/ui/actions';
+
+import * as S from '../../../state';
+
+type DispatchProps = {
+  showDialog: () => any;
+};
+
+type Props = DispatchProps;
+
+const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
   const onSelectItem = item => {
     if (item.slug === 'import') {
-      showImportDialog();
+      showDialog();
     } else if (item.slug === 'export') {
       exportZipArchive();
     }
@@ -38,15 +45,8 @@ const ToolsPanel = ({ showImportDialog }) => {
   );
 };
 
-ToolsPanel.propTypes = {
-  showImportDialog: PropTypes.func.isRequired,
-};
-
-const mapDispatchToProps = dispatch => {
-  const { showDialog } = appState.actionCreators;
-  return {
-    showImportDialog: () => dispatch(showDialog({ dialog: IMPORT })),
-  };
-};
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  showDialog: () => dispatch(showDialog('IMPORT')),
+});
 
 export default connect(null, mapDispatchToProps)(ToolsPanel);

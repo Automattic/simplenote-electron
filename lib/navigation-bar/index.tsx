@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 
 import analytics from '../analytics';
@@ -12,48 +11,43 @@ import SettingsIcon from '../icons/settings';
 import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 import appState from '../flux/app-state';
-import DialogTypes from '../../shared/dialog-types';
 
-import { toggleNavigation } from '../state/ui/actions';
+import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
+type OwnProps = {
+  isElectron: boolean;
+};
+
 type StateProps = {
+  autoHideMenuBar: boolean;
+  isDialogOpen: boolean;
+  openedTag: T.TagEntity | null;
   showNavigation: boolean;
+  showTrash: boolean;
 };
 
 type DispatchProps = {
+  onAbout: () => any;
   onOutsideClick: () => any;
-  toggleNavigation: () => any;
+  onSettings: () => any;
+  onShowAllNotes: () => any;
+  selectTrash: () => any;
+  showKeyboardShortcuts: () => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class NavigationBar extends Component<Props> {
   static displayName = 'NavigationBar';
 
-  static propTypes = {
-    autoHideMenuBar: PropTypes.bool,
-    dialogs: PropTypes.array.isRequired,
-    isElectron: PropTypes.bool.isRequired,
-    onAbout: PropTypes.func.isRequired,
-    onSettings: PropTypes.func.isRequired,
-    onShowAllNotes: PropTypes.func.isRequired,
-    selectTrash: PropTypes.func.isRequired,
-    selectedTag: PropTypes.object,
-    showTrash: PropTypes.bool.isRequired,
-  };
-
-  static defaultProps = {
-    onShowAllNotes: function() {},
-  };
-
   // Used by onClickOutside wrapper
   handleClickOutside = () => {
-    const { dialogs, onOutsideClick, showNavigation } = this.props;
+    const { isDialogOpen, onOutsideClick, showNavigation } = this.props;
 
-    if (dialogs.length > 0) {
+    if (isDialogOpen) {
       return;
     }
 
@@ -70,11 +64,11 @@ export class NavigationBar extends Component<Props> {
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
-  isSelected = ({ isTrashRow }) => {
-    const { showTrash, selectedTag } = this.props;
+  isSelected = ({ isTrashRow }: { isTrashRow: boolean }) => {
+    const { showTrash, openedTag } = this.props;
     const isItemSelected = isTrashRow === showTrash;
 
-    return isItemSelected && !selectedTag;
+    return isItemSelected && !openedTag;
   };
 
   render() {
@@ -118,6 +112,15 @@ export class NavigationBar extends Component<Props> {
               <button
                 type="button"
                 className="navigation-bar__footer-item theme-color-fg-dim"
+                onClick={this.props.showKeyboardShortcuts}
+              >
+                Keyboard Shortcuts
+              </button>
+            </div>
+            <div className="navigation-bar__footer">
+              <button
+                type="button"
+                className="navigation-bar__footer-item theme-color-fg-dim"
                 onClick={this.onHelpClicked}
               >
                 Help &amp; Support
@@ -141,30 +144,26 @@ export class NavigationBar extends Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  appState: state,
+const mapStateToProps: S.MapState<StateProps> = ({
   settings,
-  ui: { showNavigation, showTrash },
+  ui: { dialogs, openedTag, showNavigation, showTrash },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
-  dialogs: state.dialogs,
-  selectedTag: state.tag,
+  isDialogOpen: dialogs.length > 0,
+  openedTag,
   showNavigation,
   showTrash,
 });
 
-const {
-  showAllNotesAndSelectFirst,
-  selectTrash,
-  showDialog,
-} = appState.actionCreators;
+const { showAllNotesAndSelectFirst } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog({ dialog: DialogTypes.ABOUT }),
+  onAbout: () => showDialog('ABOUT'),
   onOutsideClick: toggleNavigation,
   onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog({ dialog: DialogTypes.SETTINGS }),
+  onSettings: () => showDialog('SETTINGS'),
   selectTrash,
+  showKeyboardShortcuts: () => showDialog('KEYBINDINGS'),
 };
 
 export default connect(

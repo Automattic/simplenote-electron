@@ -1,23 +1,14 @@
-/**
- * @module NoteList
- *
- * This module includes some ugly code.
- * The note list display is a significant source of
- * visual re-render lag for accounts with many notes.
- * The trade-offs in this file reflect a decision to
- * optimize heavy inner loops for performance over
- * code burden.
- *
- * Any changes to this code which could affect the
- * row height calculations should be double-checked
- * against performance regressions.
- */
 import React, { Component, Fragment, createRef } from 'react';
-import PropTypes from 'prop-types';
-import { AutoSizer, List } from 'react-virtualized';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List,
+  ListRowRenderer,
+} from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
-import { debounce, get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 import appState from '../flux/app-state';
 import analytics from '../analytics';
@@ -27,257 +18,161 @@ import {
   checkboxDecorator,
   makeFilterDecorator,
 } from './decorators';
-import TagSuggestions, { getMatchingTags } from '../tag-suggestions';
+import TagSuggestions from '../tag-suggestions';
 
-import { closeNote } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+import { getTerms } from '../utils/filter-notes';
+
+type OwnProps = {
+  isSmallScreen: boolean;
+  noteBucket: T.Bucket<T.Note>;
+};
 
 type StateProps = {
-  selectedNoteId?: T.EntityId;
+  hasLoaded: boolean;
+  noteDisplay: T.ListDisplayMode;
+  notes: T.NoteEntity[];
+  openedTag: T.TagEntity | null;
+  searchQuery: string;
+  selectedNote: T.NoteEntity | null;
+  selectedNoteContent: string;
+  selectedNotePreview: { title: string; preview: string };
+  showNoteList: boolean;
+  showTrash: boolean;
+  tagResultsFound: number;
 };
 
-type Props = StateProps;
-
-AutoSizer.displayName = 'AutoSizer';
-List.displayName = 'List';
-
-/**
- * Delay for preventing row height calculation thrashing
- *
- * this constant was determined experimentally
- * and is open to adjustment if it doesn't find
- * the proper balance between visual updates
- * and performance impacts recomputing row heights
- *
- * @type {Number} minimum number of ms between calls to recomputeRowHeights in virtual/list
- */
-const TYPING_DEBOUNCE_DELAY = 70;
-
-/**
- * Maximum delay when debouncing the row height calculation
- *
- * this is used to make sure that we don't endlessly delay
- * the row height recalculation in situations like when we
- * are constantly typing without pause. by setting this value
- * we can make sure that the updates don't happen
- * less-frequently than the number of ms set here
- *
- * @type {Number} maximum number of ms between calls when debouncing recomputeRowHeights in virtual/list
- */
-const TYPING_DEBOUNCE_MAX = 1000;
-
-/** @type {Number} height of title + vertical padding in list rows */
-const ROW_HEIGHT_BASE = 24 + 18;
-
-/** @type {Number} height of one row of preview text in list rows */
-const ROW_HEIGHT_LINE = 21;
-
-/** @type {Object.<String, Number>} maximum number of lines to display in list rows for display mode */
-const maxPreviewLines = {
-  comfy: 1,
-  condensed: 0,
-  expanded: 4,
+type DispatchProps = {
+  closeNote: () => any;
+  onEmptyTrash: () => any;
+  onSelectNote: (note: T.NoteEntity | null) => any;
+  onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
+  openNote: (note: T.NoteEntity) => any;
+  toggleNoteList: () => any;
 };
 
-/** @type {Number} height of a single header in list rows */
-const HEADER_HEIGHT = 28;
+type Props = Readonly<OwnProps & StateProps & DispatchProps>;
 
-/** @type {Number} height of a single tag result row in list rows */
-const TAG_ROW_HEIGHT = 40;
+type NoteListItem =
+  | T.NoteEntity
+  | 'tag-suggestions'
+  | 'notes-header'
+  | 'no-notes';
 
-/** @type {Number} height of a the empty "No Notes" div in the notes list */
-const EMPTY_DIV_HEIGHT = 200;
-
-/**
- * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
- *
- * @see http://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
- *
- * @param {String} text The text to be rendered.
- * @param {String} width width of the containing area in which the text is rendered
- * @returns {number} width of rendered text in pixels
- */
-function getTextWidth(text, width) {
-  const canvas =
-    getTextWidth.canvas ||
-    (getTextWidth.canvas = document.createElement('canvas'));
-  canvas.width = width;
-  const context = canvas.getContext('2d');
-  context.font = '16px arial';
-  return context.measureText(text).width;
-}
-
-/** @type {Map} stores a cache of computed row heights to prevent re-rendering the canvas calculation */
-const previewCache = new Map();
-
-/**
- * Caches based on note id, width, note display format, and note preview excerpt
- *
- * @param {Function} f produces the row height
- * @returns {Number} row height for note in list
- */
-const rowHeightCache = f => (
-  notes,
-  { noteDisplay, tagResultsFound, width }
-) => ({ index }) => {
-  const note = notes[index];
-
-  // handle special sections
-  switch (note) {
-    case 'notes-header':
-      return HEADER_HEIGHT;
-    case 'tag-suggestions':
-      return HEADER_HEIGHT + TAG_ROW_HEIGHT * tagResultsFound;
-    case 'no-notes':
-      return EMPTY_DIV_HEIGHT;
-  }
-
-  const { preview } = getNoteTitleAndPreview(note);
-
-  const key = note.id;
-  const cached = previewCache.get(key);
-
-  if ('undefined' !== typeof cached) {
-    const [cWidth, cNoteDisplay, cPreview, cHeight] = cached;
-
-    if (
-      cWidth === width &&
-      cNoteDisplay === noteDisplay &&
-      cPreview === preview
-    ) {
-      return cHeight;
-    }
-  }
-
-  const height = f(width, noteDisplay, preview);
-
-  previewCache.set(key, [width, noteDisplay, preview, height]);
-
-  return height;
-};
-
-/**
- * Computes the pixel height of a row for a given preview text in the list
- *
- * @param {Number} width how wide the list renders
- * @param {String} noteDisplay mode of list display: 'comfy', 'condensed', or 'expanded'
- * @param {String} preview preview snippet from note
- * @returns {Number} height of the row in the list
- */
-const computeRowHeight = (width, noteDisplay, preview) => {
-  if ('condensed' === noteDisplay) {
-    return ROW_HEIGHT_BASE;
-  }
-
-  const lines = Math.ceil(getTextWidth(preview, width - 24) / (width - 24));
-  return (
-    ROW_HEIGHT_BASE +
-    ROW_HEIGHT_LINE * Math.min(maxPreviewLines[noteDisplay], lines)
-  );
-};
-
-/**
- * Estimates the pixel height of a given row in the note list
- *
- * This function utilizes a cache to prevent rerendering the text into a canvas
- * @see rowHeightCache
- *
- * @function
- */
-const getRowHeight = rowHeightCache(computeRowHeight);
+const heightCache = new CellMeasurerCache({
+  // row height base is 21px for the title + 18px vertical padding
+  // max preview lines is 4 lines of 24px
+  defaultHeight: 21 + 18 + 24 * 4,
+  fixedWidth: true,
+});
 
 /**
  * Renders an individual row in the note list
  *
  * @see react-virtual/list
  *
- * @param {Object[]} notes list of filtered notes
- * @param {String} searchQuery search searchQuery
- * @param {String} noteDisplay list view style: comfy, condensed, expanded
- * @param {Number} selectedNoteId id of currently selected note
- * @param {Function} onSelectNote used to change the current note selection
- * @param {Function} onPinNote used to pin a note to the top of the list
- * @returns {Function} does the actual rendering for the List
+ * @param notes list of filtered notes
+ * @param searchQuery search searchQuery
+ * @param noteDisplay list view style: comfy, condensed, expanded
+ * @param openNote used to select a note and open it in the editor
+ * @param selectedNoteId id of currently selected note
+ * @param onPinNote used to pin a note to the top of the list
+ * @returns does the actual rendering for the List
  */
 const renderNote = (
-  notes,
+  notes: NoteListItem[],
   {
     searchQuery,
     noteDisplay,
-    selectedNoteId,
-    onSelectNote,
+    highlightedIndex,
     onPinNote,
-    isSmallScreen,
+    openNote,
+  }: {
+    searchQuery: string;
+    noteDisplay: T.ListDisplayMode;
+    highlightedIndex: number;
+    onPinNote: DispatchProps['onPinNote'];
+    openNote: DispatchProps['openNote'];
   }
-) => ({ index, rowIndex, key, style }) => {
-  const note = notes['undefined' === typeof index ? rowIndex : index];
+): ListRowRenderer => ({ index, key, parent, style }) => {
+  const note = notes[index];
 
-  // handle special sections
-  switch (note) {
-    case 'notes-header':
-      return (
-        <div key={key} style={style} className="note-list-header">
-          Notes
-        </div>
-      );
-    case 'tag-suggestions':
-      return (
-        <div key={key} style={style}>
+  if ('no-notes' === note) {
+    return (
+      <div className="note-list is-empty" style={{ ...style, height: 200 }}>
+        <span className="note-list-placeholder">No Notes</span>
+      </div>
+    );
+  }
+
+  if ('tag-suggestions' === note || 'notes-header' === note) {
+    return (
+      <CellMeasurer
+        cache={heightCache}
+        columnIndex={0}
+        key={key}
+        parent={parent}
+        rowIndex={index}
+      >
+        {'tag-suggestions' === note ? (
           <TagSuggestions />
-        </div>
-      );
-    case 'no-notes':
-      return (
-        <div key={key} style={style} className="note-list is-empty">
-          <span className="note-list-placeholder">No Notes</span>
-        </div>
-      );
+        ) : (
+          <div className="note-list-header">Notes</div>
+        )}
+      </CellMeasurer>
+    );
   }
 
   const { title, preview } = getNoteTitleAndPreview(note);
-  const isPublished = !isEmpty(note.data.publishURL);
-
+  const isPinned = note.data.systemTags.includes('pinned');
+  const isPublished = !!note.data.publishURL;
   const classes = classNames('note-list-item', {
-    'note-list-item-selected': !isSmallScreen && selectedNoteId === note.id,
-    'note-list-item-pinned': note.data.systemTags.includes('pinned'),
+    'note-list-item-selected': highlightedIndex === index,
+    'note-list-item-pinned': isPinned,
     'published-note': isPublished,
   });
 
-  const decorators = [checkboxDecorator, makeFilterDecorator(searchQuery)];
-
-  const selectNote = () => {
-    onSelectNote(note.id);
-  };
+  const terms = getTerms(searchQuery).map(makeFilterDecorator);
+  const decorators = [checkboxDecorator, ...terms];
 
   return (
-    <div key={key} style={style} className={classes}>
-      <div
-        className="note-list-item-pinner"
-        tabIndex={0}
-        onClick={onPinNote.bind(null, note)}
-      />
-      <div
-        className="note-list-item-text theme-color-border"
-        tabIndex={0}
-        onClick={selectNote}
-      >
-        <div className="note-list-item-title">
-          <span>{decorateWith(decorators, title)}</span>
-          {isPublished && (
-            <div className="note-list-item-published-icon">
-              <PublishIcon />
+    <CellMeasurer
+      cache={heightCache}
+      columnIndex={0}
+      key={key}
+      parent={parent}
+      rowIndex={index}
+    >
+      <div style={style} className={classes}>
+        <div
+          className="note-list-item-pinner"
+          tabIndex={0}
+          onClick={() => onPinNote(note, !isPinned)}
+        />
+        <div
+          className="note-list-item-text theme-color-border"
+          tabIndex={0}
+          onClick={() => openNote(note)}
+        >
+          <div className="note-list-item-title">
+            <span>{decorateWith(decorators, title)}</span>
+            {isPublished && (
+              <div className="note-list-item-published-icon">
+                <PublishIcon />
+              </div>
+            )}
+          </div>
+          {'condensed' !== noteDisplay && preview.trim() && (
+            <div className="note-list-item-excerpt">
+              {decorateWith(decorators, preview)}
             </div>
           )}
         </div>
-        {'condensed' !== noteDisplay && preview.trim() && (
-          <div className="note-list-item-excerpt">
-            {decorateWith(decorators, preview)}
-          </div>
-        )}
       </div>
-    </div>
+    </CellMeasurer>
   );
 };
 
@@ -287,12 +182,16 @@ const renderNote = (
  *
  * @see renderNote
  *
- * @param {Object[]} notes list of filtered notes
- * @param {String} searchQuery search filter
- * @param {Number} tagResultsFound number of tag matches to display
- * @returns {Object[]} modified notes list
+ * @param notes list of filtered notes
+ * @param searchQuery search filter
+ * @param tagResultsFound number of tag matches to display
+ * @returns modified notes list
  */
-const createCompositeNoteList = (notes, searchQuery, tagResultsFound) => {
+const createCompositeNoteList = (
+  notes: T.NoteEntity[],
+  searchQuery: string,
+  tagResultsFound: number
+): NoteListItem[] => {
   if (searchQuery.length === 0 || tagResultsFound === 0) {
     return notes;
   }
@@ -300,69 +199,143 @@ const createCompositeNoteList = (notes, searchQuery, tagResultsFound) => {
   return [
     'tag-suggestions',
     'notes-header',
-    ...(notes.length > 0 ? notes : ['no-notes']),
+    ...(notes.length > 0 ? notes : ['no-notes' as NoteListItem]),
   ];
 };
 
 export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
-  list = createRef();
+  state = { selectedIndex: null };
 
-  static propTypes = {
-    tagResultsFound: PropTypes.number.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
-    notes: PropTypes.array.isRequired,
-    onSelectNote: PropTypes.func.isRequired,
-    onPinNote: PropTypes.func.isRequired,
-    noteDisplay: PropTypes.string.isRequired,
-    onEmptyTrash: PropTypes.any.isRequired,
-    showTrash: PropTypes.bool,
-  };
+  list = createRef<List>();
 
   componentDidMount() {
-    /**
-     * Prevents rapid changes from incurring major
-     * performance hits due to row height computation
-     */
-    this.recomputeHeights = debounce(
-      () => this.list.current && this.list.current.recomputeRowHeights(),
-      TYPING_DEBOUNCE_DELAY,
-      { maxWait: TYPING_DEBOUNCE_MAX }
-    );
-
     this.toggleShortcuts(true);
-    window.addEventListener('resize', this.recomputeHeights);
   }
 
-  componentDidUpdate(prevProps) {
-    const { searchQuery, notes } = this.props;
+  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
+    const {
+      notes,
+      noteDisplay,
+      openedTag,
+      selectedNote,
+      selectedNoteContent,
+      showNoteList,
+      showTrash,
+      tagResultsFound,
+    } = nextProps;
+    const { selectedIndex } = this.state;
 
     if (
-      prevProps.searchQuery !== searchQuery ||
-      prevProps.noteDisplay !== this.props.noteDisplay ||
-      prevProps.notes !== notes ||
-      prevProps.selectedNoteContent !== this.props.selectedNoteContent
+      noteDisplay !== this.props.noteDisplay ||
+      notes !== this.props.notes ||
+      tagResultsFound !== this.props.tagResultsFound ||
+      selectedNoteContent !== this.props.selectedNoteContent ||
+      showNoteList !== this.props.showNoteList
     ) {
-      this.recomputeHeights();
+      heightCache.clearAll();
+    }
+
+    // jump to top of note list
+    if (
+      openedTag !== this.props.openedTag ||
+      showTrash !== this.props.showTrash
+    ) {
+      const hasNotes = notes.length > 0;
+      this.setState({ selectedIndex: hasNotes ? 0 : null });
+      this.props.onSelectNote(hasNotes ? notes[0] : null);
+      return;
+    }
+
+    if (notes.length === 0 && selectedNote) {
+      // unselect active note if it doesn't match search
+      this.props.closeNote();
+      this.setState({ selectedIndex: null });
+    }
+
+    // nothing has changed, so don't change anything
+    if (
+      selectedIndex &&
+      selectedNote &&
+      notes[selectedIndex]?.id === selectedNote.id &&
+      showTrash === this.props.showTrash &&
+      openedTag === this.props.openedTag
+    ) {
+      return;
+    }
+
+    const nextIndex = this.getHighlightedIndex(nextProps);
+
+    if (null === nextIndex) {
+      return this.setState({ selectedIndex: null });
+    }
+
+    if (
+      notes.length &&
+      (!selectedNote || selectedNote.id !== notes[nextIndex]?.id)
+    ) {
+      // select the note that should be selected, if it isn't already
+      this.props.onSelectNote(
+        notes[Math.max(0, Math.min(notes.length - 1, nextIndex))]
+      );
+    }
+
+    this.setState({ selectedIndex: nextIndex });
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (
+      prevProps.noteDisplay !== this.props.noteDisplay ||
+      prevProps.notes !== this.props.notes ||
+      prevProps.tagResultsFound !== this.props.tagResultsFound ||
+      prevProps.selectedNoteContent !== this.props.selectedNoteContent ||
+      prevProps.showNoteList !== this.props.showNoteList
+    ) {
+      heightCache.clearAll();
     }
   }
 
   componentWillUnmount() {
     this.toggleShortcuts(false);
-    window.removeEventListener('resize', this.recomputeHeights);
   }
 
-  handleShortcut = event => {
-    const { ctrlKey, key, metaKey, shiftKey } = event;
+  handleShortcut = (event: KeyboardEvent) => {
+    const { ctrlKey, code, metaKey, shiftKey } = event;
+    const { isSmallScreen, notes, showNoteList } = this.props;
+    const { selectedIndex: index } = this.state;
+
+    const highlightedIndex = this.getHighlightedIndex(this.props);
 
     const cmdOrCtrl = ctrlKey || metaKey;
-    if (
-      cmdOrCtrl &&
-      shiftKey &&
-      (key === 'ArrowUp' || key.toLowerCase() === 'k')
-    ) {
-      this.props.onSelectNote(this.props.nextNote.id);
+    if (cmdOrCtrl && shiftKey && code === 'KeyK') {
+      if (-1 === highlightedIndex || index < 0 || !notes[index - 1]?.id) {
+        return false;
+      }
+
+      this.props.onSelectNote(notes[index - 1]);
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (cmdOrCtrl && shiftKey && code === 'KeyJ') {
+      if (
+        -1 === highlightedIndex ||
+        index >= notes.length ||
+        !notes[index + 1]?.id
+      ) {
+        return false;
+      }
+
+      this.props.onSelectNote(notes[index + 1]);
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (isSmallScreen && cmdOrCtrl && shiftKey && code === 'KeyL') {
+      this.props.toggleNoteList();
 
       event.stopPropagation();
       event.preventDefault();
@@ -370,11 +343,12 @@ export class NoteList extends Component<Props> {
     }
 
     if (
-      cmdOrCtrl &&
-      shiftKey &&
-      (key === 'ArrowDown' || key.toLowerCase() === 'j')
+      isSmallScreen &&
+      showNoteList &&
+      code === 'Enter' &&
+      highlightedIndex !== null
     ) {
-      this.props.onSelectNote(this.props.prevNote.id);
+      this.props.openNote(notes[highlightedIndex]);
 
       event.stopPropagation();
       event.preventDefault();
@@ -384,7 +358,7 @@ export class NoteList extends Component<Props> {
     return true;
   };
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable: boolean) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -392,32 +366,78 @@ export class NoteList extends Component<Props> {
     }
   };
 
+  getHighlightedIndex = (props: Props) => {
+    const { notes, selectedNote } = props;
+    const { selectedIndex: index } = this.state;
+
+    // Cases:
+    //   - the notes list is empty
+    //   - nothing has been selected -> select the first item if it exists
+    //   - the selected note matches the index -> use the index
+    //   - selected note is in the list -> use the index where it's found
+    //   - selected note isn't in the list -> previous index?
+
+    if (notes.length === 0) {
+      return null;
+    }
+
+    if (!selectedNote && !index) {
+      const firstNote = notes.findIndex(item => item?.id);
+
+      return firstNote > -1 ? firstNote : null;
+    }
+
+    if (selectedNote && selectedNote.id === notes[index]?.id) {
+      return index;
+    }
+
+    const noteAt = notes.findIndex(item => item?.id === selectedNote?.id);
+
+    if (selectedNote && noteAt > -1) {
+      return noteAt;
+    }
+
+    if (selectedNote) {
+      return Math.min(index, notes.length - 1); // different note, same index
+    }
+
+    // we have no selected note here, but we do have a previous index
+    return index;
+  };
+
   render() {
     const {
-      searchQuery,
       hasLoaded,
-      selectedNoteId,
-      onSelectNote,
-      onEmptyTrash,
       noteDisplay,
+      notes,
+      openNote,
+      onEmptyTrash,
+      onPinNote,
+      searchQuery,
       showTrash,
       tagResultsFound,
-      notes,
-      isSmallScreen,
     } = this.props;
+    const { selectedIndex } = this.state;
 
-    const listItemsClasses = classNames('note-list-items', noteDisplay);
-
-    const renderNoteRow = renderNote(notes, {
+    const compositeNoteList = createCompositeNoteList(
+      notes,
       searchQuery,
+      tagResultsFound
+    );
+
+    const specialRows = compositeNoteList.length - notes.length;
+    const highlightedIndex =
+      selectedIndex !== null ? selectedIndex + specialRows : null;
+
+    const renderNoteRow = renderNote(compositeNoteList, {
+      searchQuery,
+      highlightedIndex,
       noteDisplay,
-      onSelectNote,
-      onPinNote: this.onPinNote,
-      selectedNoteId,
-      isSmallScreen,
+      onPinNote,
+      openNote,
     });
 
-    const isEmptyList = notes.length === 0;
+    const isEmptyList = compositeNoteList.length === 0;
 
     const emptyTrashButton = (
       <div className="note-list-empty-trash theme-color-border">
@@ -439,68 +459,47 @@ export class NoteList extends Component<Props> {
           </span>
         ) : (
           <Fragment>
-            <div className={listItemsClasses}>
+            <div className={`note-list-items ${noteDisplay}`}>
               <AutoSizer>
                 {({ height, width }) => (
                   <List
                     ref={this.list}
-                    estimatedRowSize={
-                      ROW_HEIGHT_BASE +
-                      ROW_HEIGHT_LINE * maxPreviewLines[noteDisplay]
-                    }
+                    estimatedRowSize={24 + 18 + 21 * 4}
                     height={height}
                     noteDisplay={noteDisplay}
-                    notes={notes}
-                    rowCount={notes.length}
-                    rowHeight={getRowHeight(notes, {
-                      searchQuery,
-                      noteDisplay,
-                      tagResultsFound,
-                      width,
-                    })}
+                    notes={compositeNoteList}
+                    rowCount={compositeNoteList.length}
+                    rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
+                    scrollToIndex={highlightedIndex}
                     width={width}
                   />
                 )}
               </AutoSizer>
             </div>
-            {!!showTrash && emptyTrashButton}
+            {showTrash && emptyTrashButton}
           </Fragment>
         )}
       </div>
     );
   }
-
-  onPinNote = note =>
-    this.props.onPinNote(note, !note.data.systemTags.includes('pinned'));
 }
 
-const { emptyTrash, loadAndSelectNote, pinNote } = appState.actionCreators;
+const { emptyTrash } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
-  ui: { filteredNotes, note, searchQuery, showTrash },
+  ui: {
+    filteredNotes,
+    note,
+    openedTag,
+    searchQuery,
+    showNoteList,
+    showTrash,
+    tagSuggestions,
+  },
   settings: { noteDisplay },
 }) => {
-  const tagResultsFound = getMatchingTags(state.tags, searchQuery).length;
-  const selectedNote = note;
-  const selectedNoteId = selectedNote?.id;
-  const selectedNoteIndex = filteredNotes.findIndex(
-    ({ id }) => id === selectedNoteId
-  );
-
-  const nextNoteId = Math.max(0, selectedNoteIndex - 1);
-  const prevNoteId = Math.min(filteredNotes.length - 1, selectedNoteIndex + 1);
-
-  const nextNote = filteredNotes[nextNoteId];
-  const prevNote = filteredNotes[prevNoteId];
-
-  const compositeNoteList = createCompositeNoteList(
-    filteredNotes,
-    searchQuery,
-    tagResultsFound
-  );
-
   /**
    * Although not used directly in the React component this value
    * is used to bust the cache when editing a note and the number
@@ -521,41 +520,36 @@ const mapStateToProps: S.MapState<StateProps> = ({
    *
    * @type {String} preview excerpt for the current note
    */
-  const selectedNotePreview =
-    selectedNote && getNoteTitleAndPreview(selectedNote).preview;
+  const selectedNotePreview = note && getNoteTitleAndPreview(note).preview;
 
   return {
     hasLoaded: state.notes !== null,
-    nextNote,
     noteDisplay,
-    notes: compositeNoteList,
-    prevNote,
+    notes: filteredNotes,
+    openedTag,
     searchQuery,
+    selectedNote: note,
     selectedNotePreview,
-    selectedNoteContent: get(selectedNote, 'data.content'),
-    selectedNoteId,
+    selectedNoteContent: get(note, 'data.content'),
+    showNoteList,
     showTrash,
-    tagResultsFound,
+    tagResultsFound: tagSuggestions.length,
   };
 };
 
-const mapDispatchToProps = (dispatch, { noteBucket }) => ({
-  closeNote: () => dispatch(closeNote()),
+const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
+  dispatch,
+  { noteBucket }
+) => ({
+  closeNote: () => dispatch(actions.ui.closeNote()),
   onEmptyTrash: () => dispatch(emptyTrash({ noteBucket })),
-  onSelectNote: noteId => {
-    if (noteId) {
-      dispatch(loadAndSelectNote({ noteBucket, noteId }));
-      analytics.tracks.recordEvent('list_note_opened');
-    }
+  onSelectNote: (note: T.NoteEntity | null) => {
+    dispatch(actions.ui.selectNote(note));
+    analytics.tracks.recordEvent('list_note_opened');
   },
-  onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
+  onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
+  openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
+  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
 });
-
-NoteList.propTypes = {
-  hasLoaded: PropTypes.bool.isRequired,
-  nextNote: PropTypes.object,
-  prevNote: PropTypes.object,
-  selectedNoteContent: PropTypes.string,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

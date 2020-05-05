@@ -1,26 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import appState from '../flux/app-state';
 import TagField from '../tag-field';
 import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 import { toggleEditMode } from '../state/ui/actions';
 
-import { closeNote } from '../state/ui/actions';
+import { markdownNote, toggleNoteList } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
-type DispatchProps = {
-  toggleEditMode: () => any;
+type OwnProps = {
+  isSmallScreen: boolean;
 };
 
 type StateProps = {
   note: T.NoteEntity | null;
 };
 
-type Props = DispatchProps & StateProps;
+type DispatchProps = {
+  toggleMarkdown: (note: T.NoteEntity, enableMarkdown: boolean) => any;
+  toggleNoteList: () => any;
+  toggleEditMode: () => any;
+};
+
+type Props = OwnProps & DispatchProps & StateProps;
 
 export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
@@ -28,7 +33,6 @@ export class NoteEditor extends Component<Props> {
   static propTypes = {
     allTags: PropTypes.array.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
     noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
     onUpdateContent: PropTypes.func.isRequired,
@@ -62,48 +66,44 @@ export class NoteEditor extends Component<Props> {
     );
   };
 
-  handleShortcut = event => {
-    const { ctrlKey, key, metaKey, shiftKey } = event;
+  handleShortcut = (event: KeyboardEvent) => {
+    const { code, ctrlKey, metaKey, shiftKey } = event;
+    const { note, revision, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
+    // toggle Markdown enabled
+    if (!revision && note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
+      toggleMarkdown(note, !this.markdownEnabled());
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
     // toggle editor mode
-    if (
-      cmdOrCtrl &&
-      shiftKey &&
-      'p' === key.toLowerCase() &&
-      this.markdownEnabled
-    ) {
+    if (cmdOrCtrl && shiftKey && 'KeyP' === code && this.markdownEnabled()) {
       this.props.toggleEditMode();
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
-    // open note list - shift + n
-    if (
-      this.props.isSmallScreen &&
-      cmdOrCtrl &&
-      shiftKey &&
-      'n' === key.toLowerCase()
-    ) {
-      this.props.closeNote();
-      event.stopPropagation();
-      event.preventDefault();
-      return false;
-    }
-
     // toggle between tag editor and note editor
-    if (cmdOrCtrl && 't' === key.toLowerCase() && this.props.isEditorActive) {
+    if (
+      !shiftKey &&
+      cmdOrCtrl &&
+      'KeyT' === code &&
+      this.props.isEditorActive
+    ) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
-        this.focusNoteEditor && this.focusNoteEditor();
+        this.focusNoteEditor?.();
 
         event.stopPropagation();
         event.preventDefault();
         return false;
-      } else if (!this.tagFieldHasFocus()) {
-        this.focusTagField && this.focusTagField();
+      } else {
+        this.focusTagField?.();
 
         event.stopPropagation();
         event.preventDefault();
@@ -168,9 +168,10 @@ export class NoteEditor extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = ({
   appState: state,
   settings,
+  tags,
   ui: { note, editMode, selectedRevision },
 }) => ({
-  allTags: state.tags,
+  allTags: tags,
   fontSize: settings.fontSize,
   editMode,
   isEditorActive: !state.showNavigation,
@@ -179,7 +180,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
-  closeNote: () => dispatch(closeNote()),
+  toggleNoteList: () => dispatch(toggleNoteList()),
+  toggleMarkdown: (note, enableMarkdown) =>
+    dispatch(markdownNote(note, enableMarkdown)),
   toggleEditMode: () => dispatch(toggleEditMode()),
 });
 

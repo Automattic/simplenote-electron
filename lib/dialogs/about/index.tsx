@@ -1,26 +1,29 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import SimplenoteLogo from '../../icons/simplenote';
 import CrossIcon from '../../icons/cross';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
 import Dialog from '../../dialog';
+import { closeDialog } from '../../state/ui/actions';
+
+import * as S from '../../state';
 
 const appVersion = config.version; // eslint-disable-line no-undef
 
-export class AboutDialog extends Component {
-  static propTypes = {
-    actions: PropTypes.object.isRequired,
-    dialog: PropTypes.object.isRequired,
-    requestClose: PropTypes.func.isRequired,
-  };
+type DispatchProps = {
+  closeDialog: () => any;
+};
 
+type Props = DispatchProps;
+
+export class AboutDialog extends Component<Props> {
   render() {
-    const { dialog, requestClose } = this.props;
+    const { closeDialog } = this.props;
     const thisYear = new Date().getFullYear();
 
     return (
       <div className="about">
-        <Dialog hideTitleBar onDone={requestClose} title={dialog.title}>
+        <Dialog hideTitleBar onDone={closeDialog} title="About">
           <div className="about-top">
             <SimplenoteLogo />
 
@@ -112,7 +115,7 @@ export class AboutDialog extends Component {
             type="button"
             aria-label="Close dialog"
             className="about-done button button-borderless"
-            onClick={requestClose}
+            onClick={closeDialog}
           >
             <CrossIcon />
           </button>
@@ -122,4 +125,8 @@ export class AboutDialog extends Component {
   }
 }
 
-export default AboutDialog;
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog,
+};
+
+export default connect(null, mapDispatchToProps)(AboutDialog);

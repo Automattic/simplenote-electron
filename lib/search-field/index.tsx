@@ -7,12 +7,23 @@ import { search } from '../state/ui/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
+import * as S from '../state';
+
 const KEY_ESC = 27;
 
-type ConnectedProps = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
+type StateProps = {
+  isTagSelected: boolean;
+  placeholder: string;
+  searchQuery: string;
+};
 
-export class SearchField extends Component<ConnectedProps> {
+type DispatchProps = {
+  onSearch: (query: string) => any;
+};
+
+type Props = StateProps & DispatchProps;
+
+export class SearchField extends Component<Props> {
   static displayName = 'SearchField';
 
   inputField = createRef<HTMLInputElement>();
@@ -88,16 +99,15 @@ export class SearchField extends Component<ConnectedProps> {
   }
 }
 
-const mapStateToProps = ({
-  appState: state,
-  ui: { listTitle, searchQuery },
+const mapStateToProps: S.MapState<StateProps> = ({
+  ui: { listTitle, openedTag, searchQuery },
 }: State) => ({
-  isTagSelected: !!state.tag,
+  isTagSelected: !!openedTag,
   placeholder: listTitle,
   searchQuery,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   onSearch: (query: string) => {
     dispatch(search(query));
     analytics.tracks.recordEvent('list_notes_searched');

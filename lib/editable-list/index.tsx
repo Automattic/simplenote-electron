@@ -343,8 +343,8 @@ export class EditableList extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: { tags },
   settings: { sortTagsAlpha },
+  tags,
   ui: { editingTags },
 }) => ({
   editing: editingTags,

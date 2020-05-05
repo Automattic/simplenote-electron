@@ -64,11 +64,6 @@ export const toggleSortTagsAlpha = () => (dispatch, getState) => {
   });
 };
 
-export const setMarkdown: A.ActionCreator<A.SetMarkdownEnabled> = markdownEnabled => ({
-  type: 'setMarkdownEnabled',
-  markdownEnabled,
-});
-
 export const setAccountName: A.ActionCreator<A.SetAccountName> = accountName => ({
   type: 'setAccountName',
   accountName,

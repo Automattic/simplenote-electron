@@ -12,6 +12,7 @@ import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
+import { closeDialog, publishNote } from '../../state/ui/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -20,28 +21,20 @@ const shareTabs = ['collaborate', 'publish'];
 
 type StateProps = {
   settings: S.State['settings'];
-  note: T.NoteEntity | null;
+  note: T.NoteEntity;
 };
 
-type Props = StateProps;
+type DispatchProps = {
+  closeDialog: () => any;
+  publishNote: (note: T.NoteEntity, shouldPublish: boolean) => any;
+  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagName[] }) => any;
+};
+
+type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
-  static propTypes = {
-    actions: PropTypes.object.isRequired,
-    dialog: PropTypes.object.isRequired,
-    noteBucket: PropTypes.object.isRequired,
-    appState: PropTypes.object.isRequired,
-    requestClose: PropTypes.func.isRequired,
-    tagBucket: PropTypes.object.isRequired,
-    updateNoteTags: PropTypes.func.isRequired,
-  };
-
-  onTogglePublished = event => {
-    this.props.actions.publishNote({
-      noteBucket: this.props.noteBucket,
-      note: this.props.note,
-      publish: event.currentTarget.checked,
-    });
+  onTogglePublished = (event: React.MouseEvent<HTMLInputElement>) => {
+    this.props.publishNote(this.props.note, event.currentTarget.checked);
   };
 
   getPublishURL = url => (isEmpty(url) ? undefined : `http://simp.ly/p/${url}`);
@@ -95,13 +88,13 @@ export class ShareDialog extends Component<Props> {
   };
 
   render() {
-    const { dialog, note, requestClose } = this.props;
+    const { closeDialog, note } = this.props;
     const data = (note && note.data) || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
     return (
-      <Dialog className="settings" title={dialog.title} onDone={requestClose}>
+      <Dialog className="settings" title="Share" onDone={closeDialog}>
         <TabPanels tabNames={shareTabs}>
           <div>
             <div className="settings-group">
@@ -222,4 +215,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note,
 });
 
-export default connect(mapStateToProps, { updateNoteTags })(ShareDialog);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  closeDialog: () => dispatch(closeDialog()),
+  publishNote: (note, shouldPublish) =>
+    dispatch(publishNote(note, shouldPublish)),
+  updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShareDialog);

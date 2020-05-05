@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
 import format from 'date-fns/format';
 
-import appState from '../flux/app-state';
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
 import CrossIcon from '../icons/cross';
@@ -16,6 +14,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type OwnProps = {
+  markdownEnabled: boolean;
   noteBucket: T.Bucket<T.Note>;
 };
 
@@ -27,21 +26,14 @@ type StateProps = {
 
 type DispatchProps = {
   onMarkdownNote: (note: T.NoteEntity, isMarkdown: boolean) => any;
-  onPinNote: (note: T.NoteEntity, shouldPinNote: boolean) => any;
   onOutsideClick: () => any;
+  onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteInfo extends Component<Props> {
   static displayName = 'NoteInfo';
-
-  static propTypes = {
-    markdownEnabled: PropTypes.bool,
-    onPinNote: PropTypes.func.isRequired,
-    onMarkdownNote: PropTypes.func.isRequired,
-    onOutsideClick: PropTypes.func.isRequired,
-  };
 
   handleClickOutside = () => this.props.onOutsideClick();
 
@@ -208,25 +200,17 @@ function characterCount(content: string) {
   );
 }
 
-const { markdownNote, pinNote } = appState.actionCreators;
-
 const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
   note,
   isMarkdown: !!note && note.data.systemTags.includes('markdown'),
   isPinned: !!note && note.data.systemTags.includes('pinned'),
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
-  dispatch,
-  { noteBucket }
-) => ({
-  onMarkdownNote: (note, markdown = true) => {
-    dispatch(markdownNote({ markdown, note, noteBucket }));
-    // Update global setting to set markdown flag for new notes
-    dispatch(actions.settings.setMarkdown(markdown));
-  },
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+  onMarkdownNote: (note, markdown = true) =>
+    dispatch(actions.ui.markdownNote(note, markdown)),
   onOutsideClick: () => dispatch(actions.ui.toggleNoteInfo()),
-  onPinNote: (note, pin) => dispatch(pinNote({ noteBucket, note, pin })),
+  onPinNote: (note, pin) => dispatch(actions.ui.pinNote(note, pin)),
 });
 
 export default connect(

@@ -41,7 +41,7 @@
 - [ ] Searching in the search field highlights matches in the note editor during preview
 - [ ] Clearing the search field immediately updates filtered notes
 - [ ] Clicking on different tags or `All Notes` or `Trash` immediately updates filtered notes
-- [ ] Can search by keyword, filtering debounced
+- [ ] Can search by keyword, filtered instantly
 - [ ] Tag auto-completes appear when typing in search field
 - [ ] Typing `tag:` does not result a list of all tags in the autocompleter
 - [ ] Typing `tag:` and something else, like `tag:te` results in autocomplete results starting with that something else, e.g. `test`

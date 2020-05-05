@@ -50,16 +50,23 @@ export type OwnProps = {
   noteBucket: object;
 };
 
+export type StateProps = S.State & {
+  authIsPending: boolean;
+  isAuthorized: boolean;
+};
+
 export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
   focusSearchField: () => any;
   selectNote: (note: T.NoteEntity) => any;
+  showDialog: (type: T.DialogType) => any;
+  trashNote: (previousIndex: number) => any;
 };
 
-export type Props = DispatchProps;
+export type Props = OwnProps & StateProps & DispatchProps;
 
-const mapStateToProps = state => ({
+const mapStateToProps: S.MapState<StateProps> = state => ({
   ...state,
   authIsPending: selectors.auth.authIsPending(state),
   isAuthorized: selectors.auth.isAuthorized(state),
@@ -91,7 +98,6 @@ const mapDispatchToProps: S.MapDispatch<
         'resetFontSize',
         'setLineLength',
         'setNoteDisplay',
-        'setMarkdown',
         'setAccountName',
         'toggleAutoHideMenuBar',
         'toggleFocusMode',
@@ -100,6 +106,8 @@ const mapDispatchToProps: S.MapDispatch<
       dispatch
     ),
     closeNote: () => dispatch(closeNote()),
+    remoteNoteUpdate: (noteId, data) =>
+      dispatch(actions.simperium.remoteNoteUpdate(noteId, data)),
     loadTags: () => dispatch(loadTags()),
     setSortType: thenReloadNotes(settingsActions.setSortType),
     toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
@@ -114,6 +122,8 @@ const mapDispatchToProps: S.MapDispatch<
       dispatch(toggleSimperiumConnectionStatus(connected)),
     selectNote: note => dispatch(actions.ui.selectNote(note)),
     setUnsyncedNoteIds: noteIds => dispatch(setUnsyncedNoteIds(noteIds)),
+    showDialog: dialog => dispatch(actions.ui.showDialog(dialog)),
+    trashNote: previousIndex => dispatch(actions.ui.trashNote(previousIndex)),
   };
 };
 
@@ -226,8 +236,8 @@ export const App = connect(
       }
     }
 
-    handleShortcut = event => {
-      const { ctrlKey, key, metaKey } = event;
+    handleShortcut = (event: KeyboardEvent) => {
+      const { code, ctrlKey, metaKey, shiftKey } = event;
 
       // Is either cmd or ctrl pressed? (But not both)
       const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
@@ -235,7 +245,8 @@ export const App = connect(
       // open tag list
       if (
         cmdOrCtrl &&
-        't' === key.toLowerCase() &&
+        shiftKey &&
+        'KeyT' === code &&
         !this.props.showNavigation
       ) {
         this.props.openTagList();
@@ -243,6 +254,54 @@ export const App = connect(
         event.stopPropagation();
         event.preventDefault();
         return false;
+      }
+
+      if (cmdOrCtrl && !shiftKey && 'KeyF' === code) {
+        this.props.focusSearchField();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+        this.props.toggleFocusMode();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
+        this.props.actions.newNote({
+          noteBucket: this.props.noteBucket,
+        });
+        analytics.tracks.recordEvent('list_note_created');
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      if (this.props.ui.note && cmdOrCtrl && 'Delete' === code) {
+        this.props.actions.trashNote({
+          noteBucket: this.props.noteBucket,
+          note: this.props.ui.note,
+          previousIndex: this.props.appState.notes.findIndex(
+            ({ id }) => this.props.ui.note.id === id
+          ),
+        });
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+
+      // prevent default browser behavior for search
+      // will bubble up from note-detail
+      if (cmdOrCtrl && 'KeyG' === code) {
+        event.stopPropagation();
+        event.preventDefault();
       }
 
       return true;
@@ -261,6 +320,20 @@ export const App = connect(
         return this.props.focusSearchField();
       }
 
+      if ('showDialog' === command.action) {
+        return this.props.showDialog(command.dialog);
+      }
+
+      if ('trashNote' === command.action && this.props.ui.note) {
+        return this.props.actions.trashNote({
+          noteBucket: this.props.noteBucket,
+          note: this.props.ui.note,
+          previousIndex: this.props.appState.notes.findIndex(
+            ({ id }) => this.props.ui.note.id === id
+          ),
+        });
+      }
+
       const canRun = overEvery(
         isObject,
         o => o.action !== null,
@@ -270,7 +343,6 @@ export const App = connect(
       if (canRun(command)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
         if (command.action === 'newNote') {
-          this.props.createNote();
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
@@ -332,6 +404,9 @@ export const App = connect(
         selectNote,
         ui: { note },
       } = this.props;
+
+      this.props.remoteNoteUpdate(noteId, data);
+
       if (note && noteId === note.id) {
         noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
           if (e) {
@@ -395,15 +470,6 @@ export const App = connect(
 
     syncNote = noteId => {
       this.props.noteBucket.touch(noteId);
-    };
-
-    // gets the index of the note located before the currently selected one
-    getPreviousNoteIndex = note => {
-      const previousIndex = this.props.ui.filteredNotes.findIndex(
-        ({ id }) => note.id === id
-      );
-
-      return Math.max(previousIndex - 1, 0);
     };
 
     syncActivityHooks = data => {
@@ -497,8 +563,6 @@ export const App = connect(
             appProps={this.props}
             buckets={{ noteBucket, preferencesBucket, tagBucket }}
             themeClass={themeClass}
-            closeDialog={this.props.actions.closeDialog}
-            dialogs={this.props.appState.dialogs}
             isElectron={isElectron()}
             isMacApp={isMacApp}
           />

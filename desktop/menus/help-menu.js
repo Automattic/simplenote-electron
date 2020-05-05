@@ -4,11 +4,17 @@ const menuItems = require('./menu-items');
 const platform = require('../detect/platform');
 const build = require('../detect/build');
 
+const { appCommandSender } = require('./utils');
+
 const submenu = [
   {
     label: 'Help && &Support',
     accelerator: platform.isLinux() ? 'F1' : null,
     click: () => shell.openExternal('https://simplenote.com/help'),
+  },
+  {
+    label: '&Keyboard Shortcuts',
+    click: appCommandSender({ action: 'showDialog', dialog: 'KEYBINDINGS' }),
   },
   { type: 'separator' },
   {
