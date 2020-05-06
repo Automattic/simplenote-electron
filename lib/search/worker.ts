@@ -103,6 +103,7 @@ export const updateNote = (noteId: T.EntityId, data) => {
     {
       ...data,
       content: data.content.toLocaleLowerCase(),
+      deleted: !!data.deleted,
       tags: noteTags,
     },
   ]);

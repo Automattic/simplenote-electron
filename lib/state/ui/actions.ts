@@ -60,6 +60,11 @@ export const publishNote: A.ActionCreator<A.SetSystemTag> = (
   shouldHaveTag: shoudlPublish,
 });
 
+export const openNote: A.ActionCreator<A.OpenNote> = (note: T.NoteEntity) => ({
+  type: 'OPEN_NOTE',
+  note,
+});
+
 export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
   type: 'OPEN_TAG',
   tag,
@@ -133,6 +138,10 @@ export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
 
 export const toggleNavigation: A.ActionCreator<A.ToggleNavigation> = () => ({
   type: 'NAVIGATION_TOGGLE',
+});
+
+export const toggleNoteList: A.ActionCreator<A.ToggleNoteList> = () => ({
+  type: 'NOTE_LIST_TOGGLE',
 });
 
 export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({
