@@ -1,39 +1,77 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
-export const createNote: A.ActionCreator<A.CreateNote> = () => ({
-  type: 'CREATE_NOTE',
+export const closeDialog: A.ActionCreator<A.CloseDialog> = () => ({
+  type: 'CLOSE_DIALOG',
 });
 
 export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
 });
 
-export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = (
-  previousIndex: number
-) => ({
+export const createNote: A.ActionCreator<A.CreateNote> = () => ({
+  type: 'CREATE_NOTE',
+});
+
+export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = () => ({
   type: 'DELETE_NOTE_FOREVER',
-  previousIndex,
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   notes: T.NoteEntity[],
-  previousIndex: number
+  tags: T.TagEntity[]
 ) => ({
   type: 'FILTER_NOTES',
   notes,
-  previousIndex,
+  tags,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
 });
 
-export const restoreNote: A.ActionCreator<A.RestoreNote> = (
-  previousIndex: number
+export const markdownNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  isMarkdown: boolean
 ) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'markdown',
+  shouldHaveTag: isMarkdown,
+});
+
+export const pinNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  shouldPin: boolean
+) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'pinned',
+  shouldHaveTag: shouldPin,
+});
+
+export const publishNote: A.ActionCreator<A.SetSystemTag> = (
+  note: T.NoteEntity,
+  shoudlPublish: boolean
+) => ({
+  type: 'SET_SYSTEM_TAG',
+  note,
+  tagName: 'published',
+  shouldHaveTag: shoudlPublish,
+});
+
+export const openNote: A.ActionCreator<A.OpenNote> = (note: T.NoteEntity) => ({
+  type: 'OPEN_NOTE',
+  note,
+});
+
+export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
+  type: 'OPEN_TAG',
+  tag,
+});
+
+export const restoreNote: A.ActionCreator<A.RestoreNote> = () => ({
   type: 'RESTORE_NOTE',
-  previousIndex,
 });
 
 export const selectRevision: A.ActionCreator<A.SelectRevision> = (
@@ -43,11 +81,26 @@ export const selectRevision: A.ActionCreator<A.SelectRevision> = (
   revision,
 });
 
+export const selectTrash: A.ActionCreator<A.SelectTrash> = () => ({
+  type: 'SELECT_TRASH',
+});
+
 export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
   noteIds: T.EntityId[]
 ) => ({
   type: 'SET_UNSYNCED_NOTE_IDS',
   noteIds,
+});
+
+export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
+  type: 'SHOW_ALL_NOTES',
+});
+
+export const showDialog: A.ActionCreator<A.ShowDialog> = (
+  dialog: T.DialogType
+) => ({
+  type: 'SHOW_DIALOG',
+  dialog,
 });
 
 export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (
@@ -87,6 +140,10 @@ export const toggleNavigation: A.ActionCreator<A.ToggleNavigation> = () => ({
   type: 'NAVIGATION_TOGGLE',
 });
 
+export const toggleNoteList: A.ActionCreator<A.ToggleNoteList> = () => ({
+  type: 'NOTE_LIST_TOGGLE',
+});
+
 export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({
   type: 'NOTE_INFO_TOGGLE',
 });
@@ -102,9 +159,6 @@ export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
   type: 'TAG_EDITING_TOGGLE',
 });
 
-export const trashNote: A.ActionCreator<A.TrashNote> = (
-  previousIndex: number
-) => ({
+export const trashNote: A.ActionCreator<A.TrashNote> = () => ({
   type: 'TRASH_NOTE',
-  previousIndex,
 });

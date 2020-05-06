@@ -91,25 +91,10 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   return filterAtMost(tags, matcher, 5);
 };
 
-let lastTags = null;
-let lastQuery = null;
-let lastMatches = [];
-export const getMatchingTags = (tags, query) => {
-  if (lastTags === tags && lastQuery === query) {
-    return lastMatches;
-  }
-
-  lastTags = tags;
-  lastQuery = query;
-  lastMatches = filterTags(tags, query);
-  return lastMatches;
-};
-
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  ui: { searchQuery },
+  ui: { searchQuery, tagSuggestions },
 }) => ({
-  filteredTags: getMatchingTags(state.tags, searchQuery),
+  filteredTags: tagSuggestions,
   searchQuery,
 });
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import analytics from './analytics';
 import appState from './flux/app-state';
 import { toggleFocusMode } from './state/settings/actions';
-import DialogTypes from '../shared/dialog-types';
+import { showDialog } from './state/ui/actions';
 
 import * as S from './state';
 import * as T from './types';
@@ -24,45 +24,32 @@ type NoteChanger = {
   note: T.NoteEntity;
 };
 
-type ListChanger = NoteChanger & { previousIndex: number };
-
 type DispatchProps = {
-  deleteNoteForever: (args: ListChanger) => any;
-  restoreNote: (args: ListChanger) => any;
+  deleteNoteForever: (args: NoteChanger) => any;
+  restoreNote: (args: NoteChanger) => any;
   shareNote: () => any;
+  showDialog: () => any;
   toggleFocusMode: () => any;
-  trashNote: (args: ListChanger) => any;
+  trashNote: (args: NoteChanger) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteToolbarContainer extends Component<Props> {
-  // Gets the index of the note located before the currently selected one
-  getPreviousNoteIndex = (note: T.NoteEntity) => {
-    const previousIndex = this.props.notes.findIndex(
-      ({ id }) => note.id === id
-    );
-
-    return Math.max(previousIndex - 1, 0);
-  };
-
   onTrashNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.trashNote({ noteBucket, note, previousIndex });
+    this.props.trashNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_deleted');
   };
 
   onDeleteNoteForever = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.deleteNoteForever({ noteBucket, note, previousIndex });
+    this.props.deleteNoteForever({ noteBucket, note });
   };
 
   onRestoreNote = (note: T.NoteEntity) => {
     const { noteBucket } = this.props;
-    const previousIndex = this.getPreviousNoteIndex(note);
-    this.props.restoreNote({ noteBucket, note, previousIndex });
+    this.props.restoreNote({ noteBucket, note });
     analytics.tracks.recordEvent('editor_note_restored');
   };
 
@@ -97,17 +84,12 @@ const mapStateToProps: S.MapState<StateProps> = ({
   notes: filteredNotes,
 });
 
-const {
-  deleteNoteForever,
-  restoreNote,
-  showDialog,
-  trashNote,
-} = appState.actionCreators;
+const { deleteNoteForever, restoreNote, trashNote } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
   deleteNoteForever: args => dispatch(deleteNoteForever(args)),
   restoreNote: args => dispatch(restoreNote(args)),
-  shareNote: () => dispatch(showDialog({ dialog: DialogTypes.SHARE })),
+  shareNote: () => dispatch(showDialog('SHARE')),
   toggleFocusMode: () => dispatch(toggleFocusMode()),
   trashNote: args => dispatch(trashNote(args)),
 });

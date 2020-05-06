@@ -1,8 +1,7 @@
-import { get, partition, some } from 'lodash';
+import { get, partition } from 'lodash';
 import update from 'react-addons-update';
 import Debug from 'debug';
 import ActionMap from './action-map';
-import analytics from '../analytics';
 import actions from '../state/actions';
 
 import { AppState, State } from '../state';
@@ -10,34 +9,9 @@ import * as T from '../types';
 
 const debug = Debug('appState');
 
-const toggleSystemTag = (
-  note: T.NoteEntity,
-  systemTag: T.SystemTag,
-  shouldHaveTag: boolean
-) => {
-  const {
-    data: { systemTags = [] },
-  } = note;
-  const hasTagAlready = systemTags.includes(systemTag);
-
-  return hasTagAlready !== shouldHaveTag
-    ? {
-        ...note,
-        data: {
-          ...note.data,
-          systemTags: shouldHaveTag
-            ? [...systemTags, systemTag]
-            : systemTags.filter(tag => tag !== systemTag),
-        },
-      }
-    : note;
-};
-
 const initialState: AppState = {
   notes: null,
   tags: [],
-  dialogs: [],
-  nextDialogKey: 0,
   unsyncedNoteIds: [], // note bucket only
 };
 
@@ -49,14 +23,13 @@ export const actionMap = new ActionMap({
       return update(state, {
         notes: { $set: null },
         tags: { $set: [] },
-        dialogs: { $set: [] },
       });
     },
 
     showAllNotesAndSelectFirst: {
       creator() {
         return (dispatch, getState) => {
-          dispatch(this.action('showAllNotes'));
+          dispatch(actions.ui.showAllNotes());
           dispatch(
             this.action('notesLoaded', {
               notes: getState().appState.notes,
@@ -64,75 +37,6 @@ export const actionMap = new ActionMap({
           );
         };
       },
-    },
-
-    showAllNotes(state: AppState) {
-      return update(state, {
-        tag: { $set: null },
-      });
-    },
-
-    selectTrash(state: AppState) {
-      return update(state, {
-        tag: { $set: null },
-      });
-    },
-
-    selectTagAndSelectFirstNote: {
-      creator({ tag }: { tag: T.TagEntity }) {
-        return (dispatch, getState) => {
-          dispatch(this.action('selectTag', { tag }));
-          dispatch(
-            this.action('notesLoaded', {
-              notes: getState().appState.notes,
-            })
-          );
-        };
-      },
-    },
-
-    selectTag(state: AppState, { tag }: { tag: T.TagEntity }) {
-      return update(state, {
-        tag: { $set: tag },
-      });
-    },
-
-    showDialog(state: AppState, { dialog }) {
-      const { type, multiple = false, title, ...dialogProps } = dialog;
-
-      // If there should only be one instance of the dialog in the stack
-      if (!multiple && some(state.dialogs, { type })) {
-        return;
-      }
-
-      const updateCommands = {
-        dialogs: {
-          $push: [
-            {
-              type,
-              multiple,
-              title,
-              key: state.nextDialogKey,
-              ...dialogProps,
-            },
-          ],
-        },
-        nextDialogKey: { $set: state.nextDialogKey + 1 },
-      };
-
-      return update(state, updateCommands);
-    },
-
-    closeDialog(state: AppState, { key }) {
-      var dialogs = state.dialogs;
-
-      for (let i = 0; i < dialogs.length; i++) {
-        if (dialogs[i].key === key) {
-          return update(state, {
-            dialogs: { $splice: [[i, 1]] },
-          });
-        }
-      }
     },
 
     newNote: {
@@ -144,7 +48,10 @@ export const actionMap = new ActionMap({
         content: string;
       }) {
         return (dispatch, getState: () => State) => {
-          const { appState: state, settings } = getState();
+          const {
+            settings,
+            ui: { openedTag },
+          } = getState();
           const timestamp = new Date().getTime() / 1000;
 
           // insert a new note into the store and select it
@@ -157,20 +64,14 @@ export const actionMap = new ActionMap({
               modificationDate: timestamp,
               shareURL: '',
               publishURL: '',
-              tags: ([] as T.TagName[]).concat(
-                state.tag ? state.tag.data.name : []
-              ),
+              tags: openedTag ? [openedTag.data.name] : [],
             },
             (e, note) => {
               if (e) {
                 return debug(`newNote: could not create note - ${e.message}`);
               }
-              dispatch(
-                this.action('loadAndSelectNote', {
-                  noteBucket,
-                  noteId: note.id,
-                })
-              );
+              dispatch(actions.ui.createNote());
+              setTimeout(() => dispatch(actions.ui.selectNote(note)), 500);
             }
           );
         };
@@ -234,48 +135,6 @@ export const actionMap = new ActionMap({
       },
     },
 
-    pinNote: {
-      creator({ noteBucket, note, pin: shouldPin }) {
-        const updated = toggleSystemTag(note, 'pinned', shouldPin);
-
-        if (note !== updated) {
-          noteBucket.update(note.id, updated.data);
-        }
-
-        return actions.ui.selectNote(updated);
-      },
-    },
-
-    markdownNote: {
-      creator({ noteBucket, note, markdown: shouldEnableMarkdown }) {
-        const updated = toggleSystemTag(note, 'markdown', shouldEnableMarkdown);
-
-        if (updated !== note) {
-          noteBucket.update(note.id, updated.data);
-        }
-
-        return actions.ui.selectNote(updated);
-      },
-    },
-
-    publishNote: {
-      creator({ noteBucket, note, publish: shouldPublish }) {
-        const updated = toggleSystemTag(note, 'published', shouldPublish);
-
-        if (updated !== note) {
-          noteBucket.update(note.id, updated.data);
-
-          if (shouldPublish) {
-            analytics.tracks.recordEvent('editor_note_published');
-          } else {
-            analytics.tracks.recordEvent('editor_note_unpublished');
-          }
-        }
-
-        return actions.ui.selectNote(updated);
-      },
-    },
-
     /**
      * A note is being changed from somewhere else! If the same
      * note is also open and being edited, we need to make sure
@@ -312,7 +171,6 @@ export const actionMap = new ActionMap({
       creator({
         noteBucket,
         note,
-        previousIndex,
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
@@ -321,7 +179,7 @@ export const actionMap = new ActionMap({
           if (note) {
             note.data.deleted = true;
             noteBucket.update(note.id, note.data);
-            dispatch(actions.ui.trashNote(previousIndex));
+            dispatch(actions.ui.trashNote());
           }
         };
       },
@@ -331,7 +189,6 @@ export const actionMap = new ActionMap({
       creator({
         noteBucket,
         note,
-        previousIndex,
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
@@ -340,7 +197,7 @@ export const actionMap = new ActionMap({
           if (note) {
             note.data.deleted = false;
             noteBucket.update(note.id, note.data);
-            dispatch(actions.ui.restoreNote(previousIndex));
+            dispatch(actions.ui.restoreNote());
           }
         };
       },
@@ -350,7 +207,6 @@ export const actionMap = new ActionMap({
       creator({
         noteBucket,
         note,
-        previousIndex,
       }: {
         noteBucket: T.Bucket<T.Note>;
         note: T.NoteEntity;
@@ -358,7 +214,7 @@ export const actionMap = new ActionMap({
         return dispatch => {
           noteBucket.remove(note.id);
           dispatch(this.action('loadNotes', { noteBucket }));
-          dispatch(actions.ui.deleteNoteForever(previousIndex));
+          dispatch(actions.ui.deleteNoteForever());
         };
       },
     },
@@ -375,28 +231,6 @@ export const actionMap = new ActionMap({
           dispatch(this.action('notesLoaded', { notes }));
         };
       },
-    },
-
-    tagsLoaded(
-      state: AppState,
-      { tags, sortTagsAlpha }: { tags: T.TagEntity[]; sortTagsAlpha: boolean }
-    ) {
-      tags = tags.slice();
-      if (sortTagsAlpha) {
-        // Sort tags alphabetically by 'name' value
-        tags.sort((a, b) => {
-          return get(a, 'data.name', '')
-            .toLowerCase()
-            .localeCompare(get(b, 'data.name', '').toLowerCase());
-        });
-      } else {
-        // Sort the tags by their 'index' value
-        tags.sort((a, b) => (a.data.index | 0) - (b.data.index | 0));
-      }
-
-      return update(state, {
-        tags: { $set: tags },
-      });
     },
 
     loadPreferences: {

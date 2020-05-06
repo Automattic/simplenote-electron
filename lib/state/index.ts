@@ -20,25 +20,23 @@ import { omit } from 'lodash';
 
 import appState from '../flux/app-state';
 
-import uiMiddleware from './ui/middleware';
+import { middleware as searchMiddleware } from '../search';
 import searchFieldMiddleware from './ui/search-field-middleware';
 import simperiumMiddleware from './simperium/middleware';
 
 import auth from './auth/reducer';
 import settings from './settings/reducer';
+import tags from './tags/reducer';
 import ui from './ui/reducer';
 
 import * as A from './action-types';
 import * as T from '../types';
 
 export type AppState = {
-  dialogs: unknown[];
-  nextDialogKey: number;
   notes: T.NoteEntity[] | null;
   preferences?: T.Preferences;
   revision: T.NoteEntity | null;
   showNavigation: boolean;
-  tags: T.TagEntity[];
   tag?: T.TagEntity;
   unsyncedNoteIds: T.EntityId[];
 };
@@ -47,6 +45,7 @@ export const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   auth,
   settings,
+  tags,
   ui,
 });
 
@@ -54,6 +53,7 @@ export type State = {
   appState: AppState;
   auth: ReturnType<typeof auth>;
   settings: ReturnType<typeof settings>;
+  tags: ReturnType<typeof tags>;
   ui: ReturnType<typeof ui>;
 };
 
@@ -71,7 +71,7 @@ export const store = createStore<State, A.ActionType, {}, {}>(
     }),
     applyMiddleware(
       thunk,
-      uiMiddleware,
+      searchMiddleware,
       searchFieldMiddleware,
       simperiumMiddleware
     )

@@ -1,6 +1,8 @@
 import debugFactory from 'debug';
 import actions from '../actions';
 
+import { toggleSystemTag } from '../domain/notes';
+
 import * as A from '../action-types';
 import * as S from '../';
 import * as T from '../../types';
@@ -47,6 +49,14 @@ export const middleware: S.Middleware = store => {
     const nextState = store.getState();
 
     switch (action.type) {
+      case 'SET_SYSTEM_TAG':
+        buckets.note.update(
+          action.note.id,
+          toggleSystemTag(action.note, action.tagName, action.shouldHaveTag)
+            .data
+        );
+        break;
+
       case 'REVISIONS_TOGGLE':
         fetchRevisions(store, nextState);
         break;

@@ -118,4 +118,8 @@ optgroup {
   padding-left: 2px;
   padding-right: 2px;
   color: $studio-white;
+
+  &[data-current-match='true'] {
+    background-color: $studio-yellow-60;
+  }
 }

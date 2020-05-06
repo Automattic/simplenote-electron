@@ -8,11 +8,12 @@
   }
 
   &:disabled {
-    opacity: .4;
+    opacity: 0.4;
   }
 }
 
 .icon-button__tooltip {
   position: relative;
   top: -8px;
+  font-size: 14px !important;
 }

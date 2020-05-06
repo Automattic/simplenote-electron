@@ -14,9 +14,9 @@ import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 
 import {
-  closeNote,
   toggleEditMode,
   toggleNoteInfo,
+  toggleNoteList,
   toggleRevisions,
 } from '../state/ui/actions';
 
@@ -24,9 +24,9 @@ import * as S from '../state';
 import * as T from '../types';
 
 type DispatchProps = {
-  closeNote: () => any;
   toggleEditMode: () => any;
   toggleNoteInfo: () => any;
+  toggleNoteList: () => any;
   toggleRevisions: () => any;
 };
 
@@ -87,8 +87,8 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
-              onClick={this.props.closeNote}
-              title="Back"
+              onClick={this.props.toggleNoteList}
+              title="Back • Ctrl+Shift+L"
             />
           </div>
           {markdownEnabled && (
@@ -118,7 +118,7 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<TrashIcon />}
               onClick={this.props.onTrashNote.bind(null, note)}
-              title="Trash"
+              title="Trash • Ctrl+Delete"
             />
           </div>
           <div className="note-toolbar__button">
@@ -141,8 +141,8 @@ export class NoteToolbar extends Component<Props> {
         <div className="note-toolbar__column-left">
           <IconButton
             icon={<BackIcon />}
-            onClick={this.props.closeNote}
-            title="Back"
+            onClick={this.props.toggleNoteList}
+            title="Back • Ctrl+Shift+L"
           />
         </div>
         <div className="note-toolbar__column-right">
@@ -185,9 +185,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeNote,
   toggleEditMode,
   toggleNoteInfo,
+  toggleNoteList,
   toggleRevisions,
 };
 

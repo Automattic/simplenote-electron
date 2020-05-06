@@ -45,13 +45,17 @@ export const SearchBar: Component<Props> = ({
   toggleNavigation,
 }) => (
   <div className="search-bar theme-color-border">
-    <IconButton icon={<MenuIcon />} onClick={toggleNavigation} title="Menu" />
+    <IconButton
+      icon={<MenuIcon />}
+      onClick={toggleNavigation}
+      title="Menu • Ctrl+Shift+T"
+    />
     <SearchField />
     <IconButton
       disabled={showTrash}
       icon={<NewNoteIcon />}
       onClick={() => onNewNote(withoutTags(searchQuery))}
-      title="New Note"
+      title="New Note • Ctrl+Shift+N"
     />
   </div>
 );
@@ -68,8 +72,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   { noteBucket }
 ) => ({
   onNewNote: (content: string) => {
-    dispatch(createNote());
-    dispatch(search(''));
     dispatch(newNote({ noteBucket, content }));
     analytics.tracks.recordEvent('list_note_created');
   },

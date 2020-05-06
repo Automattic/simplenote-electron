@@ -1,4 +1,3 @@
-const DialogTypes = require('../../shared/dialog-types');
 const menuItems = require('./menu-items');
 const platform = require('../detect/platform');
 const { appCommandSender } = require('./utils');
@@ -6,7 +5,6 @@ const { appCommandSender } = require('./utils');
 const submenu = [
   {
     label: '&New Note',
-    accelerator: 'CommandOrControl+N',
     click: appCommandSender({ action: 'newNote' }),
   },
   { type: 'separator' },
@@ -14,7 +12,7 @@ const submenu = [
     label: '&Import Notes…',
     click: appCommandSender({
       action: 'showDialog',
-      dialog: DialogTypes.IMPORT,
+      dialog: 'IMPORT',
     }),
   },
   {

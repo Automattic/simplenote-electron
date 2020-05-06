@@ -1,8 +1,27 @@
 import { combineReducers } from 'redux';
+
+import { toggleSystemTag } from '../domain/notes';
+
 import * as A from '../action-types';
 import * as T from '../../types';
 
 const emptyList: unknown[] = [];
+
+const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
+  switch (action.type) {
+    case 'CLOSE_DIALOG':
+      return state.slice(0, -1);
+
+    case 'SHOW_DIALOG':
+      return state.includes(action.dialog) ? state : [...state, action.dialog];
+
+    case 'App.authChanged':
+      return [];
+
+    default:
+      return state;
+  }
+};
 
 const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
@@ -20,12 +39,12 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'TAG_EDITING_TOGGLE':
       return !state;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
-    case 'App.selectTag':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'OPEN_TAG':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
     case 'NAVIGATION_TOGGLE':
-    case 'App.toggleNoteInfo':
       return false;
     default:
       return state;
@@ -42,11 +61,11 @@ const listTitle: A.Reducer<T.TranslatableString> = (
   action
 ) => {
   switch (action.type) {
-    case 'App.showAllNotes':
+    case 'SHOW_ALL_NOTES':
       return 'All Notes';
-    case 'App.selectTrash':
+    case 'SELECT_TRASH':
       return 'Trash';
-    case 'App.selectTag':
+    case 'OPEN_TAG':
       return action.tag.data.name;
     default:
       return state;
@@ -61,8 +80,21 @@ const noteRevisions: A.Reducer<T.NoteEntity[]> = (
     case 'STORE_REVISIONS':
       return action.revisions;
     case 'CREATE_NOTE':
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
       return emptyList as T.NoteEntity[];
+    default:
+      return state;
+  }
+};
+
+const openedTag: A.Reducer<T.TagEntity | null> = (state = null, action) => {
+  switch (action.type) {
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
+      return null;
+    case 'OPEN_TAG':
+      return action.tag;
     default:
       return state;
   }
@@ -76,6 +108,7 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
     case 'SELECT_REVISION':
       return action.revision;
     case 'CREATE_NOTE':
+    case 'OPEN_NOTE':
     case 'REVISIONS_TOGGLE':
     case 'SELECT_NOTE':
       return null;
@@ -84,27 +117,12 @@ const selectedRevision: A.Reducer<T.NoteEntity | null> = (
   }
 };
 
-const previousIndex: A.Reducer<number> = (state = -1, action) => {
+const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
-    case 'DELETE_NOTE_FOREVER':
-    case 'RESTORE_NOTE':
-    case 'TRASH_NOTE':
-      return action.previousIndex || state;
-    case 'App.selectTag':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
-      return -1;
-    default:
-      return state;
-  }
-};
+    case 'NOTE_LIST_TOGGLE':
+      return !state;
 
-const showNoteList: A.Reducer<boolean> = (state = false, action) => {
-  switch (action.type) {
-    case 'CLOSE_NOTE':
-      return true;
-
-    case 'SELECT_NOTE':
+    case 'OPEN_NOTE':
       return false;
 
     default:
@@ -117,8 +135,16 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   action
 ) => ('SET_UNSYNCED_NOTE_IDS' === action.type ? action.noteIds : state);
 
-const searchQuery: A.Reducer<string> = (state = '', action) =>
-  'SEARCH' === action.type ? action.searchQuery : state;
+const searchQuery: A.Reducer<string> = (state = '', action) => {
+  switch (action.type) {
+    case 'CREATE_NOTE':
+      return '';
+    case 'SEARCH':
+      return action.searchQuery;
+    default:
+      return state;
+  }
+};
 
 const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE' === action.type
@@ -143,12 +169,12 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'NAVIGATION_TOGGLE':
       return !state;
 
-    case 'App.selectTag':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'OPEN_TAG':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
       return false;
-    case 'App.showDialog':
-      if (action.dialog && action.dialog.type === 'Settings') {
+    case 'SHOW_DIALOG':
+      if (action.dialog === 'SETTINGS') {
         return false;
       }
       return state;
@@ -161,6 +187,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'REVISIONS_TOGGLE':
       return !state;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'CREATE_NOTE':
       return false;
@@ -171,11 +198,11 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
 
 const showTrash: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'App.selectTrash':
+    case 'SELECT_TRASH':
       return true;
     case 'CREATE_NOTE':
-    case 'App.selectTag':
-    case 'App.showAllNotes': {
+    case 'OPEN_TAG':
+    case 'SHOW_ALL_NOTES': {
       return false;
     }
     default:
@@ -186,14 +213,15 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
   switch (action.type) {
     case 'App.emptyTrash':
-    case 'App.selectTag':
-    case 'App.selectTrash':
-    case 'App.showAllNotes':
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
     case 'CLOSE_NOTE':
     case 'DELETE_NOTE_FOREVER':
     case 'RESTORE_NOTE':
     case 'TRASH_NOTE':
+    case 'OPEN_TAG':
       return null;
+    case 'OPEN_NOTE':
     case 'SELECT_NOTE':
       return action.options
         ? {
@@ -201,24 +229,27 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
             hasRemoteUpdate: action.options.hasRemoteUpdate,
           }
         : action.note;
-    case 'FILTER_NOTES':
-      // keep note if still in new filtered list otherwise try to choose first note in list
-      return state && action.notes.some(({ id }) => id === state.id)
-        ? state
-        : action.notes[Math.max(action.previousIndex, 0)] || null;
+    case 'SET_SYSTEM_TAG':
+      return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
     default:
       return state;
   }
 };
 
+const tagSuggestions: A.Reducer<T.TagEntity[]> = (
+  state = emptyList as T.TagEntity[],
+  action
+) => ('FILTER_NOTES' === action.type ? action.tags : state);
+
 export default combineReducers({
+  dialogs,
   editMode,
   editingTags,
   filteredNotes,
   listTitle,
   note,
   noteRevisions,
-  previousIndex,
+  openedTag,
   searchQuery,
   selectedRevision,
   showNavigation,
@@ -227,5 +258,6 @@ export default combineReducers({
   showRevisions,
   showTrash,
   simperiumConnected,
+  tagSuggestions,
   unsyncedNoteIds,
 });

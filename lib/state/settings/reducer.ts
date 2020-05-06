@@ -37,8 +37,10 @@ const reducer: A.Reducer<typeof initialState> = (
       };
     case 'setLineLength':
       return { ...state, lineLength: action.lineLength };
-    case 'setMarkdownEnabled':
-      return { ...state, markdownEnabled: action.markdownEnabled };
+    case 'SET_SYSTEM_TAG':
+      return 'markdown' === action.tagName
+        ? { ...state, markdownEnabled: action.shouldHaveTag }
+        : state;
     case 'setNoteDisplay':
       return { ...state, noteDisplay: action.noteDisplay };
     case 'setSortReversed':
