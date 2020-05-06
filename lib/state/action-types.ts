@@ -53,7 +53,7 @@ export type CreateNote = Action<'CREATE_NOTE'>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
-  { notes: T.NoteEntity[]; tags: T.TagEntity[] }
+  { notes: Set<T.EntityId>; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type OpenNote = Action<'OPEN_NOTE', { note: T.NoteEntity }>;
@@ -105,10 +105,19 @@ export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
 
+/*
+ * Data actions
+ */
+export type DataAction =
+  | Action<'ADD_NOTE', { noteId: T.EntityId; data: T.Note }>
+  | Action<'ALLOW_ANALYTICS', { analyticsAllowed: boolean }>
+  | Action<'REMOVE_NOTE', { noteId: T.EntityId }>;
+
 export type ActionType =
   | CloseNote
   | CloseDialog
   | CreateNote
+  | DataAction
   | DeleteNoteForever
   | LegacyAction
   | FilterNotes

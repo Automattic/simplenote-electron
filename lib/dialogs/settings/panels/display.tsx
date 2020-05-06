@@ -8,16 +8,13 @@ import RadioGroup from '../../radio-settings-group';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 
-import appState from '../../../flux/app-state';
 import * as settingsActions from '../../../state/settings/actions';
-import { loadTags } from '../../../state/domain/tags';
 
 const DisplayPanel = (props) => {
   const {
     actions,
     activeTheme,
     autoHideMenuBar,
-    buckets: { noteBucket },
     lineLength,
     loadNotes,
     noteDisplay,
@@ -25,11 +22,6 @@ const DisplayPanel = (props) => {
     sortTagsAlpha,
     sortType,
   } = props;
-
-  const withCallback = ({ action, callback }) => (arg) => {
-    action(arg);
-    callback();
-  };
 
   return (
     <Fragment>
@@ -60,10 +52,7 @@ const DisplayPanel = (props) => {
         title="Sort type"
         slug="sortType"
         activeSlug={sortType}
-        onChange={withCallback({
-          action: actions.setSortType,
-          callback: () => loadNotes(noteBucket),
-        })}
+        onChange={actions.setSortType}
         renderer={RadioGroup}
       >
         <Item title="Date modified" slug="modificationDate" />
@@ -75,10 +64,7 @@ const DisplayPanel = (props) => {
         title="Sort order"
         slug="sortOrder"
         activeSlug={sortIsReversed ? 'reversed' : ''}
-        onChange={withCallback({
-          action: actions.toggleSortOrder,
-          callback: () => loadNotes(noteBucket),
-        })}
+        onChange={actions.toggleSortOrder}
         renderer={ToggleGroup}
       >
         <Item title="Reversed" slug="reversed" />
@@ -88,10 +74,7 @@ const DisplayPanel = (props) => {
         title="Tags"
         slug="sortTagsAlpha"
         activeSlug={sortTagsAlpha ? 'alpha' : ''}
-        onChange={withCallback({
-          action: actions.toggleSortTagsAlpha,
-          callback: props.loadTags,
-        })}
+        onChange={actions.toggleSortTagsAlpha}
         renderer={ToggleGroup}
       >
         <Item title="Sort Alphabetically" slug="alpha" />
@@ -131,12 +114,7 @@ DisplayPanel.propTypes = {
   actions: PropTypes.object.isRequired,
   activeTheme: PropTypes.string.isRequired,
   autoHideMenuBar: PropTypes.bool,
-  buckets: PropTypes.shape({
-    noteBucket: PropTypes.object.isRequired,
-  }),
   lineLength: PropTypes.string.isRequired,
-  loadNotes: PropTypes.func.isRequired,
-  loadTags: PropTypes.func.isRequired,
   noteDisplay: PropTypes.string.isRequired,
   sortIsReversed: PropTypes.bool.isRequired,
   sortTagsAlpha: PropTypes.bool.isRequired,
@@ -156,11 +134,8 @@ const mapStateToProps = ({ settings }) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  const { loadNotes } = appState.actionCreators;
   return {
     actions: bindActionCreators(settingsActions, dispatch),
-    loadNotes: (noteBucket) => dispatch(loadNotes({ noteBucket })),
-    loadTags: () => dispatch(loadTags()),
   };
 };
 

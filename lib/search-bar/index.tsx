@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import appState from '../flux/app-state';
 import analytics from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
@@ -19,11 +18,8 @@ import { createNote, search, toggleNavigation } from '../state/ui/actions';
 import * as S from '../state';
 import * as T from '../types';
 
-const { newNote } = appState.actionCreators;
-
 type OwnProps = {
   onNewNote: Function;
-  noteBucket: object;
   onNoteOpened: Function;
 };
 
@@ -68,8 +64,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
-  dispatch,
-  { noteBucket }
+  dispatch
 ) => ({
   onNewNote: (content: string) => {
     dispatch(newNote({ noteBucket, content }));

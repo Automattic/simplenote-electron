@@ -4,7 +4,7 @@ import {
   CellMeasurer,
   CellMeasurerCache,
   List,
-  ListRowRenderer
+  ListRowRenderer,
 } from 'react-virtualized';
 import PublishIcon from '../icons/feed';
 import classNames from 'classnames';
@@ -16,7 +16,7 @@ import getNoteTitleAndPreview from './get-note-title-and-preview';
 import {
   decorateWith,
   checkboxDecorator,
-  makeFilterDecorator
+  makeFilterDecorator,
 } from './decorators';
 import TagSuggestions from '../tag-suggestions';
 
@@ -66,7 +66,7 @@ const heightCache = new CellMeasurerCache({
   // row height base is 21px for the title + 18px vertical padding
   // max preview lines is 4 lines of 24px
   defaultHeight: 21 + 18 + 24 * 4,
-  fixedWidth: true
+  fixedWidth: true,
 });
 
 /**
@@ -89,7 +89,7 @@ const renderNote = (
     noteDisplay,
     highlightedIndex,
     onPinNote,
-    openNote
+    openNote,
   }: {
     searchQuery: string;
     noteDisplay: T.ListDisplayMode;
@@ -132,7 +132,7 @@ const renderNote = (
   const classes = classNames('note-list-item', {
     'note-list-item-selected': highlightedIndex === index,
     'note-list-item-pinned': isPinned,
-    'published-note': isPublished
+    'published-note': isPublished,
   });
 
   const terms = getTerms(searchQuery).map(makeFilterDecorator);
@@ -199,7 +199,7 @@ const createCompositeNoteList = (
   return [
     'tag-suggestions',
     'notes-header',
-    ...(notes.length > 0 ? notes : ['no-notes' as NoteListItem])
+    ...(notes.length > 0 ? notes : ['no-notes' as NoteListItem]),
   ];
 };
 
@@ -223,7 +223,7 @@ export class NoteList extends Component<Props> {
       selectedNoteContent,
       showNoteList,
       showTrash,
-      tagResultsFound
+      tagResultsFound,
     } = nextProps;
     const { selectedIndex } = this.state;
 
@@ -382,7 +382,7 @@ export class NoteList extends Component<Props> {
     }
 
     if (!selectedNote && !index) {
-      const firstNote = notes.findIndex(item => item?.id);
+      const firstNote = notes.findIndex((item) => item?.id);
 
       return firstNote > -1 ? firstNote : null;
     }
@@ -391,7 +391,7 @@ export class NoteList extends Component<Props> {
       return index;
     }
 
-    const noteAt = notes.findIndex(item => item?.id === selectedNote?.id);
+    const noteAt = notes.findIndex((item) => item?.id === selectedNote?.id);
 
     if (selectedNote && noteAt > -1) {
       return noteAt;
@@ -415,7 +415,7 @@ export class NoteList extends Component<Props> {
       onPinNote,
       searchQuery,
       showTrash,
-      tagResultsFound
+      tagResultsFound,
     } = this.props;
     const { selectedIndex } = this.state;
 
@@ -434,7 +434,7 @@ export class NoteList extends Component<Props> {
       highlightedIndex,
       noteDisplay,
       onPinNote,
-      openNote
+      openNote,
     });
 
     const isEmptyList = compositeNoteList.length === 0;
@@ -488,7 +488,7 @@ export class NoteList extends Component<Props> {
 const { emptyTrash } = appState.actionCreators;
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
+  data: { notes },
   ui: {
     filteredNotes,
     note,
@@ -496,9 +496,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
     searchQuery,
     showNoteList,
     showTrash,
-    tagSuggestions
+    tagSuggestions,
   },
-  settings: { noteDisplay }
+  settings: { noteDisplay },
 }) => {
   /**
    * Although not used directly in the React component this value
@@ -533,7 +533,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     selectedNoteContent: get(note, 'data.content'),
     showNoteList,
     showTrash,
-    tagResultsFound: tagSuggestions.length
+    tagResultsFound: tagSuggestions.length,
   };
 };
 
@@ -549,7 +549,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   },
   onPinNote: (note, shouldPin) => dispatch(actions.ui.pinNote(note, shouldPin)),
   openNote: (note: T.NoteEntity) => dispatch(actions.ui.openNote(note)),
-  toggleNoteList: () => dispatch(actions.ui.toggleNoteList())
+  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

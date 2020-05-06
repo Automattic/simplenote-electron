@@ -16,7 +16,6 @@ export const middleware: S.Middleware = (store) => {
 
   const setFilteredNotes = (noteIds: Set<T.EntityId>) => {
     const {
-      appState,
       tags,
       ui: { searchQuery },
     } = store.getState();
@@ -25,7 +24,7 @@ export const middleware: S.Middleware = (store) => {
 
     store.dispatch(
       actions.ui.filterNotes(
-        appState.notes?.filter(({ id }) => noteIds.has(id)) || emptyList,
+        noteIds,
         tagSuggestions.length > 0 ? tagSuggestions : emptyList
       )
     );

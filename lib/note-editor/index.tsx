@@ -33,19 +33,16 @@ export class NoteEditor extends Component<Props> {
   static propTypes = {
     allTags: PropTypes.array.isRequired,
     isEditorActive: PropTypes.bool.isRequired,
-    noteBucket: PropTypes.object.isRequired,
     fontSize: PropTypes.number,
-    onUpdateContent: PropTypes.func.isRequired,
     revision: PropTypes.object,
-    syncNote: PropTypes.func.isRequired
   };
 
   static defaultProps = {
     note: {
       data: {
-        tags: []
-      }
-    }
+        tags: [],
+      },
+    },
   };
 
   componentDidMount() {
@@ -116,17 +113,17 @@ export class NoteEditor extends Component<Props> {
 
   editFieldHasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  storeEditorHasFocus = f => (this.editorHasFocus = f);
+  storeEditorHasFocus = (f) => (this.editorHasFocus = f);
 
-  storeFocusEditor = f => (this.focusNoteEditor = f);
+  storeFocusEditor = (f) => (this.focusNoteEditor = f);
 
-  storeFocusTagField = f => (this.focusTagField = f);
+  storeFocusTagField = (f) => (this.focusTagField = f);
 
-  storeTagFieldHasFocus = f => (this.tagFieldHasFocus = f);
+  storeTagFieldHasFocus = (f) => (this.tagFieldHasFocus = f);
 
   tagFieldHasFocus = () => this.tagFieldHasFocus && this.tagFieldHasFocus();
 
-  toggleShortcuts = doEnable => {
+  toggleShortcuts = (doEnable) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -135,7 +132,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note, noteBucket, fontSize } = this.props;
+    const { editMode, note, fontSize } = this.props;
     const revision = this.props.revision || note;
     const tags = (revision && revision.data && revision.data.tags) || [];
     const isTrashed = !!(note && note.data.deleted);
@@ -145,10 +142,7 @@ export class NoteEditor extends Component<Props> {
         <NoteDetail
           storeFocusEditor={this.storeFocusEditor}
           storeHasFocus={this.storeEditorHasFocus}
-          noteBucket={noteBucket}
           previewingMarkdown={this.markdownEnabled() && !editMode}
-          onChangeContent={this.props.onUpdateContent}
-          syncNote={this.props.syncNote}
           fontSize={fontSize}
         />
         {note && !isTrashed && (
@@ -166,24 +160,23 @@ export class NoteEditor extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
   settings,
   tags,
-  ui: { note, editMode, selectedRevision }
+  ui: { note, editMode, selectedRevision, showNavigation },
 }) => ({
   allTags: tags,
   fontSize: settings.fontSize,
   editMode,
-  isEditorActive: !state.showNavigation,
+  isEditorActive: !showNavigation,
   note,
-  revision: selectedRevision
+  revision: selectedRevision,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = dispatch => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   toggleNoteList: () => dispatch(toggleNoteList()),
   toggleMarkdown: (note, enableMarkdown) =>
     dispatch(markdownNote(note, enableMarkdown)),
-  toggleEditMode: () => dispatch(toggleEditMode())
+  toggleEditMode: () => dispatch(toggleEditMode()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

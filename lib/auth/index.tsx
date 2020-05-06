@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
@@ -8,25 +6,22 @@ import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 
-import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
 import { isElectron, isMac } from '../utils/platform';
-import { reset } from '../state/auth/actions';
-import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
 
-export class Auth extends Component {
-  static propTypes = {
-    authorizeUserWithToken: PropTypes.func.isRequired,
-    authPending: PropTypes.bool,
-    hasInvalidCredentials: PropTypes.bool,
-    hasLoginError: PropTypes.bool,
-    isAuthenticated: PropTypes.bool,
-    onAuthenticate: PropTypes.func.isRequired,
-    onCreateUser: PropTypes.func.isRequired,
-    resetErrors: PropTypes.func.isRequired,
-    saveWPToken: PropTypes.func.isRequired,
-  };
+type OwnProps = {
+  authPending: boolean;
+  hasInvalidCredentials: boolean;
+  hasLoginError: boolean;
+  login: (username: string, password: string) => any;
+  signup: (username: string, password: string) => any;
+  tokenLogin: (username: string, token: string) => any;
+  resetErrors: () => any;
+};
 
+type Props = OwnProps;
+
+export class Auth extends Component<Props> {
   state = {
     isCreatingAccount: false,
     passwordErrorMessage: null,
@@ -207,7 +202,7 @@ export class Auth extends Component {
       return;
     }
 
-    this.props.onAuthenticate(username, password);
+    this.props.login(username, password);
   };
 
   onWPLogin = () => {
@@ -283,11 +278,7 @@ export class Auth extends Component {
           return;
         }
 
-        const { authorizeUserWithToken, saveWPToken } = this.props;
-        authorizeUserWithToken(userEmail, simpToken);
-        if (wpccToken) {
-          saveWPToken(wpccToken);
-        }
+        this.props.tokenLogin(userEmail, simpToken);
       }
     );
   };
@@ -331,7 +322,7 @@ export class Auth extends Component {
       return;
     }
 
-    this.props.onCreateUser(username, password);
+    this.props.signup(username, password, true);
     this.setState({ passwordErrorMessage: null });
   };
 
@@ -344,15 +335,3 @@ export class Auth extends Component {
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  resetErrors: () => dispatch(reset()),
-  saveWPToken: (token) => dispatch(setWPToken(token)),
-});
-
-const mapStateToProps = (state) => ({
-  hasInvalidCredentials: hasInvalidCredentials(state),
-  hasLoginError: hasLoginError(state),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);

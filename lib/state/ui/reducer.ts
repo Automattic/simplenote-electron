@@ -6,6 +6,7 @@ import * as A from '../action-types';
 import * as T from '../../types';
 
 const emptyList: unknown[] = [];
+const emptySet = new Set();
 
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
@@ -226,7 +227,7 @@ const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
       return action.options
         ? {
             ...action.note,
-            hasRemoteUpdate: action.options.hasRemoteUpdate
+            hasRemoteUpdate: action.options.hasRemoteUpdate,
           }
         : action.note;
     case 'SET_SYSTEM_TAG':
@@ -259,5 +260,5 @@ export default combineReducers({
   showTrash,
   simperiumConnected,
   tagSuggestions,
-  unsyncedNoteIds
+  unsyncedNoteIds,
 });

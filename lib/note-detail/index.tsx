@@ -32,26 +32,22 @@ export class NoteDetail extends Component<Props> {
 
   static propTypes = {
     fontSize: PropTypes.number,
-    onChangeContent: PropTypes.func.isRequired,
-    syncNote: PropTypes.func.isRequired,
     note: PropTypes.object,
-    noteBucket: PropTypes.object.isRequired,
     previewingMarkdown: PropTypes.bool,
     spellCheckEnabled: PropTypes.bool.isRequired,
     storeFocusEditor: PropTypes.func,
-    storeHasFocus: PropTypes.func
+    storeHasFocus: PropTypes.func,
   };
 
   static defaultProps = {
     storeFocusEditor: noop,
-    storeHasFocus: noop
+    storeHasFocus: noop,
   };
 
   noteDetail = createRef<HTMLDivElement>();
   previewNode = createRef<HTMLDivElement>();
 
   componentWillMount() {
-    this.queueNoteSync = debounce(this.syncNote, syncDelay);
     document.addEventListener('copy', this.copyRenderedNote, false);
   }
 
@@ -59,9 +55,6 @@ export class NoteDetail extends Component<Props> {
     const { previewingMarkdown } = this.props;
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
-
-    // Ensures note gets saved if user abruptly quits the app
-    window.addEventListener('beforeunload', this.queueNoteSync.flush);
 
     window.addEventListener('keydown', this.handlePreviewKeydown, true);
 
@@ -72,17 +65,7 @@ export class NoteDetail extends Component<Props> {
 
   focusEditor = () => this.focusContentEditor && this.focusContentEditor();
 
-  isValidNote = note => note && note.id;
-
-  componentWillReceiveProps(nextProps) {
-    const isEditingNote = get(this.props, ['note', 'id'], false);
-    if (isEditingNote === false) {
-      return;
-    }
-    if (get(nextProps, ['note', 'id']) !== isEditingNote) {
-      this.queueNoteSync.flush();
-    }
-  }
+  isValidNote = (note) => note && note.id;
 
   componentDidUpdate(prevProps) {
     const { note, previewingMarkdown, searchQuery } = this.props;
@@ -102,12 +85,11 @@ export class NoteDetail extends Component<Props> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.queueNoteSync.flush);
     document.removeEventListener('copy', this.copyRenderedNote, false);
     window.removeEventListener('keydown', this.handlePreviewKeydown, true);
   }
 
-  copyRenderedNote = event => {
+  copyRenderedNote = (event) => {
     const { previewingMarkdown, showNoteInfo, isDialogOpen } = this.props;
     // Only copy the rendered content if we're in the preview mode
     if (!previewingMarkdown) {
@@ -135,8 +117,8 @@ export class NoteDetail extends Component<Props> {
 
   hasFocus = () => this.editorHasFocus && this.editorHasFocus();
 
-  onPreviewClick = event => {
-    const { note, onChangeContent, syncNote } = this.props;
+  onPreviewClick = (event) => {
+    const { note } = this.props;
 
     for (let node = event.target; node !== null; node = node.parentNode) {
       // open markdown preview links in a new window
@@ -150,9 +132,8 @@ export class NoteDetail extends Component<Props> {
       if (node.className === 'task-list-item') {
         event.preventDefault();
         toggleTask({ taskNode: node, text: note.data.content }).then(
-          newContent => {
-            onChangeContent(note, newContent);
-            syncNote(note.id);
+          (newContent) => {
+            window.alert('toggle the checklist');
           }
         );
         break;
@@ -160,27 +141,9 @@ export class NoteDetail extends Component<Props> {
     }
   };
 
-  saveNote = content => {
-    const { note } = this.props;
+  storeEditorHasFocus = (f) => (this.editorHasFocus = f);
 
-    if (!this.isValidNote(note)) return;
-
-    this.props.onChangeContent(note, content);
-    this.queueNoteSync();
-    analytics.tracks.recordEvent('editor_note_edited');
-  };
-
-  syncNote = () => {
-    const { note } = this.props;
-
-    if (!this.isValidNote(note)) return;
-
-    this.props.syncNote(note.id);
-  };
-
-  storeEditorHasFocus = f => (this.editorHasFocus = f);
-
-  storeFocusContentEditor = f => (this.focusContentEditor = f);
+  storeFocusContentEditor = (f) => (this.focusContentEditor = f);
 
   updateMarkdown = () => {
     if (
@@ -253,13 +216,12 @@ export class NoteDetail extends Component<Props> {
       note,
       fontSize,
       previewingMarkdown,
-      spellCheckEnabled
+      spellCheckEnabled,
     } = this.props;
 
     const content = {
       text: get(note, 'data.content', ''),
-      hasRemoteUpdate: get(note, 'hasRemoteUpdate', false),
-      version: get(note, 'version', undefined)
+      version: get(note, 'version', undefined),
     };
     const divStyle = { fontSize: `${fontSize}px` };
 
@@ -292,7 +254,6 @@ export class NoteDetail extends Component<Props> {
                   storeHasFocus={this.storeEditorHasFocus}
                   noteId={get(note, 'id', null)}
                   content={content}
-                  onChangeContent={this.saveNote}
                 />
               </div>
             )}
@@ -308,7 +269,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ ui, settings }) => ({
   note: ui.selectedRevision || ui.note,
   searchQuery: ui.searchQuery,
   showNoteInfo: ui.showNoteInfo,
-  spellCheckEnabled: settings.spellCheckEnabled
+  spellCheckEnabled: settings.spellCheckEnabled,
 });
 
 export default connect(mapStateToProps)(NoteDetail);
