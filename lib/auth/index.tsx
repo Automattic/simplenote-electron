@@ -25,13 +25,24 @@ export class Auth extends Component<Props> {
   state = {
     isCreatingAccount: false,
     passwordErrorMessage: null,
+    onLine: window.navigator.onLine,
   };
 
   componentDidMount() {
     if (this.usernameInput) {
       this.usernameInput.focus();
     }
+
+    window.addEventListener('online', this.setConnectivity, false);
+    window.addEventListener('offline', this.setConnectivity, false);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.setConnectivity, false);
+    window.removeEventListener('offline', this.setConnectivity, false);
+  }
+
+  setConnectivity = () => this.setState({ onLine: window.navigator.onLine });
 
   render() {
     // Don't render this component when running on the web
@@ -62,7 +73,9 @@ export class Auth extends Component<Props> {
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onLogin}>
           <h1>{buttonLabel}</h1>
-
+          {!this.state.onLine && (
+            <p className="login__auth-message is-error">Offline</p>
+          )}
           {this.props.hasInvalidCredentials && (
             <p
               className="login__auth-message is-error"
@@ -116,6 +129,7 @@ export class Auth extends Component<Props> {
           <button
             id="login__login-button"
             className={submitClasses}
+            disabled={!this.state.onLine}
             onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
             type="submit"
           >

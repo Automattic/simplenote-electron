@@ -47,10 +47,10 @@ class AppWithoutAuth extends Component<Props, State> {
           }
           this.props.onAuth(user.access_token, username, false);
         })
-        .catch(({ message }: Error) => {
+        .catch((error: unknown) => {
           if (
-            'invalid password' === message ||
-            message.startsWith('unknown username:')
+            'invalid password' === error?.message ||
+            error?.message.startsWith('unknown username:')
           ) {
             this.setState({ authStatus: 'invalid-credentials' });
           } else {
