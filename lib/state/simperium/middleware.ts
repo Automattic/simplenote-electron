@@ -32,6 +32,10 @@ export const initSimperium = (
     }
   });
 
+  client.on('unauthorized', () => {
+    logout();
+  });
+
   const noteBucket = client.bucket('note');
 
   const fetchRevisions = (store: S.Store, state: S.State) => {
