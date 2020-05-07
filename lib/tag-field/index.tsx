@@ -249,7 +249,7 @@ export class TagField extends Component<Props, OwnState> {
           {tags.filter(negate(isEmailTag)).map((tag) => (
             <TagChip
               key={tag}
-              tag={tag}
+              tagName={tag}
               selected={tag === selectedTag}
               onSelect={this.selectTag}
             />

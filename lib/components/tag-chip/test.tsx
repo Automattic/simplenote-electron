@@ -8,7 +8,7 @@ describe('TagChip', () => {
   it('should select tag when clicked', () => {
     const selectIt = jest.fn();
 
-    const chip = mount(<TagChip tag="spline" onSelect={selectIt} />);
+    const chip = mount(<TagChip tagName="spline" onSelect={selectIt} />);
 
     expect(selectIt).not.toHaveBeenCalled();
     chip.simulate('click');
@@ -16,19 +16,19 @@ describe('TagChip', () => {
   });
 
   it('should not include the `selected` class by default', () => {
-    const chip = shallow(<TagChip tag="spline" />);
+    const chip = shallow(<TagChip tagName="spline" />);
 
     expect(chip.hasClass('selected')).toBe(false);
   });
 
   it('should include the `selected` class when selected', () => {
-    const chip = shallow(<TagChip tag="spline" selected />);
+    const chip = shallow(<TagChip tagName="spline" selected />);
 
     expect(chip.hasClass('selected')).toBe(true);
   });
 
   it('should toggle the `selected` class with prop changes', () => {
-    const chip = shallow(<TagChip tag="spline" />);
+    const chip = shallow(<TagChip tagName="spline" />);
 
     expect(chip.hasClass('selected')).toBe(false);
 
@@ -42,7 +42,7 @@ describe('TagChip', () => {
   });
 
   it('should not introduce visual regressions', () => {
-    const component = renderer.create(<TagChip tag="spline" />).toJSON();
+    const component = renderer.create(<TagChip tagName="spline" />).toJSON();
 
     expect(component).toMatchSnapshot();
   });
