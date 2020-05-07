@@ -2,6 +2,7 @@ import './utils/ensure-platform-support';
 
 import { parse } from 'cookie';
 
+import analytics from './analytics';
 import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
 import { isElectron } from './utils/platform';
@@ -44,6 +45,7 @@ const run = (
     import('./boot-with-auth').then(({ bootWithToken }) => {
       bootWithToken(
         () => {
+          analytics.tracks.recordEvent('user_signed_out');
           localStorage.removeItem('stored_user');
           localStorage.removeItem('simpleNote');
           indexedDB.deleteDatabase('ghost');
@@ -67,6 +69,8 @@ const run = (
           'stored_user',
           JSON.stringify({ accessToken: token, username })
         );
+
+        analytics.tracks.recordEvent('user_signed_in');
 
         run(token, username, false);
       }
