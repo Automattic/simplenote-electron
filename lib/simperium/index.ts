@@ -31,7 +31,7 @@ function BrowserClient({ appID, token, bucketConfig, database, version }) {
   let objectStoreProvider = this.bucketDB.provider();
   this.ghostStore = ghost_store;
 
-  this.client = simperium(appID, token, {
+  this.client = simperium<'note' | 'preferences' | 'tag'>(appID, token, {
     ghostStoreProvider: ghost_store,
     objectStoreProvider: function (bucket) {
       var store = objectStoreProvider.apply(null, arguments);

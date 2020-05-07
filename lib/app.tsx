@@ -5,13 +5,10 @@ import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import appState from './flux/app-state';
 import { loadTags } from './state/domain/tags';
-import reduxActions from './state/actions';
-import selectors from './state/selectors';
 import browserShell from './browser-shell';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
-import Auth from './auth';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { getIpcRenderer } from './utils/electron';
@@ -42,11 +39,6 @@ export type OwnProps = {
   noteBucket: object;
 };
 
-export type StateProps = S.State & {
-  authIsPending: boolean;
-  isAuthorized: boolean;
-};
-
 export type DispatchProps = {
   createNote: () => any;
   closeNote: () => any;
@@ -56,13 +48,9 @@ export type DispatchProps = {
   trashNote: (previousIndex: number) => any;
 };
 
-export type Props = OwnProps & StateProps & DispatchProps;
+export type Props = OwnProps & DispatchProps;
 
-const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  ...state,
-  authIsPending: selectors.auth.authIsPending(state),
-  isAuthorized: selectors.auth.isAuthorized(state),
-});
+const mapStateToProps: S.MapState<S.State> = (state) => state;
 
 const mapDispatchToProps: S.MapDispatch<
   DispatchProps,
@@ -106,9 +94,7 @@ const mapDispatchToProps: S.MapDispatch<
     toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
     createNote: () => dispatch(createNote()),
     openTagList: () => dispatch(toggleNavigation()),
-    resetAuth: () => dispatch(reduxActions.auth.reset()),
     selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
-    setAuthorized: () => dispatch(reduxActions.auth.setAuthorized()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
@@ -129,29 +115,15 @@ export const App = connect(
     static propTypes = {
       actions: PropTypes.object.isRequired,
       appState: PropTypes.object.isRequired,
-      authIsPending: PropTypes.bool.isRequired,
-      authorizeUserWithToken: PropTypes.func.isRequired,
       client: PropTypes.object.isRequired,
-      isAuthorized: PropTypes.bool.isRequired,
       isDevConfig: PropTypes.bool.isRequired,
       isSmallScreen: PropTypes.bool.isRequired,
       loadTags: PropTypes.func.isRequired,
-      onAuthenticate: PropTypes.func.isRequired,
-      onCreateUser: PropTypes.func.isRequired,
       openTagList: PropTypes.func.isRequired,
-      onSignOut: PropTypes.func.isRequired,
       settings: PropTypes.object.isRequired,
       preferencesBucket: PropTypes.object.isRequired,
-      resetAuth: PropTypes.func.isRequired,
-      setAuthorized: PropTypes.func.isRequired,
       systemTheme: PropTypes.string.isRequired,
       tagBucket: PropTypes.object.isRequired,
-    };
-
-    static defaultProps = {
-      onAuthenticate: () => {},
-      onCreateUser: () => {},
-      onSignOut: () => {},
     };
 
     UNSAFE_componentWillMount() {
@@ -341,21 +313,9 @@ export const App = connect(
 
     onAuthChanged = () => {
       const {
-        actions,
         appState: { accountName },
-        client,
-        resetAuth,
-        setAuthorized,
       } = this.props;
 
-      actions.authChanged();
-
-      if (!client.isAuthorized()) {
-        this.props.closeNote();
-        return resetAuth();
-      }
-
-      setAuthorized();
       analytics.initialize(accountName);
       this.onLoadPreferences();
 
@@ -487,8 +447,6 @@ export const App = connect(
     render() {
       const {
         appState: state,
-        authIsPending,
-        isAuthorized,
         isDevConfig,
         noteBucket,
         preferencesBucket,
@@ -515,29 +473,19 @@ export const App = connect(
       return (
         <div className={appClasses}>
           {isDevConfig && <DevBadge />}
-          {isAuthorized ? (
-            <div className={mainClasses}>
-              {showNavigation && <NavigationBar />}
-              <AppLayout
-                isFocusMode={settings.focusModeEnabled}
-                isNavigationOpen={showNavigation}
-                isNoteInfoOpen={showNoteInfo}
-                isSmallScreen={isSmallScreen}
-                noteBucket={noteBucket}
-                onUpdateContent={this.onUpdateContent}
-                syncNote={this.syncNote}
-              />
-              {showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
-            </div>
-          ) : (
-            <Auth
-              authPending={authIsPending}
-              isAuthenticated={isAuthorized}
-              onAuthenticate={this.props.onAuthenticate}
-              onCreateUser={this.props.onCreateUser}
-              authorizeUserWithToken={this.props.authorizeUserWithToken}
+          <div className={mainClasses}>
+            {showNavigation && <NavigationBar />}
+            <AppLayout
+              isFocusMode={settings.focusModeEnabled}
+              isNavigationOpen={showNavigation}
+              isNoteInfoOpen={showNoteInfo}
+              isSmallScreen={isSmallScreen}
+              noteBucket={noteBucket}
+              onUpdateContent={this.onUpdateContent}
+              syncNote={this.syncNote}
             />
-          )}
+            {showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
+          </div>
           <DialogRenderer
             appProps={this.props}
             buckets={{ noteBucket, preferencesBucket, tagBucket }}

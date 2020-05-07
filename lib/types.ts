@@ -35,7 +35,7 @@ export type Tag = {
 export type TagEntity = Entity<Tag>;
 
 export type Preferences = {
-  analytics_enabled: boolean;
+  analytics_enabled: boolean | null;
 };
 
 export type PreferencesEntity = Entity<Preferences>;

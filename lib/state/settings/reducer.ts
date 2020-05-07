@@ -53,8 +53,6 @@ const reducer: A.Reducer<typeof initialState> = (
       return { ...state, spellCheckEnabled: action.spellCheckEnabled };
     case 'setTheme':
       return { ...state, theme: action.theme };
-    case 'setWPToken':
-      return { ...state, wpToken: action.token };
     default:
       return state;
   }

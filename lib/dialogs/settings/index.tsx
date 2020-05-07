@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import { isElectron } from '../../utils/platform';
@@ -12,9 +11,8 @@ import DisplayPanel from './panels/display';
 import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
-import { setWPToken } from '../../state/settings/actions';
 
-import { closeDialog } from '../../state/ui/actions';
+import { closeDialog, logout } from '../../state/ui/actions';
 
 import * as S from '../../state';
 
@@ -31,7 +29,7 @@ type OwnProps = {
 
 type DispatchProps = {
   closeDialog: () => any;
-  setWPToken: (token: string) => any;
+  logout: () => any;
 };
 
 type Props = OwnProps & DispatchProps;
@@ -63,24 +61,10 @@ export class SettingsDialog extends Component<Props> {
         );
 
       Promise.all(notes.map(noteHasSynced)).then(
-        () => this.signOut(), // All good, sign out now!
+        () => this.props.logout(), // All good, sign out now!
         () => this.showUnsyncedWarning() // Show a warning to the user
       );
     });
-  };
-
-  signOut = () => {
-    const { onSignOut, setWPToken } = this.props;
-
-    // Reset the WordPress Token
-    setWPToken(null);
-
-    onSignOut();
-
-    if (isElectron) {
-      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-      ipcRenderer.send('clearCookies');
-    }
   };
 
   showUnsyncedWarning = () => {
@@ -148,7 +132,7 @@ const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   closeDialog: () => dispatch(closeDialog()),
-  setWPToken: (token) => dispatch(setWPToken(token)),
+  logout: () => dispatch(logout()),
   toggleShareAnalyticsPreference: (args) => {
     dispatch(toggleShareAnalyticsPreference(args));
   },

@@ -75,11 +75,6 @@ export const setAccountName: A.ActionCreator<A.SetAccountName> = (
   accountName,
 });
 
-export const setWPToken: A.ActionCreator<A.SetWPToken> = (token) => ({
-  type: 'setWPToken',
-  token,
-});
-
 export const toggleFocusMode = () => (dispatch, getState) => {
   dispatch({
     type: 'setFocusMode',
