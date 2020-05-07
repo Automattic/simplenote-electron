@@ -84,7 +84,7 @@ export class SettingsDialog extends Component<Props> {
       })
       .then(({ response }) => {
         if (response === 0) {
-          this.props.onSignOut();
+          this.props.logout();
         } else if (response === 2) {
           viewExternalUrl('https://app.simplenote.com');
         }
@@ -100,7 +100,7 @@ export class SettingsDialog extends Component<Props> {
     );
 
     if (shouldReallySignOut) {
-      this.signOut();
+      this.props.logout();
     }
   };
 
