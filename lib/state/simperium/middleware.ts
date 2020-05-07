@@ -38,6 +38,24 @@ export const initSimperium = (
 
   const noteBucket = client.bucket('note');
 
+  if (createWelcomeNote) {
+    import(
+      /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
+    ).then(({ content }) => {
+      const now = Date.now() / 1000;
+      noteBucket.add({
+        content,
+        deleted: false,
+        systemTags: [],
+        creationDate: now,
+        modificationDate: now,
+        shareURL: '',
+        publishURL: '',
+        tags: [],
+      });
+    });
+  }
+
   const fetchRevisions = (store: S.Store, state: S.State) => {
     if (!state.ui.showRevisions || !state.ui.note) {
       return;

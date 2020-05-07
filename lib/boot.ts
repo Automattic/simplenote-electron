@@ -39,7 +39,7 @@ if (config.is_app_engine && !storedToken) {
 const run = (
   token: string | null,
   username: string | null,
-  createWelcomeNote: false
+  createWelcomeNote: boolean
 ) => {
   if (token) {
     import('./boot-with-auth').then(({ bootWithToken }) => {
@@ -72,7 +72,7 @@ const run = (
 
         analytics.tracks.recordEvent('user_signed_in');
 
-        run(token, username, false);
+        run(token, username, createWelcomeNote);
       }
     );
   }
