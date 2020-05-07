@@ -53,7 +53,7 @@ const run = (
             ipcRenderer.send('clearCookies');
           }
 
-          run(null, null, false);
+          history.go();
         },
         token,
         username,

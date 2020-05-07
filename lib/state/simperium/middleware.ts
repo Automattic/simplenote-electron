@@ -1,7 +1,6 @@
 import type { Client } from 'simperium';
 
 import debugFactory from 'debug';
-import appState from '../../flux/app-state';
 import actions from '../actions';
 
 import { toggleSystemTag } from '../domain/notes';
@@ -67,7 +66,8 @@ export const initSimperium = (
 
     switch (action.type) {
       case 'LOGOUT':
-        return logout();
+        client.reset().then(() => logout());
+        return result;
 
       case 'SET_SYSTEM_TAG':
         noteBucket.update(

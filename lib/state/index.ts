@@ -37,7 +37,7 @@ export type AppState = {
   unsyncedNoteIds: T.EntityId[];
 };
 
-export const reducers = combineReducers<State, A.ActionType>({
+const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
   settings,
   tags,

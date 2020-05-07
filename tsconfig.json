@@ -11,7 +11,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "types": ["dom", "jest"],
-    "typeRoots": ["./node_modules/@types", "./lib/typings"]
+    "typeRoots": ["./lib/typings", "./node_modules/@types"]
   },
   "include": ["lib/**/*"]
 }
