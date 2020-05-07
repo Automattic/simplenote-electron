@@ -60,6 +60,10 @@ export class SettingsDialog extends Component<Props> {
           )
         );
 
+      if (!notes) {
+        return this.props.logout();
+      }
+
       Promise.all(notes.map(noteHasSynced)).then(
         () => this.props.logout(), // All good, sign out now!
         () => this.showUnsyncedWarning() // Show a warning to the user
