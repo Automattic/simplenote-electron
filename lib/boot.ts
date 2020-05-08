@@ -5,25 +5,30 @@ import { parse } from 'cookie';
 import analytics from './analytics';
 import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
+import { boot as bootLoggingOut } from './logging-out';
 import { isElectron } from './utils/platform';
 
 const config = getConfig();
 
-const clearStorage = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('lastSyncedTime');
-  localStorage.removeItem('localQueue:note');
-  localStorage.removeItem('localQueue:preferences');
-  localStorage.removeItem('localQueue:tag');
-  localStorage.removeItem('simpleNote');
-  localStorage.removeItem('stored_user');
-  indexedDB.deleteDatabase('ghost');
-  indexedDB.deleteDatabase('simplenote');
-  if (isElectron) {
-    const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-    ipcRenderer.send('clearCookies');
-  }
-};
+const clearStorage = () =>
+  new Promise((resolve) => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('lastSyncedTime');
+    localStorage.removeItem('localQueue:note');
+    localStorage.removeItem('localQueue:preferences');
+    localStorage.removeItem('localQueue:tag');
+    localStorage.removeItem('simpleNote');
+    localStorage.removeItem('stored_user');
+    indexedDB.deleteDatabase('ghost');
+    indexedDB.deleteDatabase('simplenote');
+    if (isElectron) {
+      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
+      ipcRenderer.send('clearCookies');
+    }
+
+    // let everything settle
+    setTimeout(() => resolve(), 500);
+  });
 
 const forceReload = () => history.go();
 
@@ -90,9 +95,9 @@ const run = (
     import('./boot-with-auth').then(({ bootWithToken }) => {
       bootWithToken(
         () => {
+          bootLoggingOut();
           analytics.tracks.recordEvent('user_signed_out');
-          clearStorage();
-          forceReload();
+          clearStorage().then(() => forceReload());
         },
         token,
         username,
