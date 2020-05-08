@@ -97,7 +97,13 @@ const run = (
         () => {
           bootLoggingOut();
           analytics.tracks.recordEvent('user_signed_out');
-          clearStorage().then(() => forceReload());
+          clearStorage().then(() => {
+            if (window.webConfig?.signout) {
+              window.webConfig.signout(forceReload);
+            } else {
+              forceReload();
+            }
+          });
         },
         token,
         username,
