@@ -9,20 +9,65 @@ import { isElectron } from './utils/platform';
 
 const config = getConfig();
 
-const getStoredAccount = () => {
-  const cookie = parse(document.cookie);
-  if (config.is_app_engine && cookie?.token && cookie?.email) {
-    return [cookie.token, cookie.email];
+const clearStorage = () => {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('lastSyncedTime');
+  localStorage.removeItem('localQueue:note');
+  localStorage.removeItem('localQueue:preferences');
+  localStorage.removeItem('localQueue:tag');
+  localStorage.removeItem('simpleNote');
+  localStorage.removeItem('stored_user');
+  indexedDB.deleteDatabase('ghost');
+  indexedDB.deleteDatabase('simplenote');
+  if (isElectron) {
+    const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
+    ipcRenderer.send('clearCookies');
   }
+};
 
+const forceReload = () => history.go();
+
+const loadAccount = () => {
   const storedUserData = localStorage.getItem('stored_user');
   if (!storedUserData) {
     return [null, null];
   }
 
-  const storedUser = JSON.parse(storedUserData);
-  if (storedUser?.accessToken && storedUser?.username) {
+  try {
+    const storedUser = JSON.parse(storedUserData);
     return [storedUser.accessToken, storedUser.username];
+  } catch (e) {
+    return [null, null];
+  }
+};
+
+const saveAccount = (accessToken: string, username: string): void => {
+  localStorage.setItem(
+    'stored_user',
+    JSON.stringify({ accessToken, username })
+  );
+};
+
+const getStoredAccount = () => {
+  const [storedToken, storedUsername] = loadAccount();
+
+  // App Engine gets preference if it sends authentication details
+  const cookie = parse(document.cookie);
+  if (config.is_app_engine && cookie?.token && cookie?.email) {
+    if (cookie.email !== storedUsername) {
+      clearStorage();
+      saveAccount(cookie.token, cookie.email);
+    }
+    return [cookie.token, cookie.email];
+  }
+
+  if (storedToken) {
+    return [storedToken, storedUsername];
+  }
+
+  const accessToken = localStorage.getItem('access_token');
+  if (accessToken) {
+    return [accessToken, null];
   }
 
   return [null, null];
@@ -46,16 +91,8 @@ const run = (
       bootWithToken(
         () => {
           analytics.tracks.recordEvent('user_signed_out');
-          localStorage.removeItem('stored_user');
-          localStorage.removeItem('simpleNote');
-          indexedDB.deleteDatabase('ghost');
-          indexedDB.deleteDatabase('simplenote');
-          if (isElectron) {
-            const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-            ipcRenderer.send('clearCookies');
-          }
-
-          history.go();
+          clearStorage();
+          forceReload();
         },
         token,
         username,
@@ -65,13 +102,8 @@ const run = (
   } else {
     bootWithoutAuth(
       (token: string, username: string, createWelcomeNote: boolean) => {
-        localStorage.setItem(
-          'stored_user',
-          JSON.stringify({ accessToken: token, username })
-        );
-
+        saveAccount(token, username);
         analytics.tracks.recordEvent('user_signed_in');
-
         run(token, username, createWelcomeNote);
       }
     );

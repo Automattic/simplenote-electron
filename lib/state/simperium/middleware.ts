@@ -26,6 +26,12 @@ export const initSimperium = (
     const [prefix, authenticatedUsername] = message.split('0:auth:');
     debug(`authenticated: ${authenticatedUsername}`);
 
+    if (null === username) {
+      return store.dispatch(
+        actions.settings.setAccountName(authenticatedUsername)
+      );
+    }
+
     if (username !== authenticatedUsername) {
       debug(`was logged in as ${username} - logging out`);
       return logout();
