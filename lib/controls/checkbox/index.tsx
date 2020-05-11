@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 type OwnProps = React.HTMLProps<HTMLInputElement> & {
   className?: string;
-  onChange: () => {};
+  onChange: () => any;
 };
 
 function CheckboxControl({ className, ...props }: OwnProps) {
