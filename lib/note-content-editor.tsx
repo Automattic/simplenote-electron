@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  CompositeDecorator,
-  ContentState,
-  Editor,
-  EditorState,
-  Modifier,
-} from 'draft-js';
+import MultiDecorator from 'draft-js-multidecorators';
+import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import { debounce, get, has, invoke, noop } from 'lodash';
 
 import {
@@ -33,7 +28,6 @@ import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 import * as S from './state';
-import * as T from './types';
 
 const TEXT_DELIMITER = '\n';
 
@@ -88,7 +82,7 @@ class NoteContentEditor extends Component<Props> {
     const queryHasTerms = filterHasText(searchQuery);
 
     if (queryHasTerms) {
-      return new CompositeDecorator([
+      return new MultiDecorator([
         matchingTextDecorator(searchPattern(searchQuery)),
         checkboxDecorator(this.replaceRangeWithText),
       ]);
@@ -217,7 +211,7 @@ class NoteContentEditor extends Component<Props> {
 
     // If searchQuery changes, re-set decorators
     if (searchQuery !== prevProps.searchQuery) {
-      this.queueDecoratorUpdate(noteId);
+      this.queueDecoratorUpdate();
     }
 
     // If a remote change comes in, push it to the existing editor state.
@@ -226,18 +220,12 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  queueDecoratorUpdate = debounce((noteId: T.EntityId) => {
+  queueDecoratorUpdate = debounce(() => {
     const { searchQuery } = this.props;
     const { editorState } = this.state;
 
-    if (noteId === null) {
+    if (this.props.noteId === null) {
       // oops, we unselected a note - don't recompute
-      return;
-    }
-
-    if (noteId !== this.props.noteId) {
-      // oops, we switched notes - requeue
-      this.queueDecoratorUpdate(this.props.noteId);
       return;
     }
 
