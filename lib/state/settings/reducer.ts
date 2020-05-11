@@ -15,6 +15,7 @@ export const initialState = {
   sortTagsAlpha: false,
   sortType: 'modificationDate' as T.SortType,
   spellCheckEnabled: true,
+  systemSearch: false,
   theme: 'system' as T.Theme,
   wpToken: false as string | boolean,
 };
@@ -51,6 +52,8 @@ const reducer: A.Reducer<typeof initialState> = (
       return { ...state, sortType: action.sortType };
     case 'setSpellCheck':
       return { ...state, spellCheckEnabled: action.spellCheckEnabled };
+    case 'setSystemSearch':
+      return { ...state, systemSearch: action.systemSearch };
     case 'setTheme':
       return { ...state, theme: action.theme };
     case 'setWPToken':

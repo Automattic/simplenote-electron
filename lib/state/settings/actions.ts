@@ -104,3 +104,12 @@ export const toggleAutoHideMenuBar = () => (dispatch, getState) => {
     autoHideMenuBar: newValue,
   });
 };
+
+export const toggleSystemSearch = () => (dispatch, getState) => {
+  const newValue = !getState().settings.systemSearch;
+
+  dispatch({
+    type: 'setSystemSearch',
+    systemSearch: newValue,
+  });
+};

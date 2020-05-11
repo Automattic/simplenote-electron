@@ -238,7 +238,12 @@ export const App = connect(
         return false;
       }
 
-      if (cmdOrCtrl && !shiftKey && 'KeyF' === code) {
+      if (
+        cmdOrCtrl &&
+        !shiftKey &&
+        'KeyF' === code &&
+        !this.props.settings.systemSearch
+      ) {
         this.props.focusSearchField();
 
         event.stopPropagation();

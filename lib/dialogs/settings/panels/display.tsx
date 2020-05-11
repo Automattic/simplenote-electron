@@ -24,6 +24,7 @@ const DisplayPanel = (props) => {
     sortIsReversed,
     sortTagsAlpha,
     sortType,
+    systemSearch,
   } = props;
 
   const withCallback = ({ action, callback }) => (arg) => {
@@ -123,6 +124,18 @@ const DisplayPanel = (props) => {
           <Item title="Hide Automatically" slug="autoHide" />
         </SettingsGroup>
       )}
+
+      {!isElectron && (
+        <SettingsGroup
+          title="Use System Search"
+          slug="systemSearch"
+          activeSlug={systemSearch ? 'systemSearch' : ''}
+          onChange={actions.toggleSystemSearch}
+          renderer={ToggleGroup}
+        >
+          <Item title="Use Native Browser Search" slug="systemSearch" />
+        </SettingsGroup>
+      )}
     </Fragment>
   );
 };
@@ -152,6 +165,7 @@ const mapStateToProps = ({ settings }) => {
     sortIsReversed: settings.sortReversed,
     sortTagsAlpha: settings.sortTagsAlpha,
     sortType: settings.sortType,
+    systemSearch: settings.systemSearch,
   };
 };
 

@@ -41,6 +41,10 @@ export type SetSpellCheck = Action<
   'setSpellCheck',
   { spellCheckEnabled: boolean }
 >;
+export type SetSystemSearch = Action<
+  'setSystemSearch',
+  { systemSearch: boolean }
+>;
 export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
 export type SetWPToken = Action<'setWPToken', { token: string }>;
 
@@ -132,6 +136,7 @@ export type ActionType =
   | SetSortTagsAlpha
   | SetSortType
   | SetSpellCheck
+  | SetSystemSearch
   | SetSystemTag
   | SetTheme
   | SetUnsyncedNoteIds
