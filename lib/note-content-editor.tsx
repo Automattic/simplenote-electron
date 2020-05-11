@@ -93,8 +93,7 @@ class NoteContentEditor extends Component<Props> {
 
   createNewEditorState = (text: string, searchQuery: string) => {
     const newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(text, TEXT_DELIMITER),
-      this.generateDecorators(searchQuery)
+      ContentState.createFromText(text, TEXT_DELIMITER)
     );
 
     // Focus the editor for a new, empty note when not searching
@@ -199,12 +198,20 @@ class NoteContentEditor extends Component<Props> {
         {
           editorState: this.createNewEditorState(content.text, searchQuery),
         },
-        () =>
-          __TEST__ &&
-          window.testEvents.push([
-            'editorNewNote',
-            plainTextContent(this.state.editorState),
-          ])
+        () => {
+          this.queueDecoratorUpdate();
+
+          if (content.text.length < 10000) {
+            this.queueDecoratorUpdate.flush();
+          }
+
+          if (__TEST__) {
+            window.testEvents.push([
+              'editorNewNote',
+              plainTextContent(this.state.editorState),
+            ]);
+          }
+        }
       );
       return;
     }
