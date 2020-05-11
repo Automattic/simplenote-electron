@@ -17,7 +17,6 @@ const clearStorage = () =>
     localStorage.removeItem('localQueue:note');
     localStorage.removeItem('localQueue:preferences');
     localStorage.removeItem('localQueue:tag');
-    localStorage.removeItem('simpleNote');
     localStorage.removeItem('stored_user');
     indexedDB.deleteDatabase('ghost');
     indexedDB.deleteDatabase('simplenote');

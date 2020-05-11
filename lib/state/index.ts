@@ -61,7 +61,7 @@ export const makeStore = (...middlewares) =>
         key: 'simpleNote',
         slicer: (path) => (state) => ({
           // Omit property from persisting
-          [path]: omit(state[path], 'focusModeEnabled'),
+          [path]: omit(state[path], ['accountName', 'focusModeEnabled']),
         }),
       }),
       applyMiddleware(
