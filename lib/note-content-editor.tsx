@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, has, invoke, noop } from 'lodash';
+import {
+  CompositeDecorator,
+  ContentState,
+  Editor,
+  EditorState,
+  Modifier,
+} from 'draft-js';
+import { debounce, get, has, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
@@ -28,6 +33,7 @@ import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 import * as S from './state';
+import * as T from './types';
 
 const TEXT_DELIMITER = '\n';
 
@@ -79,13 +85,16 @@ class NoteContentEditor extends Component<Props> {
   };
 
   generateDecorators = (searchQuery: string) => {
-    return new MultiDecorator(
-      compact([
-        filterHasText(searchQuery) &&
-          matchingTextDecorator(searchPattern(searchQuery)),
+    const queryHasTerms = filterHasText(searchQuery);
+
+    if (queryHasTerms) {
+      return new CompositeDecorator([
+        matchingTextDecorator(searchPattern(searchQuery)),
         checkboxDecorator(this.replaceRangeWithText),
-      ])
-    );
+      ]);
+    }
+
+    return checkboxDecorator(this.replaceRangeWithText);
   };
 
   createNewEditorState = (text: string, searchQuery: string) => {
@@ -208,11 +217,7 @@ class NoteContentEditor extends Component<Props> {
 
     // If searchQuery changes, re-set decorators
     if (searchQuery !== prevProps.searchQuery) {
-      this.setState({
-        editorState: EditorState.set(editorState, {
-          decorator: this.generateDecorators(searchQuery),
-        }),
-      });
+      this.queueDecoratorUpdate(noteId);
     }
 
     // If a remote change comes in, push it to the existing editor state.
@@ -220,6 +225,28 @@ class NoteContentEditor extends Component<Props> {
       this.reflectChangesFromReceivedContent(editorState, content.text);
     }
   }
+
+  queueDecoratorUpdate = debounce((noteId: T.EntityId) => {
+    const { searchQuery } = this.props;
+    const { editorState } = this.state;
+
+    if (noteId === null) {
+      // oops, we unselected a note - don't recompute
+      return;
+    }
+
+    if (noteId !== this.props.noteId) {
+      // oops, we switched notes - requeue
+      this.queueDecoratorUpdate(this.props.noteId);
+      return;
+    }
+
+    this.setState({
+      editorState: EditorState.set(editorState, {
+        decorator: this.generateDecorators(searchQuery),
+      }),
+    });
+  }, 500);
 
   saveEditorRef = (ref) => {
     this.editor = ref;
