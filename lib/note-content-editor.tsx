@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
 import MultiDecorator from 'draft-js-multidecorators';
-import { compact, get, has, invoke, noop } from 'lodash';
+import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
+import { debounce, get, has, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
@@ -79,19 +79,21 @@ class NoteContentEditor extends Component<Props> {
   };
 
   generateDecorators = (searchQuery: string) => {
-    return new MultiDecorator(
-      compact([
-        filterHasText(searchQuery) &&
-          matchingTextDecorator(searchPattern(searchQuery)),
+    const queryHasTerms = filterHasText(searchQuery);
+
+    if (queryHasTerms) {
+      return new MultiDecorator([
+        matchingTextDecorator(searchPattern(searchQuery)),
         checkboxDecorator(this.replaceRangeWithText),
-      ])
-    );
+      ]);
+    }
+
+    return checkboxDecorator(this.replaceRangeWithText);
   };
 
   createNewEditorState = (text: string, searchQuery: string) => {
     const newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(text, TEXT_DELIMITER),
-      this.generateDecorators(searchQuery)
+      ContentState.createFromText(text, TEXT_DELIMITER)
     );
 
     // Focus the editor for a new, empty note when not searching
@@ -196,23 +198,27 @@ class NoteContentEditor extends Component<Props> {
         {
           editorState: this.createNewEditorState(content.text, searchQuery),
         },
-        () =>
-          __TEST__ &&
-          window.testEvents.push([
-            'editorNewNote',
-            plainTextContent(this.state.editorState),
-          ])
+        () => {
+          this.queueDecoratorUpdate();
+
+          if (content.text.length < 10000) {
+            this.queueDecoratorUpdate.flush();
+          }
+
+          if (__TEST__) {
+            window.testEvents.push([
+              'editorNewNote',
+              plainTextContent(this.state.editorState),
+            ]);
+          }
+        }
       );
       return;
     }
 
     // If searchQuery changes, re-set decorators
     if (searchQuery !== prevProps.searchQuery) {
-      this.setState({
-        editorState: EditorState.set(editorState, {
-          decorator: this.generateDecorators(searchQuery),
-        }),
-      });
+      this.queueDecoratorUpdate();
     }
 
     // If a remote change comes in, push it to the existing editor state.
@@ -220,6 +226,22 @@ class NoteContentEditor extends Component<Props> {
       this.reflectChangesFromReceivedContent(editorState, content.text);
     }
   }
+
+  queueDecoratorUpdate = debounce(() => {
+    const { searchQuery } = this.props;
+    const { editorState } = this.state;
+
+    if (this.props.noteId === null) {
+      // oops, we unselected a note - don't recompute
+      return;
+    }
+
+    this.setState({
+      editorState: EditorState.set(editorState, {
+        decorator: this.generateDecorators(searchQuery),
+      }),
+    });
+  }, 500);
 
   saveEditorRef = (ref) => {
     this.editor = ref;
