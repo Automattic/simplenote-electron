@@ -10,7 +10,7 @@ type OwnProps = {
 const TagChip: FunctionComponent<OwnProps> = ({
   onSelect,
   selected,
-  tagName
+  tagName,
 }) => (
   <div
     className={classNames('tag-chip', { selected })}
