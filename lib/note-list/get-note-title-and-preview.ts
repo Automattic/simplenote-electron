@@ -25,7 +25,7 @@ export const withCache = (getKey, getValue) => (note) => {
 export const clearCache = () => noteCache.clear();
 
 const getNoteTitleAndPreview = withCache(
-  (note) => note.data.modificationDate,
+  (note) => note.data.content,
   getNoteExcerpt
 );
 
