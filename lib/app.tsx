@@ -200,7 +200,7 @@ export const App = connect(
       if (
         cmdOrCtrl &&
         shiftKey &&
-        'KeyA' === code &&
+        'KeyU' === code &&
         !this.props.showNavigation
       ) {
         this.props.openTagList();

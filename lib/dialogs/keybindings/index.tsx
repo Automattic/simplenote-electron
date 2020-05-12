@@ -104,7 +104,7 @@ export class AboutDialog extends Component<DispatchProps> {
                   </li>
                 )}
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'A']}>Toggle tag list</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'U']}>Toggle tag list</Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'K']}>
