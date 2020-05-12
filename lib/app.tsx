@@ -210,7 +210,7 @@ export const App = connect(
         return false;
       }
 
-      if (cmdOrCtrl && !shiftKey && 'KeyF' === code) {
+      if (cmdOrCtrl && shiftKey && 'KeyS' === code) {
         this.props.focusSearchField();
 
         event.stopPropagation();
