@@ -1,7 +1,5 @@
 import * as T from '../types';
 
-import { AuthState } from './auth/constants';
-
 export type Action<
   T extends string,
   Args extends { [extraProps: string]: unknown } = {}
@@ -42,7 +40,6 @@ export type SetSpellCheck = Action<
   { spellCheckEnabled: boolean }
 >;
 export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
-export type SetWPToken = Action<'setWPToken', { token: string }>;
 
 /*
  * Normal action types
@@ -56,6 +53,7 @@ export type FilterNotes = Action<
   { notes: T.NoteEntity[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { note: T.NoteEntity }>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
@@ -73,7 +71,6 @@ export type SelectRevision = Action<
   { revision: T.NoteEntity }
 >;
 export type SelectTrash = Action<'SELECT_TRASH'>;
-export type SetAuth = Action<'AUTH_SET', { status: AuthState }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
@@ -113,6 +110,7 @@ export type ActionType =
   | LegacyAction
   | FilterNotes
   | FocusSearchField
+  | Logout
   | RemoteNoteUpdate
   | OpenNote
   | OpenTag
@@ -122,7 +120,6 @@ export type ActionType =
   | SelectRevision
   | SelectTrash
   | SetAccountName
-  | SetAuth
   | SetAutoHideMenuBar
   | SetFocusMode
   | SetFontSize
@@ -135,7 +132,6 @@ export type ActionType =
   | SetSystemTag
   | SetTheme
   | SetUnsyncedNoteIds
-  | SetWPToken
   | ShowAllNotes
   | ShowDialog
   | StoreRevisions
@@ -208,7 +204,6 @@ type LegacyAction =
         note: T.NoteEntity;
       }
     >
-  | Action<'App.authChanged'>
   | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
   | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>

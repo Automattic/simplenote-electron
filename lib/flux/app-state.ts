@@ -11,6 +11,7 @@ const debug = Debug('appState');
 
 const initialState: AppState = {
   notes: null,
+  preferences: { analytics_enabled: null },
   tags: [],
   unsyncedNoteIds: [], // note bucket only
 };
@@ -19,13 +20,6 @@ export const actionMap = new ActionMap({
   namespace: 'App',
   initialState,
   handlers: {
-    authChanged(state: AppState) {
-      return update(state, {
-        notes: { $set: null },
-        tags: { $set: [] },
-      });
-    },
-
     showAllNotesAndSelectFirst: {
       creator() {
         return (dispatch, getState) => {

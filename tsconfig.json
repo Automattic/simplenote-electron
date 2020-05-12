@@ -10,7 +10,8 @@
     "strict": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "types": ["dom", "jest"]
+    "types": ["dom", "jest"],
+    "typeRoots": ["./lib/typings", "./node_modules/@types"]
   },
   "include": ["lib/**/*"]
 }

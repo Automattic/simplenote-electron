@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import { isElectron } from '../../utils/platform';
@@ -12,9 +11,8 @@ import DisplayPanel from './panels/display';
 import ToolsPanel from './panels/tools';
 
 import appState from '../../flux/app-state';
-import { setWPToken } from '../../state/settings/actions';
 
-import { closeDialog } from '../../state/ui/actions';
+import { closeDialog, logout } from '../../state/ui/actions';
 
 import * as S from '../../state';
 
@@ -31,7 +29,7 @@ type OwnProps = {
 
 type DispatchProps = {
   closeDialog: () => any;
-  setWPToken: (token: string) => any;
+  logout: () => any;
 };
 
 type Props = OwnProps & DispatchProps;
@@ -62,25 +60,15 @@ export class SettingsDialog extends Component<Props> {
           )
         );
 
+      if (!notes) {
+        return this.props.logout();
+      }
+
       Promise.all(notes.map(noteHasSynced)).then(
-        () => this.signOut(), // All good, sign out now!
+        () => this.props.logout(), // All good, sign out now!
         () => this.showUnsyncedWarning() // Show a warning to the user
       );
     });
-  };
-
-  signOut = () => {
-    const { onSignOut, setWPToken } = this.props;
-
-    // Reset the WordPress Token
-    setWPToken(null);
-
-    onSignOut();
-
-    if (isElectron) {
-      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-      ipcRenderer.send('clearCookies');
-    }
   };
 
   showUnsyncedWarning = () => {
@@ -89,23 +77,22 @@ export class SettingsDialog extends Component<Props> {
 
   showElectronWarningDialog = () => {
     const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
-    dialog.showMessageBox(
-      {
+    dialog
+      .showMessageBox({
         type: 'warning',
         buttons: ['Delete Notes', 'Cancel', 'Visit Web App'],
         title: 'Unsynced Notes Detected',
         message:
           'Logging out will delete any unsynced notes. You can verify your ' +
           'synced notes by logging in to the Web App.',
-      },
-      (response) => {
+      })
+      .then(({ response }) => {
         if (response === 0) {
-          this.signOut();
+          this.props.logout();
         } else if (response === 2) {
           viewExternalUrl('https://app.simplenote.com');
         }
-      }
-    );
+      });
   };
 
   showWebWarningDialog = () => {
@@ -117,7 +104,7 @@ export class SettingsDialog extends Component<Props> {
     );
 
     if (shouldReallySignOut) {
-      this.signOut();
+      this.props.logout();
     }
   };
 
@@ -148,7 +135,7 @@ const { toggleShareAnalyticsPreference } = appState.actionCreators;
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   closeDialog: () => dispatch(closeDialog()),
-  setWPToken: (token) => dispatch(setWPToken(token)),
+  logout: () => dispatch(logout()),
   toggleShareAnalyticsPreference: (args) => {
     dispatch(toggleShareAnalyticsPreference(args));
   },

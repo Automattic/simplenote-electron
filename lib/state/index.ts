@@ -7,8 +7,6 @@
 import {
   Dispatch as ReduxDispatch,
   Middleware as ReduxMiddleware,
-  MiddlewareAPI,
-  Store as ReduxStore,
   compose,
   createStore,
   combineReducers,
@@ -22,9 +20,7 @@ import appState from '../flux/app-state';
 
 import { middleware as searchMiddleware } from '../search';
 import searchFieldMiddleware from './ui/search-field-middleware';
-import simperiumMiddleware from './simperium/middleware';
 
-import auth from './auth/reducer';
 import settings from './settings/reducer';
 import tags from './tags/reducer';
 import ui from './ui/reducer';
@@ -41,9 +37,8 @@ export type AppState = {
   unsyncedNoteIds: T.EntityId[];
 };
 
-export const reducers = combineReducers<State, A.ActionType>({
+const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
-  auth,
   settings,
   tags,
   ui,
@@ -51,7 +46,6 @@ export const reducers = combineReducers<State, A.ActionType>({
 
 export type State = {
   appState: AppState;
-  auth: ReturnType<typeof auth>;
   settings: ReturnType<typeof settings>;
   tags: ReturnType<typeof tags>;
   ui: ReturnType<typeof ui>;
@@ -59,24 +53,25 @@ export type State = {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const store = createStore<State, A.ActionType, {}, {}>(
-  reducers,
-  composeEnhancers(
-    persistState('settings', {
-      key: 'simpleNote',
-      slicer: (path) => (state) => ({
-        // Omit property from persisting
-        [path]: omit(state[path], 'focusModeEnabled'),
+export const makeStore = (...middlewares) =>
+  createStore<State, A.ActionType, {}, {}>(
+    reducers,
+    composeEnhancers(
+      persistState('settings', {
+        key: 'simpleNote',
+        slicer: (path) => (state) => ({
+          // Omit property from persisting
+          [path]: omit(state[path], ['accountName', 'focusModeEnabled']),
+        }),
       }),
-    }),
-    applyMiddleware(
-      thunk,
-      searchMiddleware,
-      searchFieldMiddleware,
-      simperiumMiddleware
+      applyMiddleware(
+        thunk,
+        searchMiddleware,
+        searchFieldMiddleware,
+        ...middlewares
+      )
     )
-  )
-);
+  );
 
 export type Store = {
   dispatch: Dispatch;
@@ -110,5 +105,3 @@ export type Middleware<Extension = {}> = ReduxMiddleware<
   State,
   Dispatch
 >;
-
-export default store;

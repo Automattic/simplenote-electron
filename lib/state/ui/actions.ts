@@ -30,6 +30,10 @@ export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
 });
 
+export const logout: A.ActionCreator<A.Logout> = () => ({
+  type: 'LOGOUT',
+});
+
 export const markdownNote: A.ActionCreator<A.SetSystemTag> = (
   note: T.NoteEntity,
   isMarkdown: boolean

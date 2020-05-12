@@ -1,3 +1,5 @@
+import type { Client } from 'simperium';
+
 import debugFactory from 'debug';
 import actions from '../actions';
 
@@ -9,48 +11,94 @@ import * as T from '../../types';
 
 const debug = debugFactory('simperium-middleware');
 
-type Buckets = {
-  note: T.Bucket<T.Note>;
-};
+export const initSimperium = (
+  logout: () => any,
+  token: string,
+  username: string | null,
+  createWelcomeNote: boolean,
+  client: Client<'note' | 'preferences' | 'tag'>
+): S.Middleware => (store) => {
+  client.on('message', (message: string) => {
+    if (!message.startsWith('0:auth:')) {
+      return;
+    }
 
-const buckets: Buckets = {} as Buckets;
+    const [prefix, authenticatedUsername] = message.split('0:auth:');
+    debug(`authenticated: ${authenticatedUsername}`);
 
-export const storeBuckets = (newBuckets: Buckets) => {
-  buckets.note = newBuckets.note;
-};
+    if (null === username) {
+      return store.dispatch(
+        actions.settings.setAccountName(authenticatedUsername)
+      );
+    }
 
-const fetchRevisions = (store: S.Store, state: S.State) => {
-  if (!state.ui.showRevisions || !state.ui.note) {
-    return;
+    if (username !== authenticatedUsername) {
+      debug(`was logged in as ${username} - logging out`);
+      return logout();
+    }
+  });
+
+  client.on('unauthorized', () => {
+    logout();
+  });
+
+  const noteBucket = client.bucket('note');
+
+  if (createWelcomeNote) {
+    import(
+      /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
+    ).then(({ content }) => {
+      const now = Date.now() / 1000;
+      noteBucket.add({
+        content,
+        deleted: false,
+        systemTags: [],
+        creationDate: now,
+        modificationDate: now,
+        shareURL: '',
+        publishURL: '',
+        tags: [],
+      });
+    });
   }
 
-  const note = state.ui.note;
-
-  buckets.note.getRevisions(
-    note.id,
-    (error: unknown, revisions: T.NoteEntity[]) => {
-      if (error) {
-        return debug(`Failed to load revisions for note ${note.id}: ${error}`);
-      }
-
-      const thisState = store.getState();
-      if (!(thisState.ui.note && note.id === thisState.ui.note.id)) {
-        return;
-      }
-
-      store.dispatch(actions.ui.storeRevisions(note.id, revisions));
+  const fetchRevisions = (store: S.Store, state: S.State) => {
+    if (!state.ui.showRevisions || !state.ui.note) {
+      return;
     }
-  );
-};
 
-export const middleware: S.Middleware = (store) => {
+    const note = state.ui.note;
+
+    noteBucket.getRevisions(
+      note.id,
+      (error: unknown, revisions: T.NoteEntity[]) => {
+        if (error) {
+          return debug(
+            `Failed to load revisions for note ${note.id}: ${error}`
+          );
+        }
+
+        const thisState = store.getState();
+        if (!(thisState.ui.note && note.id === thisState.ui.note.id)) {
+          return;
+        }
+
+        store.dispatch(actions.ui.storeRevisions(note.id, revisions));
+      }
+    );
+  };
+
   return (next) => (action: A.ActionType) => {
     const result = next(action);
     const nextState = store.getState();
 
     switch (action.type) {
+      case 'LOGOUT':
+        client.reset().then(() => logout());
+        return result;
+
       case 'SET_SYSTEM_TAG':
-        buckets.note.update(
+        noteBucket.update(
           action.note.id,
           toggleSystemTag(action.note, action.tagName, action.shouldHaveTag)
             .data
@@ -65,5 +113,3 @@ export const middleware: S.Middleware = (store) => {
     return result;
   };
 };
-
-export default middleware;

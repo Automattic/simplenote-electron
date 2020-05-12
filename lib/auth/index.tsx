@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
@@ -8,35 +6,43 @@ import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 
-import { hasInvalidCredentials, hasLoginError } from '../state/auth/selectors';
 import { isElectron, isMac } from '../utils/platform';
-import { reset } from '../state/auth/actions';
-import { setWPToken } from '../state/settings/actions';
 import { viewExternalUrl } from '../utils/url-utils';
 
-export class Auth extends Component {
-  static propTypes = {
-    authorizeUserWithToken: PropTypes.func.isRequired,
-    authPending: PropTypes.bool,
-    hasInvalidCredentials: PropTypes.bool,
-    hasLoginError: PropTypes.bool,
-    isAuthenticated: PropTypes.bool,
-    onAuthenticate: PropTypes.func.isRequired,
-    onCreateUser: PropTypes.func.isRequired,
-    resetErrors: PropTypes.func.isRequired,
-    saveWPToken: PropTypes.func.isRequired,
-  };
+type OwnProps = {
+  authPending: boolean;
+  hasInvalidCredentials: boolean;
+  hasLoginError: boolean;
+  login: (username: string, password: string) => any;
+  signup: (username: string, password: string) => any;
+  tokenLogin: (username: string, token: string) => any;
+  resetErrors: () => any;
+};
 
+type Props = OwnProps;
+
+export class Auth extends Component<Props> {
   state = {
     isCreatingAccount: false,
     passwordErrorMessage: null,
+    onLine: window.navigator.onLine,
   };
 
   componentDidMount() {
     if (this.usernameInput) {
       this.usernameInput.focus();
     }
+
+    window.addEventListener('online', this.setConnectivity, false);
+    window.addEventListener('offline', this.setConnectivity, false);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.setConnectivity, false);
+    window.removeEventListener('offline', this.setConnectivity, false);
+  }
+
+  setConnectivity = () => this.setState({ onLine: window.navigator.onLine });
 
   render() {
     // Don't render this component when running on the web
@@ -67,7 +73,9 @@ export class Auth extends Component {
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onLogin}>
           <h1>{buttonLabel}</h1>
-
+          {!this.state.onLine && (
+            <p className="login__auth-message is-error">Offline</p>
+          )}
           {this.props.hasInvalidCredentials && (
             <p
               className="login__auth-message is-error"
@@ -121,6 +129,7 @@ export class Auth extends Component {
           <button
             id="login__login-button"
             className={submitClasses}
+            disabled={!this.state.onLine}
             onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
             type="submit"
           >
@@ -207,7 +216,7 @@ export class Auth extends Component {
       return;
     }
 
-    this.props.onAuthenticate(username, password);
+    this.props.login(username, password);
   };
 
   onWPLogin = () => {
@@ -283,11 +292,7 @@ export class Auth extends Component {
           return;
         }
 
-        const { authorizeUserWithToken, saveWPToken } = this.props;
-        authorizeUserWithToken(userEmail, simpToken);
-        if (wpccToken) {
-          saveWPToken(wpccToken);
-        }
+        this.props.tokenLogin(userEmail, simpToken);
       }
     );
   };
@@ -331,7 +336,7 @@ export class Auth extends Component {
       return;
     }
 
-    this.props.onCreateUser(username, password);
+    this.props.signup(username, password, true);
     this.setState({ passwordErrorMessage: null });
   };
 
@@ -344,15 +349,3 @@ export class Auth extends Component {
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  resetErrors: () => dispatch(reset()),
-  saveWPToken: (token) => dispatch(setWPToken(token)),
-});
-
-const mapStateToProps = (state) => ({
-  hasInvalidCredentials: hasInvalidCredentials(state),
-  hasLoginError: hasLoginError(state),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
