@@ -16,6 +16,7 @@ type OwnProps = {
 };
 
 type StateProps = {
+  keyboardShortcuts: boolean;
   note: T.NoteEntity | null;
 };
 
@@ -67,6 +68,9 @@ export class NoteEditor extends Component<Props> {
   };
 
   handleShortcut = (event: KeyboardEvent) => {
+    if (!this.props.keyboardShortcuts) {
+      return;
+    }
     const { code, ctrlKey, metaKey, shiftKey } = event;
     const { note, revision, toggleMarkdown } = this.props;
 
@@ -169,6 +173,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   allTags: tags,
   fontSize: settings.fontSize,
   editMode,
+  keyboardShortcuts: settings.keyboardShortcuts,
   isEditorActive: !state.showNavigation,
   note,
   revision: selectedRevision,

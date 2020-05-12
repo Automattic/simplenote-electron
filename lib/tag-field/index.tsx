@@ -45,7 +45,11 @@ type DispatchProps = {
   updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagEntity[] }) => any;
 };
 
-type Props = OwnProps & DispatchProps;
+type StateProps = {
+  keyboardShortcuts: boolean;
+};
+
+type Props = OwnProps & DispatchProps & StateProps;
 
 const KEY_BACKSPACE = 8;
 const KEY_TAB = 9;
@@ -164,8 +168,15 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
-  preventStealingFocus = (event: KeyboardEvent) => {
-    const { code, ctrlKey, metaKey, shiftKey } = event;
+  preventStealingFocus = ({
+    ctrlKey,
+    code,
+    metaKey,
+    shiftKey,
+  }: KeyboardEvent) => {
+    if (!this.props.keyboardShortcuts) {
+      return;
+    }
     const cmdOrCtrl = ctrlKey || metaKey;
 
     if (cmdOrCtrl && shiftKey && 'KeyY' === code) {
@@ -282,6 +293,12 @@ export class TagField extends Component<Props, OwnState> {
   }
 }
 
-export default connect(null, { updateNoteTags } as S.MapDispatch<
-  DispatchProps
->)(TagField);
+const mapStateToProps: S.MapState<StateProps> = ({
+  settings: { keyboardShortcuts },
+}) => ({
+  keyboardShortcuts,
+});
+
+export default connect(mapStateToProps, {
+  updateNoteTags,
+} as S.MapDispatch<DispatchProps>)(TagField);

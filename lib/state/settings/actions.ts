@@ -49,6 +49,10 @@ export const setLineLength: A.ActionCreator<A.SetLineLength> = (
   lineLength,
 });
 
+export const toggleKeyboardShortcuts: A.ActionCreator<A.ToggleKeyboardShortcuts> = () => ({
+  type: 'KEYBOARD_SHORTCUTS_TOGGLE',
+});
+
 export const toggleSortOrder = () => (dispatch, getState) => {
   dispatch({
     type: 'setSortReversed',

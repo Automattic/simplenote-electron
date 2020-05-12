@@ -191,6 +191,12 @@ export const App = connect(
     }
 
     handleShortcut = (event: KeyboardEvent) => {
+      const {
+        settings: { keyboardShortcuts },
+      } = this.props;
+      if (!keyboardShortcuts) {
+        return;
+      }
       const { code, ctrlKey, metaKey, shiftKey } = event;
 
       // Is either cmd or ctrl pressed? (But not both)
