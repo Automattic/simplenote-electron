@@ -117,7 +117,7 @@ export class AboutDialog extends Component<DispatchProps> {
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'T']}>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'Y']}>
                     Toggle editing content/tags
                   </Keys>
                 </li>
