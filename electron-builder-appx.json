@@ -10,7 +10,8 @@
     "icon": "resources/images/simplenote.ico",
     "target": [
       {
-        "target": "appx"
+        "target": "appx",
+        "arch": ["ia32", "x64"]
       }
     ]
   },
