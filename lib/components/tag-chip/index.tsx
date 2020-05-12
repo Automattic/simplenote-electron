@@ -2,9 +2,7 @@ import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 
 type OwnProps = {
-  onSelect?: (
-    event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-  ) => any;
+  onSelect?: (event: React.MouseEvent<HTMLDivElement>) => any;
   selected: boolean;
   tagName: string;
 };
@@ -12,7 +10,7 @@ type OwnProps = {
 const TagChip: FunctionComponent<OwnProps> = ({
   onSelect,
   selected,
-  tagName,
+  tagName
 }) => (
   <div
     className={classNames('tag-chip', { selected })}
