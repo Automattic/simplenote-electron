@@ -135,17 +135,6 @@ export class AboutDialog extends Component<DispatchProps> {
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
                 </li>
-                <li>
-                  <Keys
-                    keys={
-                      isMac
-                        ? ['fn', CmdOrCtrl, 'Delete']
-                        : [CmdOrCtrl, 'Delete']
-                    }
-                  >
-                    Trash note
-                  </Keys>
-                </li>
                 {isElectron && (
                   <li>
                     <Keys keys={[CmdOrCtrl, 'P']}>Print note</Keys>
