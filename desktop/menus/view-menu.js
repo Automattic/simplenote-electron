@@ -137,6 +137,7 @@ const buildViewMenu = (settings) => {
       },
       {
         label: 'Focus Mode',
+        accelerator: 'CommandOrControl+Shift+F',
         type: 'checkbox',
         checked: settings.focusModeEnabled,
         click: appCommandSender({ action: 'toggleFocusMode' }),
