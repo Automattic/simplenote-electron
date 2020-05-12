@@ -226,7 +226,7 @@ export const App = connect(
         return false;
       }
 
-      if (cmdOrCtrl && shiftKey && 'KeyN' === code) {
+      if (cmdOrCtrl && shiftKey && 'KeyI' === code) {
         this.props.actions.newNote({
           noteBucket: this.props.noteBucket,
         });

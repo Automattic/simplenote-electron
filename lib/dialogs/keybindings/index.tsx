@@ -133,7 +133,7 @@ export class AboutDialog extends Component<DispatchProps> {
               <h1>Note Editing</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'N']}>Create new note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'I']}>Create new note</Keys>
                 </li>
                 <li>
                   <Keys
