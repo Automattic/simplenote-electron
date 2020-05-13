@@ -114,12 +114,7 @@ const theme: A.Reducer<T.Theme> = (state = 'system', action) => {
   }
 };
 const wpToken: A.Reducer<string | boolean> = (state = false, action) => {
-  switch (action.type) {
-    case 'setAccountName':
-      return action.accountName;
-    default:
-      return state;
-  }
+  return state;
 };
 
 export default combineReducers({
