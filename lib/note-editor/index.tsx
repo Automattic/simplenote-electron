@@ -89,12 +89,7 @@ export class NoteEditor extends Component<Props> {
     }
 
     // toggle between tag editor and note editor
-    if (
-      !shiftKey &&
-      cmdOrCtrl &&
-      'KeyT' === code &&
-      this.props.isEditorActive
-    ) {
+    if (shiftKey && cmdOrCtrl && 'KeyY' === code && this.props.isEditorActive) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus()) {
         this.focusNoteEditor?.();
