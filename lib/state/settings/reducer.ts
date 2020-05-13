@@ -1,61 +1,139 @@
 import { clamp } from 'lodash';
 
+import { combineReducers } from 'redux';
+
 import * as A from '../action-types';
 import * as T from '../../types';
 
-export const initialState = {
-  accountName: null as string | null,
-  autoHideMenuBar: false,
-  focusModeEnabled: false,
-  fontSize: 16,
-  lineLength: 'narrow' as T.LineLength,
-  markdownEnabled: false,
-  noteDisplay: 'comfy' as T.ListDisplayMode,
-  sortReversed: false,
-  sortTagsAlpha: false,
-  sortType: 'modificationDate' as T.SortType,
-  spellCheckEnabled: true,
-  theme: 'system' as T.Theme,
-  wpToken: false as string | boolean,
-};
-
-const reducer: A.Reducer<typeof initialState> = (
-  state = initialState,
-  action
-) => {
+const accountName: A.Reducer<string | null> = (state = null, action) => {
   switch (action.type) {
     case 'setAccountName':
-      return { ...state, accountName: action.accountName };
-    case 'setAutoHideMenuBar':
-      return { ...state, autoHideMenuBar: action.autoHideMenuBar };
-    case 'setFocusMode':
-      return { ...state, focusModeEnabled: action.focusModeEnabled };
-    case 'setFontSize':
-      return {
-        ...state,
-        fontSize: clamp(action.fontSize || initialState.fontSize, 10, 30),
-      };
-    case 'setLineLength':
-      return { ...state, lineLength: action.lineLength };
-    case 'SET_SYSTEM_TAG':
-      return 'markdown' === action.tagName
-        ? { ...state, markdownEnabled: action.shouldHaveTag }
-        : state;
-    case 'setNoteDisplay':
-      return { ...state, noteDisplay: action.noteDisplay };
-    case 'setSortReversed':
-      return { ...state, sortReversed: action.sortReversed };
-    case 'setSortTagsAlpha':
-      return { ...state, sortTagsAlpha: action.sortTagsAlpha };
-    case 'setSortType':
-      return { ...state, sortType: action.sortType };
-    case 'setSpellCheck':
-      return { ...state, spellCheckEnabled: action.spellCheckEnabled };
-    case 'setTheme':
-      return { ...state, theme: action.theme };
+      return action.accountName;
     default:
       return state;
   }
 };
 
-export default reducer;
+const autoHideMenuBar: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'setAutoHideMenuBar':
+      return action.autoHideMenuBar;
+    default:
+      return state;
+  }
+};
+
+const focusModeEnabled: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'setFocusMode':
+      return action.focusModeEnabled;
+    default:
+      return state;
+  }
+};
+
+const fontSize: A.Reducer<number> = (state = 16, action) => {
+  switch (action.type) {
+    case 'setFontSize':
+      return clamp(action.fontSize || 16, 10, 30);
+    default:
+      return state;
+  }
+};
+
+const lineLength: A.Reducer<T.LineLength> = (state = 'narrow', action) => {
+  switch (action.type) {
+    case 'setLineLength':
+      return action.lineLength;
+    default:
+      return state;
+  }
+};
+
+const markdownEnabled: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'SET_SYSTEM_TAG':
+      if ('markdown' === action.tagName) {
+        return action.shouldHaveTag;
+      }
+      return state;
+    default:
+      return state;
+  }
+};
+
+const noteDisplay: A.Reducer<T.ListDisplayMode> = (state = 'comfy', action) => {
+  switch (action.type) {
+    case 'setNoteDisplay':
+      return action.noteDisplay;
+    default:
+      return state;
+  }
+};
+const sortReversed: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'setSortReversed':
+      return action.sortReversed;
+    default:
+      return state;
+  }
+};
+const sortTagsAlpha: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'setSortTagsAlpha':
+      return action.sortTagsAlpha;
+    default:
+      return state;
+  }
+};
+const sortType: A.Reducer<T.SortType> = (
+  state = 'modificationDate',
+  action
+) => {
+  switch (action.type) {
+    case 'setSortType':
+      return action.sortType;
+    default:
+      return state;
+  }
+};
+const spellCheckEnabled: A.Reducer<boolean> = (state = true, action) => {
+  switch (action.type) {
+    case 'setSpellCheck':
+      return action.spellCheckEnabled;
+    default:
+      return state;
+  }
+};
+const theme: A.Reducer<T.Theme> = (state = 'system', action) => {
+  switch (action.type) {
+    case 'setTheme':
+      return action.theme;
+    default:
+      return state;
+  }
+};
+const wpToken: A.Reducer<string | boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'setAccountName':
+      return action.accountName;
+    default:
+      return state;
+  }
+};
+
+export default combineReducers({
+  accountName,
+  autoHideMenuBar,
+  focusModeEnabled,
+  fontSize,
+  lineLength,
+  markdownEnabled,
+  noteDisplay,
+  sortReversed,
+  sortTagsAlpha,
+  sortType,
+  spellCheckEnabled,
+  theme,
+  wpToken,
+});
