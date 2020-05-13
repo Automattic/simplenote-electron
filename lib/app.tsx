@@ -237,20 +237,6 @@ export const App = connect(
         return false;
       }
 
-      if (this.props.ui.note && cmdOrCtrl && 'Delete' === code) {
-        this.props.actions.trashNote({
-          noteBucket: this.props.noteBucket,
-          note: this.props.ui.note,
-          previousIndex: this.props.appState.notes.findIndex(
-            ({ id }) => this.props.ui.note.id === id
-          ),
-        });
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
       // prevent default browser behavior for search
       // will bubble up from note-detail
       if (cmdOrCtrl && 'KeyG' === code) {

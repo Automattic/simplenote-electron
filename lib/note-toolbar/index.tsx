@@ -118,7 +118,7 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<TrashIcon />}
               onClick={this.props.onTrashNote.bind(null, note)}
-              title="Trash • Ctrl+Delete"
+              title="Trash"
             />
           </div>
           <div className="note-toolbar__button">
