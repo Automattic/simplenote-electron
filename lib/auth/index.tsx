@@ -11,6 +11,7 @@ import { viewExternalUrl } from '../utils/url-utils';
 
 type OwnProps = {
   authPending: boolean;
+  hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
   login: (username: string, password: string) => any;
@@ -75,6 +76,25 @@ export class Auth extends Component<Props> {
           <h1>{buttonLabel}</h1>
           {!this.state.onLine && (
             <p className="login__auth-message is-error">Offline</p>
+          )}
+          {this.props.hasInsecurePassword && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
+              Your password is insecure and must be
+              <a
+                className="login__reset"
+                href="https://app.simplenote.com/reset/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={this.onForgot}
+              >
+                reset
+              </a>
+              . The password requirements are: Password cannot match email,
+              Between 8 and 64 characters, No new lines, and No tabs
+            </p>
           )}
           {this.props.hasInvalidCredentials && (
             <p

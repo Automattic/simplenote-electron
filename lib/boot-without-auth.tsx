@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
 import analytics from './analytics';
+import { validatePassword } from '../utils/validate-password';
 
 import getConfig from '../get-config';
 
@@ -16,6 +17,7 @@ type State = {
   authStatus:
     | 'unsubmitted'
     | 'submitting'
+    | 'insecure-password'
     | 'invalid-credentials'
     | 'unknown-error';
 };
@@ -42,6 +44,9 @@ class AppWithoutAuth extends Component<Props, State> {
       auth
         .authorize(username, password)
         .then((user: User) => {
+          if (!validatePassword(password, username)) {
+            this.setState({ authStatus: 'insecure-password' });
+          }
           if (!user.access_token) {
             throw new Error('missing access token');
           }
@@ -96,6 +101,7 @@ class AppWithoutAuth extends Component<Props, State> {
       <div className={`app theme-${systemTheme}`}>
         <AuthApp
           authPending={this.state.authStatus === 'submitting'}
+          hasInsecurePassword={this.state.authStatus === 'insecure-password'}
           hasInvalidCredentials={
             this.state.authStatus === 'invalid-credentials'
           }
