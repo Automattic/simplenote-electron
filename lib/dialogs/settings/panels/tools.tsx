@@ -66,15 +66,15 @@ const ToolsPanel: FunctionComponent<Props> = ({
   );
 };
 
-const mapStateToProps = ({ settings }) => {
-  return {
-    keyboardShortcuts: settings.keyboardShortcuts,
-  };
-};
+const mapStateToProps: S.MapState<StateProps> = ({
+  settings: { keyboardShortcuts },
+}) => ({
+  keyboardShortcuts,
+});
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   showImportDialog: () => dispatch(showDialog('IMPORT')),
   toggleShortcuts: () => dispatch(toggleKeyboardShortcuts()),
 });
 
-export default connect(null, mapDispatchToProps)(ToolsPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(ToolsPanel);
