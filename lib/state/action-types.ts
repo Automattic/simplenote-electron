@@ -90,6 +90,7 @@ export type TagsLoaded = Action<
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
 >;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
+export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteList = Action<'NOTE_LIST_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
@@ -137,6 +138,7 @@ export type ActionType =
   | StoreRevisions
   | TagsLoaded
   | ToggleEditMode
+  | ToggleKeyboardShortcuts
   | ToggleNavigation
   | ToggleNoteList
   | ToggleNoteInfo

@@ -41,6 +41,15 @@ const fontSize: A.Reducer<number> = (state = 16, action) => {
   }
 };
 
+const keyboardShortcuts: A.Reducer<boolean> = (state = true, action) => {
+  switch (action.type) {
+    case 'KEYBOARD_SHORTCUTS_TOGGLE':
+      return !state;
+    default:
+      return state;
+  }
+};
+
 const lineLength: A.Reducer<T.LineLength> = (state = 'narrow', action) => {
   switch (action.type) {
     case 'setLineLength':
@@ -122,6 +131,7 @@ export default combineReducers({
   autoHideMenuBar,
   focusModeEnabled,
   fontSize,
+  keyboardShortcuts,
   lineLength,
   markdownEnabled,
   noteDisplay,

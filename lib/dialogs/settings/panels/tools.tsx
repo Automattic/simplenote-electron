@@ -1,52 +1,80 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import exportZipArchive from '../../../utils/export';
 
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
-
+import SettingsGroup, { Item } from '../../settings-group';
 import { showDialog } from '../../../state/ui/actions';
+import ToggleGroup from '../../toggle-settings-group';
+import { toggleKeyboardShortcuts } from '../../../state/settings/actions';
 
 import * as S from '../../../state';
 
 type DispatchProps = {
-  showDialog: () => any;
+  showImportDialog: () => any;
+  toggleShortcuts: () => any;
 };
 
-type Props = DispatchProps;
+type StateProps = {
+  keyboardShortcuts: boolean;
+};
 
-const ToolsPanel: FunctionComponent<Props> = ({ showDialog }) => {
+type Props = DispatchProps & StateProps;
+
+const ToolsPanel: FunctionComponent<Props> = ({
+  keyboardShortcuts,
+  showImportDialog,
+  toggleShortcuts,
+}) => {
   const onSelectItem = (item) => {
     if (item.slug === 'import') {
-      showDialog();
+      showImportDialog();
     } else if (item.slug === 'export') {
       exportZipArchive();
     }
   };
 
   return (
-    <div className="settings-tools">
-      <PanelTitle headingLevel="3">Tools</PanelTitle>
-      <ButtonGroup
-        items={[
-          {
-            name: 'Import Notes',
-            slug: 'import',
-          },
-          {
-            name: 'Export Notes',
-            slug: 'export',
-          },
-        ]}
-        onClickItem={onSelectItem}
-      />
-    </div>
+    <Fragment>
+      <div className="settings-tools">
+        <PanelTitle headingLevel={3}>Tools</PanelTitle>
+        <ButtonGroup
+          items={[
+            {
+              name: 'Import Notes',
+              slug: 'import',
+            },
+            {
+              name: 'Export Notes',
+              slug: 'export',
+            },
+          ]}
+          onClickItem={onSelectItem}
+        />
+      </div>
+      <SettingsGroup
+        slug="keyboardShortcuts"
+        activeSlug={keyboardShortcuts ? 'keyboardShortcuts' : ''}
+        onChange={toggleShortcuts}
+        renderer={ToggleGroup}
+      >
+        <Item title="Keyboard Shortcuts" slug="keyboardShortcuts" />
+      </SettingsGroup>
+    </Fragment>
   );
 };
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  showDialog: () => dispatch(showDialog('IMPORT')),
+const mapStateToProps: S.MapState<StateProps> = ({
+  settings: { keyboardShortcuts },
+}) => ({
+  keyboardShortcuts,
 });
 
-export default connect(null, mapDispatchToProps)(ToolsPanel);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+  showImportDialog: () => dispatch(showDialog('IMPORT')),
+  toggleShortcuts: () => dispatch(toggleKeyboardShortcuts()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ToolsPanel);

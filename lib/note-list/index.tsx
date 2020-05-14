@@ -33,6 +33,7 @@ type OwnProps = {
 
 type StateProps = {
   hasLoaded: boolean;
+  keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
   notes: T.NoteEntity[];
   openedTag: T.TagEntity | null;
@@ -301,6 +302,9 @@ export class NoteList extends Component<Props> {
   }
 
   handleShortcut = (event: KeyboardEvent) => {
+    if (!this.props.keyboardShortcuts) {
+      return;
+    }
     const { ctrlKey, code, metaKey, shiftKey } = event;
     const { isSmallScreen, notes, showNoteList } = this.props;
     const { selectedIndex: index } = this.state;
@@ -498,7 +502,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
     showTrash,
     tagSuggestions,
   },
-  settings: { noteDisplay },
+  settings: { keyboardShortcuts, noteDisplay },
 }) => {
   /**
    * Although not used directly in the React component this value
@@ -524,6 +528,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
   return {
     hasLoaded: state.notes !== null,
+    keyboardShortcuts,
     noteDisplay,
     notes: filteredNotes,
     openedTag,

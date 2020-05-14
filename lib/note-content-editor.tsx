@@ -40,6 +40,7 @@ const isElectron = (() => {
 
 type StateProps = {
   editingEnabled: boolean;
+  keyboardShortcuts: boolean;
   searchQuery: string;
 };
 
@@ -331,6 +332,9 @@ class NoteContentEditor extends Component<Props> {
   };
 
   handleKeydown = (event: KeyboardEvent) => {
+    if (!this.props.keyboardShortcuts) {
+      return;
+    }
     const { code, ctrlKey, metaKey, shiftKey } = event;
     const cmdOrCtrl = ctrlKey || metaKey;
 
@@ -398,7 +402,9 @@ class NoteContentEditor extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   ui: { searchQuery, showNoteList },
+  settings: { keyboardShortcuts },
 }) => ({
+  keyboardShortcuts,
   searchQuery,
 });
 
