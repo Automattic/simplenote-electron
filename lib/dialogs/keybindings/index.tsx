@@ -58,7 +58,9 @@ export class AboutDialog extends Component<DispatchProps> {
                   </Keys>
                 </li>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'F']}>Focus search field</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'S']}>
+                    Focus search field
+                  </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'G']}>
