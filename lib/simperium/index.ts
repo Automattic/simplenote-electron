@@ -1,6 +1,6 @@
 import simperium, { Client } from 'simperium';
 import store_provider from './store-provider';
-import ghost_store from './ghost-store';
+import ghost_store, { reset as resetGhostStore } from './ghost-store';
 import localQueueStore from './local-queue-store';
 import util from 'util';
 import events from 'events';
@@ -121,7 +121,7 @@ BrowserClient.prototype.reset = function () {
   // loop through each known bucket and generate a promise to reset the bucket
   return this.bucketDB.reset().then(
     () => {
-      return ghost_store.reset();
+      return resetGhostStore();
     },
     (e) => {
       console.error('Failed to reset', e); // eslint-disable-line no-console
