@@ -5,6 +5,7 @@ import { get } from 'lodash';
 import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
+import { validatePassword } from '../utils/validate-password';
 
 import { isElectron, isMac } from '../utils/platform';
 import { viewExternalUrl } from '../utils/url-utils';
@@ -329,9 +330,10 @@ export class Auth extends Component<Props> {
       return;
     }
 
-    if (password.length < 4) {
+    if (validatePassword(password, username)) {
       this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        passwordErrorMessage:
+          'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.',
       });
       return;
     }
