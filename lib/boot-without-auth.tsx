@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
 import analytics from './analytics';
-import { validatePassword } from '../utils/validate-password';
+import { validatePassword } from './utils/validate-password';
 
 import getConfig from '../get-config';
 
