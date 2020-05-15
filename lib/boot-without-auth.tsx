@@ -46,6 +46,7 @@ class AppWithoutAuth extends Component<Props, State> {
         .then((user: User) => {
           if (!validatePassword(password, username)) {
             this.setState({ authStatus: 'insecure-password' });
+            return;
           }
           if (!user.access_token) {
             throw new Error('missing access token');

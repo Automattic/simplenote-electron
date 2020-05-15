@@ -82,7 +82,7 @@ export class Auth extends Component<Props> {
               className="login__auth-message is-error"
               data-error-name="invalid-login"
             >
-              Your password is insecure and must be
+              Your password is insecure and must be{' '}
               <a
                 className="login__reset"
                 href="https://app.simplenote.com/reset/"
