@@ -5,6 +5,6 @@ export const validatePassword = function (password: string, email: string) {
   }
   // minimum of 8 characters, max of 64
   // allow symbols ~!@#$%^&*_-+=`|(){}[]:;"',.?/
-  const re = /^[a-zA-Z0-9~ !@#$%^&*_\-+=`|()[\]:;"',.?\/]{8,64}$/;
+  const re = /^[a-zA-Z0-9~ !@#$%^&*_\-+=`|()[\]:;"',.?/]{8,64}$/;
   return re.test(password);
 };
