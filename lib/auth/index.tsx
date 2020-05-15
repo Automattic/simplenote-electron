@@ -92,8 +92,8 @@ export class Auth extends Component<Props> {
               >
                 reset
               </a>
-              . The password requirements are: Password cannot match email,
-              Between 8 and 64 characters, No new lines, and No tabs
+              . Passwords must be between 8 and 64 characters long and may not
+              include your email address, new lines, or tabs.
             </p>
           )}
           {this.props.hasInvalidCredentials && (
