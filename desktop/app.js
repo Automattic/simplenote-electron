@@ -63,16 +63,17 @@ module.exports = function main() {
       titleBarStyle: 'hidden',
       show: false,
       webPreferences: {
-        nodeIntegration: true,
+        nodeIntegration: false,
+        contextIsolation: true,
         preload: path.join(__dirname, './preload.js'),
       },
     });
 
     // and load the index of the app.
     if (typeof mainWindow.loadURL === 'function') {
-      mainWindow.loadURL(url);
+      mainWindow.loadURL('https://app.simplenote.com');
     } else {
-      mainWindow.loadUrl(url);
+      mainWindow.loadUrl('https://app.simplenote.com');
     }
 
     if (
