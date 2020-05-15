@@ -111,6 +111,8 @@ export class Auth extends Component<Props> {
             ref={(ref) => (this.usernameInput = ref)}
             spellCheck={false}
             type="email"
+            required
+            autofocus
           />
           <label
             className="login__field theme-color-border"
@@ -330,7 +332,7 @@ export class Auth extends Component<Props> {
       return;
     }
 
-    if (validatePassword(password, username)) {
+    if (!validatePassword(password, username)) {
       this.setState({
         passwordErrorMessage:
           'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.',
