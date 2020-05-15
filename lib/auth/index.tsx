@@ -112,7 +112,7 @@ export class Auth extends Component<Props> {
             spellCheck={false}
             type="email"
             required
-            autofocus
+            autoFocus
           />
           <label
             className="login__field theme-color-border"
