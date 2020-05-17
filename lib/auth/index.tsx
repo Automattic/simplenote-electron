@@ -85,7 +85,10 @@ export class Auth extends Component<Props> {
               Your password is insecure and must be{' '}
               <a
                 className="login__reset"
-                href="https://app.simplenote.com/reset/"
+                href={
+                  'https://app.simplenote.com/reset/?email=' +
+                  encodeURIComponent(get(this.usernameInput, 'value'))
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={this.onForgot}
