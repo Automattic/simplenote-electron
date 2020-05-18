@@ -5,16 +5,16 @@
 ### Enhancements
 
 - Added option to disable keyboard shortcuts [#2075](https://github.com/Automattic/simplenote-electron/pull/2075)
-- Added a password validation utility ([#2086](https://github.com/Automattic/simplenote-electron/pull/2086)) and stricter password requirements on signup ([#2087](https://github.com/Automattic/simplenote-electron/pull/2087)) and login ([#2088](https://github.com/Automattic/simplenote-electron/pull/2088))
+- Added a password validation utility [#2086](https://github.com/Automattic/simplenote-electron/pull/2086) and stricter password requirements on signup [#2087](https://github.com/Automattic/simplenote-electron/pull/2087) and login [#2088](https://github.com/Automattic/simplenote-electron/pull/2088)
 
 ### Fixes
 
 - Many keyboard shortcut fixes:
   - Delete note shortcut removed [#2076](https://github.com/Automattic/simplenote-electron/pull/2076)
-  - Search shortcut changed to ctrl + shift + s so that it does not conflict with the native browser find [#2078](https://github.com/Automattic/simplenote-electron/pull/2078)
-  - Toggle focus on tag field changed from ctrl/cmd + t to ctrl/cmd + shift + y [#2081](https://github.com/Automattic/simplenote-electron/pull/2081)
-  - Create a new note changed from ctrl/cmd + shift + n to ctrl/cmd + shift + i [#2080](https://github.com/Automattic/simplenote-electron/pull/2080)
-  - Open the tag list changed from ctrl/cmd + shift + t to ctrl/cmd + shift + u [#2079](https://github.com/Automattic/simplenote-electron/pull/2079)
+  - Search shortcut changed to `CTRL+Shift+S` so that it does not conflict with the native browser find [#2078](https://github.com/Automattic/simplenote-electron/pull/2078)
+  - Toggle focus on tag field changed from `CTRL/Cmd+T` to `CTRL/Cmd+Shift+Y` [#2081](https://github.com/Automattic/simplenote-electron/pull/2081)
+  - Create a new note changed from `CTRL/Cmd+Shift+N` to `CTRL/Cmd+Shift+I` [#2080](https://github.com/Automattic/simplenote-electron/pull/2080)
+  - Open the tag list changed from `CTRL/Cmd+Shift+T` to `CTRL/Cmd+Shift+U` [#2079](https://github.com/Automattic/simplenote-electron/pull/2079)
   - Added focus mode shortcut hint to View menu [#2082](https://github.com/Automattic/simplenote-electron/pull/2082)
 - Fixed a bug causing occasional missing characters in note titles [#2063](https://github.com/Automattic/simplenote-electron/pull/2063)
 - Defer re-decorating note when changing search [#2073](https://github.com/Automattic/simplenote-electron/pull/2073)
