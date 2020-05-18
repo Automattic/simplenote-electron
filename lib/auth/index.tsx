@@ -69,7 +69,7 @@ export class Auth extends Component<Props> {
       <div className="login">
         {isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
-        <form className="login__form" onSubmit={this.onLogin}>
+        <form className="login__form" onSubmit={this.onSubmit}>
           <h1>{buttonLabel}</h1>
           {!this.state.onLine && (
             <p className="login__auth-message is-error">Offline</p>
@@ -96,22 +96,15 @@ export class Auth extends Component<Props> {
               include your email address, new lines, or tabs.
             </p>
           )}
-          {this.props.hasInvalidCredentials && (
-            <p
-              className="login__auth-message is-error"
-              data-error-name="invalid-login"
-            >
-              Could not log in with the provided email address and password.
-            </p>
-          )}
-          {this.props.hasLoginError && (
-            <p
-              className="login__auth-message is-error"
-              data-error-name="invalid-login"
-            >
-              {errorMessage}
-            </p>
-          )}
+          {this.props.hasInvalidCredentials ||
+            (this.props.hasLoginError && (
+              <p
+                className="login__auth-message is-error"
+                data-error-name="invalid-login"
+              >
+                {errorMessage}
+              </p>
+            ))}
           {passwordErrorMessage && (
             <p className="login__auth-message is-error">
               {passwordErrorMessage}
@@ -125,7 +118,8 @@ export class Auth extends Component<Props> {
           </label>
           <input
             id="login__field-username"
-            onKeyDown={this.onInput}
+            // onKeyDown={this.onInput}
+            onInput={this.onInput}
             placeholder="Email"
             ref={(ref) => (this.usernameInput = ref)}
             spellCheck={false}
@@ -141,18 +135,22 @@ export class Auth extends Component<Props> {
           </label>
           <input
             id="login__field-password"
-            onKeyDown={this.onInput}
+            // onKeyDown={this.onInput}
+            onInput={this.onInput}
             placeholder="Password"
             ref={(ref) => (this.passwordInput = ref)}
             spellCheck={false}
             type="password"
+            required
+            minLength="4"
+            maxLength="64"
           />
 
           <button
             id="login__login-button"
             className={submitClasses}
             disabled={!this.state.onLine}
-            onClick={isCreatingAccount ? this.onSignUp : this.onLogin}
+            onClick={this.onSubmit}
             type="submit"
           >
             {this.props.authPending ? (
@@ -209,36 +207,85 @@ export class Auth extends Component<Props> {
   }
 
   onInput = (event) => {
-    if (event.type === 'keydown' && event.keyCode !== 13) {
-      this.props.resetErrors();
-      this.setState({
-        passwordErrorMessage: '',
-      });
-      return;
+    const passwordError =
+      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.';
+
+    if (this.state.isCreatingAccount) {
+      const username = get(this.usernameInput, 'value');
+      const password = get(this.passwordInput, 'value');
+
+      // run custom validation for the password but use the default message for missing value
+      if (
+        this.passwordInput.validity.valueMissing ||
+        validatePassword(password, username)
+      ) {
+        this.passwordInput.setCustomValidity('');
+      } else {
+        this.passwordInput.setCustomValidity(passwordError);
+      }
     }
+
+    //   if (event.type === 'keydown' && event.keyCode !== 13) {
+    //     this.props.resetErrors();
+    //     this.setState({
+    //       passwordErrorMessage: '',
+    //     });
+    //     return;
+    //   }
   };
 
-  onLogin = (event) => {
+  onSubmit = (event) => {
     event.preventDefault();
 
-    const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
-
-    if (!(username && password)) {
+    if (
+      this.usernameInput.validity.valueMissing ||
+      this.passwordInput.validity.valueMissing
+    ) {
       this.setState({
         passwordErrorMessage: 'Please fill out email and password.',
       });
       return;
     }
 
-    if (password.length < 4) {
+    // check that email is valid
+    if (!this.usernameInput.validity.valid) {
       this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        passwordErrorMessage: 'Please enter a valid email address.',
       });
       return;
     }
 
-    this.props.login(username, password);
+    const username = get(this.usernameInput, 'value');
+    const password = get(this.passwordInput, 'value');
+    const passwordError =
+      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.';
+
+    // signup - stricter password requirements apply
+    if (this.state.isCreatingAccount) {
+      if (!validatePassword(password, username)) {
+        this.setState({
+          passwordErrorMessage: passwordError,
+        });
+        this.passwordInput.setCustomValidity(passwordError);
+        return;
+      }
+
+      this.props.signup(username, password, true);
+    }
+
+    // login - slightly more relaxed password rules
+    else {
+      if (!this.passwordInput.validity.valid) {
+        this.setState({
+          passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        });
+        return;
+      }
+
+      this.props.login(username, password);
+    }
+
+    this.setState({ passwordErrorMessage: null });
   };
 
   onWPLogin = () => {
@@ -336,31 +383,6 @@ export class Auth extends Component<Props> {
       null,
       'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes'
     );
-  };
-
-  onSignUp = (event) => {
-    event.preventDefault();
-
-    const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
-
-    if (!(username && password)) {
-      this.setState({
-        passwordErrorMessage: 'Please fill out email and password.',
-      });
-      return;
-    }
-
-    if (!validatePassword(password, username)) {
-      this.setState({
-        passwordErrorMessage:
-          'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not be the same as your email address.',
-      });
-      return;
-    }
-
-    this.props.signup(username, password, true);
-    this.setState({ passwordErrorMessage: null });
   };
 
   toggleSignUp = (event) => {
