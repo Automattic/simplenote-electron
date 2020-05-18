@@ -31,10 +31,6 @@ export class Auth extends Component<Props> {
   };
 
   componentDidMount() {
-    if (this.usernameInput) {
-      this.usernameInput.focus();
-    }
-
     window.addEventListener('online', this.setConnectivity, false);
     window.addEventListener('offline', this.setConnectivity, false);
   }
