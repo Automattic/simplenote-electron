@@ -1,5 +1,31 @@
 # Changelog
 
+## [v1.17.0]
+
+### Enhancements
+
+- Added option to disable keyboard shortcuts [#2075](https://github.com/Automattic/simplenote-electron/pull/2075)
+- Added a password validation utility ([#2086](https://github.com/Automattic/simplenote-electron/pull/2086)) and stricter password requirements on signup ([#2087](https://github.com/Automattic/simplenote-electron/pull/2087)) and login ([#2088](https://github.com/Automattic/simplenote-electron/pull/2088))
+
+### Fixes
+
+- Many keyboard shortcut fixes:
+  - Delete note shortcut removed [#2076](https://github.com/Automattic/simplenote-electron/pull/2076)
+  - Search shortcut changed to ctrl + shift + s so that it does not conflict with the native browser find [#2078](https://github.com/Automattic/simplenote-electron/pull/2078)
+  - Toggle focus on tag field changed from ctrl/cmd + t to ctrl/cmd + shift + y [#2081](https://github.com/Automattic/simplenote-electron/pull/2081)
+  - Create a new note changed from ctrl/cmd + shift + n to ctrl/cmd + shift + i [#2080](https://github.com/Automattic/simplenote-electron/pull/2080)
+  - Open the tag list changed from ctrl/cmd + shift + t to ctrl/cmd + shift + u [#2079](https://github.com/Automattic/simplenote-electron/pull/2079)
+  - Added focus mode shortcut hint to View menu [#2082](https://github.com/Automattic/simplenote-electron/pull/2082)
+- Fixed a bug causing occasional missing characters in note titles [#2063](https://github.com/Automattic/simplenote-electron/pull/2063)
+- Defer re-decorating note when changing search [#2073](https://github.com/Automattic/simplenote-electron/pull/2073)
+
+### Other Changes
+
+- Refactor: Extract authentication and login screen from main app [#2066](https://github.com/Automattic/simplenote-electron/pull/2066)
+- Build updates: Simplenote now supports armv7l (aka armhf on Debian) and arm64 platforms [#2042](https://github.com/Automattic/simplenote-electron/pull/2042); Added 32-bit version for Windows Store [#2067](https://github.com/Automattic/simplenote-electron/pull/2067)
+- Refactor settings reducer [#2083](https://github.com/Automattic/simplenote-electron/pull/2083) and tag chip [#2068](https://github.com/Automattic/simplenote-electron/pull/2068)
+- Added types to the Checkbox component [#2023](https://github.com/Automattic/simplenote-electron/pull/2023)
+
 ## [v1.16.0]
 
 ### Enhancements
