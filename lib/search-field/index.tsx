@@ -79,9 +79,8 @@ export class SearchField extends Component<Props> {
       <div className="search-field">
         <input
           aria-label={screenReaderLabel}
-          autoComplete="off"
           ref={this.inputField}
-          type="text"
+          type="search"
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
