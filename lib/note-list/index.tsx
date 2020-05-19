@@ -96,7 +96,7 @@ const renderNote = (
     noteDisplay: T.ListDisplayMode;
     highlightedIndex: number;
     onPinNote: DispatchProps['onPinNote'];
-    openNote: DispatchProps['openNote'];
+    openNote: (index: number) => any;
   }
 ): ListRowRenderer => ({ index, key, parent, style }) => {
   const note = notes[index];
@@ -156,7 +156,7 @@ const renderNote = (
         <div
           className="note-list-item-text theme-color-border"
           tabIndex={0}
-          onClick={() => openNote(note)}
+          onClick={() => openNote(index)}
         >
           <div className="note-list-item-title">
             <span>{decorateWith(decorators, title)}</span>
@@ -216,73 +216,15 @@ export class NoteList extends Component<Props> {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: Props): void {
-    const {
-      notes,
-      noteDisplay,
-      openedTag,
-      selectedNote,
-      selectedNoteContent,
-      showNoteList,
-      showTrash,
-      tagResultsFound,
-    } = nextProps;
-    const { selectedIndex } = this.state;
-
     if (
-      noteDisplay !== this.props.noteDisplay ||
-      notes !== this.props.notes ||
-      tagResultsFound !== this.props.tagResultsFound ||
-      selectedNoteContent !== this.props.selectedNoteContent ||
-      showNoteList !== this.props.showNoteList
+      nextProps.noteDisplay !== this.props.noteDisplay ||
+      nextProps.notes !== this.props.notes ||
+      nextProps.tagResultsFound !== this.props.tagResultsFound ||
+      nextProps.selectedNoteContent !== this.props.selectedNoteContent ||
+      nextProps.showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
     }
-
-    // jump to top of note list
-    if (
-      openedTag !== this.props.openedTag ||
-      showTrash !== this.props.showTrash
-    ) {
-      const hasNotes = notes.length > 0;
-      this.setState({ selectedIndex: hasNotes ? 0 : null });
-      this.props.onSelectNote(hasNotes ? notes[0] : null);
-      return;
-    }
-
-    if (notes.length === 0 && selectedNote) {
-      // unselect active note if it doesn't match search
-      this.props.closeNote();
-      this.setState({ selectedIndex: null });
-    }
-
-    // nothing has changed, so don't change anything
-    if (
-      selectedIndex &&
-      selectedNote &&
-      notes[selectedIndex]?.id === selectedNote.id &&
-      showTrash === this.props.showTrash &&
-      openedTag === this.props.openedTag
-    ) {
-      return;
-    }
-
-    const nextIndex = this.getHighlightedIndex(nextProps);
-
-    if (null === nextIndex) {
-      return this.setState({ selectedIndex: null });
-    }
-
-    if (
-      notes.length &&
-      (!selectedNote || selectedNote.id !== notes[nextIndex]?.id)
-    ) {
-      // select the note that should be selected, if it isn't already
-      this.props.onSelectNote(
-        notes[Math.max(0, Math.min(notes.length - 1, nextIndex))]
-      );
-    }
-
-    this.setState({ selectedIndex: nextIndex });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -294,6 +236,35 @@ export class NoteList extends Component<Props> {
       prevProps.showNoteList !== this.props.showNoteList
     ) {
       heightCache.clearAll();
+    }
+
+    // reselect when a note is removed
+    if (
+      !this.props.selectedNote &&
+      this.state.selectedIndex !== null &&
+      this.props.notes[this.state.selectedIndex]
+    ) {
+      this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
+    }
+
+    // reselect when a note should be removed
+    if (
+      this.props.selectedNote &&
+      this.props.selectedNote.data.deleted !== this.props.showTrash &&
+      this.state.selectedIndex &&
+      this.props.notes[this.state.selectedIndex]
+    ) {
+      this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
+    }
+  }
+
+  static getDerivedStateFromProps(props: Props) {
+    if (props.selectedNote) {
+      const noteAt = props.notes.findIndex(
+        ({ id }) => id === props.selectedNote!.id
+      );
+
+      return { selectedIndex: -1 === noteAt ? null : noteAt };
     }
   }
 
@@ -307,32 +278,36 @@ export class NoteList extends Component<Props> {
     }
     const { ctrlKey, code, metaKey, shiftKey } = event;
     const { isSmallScreen, notes, showNoteList } = this.props;
-    const { selectedIndex: index } = this.state;
-
-    const highlightedIndex = this.getHighlightedIndex(this.props);
+    const { selectedIndex } = this.state;
 
     const cmdOrCtrl = ctrlKey || metaKey;
     if (cmdOrCtrl && shiftKey && code === 'KeyK') {
-      if (-1 === highlightedIndex || index < 0 || !notes[index - 1]?.id) {
-        return false;
+      if (!notes.length) {
+        this.setState({ selectedIndex: null });
+      } else {
+        const nextIndex =
+          selectedIndex !== null ? Math.max(0, selectedIndex - 1) : 0;
+        const nextNote = notes[nextIndex];
+        this.props.onSelectNote(nextNote);
       }
 
-      this.props.onSelectNote(notes[index - 1]);
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
     if (cmdOrCtrl && shiftKey && code === 'KeyJ') {
-      if (
-        -1 === highlightedIndex ||
-        index >= notes.length ||
-        !notes[index + 1]?.id
-      ) {
-        return false;
+      if (!notes.length) {
+        this.setState({ selectedIndex: null });
+      } else {
+        const nextIndex =
+          selectedIndex !== null
+            ? Math.min(notes.length - 1, selectedIndex + 1)
+            : 0;
+        const nextNote = notes[nextIndex];
+        this.props.onSelectNote(nextNote);
       }
 
-      this.props.onSelectNote(notes[index + 1]);
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -350,9 +325,9 @@ export class NoteList extends Component<Props> {
       isSmallScreen &&
       showNoteList &&
       code === 'Enter' &&
-      highlightedIndex !== null
+      selectedIndex !== null
     ) {
-      this.props.openNote(notes[highlightedIndex]);
+      this.props.openNote(notes[selectedIndex]);
 
       event.stopPropagation();
       event.preventDefault();
@@ -368,45 +343,6 @@ export class NoteList extends Component<Props> {
     } else {
       window.removeEventListener('keydown', this.handleShortcut, true);
     }
-  };
-
-  getHighlightedIndex = (props: Props) => {
-    const { notes, selectedNote } = props;
-    const { selectedIndex: index } = this.state;
-
-    // Cases:
-    //   - the notes list is empty
-    //   - nothing has been selected -> select the first item if it exists
-    //   - the selected note matches the index -> use the index
-    //   - selected note is in the list -> use the index where it's found
-    //   - selected note isn't in the list -> previous index?
-
-    if (notes.length === 0) {
-      return null;
-    }
-
-    if (!selectedNote && !index) {
-      const firstNote = notes.findIndex((item) => item?.id);
-
-      return firstNote > -1 ? firstNote : null;
-    }
-
-    if (selectedNote && selectedNote.id === notes[index]?.id) {
-      return index;
-    }
-
-    const noteAt = notes.findIndex((item) => item?.id === selectedNote?.id);
-
-    if (selectedNote && noteAt > -1) {
-      return noteAt;
-    }
-
-    if (selectedNote) {
-      return Math.min(index, notes.length - 1); // different note, same index
-    }
-
-    // we have no selected note here, but we do have a previous index
-    return index;
   };
 
   render() {
@@ -438,7 +374,10 @@ export class NoteList extends Component<Props> {
       highlightedIndex,
       noteDisplay,
       onPinNote,
-      openNote,
+      openNote: (index: number) =>
+        this.setState({ selectedIndex: index - specialRows }, () =>
+          openNote(notes[index - specialRows])
+        ),
     });
 
     const isEmptyList = compositeNoteList.length === 0;
