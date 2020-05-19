@@ -48,14 +48,14 @@ export const SearchBar: Component<Props> = ({
     <IconButton
       icon={<MenuIcon />}
       onClick={toggleNavigation}
-      title="Menu • Ctrl+Shift+T"
+      title="Menu • Ctrl+Shift+U"
     />
     <SearchField />
     <IconButton
       disabled={showTrash}
       icon={<NewNoteIcon />}
       onClick={() => onNewNote(withoutTags(searchQuery))}
-      title="New Note • Ctrl+Shift+N"
+      title="New Note • Ctrl+Shift+I"
     />
   </div>
 );

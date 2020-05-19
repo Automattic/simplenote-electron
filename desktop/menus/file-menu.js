@@ -5,6 +5,7 @@ const { appCommandSender } = require('./utils');
 const submenu = [
   {
     label: '&New Note',
+    accelerator: 'CommandOrControl+Shift+I',
     click: appCommandSender({ action: 'newNote' }),
   },
   { type: 'separator' },
