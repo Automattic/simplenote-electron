@@ -65,8 +65,12 @@ export class Auth extends Component<Props> {
       ? 'Could not create account. Please try again.'
       : 'Could not log in with the provided email address and password.';
 
+    const mainClasses = classNames('login', {
+      'is-electron': isElectron,
+    });
+
     return (
-      <div className="login">
+      <div className={mainClasses}>
         {isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onSubmit}>
@@ -118,8 +122,8 @@ export class Auth extends Component<Props> {
           </label>
           <input
             id="login__field-username"
-            // onKeyDown={this.onInput}
             onInput={this.onInput}
+            onInvalid={this.onInput}
             placeholder="Email"
             ref={(ref) => (this.usernameInput = ref)}
             spellCheck={false}
@@ -135,8 +139,8 @@ export class Auth extends Component<Props> {
           </label>
           <input
             id="login__field-password"
-            // onKeyDown={this.onInput}
             onInput={this.onInput}
+            onInvalid={this.onInput}
             placeholder="Password"
             ref={(ref) => (this.passwordInput = ref)}
             spellCheck={false}
@@ -224,18 +228,16 @@ export class Auth extends Component<Props> {
         this.passwordInput.setCustomValidity(passwordError);
       }
     }
-
-    //   if (event.type === 'keydown' && event.keyCode !== 13) {
-    //     this.props.resetErrors();
-    //     this.setState({
-    //       passwordErrorMessage: '',
-    //     });
-    //     return;
-    //   }
   };
 
   onSubmit = (event) => {
     event.preventDefault();
+
+    // clear any existing error messages on submit
+    this.props.resetErrors();
+    this.setState({
+      passwordErrorMessage: '',
+    });
 
     if (
       this.usernameInput.validity.valueMissing ||
