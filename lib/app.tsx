@@ -1,477 +1,207 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
-import appState from './flux/app-state';
-import { loadTags } from './state/domain/tags';
-import browserShell from './browser-shell';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
-import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
-import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
-import { setLastSyncedTime } from './utils/sync/last-synced-time';
-import analytics from './analytics';
 import classNames from 'classnames';
-import { debounce, get, has, isObject, overEvery, pick, values } from 'lodash';
-import {
-  createNote,
-  closeNote,
-  setUnsyncedNoteIds,
-  toggleNavigation,
-  toggleSimperiumConnectionStatus,
-} from './state/ui/actions';
+import { createNote, closeNote, toggleNavigation } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
 
 import actions from './state/actions';
+import * as selectors from './state/selectors';
 import * as S from './state';
 import * as T from './types';
 
-export type OwnProps = {
-  noteBucket: object;
+type OwnProps = {
+  isDevConfig: boolean;
 };
 
-export type DispatchProps = {
-  createNote: () => any;
+type StateProps = {
+  autoHideMenuBar: boolean;
+  hotkeysEnabled: boolean;
+  isOffline: boolean;
+  isSmallScreen: boolean;
+  lineLength: T.LineLength;
+  showNavigation: boolean;
+  showNoteInfo: boolean;
+  theme: 'light' | 'dark';
+};
+
+type DispatchProps = {
   closeNote: () => any;
+  createNote: () => any;
   focusSearchField: () => any;
-  selectNote: (note: T.NoteEntity) => any;
-  showDialog: (type: T.DialogType) => any;
-  trashNote: (previousIndex: number) => any;
+  openTagList: () => any;
+  setAccountName: (name: string) => any;
+  setLineLength: (length: T.LineLength) => any;
+  setNoteDisplay: (displayMode: T.ListDisplayMode) => any;
+  setSortType: (sortType: T.SortType) => any;
+  toggleAutoHideMenuBar: () => any;
+  toggleFocusMode: () => any;
+  toggleSortOrder: () => any;
+  toggleSortTagsAlpha: () => any;
+  toggleSpellCheck: () => any;
 };
 
-export type Props = OwnProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
-const mapStateToProps: S.MapState<S.State> = (state) => state;
+class AppComponent extends Component<Props> {
+  static displayName = 'App';
 
-const mapDispatchToProps: S.MapDispatch<
-  DispatchProps,
-  OwnProps
-> = function mapDispatchToProps(dispatch, { noteBucket }) {
-  const actionCreators = Object.assign({}, appState.actionCreators);
+  componentDidMount() {
+    window.electron?.send('setAutoHideMenuBar', this.props.autoHideMenuBar);
 
-  const thenReloadNotes = (action) => (a) => {
-    dispatch(action(a));
-    dispatch(actionCreators.loadNotes({ noteBucket }));
-  };
+    this.toggleShortcuts(true);
 
-  const thenReloadTags = (action) => (a) => {
-    dispatch(action(a));
-    dispatch(loadTags());
-  };
-
-  return {
-    actions: bindActionCreators(actionCreators, dispatch),
-    ...bindActionCreators(
-      pick(settingsActions, [
-        'activateTheme',
-        'decreaseFontSize',
-        'increaseFontSize',
-        'resetFontSize',
-        'setLineLength',
-        'setNoteDisplay',
-        'setAccountName',
-        'toggleAutoHideMenuBar',
-        'toggleFocusMode',
-        'toggleSpellCheck',
-      ]),
-      dispatch
-    ),
-    closeNote: () => dispatch(closeNote()),
-    remoteNoteUpdate: (noteId, data) =>
-      dispatch(actions.simperium.remoteNoteUpdate(noteId, data)),
-    loadTags: () => dispatch(loadTags()),
-    setSortType: thenReloadNotes(settingsActions.setSortType),
-    toggleSortOrder: thenReloadNotes(settingsActions.toggleSortOrder),
-    toggleSortTagsAlpha: thenReloadTags(settingsActions.toggleSortTagsAlpha),
-    createNote: () => dispatch(createNote()),
-    openTagList: () => dispatch(toggleNavigation()),
-    selectNote: (note: T.NoteEntity) => dispatch(actions.ui.selectNote(note)),
-    focusSearchField: () => dispatch(actions.ui.focusSearchField()),
-    setSimperiumConnectionStatus: (connected) =>
-      dispatch(toggleSimperiumConnectionStatus(connected)),
-    setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
-    showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
-    trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
-  };
-};
-
-export const App = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  class extends Component<Props> {
-    static displayName = 'App';
-
-    static propTypes = {
-      actions: PropTypes.object.isRequired,
-      appState: PropTypes.object.isRequired,
-      client: PropTypes.object.isRequired,
-      isDevConfig: PropTypes.bool.isRequired,
-      isSmallScreen: PropTypes.bool.isRequired,
-      loadTags: PropTypes.func.isRequired,
-      openTagList: PropTypes.func.isRequired,
-      settings: PropTypes.object.isRequired,
-      preferencesBucket: PropTypes.object.isRequired,
-      systemTheme: PropTypes.string.isRequired,
-      tagBucket: PropTypes.object.isRequired,
-    };
-
-    UNSAFE_componentWillMount() {
-      this.onAuthChanged();
-    }
-
-    componentDidMount() {
-      window.electron?.receive('appCommand', this.onAppCommand);
-      window.electron?.send(
-        'setAutoHideMenuBar',
-        this.props.settings.autoHideMenuBar
-      );
-      window.electron?.send('settingsUpdate', this.props.settings);
-
-      this.props.noteBucket
-        .on('index', this.onNotesIndex)
-        .on('update', this.onNoteUpdate)
-        .on('update', debounce(this.onNotesIndex, 200, { maxWait: 1000 })) // refresh notes list
-        .on('remove', this.onNoteRemoved)
-        .beforeNetworkChange((noteId) =>
-          this.props.actions.onNoteBeforeRemoteUpdate({
-            noteId,
-          })
-        );
-
-      this.props.preferencesBucket.on('update', this.onLoadPreferences);
-
-      this.props.tagBucket
-        .on('index', this.props.loadTags)
-        .on('update', debounce(this.props.loadTags, 200))
-        .on('remove', this.props.loadTags);
-
-      this.props.client
-        .on('authorized', this.onAuthChanged)
-        .on('unauthorized', this.onAuthChanged)
-        .on('message', setLastSyncedTime)
-        .on('message', this.syncActivityHooks)
-        .on('send', this.syncActivityHooks)
-        .on('connect', () => this.props.setSimperiumConnectionStatus(true))
-        .on('disconnect', () => this.props.setSimperiumConnectionStatus(false));
-
-      this.onLoadPreferences(() =>
-        // Make sure that tracking starts only after preferences are loaded
-        analytics.tracks.recordEvent('application_opened')
-      );
-
-      this.toggleShortcuts(true);
-
-      __TEST__ && window.testEvents.push('booted');
-    }
-
-    componentWillUnmount() {
-      this.toggleShortcuts(false);
-    }
-
-    componentDidUpdate(prevProps) {
-      const { settings } = this.props;
-
-      if (settings !== prevProps.settings) {
-        window.electron?.send('settingsUpdate', settings);
-      }
-    }
-
-    handleShortcut = (event: KeyboardEvent) => {
-      const {
-        settings: { keyboardShortcuts },
-      } = this.props;
-      if (!keyboardShortcuts) {
-        return;
-      }
-      const { code, ctrlKey, metaKey, shiftKey } = event;
-
-      // Is either cmd or ctrl pressed? (But not both)
-      const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
-
-      // open tag list
-      if (
-        cmdOrCtrl &&
-        shiftKey &&
-        'KeyU' === code &&
-        !this.props.showNavigation
-      ) {
-        this.props.openTagList();
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
-      if (
-        (cmdOrCtrl && shiftKey && 'KeyS' === code) ||
-        (isElectron && cmdOrCtrl && !shiftKey && 'KeyF' === code)
-      ) {
-        this.props.focusSearchField();
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
-      if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
-        this.props.toggleFocusMode();
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
-      if (cmdOrCtrl && shiftKey && 'KeyI' === code) {
-        this.props.actions.newNote({
-          noteBucket: this.props.noteBucket,
-        });
-        analytics.tracks.recordEvent('list_note_created');
-
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-      }
-
-      // prevent default browser behavior for search
-      // will bubble up from note-detail
-      if (cmdOrCtrl && 'KeyG' === code) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
-
-      return true;
-    };
-
-    onAppCommand = (event) => {
-      if ('exportZipArchive' === event.action) {
-        exportZipArchive();
-      }
-
-      if ('printNote' === event.action) {
-        return window.print();
-      }
-
-      if ('focusSearchField' === event.action) {
-        return this.props.focusSearchField();
-      }
-
-      if ('showDialog' === event.action) {
-        return this.props.showDialog(event.dialog);
-      }
-
-      if ('trashNote' === event.action && this.props.ui.note) {
-        return this.props.actions.trashNote({
-          noteBucket: this.props.noteBucket,
-          note: this.props.ui.note,
-          previousIndex: this.props.appState.notes.findIndex(
-            ({ id }) => this.props.ui.note.id === id
-          ),
-        });
-      }
-
-      const canRun = overEvery(
-        isObject,
-        (o) => o.action !== null,
-        (o) => has(this.props.actions, o.action) || has(this.props, o.action)
-      );
-
-      if (canRun(event)) {
-        // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
-        if (event.action === 'newNote') {
-          this.props.actions.newNote({
-            noteBucket: this.props.noteBucket,
-          });
-          analytics.tracks.recordEvent('list_note_created');
-        } else if (has(this.props, event.action)) {
-          const { action, ...args } = event;
-
-          this.props[action](...values(args));
-        } else {
-          this.props.actions[event.action](event);
-        }
-      }
-    };
-
-    onAuthChanged = () => {
-      const {
-        appState: { accountName },
-      } = this.props;
-
-      analytics.initialize(accountName);
-      this.onLoadPreferences();
-
-      // 'Kick' the app to ensure content is loaded after signing in
-      this.onNotesIndex();
-      this.props.loadTags();
-    };
-
-    onNotesIndex = () => {
-      const { noteBucket, setUnsyncedNoteIds } = this.props;
-      const { loadNotes } = this.props.actions;
-
-      loadNotes({ noteBucket });
-      setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
-
-      __TEST__ && window.testEvents.push('notesLoaded');
-    };
-
-    onNoteRemoved = () => this.onNotesIndex();
-
-    onNoteUpdate = (
-      noteId: T.EntityId,
-      data,
-      remoteUpdateInfo: { patch?: object } = {}
-    ) => {
-      const {
-        noteBucket,
-        selectNote,
-        ui: { note },
-      } = this.props;
-
-      this.props.remoteNoteUpdate(noteId, data);
-
-      if (note && noteId === note.id) {
-        noteBucket.get(noteId, (e: unknown, storedNote: T.NoteEntity) => {
-          if (e) {
-            return;
-          }
-          const updatedNote = remoteUpdateInfo.patch
-            ? { ...storedNote, hasRemoteUpdate: true }
-            : storedNote;
-          selectNote(updatedNote);
-        });
-      }
-    };
-
-    onLoadPreferences = (callback) =>
-      this.props.actions.loadPreferences({
-        callback,
-        preferencesBucket: this.props.preferencesBucket,
-      });
-
-    getTheme = () => {
-      const {
-        settings: { theme },
-        systemTheme,
-      } = this.props;
-      return 'system' === theme ? systemTheme : theme;
-    };
-
-    onUpdateContent = (note, content, sync = false) => {
-      if (!note) {
-        return;
-      }
-
-      const updatedNote = {
-        ...note,
-        data: {
-          ...note.data,
-          content,
-          modificationDate: Math.floor(Date.now() / 1000),
-        },
-      };
-
-      this.props.selectNote(updatedNote);
-
-      const { noteBucket } = this.props;
-      noteBucket.update(note.id, updatedNote.data, {}, { sync });
-      if (sync) {
-        this.syncNote(note.id);
-      }
-    };
-
-    syncNote = (noteId) => {
-      this.props.noteBucket.touch(noteId);
-    };
-
-    syncActivityHooks = (data) => {
-      activityHooks(data, {
-        onIdle: () => {
-          const {
-            appState: { notes },
-            client,
-            noteBucket,
-            setUnsyncedNoteIds,
-          } = this.props;
-
-          nudgeUnsynced({ client, noteBucket, notes });
-          setUnsyncedNoteIds(getUnsyncedNoteIds(noteBucket));
-        },
-      });
-    };
-
-    toggleShortcuts = (doEnable) => {
-      if (doEnable) {
-        window.addEventListener('keydown', this.handleShortcut, true);
-      } else {
-        window.removeEventListener('keydown', this.handleShortcut, true);
-      }
-    };
-
-    loadPreferences = () => {
-      this.props.actions.loadPreferences({
-        preferencesBucket: this.props.preferencesBucket,
-      });
-    };
-
-    render() {
-      const {
-        appState: state,
-        isDevConfig,
-        noteBucket,
-        preferencesBucket,
-        settings,
-        tagBucket,
-        isSmallScreen,
-        ui: { showNavigation, showNoteInfo },
-      } = this.props;
-
-      const themeClass = `theme-${this.getTheme()}`;
-
-      const appClasses = classNames('app', themeClass, {
-        'is-line-length-full': settings.lineLength === 'full',
-        'touch-enabled': 'ontouchstart' in document.body,
-      });
-
-      const mainClasses = classNames('simplenote-app', {
-        'note-info-open': showNoteInfo,
-        'navigation-open': showNavigation,
-        'is-electron': isElectron,
-        'is-macos': isMac,
-      });
-
-      return (
-        <div className={appClasses}>
-          {isDevConfig && <DevBadge />}
-          <div className={mainClasses}>
-            {showNavigation && <NavigationBar />}
-            <AppLayout
-              isFocusMode={settings.focusModeEnabled}
-              isNavigationOpen={showNavigation}
-              isNoteInfoOpen={showNoteInfo}
-              isSmallScreen={isSmallScreen}
-              noteBucket={noteBucket}
-              onUpdateContent={this.onUpdateContent}
-              syncNote={this.syncNote}
-            />
-            {showNoteInfo && <NoteInfo noteBucket={noteBucket} />}
-          </div>
-          <DialogRenderer
-            appProps={this.props}
-            buckets={{ noteBucket, preferencesBucket, tagBucket }}
-            themeClass={themeClass}
-          />
-        </div>
-      );
-    }
+    __TEST__ && window.testEvents.push('booted');
   }
-);
 
-export default browserShell(App);
+  componentWillUnmount() {
+    this.toggleShortcuts(false);
+  }
+
+  handleShortcut = (event: KeyboardEvent) => {
+    const { hotkeysEnabled } = this.props;
+    if (!hotkeysEnabled) {
+      return;
+    }
+    const { code, ctrlKey, metaKey, shiftKey } = event;
+
+    // Is either cmd or ctrl pressed? (But not both)
+    const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
+
+    // open tag list
+    if (
+      cmdOrCtrl &&
+      shiftKey &&
+      'KeyU' === code &&
+      !this.props.showNavigation
+    ) {
+      this.props.openTagList();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (
+      (cmdOrCtrl && shiftKey && 'KeyS' === code) ||
+      (isElectron && cmdOrCtrl && !shiftKey && 'KeyF' === code)
+    ) {
+      this.props.focusSearchField();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+      this.props.toggleFocusMode();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (cmdOrCtrl && shiftKey && 'KeyI' === code) {
+      this.props.createNote();
+
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    // prevent default browser behavior for search
+    // will bubble up from note-detail
+    if (cmdOrCtrl && 'KeyG' === code) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+
+    return true;
+  };
+
+  toggleShortcuts = (doEnable: boolean) => {
+    if (doEnable) {
+      window.addEventListener('keydown', this.handleShortcut, true);
+    } else {
+      window.removeEventListener('keydown', this.handleShortcut, true);
+    }
+  };
+
+  render() {
+    const {
+      isDevConfig,
+      isOffline,
+      lineLength,
+      showNavigation,
+      showNoteInfo,
+      theme,
+    } = this.props;
+
+    const appClasses = classNames('app', `theme-${theme}`, {
+      'is-line-length-full': lineLength === 'full',
+      'touch-enabled': 'ontouchstart' in document.body,
+    });
+
+    const mainClasses = classNames('simplenote-app', {
+      'note-info-open': showNoteInfo,
+      'navigation-open': showNavigation,
+      'is-electron': isElectron,
+      'is-macos': isMac,
+    });
+
+    return (
+      <div className={appClasses}>
+        {isDevConfig && <DevBadge />}
+        {isOffline && <div className="dev-badge">OFFLINE</div>}
+        <div className={mainClasses}>
+          {showNavigation && <NavigationBar />}
+          <AppLayout />
+          {showNoteInfo && <NoteInfo />}
+        </div>
+        <DialogRenderer appProps={this.props} />
+      </div>
+    );
+  }
+}
+
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  autoHideMenuBar: state.settings.autoHideMenuBar,
+  hotkeysEnabled: state.settings.keyboardShortcuts,
+  isOffline: state.simperium.connectionStatus === 'offline',
+  isSmallScreen: selectors.isSmallScreen(state),
+  lineLength: state.settings.lineLength,
+  showNavigation: state.ui.showNavigation,
+  showNoteInfo: state.ui.showNoteInfo,
+  theme: selectors.getTheme(state),
+});
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
+  return {
+    activateTheme: (theme: T.Theme) =>
+      dispatch(settingsActions.activateTheme(theme)),
+    closeNote: () => dispatch(closeNote()),
+    createNote: () => dispatch(createNote()),
+    focusSearchField: () => dispatch(actions.ui.focusSearchField()),
+    openTagList: () => dispatch(toggleNavigation()),
+    setAccountName: (name) => dispatch(settingsActions.setAccountName(name)),
+    setLineLength: (length) => dispatch(settingsActions.setLineLength(length)),
+    setNoteDisplay: (displayMode) =>
+      dispatch(settingsActions.setNoteDisplay(displayMode)),
+    setSortType: (sortType) => dispatch(settingsActions.setSortType(sortType)),
+    toggleAutoHideMenuBar: () =>
+      dispatch(settingsActions.toggleAutoHideMenuBar()),
+    toggleFocusMode: () => dispatch(settingsActions.toggleFocusMode()),
+    toggleSortOrder: () => dispatch(settingsActions.toggleSortOrder()),
+    toggleSortTagsAlpha: () => dispatch(settingsActions.toggleSortTagsAlpha()),
+    toggleSpellCheck: () => dispatch(settingsActions.toggleSpellCheck()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppComponent);

@@ -1,5 +1,3 @@
-import { clamp } from 'lodash';
-
 import { combineReducers } from 'redux';
 
 import * as A from '../action-types';
@@ -18,6 +16,8 @@ const autoHideMenuBar: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setAutoHideMenuBar':
       return action.autoHideMenuBar;
+    case 'TOGGLE_AUTO_HIDE_MENU_BAR':
+      return !state;
     default:
       return state;
   }
@@ -27,15 +27,24 @@ const focusModeEnabled: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setFocusMode':
       return action.focusModeEnabled;
+    case 'TOGGLE_FOCUS_MODE':
+      return !state;
     default:
       return state;
   }
 };
 
+const fontSizes = [10, 14, 16, 20, 24, 34];
 const fontSize: A.Reducer<number> = (state = 16, action) => {
   switch (action.type) {
-    case 'setFontSize':
-      return clamp(action.fontSize || 16, 10, 30);
+    case 'DECREASE_FONT_SIZE':
+      return fontSizes[Math.max(0, fontSizes.indexOf(state) - 1)];
+    case 'INCREASE_FONT_SIZE':
+      return fontSizes[
+        Math.min(fontSizes.length - 1, fontSizes.indexOf(state) + 1)
+      ];
+    case 'RESET_FONT_SIZE':
+      return 16;
     default:
       return state;
   }
@@ -83,6 +92,8 @@ const sortReversed: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setSortReversed':
       return action.sortReversed;
+    case 'TOGGLE_SORT_ORDER':
+      return !state;
     default:
       return state;
   }
@@ -91,6 +102,8 @@ const sortTagsAlpha: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setSortTagsAlpha':
       return action.sortTagsAlpha;
+    case 'TOGGLE_SORT_TAGS_ALPHA':
+      return !state;
     default:
       return state;
   }
@@ -110,10 +123,13 @@ const spellCheckEnabled: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'setSpellCheck':
       return action.spellCheckEnabled;
+    case 'TOGGLE_SPELLCHECK':
+      return !state;
     default:
       return state;
   }
 };
+
 const theme: A.Reducer<T.Theme> = (state = 'system', action) => {
   switch (action.type) {
     case 'setTheme':
@@ -121,9 +137,6 @@ const theme: A.Reducer<T.Theme> = (state = 'system', action) => {
     default:
       return state;
   }
-};
-const wpToken: A.Reducer<string | boolean> = (state = false, action) => {
-  return state;
 };
 
 export default combineReducers({
@@ -140,5 +153,4 @@ export default combineReducers({
   sortType,
   spellCheckEnabled,
   theme,
-  wpToken,
 });

@@ -59,19 +59,19 @@
     "target": [
       {
         "target": "AppImage",
-        "arch": ["x64", "ia32", "armv7l", "arm64"]
+        "arch": ["x64", "ia32"]
       },
       {
         "target": "deb",
-        "arch": ["x64", "ia32", "armv7l", "arm64"]
+        "arch": ["x64", "ia32"]
       },
       {
         "target": "rpm",
-        "arch": ["x64", "ia32", "armv7l", "arm64"]
+        "arch": ["x64", "ia32"]
       },
       {
         "target": "tar.gz",
-        "arch": ["x64", "ia32", "armv7l", "arm64"]
+        "arch": ["x64", "ia32"]
       }
     ],
     "synopsis": "The simplest way to keep notes",

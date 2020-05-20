@@ -2,10 +2,12 @@ import { EventEmitter } from 'events';
 import { createStream } from 'sax';
 import { isElectron } from '../../platform';
 import parseISO from 'date-fns/parseISO';
-import { endsWith, get, has } from 'lodash';
+import { endsWith, get } from 'lodash';
 
 import CoreImporter from '../';
 import enmlToMarkdown from './enml-to-markdown';
+
+import * as T from '../../../types';
 
 let fs = null;
 
@@ -14,10 +16,9 @@ if (isElectron) {
 }
 
 class EvernoteImporter extends EventEmitter {
-  constructor({ noteBucket, tagBucket, options }) {
+  constructor(addNote: (note: T.Note) => any, options) {
     super();
-    this.noteBucket = noteBucket;
-    this.tagBucket = tagBucket;
+    this.addNote = addNote;
     this.options = options;
   }
 
@@ -39,10 +40,7 @@ class EvernoteImporter extends EventEmitter {
 
     const saxStream = createStream(true, false);
     const parser = new DOMParser();
-    const coreImporter = new CoreImporter({
-      noteBucket: this.noteBucket,
-      tagBucket: this.tagBucket,
-    });
+    const coreImporter = new CoreImporter(this.addNote);
     let currentNote = {}; // The current note we are parsing
     let importedNoteCount = 0;
 

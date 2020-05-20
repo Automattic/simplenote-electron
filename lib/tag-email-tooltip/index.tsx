@@ -1,12 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-
-import appState from '../flux/app-state';
 
 import { showDialog } from '../state/ui/actions';
 
-export const EmailToolTip = ({ openShareDialog }) => (
+import * as S from '../state';
+
+type DispatchProps = {
+  openShareDialog: () => any;
+};
+
+type Props = DispatchProps;
+
+export const EmailToolTip: FunctionComponent<Props> = ({ openShareDialog }) => (
   <div className="tag-email-tooltip">
     <div className="tag-email-tooltip__arrow" />
     <div className="tag-email-tooltip__inside">
@@ -20,12 +25,8 @@ export const EmailToolTip = ({ openShareDialog }) => (
   </div>
 );
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   openShareDialog: () => dispatch(showDialog('SHARE')),
 });
-
-EmailToolTip.propTypes = {
-  openShareDialog: PropTypes.func.isRequired,
-};
 
 export default connect(null, mapDispatchToProps)(EmailToolTip);

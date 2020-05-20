@@ -1,5 +1,4 @@
 import removeMarkdown from 'remove-markdown';
-import { isFunction } from 'lodash';
 
 import * as T from '../types';
 
@@ -10,18 +9,6 @@ export interface TitleAndPreview {
 
 export const maxTitleChars = 64;
 export const maxPreviewChars = 200;
-const maxPreviewLines = 4; // probably need to adjust if we're in the comfy view
-
-const matchUntilLimit = (pattern, source, preview = '', lines = 0) => {
-  const match = pattern.exec(source);
-  // must match, must have no more than four lines, must not be longer than N=10 characters
-  if (!match || lines > maxPreviewLines || preview.length > maxPreviewChars) {
-    return preview;
-  }
-
-  const [, chunk] = match;
-  return matchUntilLimit(pattern, source, preview + chunk, lines + 1);
-};
 
 /**
  * Returns a string with markdown stripped
@@ -47,60 +34,74 @@ const getTitle = (content) => {
   return title;
 };
 
-const getPreview = (content) => {
-  const previewPattern = new RegExp(
-    `[^\n]*\n+[ \t]*([^]{0,${maxPreviewChars}})`,
-    'g'
-  );
-  return matchUntilLimit(previewPattern, content);
+/**
+ * Generate preview for note list
+ *
+ * Should gather the first non-whitespace content
+ * for up to four lines and up to 200 characters
+ *
+ * @param content
+ */
+const getPreview = (content: string) => {
+  let preview = '';
+  let lines = 0;
+  let index = content.indexOf('\n');
+
+  if (index === -1) {
+    return '';
+  }
+
+  while (index > -1 && lines < 4) {
+    const nextNewline = content.indexOf('\n', index);
+    if (-1 === nextNewline) {
+      return preview + content.slice(index).trim();
+    }
+
+    const nextLine = content.slice(index, nextNewline).trim();
+    if (nextLine) {
+      preview += nextLine + '\n';
+      lines++;
+    }
+
+    index = nextNewline + 1;
+  }
+
+  return preview.trim();
 };
 
 const formatPreview = (stripMarkdown: boolean, s: string): string =>
   stripMarkdown ? removeMarkdownWithFix(s) || s : s;
 
+const previewCache = new Map<string, [boolean, TitleAndPreview]>();
+
 /**
  * Returns the title and excerpt for a given note
  *
- * @param {Object} note a note object
- * @returns {Object} title and excerpt (if available)
+ * @param note generate the previews for this note
+ * @returns title and excerpt (if available)
  */
-export const noteTitleAndPreview = (note: T.NoteEntity): TitleAndPreview => {
-  const content = (note && note.data && note.data.content) || '';
+export const noteTitleAndPreview = (note: T.Note): TitleAndPreview => {
   const stripMarkdown = isMarkdown(note);
-  const title = formatPreview(stripMarkdown, getTitle(content));
-  const preview = formatPreview(stripMarkdown, getPreview(content));
-  return { title, preview };
-};
-
-function isMarkdown(note: T.NoteEntity): boolean {
-  return note && note.data && note.data.systemTags.includes('markdown');
-}
-
-/**
- * Clean the text so it is ready to be sorted alphabetically.
- *
- * @param {string} text - The string to be normalized.
- * @returns {string} The normalized string.
- */
-export const normalizeForSorting = (text) => {
-  const maxLength = 200;
-
-  let normalizedText = text
-    .replace(/^\s*#+\s*/, '') // Remove leading whitespace and Markdown heading
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, maxLength)
-    .toLowerCase();
-
-  // Remove accents/diacritics (https://stackoverflow.com/questions/990904)
-  // if `normalize()` is available.
-  if (isFunction(normalizedText.normalize)) {
-    normalizedText = normalizedText
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+  const cached = previewCache.get(note.content);
+  if (cached) {
+    const [wasMarkdown, value] = cached;
+    if (wasMarkdown === stripMarkdown) {
+      return value;
+    }
   }
 
-  return normalizedText;
+  const content = note.content || '';
+  const title = formatPreview(stripMarkdown, getTitle(content));
+  const preview = formatPreview(stripMarkdown, getPreview(content));
+  const result = { title, preview };
+
+  previewCache.set(note.content, [stripMarkdown, result]);
+
+  return result;
 };
+
+function isMarkdown(note: T.Note): boolean {
+  return note.systemTags.includes('markdown');
+}
 
 export default noteTitleAndPreview;

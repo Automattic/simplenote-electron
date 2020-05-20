@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 import IconButton from '../icon-button';
 import BackIcon from '../icons/back';
@@ -12,28 +10,28 @@ import RevisionsIcon from '../icons/revisions';
 import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-
-import {
-  toggleEditMode,
-  toggleNoteInfo,
-  toggleNoteList,
-  toggleRevisions,
-} from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
+type StateProps = {
+  editMode: boolean;
+  hasRevisions: boolean;
+  markdownEnabled: boolean;
+  note: T.Note | null;
+};
+
 type DispatchProps = {
+  deleteNoteForever: () => any;
+  restoreNote: () => any;
+  shareNote: () => any;
   toggleEditMode: () => any;
+  toggleFocusMode: () => any;
   toggleNoteInfo: () => any;
   toggleNoteList: () => any;
   toggleRevisions: () => any;
-};
-
-type StateProps = {
-  editMode: boolean;
-  markdownEnabled: boolean;
-  note: T.NoteEntity | null;
+  trashNote: () => any;
 };
 
 type Props = DispatchProps & StateProps;
@@ -41,35 +39,24 @@ type Props = DispatchProps & StateProps;
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
-  static propTypes = {
-    onRestoreNote: PropTypes.func,
-    onTrashNote: PropTypes.func,
-    onDeleteNoteForever: PropTypes.func,
-    onShareNote: PropTypes.func,
-    toggleFocusMode: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-    onDeleteNoteForever: noop,
-    onRestoreNote: noop,
-    onShareNote: noop,
-    onTrashNote: noop,
-    toggleFocusMode: noop,
-  };
-
   render() {
     const { note } = this.props;
-    const isTrashed = !!(note && note.data.deleted);
 
     return (
       <div className="note-toolbar-wrapper theme-color-border">
-        {isTrashed ? this.renderTrashed() : this.renderNormal()}
+        {note?.deleted ? this.renderTrashed() : this.renderNormal()}
       </div>
     );
   }
 
   renderNormal = () => {
-    const { editMode, markdownEnabled, note, toggleNoteInfo } = this.props;
+    const {
+      editMode,
+      hasRevisions,
+      markdownEnabled,
+      note,
+      toggleNoteInfo,
+    } = this.props;
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -102,22 +89,23 @@ export class NoteToolbar extends Component<Props> {
           )}
           <div className="note-toolbar__button">
             <IconButton
+              disabled={!hasRevisions}
               icon={<RevisionsIcon />}
               onClick={this.props.toggleRevisions}
-              title="History"
+              title={hasRevisions ? 'History' : 'History (unavailable)'}
             />
           </div>
           <div className="note-toolbar__button">
             <IconButton
               icon={<ShareIcon />}
-              onClick={this.props.onShareNote.bind(null)}
+              onClick={this.props.shareNote}
               title="Share"
             />
           </div>
           <div className="note-toolbar__button">
             <IconButton
               icon={<TrashIcon />}
-              onClick={this.props.onTrashNote.bind(null, note)}
+              onClick={this.props.trashNote}
               title="Trash"
             />
           </div>
@@ -134,8 +122,6 @@ export class NoteToolbar extends Component<Props> {
   };
 
   renderTrashed = () => {
-    const { note } = this.props;
-
     return (
       <div className="note-toolbar-trashed">
         <div className="note-toolbar__column-left">
@@ -150,7 +136,7 @@ export class NoteToolbar extends Component<Props> {
             <button
               type="button"
               className="button button-compact button-danger"
-              onClick={this.props.onDeleteNoteForever.bind(null, note)}
+              onClick={this.props.deleteNoteForever}
             >
               Delete Forever
             </button>
@@ -159,7 +145,7 @@ export class NoteToolbar extends Component<Props> {
             <button
               type="button"
               className="button button-primary button-compact"
-              onClick={this.props.onRestoreNote.bind(null, note)}
+              onClick={this.props.restoreNote}
             >
               Restore Note
             </button>
@@ -171,24 +157,29 @@ export class NoteToolbar extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, editMode, selectedRevision },
+  data,
+  ui: { editMode, openedNote, selectedRevision },
 }) => {
-  const revisionOrNote = selectedRevision || note;
+  const note = openedNote ? data.notes.get(openedNote) ?? null : null;
 
   return {
     editMode,
-    markdownEnabled: revisionOrNote
-      ? revisionOrNote.data.systemTags.includes('markdown')
-      : false,
+    hasRevisions: !!data.noteRevisions.get(openedNote)?.size,
+    markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
   };
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  toggleEditMode,
-  toggleNoteInfo,
-  toggleNoteList,
-  toggleRevisions,
+  deleteNoteForever: actions.ui.deleteOpenNoteForever,
+  restoreNote: actions.ui.restoreOpenNote,
+  shareNote: () => actions.ui.showDialog('SHARE'),
+  toggleEditMode: actions.ui.toggleEditMode,
+  toggleFocusMode: actions.settings.toggleFocusMode,
+  toggleNoteInfo: actions.ui.toggleNoteInfo,
+  toggleNoteList: actions.ui.toggleNoteList,
+  toggleRevisions: actions.ui.toggleRevisions,
+  trashNote: actions.ui.trashOpenNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);

@@ -10,3 +10,4 @@ release/
 .idea
 .DS_Store
 dev-app-update.yml
+lib/state/data/test_account.json

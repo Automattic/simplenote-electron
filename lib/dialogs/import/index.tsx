@@ -1,6 +1,5 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import Dialog from '../../dialog';
 import ImportSourceSelector from './source-selector';
@@ -22,17 +21,13 @@ type DispatchProps = {
 type Props = DispatchProps;
 
 class ImportDialog extends Component<Props> {
-  static propTypes = {
-    buckets: PropTypes.object,
-  };
-
   state = {
     importStarted: false,
     selectedSource: undefined,
   };
 
   render() {
-    const { buckets, closeDialog } = this.props;
+    const { closeDialog } = this.props;
     const { importStarted, selectedSource } = this.state;
 
     const selectSource = (source) => this.setState({ selectedSource: source });
@@ -66,7 +61,6 @@ class ImportDialog extends Component<Props> {
           >
             <Suspense fallback={placeholder}>
               <SourceImporter
-                buckets={buckets}
                 locked={importStarted}
                 onClose={closeDialog}
                 onStart={() => this.setState({ importStarted: true })}

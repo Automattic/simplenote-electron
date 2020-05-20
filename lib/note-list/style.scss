@@ -1,9 +1,25 @@
+@keyframes announce-note-update {
+  0% {
+    padding-left: 8px;
+  }
+  50% {
+    padding-left: 16px;
+  }
+  100% {
+    padding-left: 8px;
+  }
+}
+
 .note-list {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   overflow: hidden;
   background: inherit;
+
+  .comfy .note-list-item-excerpt {
+    white-space: nowrap;
+  }
 
   .condensed .note-list-item-excerpt {
     display: none;
@@ -60,6 +76,7 @@
   display: flex;
   padding-left: 8px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: 'Simplenote Tasks', sans-serif;
 
   .note-list-item-pinner {
     flex: none;
@@ -111,6 +128,11 @@
 
   &.note-list-item-selected {
     background: $studio-simplenote-blue-5;
+  }
+
+  &.note-recently-updated {
+    animation: announce-note-update 0.4s ease-in-out;
+    animation-iteration-count: 3;
   }
 
   .note-list-item-published-icon {

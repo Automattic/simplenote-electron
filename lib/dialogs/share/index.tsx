@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
 import analytics from '../../analytics';
 import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
-import { updateNoteTags } from '../../state/domain/notes';
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
-import { closeDialog, publishNote } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -21,28 +19,29 @@ const shareTabs = ['collaborate', 'publish'];
 
 type StateProps = {
   settings: S.State['settings'];
-  note: T.NoteEntity;
+  noteId: T.EntityId;
+  note: T.Note;
 };
 
 type DispatchProps = {
   closeDialog: () => any;
-  publishNote: (note: T.NoteEntity, shouldPublish: boolean) => any;
-  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagName[] }) => any;
+  editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  publishNote: (noteId: T.EntityId, shouldPublish: boolean) => any;
 };
 
 type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
-  onTogglePublished = (event: React.MouseEvent<HTMLInputElement>) => {
-    this.props.publishNote(this.props.note, event.currentTarget.checked);
+  onTogglePublished = (shouldPublish: boolean) => {
+    this.props.publishNote(this.props.noteId, shouldPublish);
   };
 
   getPublishURL = (url) =>
     isEmpty(url) ? undefined : `http://simp.ly/p/${url}`;
 
   onAddCollaborator = (event) => {
-    const { note } = this.props;
-    const tags = (note.data && note.data.tags) || [];
+    const { note, noteId } = this.props;
+    const tags = note?.tags || [];
     const collaborator = this.collaboratorElement.value.trim();
 
     event.preventDefault();
@@ -51,27 +50,24 @@ export class ShareDialog extends Component<Props> {
     const isSelf = this.props.settings.accountName === collaborator;
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
-      this.props.updateNoteTags({
-        note,
-        tags: [...tags, collaborator],
-      });
+      this.props.editNote(noteId, { tags: [...tags, collaborator] });
       analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
   onRemoveCollaborator = (collaborator) => {
-    const { note } = this.props;
+    const { note, noteId } = this.props;
 
-    let tags = (note.data && note.data.tags) || [];
+    let tags = note?.tags || [];
     tags = tags.filter((tag) => tag !== collaborator);
 
-    this.props.updateNoteTags({ note, tags });
+    this.props.editNote(noteId, { tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
     const { note } = this.props;
-    const tags = (note.data && note.data.tags) || [];
+    const tags = note?.tags || [];
     const collaborators = tags.filter(isEmailTag);
 
     collaborators.reverse();
@@ -90,7 +86,7 @@ export class ShareDialog extends Component<Props> {
 
   render() {
     const { closeDialog, note } = this.props;
-    const data = (note && note.data) || {};
+    const data = note || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
@@ -127,7 +123,7 @@ export class ShareDialog extends Component<Props> {
             </div>
             <div className="settings-group">
               <div className="share-collaborators-heading theme-color-border">
-                <PanelTitle headingLevel="3">Collaborators</PanelTitle>
+                <PanelTitle headingLevel={3}>Collaborators</PanelTitle>
               </div>
               <ul className="share-collaborators">
                 {this.collaborators().map((collaborator) => (
@@ -181,7 +177,7 @@ export class ShareDialog extends Component<Props> {
             </div>
             {isPublished && (
               <div className="settings-group">
-                <PanelTitle headingLevel="3">Public link</PanelTitle>
+                <PanelTitle headingLevel={3}>Public link</PanelTitle>
                 <div className="settings-items theme-color-border">
                   <div className="settings-item theme-color-border">
                     <input
@@ -209,18 +205,19 @@ export class ShareDialog extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
+  data,
   settings,
-  ui: { note },
+  ui: { openedNote },
 }) => ({
   settings,
-  note,
+  noteId: openedNote,
+  note: data.notes.get(openedNote),
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  closeDialog: () => dispatch(closeDialog()),
-  publishNote: (note, shouldPublish) =>
-    dispatch(publishNote(note, shouldPublish)),
-  updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog: actions.ui.closeDialog,
+  editNote: actions.data.editNote,
+  publishNote: actions.data.publishNote,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareDialog);

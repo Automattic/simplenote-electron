@@ -1,5 +1,4 @@
 import noteTitleAndPreview, {
-  normalizeForSorting,
   maxTitleChars,
   maxPreviewChars,
 } from './note-utils';
@@ -9,10 +8,8 @@ describe('noteTitleAndPreview', () => {
 
   beforeEach(() => {
     note = {
-      data: {
-        content: '',
-        systemTags: ['markdown'],
-      },
+      content: '',
+      systemTags: ['markdown'],
     };
   });
 
@@ -22,8 +19,8 @@ describe('noteTitleAndPreview', () => {
   });
 
   it('should return the title and preview when note is not Markdown', () => {
-    note.data.content = 'My title\nThe preview';
-    note.data.systemTags = [];
+    note.content = 'My title\nThe preview';
+    note.systemTags = [];
     const result = noteTitleAndPreview(note);
     expect(result).toEqual({
       title: 'My title',
@@ -32,7 +29,7 @@ describe('noteTitleAndPreview', () => {
   });
 
   it('should return the title and preview with Markdown removed when note is Markdown', () => {
-    note.data.content = '# My title\nThe [preview](https://test.com)';
+    note.content = '# My title\nThe [preview](https://test.com)';
     const result = noteTitleAndPreview(note);
     expect(result).toEqual({
       title: 'My title',
@@ -45,7 +42,7 @@ describe('noteTitleAndPreview', () => {
   it('should complete in a reasonable amount of time', () => {
     const bugInducingString =
       '# aaa                                               bbb';
-    note.data.content = bugInducingString + '\n' + bugInducingString;
+    note.content = bugInducingString + '\n' + bugInducingString;
     const count = 100;
     let sentinel = '';
     const tic = process.hrtime();
@@ -62,38 +59,9 @@ describe('noteTitleAndPreview', () => {
     const title = 'A really long title'.repeat(100);
     const paragraph = 'A really long paragraph'.repeat(100);
 
-    note.data.content = title + '\n' + paragraph;
+    note.content = title + '\n' + paragraph;
     const result = noteTitleAndPreview(note);
     expect(result.title).toHaveLength(maxTitleChars);
     expect(result.preview).toHaveLength(maxPreviewChars);
-  });
-});
-
-describe('normalizeForSorting', () => {
-  it('should remove accents and diacritics', () => {
-    expect(normalizeForSorting('àéïñ')).toBe('aein');
-  });
-
-  it('should not choke when String.prototype.normalize() is not implemented', () => {
-    const originalNormalize = String.prototype.normalize;
-    String.prototype.normalize = undefined; // Not implemented in IE11
-    expect(normalizeForSorting('à')).toBe('à');
-    String.prototype.normalize = originalNormalize;
-  });
-
-  it('should remove leading whitespace', () => {
-    expect(normalizeForSorting('\tfoo')).toBe('foo');
-  });
-
-  it('should remove Markdown headings in the first line', () => {
-    expect(normalizeForSorting('# title')).toBe('title');
-  });
-
-  it('should collapse multiple spaces', () => {
-    expect(normalizeForSorting('foo   bar')).toBe('foo bar');
-  });
-
-  it('should lowercase the whole string', () => {
-    expect(normalizeForSorting('FOO')).toBe('foo');
   });
 });

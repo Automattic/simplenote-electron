@@ -15,19 +15,19 @@ import * as T from '../types';
 
 type OwnProps = {
   markdownEnabled: boolean;
-  noteBucket: T.Bucket<T.Note>;
 };
 
 type StateProps = {
   isMarkdown: boolean;
   isPinned: boolean;
-  note: T.NoteEntity | null;
+  noteId: T.EntityId;
+  note: T.Note;
 };
 
 type DispatchProps = {
-  onMarkdownNote: (note: T.NoteEntity, isMarkdown: boolean) => any;
+  markdownNote: (noteId: T.EntityId, shouldEnableMarkdown: boolean) => any;
   onOutsideClick: () => any;
-  onPinNote: (note: T.NoteEntity, shouldPin: boolean) => any;
+  pinNote: (noteId: T.EntityId, shouldPin: boolean) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -35,7 +35,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 export class NoteInfo extends Component<Props> {
   static displayName = 'NoteInfo';
 
-  handleClickOutside = () => this.props.onOutsideClick();
+  handleClickOutside = this.props.onOutsideClick;
 
   copyPublishURL = () => {
     this.publishUrlElement.select();
@@ -55,17 +55,16 @@ export class NoteInfo extends Component<Props> {
 
   render() {
     const { isMarkdown, isPinned, note } = this.props;
-    const data = (note && note.data) || {};
     const formattedDate =
-      data.modificationDate && formatTimestamp(data.modificationDate);
-    const isPublished = includes(data.systemTags, 'published');
-    const publishURL = this.getPublishURL(data.publishURL);
+      note.modificationDate && formatTimestamp(note.modificationDate);
+    const isPublished = includes(note.systemTags, 'published');
+    const publishURL = this.getPublishURL(note.publishURL);
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
         <div className="note-info-panel note-info-stats theme-color-border">
           <div className="note-info-header">
-            <PanelTitle headingLevel="2">Info</PanelTitle>
+            <PanelTitle headingLevel={2}>Info</PanelTitle>
             <button
               type="button"
               className="about-done button button-borderless"
@@ -86,14 +85,14 @@ export class NoteInfo extends Component<Props> {
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {wordCount(data && data.content)} words
+                {wordCount(note.content)} words
               </span>
             </span>
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {characterCount(data && data.content)} characters
+                {characterCount(note.content)} characters
               </span>
             </span>
           </p>
@@ -107,7 +106,7 @@ export class NoteInfo extends Component<Props> {
               <ToggleControl
                 id="note-info-pin-checkbox"
                 checked={isPinned}
-                onChange={this.onPinChanged}
+                onChange={this.pinNote}
               />
             </span>
           </label>
@@ -135,7 +134,7 @@ export class NoteInfo extends Component<Props> {
               <ToggleControl
                 id="note-info-markdown-checkbox"
                 checked={isMarkdown}
-                onChange={this.onMarkdownChanged}
+                onChange={this.markdownNote}
               />
             </span>
           </label>
@@ -167,11 +166,11 @@ export class NoteInfo extends Component<Props> {
     );
   }
 
-  onPinChanged = (event) =>
-    this.props.onPinNote(this.props.note, event.currentTarget.checked);
+  pinNote = (shouldPin: boolean) =>
+    this.props.pinNote(this.props.noteId, shouldPin);
 
-  onMarkdownChanged = (event) =>
-    this.props.onMarkdownNote(this.props.note, event.currentTarget.checked);
+  markdownNote = (shouldEnableMarkdown: boolean) =>
+    this.props.markdownNote(this.props.noteId, shouldEnableMarkdown);
 }
 
 function formatTimestamp(unixTime: number) {
@@ -200,18 +199,25 @@ function characterCount(content: string) {
   );
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
-  note,
-  isMarkdown: !!note && note.data.systemTags.includes('markdown'),
-  isPinned: !!note && note.data.systemTags.includes('pinned'),
-});
+const mapStateToProps: S.MapState<StateProps> = ({
+  data,
+  ui: { openedNote },
+}) => {
+  const note = data.notes.get(openedNote);
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  onMarkdownNote: (note, markdown = true) =>
-    dispatch(actions.ui.markdownNote(note, markdown)),
-  onOutsideClick: () => dispatch(actions.ui.toggleNoteInfo()),
-  onPinNote: (note, pin) => dispatch(actions.ui.pinNote(note, pin)),
-});
+  return {
+    noteId: openedNote,
+    note: note,
+    isMarkdown: note?.systemTags.includes('markdown'),
+    isPinned: note?.systemTags.includes('pinned'),
+  };
+};
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  markdownNote: actions.data.markdownNote,
+  onOutsideClick: actions.ui.toggleNoteInfo,
+  pinNote: actions.data.pinNote,
+};
 
 export default connect(
   mapStateToProps,
