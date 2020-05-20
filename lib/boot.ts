@@ -6,7 +6,6 @@ import analytics from './analytics';
 import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
 import { boot as bootLoggingOut } from './logging-out';
-import { isElectron } from './utils/platform';
 
 const config = getConfig();
 

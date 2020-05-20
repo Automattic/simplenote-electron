@@ -1,11 +1,23 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import React, { ChangeEventHandler, FunctionComponent } from 'react';
 
-function ToggleControl({ className, ...props }) {
+type OwnProps = Partial<HTMLInputElement> & {
+  onChange: (isNowToggled: boolean) => any;
+};
+
+type Props = OwnProps;
+
+export const ToggleControl: FunctionComponent<Props> = ({
+  className,
+  onChange,
+  ...props
+}) => {
+  const onToggle: ChangeEventHandler<HTMLInputElement> = ({
+    currentTarget: { checked },
+  }) => onChange(checked);
+
   return (
-    <span className={classNames('toggle-control', className)}>
-      <input type="checkbox" {...props} />
+    <span className={`toggle-control ${className}`}>
+      <input type="checkbox" onChange={onToggle} {...props} />
       <span className="toggle-control-layers">
         <span className="toggle-control-unchecked-color" />
         <span className="toggle-control-checked-color" />
@@ -13,10 +25,6 @@ function ToggleControl({ className, ...props }) {
       </span>
     </span>
   );
-}
-
-ToggleControl.propTypes = {
-  className: PropTypes.string,
 };
 
 export default ToggleControl;

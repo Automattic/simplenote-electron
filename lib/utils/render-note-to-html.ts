@@ -18,12 +18,12 @@ export const renderNoteToHtml = (content: string) => {
       markdownConverter.setOption('ghMentions', false);
       markdownConverter.setOption('smoothLivePreview', true);
 
-      const withNormalizedBullets = content.replace(
+      const transformedContent = content.replace(
         /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
         '$1-$2'
-      );
+      ); // normalized bullets
 
-      return sanitizeHtml(markdownConverter.makeHtml(withNormalizedBullets));
+      return sanitizeHtml(markdownConverter.makeHtml(transformedContent));
     }
   );
 };

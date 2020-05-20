@@ -1,11 +1,119 @@
 import { combineReducers } from 'redux';
 
-import { toggleSystemTag } from '../domain/notes';
-
 import * as A from '../action-types';
 import * as T from '../../types';
 
 const emptyList: unknown[] = [];
+
+const withCheckboxCharacters = (s: string): string =>
+  s
+    .replace(/^(\s*)- \[ \](\s)/gm, '$1\ue000$2')
+    .replace(/^(\s*)- \[x\](\s)/gim, '$1\ue001$2');
+
+const withCheckboxSyntax = (s: string): string =>
+  s.replace(/\ue000/g, '- [ ]').replace(/\ue001/g, '- [x]');
+
+const editorSelection: A.Reducer<Map<
+  T.EntityId,
+  [number, number, 'RTL' | 'LTR']
+>> = (state = new Map(), action) => {
+  switch (action.type) {
+    case 'CONFIRM_NEW_NOTE': {
+      const prev = state.get(action.originalNoteId);
+      if (!prev) {
+        return state;
+      }
+
+      const next = new Map(state).set(action.newNoteId, prev);
+      next.delete(action.originalNoteId);
+
+      return next;
+    }
+
+    case 'REMOTE_NOTE_UPDATE': {
+      if (
+        action.remoteInfo?.patch?.content?.o !== 'd' ||
+        !state.has(action.noteId)
+      ) {
+        return state;
+      }
+
+      const [_prevStart, _prevEnd, direction] = state.get(action.noteId)!;
+      const patches = action.remoteInfo.patch.content.v.split('\t');
+
+      const original = action.remoteInfo.original.content;
+      const prevStart = withCheckboxSyntax(
+        withCheckboxCharacters(original).slice(0, _prevStart)
+      ).length;
+      const prevEnd = withCheckboxSyntax(
+        withCheckboxCharacters(original).slice(0, _prevEnd)
+      ).length;
+
+      const [_nextStart, _nextEnd] = patches.reduce(
+        (offsets: [number, number, number], patch) => {
+          const [start, end, offset] = offsets;
+
+          if (offset > start && offset > end) {
+            return offsets;
+          }
+
+          const op = patch[0];
+          const data = patch.slice(1);
+
+          switch (op) {
+            case '=':
+              return [start, end, offset + parseInt(data, 10)];
+
+            case '-': {
+              const delta = parseInt(data, 10);
+
+              return [
+                start > offset ? start - delta : start,
+                end > offset ? end - delta : end,
+                offset,
+              ];
+            }
+
+            case '+': {
+              const insertion = decodeURIComponent(data);
+              const delta = insertion.length;
+
+              return [
+                start > offset ? start + delta : start,
+                end > offset ? end + delta : end,
+                offset,
+              ];
+            }
+
+            default:
+              // this should be unreachable
+              return offsets;
+          }
+        },
+        [prevStart, prevEnd, 0]
+      );
+
+      const nextStart = withCheckboxCharacters(
+        action.note.content.slice(0, _nextStart)
+      ).length;
+      const nextEnd = withCheckboxCharacters(
+        action.note.content.slice(0, _nextEnd)
+      ).length;
+
+      return new Map(state).set(action.noteId, [nextStart, nextEnd, direction]);
+    }
+
+    case 'STORE_EDITOR_SELECTION':
+      return new Map(state).set(action.noteId, [
+        action.start,
+        action.end,
+        action.direction,
+      ]);
+
+    default:
+      return state;
+  }
+};
 
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
@@ -14,9 +122,6 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
 
     case 'SHOW_DIALOG':
       return state.includes(action.dialog) ? state : [...state, action.dialog];
-
-    case 'App.authChanged':
-      return [];
 
     default:
       return state;
@@ -51,67 +156,72 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const filteredNotes: A.Reducer<T.NoteEntity[]> = (
-  state = emptyList as T.NoteEntity[],
-  action
-) => ('FILTER_NOTES' === action.type ? action.notes : state);
-
-const listTitle: A.Reducer<T.TranslatableString> = (
-  state = 'All Notes',
+const filteredNotes: A.Reducer<T.EntityId[]> = (
+  state = emptyList as T.EntityId[],
   action
 ) => {
+  if ('undefined' === typeof action.meta?.searchResults) {
+    return state;
+  }
+
+  return action.meta.searchResults.noteIds;
+};
+
+const hasLoadedNotes: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
-    case 'SHOW_ALL_NOTES':
-      return 'All Notes';
-    case 'SELECT_TRASH':
-      return 'Trash';
-    case 'OPEN_TAG':
-      return action.tag.data.name;
+    case 'FILTER_NOTES':
+      return action.noteIds.length > 0 ? true : state;
+
     default:
       return state;
   }
 };
 
-const noteRevisions: A.Reducer<T.NoteEntity[]> = (
-  state = emptyList as T.NoteEntity[],
-  action
-) => {
+const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
-    case 'STORE_REVISIONS':
-      return action.revisions;
-    case 'CREATE_NOTE':
-    case 'OPEN_NOTE':
-    case 'SELECT_NOTE':
-      return emptyList as T.NoteEntity[];
-    default:
-      return state;
-  }
-};
-
-const openedTag: A.Reducer<T.TagEntity | null> = (state = null, action) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
+    case 'CLOSE_NOTE':
       return null;
-    case 'OPEN_TAG':
-      return action.tag;
+
+    case 'CONFIRM_NEW_NOTE':
+      return state === action.originalNoteId ? action.newNoteId : state;
+
+    case 'OPEN_NOTE':
+      return action?.noteId ?? state;
+
+    case 'SELECT_NOTE':
+      return action.noteId;
+
     default:
-      return state;
+      return 'undefined' !== typeof action.meta?.nextNoteToOpen
+        ? action.meta.nextNoteToOpen
+        : state;
   }
 };
 
-const selectedRevision: A.Reducer<T.NoteEntity | null> = (
+const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   state = null,
   action
 ) => {
   switch (action.type) {
-    case 'SELECT_REVISION':
-      return action.revision;
-    case 'CREATE_NOTE':
-    case 'OPEN_NOTE':
-    case 'REVISIONS_TOGGLE':
-    case 'SELECT_NOTE':
+    case 'CLOSE_REVISION':
+    case 'RESTORE_NOTE_REVISION':
       return null;
+
+    case 'OPEN_REVISION':
+      return [action.noteId, action.version];
+
+    default:
+      return state;
+  }
+};
+
+const openedTag: A.Reducer<T.EntityId | null> = (state = null, action) => {
+  switch (action.type) {
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
+      return null;
+    case 'OPEN_TAG':
+      return action.tagId;
     default:
       return state;
   }
@@ -187,9 +297,11 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'REVISIONS_TOGGLE':
       return !state;
+    case 'CLOSE_REVISION':
     case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'CREATE_NOTE':
+    case 'RESTORE_NOTE_REVISION':
       return false;
     default:
       return state;
@@ -210,48 +322,28 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
-  switch (action.type) {
-    case 'App.emptyTrash':
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
-    case 'CLOSE_NOTE':
-    case 'DELETE_NOTE_FOREVER':
-    case 'RESTORE_NOTE':
-    case 'TRASH_NOTE':
-    case 'OPEN_TAG':
-      return null;
-    case 'OPEN_NOTE':
-    case 'SELECT_NOTE':
-      return action.options
-        ? {
-            ...action.note,
-            hasRemoteUpdate: action.options.hasRemoteUpdate,
-          }
-        : action.note;
-    case 'SET_SYSTEM_TAG':
-      return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
-    default:
-      return state;
+const tagSuggestions: A.Reducer<T.EntityId[]> = (
+  state = emptyList as T.EntityId[],
+  action
+) => {
+  if ('undefined' === typeof action.meta?.searchResults) {
+    return state;
   }
+
+  return action.meta.searchResults.tagIds;
 };
 
-const tagSuggestions: A.Reducer<T.TagEntity[]> = (
-  state = emptyList as T.TagEntity[],
-  action
-) => ('FILTER_NOTES' === action.type ? action.tags : state);
-
 export default combineReducers({
+  editorSelection,
   dialogs,
   editMode,
   editingTags,
   filteredNotes,
-  listTitle,
-  note,
-  noteRevisions,
+  hasLoadedNotes,
+  openedNote,
+  openedRevision,
   openedTag,
   searchQuery,
-  selectedRevision,
   showNavigation,
   showNoteInfo,
   showNoteList,

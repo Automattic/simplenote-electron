@@ -2,17 +2,12 @@ import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import format from 'date-fns/format';
-import { orderBy } from 'lodash';
 import classNames from 'classnames';
 import Slider from '../components/slider';
-import { updateNoteTags } from '../state/domain/notes';
 import { selectRevision, toggleRevisions } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
-
-const sortedRevisions = (revisions: T.NoteEntity[]) =>
-  orderBy(revisions, 'version', 'asc');
 
 type OwnProps = {
   onUpdateContent: Function;
@@ -23,129 +18,67 @@ type OwnProps = {
 
 type StateProps = {
   isViewingRevisions: boolean;
-  note: T.NoteEntity | null;
-  revisions: T.NoteEntity[];
+  noteId: T.EntityId;
+  note: T.Note | null;
+  openedRevision: number | null;
+  revisions: Map<number, T.Note> | null;
 };
 
 type DispatchProps = {
-  setRevision: (revision: T.NoteEntity | null) => any;
-  resetIsViewingRevisions: () => any;
+  openRevision: (noteId: T.EntityId, version: number) => any;
   cancelRevision: () => any;
-  updateNoteTags: (arg: {
-    note: T.NoteEntity | null;
-    tags: T.TagName[];
-  }) => any;
-};
-
-type ComponentState = {
-  revisions: T.NoteEntity[];
-  selection: number;
+  restoreRevision: (noteId: T.EntityId, version: number) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-export class RevisionSelector extends Component<Props, ComponentState> {
-  constructor(props: Props, ...args: unknown[]) {
-    super(props, ...args);
-
-    this.state = {
-      revisions: sortedRevisions(props.revisions),
-      selection: Infinity,
-    };
-  }
-
-  UNSAFE_componentWillReceiveProps({ revisions: nextRevisions }: Props) {
-    const { revisions: prevRevisions } = this.props;
-
-    if (nextRevisions === prevRevisions) {
-      return;
-    }
-
-    this.setState({
-      revisions: sortedRevisions(nextRevisions),
-    });
-  }
-
-  componentDidUpdate({ revisions: prevRevisions }: Props) {
-    const { revisions: nextRevisions } = this.props;
-
-    if (prevRevisions !== nextRevisions) {
-      // I'm not sure why exactly, but
-      // this control wasn't refreshing
-      // after loading in the revisions
-      // the first time.
-      //
-      // This led to the 'Latest' revision
-      // being in position 1 instead of
-      // on the far right.
-      //
-      // This forces the refresh to correct
-      // things until we figure out what's
-      // really causing the problem.
-      this.forceUpdate();
-    }
-  }
-
+export class RevisionSelector extends Component<Props> {
   handleClickOutside = () => this.onCancelRevision();
 
   onAcceptRevision = () => {
-    const { note, onUpdateContent, resetIsViewingRevisions } = this.props;
-    const { revisions, selection } = this.state;
-    const revision = revisions[selection];
+    const { noteId, openedRevision, restoreRevision } = this.props;
 
-    if (revision) {
-      const {
-        data: { content, tags },
-      } = revision;
-
-      onUpdateContent(note, content, true);
-      this.props.updateNoteTags({ note, tags });
-      resetIsViewingRevisions();
-    }
-    this.resetSelection();
+    restoreRevision(noteId, openedRevision);
   };
-
-  resetSelection = () => this.setState({ selection: Infinity });
 
   onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
     target: { value },
   }) => {
-    const { revisions } = this.state;
+    const { revisions } = this.props;
 
     const selection = parseInt(value, 10);
-    const revision = revisions[selection];
+    const revision = [...revisions.keys()][selection];
 
-    this.setState({ selection });
-    this.props.setRevision(revision || null);
+    this.props.openRevision(this.props.noteId, revision);
   };
 
   onCancelRevision = () => {
     this.props.cancelRevision();
-    this.resetSelection();
   };
 
   render() {
-    const { isViewingRevisions } = this.props;
+    const { isViewingRevisions, note, openedRevision, revisions } = this.props;
 
     if (!isViewingRevisions) {
       return null;
     }
 
-    const { revisions, selection: rawSelection } = this.state;
-    const min = 0;
-    const max = Math.max(revisions.length - 1, 1);
-    const selection = Math.min(rawSelection, max);
+    const selectedIndex =
+      revisions && openedRevision
+        ? [...revisions.keys()].indexOf(openedRevision)
+        : -1;
+    const isNewest = openedRevision && selectedIndex === revisions?.size - 1;
 
-    const revisionDate =
-      !revisions.length || selection === max
-        ? 'Latest'
-        : format(
-            revisions[selection].data.modificationDate * 1000,
-            'MMM d, yyyy h:mm a'
-          );
+    const revisionDate = format(
+      (openedRevision
+        ? revisions.get(openedRevision).modificationDate
+        : note.modificationDate) * 1000,
+      'MMM d, yyyy h:mm a'
+    );
 
-    const revisionButtonStyle: CSSProperties =
-      selection === max ? { opacity: '0.5', pointerEvents: 'none' } : {};
+    const revisionButtonStyle: CSSProperties = isNewest
+      ? { opacity: '0.5', pointerEvents: 'none' }
+      : {};
 
     const mainClasses = classNames('revision-selector', {
       'is-visible': isViewingRevisions,
@@ -153,12 +86,15 @@ export class RevisionSelector extends Component<Props, ComponentState> {
 
     return (
       <div className={mainClasses}>
-        <div className="revision-date">{revisionDate}</div>
+        <div className="revision-date">{`Originally created: ${revisionDate}`}</div>
         <div className="revision-slider">
           <Slider
-            min={min}
-            max={max}
-            value={selection}
+            disabled={!revisions || revisions.size === 0}
+            min={
+              1 /* don't allow reverting to the very first version because that's a blank note */
+            }
+            max={revisions?.size - 1}
+            value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
             onChange={this.onSelectRevision}
           />
         </div>
@@ -182,20 +118,32 @@ export class RevisionSelector extends Component<Props, ComponentState> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { note, noteRevisions, showRevisions },
-}) => ({
-  isViewingRevisions: showRevisions,
-  note: note,
-  revisions: noteRevisions,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  isViewingRevisions: state.ui.showRevisions,
+  noteId: state.ui.openedNote,
+  note: state.data.notes.get(state.ui.openedNote) ?? null,
+  openedRevision:
+    state.ui.openedRevision?.[0] === state.ui.openedNote
+      ? state.ui.openedRevision?.[1] ?? null
+      : null,
+  revisions: state.data.noteRevisions.get(state.ui.openedNote) ?? null,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  setRevision: (revision: T.NoteEntity) => dispatch(selectRevision(revision)),
-  resetIsViewingRevisions: () => dispatch(toggleRevisions()),
-  cancelRevision: () => dispatch(toggleRevisions()),
-  updateNoteTags: (arg) => dispatch(updateNoteTags(arg)),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  openRevision: (noteId, version) => ({
+    type: 'OPEN_REVISION',
+    noteId,
+    version,
+  }),
+  cancelRevision: () => ({
+    type: 'CLOSE_REVISION',
+  }),
+  restoreRevision: (noteId, version) => ({
+    type: 'RESTORE_NOTE_REVISION',
+    noteId,
+    version,
+  }),
+};
 
 export default connect(
   mapStateToProps,

@@ -13,17 +13,17 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
-export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = () => ({
-  type: 'DELETE_NOTE_FOREVER',
+export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = () => ({
+  type: 'DELETE_OPEN_NOTE_FOREVER',
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
-  notes: T.NoteEntity[],
-  tags: T.TagEntity[]
+  noteIds: T.EntityId[],
+  tagIds: T.EntityId[]
 ) => ({
   type: 'FILTER_NOTES',
-  notes,
-  tags,
+  noteIds,
+  tagIds,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
@@ -34,66 +34,30 @@ export const logout: A.ActionCreator<A.Logout> = () => ({
   type: 'LOGOUT',
 });
 
-export const markdownNote: A.ActionCreator<A.SetSystemTag> = (
-  note: T.NoteEntity,
-  isMarkdown: boolean
-) => ({
-  type: 'SET_SYSTEM_TAG',
-  note,
-  tagName: 'markdown',
-  shouldHaveTag: isMarkdown,
-});
-
-export const pinNote: A.ActionCreator<A.SetSystemTag> = (
-  note: T.NoteEntity,
-  shouldPin: boolean
-) => ({
-  type: 'SET_SYSTEM_TAG',
-  note,
-  tagName: 'pinned',
-  shouldHaveTag: shouldPin,
-});
-
-export const publishNote: A.ActionCreator<A.SetSystemTag> = (
-  note: T.NoteEntity,
-  shoudlPublish: boolean
-) => ({
-  type: 'SET_SYSTEM_TAG',
-  note,
-  tagName: 'published',
-  shouldHaveTag: shoudlPublish,
-});
-
-export const openNote: A.ActionCreator<A.OpenNote> = (note: T.NoteEntity) => ({
+export const openNote: A.ActionCreator<A.OpenNote> = (noteId?: T.EntityId) => ({
   type: 'OPEN_NOTE',
-  note,
+  noteId,
 });
 
-export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
+export const openTag: A.ActionCreator<A.OpenTag> = (tagId: T.EntityId) => ({
   type: 'OPEN_TAG',
-  tag,
+  tagId,
 });
 
-export const restoreNote: A.ActionCreator<A.RestoreNote> = () => ({
-  type: 'RESTORE_NOTE',
+export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({
+  type: 'RESTORE_OPEN_NOTE',
 });
 
-export const selectRevision: A.ActionCreator<A.SelectRevision> = (
-  revision: T.NoteEntity
-) => ({
-  type: 'SELECT_REVISION',
-  revision,
+export const selectNoteAbove: A.ActionCreator<A.SelectNoteAbove> = () => ({
+  type: 'SELECT_NOTE_ABOVE',
+});
+
+export const selectNoteBelow: A.ActionCreator<A.SelectNoteBelow> = () => ({
+  type: 'SELECT_NOTE_BELOW',
 });
 
 export const selectTrash: A.ActionCreator<A.SelectTrash> = () => ({
   type: 'SELECT_TRASH',
-});
-
-export const setUnsyncedNoteIds: A.ActionCreator<A.SetUnsyncedNoteIds> = (
-  noteIds: T.EntityId[]
-) => ({
-  type: 'SET_UNSYNCED_NOTE_IDS',
-  noteIds,
 });
 
 export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
@@ -120,21 +84,14 @@ export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({
   type: 'REVISIONS_TOGGLE',
 });
 
-export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumConnectionStatus> = (
-  simperiumConnected: boolean
-) => ({
-  type: 'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
-  simperiumConnected,
-});
-
 export const search: A.ActionCreator<A.Search> = (searchQuery: string) => ({
   type: 'SEARCH',
   searchQuery,
 });
 
 export const selectNote: A.ActionCreator<A.SelectNote> = (
-  note: T.NoteEntity
-) => ({ type: 'SELECT_NOTE', note });
+  noteId: T.EntityId
+) => ({ type: 'SELECT_NOTE', noteId });
 
 export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
   type: 'TOGGLE_EDIT_MODE',
@@ -163,6 +120,6 @@ export const toggleTagEditing: A.ActionCreator<A.ToggleTagEditing> = () => ({
   type: 'TAG_EDITING_TOGGLE',
 });
 
-export const trashNote: A.ActionCreator<A.TrashNote> = () => ({
-  type: 'TRASH_NOTE',
+export const trashOpenNote: A.ActionCreator<A.TrashOpenNote> = () => ({
+  type: 'TRASH_OPEN_NOTE',
 });

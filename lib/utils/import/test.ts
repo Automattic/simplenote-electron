@@ -2,34 +2,29 @@ import CoreImporter from './';
 
 describe('CoreImporter', () => {
   let importer;
-  let noteBucketAdd = jest.fn();
+  let addNote = jest.fn();
 
   beforeEach(() => {
-    importer = new CoreImporter({
-      noteBucket: {
-        add: noteBucketAdd,
-      },
-      tagBucket: {},
-    });
+    importer = new CoreImporter(addNote);
     importer.emit = jest.fn();
   });
 
   describe('importNote', () => {
-    it('should call noteBucket.add() with a note containing the required properties', () => {
+    it('should call addNote() with a note containing the required properties', () => {
       const note = {};
-      return importer.importNote(note).then(() => {
-        const passedNote = noteBucketAdd.mock.calls[0][0];
+      importer.importNote(note);
 
-        // Conforms to schema
-        expect(passedNote.publishURL).toBe('');
-        expect(passedNote.shareURL).toBe('');
-        expect(passedNote.deleted).toBe(false);
-        expect(passedNote.tags).toEqual([]);
-        expect(passedNote.systemTags).toEqual([]);
-        expect(passedNote.creationDate).toEqual(expect.any(Number));
-        expect(passedNote.modificationDate).toEqual(expect.any(Number));
-        expect(passedNote.content).toBe('');
-      });
+      const passedNote = addNote.mock.calls[0][0];
+
+      // Conforms to schema
+      expect(passedNote.publishURL).toBe('');
+      expect(passedNote.shareURL).toBe('');
+      expect(passedNote.deleted).toBe(false);
+      expect(passedNote.tags).toEqual([]);
+      expect(passedNote.systemTags).toEqual([]);
+      expect(passedNote.creationDate).toEqual(expect.any(Number));
+      expect(passedNote.modificationDate).toEqual(expect.any(Number));
+      expect(passedNote.content).toBe('');
     });
   });
 
