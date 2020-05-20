@@ -39,7 +39,7 @@ type OwnProps = {
 }
 
 type StateProps = {
-	notes: T.NoteEntity[];
+	notes: T.Note[];
 }
 
 type DispatchProps = {
@@ -156,16 +156,13 @@ const loginAttempts: A.Reducer<number> = (state = 0, action) => {
 	}
 }
 
-const selectedNote: A.Reducer<T.NoteEntity[] | null> = (state = null, action) => {
+const selectedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
 	switch (action.type) {
 		case 'CREATE_NOTE':
-			return makeNote();
+			return action.noteId;
 
 		case 'TRASH_NOTE':
 			return null;
-
-		case 'FILTER_NOTES':
-			return action.filteredNotes.has(state) ? state : null;
 
 		default:
 			return state;

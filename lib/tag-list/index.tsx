@@ -1,83 +1,158 @@
-import React, { Component, FocusEvent, MouseEvent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import {
+  SortableContainer,
+  SortableElement,
+  SortableHandle,
+  SortEndHandler,
+} from 'react-sortable-hoc';
+import isEmailTag from '../utils/is-email-tag';
 import PanelTitle from '../components/panel-title';
-import EditableList from '../editable-list';
-import { get } from 'lodash';
+import ReorderIcon from '../icons/reorder';
+import TrashIcon from '../icons/trash';
 import TagListInput from './input';
-import { renameTag, reorderTags, trashTag } from '../state/domain/tags';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
-import analytics from '../analytics';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 type StateProps = {
   editingTags: boolean;
-  tags: T.TagEntity[] | null;
-  openedTag?: T.TagEntity;
+  openedTag: T.TagHash | null;
+  sortTagsAlpha: boolean;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type DispatchProps = {
   onEditTags: () => any;
-  openTag: (tag: T.TagEntity) => any;
-  renameTag: (args: { tag: T.TagEntity; name: T.TagName }) => any;
-  reorderTags: (args: { tags: T.TagEntity[] }) => any;
-  trashTag: (args: { tag: T.TagEntity }) => any;
+  openTag: (tagName: T.TagName) => any;
+  renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+  reorderTag: (tagName: T.TagName, newIndex: number) => any;
+  trashTag: (tagName: T.TagName) => any;
 };
 
 type Props = StateProps & DispatchProps;
 
+const TagHandle = SortableHandle(() => <ReorderIcon />);
+
+const SortableTag = SortableElement(
+  ({
+    allowReordering,
+    editingActive,
+    isSelected,
+    renameTag,
+    selectTag,
+    trashTag,
+    value: [tagHash, tag],
+  }: {
+    allowReordering: boolean;
+    editingActive: boolean;
+    isSelected: boolean;
+    renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+    selectTag: (tagName: T.TagName) => any;
+    trashTag: (tagName: T.TagName) => any;
+    value: [T.TagHash, T.Tag];
+  }) => (
+    <li key={tagHash} className="tag-list-item" data-tag-name={tag.name}>
+      {editingActive && <TrashIcon onClick={() => trashTag(tag.name)} />}
+      <TagListInput
+        editable={editingActive}
+        isSelected={isSelected}
+        onClick={() => !editingActive && selectTag(tag.name)}
+        onDone={(event) => {
+          const newTagName = event.target?.value as T.TagName;
+
+          if (newTagName && newTagName !== tag.name) {
+            renameTag(tag.name, newTagName);
+          }
+        }}
+        value={tag.name}
+      />
+      {editingActive && allowReordering && <TagHandle />}
+    </li>
+  )
+);
+
+const SortableTagList = SortableContainer(
+  ({
+    editingTags,
+    items,
+    openedTag,
+    openTag,
+    renameTheTag,
+    sortTagsAlpha,
+    trashTheTag,
+  }: {
+    editingTags: boolean;
+    items: [T.TagHash, T.Tag][];
+    openedTag: T.TagHash | null;
+    openTag: (tagName: T.TagName) => any;
+    renameTheTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+    sortTagsAlpha: boolean;
+    trashTheTag: (tagName: T.TagName) => any;
+  }) => (
+    <ul className="tag-list-items">
+      {items.map((value, index) => (
+        <SortableTag
+          key={value[0]}
+          allowReordering={!sortTagsAlpha}
+          editingActive={editingTags}
+          index={index}
+          isSelected={openedTag === value[0]}
+          renameTag={renameTheTag}
+          selectTag={openTag}
+          trashTag={trashTheTag}
+          value={value}
+        />
+      ))}
+    </ul>
+  )
+);
+
 export class TagList extends Component<Props> {
   static displayName = 'TagList';
 
-  renderItem = (tag: T.TagEntity) => {
-    const { editingTags, openedTag } = this.props;
-    const isSelected = tag.data.name === get(openedTag, 'data.name', '');
+  reorderTag: SortEndHandler = ({ newIndex, nodes, oldIndex }) => {
+    const tagName = nodes[oldIndex].node.dataset.tagName;
 
-    const handleRenameTag = ({
-      target: { value },
-    }: FocusEvent<HTMLInputElement>) =>
-      this.props.renameTag({ tag, name: value });
-
-    return (
-      <TagListInput
-        editable={editingTags}
-        isSelected={isSelected}
-        onClick={this.openTag.bind(this, tag)}
-        onDone={handleRenameTag}
-        value={tag.data.name}
-      />
-    );
-  };
-
-  onReorderTags = (tags: T.TagEntity[]) => this.props.reorderTags({ tags });
-
-  openTag = (tag: T.TagEntity, event: MouseEvent<HTMLInputElement>) => {
-    if (!this.props.editingTags) {
-      event.preventDefault();
-      event.currentTarget.blur();
-      this.props.openTag(tag);
-    }
-  };
-
-  onTrashTag = (tag: T.TagEntity) => {
-    this.props.trashTag({ tag });
-    analytics.tracks.recordEvent('list_tag_deleted');
+    this.props.reorderTag(tagName, newIndex);
   };
 
   render() {
-    const { editingTags, onEditTags, tags } = this.props;
+    const {
+      editingTags,
+      onEditTags,
+      openTag,
+      openedTag,
+      renameTag,
+      sortTagsAlpha,
+      tags,
+      trashTag,
+    } = this.props;
 
     const classes = classNames('tag-list', {
       'tag-list-editing': this.props.editingTags,
     });
 
+    const sortedTags = Array.from(tags)
+      .filter(([_, { name }]) => !isEmailTag(name))
+      .sort(([aId, aTag], [bId, bTag]) =>
+        sortTagsAlpha
+          ? aTag.name.localeCompare(bTag.name)
+          : 'undefined' !== typeof aTag.index &&
+            'undefined' !== typeof bTag.index
+          ? aTag.index - bTag.index
+          : 'undefined' === typeof aTag.index
+          ? 1
+          : -1
+      );
+
     return (
       <div className={classes}>
         <div className="tag-list-title">
-          <PanelTitle headingLevel="2">Tags</PanelTitle>
-          {tags.length > 0 && (
+          <PanelTitle headingLevel={2}>Tags</PanelTitle>
+          {sortedTags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"
               tabIndex={0}
@@ -87,11 +162,17 @@ export class TagList extends Component<Props> {
             </button>
           )}
         </div>
-        <EditableList
-          className="tag-list-items"
-          renderItem={this.renderItem}
-          onRemove={this.onTrashTag}
-          onReorder={this.onReorderTags}
+        <SortableTagList
+          editingTags={editingTags}
+          lockAxis="y"
+          openedTag={openedTag}
+          openTag={openTag}
+          items={sortedTags}
+          renameTheTag={renameTag}
+          sortTagsAlpha={sortTagsAlpha}
+          onSortEnd={this.reorderTag}
+          useDragHandle={true}
+          trashTheTag={trashTag}
         />
       </div>
     );
@@ -99,23 +180,33 @@ export class TagList extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  tags,
+  data,
+  settings: { sortTagsAlpha },
   ui: { editingTags, openedTag },
 }) => ({
   editingTags,
-  tags,
+  sortTagsAlpha,
+  tags: data.tags,
   openedTag,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  onEditTags: () => dispatch(toggleTagEditing()),
-  openTag: (tag) => {
-    dispatch(openTag(tag));
-    analytics.tracks.recordEvent('list_tag_viewed');
-  },
-  renameTag: (arg) => dispatch(renameTag(arg)),
-  reorderTags: (arg) => dispatch(reorderTags(arg)),
-  trashTag: (arg) => dispatch(trashTag(arg)),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  onEditTags: toggleTagEditing,
+  openTag: openTag,
+  renameTag: (oldTagName, newTagName) => ({
+    type: 'RENAME_TAG',
+    oldTagName,
+    newTagName,
+  }),
+  reorderTag: (tagName, newIndex) => ({
+    type: 'REORDER_TAG',
+    tagName,
+    newIndex,
+  }),
+  trashTag: (tagName) => ({
+    type: 'TRASH_TAG',
+    tagName,
+  }),
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagList);

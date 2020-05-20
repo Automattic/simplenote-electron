@@ -1,20 +1,20 @@
 import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
-import analytics from '../analytics';
 import { State } from '../state';
 import { search } from '../state/ui/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
-import * as S from '../state';
+import type * as S from '../state';
+import type * as T from '../types';
 
 const KEY_ESC = 27;
 
 type StateProps = {
-  isTagSelected: boolean;
-  placeholder: string;
+  openedTag: T.Tag | null;
   searchQuery: string;
+  showTrash: boolean;
 };
 
 type DispatchProps = {
@@ -69,11 +69,12 @@ export class SearchField extends Component<Props> {
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { searchQuery, isTagSelected, placeholder } = this.props;
+    const { openedTag, searchQuery, showTrash } = this.props;
     const hasQuery = searchQuery.length > 0;
+    const placeholder = showTrash ? 'Trash' : openedTag?.name ?? 'All Notes';
 
     const screenReaderLabel =
-      'Search ' + (isTagSelected ? 'notes with tag ' : '') + placeholder;
+      'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
 
     return (
       <div className="search-field">
@@ -100,17 +101,17 @@ export class SearchField extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { listTitle, openedTag, searchQuery },
+  data,
+  ui: { openedTag, searchQuery, showTrash },
 }: State) => ({
-  isTagSelected: !!openedTag,
-  placeholder: listTitle,
+  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
   searchQuery,
+  showTrash,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 

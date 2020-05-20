@@ -21,6 +21,13 @@ const buildMacAppMenu = (isAuthenticated) => {
     { role: 'hide' },
     { role: 'hideothers' },
     { role: 'unhide' },
+    ...(isAuthenticated
+      ? [
+          { type: 'separator' },
+          menuItems.emptyTrash(isAuthenticated),
+          menuItems.signout(isAuthenticated),
+        ]
+      : []),
     { type: 'separator' },
     { role: 'quit' },
   ];

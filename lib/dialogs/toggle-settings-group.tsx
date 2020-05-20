@@ -1,9 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
 
 import ToggleControl from '../controls/toggle';
 
-const ToggleGroup = ({ groupSlug, slug, isEnabled, onChange }) => (
+type OwnProps = {
+  groupSlug: string;
+  slug: string;
+  isEnabled: boolean;
+  onChange: () => any;
+};
+
+type Props = OwnProps;
+
+const ToggleGroup: FunctionComponent<Props> = ({
+  groupSlug,
+  slug,
+  isEnabled,
+  onChange,
+}) => (
   <ToggleControl
     name={groupSlug}
     value={slug}
@@ -12,12 +25,5 @@ const ToggleGroup = ({ groupSlug, slug, isEnabled, onChange }) => (
     onChange={onChange}
   />
 );
-
-ToggleGroup.propTypes = {
-  groupSlug: PropTypes.string,
-  slug: PropTypes.string,
-  isEnabled: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
 
 export default ToggleGroup;

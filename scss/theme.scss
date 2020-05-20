@@ -1,3 +1,189 @@
+/*
+ * Regenerate the Simplenote Tasks font with the following script.
+ * Download the SVG task icons from the Simplecons repo
+ *
+ * // gen.js
+ * const wfg = require('webfonts-generator');
+ *
+ * wfg({
+ * 	files: [
+ * 		'svg/task-unchecked.svg',
+ * 		'svg/task-checked.svg'
+ * 	],
+ * 	dest: 'font/',
+ * 	fontName: 'Simplenote Tasks',
+ * 	types: ['woff'],
+ * 	startCodepoint: 0xE000,
+ * 	descent: 3, // needed to vertically align the tasks
+ * }, () => {} );
+ *
+ * Once the script finishes copy the output here
+ * ~$ node gen.js && cat font/Simplenote\ Tasks.woff | base64 | pbcopy
+ */
+@font-face {
+  font-family: 'Simplenote Tasks';
+  src: url('data:application/x-font-woff;charset=utf8-8;base64,d09GRgABAAAAAAQgAAsAAAAABrwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADsAAABUIIslek9TLzIAAAFEAAAAPwAAAFYpRjXwY21hcAAAAYQAAABPAAABfmBD5KlnbHlmAAAB1AAAAGAAAACINxFu0WhlYWQAAAI0AAAAMAAAADYV/A6waGhlYQAAAmQAAAAcAAAAJAAtABlobXR4AAACgAAAAAwAAAAMADAAAGxvY2EAAAKMAAAACAAAAAgAIABEbWF4cAAAApQAAAAeAAAAIAEPACJuYW1lAAACtAAAAT8AAAJzQ72hRHBvc3QAAAP0AAAAKgAAAEeHVaHleJxjYGRgYOBiMGCwY2BycfMJYeDLSSzJY5BiYGGAAJA8MpsxJzM9kYEDxgPKsYBpDiBmg4gCACY7BUgAeJxjYGQQYJzAwMrAwMDPIAAkmaE0NwMjAxsDAxMDKzMDVhCQ5prC4PCA4QEjg+j/v0CFogwglYwgOQC9ZgaRAHic7ZCxDYAwDATPiaFAjEFBwTBUzM8mydtmDF66k/7lysACdHEJB3swIrdWy72z5e4ceeOxvzaGTFjd001a+bOnz6+1+FNRnytoE7boCy0AeJxjYGJg+P+fQYxBiIGFQYSBwdxQVNnUXFmJTZZRRMya0cjMltFETZiPj48RCECEAB8fE4QFIhgYEPr5GUSB+tG0squbi5uLC8O1c7EwMrMzCiFM4GMFCjAxAAC/8AuCeJxjYGRgYADiawd0bOP5bb4ycDNIAEUYbidnHEXQ//8ziDEIAbkcDEwgUQA3/ArKeJxjYGRgYBD9/xdISjCAgBgDIwMqYAYAQWsCRQAAAAAAGAAAABgAAAAAAAAAIABEeJxjYGRgYGBmEGNgYgABEMkFhAwM/8F8BgAK7wEyAAB4nIWOy2rCQBSG/3grVWgLQrsrs2oXhXjZFFx2oeuquI860WiSCZNRELrvso/SJ3Dbt+ijFPqbHhCkYIZkvvNfDgFwgy94ODweGcIlXHD64zLpTrhCfhSuooFn4Rqu8SJcxxNehRto4o0bvMolFYUP4RKu8Clcpr4XrpC/hau4xY9wDfdeU7iOidcRbuDBex9FSRbr1DitxkG+zod6sYkDeyqfzhNt88ikquO3j1bhDHSqbeD0XE13Kt8uus6FKrQmUX2TOh3HRmXWrPTM+Uvnsl6rFYruz0yCESIkyBBDI4WB460wRoAca75Dzgts6AewZ9Pn/Alnyzuil9LpwEf739axMyjUQy8onDl7U+z4zbHlv3WpOoScQ2YMNyn0i/2HdMxjqGSFt6Iyo+5jWbQy9NDiCU/yPlPc9As0/naZAHicY2BiwA+YGZkYmRlZGPhKEouzdUvzkjNSk7NTU3jAXCiHgQEAqZ8KXQAA')
+    format('woff2');
+  unicode-range: U+E000-E001;
+}
+
+.note-detail-preview,
+.note-content-plaintext.visible {
+  padding: 0 calc((100% - 768px) / 2);
+}
+
+@media only screen and (max-width: 1400px) {
+  .note-detail-preview,
+  .note-content-plaintext.visible {
+    padding: 0 10%;
+  }
+}
+
+/* Monaco adds the dir='ltr' attribute to rtl languages.
+   This does the opposite of what you think it should do.
+*/
+span[dir='ltr'] {
+  float: right;
+  margin-right: calc(100% - 768px);
+}
+
+.is-line-length-full {
+  span[dir='ltr'] {
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  span[dir='ltr'] {
+    margin-right: 14%;
+  }
+}
+
+.react-monaco-editor-container {
+  .scrollbar.vertical {
+    width: 10px !important;
+    right: 0 !important;
+
+    .slider {
+      width: 10px !important;
+    }
+  }
+}
+// scrollbar search highlights
+.decorationsOverviewRuler {
+  width: 10px !important;
+  right: -2px !important;
+}
+
+.is-line-length-full {
+  .note-detail-preview,
+  .note-content-plaintext.visible {
+    padding: 0 25px;
+  }
+}
+
+.note-content-editor-shell,
+.note-detail-markdown {
+  height: 100%;
+  width: 100%;
+
+  font-family: 'Simplenote Tasks', sans-serif;
+
+  .slider {
+    border-radius: 10px;
+    border: 3px solid gray;
+  }
+  .search-decoration {
+    background-color: rgba($studio-simplenote-blue-40, 0.6);
+  }
+}
+
+/* Hide unwanted items in the context menu.
+   This removes the first item (Change All Occurrences) and the last (Command Palette).
+   The nth-child's remove Cut(7) and Copy(9) so we can add keybindings to them.
+   We may need to adjust these rules if a Monaco update adds more default items,
+   OR if we add/remove/reorder menu items sometime in the future :(
+   See: https://github.com/microsoft/monaco-editor/issues/1280
+*/
+.monaco-menu .monaco-action-bar.vertical .action-item:first-child,
+.monaco-menu .monaco-action-bar.vertical .action-item:nth-child(7),
+.monaco-menu .monaco-action-bar.vertical .action-item:nth-child(9),
+.monaco-menu .monaco-action-bar.vertical .action-item:nth-last-child(2),
+.monaco-menu .monaco-action-bar.vertical .action-item:last-child {
+  display: none !important;
+}
+
+/* Hide the suggestion popup
+  See: https://github.com/microsoft/monaco-editor/issues/1681#issuecomment-580751164
+*/
+.monaco-editor .suggest-widget {
+  display: none !important;
+}
+
+/* Safari requires that it be displayed absolute so that it takes the full height
+*/
+.note-content-editor-shell {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.search-results {
+  position: fixed;
+  left: 330px;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  line-height: 56px;
+  z-index: 100;
+  border-top: 1px solid $studio-gray-5;
+  background-color: $studio-white;
+  text-align: center;
+  user-select: none;
+
+  div {
+    display: inline-block;
+  }
+
+  .search-results-next,
+  .search-results-prev {
+    float: right;
+    padding: 0px 6px;
+    width: 42px;
+    height: 100%;
+
+    svg {
+      fill: $studio-simplenote-blue-50;
+    }
+  }
+  .search-results-next {
+    margin-right: 6px;
+  }
+  .search-results-prev svg {
+    transform: scaleX(-1);
+  }
+
+  @media only screen and (max-width: $single-column) {
+    left: 0;
+  }
+}
+
+.note-detail-textarea .note-content-editor-shell.cursor-pointer div {
+  cursor: pointer;
+}
+
+.note-content-plaintext {
+  display: none;
+  font-size: 16px;
+  white-space: pre-wrap;
+
+  &.visible {
+    display: inherit;
+  }
+}
+
 .theme-light {
   background-color: $studio-white;
   color: $studio-gray-60;
@@ -109,6 +295,11 @@
     color: $studio-simplenote-blue-30;
   }
 
+  .tag-field {
+    height: 56px;
+    padding: 7px;
+  }
+
   .tag-field input {
     background: transparent;
 
@@ -143,30 +334,18 @@
   }
 
   .note-list-item {
-    &.note-list-item-pinned .note-list-item-pinner {
-      background: $studio-white;
-      box-shadow: inset 0 0 0 2px $studio-gray-80,
-        inset 0 0 0 3px $studio-gray-80;
-
-      &:hover {
-        background: $studio-gray-80;
-      }
-    }
-
     &.note-list-item-selected {
-      background: #2c3338;
+      background: $studio-gray-80;
     }
 
     .note-list-item-excerpt {
       color: $studio-gray-20;
     }
   }
-  &.note-list-item-selected .note-list-item-excerpt .note-list-item-pinner {
-    box-shadow: inset 0 0 0 2px $studio-gray-80, inset 0 0 0 3px $studio-gray-90;
 
-    &:hover {
-      background: $studio-gray-80;
-    }
+  .note-list-item-pinner:hover,
+  .note-list-item-pinner.note-list-item-pinned {
+    color: $studio-simplenote-blue-20;
   }
 
   .note-detail-markdown {
@@ -192,6 +371,16 @@
       tr:nth-child(2n) {
         background-color: $studio-gray-80;
       }
+    }
+  }
+
+  .search-results {
+    color: $studio-gray-10;
+    border-color: $studio-gray-80;
+    background-color: $studio-gray-90;
+
+    button svg {
+      fill: $studio-simplenote-blue-30;
     }
   }
 }

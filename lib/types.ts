@@ -2,22 +2,23 @@
 // Simplenote Data Model
 ///////////////////////////////////////
 
-export type EntityId = string;
-export type SecondsEpoch = number;
+export type EntityId = Brand<string, 'EntityId'>;
 
-type Entity<T> = {
+export type SecondsEpoch = number;
+export type Entity<T> = {
   id: EntityId;
   data: T;
   version: number;
 };
 
-export type TagName = string;
+export type TagHash = Brand<string, 'TagHash'> | EntityId;
+export type TagName = Brand<string, 'TagName'>;
 export type SystemTag = 'markdown' | 'pinned' | 'published' | 'shared';
 
 export type Note = {
   content: string;
   creationDate: SecondsEpoch;
-  deleted: boolean;
+  deleted: boolean | 0 | 1;
   modificationDate: SecondsEpoch;
   publishURL?: string;
   shareURL?: string;
@@ -25,7 +26,7 @@ export type Note = {
   tags: TagName[];
 };
 
-export type NoteEntity = Entity<Note> & { hasRemoteUpdate?: boolean };
+export type NoteEntity = Entity<Note>;
 
 export type Tag = {
   index?: number;
@@ -38,44 +39,37 @@ export type Preferences = {
   analytics_enabled: boolean | null;
 };
 
+export type AnalyticsRecord = [string, JSONSerializable | undefined];
+
 export type PreferencesEntity = Entity<Preferences>;
 
-export type Bucket<T = unknown> = {
-  add(
-    data: T,
-    callback: (error: Error | null, data: Entity<T> | null) => any
-  ): void;
-  get(
-    entityId: EntityId,
-    callback: (error: Error | null, data: Entity<T> | null) => any
-  ): void;
-  getRevisions(
-    entityId: EntityId,
-    callback: (error: Error, revisions: Entity<T>[]) => any
-  ): void;
-  query(fn: (db: IDBDatabase) => any): void;
-  remove(entityId: EntityId): void;
-  update(entityId: EntityId, data: T): void;
-};
+///////////////////////////////////////
+// Simperium Types
+///////////////////////////////////////
+export type ConnectionState = 'green' | 'red' | 'offline';
 
 ///////////////////////////////////////
 // Application Types
 ///////////////////////////////////////
 export type DialogType =
   | 'ABOUT'
-  | 'KEYBINDINGS'
+  | 'BETA-WARNING'
   | 'IMPORT'
+  | 'KEYBINDINGS'
+  | 'LOGOUT-CONFIRMATION'
   | 'SETTINGS'
   | 'SHARE';
 export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
 export type Theme = 'system' | 'light' | 'dark';
-export type TranslatableString = string;
+export type TranslatableString = Brand<string, 'TranslatableString'>;
 
 ///////////////////////////////////////
 // Language and Platform
 ///////////////////////////////////////
+
+export type Brand<T, Name> = T & { __type__: Name };
 
 export type JSONValue =
   | null
@@ -86,6 +80,14 @@ export type JSONValue =
   | { [key: string]: JSONValue };
 
 export type JSONSerializable = { [key: string]: JSONValue };
+
+export type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? RecursivePartial<U>[]
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P];
+};
 
 // Returns a type with the properties in T not also present in U
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };

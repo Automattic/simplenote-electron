@@ -1,0 +1,87 @@
+.logoutConfirmation .dialog {
+  max-width: 360px;
+
+  .dialog-title-side:first-child {
+    display: none;
+  }
+
+  .dialog-title-text {
+    font-size: 16px;
+    font-weight: 600;
+    padding-left: 16px;
+    text-align: left;
+  }
+
+  .dialog-title-side svg {
+    height: 16px;
+    width: 16px;
+    color: $studio-gray-50;
+  }
+
+  .explanation,
+  .explanation-secondary {
+    font-size: 14px;
+    margin: 12px 0;
+    padding-left: 16px;
+  }
+
+  .explanation-secondary {
+    color: $studio-gray-50;
+  }
+
+  .change-list {
+    border-bottom: 1px solid $studio-gray-5;
+    border-top: 1px solid $studio-gray-5;
+
+    ul {
+      list-style: none;
+      padding: 6px 0 6px 17px;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      padding: 4px 0;
+    }
+
+    li span {
+      padding-left: 17px;
+    }
+
+    .icon-attention {
+      color: $studio-orange-30;
+      height: 25px;
+      width: 19px;
+    }
+  }
+
+  .export-unsynchronized {
+    color: $studio-simplenote-blue-50;
+    padding: 17px;
+    text-align: left;
+  }
+
+  .action-button {
+    display: flex;
+    justify-content: flex-end;
+
+    .log-out {
+      border-radius: 4px;
+      background-color: $studio-simplenote-blue-50;
+      color: $studio-white;
+      font-size: 14px;
+      padding: 6px 12px;
+      margin: 14px 12px;
+    }
+  }
+}
+
+.theme-dark .logoutConfirmation .dialog {
+  .change-list {
+    border-color: $studio-gray-80;
+  }
+
+  .export-unsynchronized {
+    color: $studio-simplenote-blue-30;
+  }
+}

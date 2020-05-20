@@ -1,399 +1,990 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import MultiDecorator from 'draft-js-multidecorators';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
-import { debounce, get, has, invoke, noop } from 'lodash';
+import Monaco, {
+  ChangeHandler,
+  EditorDidMount,
+  EditorWillMount,
+} from 'react-monaco-editor';
+import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
+import { search } from './state/ui/actions';
 
+import actions from './state/actions';
+import * as selectors from './state/selectors';
+import { getTerms } from './utils/filter-notes';
+import { isSafari } from './utils/platform';
 import {
-  getCurrentBlock,
-  getEquivalentSelectionState,
-  getSelectedText,
-  plainTextContent,
-} from './editor/utils';
-import {
-  continueList,
-  finishList,
-  indentCurrentBlock,
-  outdentCurrentBlock,
-  isLonelyBullet,
-} from './editor/text-manipulation-helpers';
-import { filterHasText, searchPattern } from './utils/filter-notes';
-import { isElectron } from './utils/platform';
-import matchingTextDecorator from './editor/matching-text-decorator';
-import checkboxDecorator from './editor/checkbox-decorator';
-import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
-import { taskRegex } from './note-detail/toggle-task/constants';
-import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
-import analytics from './analytics';
+  withCheckboxCharacters,
+  withCheckboxSyntax,
+} from './utils/task-transform';
+import IconButton from './icon-button';
+import ChevronRightIcon from './icons/chevron-right';
 
 import * as S from './state';
+import * as T from './types';
 
-const TEXT_DELIMITER = '\n';
+const SPEED_DELAY = 120;
 
-type StateProps = {
-  editingEnabled: boolean;
-  keyboardShortcuts: boolean;
-  searchQuery: string;
+const titleDecorationForLine = (line: number) => ({
+  range: new monaco.Range(line, 1, line, 1),
+  options: {
+    isWholeLine: true,
+    inlineClassName: 'note-title',
+    stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+  },
+});
+
+const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
+  if (lineLength === 'full' || 'undefined' === typeof width) {
+    return 25;
+  }
+
+  // magic number alert: 328px is the width of the sidebar :/
+  // this logic matches "@media only screen and (max-width: 1400px)" in the CSS
+  // 1400 is the viewport width; width is the width of the container element
+  if (width <= 1400 - 328) {
+    // should be 10% up to 1400px wide
+    return width * 0.1;
+  } else {
+    // after 1400, calc((100% - 768px) / 2);
+    return (width - 768) / 2;
+  }
 };
 
-type Props = StateProps;
+type OwnProps = {
+  storeFocusEditor: (focusSetter: () => any) => any;
+  storeHasFocus: (focusGetter: () => boolean) => any;
+};
+
+type StateProps = {
+  editorSelection: [number, number, 'RTL' | 'LTR'];
+  fontSize: number;
+  keyboardShortcuts: boolean;
+  lineLength: T.LineLength;
+  noteId: T.EntityId;
+  note: T.Note;
+  searchQuery: string;
+  spellCheckEnabled: boolean;
+  theme: T.Theme;
+};
+
+type DispatchProps = {
+  clearSearch: () => any;
+  editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  insertTask: () => any;
+  storeEditorSelection: (
+    noteId: T.EntityId,
+    start: number,
+    end: number,
+    direction: 'LTR' | 'RTL'
+  ) => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+type OwnState = {
+  content: string;
+  editor: 'fast' | 'full';
+  noteId: T.EntityId | null;
+  overTodo: boolean;
+  searchQuery: string;
+  selectedSearchMatchIndex: number | null;
+};
 
 class NoteContentEditor extends Component<Props> {
-  static propTypes = {
-    content: PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      hasRemoteUpdate: PropTypes.bool.isRequired,
-      version: PropTypes.number,
-    }),
-    noteId: PropTypes.string,
-    onChangeContent: PropTypes.func.isRequired,
-    spellCheckEnabled: PropTypes.bool.isRequired,
-    storeFocusEditor: PropTypes.func,
-    storeHasFocus: PropTypes.func,
+  bootTimer: ReturnType<typeof setTimeout> | null = null;
+  editor: Editor.IStandaloneCodeEditor | null = null;
+  monaco: Monaco | null = null;
+  contentDiv = createRef<HTMLDivElement>();
+  decorations: string[] = [];
+  matchesInNote: [] = [];
+
+  state: OwnState = {
+    content: '',
+    editor: 'fast',
+    noteId: null,
+    overTodo: false,
+    searchQuery: '',
+    selectedSearchMatchIndex: null,
   };
 
-  static defaultProps = {
-    storeFocusEditor: noop,
-    storeHasFocus: noop,
-  };
+  static getDerivedStateFromProps(props: Props, state: OwnState) {
+    const goFast = props.note.content.length > 5000;
+    const contentChanged = props.note.content !== state.content;
+    const noteChanged = props.noteId !== state.noteId;
 
-  replaceRangeWithText = (rangeToReplace, newText) => {
-    const { editorState } = this.state;
-    const newContentState = Modifier.replaceText(
-      editorState.getCurrentContent(),
-      rangeToReplace,
-      newText
-    );
-    this.handleEditorStateChange(
-      EditorState.push(editorState, newContentState, 'replace-text')
-    );
-  };
+    const content = contentChanged
+      ? noteChanged && goFast
+        ? props.note.content.slice(0, props.editorSelection[1] + 5000)
+        : withCheckboxCharacters(props.note.content)
+      : state.content;
 
-  generateDecorators = (searchQuery: string) => {
-    const queryHasTerms = filterHasText(searchQuery);
+    const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
 
-    if (queryHasTerms) {
-      return new MultiDecorator([
-        matchingTextDecorator(searchPattern(searchQuery)),
-        checkboxDecorator(this.replaceRangeWithText),
-      ]);
-    }
+    const searchChanged = props.searchQuery !== state.searchQuery;
+    const selectedSearchMatchIndex =
+      noteChanged || searchChanged ? null : state.selectedSearchMatchIndex;
 
-    return checkboxDecorator(this.replaceRangeWithText);
-  };
-
-  createNewEditorState = (text: string, searchQuery: string) => {
-    const newEditorState = EditorState.createWithContent(
-      ContentState.createFromText(text, TEXT_DELIMITER)
-    );
-
-    // Focus the editor for a new, empty note when not searching
-    if (text === '' && searchQuery === '') {
-      return EditorState.moveFocusToEnd(newEditorState);
-    }
-    return newEditorState;
-  };
-
-  state = {
-    editorState: this.createNewEditorState(
-      this.props.content.text,
-      this.props.searchQuery
-    ),
-  };
-
-  editorKey = 0;
+    return {
+      content,
+      editor,
+      noteId: props.noteId,
+      searchQuery: props.searchQuery,
+      selectedSearchMatchIndex,
+    };
+  }
 
   componentDidMount() {
-    this.props.storeFocusEditor(this.focus);
+    const { noteId } = this.props;
+    this.bootTimer = setTimeout(() => {
+      if (noteId === this.props.noteId) {
+        this.setState({
+          editor: 'full',
+          content: withCheckboxCharacters(this.props.note.content),
+        });
+      }
+    }, SPEED_DELAY);
+    this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
-    this.editor.blur();
-
-    window.electron?.receive('appCommand', this.onAppCommand);
-
-    window.addEventListener('keydown', this.handleKeydown, false);
-
-    this.queueDecoratorUpdate();
-    this.queueDecoratorUpdate.flush();
+    this.toggleShortcuts(true);
   }
-
-  handleEditorStateChange = (editorState) => {
-    const { editorState: prevEditorState } = this.state;
-
-    if (editorState === prevEditorState) {
-      return;
-    }
-
-    let newEditorState = editorState;
-
-    if (shouldRemoveCheckbox(editorState, prevEditorState)) {
-      const newContentState = removeCheckbox(editorState, prevEditorState);
-      newEditorState = EditorState.push(
-        editorState,
-        newContentState,
-        'remove-range'
-      );
-    }
-
-    const nextContent = plainTextContent(newEditorState);
-    const prevContent = plainTextContent(prevEditorState);
-    const contentChanged = nextContent !== prevContent;
-
-    const announceChanges = contentChanged
-      ? () => this.props.onChangeContent(nextContent)
-      : noop;
-
-    this.setState({ editorState: newEditorState }, announceChanges);
-  };
-
-  reflectChangesFromReceivedContent = (oldEditorState, content) => {
-    let newEditorState = EditorState.push(
-      oldEditorState,
-      ContentState.createFromText(content, TEXT_DELIMITER),
-      'replace-text'
-    );
-
-    // Handle transfer of focus from oldEditorState to newEditorState
-    if (oldEditorState.getSelection().getHasFocus()) {
-      const newSelectionState = getEquivalentSelectionState(
-        oldEditorState,
-        newEditorState
-      );
-      newEditorState = EditorState.forceSelection(
-        newEditorState,
-        newSelectionState
-      );
-    }
-
-    this.setState({ editorState: newEditorState });
-  };
-
-  componentDidUpdate(prevProps) {
-    const { content, searchQuery, noteId, spellCheckEnabled } = this.props;
-    const { editorState } = this.state;
-
-    // To immediately reflect the changes to the spell check setting,
-    // we must remount the Editor and force update. The remount is
-    // done by changing the `key` prop on the Editor.
-    // https://stackoverflow.com/questions/35792275/
-    if (spellCheckEnabled !== prevProps.spellCheckEnabled) {
-      this.editorKey += 1;
-      this.forceUpdate();
-    }
-
-    // If another note/revision is selected,
-    // create a new editor state from scratch.
-    if (
-      noteId !== prevProps.noteId ||
-      content.version !== prevProps.content.version
-    ) {
-      this.setState(
-        {
-          editorState: this.createNewEditorState(content.text, searchQuery),
-        },
-        () => {
-          this.queueDecoratorUpdate();
-
-          if (content.text.length < 10000) {
-            this.queueDecoratorUpdate.flush();
-          }
-
-          if (__TEST__) {
-            window.testEvents.push([
-              'editorNewNote',
-              plainTextContent(this.state.editorState),
-            ]);
-          }
-        }
-      );
-      return;
-    }
-
-    // If searchQuery changes, re-set decorators
-    if (searchQuery !== prevProps.searchQuery) {
-      this.queueDecoratorUpdate();
-    }
-
-    // If a remote change comes in, push it to the existing editor state.
-    if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
-      this.reflectChangesFromReceivedContent(editorState, content.text);
-    }
-  }
-
-  queueDecoratorUpdate = debounce(() => {
-    const { searchQuery } = this.props;
-    const { editorState } = this.state;
-
-    if (this.props.noteId === null) {
-      // oops, we unselected a note - don't recompute
-      return;
-    }
-
-    this.setState({
-      editorState: EditorState.set(editorState, {
-        decorator: this.generateDecorators(searchQuery),
-      }),
-    });
-  }, 500);
-
-  saveEditorRef = (ref) => {
-    this.editor = ref;
-  };
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeydown, false);
+    if (this.bootTimer) {
+      clearTimeout(this.bootTimer);
+    }
+    window.electron?.removeListener('editorCommand');
+    window.removeEventListener('input', this.handleUndoRedo, true);
+    this.toggleShortcuts(false);
   }
 
-  focus = () => {
-    invoke(this, 'editor.focus');
+  toggleShortcuts = (doEnable: boolean) => {
+    if (doEnable) {
+      window.addEventListener('keydown', this.handleShortcut, true);
+    } else {
+      window.removeEventListener('keydown', this.handleShortcut, true);
+    }
   };
 
-  /**
-   * Determine whether the Draft-JS editor is focused.
-   *
-   * @returns {boolean} whether the editor area is focused
-   */
-  hasFocus = () => {
-    return document.activeElement === get(this.editor, 'editor');
-  };
+  handleShortcut = (event: KeyboardEvent) => {
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
 
-  onTab = (e) => {
-    const { editorState } = this.state;
-
-    // prevent moving focus to next input
-    e.preventDefault();
-
-    if (!editorState.getSelection().isCollapsed() && e.shiftKey) {
-      return;
-    }
-
-    if (e.altKey || e.ctrlKey || e.metaKey) {
-      return;
-    }
-
-    this.handleEditorStateChange(
-      e.shiftKey
-        ? outdentCurrentBlock(editorState)
-        : indentCurrentBlock(editorState)
-    );
-  };
-
-  handleReturn = () => {
-    // matches lines that start with `- `, `* `, `+ `, or `\u2022` (bullet)
-    // preceded by 0 or more space characters
-    // i.e. a line prefixed by a list bullet
-    const listItemRe = /^[ \t\u2000-\u200a]*[-*+\u2022]\s/;
-
-    const { editorState } = this.state;
-    const line = getCurrentBlock(editorState).getText();
-
-    const firstCharIndex = line.search(/\S/);
-    const caretIsCollapsedAt = (index) => {
-      const { anchorOffset, focusOffset } = editorState.getSelection();
-      return anchorOffset === index && focusOffset === index;
-    };
-    const atBeginningOfLine =
-      caretIsCollapsedAt(0) || caretIsCollapsedAt(firstCharIndex);
-
-    if (atBeginningOfLine) {
-      return 'not-handled';
-    }
-
-    if (isLonelyBullet(line)) {
-      this.handleEditorStateChange(finishList(editorState));
-      return 'handled';
-    }
-
-    const listItemMatch = line.match(listItemRe);
-    const taskItemMatch = line.match(taskRegex);
-
-    if (taskItemMatch) {
-      const nextTaskPrefix = line.replace(taskRegex, '$1- [ ] ');
-      this.handleEditorStateChange(continueList(editorState, nextTaskPrefix));
-      return 'handled';
-    } else if (listItemMatch) {
-      this.handleEditorStateChange(continueList(editorState, listItemMatch[0]));
-      return 'handled';
-    }
-
-    return 'not-handled';
-  };
-
-  handleKeydown = (event: KeyboardEvent) => {
-    if (!this.props.keyboardShortcuts) {
-      return;
-    }
-    const { code, ctrlKey, metaKey, shiftKey } = event;
     const cmdOrCtrl = ctrlKey || metaKey;
-
-    if (cmdOrCtrl && shiftKey && 'KeyC' === code) {
-      this.handleEditorStateChange(
-        insertOrRemoveCheckboxes(this.state.editorState)
-      );
-      analytics.tracks.recordEvent('editor_checklist_inserted');
-
+    if (cmdOrCtrl && shiftKey && key === 'g') {
+      this.setPrevSearchSelection();
       event.stopPropagation();
       event.preventDefault();
-
       return false;
     }
 
-    return true;
-  };
-
-  onAppCommand = (event) => {
-    if (event.action === 'insertChecklist') {
-      this.handleEditorStateChange(
-        insertOrRemoveCheckboxes(this.state.editorState)
-      );
-      analytics.tracks.recordEvent('editor_checklist_inserted');
+    if (cmdOrCtrl && !shiftKey && key === 'g') {
+      this.setNextSearchSelection();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
     }
   };
 
-  /**
-   * Copy the raw text as determined by the DraftJS SelectionState.
-   *
-   * By not relying on the browser's interpretation of the contenteditable
-   * selection, this allows for the clipboard data to more accurately reflect
-   * the internal plain text data.
-   */
-  copyPlainText = (event) => {
-    const textToCopy = getSelectedText(this.state.editorState);
-    if (!textToCopy) {
+  componentDidUpdate(prevProps: Props) {
+    const {
+      editorSelection: [prevStart, prevEnd, prevDirection],
+    } = prevProps;
+    const {
+      editorSelection: [thisStart, thisEnd, thisDirection],
+    } = this.props;
+
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      (prevStart !== thisStart ||
+        prevEnd !== thisEnd ||
+        prevDirection !== thisDirection)
+    ) {
+      const start = this.editor.getModel()?.getPositionAt(thisStart);
+      const end = this.editor.getModel()?.getPositionAt(thisEnd);
+
+      this.editor.setSelection(
+        Selection.createWithDirection(
+          start?.lineNumber,
+          start?.column,
+          end?.lineNumber,
+          end?.column,
+          thisDirection === 'RTL'
+            ? SelectionDirection.RTL
+            : SelectionDirection.LTR
+        )
+      );
+    }
+
+    if (this.props.searchQuery === '' && prevProps.searchQuery !== '') {
+      this.editor?.setSelection(new this.monaco.Range(0, 0, 0, 0));
+    }
+
+    if (this.props.lineLength !== prevProps.lineLength) {
+      // @TODO: This timeout is necessary for no apparent reason
+      //        Figure out why and take it out!
+      setTimeout(() => {
+        if (this.editor) {
+          this.editor.layout();
+        }
+      }, 400);
+    }
+
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      prevProps.searchQuery !== this.props.searchQuery
+    ) {
+      this.setDecorators();
+    }
+  }
+
+  setDecorators = () => {
+    this.matchesInNote = this.searchMatches() ?? [];
+    const titleDecoration = this.getTitleDecoration() ?? [];
+
+    this.decorations = this.editor.deltaDecorations(this.decorations, [
+      ...this.matchesInNote,
+      ...titleDecoration,
+    ]);
+  };
+
+  getTitleDecoration = () => {
+    const model = this.editor.getModel();
+    if (!model) {
       return;
     }
-    event.clipboardData.setData('text/plain', textToCopy);
-    event.preventDefault();
+
+    for (let i = 1; i <= model.getLineCount(); i++) {
+      const line = model.getLineContent(i);
+      if (line.trim().length > 0) {
+        return [titleDecorationForLine(i)];
+      }
+    }
+    return;
+  };
+
+  searchMatches = () => {
+    if (!this.editor || !this.props.searchQuery) {
+      return;
+    }
+    const model = this.editor.getModel();
+    const terms = getTerms(this.props.searchQuery)
+      .map((term) => term.normalize().toLowerCase())
+      .filter((term) => term.trim().length > 0);
+
+    if (terms.length === 0) {
+      return [];
+    }
+
+    const content = model.getValue().normalize().toLowerCase();
+
+    const highlights = terms.reduce(
+      (matches: monaco.languages.DocumentHighlight, term) => {
+        let termAt = null;
+        let startAt = 0;
+
+        while (termAt !== -1) {
+          termAt = content.indexOf(term, startAt);
+          if (termAt === -1) {
+            break;
+          }
+
+          startAt = termAt + term.length;
+
+          const start = model.getPositionAt(termAt);
+          const end = model.getPositionAt(termAt + term.length);
+
+          matches.push({
+            options: {
+              inlineClassName: 'search-decoration',
+              overviewRuler: {
+                color: '#3361cc',
+                position: Editor.OverviewRulerLane.Full,
+              },
+            },
+            range: {
+              startLineNumber: start.lineNumber,
+              startColumn: start.column,
+              endLineNumber: end.lineNumber,
+              endColumn: end.column,
+            },
+          });
+        }
+
+        return matches;
+      },
+      []
+    );
+    return highlights;
+  };
+
+  focusEditor = () => this.editor?.focus();
+
+  hasFocus = () => this.editor?.hasTextFocus();
+
+  handleUndoRedo = (event: InputEvent) => {
+    switch (event.inputType) {
+      case 'historyUndo':
+        this.editor?.trigger('browserMenu', 'undo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      case 'historyRedo':
+        this.editor?.trigger('browserMenu', 'redo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
+  };
+
+  cancelSelectionOrSearch = (editor: Editor.IStandaloneCodeEditor) => {
+    if (this.props.searchQuery.length > 0 && this.matchesInNote.length > 0) {
+      this.props.clearSearch();
+      return;
+    }
+    editor.trigger('customAction', 'cancelSelection', null);
+  };
+
+  insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
+    // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
+    const model = editor.getModel();
+    if (!model) {
+      return;
+    }
+
+    const position = editor.getPosition();
+    if (!position) {
+      return;
+    }
+    const lineNumber = position.lineNumber;
+    const thisLine = model.getLineContent(lineNumber);
+
+    // "(1)A line without leading space"
+    // "(1   )A line with leading space"
+    // "(1   )(3\ue000 )A line with a task and leading space"
+    // "(1   )(2- )A line with a bullet"
+    // "(1  )(2* )(3\ue001  )Bulleted task"
+    const match = /^(\s*)([-+*\u2022]\s*)?([\ue000\ue001]\s+)?/.exec(thisLine);
+    if (!match) {
+      // this shouldn't be able to fail since it requires no characters
+      return;
+    }
+
+    const [fullMatch, prefixSpace, bullet, existingTask] = match;
+    const hasTask = 'undefined' !== typeof existingTask;
+
+    const lineOffset = prefixSpace.length + (bullet?.length ?? 0) + 1;
+    const text = hasTask ? '' : '\ue000 ';
+    const range = new this.monaco.Range(
+      lineNumber,
+      lineOffset,
+      lineNumber,
+      lineOffset + (existingTask?.length ?? 0)
+    );
+
+    const identifier = { major: 1, minor: 1 };
+    const op = { identifier, range, text, forceMoveMarkers: true };
+    editor.executeEdits('insertOrRemoveCheckboxes', [op]);
+
+    this.props.insertTask();
+  };
+
+  editorInit: EditorWillMount = (monaco) => {
+    Editor.defineTheme('simplenote', {
+      base: 'vs',
+      inherit: true,
+      rules: [{ background: 'FFFFFF' }],
+      colors: {
+        'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
+        'editor.background': '#ffffff',
+        'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
+        'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30
+        'scrollbarSlider.background': '#c3c4c7', // $studio-gray-10
+        'scrollbarSlider.hoverBackground': '#a7aaad', // $studio-gray-20
+        'textLink.foreground': '#1d4fc4', // $studio-simplenote-blue-60
+      },
+    });
+    Editor.defineTheme('simplenote-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ background: '1d2327' }],
+      colors: {
+        'editor.foreground': '#ffffff',
+        'editor.background': '#1d2327', // $studio-gray-90
+        'editor.selectionBackground': '#50575e', // $studio-gray-60
+        'scrollbarSlider.activeBackground': '#646970', // $studio-gray-50
+        'scrollbarSlider.background': '#2c3338', // $studio-gray-80
+        'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90
+        'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
+      },
+    });
+  };
+
+  editorReady: EditorDidMount = (editor, monaco) => {
+    this.editor = editor;
+    this.monaco = monaco;
+
+    // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
+    const shortcutsToDisable = [
+      'cancelSelection', // escape; we need to allow this to bubble up to clear search
+      'cursorUndo', // meta+U
+      'editor.action.commentLine', // meta+/
+      'editor.action.jumpToBracket', // shift+meta+\
+      'editor.action.transposeLetters', // ctrl+T
+      'editor.action.triggerSuggest', // ctrl+space
+      'expandLineSelection', // meta+L
+      // search shortcuts
+      'actions.find',
+      'actions.findWithSelection',
+      'editor.action.addSelectionToNextFindMatch',
+      'editor.action.nextMatchFindAction',
+      'editor.action.selectHighlights',
+    ];
+    // let Electron menus trigger these
+    if (window.electron) {
+      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
+    }
+    shortcutsToDisable.forEach(function (action) {
+      editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
+    });
+
+    // disable editor keybindings for Electron since it is handled by editorCommand
+    // doing it this way will always show the keyboard hint in the context menu!
+    editor.createContextKey(
+      'allowBrowserKeybinding',
+      window.electron ? false : true
+    );
+
+    editor.addAction({
+      id: 'context_undo',
+      label: 'Undo',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 2,
+      // precondition: 'undo',
+      run: () => {
+        editor.trigger('contextMenu', 'undo', null);
+      },
+    });
+    editor.addAction({
+      id: 'context_redo',
+      label: 'Redo',
+      keybindings: [
+        monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+        // @todo can we switch these so Windows displays the default ^Y?
+      ],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 3,
+      // precondition: 'redo',
+      run: () => {
+        editor.trigger('contextMenu', 'redo', null);
+      },
+    });
+
+    // add a new Cut and Copy that show keyboard shortcuts
+    editor.addAction({
+      id: 'context_cut',
+      label: 'Cut',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 1,
+      run: () => {
+        editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
+      },
+    });
+    editor.addAction({
+      id: 'context_copy',
+      label: 'Copy',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 2,
+      run: () => {
+        editor.trigger(
+          'contextMenu',
+          'editor.action.clipboardCopyAction',
+          null
+        );
+      },
+    });
+
+    editor.addAction({
+      id: 'cancel_selection',
+      label: 'Cancel Selection',
+      keybindings: [monaco.KeyCode.Escape],
+      run: this.cancelSelectionOrSearch,
+    });
+
+    /* paste doesn't work in the browser due to security issues */
+    if (window.electron) {
+      editor.addAction({
+        id: 'paste',
+        label: 'Paste',
+        contextMenuGroupId: '9_cutcopypaste',
+        contextMenuOrder: 3,
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+        keybindingContext: 'allowBrowserKeybinding',
+        run: () => {
+          document.execCommand('paste');
+        },
+      });
+    }
+
+    editor.addAction({
+      id: 'select_all',
+      label: 'Select All',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 4,
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindingContext: 'allowBrowserKeybinding',
+      run: () => {
+        editor.setSelection(editor.getModel().getFullModelRange());
+      },
+    });
+
+    editor.addAction({
+      id: 'insertChecklist',
+      label: 'Insert Checklist',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+      ],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '10_checklist',
+      contextMenuOrder: 1,
+      run: this.insertOrRemoveCheckboxes,
+    });
+
+    window.electron?.receive('editorCommand', (command) => {
+      switch (command.action) {
+        case 'findAgain':
+          this.setNextSearchSelection();
+          return;
+        case 'insertChecklist':
+          editor.trigger('editorCommand', 'insertChecklist', null);
+          return;
+        case 'redo':
+          if (editor.hasTextFocus()) {
+            editor.trigger('editorCommand', 'redo', null);
+          } else {
+            document.execCommand('redo');
+          }
+          return;
+        case 'selectAll':
+          if (editor.hasTextFocus()) {
+            editor.setSelection(editor.getModel().getFullModelRange());
+          } else {
+            document.execCommand('selectAll');
+          }
+          return;
+        case 'undo':
+          if (editor.hasTextFocus()) {
+            editor.trigger('editorCommand', 'undo', null);
+          } else {
+            document.execCommand('undo');
+          }
+          return;
+      }
+    });
+
+    // handle undo and redo from menu in browser
+    if (!window.electron) {
+      window.addEventListener('input', this.handleUndoRedo, true);
+    }
+
+    this.setDecorators();
+    // make component rerender after the decorators are set.
+    this.setState({});
+    editor.onDidChangeModelContent(() => this.setDecorators());
+
+    document.oncopy = (event) => {
+      // @TODO: This is selecting everything in the app but we should only
+      //        need to intercept copy events coming from the editor
+      event.clipboardData.setData(
+        'text/plain',
+        withCheckboxSyntax(event.clipboardData.getData('text/plain'))
+      );
+    };
+
+    const [startOffset, endOffset, direction] = this.props.editorSelection;
+    const start = this.editor.getModel()?.getPositionAt(startOffset);
+    const end = this.editor.getModel()?.getPositionAt(endOffset);
+
+    this.editor.setSelection(
+      Selection.createWithDirection(
+        start?.lineNumber,
+        start?.column,
+        end?.lineNumber,
+        end?.column,
+        direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
+      )
+    );
+
+    editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
+
+    editor.onDidChangeCursorSelection((e) => {
+      if (
+        e.reason === Editor.CursorChangeReason.Undo ||
+        e.reason === Editor.CursorChangeReason.Redo
+      ) {
+        // @TODO: Adjust selection in Undo/Redo
+        return;
+      }
+
+      const start = editor
+        .getModel()
+        ?.getOffsetAt(e.selection.getStartPosition());
+      const end = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
+      const direction =
+        e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
+
+      this.props.storeEditorSelection(this.props.noteId, start, end, direction);
+    });
+
+    // @TODO: Is this really slow and dumb?
+    editor.onMouseMove((e) => {
+      const { content } = this.state;
+      const {
+        target: { range },
+      } = e;
+
+      if (!range) {
+        return;
+      }
+
+      // a range spanning more than one column means we're over the gutter
+      if (range.endColumn - range.startColumn > 1) {
+        return;
+      }
+
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+
+      const offset = model.getOffsetAt({
+        lineNumber: range.startLineNumber,
+        column: range.startColumn,
+      });
+
+      const overTodo =
+        content[offset] === '\ue000' || content[offset] === '\ue001';
+      if (this.state.overTodo !== overTodo) {
+        this.setState({ overTodo });
+      }
+    });
+
+    editor.onMouseDown((event) => {
+      const { editNote, noteId } = this.props;
+      const { content } = this.state;
+      const {
+        target: { range },
+      } = event;
+
+      if (!range) {
+        return;
+      }
+
+      // a range spanning more than one column means we're over the gutter
+      if (range.endColumn - range.startColumn > 1) {
+        return;
+      }
+
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+
+      const offset = model.getOffsetAt({
+        lineNumber: range.startLineNumber,
+        column: range.startColumn,
+      });
+
+      if (content[offset] === '\ue000') {
+        editNote(noteId, {
+          content: withCheckboxSyntax(
+            content.slice(0, offset) + '\ue001' + content.slice(offset + 1)
+          ),
+        });
+      } else if (content[offset] === '\ue001') {
+        editNote(noteId, {
+          content: withCheckboxSyntax(
+            content.slice(0, offset) + '\ue000' + content.slice(offset + 1)
+          ),
+        });
+      }
+    });
+  };
+
+  updateNote: ChangeHandler = (value, event) => {
+    const { editNote, noteId } = this.props;
+
+    if (!this.editor) {
+      return;
+    }
+
+    const autolist = () => {
+      // perform list auto-complete
+      if (!this.editor || event.isRedoing || event.isUndoing) {
+        return;
+      }
+
+      const change = event.changes.find(
+        ({ text }) => text[0] === '\n' && text.trim() === ''
+      );
+
+      if (!change) {
+        return;
+      }
+
+      const lineNumber = change.range.startLineNumber;
+      if (
+        lineNumber === 0 ||
+        // the newline change starts and ends on one line
+        lineNumber !== change.range.endLineNumber
+      ) {
+        return;
+      }
+
+      const model = this.editor.getModel();
+      const prevLine = model.getLineContent(lineNumber);
+
+      const prevList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
+      if (null === prevList) {
+        return;
+      }
+
+      const thisLine = model.getLineContent(lineNumber + 1);
+      if (!/^\s*$/.test(thisLine)) {
+        return;
+      }
+
+      // Lonely bullets occur when we continue a list in order
+      // to terminate the list. We expect the previous list bullet
+      // to disappear and return us to the normal text flow
+      const isLonelyBullet =
+        thisLine.trim().length === 0 && prevLine.length === prevList[0].length;
+      if (isLonelyBullet) {
+        const prevLineStart = model.getOffsetAt({
+          column: 0,
+          lineNumber: lineNumber,
+        });
+
+        const thisLineStart = model.getOffsetAt({
+          column: 0,
+          lineNumber: lineNumber + 1,
+        });
+
+        const range = new this.monaco.Range(lineNumber, 0, lineNumber + 1, 0);
+        const identifier = { major: 1, minor: 1 };
+        const op = { identifier, range, text: '', forceMoveMarkers: true };
+        this.editor.executeEdits('autolist', [op]);
+
+        return (
+          value.slice(0, Math.max(0, prevLineStart - 1)) +
+          value.slice(thisLineStart)
+        );
+      }
+
+      const lineStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 1,
+      });
+
+      const nextStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 2,
+      });
+
+      const range = new this.monaco.Range(
+        lineNumber + 1,
+        0,
+        lineNumber + 1,
+        thisLine.length
+      );
+      const identifier = { major: 1, minor: 1 };
+      const text = prevList[0].replace('\ue001', '\ue000');
+      const op = { identifier, range, text, forceMoveMarkers: true };
+      this.editor.executeEdits('autolist', [op]);
+
+      // for some reason this wasn't updating
+      // the cursor position when executed immediately
+      // so we are running it on the next micro-task
+      Promise.resolve().then(() =>
+        this.editor.setPosition({
+          column: prevList[0].length + 1,
+          lineNumber: lineNumber + 1,
+        })
+      );
+
+      return (
+        value.slice(0, lineStart) +
+        prevList[0].replace('\ue001', '\ue000') +
+        event.eol +
+        value.slice(nextStart)
+      );
+    };
+
+    const content = autolist() || value;
+
+    editNote(noteId, { content: withCheckboxSyntax(content) });
+  };
+
+  setNextSearchSelection = () => {
+    const { selectedSearchMatchIndex: index } = this.state;
+    const total = this.matchesInNote.length;
+    const newIndex = (total + (index ?? -1) + 1) % total;
+    this.setSearchSelection(newIndex);
+  };
+
+  setPrevSearchSelection = () => {
+    const { selectedSearchMatchIndex: index } = this.state;
+    const total = this.matchesInNote.length;
+    const newIndex = (total + (index ?? total) - 1) % total;
+    this.setSearchSelection(newIndex);
+  };
+
+  setSearchSelection = (index) => {
+    if (!this.matchesInNote.length) {
+      return;
+    }
+    const range = this.matchesInNote[index].range;
+    this.setState({ selectedSearchMatchIndex: index });
+    this.editor.setSelection(range);
+    this.editor.revealLineInCenter(range.startLineNumber);
+    this.focusEditor();
   };
 
   render() {
+    const { fontSize, lineLength, noteId, searchQuery, theme } = this.props;
+    const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
+    const searchMatches = searchQuery ? this.searchMatches() : [];
+
+    const editorPadding = getEditorPadding(
+      lineLength,
+      this.contentDiv.current?.offsetWidth
+    );
+
     return (
       <div
-        onCopy={this.copyPlainText}
-        onCut={this.copyPlainText}
-        style={{ height: '100%' }}
+        ref={this.contentDiv}
+        className={`note-content-editor-shell${
+          overTodo ? ' cursor-pointer' : ''
+        }`}
       >
-        <Editor
-          key={this.editorKey}
-          ref={this.saveEditorRef}
-          spellCheck={this.props.spellCheckEnabled}
-          stripPastedStyles
-          onChange={this.handleEditorStateChange}
-          editorState={this.state.editorState}
-          onTab={this.onTab}
-          handleReturn={this.handleReturn}
-        />
+        <div
+          className={`note-content-plaintext${
+            editor === 'fast' ? ' visible' : ''
+          }`}
+        >
+          {content}
+        </div>
+        {editor !== 'fast' && (
+          <Monaco
+            key={noteId}
+            editorDidMount={this.editorReady}
+            editorWillMount={this.editorInit}
+            language="plaintext"
+            theme={theme === 'dark' ? 'simplenote-dark' : 'simplenote'}
+            onChange={this.updateNote}
+            options={{
+              autoClosingBrackets: 'never',
+              autoClosingQuotes: 'never',
+              autoIndent: 'keep',
+              autoSurround: 'never',
+              automaticLayout: true,
+              codeLens: false,
+              folding: false,
+              fontFamily:
+                '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
+              fontSize,
+              hideCursorInOverviewRuler: true,
+              lineDecorationsWidth: editorPadding,
+              lineHeight: fontSize > 20 ? 42 : 24,
+              lineNumbers: 'off',
+              links: true,
+              matchBrackets: 'never',
+              minimap: { enabled: false },
+              occurrencesHighlight: false,
+              overviewRulerBorder: false,
+              quickSuggestions: false,
+              renderIndentGuides: false,
+              renderLineHighlight: 'none',
+              scrollbar: {
+                horizontal: 'hidden',
+                useShadows: false,
+                verticalScrollbarSize: editorPadding,
+              },
+              scrollBeyondLastLine: false,
+              selectionHighlight: false,
+              wordWrap: 'bounded',
+              wrappingStrategy: isSafari ? 'simple' : 'advanced',
+              wordWrapColumn: 400,
+            }}
+            value={content}
+          />
+        )}
+        {searchQuery.length > 0 && searchMatches && (
+          <div className="search-results">
+            <div>
+              {selectedSearchMatchIndex === null
+                ? `${searchMatches.length} Results`
+                : `${selectedSearchMatchIndex + 1} of ${searchMatches.length}`}
+            </div>
+            <span className="search-results-next">
+              <IconButton
+                disabled={searchMatches.length <= 1}
+                icon={<ChevronRightIcon />}
+                onClick={this.setNextSearchSelection}
+                title="Next"
+              />
+            </span>
+            <span className="search-results-prev">
+              <IconButton
+                disabled={searchMatches.length <= 1}
+                icon={<ChevronRightIcon />}
+                onClick={this.setPrevSearchSelection}
+                title="Prev"
+              />
+            </span>
+          </div>
+        )}
       </div>
     );
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, showNoteList },
-  settings: { keyboardShortcuts },
-}) => ({
-  keyboardShortcuts,
-  searchQuery,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  editorSelection: state.ui.editorSelection.get(state.ui.openedNote) ?? [
+    0,
+    0,
+    'LTR',
+  ],
+  fontSize: state.settings.fontSize,
+  keyboardShortcuts: state.settings.keyboardShortcuts,
+  lineLength: state.settings.lineLength,
+  noteId: state.ui.openedNote,
+  note: state.data.notes.get(state.ui.openedNote),
+  searchQuery: state.ui.searchQuery,
+  spellCheckEnabled: state.settings.spellCheckEnabled,
+  theme: selectors.getTheme(state),
 });
 
-export default connect(mapStateToProps)(NoteContentEditor);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  clearSearch: () => dispatch(search('')),
+  editNote: actions.data.editNote,
+  insertTask: () => ({ type: 'INSERT_TASK' }),
+  storeEditorSelection: (noteId, start, end, direction) => ({
+    type: 'STORE_EDITOR_SELECTION',
+    noteId,
+    start,
+    end,
+    direction,
+  }),
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteContentEditor);

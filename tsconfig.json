@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -9,9 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "esModuleInterop": true,
-    "types": ["dom", "jest"],
-    "typeRoots": ["./lib/typings", "./node_modules/@types"]
+    "esModuleInterop": true
   },
   "include": ["lib/**/*"]
 }

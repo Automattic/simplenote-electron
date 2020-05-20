@@ -12,66 +12,85 @@ import {
   combineReducers,
   applyMiddleware,
 } from 'redux';
-import thunk from 'redux-thunk';
 import persistState from 'redux-localstorage';
 import { omit } from 'lodash';
+import { isElectron } from '../utils/platform';
 
-import appState from '../flux/app-state';
-
+import * as persistence from './persistence';
+import { middleware as analyticsMiddleware } from './analytics/middleware';
+import dataMiddleware from './data/middleware';
+import electronMiddleware from './electron/middleware';
 import { middleware as searchMiddleware } from '../search';
+import uiMiddleware from './ui/middleware';
 import searchFieldMiddleware from './ui/search-field-middleware';
 
+import { reducer as browser, middleware as browserMiddleware } from './browser';
+import data from './data/reducer';
 import settings from './settings/reducer';
-import tags from './tags/reducer';
+import simperium from './simperium/reducer';
 import ui from './ui/reducer';
 
 import * as A from './action-types';
-import * as T from '../types';
-
-export type AppState = {
-  notes: T.NoteEntity[] | null;
-  preferences?: T.Preferences;
-  revision: T.NoteEntity | null;
-  showNavigation: boolean;
-  tag?: T.TagEntity;
-  unsyncedNoteIds: T.EntityId[];
-};
 
 const reducers = combineReducers<State, A.ActionType>({
-  appState: appState.reducer.bind(appState),
+  browser,
+  data,
   settings,
-  tags,
+  simperium,
   ui,
 });
 
 export type State = {
-  appState: AppState;
+  browser: ReturnType<typeof browser>;
+  data: ReturnType<typeof data>;
   settings: ReturnType<typeof settings>;
-  tags: ReturnType<typeof tags>;
+  simperium: ReturnType<typeof simperium>;
   ui: ReturnType<typeof ui>;
 };
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const makeStore = (...middlewares) =>
-  createStore<State, A.ActionType, {}, {}>(
-    reducers,
-    composeEnhancers(
-      persistState('settings', {
-        key: 'simpleNote',
-        slicer: (path) => (state) => ({
-          // Omit property from persisting
-          [path]: omit(state[path], ['accountName', 'focusModeEnabled']),
-        }),
-      }),
-      applyMiddleware(
-        thunk,
-        searchMiddleware,
-        searchFieldMiddleware,
-        ...middlewares
+export const makeStore = (
+  accountName: string | null,
+  ...middlewares: Middleware[]
+) =>
+  persistence
+    .loadState(accountName)
+    .then(([initialData, persistenceMiddleware]) =>
+      createStore<State, A.ActionType, {}, {}>(
+        reducers,
+        {
+          ...initialData,
+          settings: {
+            ...initialData.settings,
+            accountName: initialData.settings?.accountName ?? accountName,
+          },
+        },
+        composeEnhancers(
+          persistState('settings', {
+            key: 'simpleNote',
+            slicer: (path) => (state) => ({
+              // Omit property from persisting
+              [path]: omit(state[path], [
+                'allowNotifications',
+                'focusModeEnabled',
+              ]),
+            }),
+          }),
+          applyMiddleware(
+            dataMiddleware,
+            analyticsMiddleware,
+            browserMiddleware,
+            searchMiddleware,
+            searchFieldMiddleware,
+            uiMiddleware,
+            ...(isElectron ? [electronMiddleware] : []),
+            ...middlewares,
+            ...(persistenceMiddleware ? [persistenceMiddleware] : [])
+          )
+        )
       )
-    )
-  );
+    );
 
 export type Store = {
   dispatch: Dispatch;
@@ -105,3 +124,5 @@ export type Middleware<Extension = {}> = ReduxMiddleware<
   State,
   Dispatch
 >;
+
+export type Selector<T> = (state: State, ...args: any[]) => T;
