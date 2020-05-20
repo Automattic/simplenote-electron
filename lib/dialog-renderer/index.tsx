@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Modal from 'react-modal';
-import classNames from 'classnames';
 
 import AboutDialog from '../dialogs/about';
 import ImportDialog from '../dialogs/import';
@@ -12,15 +11,15 @@ import { closeDialog } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
+import { getTheme } from '../state/selectors';
 
 type OwnProps = {
   appProps: object;
-  buckets: Record<'noteBucket' | 'tagBucket' | 'preferencesBucket', T.Bucket>;
-  themeClass: string;
 };
 
 type StateProps = {
   dialogs: T.DialogType[];
+  theme: 'light' | 'dark';
 };
 
 type DispatchProps = {
@@ -33,7 +32,7 @@ export class DialogRenderer extends Component<Props> {
   static displayName = 'DialogRenderer';
 
   render() {
-    const { appProps, buckets, themeClass, closeDialog } = this.props;
+    const { appProps, theme, closeDialog } = this.props;
 
     return (
       <Fragment>
@@ -45,16 +44,16 @@ export class DialogRenderer extends Component<Props> {
             isOpen
             onRequestClose={closeDialog}
             overlayClassName="dialog-renderer__overlay"
-            portalClassName={classNames('dialog-renderer__portal', themeClass)}
+            portalClassName={`dialog-renderer__portal theme-${theme}`}
           >
             {'ABOUT' === dialog ? (
               <AboutDialog key="about" />
             ) : 'IMPORT' === dialog ? (
-              <ImportDialog key="import" buckets={buckets} />
+              <ImportDialog key="import" />
             ) : 'KEYBINDINGS' === dialog ? (
               <KeybindingsDialog key="keybindings" />
             ) : 'SETTINGS' === dialog ? (
-              <SettingsDialog key="settings" buckets={buckets} {...appProps} />
+              <SettingsDialog key="settings" {...appProps} />
             ) : 'SHARE' === dialog ? (
               <ShareDialog key="share" />
             ) : null}
@@ -65,8 +64,9 @@ export class DialogRenderer extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { dialogs } }) => ({
-  dialogs,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  dialogs: state.ui.dialogs,
+  theme: getTheme(state),
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
