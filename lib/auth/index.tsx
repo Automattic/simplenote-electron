@@ -124,6 +124,8 @@ export class Auth extends Component<Props> {
             id="login__field-username"
             onInput={this.onInput}
             onInvalid={this.onInput}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
             placeholder="Email"
             ref={(ref) => (this.usernameInput = ref)}
             spellCheck={false}
@@ -141,6 +143,8 @@ export class Auth extends Component<Props> {
             id="login__field-password"
             onInput={this.onInput}
             onInvalid={this.onInput}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
             placeholder="Password"
             ref={(ref) => (this.passwordInput = ref)}
             spellCheck={false}
@@ -210,7 +214,49 @@ export class Auth extends Component<Props> {
     );
   }
 
+  onBlur = (event) => {
+    // nothing has been entered yet, don't validate
+    if (
+      event.currentTarget.value === '' &&
+      !event.currentTarget.getAttribute('data-touched')
+    ) {
+      return;
+    }
+
+    // a value has been entered, validate from now on
+    event.currentTarget.className = 'validate';
+  };
+
+  onFocus = (event) => {
+    // nothing has been entered yet, don't validate
+    if (!event.currentTarget.getAttribute('data-touched')) {
+      return;
+    }
+
+    // if the input is valid when focused, don't validate on each keystroke
+    if (event.currentTarget.validity.valid) {
+      event.currentTarget.className = '';
+    } else {
+      event.currentTarget.className = 'validate';
+    }
+  };
+
   onInput = (event) => {
+    // don't be annoying about red borders during input:
+    // - don't start checking validity until field has been changed
+    // - after invalid, check at every input to see if it becomes valid
+    // see https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-ui-invalid
+
+    // monitor when the field has been changed by the user
+    if (event.currentTarget.value !== '') {
+      event.currentTarget.setAttribute('data-touched', true);
+    }
+
+    // we're using a className for validation so we can style in Electron
+    if (event.currentTarget.className !== 'validate') {
+      return;
+    }
+
     const passwordError =
       'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.';
 
