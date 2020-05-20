@@ -85,6 +85,10 @@ export type StoreRevisions = Action<
   'STORE_REVISIONS',
   { noteId: T.EntityId; revisions: T.NoteEntity[] }
 >;
+export type SystemThemeUpdate = Action<
+  'SYSTEM_THEME_UPDATE',
+  { prefers: 'light' | 'dark' }
+>;
 export type TagsLoaded = Action<
   'TAGS_LOADED',
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
@@ -102,6 +106,7 @@ export type ToggleSimperiumConnectionStatus = Action<
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
+export type WindowResize = Action<'WINDOW_RESIZE', { innerWidth: number }>;
 
 export type ActionType =
   | CloseNote
@@ -136,6 +141,7 @@ export type ActionType =
   | ShowAllNotes
   | ShowDialog
   | StoreRevisions
+  | SystemThemeUpdate
   | TagsLoaded
   | ToggleEditMode
   | ToggleKeyboardShortcuts
@@ -146,7 +152,8 @@ export type ActionType =
   | ToggleSimperiumConnectionStatus
   | ToggleTagDrawer
   | ToggleTagEditing
-  | TrashNote;
+  | TrashNote
+  | WindowResize;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;

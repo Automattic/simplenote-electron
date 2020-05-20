@@ -2,7 +2,6 @@ import React, { Component, Suspense } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
-import NoteToolbarContainer from '../note-toolbar-container';
 import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchBar from '../search-bar';
@@ -27,9 +26,6 @@ type OwnProps = {
   isNoteInfoOpen: boolean;
   isSmallScreen: boolean;
   note: T.NoteEntity;
-  noteBucket: T.Bucket<T.Note>;
-  onUpdateContent: Function;
-  syncNote: Function;
 };
 
 type StateProps = {
@@ -86,9 +82,6 @@ export class AppLayout extends Component<Props> {
       isNoteInfoOpen,
       isNoteOpen,
       isSmallScreen,
-      noteBucket,
-      onUpdateContent,
-      syncNote,
     } = this.props;
 
     const mainClasses = classNames('app-layout', {
@@ -112,22 +105,14 @@ export class AppLayout extends Component<Props> {
       <div className={mainClasses}>
         <Suspense fallback={placeholder}>
           <div className="app-layout__source-column theme-color-bg theme-color-fg">
-            <SearchBar noteBucket={noteBucket} />
-            <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
+            <SearchBar />
+            <NoteList />
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-              <RevisionSelector onUpdateContent={onUpdateContent} />
-              <NoteToolbarContainer
-                noteBucket={noteBucket}
-                toolbar={<NoteToolbar />}
-              />
-              <NoteEditor
-                isSmallScreen={isSmallScreen}
-                noteBucket={noteBucket}
-                onUpdateContent={onUpdateContent}
-                syncNote={syncNote}
-              />
+              <RevisionSelector />
+              <NoteToolbar />
+              <NoteEditor />
             </div>
           )}
         </Suspense>

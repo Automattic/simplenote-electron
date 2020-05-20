@@ -21,6 +21,7 @@ import appState from '../flux/app-state';
 import { middleware as searchMiddleware } from '../search';
 import searchFieldMiddleware from './ui/search-field-middleware';
 
+import { reducer as browser, middleware as browserMiddleware } from './browser';
 import settings from './settings/reducer';
 import tags from './tags/reducer';
 import ui from './ui/reducer';
@@ -39,6 +40,7 @@ export type AppState = {
 
 const reducers = combineReducers<State, A.ActionType>({
   appState: appState.reducer.bind(appState),
+  browser,
   settings,
   tags,
   ui,
@@ -46,6 +48,7 @@ const reducers = combineReducers<State, A.ActionType>({
 
 export type State = {
   appState: AppState;
+  browser: ReturnType<typeof browser>;
   settings: ReturnType<typeof settings>;
   tags: ReturnType<typeof tags>;
   ui: ReturnType<typeof ui>;
@@ -105,3 +108,5 @@ export type Middleware<Extension = {}> = ReduxMiddleware<
   State,
   Dispatch
 >;
+
+export type Selector<T> = (state: State) => T;
