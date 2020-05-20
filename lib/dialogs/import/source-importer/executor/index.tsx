@@ -1,40 +1,58 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { throttle } from 'lodash';
 
-import analytics from '../../../../analytics';
+import actions from '../../../../state/actions';
+import { recordEvent } from '../../../../state/analytics/middleware';
 
 import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
 import ImportProgress from '../progress';
 
-import EvernoteImporter from '../../../../utils/import/evernote';
-import SimplenoteImporter from '../../../../utils/import/simplenote';
-import TextFileImporter from '../../../../utils/import/text-files';
+import type * as S from '../../../../state/';
+import type * as T from '../../../../types';
 
-const importers = {
-  evernote: EvernoteImporter,
-  plaintext: TextFileImporter,
-  simplenote: SimplenoteImporter,
+type ImporterSource = 'evernote' | 'plaintext' | 'simplenote';
+
+const getImporter = (importer: ImporterSource): Promise<object> => {
+  switch (importer) {
+    case 'evernote':
+      return import(
+        /* webpackChunkName: 'utils-import-evernote' */ '../../../../utils/import/evernote'
+      );
+
+    case 'plaintext':
+      return import(
+        /* webpackChunkName: 'utils-import-text-files' */ '../../../../utils/import/text-files'
+      );
+
+    case 'simplenote':
+      return import(
+        /* webpackChunkName: 'utils-import-simplenote' */ '../../../../utils/import/simplenote'
+      );
+  }
 };
 
-class ImportExecutor extends React.Component {
-  static propTypes = {
-    buckets: PropTypes.shape({
-      noteBucket: PropTypes.object.isRequired,
-      tagBucket: PropTypes.object.isRequired,
-    }),
-    endValue: PropTypes.number,
-    files: PropTypes.array,
-    locked: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onStart: PropTypes.func.isRequired,
-    source: PropTypes.shape({
-      optionsHint: PropTypes.string,
-      slug: PropTypes.string.isRequired,
-    }),
+type OwnProps = {
+  endValue: number;
+  files: string[];
+  locked: boolean;
+  onClose: Function;
+  onStart: Function;
+  source: {
+    optionsHint: string;
+    slug: ImporterSource;
   };
+};
 
+type DispatchProps = {
+  importNote: (note: T.Note) => any;
+  recordEvent: (eventName: string, eventProperties: T.JSONSerializable) => any;
+};
+
+type Props = OwnProps & DispatchProps;
+
+class ImportExecutor extends Component<Props> {
   state = {
     errorMessage: undefined,
     finalNoteCount: undefined,
@@ -46,56 +64,54 @@ class ImportExecutor extends React.Component {
 
   initImporter = () => {
     const { slug: sourceSlug } = this.props.source;
-    const Importer = importers[sourceSlug];
 
-    if (!Importer) {
-      throw new Error('Unrecognized importer slug "${slug}"');
-    }
+    return getImporter(sourceSlug).then(({ default: Importer }) => {
+      const thisImporter = new Importer(this.props.importNote, {
+        isMarkdown: this.state.setMarkdown,
+      });
+      const updateProgress = throttle((arg) => {
+        this.setState({ importedNoteCount: arg });
+      }, 20);
 
-    const thisImporter = new Importer({
-      ...this.props.buckets,
-      options: { isMarkdown: this.state.setMarkdown },
+      thisImporter.on('status', (type, arg) => {
+        switch (type) {
+          case 'progress':
+            updateProgress(arg);
+            break;
+          case 'complete':
+            this.setState({
+              finalNoteCount: arg,
+              isDone: true,
+            });
+            this.props.recordEvent('importer_import_completed', {
+              source: sourceSlug,
+              note_count: arg,
+            });
+            break;
+          case 'error':
+            this.setState({
+              errorMessage: arg,
+              shouldShowProgress: false,
+            });
+            window.setTimeout(() => {
+              this.setState({ isDone: true });
+            }, 200);
+            break;
+          default:
+        }
+      });
+
+      return thisImporter;
     });
-    const updateProgress = throttle((arg) => {
-      this.setState({ importedNoteCount: arg });
-    }, 20);
-
-    thisImporter.on('status', (type, arg) => {
-      switch (type) {
-        case 'progress':
-          updateProgress(arg);
-          break;
-        case 'complete':
-          this.setState({
-            finalNoteCount: arg,
-            isDone: true,
-          });
-          analytics.tracks.recordEvent('importer_import_completed', {
-            source: sourceSlug,
-            note_count: arg,
-          });
-          break;
-        case 'error':
-          this.setState({
-            errorMessage: arg,
-            shouldShowProgress: false,
-          });
-          window.setTimeout(() => {
-            this.setState({ isDone: true });
-          }, 200);
-          break;
-        default:
-      }
-    });
-    return thisImporter;
   };
 
   startImport = () => {
     this.setState({ shouldShowProgress: true });
     this.props.onStart();
 
-    const importer = this.initImporter();
-    importer.importNotes(this.props.files);
+    this.initImporter().then((importer) => {
+      importer.importNotes(this.props.files);
+    });
   };
 
   render() {
@@ -113,7 +129,7 @@ class ImportExecutor extends React.Component {
     return (
       <div className="source-importer-executor">
         <section className="source-importer-executor__options">
-          <PanelTitle headingLevel="3">Options</PanelTitle>
+          <PanelTitle headingLevel={3}>Options</PanelTitle>
           <label>
             <input
               type="checkbox"
@@ -163,4 +179,9 @@ class ImportExecutor extends React.Component {
   }
 }
 
-export default ImportExecutor;
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  importNote: actions.data.importNote,
+  recordEvent,
+};
+
+export default connect(null, mapDispatchToProps)(ImportExecutor);

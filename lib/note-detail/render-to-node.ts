@@ -39,7 +39,7 @@ export const renderToNode = (
   node: Element,
   content: string,
   searchQuery: string
-) => {
+) =>
   renderNoteToHtml(content)
     .then((html) => {
       node.innerHTML = html;
@@ -92,6 +92,5 @@ export const renderToNode = (
           .catch();
       }
     });
-};
 
 export default renderToNode;

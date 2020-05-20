@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
-import analytics from './analytics';
+import { recordEvent } from './state/analytics/middleware';
 import { validatePassword } from './utils/validate-password';
 import Modal from 'react-modal';
 import classNames from 'classnames';
@@ -105,7 +105,7 @@ class AppWithoutAuth extends Component<Props, State> {
             throw new Error('missing access token');
           }
 
-          analytics.tracks.recordEvent('user_account_created');
+          recordEvent('user_account_created');
           this.props.onAuth(user.access_token, username, true);
         })
         .catch(() => {

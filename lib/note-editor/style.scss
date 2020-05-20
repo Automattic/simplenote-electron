@@ -3,4 +3,12 @@
   flex-direction: column;
   flex: 1 0 auto;
   user-select: text;
+
+  .last-sync {
+    color: $studio-gray-50;
+    font-size: 14px;
+    height: 22px;
+    margin-top: 11px;
+    text-align: center;
+  }
 }

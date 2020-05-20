@@ -26,7 +26,7 @@ const buildFileMenu = (isAuthenticated) => {
       visible: isAuthenticated,
       accelerator: 'CommandOrControl+Shift+E',
       click: appCommandSender({
-        action: 'exportZipArchive',
+        action: 'exportNotes',
       }),
     },
     { type: 'separator' },

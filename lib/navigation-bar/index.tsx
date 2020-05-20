@@ -2,18 +2,15 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 
-import analytics from '../analytics';
 import { isElectron } from '../utils/platform';
+import ConnectionStatus from '../connection-status';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
-import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
-import appState from '../flux/app-state';
-
-import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -57,7 +54,6 @@ export class NavigationBar extends Component<Props> {
 
   onSelectTrash = () => {
     this.props.selectTrash();
-    analytics.tracks.recordEvent('list_trash_viewed');
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
@@ -88,6 +84,11 @@ export class NavigationBar extends Component<Props> {
         </div>
         <div className="navigation-bar__tags theme-color-border">
           <TagList />
+        </div>
+        <div className="navigation-bar__tools theme-color-border">
+          <div className="navigation-bar__server-connection">
+            <ConnectionStatus />
+          </div>
         </div>
 
         {(!isElectron || autoHideMenuBar) && (
@@ -126,10 +127,6 @@ export class NavigationBar extends Component<Props> {
             </div>
           </Fragment>
         )}
-
-        <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
-          <SyncStatus />
-        </div>
       </div>
     );
   }
@@ -146,15 +143,13 @@ const mapStateToProps: S.MapState<StateProps> = ({
   showTrash,
 });
 
-const { showAllNotesAndSelectFirst } = appState.actionCreators;
-
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onAbout: () => showDialog('ABOUT'),
-  onOutsideClick: toggleNavigation,
-  onShowAllNotes: showAllNotesAndSelectFirst,
-  onSettings: () => showDialog('SETTINGS'),
-  selectTrash,
-  showKeyboardShortcuts: () => showDialog('KEYBINDINGS'),
+  onAbout: () => actions.ui.showDialog('ABOUT'),
+  onOutsideClick: actions.ui.toggleNavigation,
+  onShowAllNotes: actions.ui.showAllNotes,
+  onSettings: () => actions.ui.showDialog('SETTINGS'),
+  selectTrash: actions.ui.selectTrash,
+  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
 };
 
 export default connect(

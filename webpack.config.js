@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
@@ -63,6 +64,10 @@ module.exports = () => {
             },
           ],
         },
+        {
+          test: /\.ttf$/,
+          use: ['file-loader'],
+        },
       ],
     },
     resolve: {
@@ -83,6 +88,32 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: isDevMode ? '[name].css' : '[name].[hash].css',
         chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
+      }),
+      new MonacoWebpackPlugin({
+        languages: [],
+        features: [
+          '!bracketMatching',
+          '!codeAction',
+          '!codelens',
+          '!colorDetector',
+          '!comment',
+          '!contextmenu',
+          '!folding',
+          '!gotoError',
+          '!gotoLine',
+          '!gotoSymbol',
+          '!gotoZoom',
+          '!inspectTokens',
+          '!multicursor',
+          '!parameterHints',
+          '!quickCommand',
+          '!quickOutline',
+          '!referenceSearch',
+          '!rename',
+          '!snippets',
+          '!suggest',
+          '!toggleHighContrast',
+        ],
       }),
       new webpack.DefinePlugin({
         __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),

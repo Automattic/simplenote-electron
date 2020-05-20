@@ -13,25 +13,7 @@ const hasLocalStorage = (): boolean => {
   }
 };
 
-const hasIndexedDB = (): boolean => {
-  try {
-    const opener = indexedDB.open('simplenote_sentinel');
-    if (!(opener instanceof IDBOpenDBRequest)) {
-      return false;
-    }
-    const closer = () => indexedDB.deleteDatabase('simplenote_sentinel');
-    opener.onerror = closer;
-    opener.onsuccess = closer;
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
-const deps = [
-  ['localStorage', hasLocalStorage()],
-  ['indexedDB', hasIndexedDB()],
-] as const;
+const deps = [['localStorage', hasLocalStorage()]] as const;
 
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
 

@@ -2,6 +2,8 @@
  * @module utils/is-email-tag
  */
 
+import type * as T from '../types';
+
 /**
  * Naively matches what might appear to be an email address
  *
@@ -28,6 +30,7 @@ const naiveEmailPattern = /^(?:[^@]+)@(?:.+)(?:\.[^.]{2,})$/;
  * @param {String} tagName name of tag which might be an email address
  * @returns {Boolean} whether or not the tag is considered an email address
  */
-export const isEmailTag = (tagName) => naiveEmailPattern.test(tagName);
+export const isEmailTag = (tagName: T.TagName) =>
+  naiveEmailPattern.test(tagName);
 
 export default isEmailTag;

@@ -1,26 +1,39 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
+import { connect } from 'react-redux';
 import PanelTitle from '../../../components/panel-title';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 import TopRightArrowIcon from '../../../icons/arrow-top-right';
 import { viewExternalUrl } from '../../../utils/url-utils';
+import actions from '../../../state/actions';
 
-const AccountPanel = (props) => {
-  const {
-    accountName,
-    analyticsEnabled,
-    requestSignOut,
-    toggleShareAnalyticsPreference,
-  } = props;
+import * as S from '../../../state';
 
+type StateProps = {
+  accountName: string;
+  analyticsEnabled: boolean | null;
+};
+
+type DispatchProps = {
+  logout: () => any;
+  toggleAnalytics: () => any;
+};
+
+type Props = StateProps & DispatchProps;
+
+const AccountPanel: FunctionComponent<Props> = ({
+  accountName,
+  analyticsEnabled,
+  logout,
+  toggleAnalytics,
+}) => {
   const onEditAccount = () => {
     viewExternalUrl(`https://app.simplenote.com/settings/?from=react`);
   };
 
   return (
     <div className="settings-account">
-      <PanelTitle headingLevel="3">Account</PanelTitle>
+      <PanelTitle headingLevel={3}>Account</PanelTitle>
 
       <div className="settings-items theme-color-border">
         <div className="settings-item theme-color-border">
@@ -44,7 +57,7 @@ const AccountPanel = (props) => {
             slug="shareAnalytics"
             activeSlug={analyticsEnabled ? 'enabled' : ''}
             description="Help us improve Simplenote by sharing usage data with our analytics tool."
-            onChange={toggleShareAnalyticsPreference}
+            onChange={toggleAnalytics}
             learnMoreURL="https://automattic.com/cookies"
             renderer={ToggleGroup}
           >
@@ -55,7 +68,7 @@ const AccountPanel = (props) => {
           <button
             type="button"
             className="button button-primary"
-            onClick={requestSignOut}
+            onClick={logout}
           >
             Log Out
           </button>
@@ -65,11 +78,14 @@ const AccountPanel = (props) => {
   );
 };
 
-AccountPanel.propTypes = {
-  accountName: PropTypes.string.isRequired,
-  analyticsEnabled: PropTypes.bool.isRequired,
-  requestSignOut: PropTypes.func.isRequired,
-  toggleShareAnalyticsPreference: PropTypes.func.isRequired,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  accountName: state.settings.accountName,
+  analyticsEnabled: state.data.analyticsAllowed,
+});
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  logout: actions.ui.logout,
+  toggleAnalytics: actions.data.toggleAnalytics,
 };
 
-export default AccountPanel;
+export default connect(mapStateToProps, mapDispatchToProps)(AccountPanel);

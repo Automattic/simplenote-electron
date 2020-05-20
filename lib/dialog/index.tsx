@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import CrossIcon from '../icons/cross';
+
 export class Dialog extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
@@ -41,7 +43,7 @@ export class Dialog extends Component {
                   className="button button-borderless"
                   onClick={onDone}
                 >
-                  {closeBtnLabel}
+                  <CrossIcon />
                 </button>
               )}
             </div>

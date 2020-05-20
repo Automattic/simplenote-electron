@@ -1,13 +1,11 @@
 @import 'app-layout/style';
 @import 'auth/style';
-@import 'components/checkbox/style';
 @import 'components/beta-bar/style';
 @import 'components/dev-badge/style';
 @import 'components/panel-title/style';
 @import 'components/progress-bar/style';
 @import 'components/slider/style';
 @import 'components/spinner/style';
-@import 'components/sync-status/style';
 @import 'components/tab-panels/style';
 @import 'components/tag-chip/style';
 @import 'components/transition-delay-enter/style';
@@ -22,10 +20,10 @@
 @import 'dialogs/import/source-importer/style';
 @import 'dialogs/import/source-importer/executor/style';
 @import 'dialogs/keybindings/style';
+@import 'dialogs/logout-confirmation/style';
 @import 'dialogs/settings/style';
 @import 'dialogs/share/style';
 @import 'dialogs/button-group/style';
-@import 'editable-list/style';
 @import 'icon-button/style';
 @import 'icons/style';
 @import 'navigation-bar/style';

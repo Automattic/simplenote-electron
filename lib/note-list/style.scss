@@ -1,9 +1,41 @@
+@keyframes announce-note-update {
+  0% {
+    padding-left: 8px;
+  }
+  50% {
+    padding-left: 16px;
+  }
+  100% {
+    padding-left: 8px;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .note-list {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   overflow: hidden;
   background: inherit;
+
+  .comfy .note-list-item-excerpt {
+    white-space: nowrap;
+  }
+
+  .condensed .note-list-item {
+    min-height: 43px;
+  }
+  .condensed .note-list-item-text {
+    padding-bottom: 0;
+  }
 
   .condensed .note-list-item-excerpt {
     display: none;
@@ -60,35 +92,25 @@
   display: flex;
   padding-left: 8px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font-family: 'Simplenote Tasks', sans-serif;
+  min-height: 64px;
+
+  .note-list-item-status {
+    padding: 9px 8px 0 0;
+  }
 
   .note-list-item-pinner {
-    flex: none;
-    height: 14px;
-    width: 14px;
-    margin-right: 8px;
-    margin-top: 14px;
-    border-radius: 50%;
-
-    &:focus {
-      outline: none;
-    }
+    height: 16px;
+    width: 16px;
   }
 
-  &:hover .note-list-item-pinner {
-    box-shadow: inset 0 0 0 2px $studio-gray-10, inset 0 0 0 3px $studio-white;
-
-    &:hover {
-      background: $studio-gray-50;
-    }
+  .note-list-item-pinner {
+    color: transparent;
   }
 
-  &.note-list-item-pinned .note-list-item-pinner {
-    background: $studio-gray-80;
-    box-shadow: inset 0 0 0 2px $studio-gray-5, inset 0 0 0 3px $studio-white;
-
-    &:hover {
-      background: $studio-gray-10;
-    }
+  .note-list-item-pinner:hover,
+  .note-list-item-pinner.note-list-item-pinned {
+    color: $studio-simplenote-blue-50;
   }
 
   .note-list-item-text {
@@ -113,14 +135,40 @@
     background: $studio-simplenote-blue-5;
   }
 
+  &.note-recently-updated {
+    animation: announce-note-update 0.4s ease-in-out;
+    animation-iteration-count: 3;
+  }
+
+  .note-list-item-status-right {
+    display: flex;
+    padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
+    border-bottom: 1px solid $studio-gray-5;
+  }
+
+  .note-list-item-pending-changes,
   .note-list-item-published-icon {
-    margin-left: 4px;
-    margin-right: 10px;
+    padding: 0 4px;
 
     & svg {
       fill: $studio-gray-50;
-      height: 12px;
-      width: 12px;
+      height: 16px;
+      width: 16px;
+    }
+  }
+
+  .note-list-item-pending-changes {
+    & svg {
+      animation: 2s spin infinite linear;
+    }
+
+    &.is-offline svg {
+      animation: none;
+      fill: $studio-gray-20;
+    }
+
+    .theme-dark &.is-offline svg {
+      fill: $studio-gray-70;
     }
   }
 
