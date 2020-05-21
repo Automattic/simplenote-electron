@@ -98,7 +98,6 @@ const mapDispatchToProps: S.MapDispatch<
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     setSimperiumConnectionStatus: (connected) =>
       dispatch(toggleSimperiumConnectionStatus(connected)),
-    selectNote: (note) => dispatch(actions.ui.selectNote(note)),
     setUnsyncedNoteIds: (noteIds) => dispatch(setUnsyncedNoteIds(noteIds)),
     showDialog: (dialog) => dispatch(actions.ui.showDialog(dialog)),
     trashNote: (previousIndex) => dispatch(actions.ui.trashNote(previousIndex)),
