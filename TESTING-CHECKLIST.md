@@ -70,10 +70,10 @@
 - [ ] Added URL is linkified
 - [ ] When clicking on link it opens in new window
 - [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>p</kbd> toggles preview mode
-- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>k</kbd> or <kbd>up</kbd>) selects next note above current note, stops at top of list
-- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>j</kbd> or <kbd>down</kbd>) selects next note below current note, stops at bottom of list
-- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>t</kbd> toggles tab list
-- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>n</kbd> creates new note
-- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>n</kbd> _when in small screen mode_ navigates to note list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>k</kbd>) selects next note above current note, stops at top of list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + (<kbd>j</kbd>) selects next note below current note, stops at bottom of list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>U</kbd> toggles tab list
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>I</kbd> creates new note
+- [ ] <kbd>CmdOrCtrl</kbd> + <kbd>shift</kbd> + <kbd>L</kbd> _when in small screen mode_ navigates to note list
 - [ ] Can print note in plaintext view
 - [ ] Can print note in Markdown-preview view
