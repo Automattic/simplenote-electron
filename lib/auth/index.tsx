@@ -358,7 +358,7 @@ export class Auth extends Component<Props> {
     if (!validatePassword(password, username)) {
       this.setState({
         passwordErrorMessage:
-          'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.',
+          'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not be the same as your email address.',
       });
       return;
     }
