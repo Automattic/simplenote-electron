@@ -318,6 +318,7 @@ export class Auth extends Component<Props> {
         return;
       }
 
+      this.passwordInput.setCustomValidity('');
       this.props.signup(username, password, true);
     }
 
