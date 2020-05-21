@@ -80,7 +80,7 @@ export class SearchField extends Component<Props> {
         <input
           aria-label={screenReaderLabel}
           ref={this.inputField}
-          type="text"
+          type="search"
           placeholder={placeholder}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
