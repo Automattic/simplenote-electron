@@ -6,6 +6,6 @@ export const validatePassword = function (password: string, email: string) {
 
   // minimum of 8 characters; no tabs or newlines
   // (letters, numbers, special characters and spaces allowed)
-  var re = /^[^\r\n\t]{8,}$/;
+  const re = /^[^\r\n\t]{8,}$/;
   return re.test(password);
 };
