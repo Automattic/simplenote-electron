@@ -44,4 +44,10 @@ describe('validatePassword', () => {
       )
     ).toBeTruthy();
   });
+
+  it('should allow all special characters', () => {
+    expect(
+      validatePassword('~ !@#$%^&*_-+=`|(){}[]:;"\',.?/', 'bar@bang.com')
+    ).toBeTruthy();
+  });
 });
