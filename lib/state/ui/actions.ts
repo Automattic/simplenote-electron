@@ -18,11 +18,11 @@ export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = () => ({
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
-  notes: T.NoteEntity[],
+  noteIds: T.EntityId[],
   tags: T.TagEntity[]
 ) => ({
   type: 'FILTER_NOTES',
-  notes,
+  noteIds,
   tags,
 });
 
@@ -64,9 +64,9 @@ export const publishNote: A.ActionCreator<A.SetSystemTag> = (
   shouldHaveTag: shoudlPublish,
 });
 
-export const openNote: A.ActionCreator<A.OpenNote> = (note: T.NoteEntity) => ({
+export const openNote: A.ActionCreator<A.OpenNote> = (noteId: T.EntityId) => ({
   type: 'OPEN_NOTE',
-  note,
+  noteId,
 });
 
 export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({

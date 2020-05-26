@@ -11,7 +11,6 @@ import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
 import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
-import appState from '../flux/app-state';
 
 import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
 
@@ -146,12 +145,12 @@ const mapStateToProps: S.MapState<StateProps> = ({
   showTrash,
 });
 
-const { showAllNotesAndSelectFirst } = appState.actionCreators;
-
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onAbout: () => showDialog('ABOUT'),
   onOutsideClick: toggleNavigation,
-  onShowAllNotes: showAllNotesAndSelectFirst,
+  onShowAllNotes: () => {
+    throw new Error('Add me!');
+  },
   onSettings: () => showDialog('SETTINGS'),
   selectTrash,
   showKeyboardShortcuts: () => showDialog('KEYBINDINGS'),

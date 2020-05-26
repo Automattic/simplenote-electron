@@ -16,17 +16,18 @@ export const middleware: S.Middleware = (store) => {
 
   const setFilteredNotes = (noteIds: Set<T.EntityId>) => {
     const {
-      appState,
+      data,
       tags,
       ui: { searchQuery },
     } = store.getState();
 
-    const tagSuggestions = filterTags(tags, searchQuery);
+    const filteredTags = filterTags(tags, searchQuery);
+    const tagSuggestions = filteredTags.length > 0 ? filteredTags : emptyList;
 
     store.dispatch(
       actions.ui.filterNotes(
-        appState.notes?.filter(({ id }) => noteIds.has(id)) || emptyList,
-        tagSuggestions.length > 0 ? tagSuggestions : emptyList
+        noteIds.size > 0 ? [...noteIds.values()] : [...data.notes.keys()],
+        tagSuggestions
       )
     );
   };
@@ -41,36 +42,16 @@ export const middleware: S.Middleware = (store) => {
   };
 
   init(_searchProcessor);
-  let hasInitialized = false;
 
   return (next) => (action: A.ActionType) => {
     const prevState = store.getState();
     const result = next(action);
+    const nextState = store.getState();
 
     switch (action.type) {
-      case 'App.notesLoaded':
-        if (!hasInitialized) {
-          action.notes.forEach((note) =>
-            searchProcessor.postMessage({
-              action: 'updateNote',
-              noteId: note.id,
-              data: note.data,
-            })
-          );
-
-          hasInitialized = true;
-        }
-        searchProcessor.postMessage({ action: 'filterNotes' });
-        break;
-
-      case 'REMOTE_NOTE_UPDATE':
-        updateNote(action.noteId, action.data);
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-        });
-        break;
-
-      case 'CREATE_NOTE':
+      case 'CREATE_NOTE_WITH_ID':
+      case 'EDIT_NOTE':
+        updateNote(action.noteId, nextState.data.notes.get(action.noteId));
         searchProcessor.postMessage({
           action: 'filterNotes',
           searchQuery: '',
@@ -118,15 +99,10 @@ export const middleware: S.Middleware = (store) => {
         break;
 
       case 'TRASH_NOTE':
-      case 'App.trashNote':
         updateNote(prevState.ui.note.id, {
           ...prevState.ui.note.data,
           deleted: true,
         });
-        setFilteredNotes(updateFilter('fullSearch'));
-        break;
-
-      case 'App.authChanged':
         setFilteredNotes(updateFilter('fullSearch'));
         break;
     }

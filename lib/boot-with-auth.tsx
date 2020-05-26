@@ -32,6 +32,19 @@ export const bootWithToken = (
   const store = makeStore();
   store.dispatch(actions.settings.setAccountName(username));
 
+  Object.defineProperties(window, {
+    dispatch: {
+      get() {
+        return store.dispatch;
+      },
+    },
+    state: {
+      get() {
+        return store.getState();
+      },
+    },
+  });
+
   render(
     <Provider store={store}>
       <App isDevConfig={isDevConfig(config?.development)} />

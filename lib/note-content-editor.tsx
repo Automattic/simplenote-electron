@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MultiDecorator from 'draft-js-multidecorators';
 import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
@@ -7,7 +6,6 @@ import { debounce, get, has, invoke, noop } from 'lodash';
 
 import {
   getCurrentBlock,
-  getEquivalentSelectionState,
   getSelectedText,
   plainTextContent,
 } from './editor/utils';
@@ -26,8 +24,10 @@ import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
 import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
+import actions from './state/actions';
 
 import * as S from './state';
+import * as T from './types';
 
 const TEXT_DELIMITER = '\n';
 
@@ -39,32 +39,20 @@ const isElectron = (() => {
 })();
 
 type StateProps = {
-  editingEnabled: boolean;
   keyboardShortcuts: boolean;
+  noteId: T.EntityId;
+  note: T.Note;
   searchQuery: string;
+  spellCheckEnabled: boolean;
 };
 
-type Props = StateProps;
+type DispatchProps = {
+  editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+};
+
+type Props = StateProps & DispatchProps;
 
 class NoteContentEditor extends Component<Props> {
-  static propTypes = {
-    content: PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      hasRemoteUpdate: PropTypes.bool.isRequired,
-      version: PropTypes.number,
-    }),
-    noteId: PropTypes.string,
-    onChangeContent: PropTypes.func.isRequired,
-    spellCheckEnabled: PropTypes.bool.isRequired,
-    storeFocusEditor: PropTypes.func,
-    storeHasFocus: PropTypes.func,
-  };
-
-  static defaultProps = {
-    storeFocusEditor: noop,
-    storeHasFocus: noop,
-  };
-
   ipc = getIpcRenderer();
 
   replaceRangeWithText = (rangeToReplace, newText) => {
@@ -106,7 +94,7 @@ class NoteContentEditor extends Component<Props> {
 
   state = {
     editorState: this.createNewEditorState(
-      this.props.content.text,
+      this.props.note.content ?? '',
       this.props.searchQuery
     ),
   };
@@ -148,36 +136,18 @@ class NoteContentEditor extends Component<Props> {
     const contentChanged = nextContent !== prevContent;
 
     const announceChanges = contentChanged
-      ? () => this.props.onChangeContent(nextContent)
+      ? () =>
+          this.props.editNote(this.props.noteId, {
+            content: nextContent,
+            modificationDate: Date.now() / 1000,
+          })
       : noop;
 
     this.setState({ editorState: newEditorState }, announceChanges);
   };
 
-  reflectChangesFromReceivedContent = (oldEditorState, content) => {
-    let newEditorState = EditorState.push(
-      oldEditorState,
-      ContentState.createFromText(content, TEXT_DELIMITER),
-      'replace-text'
-    );
-
-    // Handle transfer of focus from oldEditorState to newEditorState
-    if (oldEditorState.getSelection().getHasFocus()) {
-      const newSelectionState = getEquivalentSelectionState(
-        oldEditorState,
-        newEditorState
-      );
-      newEditorState = EditorState.forceSelection(
-        newEditorState,
-        newSelectionState
-      );
-    }
-
-    this.setState({ editorState: newEditorState });
-  };
-
   componentDidUpdate(prevProps) {
-    const { content, searchQuery, noteId, spellCheckEnabled } = this.props;
+    const { noteId, note, searchQuery, spellCheckEnabled } = this.props;
     const { editorState } = this.state;
 
     // To immediately reflect the changes to the spell check setting,
@@ -191,18 +161,18 @@ class NoteContentEditor extends Component<Props> {
 
     // If another note/revision is selected,
     // create a new editor state from scratch.
-    if (
-      noteId !== prevProps.noteId ||
-      content.version !== prevProps.content.version
-    ) {
+    if (noteId !== prevProps.noteId) {
       this.setState(
         {
-          editorState: this.createNewEditorState(content.text, searchQuery),
+          editorState: this.createNewEditorState(
+            note.content ?? '',
+            searchQuery
+          ),
         },
         () => {
           this.queueDecoratorUpdate();
 
-          if (content.text.length < 10000) {
+          if ((note.content ?? '').length < 10000) {
             this.queueDecoratorUpdate.flush();
           }
 
@@ -220,11 +190,6 @@ class NoteContentEditor extends Component<Props> {
     // If searchQuery changes, re-set decorators
     if (searchQuery !== prevProps.searchQuery) {
       this.queueDecoratorUpdate();
-    }
-
-    // If a remote change comes in, push it to the existing editor state.
-    if (content.text !== prevProps.content.text && content.hasRemoteUpdate) {
-      this.reflectChangesFromReceivedContent(editorState, content.text);
     }
   }
 
@@ -388,7 +353,6 @@ class NoteContentEditor extends Component<Props> {
         <Editor
           key={this.editorKey}
           ref={this.saveEditorRef}
-          spellCheck={this.props.spellCheckEnabled}
           stripPastedStyles
           onChange={this.handleEditorStateChange}
           editorState={this.state.editorState}
@@ -400,12 +364,16 @@ class NoteContentEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, showNoteList },
-  settings: { keyboardShortcuts },
-}) => ({
-  keyboardShortcuts,
-  searchQuery,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  keyboardShortcuts: state.settings.keyboardShortcuts,
+  noteId: state.ui.openedNote,
+  note: state.data.notes.get(state.ui.openedNote),
+  searchQuery: state.ui.searchQuery,
+  spellCheckEnabled: state.settings.spellCheckEnabled,
 });
 
-export default connect(mapStateToProps)(NoteContentEditor);
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  editNote: actions.data.editNote,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NoteContentEditor);

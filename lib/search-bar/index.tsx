@@ -1,25 +1,21 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import appState from '../flux/app-state';
 import analytics from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
-import { createNote, search, toggleNavigation } from '../state/ui/actions';
+import { createNote, toggleNavigation } from '../state/ui/actions';
 
 import * as S from '../state';
-import * as T from '../types';
-
-const { newNote } = appState.actionCreators;
 
 type OwnProps = {
   onNewNote: Function;
@@ -33,12 +29,13 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  onNewNote: (content: string) => any;
   toggleNavigation: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-export const SearchBar: Component<Props> = ({
+export const SearchBar: FunctionComponent<Props> = ({
   onNewNote,
   searchQuery,
   showTrash,
@@ -68,11 +65,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
-  dispatch,
-  { noteBucket }
+  dispatch
 ) => ({
   onNewNote: (content: string) => {
-    dispatch(newNote({ noteBucket, content }));
+    dispatch(createNote(content));
     analytics.tracks.recordEvent('list_note_created');
   },
   toggleNavigation: () => {

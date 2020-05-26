@@ -13,26 +13,14 @@ import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
 import analytics from '../analytics';
-import {
-  differenceBy,
-  intersectionBy,
-  invoke,
-  negate,
-  noop,
-  union,
-} from 'lodash';
+import { differenceBy, intersectionBy, invoke, negate, union } from 'lodash';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type OwnProps = {
-  allTags: T.TagName[];
-  note: T.NoteEntity;
   storeFocusTagField: (focusSetter: () => any) => any;
   storeHasFocus: (focusGetter: () => boolean) => any;
-  tags: T.TagName[];
-  unusedTags: T.TagName[];
-  usedTags: T.TagName[];
 };
 
 type OwnState = {
@@ -41,12 +29,14 @@ type OwnState = {
   tagInput: string;
 };
 
-type DispatchProps = {
-  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagEntity[] }) => any;
+type StateProps = {
+  allTags: T.TagEntity[];
+  keyboardShortcuts: boolean;
+  note: T.NoteEntity | null;
 };
 
-type StateProps = {
-  keyboardShortcuts: boolean;
+type DispatchProps = {
+  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagEntity[] }) => any;
 };
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -63,14 +53,9 @@ export class TagField extends Component<Props, OwnState> {
 
   static displayName = 'TagField';
 
-  static defaultProps = {
-    storeFocusTagField: noop,
-    storeHasFocus: noop,
-    tags: [],
-  };
-
   state = {
     selectedTag: '',
+    showEmailTooltip: false,
     tagInput: '',
   };
 
@@ -89,7 +74,7 @@ export class TagField extends Component<Props, OwnState> {
 
   componentDidUpdate() {
     if (this.hasSelection()) {
-      this.hiddenTag.focus();
+      this.hiddenTag?.current?.focus();
     }
   }
 
@@ -102,10 +87,11 @@ export class TagField extends Component<Props, OwnState> {
       this.showEmailTooltip();
     }
 
+    const allTagNames = allTags.map((tag) => tag.data.name);
     const nextTagList = union(
       existingTags, // tags already in note
-      intersectionBy(allTags, newTags, (s) => s.toLocaleLowerCase()), // use existing case if tag known
-      differenceBy(newTags, allTags, (s) => s.toLocaleLowerCase()) // add completely new tags
+      intersectionBy(allTagNames, newTags, (s) => s.toLocaleLowerCase()), // use existing case if tag known
+      differenceBy(newTags, allTagNames, (s) => s.toLocaleLowerCase()) // add completely new tags
     );
     this.updateTags(nextTagList);
     this.storeTagInput('');
@@ -125,7 +111,7 @@ export class TagField extends Component<Props, OwnState> {
     );
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' }, () => this.tagInput?.focus());
+      this.setState({ selectedTag: '' }, () => this.tagInput?.current?.focus());
     }
 
     analytics.tracks.recordEvent('editor_tag_removed');
@@ -190,7 +176,9 @@ export class TagField extends Component<Props, OwnState> {
     this.props.updateNoteTags({ note: this.props.note, tags });
 
   selectLastTag = () =>
-    this.setState({ selectedTag: this.props.tags.slice(-1).shift() });
+    this.setState({
+      selectedTag: this.props.note?.data.tags.slice(-1).shift(),
+    });
 
   selectTag = (event: MouseEvent<HTMLDivElement>) => {
     const {
@@ -235,13 +223,13 @@ export class TagField extends Component<Props, OwnState> {
       return;
     }
 
-    if (this.hiddenTag !== event.relatedTarget) {
+    if (this.hiddenTag?.current !== event.relatedTarget) {
       this.setState({ selectedTag: '' });
     }
   };
 
   render() {
-    const { allTags, tags } = this.props;
+    const { allTags, note } = this.props;
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
     return (
@@ -250,15 +238,15 @@ export class TagField extends Component<Props, OwnState> {
           className={classNames('tag-editor', {
             'has-selection': this.hasSelection(),
           })}
-          tabIndex="-1"
+          tabIndex={-1}
           onKeyDown={this.onKeyDown}
         >
           <input
             className="hidden-tag"
-            tabIndex="-1"
+            tabIndex={-1}
             ref={this.storeHiddenTag}
           />
-          {tags.filter(negate(isEmailTag)).map((tag) => (
+          {note?.data.tags.filter(negate(isEmailTag)).map((tag) => (
             <TagChip
               key={tag}
               tagName={tag}
@@ -267,14 +255,17 @@ export class TagField extends Component<Props, OwnState> {
             />
           ))}
           <TagInput
-            allTags={allTags}
             inputRef={this.storeInputRef}
             value={tagInput}
             onChange={this.storeTagInput}
             onSelect={this.addTag}
             storeFocusInput={this.storeFocusInput}
             storeHasFocus={this.storeHasFocus}
-            tagNames={differenceBy(allTags, tags, (s) => s.toLocaleLowerCase())}
+            tagNames={differenceBy(
+              allTags.map((tag) => tag.data.name),
+              note?.data.tags,
+              (s) => s.toLocaleLowerCase()
+            )}
           />
           <Overlay
             container={this}
@@ -285,7 +276,7 @@ export class TagField extends Component<Props, OwnState> {
             show={showEmailTooltip}
             target={this.tagInput}
           >
-            {() => <EmailToolTip note={this.props.note} />}
+            {() => <EmailToolTip />}
           </Overlay>
         </div>
       </div>
@@ -293,10 +284,10 @@ export class TagField extends Component<Props, OwnState> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  settings: { keyboardShortcuts },
-}) => ({
-  keyboardShortcuts,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  allTags: state.tags,
+  keyboardShortcuts: state.settings.keyboardShortcuts,
+  note: state.ui.note,
 });
 
 export default connect(mapStateToProps, {
