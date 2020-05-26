@@ -47,14 +47,22 @@ export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
 export type CloseDialog = Action<'CLOSE_DIALOG'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
 export type CreateNote = Action<'CREATE_NOTE'>;
+export type CreateNoteWithId = Action<
+  'CREATE_NOTE_WITH_ID',
+  { noteId: T.EntityId }
+>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
+export type EditNote = Action<
+  'EDIT_NOTE',
+  { noteId: T.EntityId; changes: Partial<T.Note> }
+>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
-  { notes: T.NoteEntity[]; tags: T.TagEntity[] }
+  { noteIds: T.EntityId[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type Logout = Action<'LOGOUT'>;
-export type OpenNote = Action<'OPEN_NOTE', { note: T.NoteEntity }>;
+export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
@@ -71,6 +79,7 @@ export type SelectRevision = Action<
   { revision: T.NoteEntity }
 >;
 export type SelectTrash = Action<'SELECT_TRASH'>;
+export type SetAnalytics = Action<'SET_ANALYTICS', { allowAnalytics: boolean }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
@@ -93,6 +102,7 @@ export type TagsLoaded = Action<
   'TAGS_LOADED',
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
 >;
+export type ToggleAnalytics = Action<'TOGGLE_ANALYTICS'>;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
@@ -112,8 +122,9 @@ export type ActionType =
   | CloseNote
   | CloseDialog
   | CreateNote
+  | CreateNoteWithId
   | DeleteNoteForever
-  | LegacyAction
+  | EditNote
   | FilterNotes
   | FocusSearchField
   | Logout
@@ -126,6 +137,7 @@ export type ActionType =
   | SelectRevision
   | SelectTrash
   | SetAccountName
+  | SetAnalytics
   | SetAutoHideMenuBar
   | SetFocusMode
   | SetFontSize
@@ -143,6 +155,7 @@ export type ActionType =
   | StoreRevisions
   | SystemThemeUpdate
   | TagsLoaded
+  | ToggleAnalytics
   | ToggleEditMode
   | ToggleKeyboardShortcuts
   | ToggleNavigation
@@ -157,61 +170,3 @@ export type ActionType =
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;
 export type Reducer<S> = (state: S | undefined, action: ActionType) => S;
-
-type LegacyAction =
-  | Action<
-      'App.deleteNoteForever',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        note: T.NoteEntity;
-      }
-    >
-  | Action<
-      'App.loadPreferences',
-      { callback?: Function; preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
-      'App.noteUpdatedRemotely',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        noteId: T.EntityId;
-        data: object;
-        remoteUpdateInfo: object;
-      }
-    >
-  | Action<
-      'App.restoreNote',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        note: T.NoteEntity;
-      }
-    >
-  | Action<
-      'App.setPreference',
-      {
-        key: keyof T.Preferences;
-        value: unknown;
-        preferencesBucket: T.Bucket<T.Preferences>;
-      }
-    >
-  | Action<
-      'App.toggleShareAnalyticsPreference',
-      { preferencesBucket: T.Bucket<T.Preferences> }
-    >
-  | Action<
-      'App.trashNote',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        note: T.NoteEntity;
-      }
-    >
-  | Action<'App.emptyTrash', { noteBucket: T.Bucket<T.Note> }>
-  | Action<'App.loadNotes', { noteBucket: T.Bucket<T.Note> }>
-  | Action<'App.newNote', { noteBucket: T.Bucket<T.Note>; content: string }>
-  | Action<'App.notesLoaded', { notes: T.NoteEntity[] }>
-  | Action<'App.onNoteBeforeRemoteUpdate', { noteId: T.EntityId }>
-  | Action<'App.preferencesLoaded', { analyticsEnabled: boolean }>
-  | Action<'App.setShouldPrintNote', { shouldPrint: boolean }>
-  | Action<'App.setUnsyncedNoteIds', { noteIds: T.EntityId[] }>
-  | Action<'App.showAllNotesAndSelectFirst'>
-  | Action<'App.tagsLoaded', { tags: T.TagEntity[]; sortTagsAlpha: boolean }>;

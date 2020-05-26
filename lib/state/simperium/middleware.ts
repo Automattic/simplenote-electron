@@ -94,7 +94,8 @@ export const initSimperium = (
 
     switch (action.type) {
       case 'LOGOUT':
-        client.reset().then(() => logout());
+        throw new Error('logged out!');
+        // client.reset().then(() => logout());
         return result;
 
       case 'SET_SYSTEM_TAG':

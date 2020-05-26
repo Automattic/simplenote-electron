@@ -15,9 +15,6 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
     case 'SHOW_DIALOG':
       return state.includes(action.dialog) ? state : [...state, action.dialog];
 
-    case 'App.authChanged':
-      return [];
-
     default:
       return state;
   }
@@ -51,10 +48,10 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const filteredNotes: A.Reducer<T.NoteEntity[]> = (
-  state = emptyList as T.NoteEntity[],
+const filteredNotes: A.Reducer<T.EntityId[]> = (
+  state = emptyList as T.EntityId[],
   action
-) => ('FILTER_NOTES' === action.type ? action.notes : state);
+) => ('FILTER_NOTES' === action.type ? action.noteIds : state);
 
 const listTitle: A.Reducer<T.TranslatableString> = (
   state = 'All Notes',
@@ -83,6 +80,19 @@ const noteRevisions: A.Reducer<T.NoteEntity[]> = (
     case 'OPEN_NOTE':
     case 'SELECT_NOTE':
       return emptyList as T.NoteEntity[];
+    default:
+      return state;
+  }
+};
+
+const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
+  switch (action.type) {
+    case 'OPEN_NOTE':
+      return action.noteId;
+
+    case 'CLOSE_NOTE':
+      return null;
+
     default:
       return state;
   }
@@ -210,32 +220,6 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const note: A.Reducer<T.NoteEntity | null> = (state = null, action) => {
-  switch (action.type) {
-    case 'App.emptyTrash':
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
-    case 'CLOSE_NOTE':
-    case 'DELETE_NOTE_FOREVER':
-    case 'RESTORE_NOTE':
-    case 'TRASH_NOTE':
-    case 'OPEN_TAG':
-      return null;
-    case 'OPEN_NOTE':
-    case 'SELECT_NOTE':
-      return action.options
-        ? {
-            ...action.note,
-            hasRemoteUpdate: action.options.hasRemoteUpdate,
-          }
-        : action.note;
-    case 'SET_SYSTEM_TAG':
-      return toggleSystemTag(action.note, action.tagName, action.shouldHaveTag);
-    default:
-      return state;
-  }
-};
-
 const tagSuggestions: A.Reducer<T.TagEntity[]> = (
   state = emptyList as T.TagEntity[],
   action
@@ -247,8 +231,8 @@ export default combineReducers({
   editingTags,
   filteredNotes,
   listTitle,
-  note,
   noteRevisions,
+  openedNote,
   openedTag,
   searchQuery,
   selectedRevision,

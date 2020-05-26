@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import TagField from '../tag-field';
-import { property } from 'lodash';
 import NoteDetail from '../note-detail';
 import { toggleEditMode } from '../state/ui/actions';
 
@@ -16,6 +14,9 @@ type OwnProps = {
 };
 
 type StateProps = {
+  allTags: T.TagEntity[];
+  editMode: boolean;
+  isEditorActive: boolean;
   keyboardShortcuts: boolean;
   note: T.NoteEntity | null;
 };
@@ -31,24 +32,6 @@ type Props = OwnProps & DispatchProps & StateProps;
 export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
 
-  static propTypes = {
-    allTags: PropTypes.array.isRequired,
-    isEditorActive: PropTypes.bool.isRequired,
-    noteBucket: PropTypes.object.isRequired,
-    fontSize: PropTypes.number,
-    onUpdateContent: PropTypes.func.isRequired,
-    revision: PropTypes.object,
-    syncNote: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-    note: {
-      data: {
-        tags: [],
-      },
-    },
-  };
-
   componentDidMount() {
     this.toggleShortcuts(true);
   }
@@ -57,27 +40,20 @@ export class NoteEditor extends Component<Props> {
     this.toggleShortcuts(false);
   }
 
-  markdownEnabled = () => {
-    const revision = this.props.revision || this.props.note;
-    return (
-      revision &&
-      revision.data &&
-      revision.data.systemTags &&
-      revision.data.systemTags.indexOf('markdown') !== -1
-    );
-  };
+  markdownEnabled = () =>
+    this.props.note?.data.systemTags.indexOf('markdown') !== -1;
 
   handleShortcut = (event: KeyboardEvent) => {
     if (!this.props.keyboardShortcuts) {
       return;
     }
     const { code, ctrlKey, metaKey, shiftKey } = event;
-    const { note, revision, toggleMarkdown } = this.props;
+    const { note, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle Markdown enabled
-    if (!revision && note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
+    if (note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
       toggleMarkdown(note, !this.markdownEnabled());
       event.stopPropagation();
       event.preventDefault();
@@ -125,7 +101,7 @@ export class NoteEditor extends Component<Props> {
 
   tagFieldHasFocus = () => this.tagFieldHasFocus && this.tagFieldHasFocus();
 
-  toggleShortcuts = (doEnable) => {
+  toggleShortcuts = (doEnable: boolean) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -134,29 +110,21 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note, noteBucket, fontSize } = this.props;
-    const revision = this.props.revision || note;
-    const tags = (revision && revision.data && revision.data.tags) || [];
+    const { editMode, note } = this.props;
     const isTrashed = !!(note && note.data.deleted);
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
-        <NoteDetail
-          storeFocusEditor={this.storeFocusEditor}
-          storeHasFocus={this.storeEditorHasFocus}
-          noteBucket={noteBucket}
-          previewingMarkdown={this.markdownEnabled() && !editMode}
-          onChangeContent={this.props.onUpdateContent}
-          syncNote={this.props.syncNote}
-          fontSize={fontSize}
-        />
+        {editMode && (
+          <NoteDetail
+            storeFocusEditor={this.storeFocusEditor}
+            storeHasFocus={this.storeEditorHasFocus}
+          />
+        )}
         {note && !isTrashed && (
           <TagField
             storeFocusTagField={this.storeFocusTagField}
             storeHasFocus={this.storeTagFieldHasFocus}
-            allTags={this.props.allTags.map(property('data.name'))}
-            note={this.props.note}
-            tags={tags}
           />
         )}
       </div>
@@ -164,19 +132,13 @@ export class NoteEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  appState: state,
-  settings,
-  tags,
-  ui: { note, editMode, selectedRevision },
-}) => ({
+const mapStateToProps: S.MapState<StateProps> = ({ settings, tags, ui }) => ({
   allTags: tags,
-  fontSize: settings.fontSize,
-  editMode,
+  editMode: ui.editMode,
   keyboardShortcuts: settings.keyboardShortcuts,
-  isEditorActive: !state.showNavigation,
-  note,
-  revision: selectedRevision,
+  isEditorActive: !ui.showNavigation,
+  note: ui.note,
+  revision: ui.selectedRevision,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

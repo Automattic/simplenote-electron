@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
-import appState from './flux/app-state';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
@@ -12,7 +11,7 @@ import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
-import { get, has, isObject, overEvery, values } from 'lodash';
+import { get } from 'lodash';
 import { createNote, closeNote, toggleNavigation } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
@@ -157,7 +156,7 @@ class AppComponent extends Component<Props> {
   };
 
   onAppCommand = (event, command) => {
-    if ('exportZipArchive' === get(command, 'action')) {
+    if ('exportZipArchive' === command.action) {
       exportZipArchive();
     }
 
@@ -173,28 +172,15 @@ class AppComponent extends Component<Props> {
       return this.props.showDialog(command.dialog);
     }
 
-    if ('trashNote' === command.action && this.props.ui.note) {
+    if ('trashNote' === command.action) {
       return this.props.trashNote();
     }
 
-    const canRun = overEvery(
-      isObject,
-      (o) => o.action !== null,
-      (o) => has(this.props.actions, o.action) || has(this.props, o.action)
-    );
-
-    if (canRun(command)) {
-      // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
-      if (command.action === 'newNote') {
-        this.props.actions.newNote();
-      } else if (has(this.props, command.action)) {
-        const { action, ...args } = command;
-
-        this.props[action](...values(args));
-      } else {
-        this.props.actions[command.action](command);
-      }
+    if ('newNote' === command.action) {
+      return this.props.createNote();
     }
+
+    console.log(command.action);
   };
 
   initializeElectron = () => {
@@ -208,7 +194,7 @@ class AppComponent extends Component<Props> {
     });
   };
 
-  toggleShortcuts = (doEnable) => {
+  toggleShortcuts = (doEnable: boolean) => {
     if (doEnable) {
       window.addEventListener('keydown', this.handleShortcut, true);
     } else {
@@ -262,10 +248,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
-  const actionCreators = Object.assign({}, appState.actionCreators);
-
   return {
-    actions: bindActionCreators(actionCreators, dispatch),
     activateTheme: (theme: T.Theme) =>
       dispatch(settingsActions.activateTheme(theme)),
     closeNote: () => dispatch(closeNote()),

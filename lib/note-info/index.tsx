@@ -15,7 +15,6 @@ import * as T from '../types';
 
 type OwnProps = {
   markdownEnabled: boolean;
-  noteBucket: T.Bucket<T.Note>;
 };
 
 type StateProps = {
