@@ -97,6 +97,7 @@ export const middleware: S.Middleware = (store) => {
     switch (action.type) {
       case 'CREATE_NOTE_WITH_ID':
       case 'EDIT_NOTE':
+      case 'IMPORT_NOTE_WITH_ID':
         updateNote(action.noteId, nextState.data.notes.get(action.noteId));
         searchProcessor.postMessage({
           action: 'filterNotes',
