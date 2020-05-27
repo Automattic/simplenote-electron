@@ -53,15 +53,9 @@
     background-color: $studio-gray-50;
   }
 
-  button {
-    color: $studio-simplenote-blue-30;
-    border-color: $studio-simplenote-blue-30;
-  }
-  .button-primary {
-    background: $studio-simplenote-blue-30;
-    color: $studio-white;
-  }
   .button-borderless {
+    color: $studio-simplenote-blue-30;
+
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
