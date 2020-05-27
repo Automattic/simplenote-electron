@@ -53,20 +53,11 @@ export type CreateNoteWithId = Action<
 >;
 export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
-export type EditNote = Action<
-  'EDIT_NOTE',
-  { noteId: T.EntityId; changes: Partial<T.Note> }
->;
 export type FilterNotes = Action<
   'FILTER_NOTES',
   { noteIds: T.EntityId[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
-export type ImportNote = Action<'IMPORT_NOTE', { note: T.Note }>;
-export type ImportNoteWithId = Action<
-  'IMPORT_NOTE_WITH_ID',
-  { noteId: T.EntityId; note: T.Note }
->;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
@@ -88,10 +79,6 @@ export type SelectRevision = Action<
 >;
 export type SelectTrash = Action<'SELECT_TRASH'>;
 export type SetAnalytics = Action<'SET_ANALYTICS', { allowAnalytics: boolean }>;
-export type SetSystemTag = Action<
-  'SET_SYSTEM_TAG',
-  { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
->;
 export type SetUnsyncedNoteIds = Action<
   'SET_UNSYNCED_NOTE_IDS',
   { noteIds: T.EntityId[] }
@@ -131,6 +118,31 @@ export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
 export type WindowResize = Action<'WINDOW_RESIZE', { innerWidth: number }>;
 
+/*
+ * Note operations
+ */
+export type EditNote = Action<
+  'EDIT_NOTE',
+  { noteId: T.EntityId; changes: Partial<T.Note> }
+>;
+export type ImportNote = Action<'IMPORT_NOTE', { note: T.Note }>;
+export type ImportNoteWithId = Action<
+  'IMPORT_NOTE_WITH_ID',
+  { noteId: T.EntityId; note: T.Note }
+>;
+export type MarkdownNote = Action<
+  'MARKDOWN_NOTE',
+  { noteId: T.EntityId; shouldEnableMarkdown: boolean }
+>;
+export type PinNote = Action<
+  'PIN_NOTE',
+  { noteId: T.EntityId; shouldPin: boolean }
+>;
+export type SetSystemTag = Action<
+  'SET_SYSTEM_TAG',
+  { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
+>;
+
 export type ActionType =
   | CloseNote
   | CloseDialog
@@ -145,9 +157,11 @@ export type ActionType =
   | ImportNoteWithId
   | IncreaseFontSize
   | Logout
+  | MarkdownNote
   | RemoteNoteUpdate
   | OpenNote
   | OpenTag
+  | PinNote
   | ResetFontSize
   | RestoreNote
   | Search

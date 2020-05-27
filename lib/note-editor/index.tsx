@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TagField from '../tag-field';
 import NoteDetail from '../note-detail';
-import { toggleEditMode } from '../state/ui/actions';
-
-import { markdownNote, toggleNoteList } from '../state/ui/actions';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -142,10 +140,9 @@ const mapStateToProps: S.MapState<StateProps> = ({ settings, tags, ui }) => ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  toggleNoteList: () => dispatch(toggleNoteList()),
-  toggleMarkdown: (note, enableMarkdown) =>
-    dispatch(markdownNote(note, enableMarkdown)),
-  toggleEditMode: () => dispatch(toggleEditMode()),
+  toggleNoteList: actions.ui.toggleNoteList,
+  toggleMarkdown: actions.data.markdownNote,
+  toggleEditMode: actions.ui.toggleEditMode,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);

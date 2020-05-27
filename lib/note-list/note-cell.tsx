@@ -113,7 +113,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   openNote: actions.ui.openNote,
-  pinNote: actions.ui.pinNote,
+  pinNote: actions.data.pinNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteCell);

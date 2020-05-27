@@ -34,26 +34,6 @@ export const logout: A.ActionCreator<A.Logout> = () => ({
   type: 'LOGOUT',
 });
 
-export const markdownNote: A.ActionCreator<A.SetSystemTag> = (
-  note: T.NoteEntity,
-  isMarkdown: boolean
-) => ({
-  type: 'SET_SYSTEM_TAG',
-  note,
-  tagName: 'markdown',
-  shouldHaveTag: isMarkdown,
-});
-
-export const pinNote: A.ActionCreator<A.SetSystemTag> = (
-  note: T.NoteEntity,
-  shouldPin: boolean
-) => ({
-  type: 'SET_SYSTEM_TAG',
-  note,
-  tagName: 'pinned',
-  shouldHaveTag: shouldPin,
-});
-
 export const publishNote: A.ActionCreator<A.SetSystemTag> = (
   note: T.NoteEntity,
   shoudlPublish: boolean
