@@ -20,28 +20,37 @@ const shareTabs = ['collaborate', 'publish'];
 
 type StateProps = {
   settings: S.State['settings'];
-  note: T.NoteEntity;
+  noteId: T.EntityId;
+  note: T.Note;
 };
 
 type DispatchProps = {
   closeDialog: () => any;
-  publishNote: (note: T.NoteEntity, shouldPublish: boolean) => any;
-  updateNoteTags: (args: { note: T.NoteEntity; tags: T.TagName[] }) => any;
+  publishNote: (
+    noteId: T.EntityId,
+    note: T.Note,
+    shouldPublish: boolean
+  ) => any;
+  updateNoteTags: (args: { noteId: T.EntityId; tags: T.TagName[] }) => any;
 };
 
 type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
   onTogglePublished = (event: React.MouseEvent<HTMLInputElement>) => {
-    this.props.publishNote(this.props.note, event.currentTarget.checked);
+    this.props.publishNote(
+      this.props.noteId,
+      this.props.note,
+      event.currentTarget.checked
+    );
   };
 
   getPublishURL = (url) =>
     isEmpty(url) ? undefined : `http://simp.ly/p/${url}`;
 
   onAddCollaborator = (event) => {
-    const { note } = this.props;
-    const tags = (note.data && note.data.tags) || [];
+    const { note, noteId } = this.props;
+    const tags = note?.tags || [];
     const collaborator = this.collaboratorElement.value.trim();
 
     event.preventDefault();
@@ -51,7 +60,7 @@ export class ShareDialog extends Component<Props> {
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
       this.props.updateNoteTags({
-        note,
+        noteId,
         tags: [...tags, collaborator],
       });
       analytics.tracks.recordEvent('editor_note_collaborator_added');
@@ -61,16 +70,16 @@ export class ShareDialog extends Component<Props> {
   onRemoveCollaborator = (collaborator) => {
     const { note } = this.props;
 
-    let tags = (note.data && note.data.tags) || [];
+    let tags = note?.tags || [];
     tags = tags.filter((tag) => tag !== collaborator);
 
-    this.props.updateNoteTags({ note, tags });
+    this.props.updateNoteTags({ noteId, tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
   collaborators = () => {
     const { note } = this.props;
-    const tags = (note.data && note.data.tags) || [];
+    const tags = note?.tags || [];
     const collaborators = tags.filter(isEmailTag);
 
     collaborators.reverse();
@@ -89,7 +98,7 @@ export class ShareDialog extends Component<Props> {
 
   render() {
     const { closeDialog, note } = this.props;
-    const data = (note && note.data) || {};
+    const data = note || {};
     const isPublished = includes(data.systemTags, 'published');
     const publishURL = this.getPublishURL(data.publishURL);
 
@@ -126,7 +135,7 @@ export class ShareDialog extends Component<Props> {
             </div>
             <div className="settings-group">
               <div className="share-collaborators-heading theme-color-border">
-                <PanelTitle headingLevel="3">Collaborators</PanelTitle>
+                <PanelTitle headingLevel={3}>Collaborators</PanelTitle>
               </div>
               <ul className="share-collaborators">
                 {this.collaborators().map((collaborator) => (
@@ -180,7 +189,7 @@ export class ShareDialog extends Component<Props> {
             </div>
             {isPublished && (
               <div className="settings-group">
-                <PanelTitle headingLevel="3">Public link</PanelTitle>
+                <PanelTitle headingLevel={3}>Public link</PanelTitle>
                 <div className="settings-items theme-color-border">
                   <div className="settings-item theme-color-border">
                     <input
@@ -208,11 +217,13 @@ export class ShareDialog extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
+  data,
   settings,
-  ui: { note },
+  ui: { openedNote },
 }) => ({
   settings,
-  note,
+  noteId: openedNote,
+  note: data.notes.get(openedNote),
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
