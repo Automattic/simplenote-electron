@@ -44,6 +44,42 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
     case 'IMPORT_NOTE_WITH_ID':
       return new Map(state).set(action.noteId, action.note);
 
+    case 'MARKDOWN_NOTE': {
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      const note = state.get(action.noteId)!;
+      const alreadyMarkdown = note.systemTags.includes('markdown');
+      if (alreadyMarkdown === action.shouldEnableMarkdown) {
+        return state;
+      }
+
+      const systemTags = action.shouldEnableMarkdown
+        ? [...note.systemTags, 'markdown' as T.SystemTag]
+        : note.systemTags.filter((tag) => tag !== 'markdown');
+
+      return new Map(state).set(action.noteId, { ...note, systemTags });
+    }
+
+    case 'PIN_NOTE': {
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      const note = state.get(action.noteId)!;
+      const alreadyPinned = note.systemTags.includes('pinned');
+      if (alreadyPinned === action.shouldPin) {
+        return state;
+      }
+
+      const systemTags = action.shouldPin
+        ? [...note.systemTags, 'pinned' as T.SystemTag]
+        : note.systemTags.filter((tag) => tag !== 'pinned');
+
+      return new Map(state).set(action.noteId, { ...note, systemTags });
+    }
+
     default:
       return state;
   }

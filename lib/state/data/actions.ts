@@ -15,6 +15,24 @@ export const importNote: A.ActionCreator<A.ImportNote> = (note: T.Note) => ({
   note,
 });
 
+export const markdownNote: A.ActionCreator<A.MarkdownNote> = (
+  noteId: T.EntityId,
+  shouldEnableMarkdown: boolean
+) => ({
+  type: 'MARKDOWN_NOTE',
+  noteId,
+  shouldEnableMarkdown,
+});
+
+export const pinNote: A.ActionCreator<A.PinNote> = (
+  noteId: T.EntityId,
+  shouldPin: boolean
+) => ({
+  type: 'PIN_NOTE',
+  noteId,
+  shouldPin,
+});
+
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });
