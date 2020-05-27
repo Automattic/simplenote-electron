@@ -53,6 +53,14 @@
     background-color: $studio-gray-50;
   }
 
+  button {
+    color: $studio-simplenote-blue-30;
+    border-color: $studio-simplenote-blue-30;
+  }
+  .button-primary {
+    background: $studio-simplenote-blue-30;
+    color: $studio-white;
+  }
   .button-borderless {
     &[disabled],
     &:disabled {
@@ -60,6 +68,11 @@
         fill: $studio-gray-60;
       }
     }
+  }
+
+  .icon-button,
+  a {
+    color: $studio-simplenote-blue-30;
   }
 
   input {
@@ -81,6 +94,18 @@
     border-color: $studio-gray-80;
   }
 
+  .navigation-bar-item.is-selected {
+    button {
+      color: $studio-simplenote-blue-30;
+    }
+    svg {
+      fill: $studio-simplenote-blue-30;
+    }
+  }
+  .tag-list .tag-list-input.is-selected {
+    color: $studio-simplenote-blue-30;
+  }
+
   .tag-field input {
     background: transparent;
 
@@ -98,6 +123,7 @@
 
     &.is-active {
       color: $studio-simplenote-blue-30;
+      border-bottom-color: $studio-simplenote-blue-30;
     }
   }
 
