@@ -10,21 +10,13 @@ import ToolsPanel from './panels/tools';
 
 import { closeDialog } from '../../state/ui/actions';
 
-import * as S from '../../state';
-
 const settingTabs = ['account', 'display', 'tools'];
-
-type OwnProps = {
-  actions: object;
-  onSignOut: () => any;
-  settings: S.State['settings'];
-};
 
 type DispatchProps = {
   closeDialog: () => any;
 };
 
-type Props = OwnProps & DispatchProps;
+type Props = DispatchProps;
 
 export const SettingsDialog: FunctionComponent<Props> = ({ closeDialog }) => (
   <Dialog className="settings" title="Settings" onDone={closeDialog}>
