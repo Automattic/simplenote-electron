@@ -51,6 +51,7 @@ export type CreateNoteWithId = Action<
   'CREATE_NOTE_WITH_ID',
   { noteId: T.EntityId }
 >;
+export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
 export type EditNote = Action<
   'EDIT_NOTE',
@@ -61,6 +62,7 @@ export type FilterNotes = Action<
   { noteIds: T.EntityId[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
 export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
@@ -68,6 +70,7 @@ export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }
 >;
+export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
 export type RestoreNote = Action<'RESTORE_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectNote = Action<
@@ -103,7 +106,9 @@ export type TagsLoaded = Action<
   { tags: T.TagEntity[]; sortTagsAlpha: boolean }
 >;
 export type ToggleAnalytics = Action<'TOGGLE_ANALYTICS'>;
+export type ToggleAutoHideMenuBar = Action<'TOGGLE_AUTO_HIDE_MENU_BAR'>;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
+export type ToggleFocusMode = Action<'TOGGLE_FOCUS_MODE'>;
 export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteList = Action<'NOTE_LIST_TOGGLE'>;
@@ -113,6 +118,9 @@ export type ToggleSimperiumConnectionStatus = Action<
   'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
   { simperiumConnected: boolean }
 >;
+export type ToggleSortTagsAlpha = Action<'TOGGLE_SORT_TAGS_ALPHA'>;
+export type ToggleSortOrder = Action<'TOGGLE_SORT_ORDER'>;
+export type ToggleSpellcheck = Action<'TOGGLE_SPELLCHECK'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
 export type TrashNote = Action<'TRASH_NOTE'>;
@@ -123,14 +131,17 @@ export type ActionType =
   | CloseDialog
   | CreateNote
   | CreateNoteWithId
+  | DecreaseFontSize
   | DeleteNoteForever
   | EditNote
   | FilterNotes
   | FocusSearchField
+  | IncreaseFontSize
   | Logout
   | RemoteNoteUpdate
   | OpenNote
   | OpenTag
+  | ResetFontSize
   | RestoreNote
   | Search
   | SelectNote
@@ -156,13 +167,18 @@ export type ActionType =
   | SystemThemeUpdate
   | TagsLoaded
   | ToggleAnalytics
+  | ToggleAutoHideMenuBar
   | ToggleEditMode
+  | ToggleFocusMode
   | ToggleKeyboardShortcuts
   | ToggleNavigation
   | ToggleNoteList
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
+  | ToggleSortTagsAlpha
+  | ToggleSortOrder
+  | ToggleSpellcheck
   | ToggleTagDrawer
   | ToggleTagEditing
   | TrashNote

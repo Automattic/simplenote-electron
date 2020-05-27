@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
