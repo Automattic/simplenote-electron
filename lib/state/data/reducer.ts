@@ -41,6 +41,9 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
           })
         : state;
 
+    case 'IMPORT_NOTE_WITH_ID':
+      return new Map(state).set(action.noteId, action.note);
+
     default:
       return state;
   }

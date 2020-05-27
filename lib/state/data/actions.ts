@@ -10,6 +10,11 @@ export const editNote: A.ActionCreator<A.EditNote> = (
   changes,
 });
 
+export const importNote: A.ActionCreator<A.ImportNote> = (note: T.Note) => ({
+  type: 'IMPORT_NOTE',
+  note,
+});
+
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });

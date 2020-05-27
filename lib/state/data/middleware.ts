@@ -13,6 +13,14 @@ export const middleware: S.Middleware = (store) => (
       return next({
         type: 'CREATE_NOTE_WITH_ID',
         noteId: uuid(),
+        note: action.note,
+      });
+
+    case 'IMPORT_NOTE':
+      return next({
+        type: 'IMPORT_NOTE_WITH_ID',
+        noteId: uuid(),
+        note: action.note,
       });
 
     case 'TOGGLE_ANALYTICS':

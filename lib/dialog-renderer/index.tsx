@@ -32,7 +32,7 @@ export class DialogRenderer extends Component<Props> {
   static displayName = 'DialogRenderer';
 
   render() {
-    const { appProps, theme, closeDialog } = this.props;
+    const { theme, closeDialog } = this.props;
 
     return (
       <Fragment>
@@ -53,7 +53,7 @@ export class DialogRenderer extends Component<Props> {
             ) : 'KEYBINDINGS' === dialog ? (
               <KeybindingsDialog key="keybindings" />
             ) : 'SETTINGS' === dialog ? (
-              <SettingsDialog key="settings" {...appProps} />
+              <SettingsDialog key="settings" />
             ) : 'SHARE' === dialog ? (
               <ShareDialog key="share" />
             ) : null}
