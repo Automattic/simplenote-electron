@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import NoteInfo from './note-info';
@@ -11,7 +10,6 @@ import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
-import { get } from 'lodash';
 import { createNote, closeNote, toggleNavigation } from './state/ui/actions';
 
 import * as settingsActions from './state/settings/actions';
