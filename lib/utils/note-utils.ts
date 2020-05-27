@@ -47,16 +47,20 @@ const getTitle = (content) => {
   return title;
 };
 
+const previewPattern = new RegExp(
+  `[^\n]*\n+[ \t]*([^]{0,${maxPreviewChars}})`,
+  'g'
+);
+
 const getPreview = (content) => {
-  const previewPattern = new RegExp(
-    `[^\n]*\n+[ \t]*([^]{0,${maxPreviewChars}})`,
-    'g'
-  );
+  previewPattern.lastIndex = 0;
   return matchUntilLimit(previewPattern, content);
 };
 
 const formatPreview = (stripMarkdown: boolean, s: string): string =>
   stripMarkdown ? removeMarkdownWithFix(s) || s : s;
+
+const previewCache = new Map<string, [boolean, TitleAndPreview]>();
 
 /**
  * Returns the title and excerpt for a given note
@@ -65,11 +69,23 @@ const formatPreview = (stripMarkdown: boolean, s: string): string =>
  * @returns title and excerpt (if available)
  */
 export const noteTitleAndPreview = (note: T.Note): TitleAndPreview => {
-  const content = note.content || '';
   const stripMarkdown = isMarkdown(note);
+  const cached = previewCache.get(note.content);
+  if (cached) {
+    const [wasMarkdown, value] = cached;
+    if (wasMarkdown === stripMarkdown) {
+      return value;
+    }
+  }
+
+  const content = note.content || '';
   const title = formatPreview(stripMarkdown, getTitle(content));
   const preview = formatPreview(stripMarkdown, getPreview(content));
-  return { title, preview };
+  const result = { title, preview };
+
+  previewCache.set(note.content, [stripMarkdown, result]);
+
+  return result;
 };
 
 function isMarkdown(note: T.Note): boolean {
