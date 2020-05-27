@@ -121,7 +121,6 @@
     "@automattic/color-studio": "2.3.0",
     "@material-ui/core": "4.9.14",
     "@types/clipboard": "^2.0.1",
-    "bottleneck": "2.19.5",
     "clipboard": "2.0.6",
     "cookie": "0.4.1",
     "core-js": "3.6.5",

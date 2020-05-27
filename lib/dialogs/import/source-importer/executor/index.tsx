@@ -1,8 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { throttle } from 'lodash';
 
 import analytics from '../../../../analytics';
+import actions from '../../../../state/actions';
 
 import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
@@ -12,29 +13,43 @@ import EvernoteImporter from '../../../../utils/import/evernote';
 import SimplenoteImporter from '../../../../utils/import/simplenote';
 import TextFileImporter from '../../../../utils/import/text-files';
 
-const importers = {
-  evernote: EvernoteImporter,
-  plaintext: TextFileImporter,
-  simplenote: SimplenoteImporter,
+import * as S from '../../../../state/';
+import * as T from '../../../../types';
+
+type ImporterSource = 'evernote' | 'plaintext' | 'simplenote';
+
+const getImporter = (importer: ImporterSource) => {
+  switch (importer) {
+    case 'evernote':
+      return EvernoteImporter;
+
+    case 'plaintext':
+      return TextFileImporter;
+
+    case 'simplenote':
+      return SimplenoteImporter;
+  }
 };
 
-class ImportExecutor extends React.Component {
-  static propTypes = {
-    buckets: PropTypes.shape({
-      noteBucket: PropTypes.object.isRequired,
-      tagBucket: PropTypes.object.isRequired,
-    }),
-    endValue: PropTypes.number,
-    files: PropTypes.array,
-    locked: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onStart: PropTypes.func.isRequired,
-    source: PropTypes.shape({
-      optionsHint: PropTypes.string,
-      slug: PropTypes.string.isRequired,
-    }),
+type OwnProps = {
+  endValue: number;
+  files: string[];
+  locked: boolean;
+  onClose: Function;
+  onStart: Function;
+  source: {
+    optionsHint: string;
+    slug: ImporterSource;
   };
+};
 
+type DispatchProps = {
+  importNote: (note: T.Note) => any;
+};
+
+type Props = OwnProps & DispatchProps;
+
+class ImportExecutor extends Component<Props> {
   state = {
     errorMessage: undefined,
     finalNoteCount: undefined,
@@ -46,15 +61,10 @@ class ImportExecutor extends React.Component {
 
   initImporter = () => {
     const { slug: sourceSlug } = this.props.source;
-    const Importer = importers[sourceSlug];
+    const Importer = getImporter(sourceSlug);
 
-    if (!Importer) {
-      throw new Error('Unrecognized importer slug "${slug}"');
-    }
-
-    const thisImporter = new Importer({
-      ...this.props.buckets,
-      options: { isMarkdown: this.state.setMarkdown },
+    const thisImporter = new Importer(this.props.importNote, {
+      isMarkdown: this.state.setMarkdown,
     });
     const updateProgress = throttle((arg) => {
       this.setState({ importedNoteCount: arg });
@@ -113,7 +123,7 @@ class ImportExecutor extends React.Component {
     return (
       <div className="source-importer-executor">
         <section className="source-importer-executor__options">
-          <PanelTitle headingLevel="3">Options</PanelTitle>
+          <PanelTitle headingLevel={3}>Options</PanelTitle>
           <label>
             <input
               type="checkbox"
@@ -163,4 +173,8 @@ class ImportExecutor extends React.Component {
   }
 }
 
-export default ImportExecutor;
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  importNote: actions.data.importNote,
+};
+
+export default connect(null, mapDispatchToProps)(ImportExecutor);

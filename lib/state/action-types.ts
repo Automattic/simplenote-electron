@@ -46,10 +46,10 @@ export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
  */
 export type CloseDialog = Action<'CLOSE_DIALOG'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
-export type CreateNote = Action<'CREATE_NOTE'>;
+export type CreateNote = Action<'CREATE_NOTE', { note?: Partial<T.Note> }>;
 export type CreateNoteWithId = Action<
   'CREATE_NOTE_WITH_ID',
-  { noteId: T.EntityId }
+  { noteId: T.EntityId; note?: Partial<T.Note> }
 >;
 export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
@@ -62,6 +62,11 @@ export type FilterNotes = Action<
   { noteIds: T.EntityId[]; tags: T.TagEntity[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type ImportNote = Action<'IMPORT_NOTE', { note: T.Note }>;
+export type ImportNoteWithId = Action<
+  'IMPORT_NOTE_WITH_ID',
+  { noteId: T.EntityId; note: T.Note }
+>;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
@@ -136,6 +141,8 @@ export type ActionType =
   | EditNote
   | FilterNotes
   | FocusSearchField
+  | ImportNote
+  | ImportNoteWithId
   | IncreaseFontSize
   | Logout
   | RemoteNoteUpdate

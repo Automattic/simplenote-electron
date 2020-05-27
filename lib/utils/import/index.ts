@@ -1,6 +1,7 @@
-import Bottleneck from 'bottleneck';
 import { EventEmitter } from 'events';
 import { isEmpty, get, pick } from 'lodash';
+
+import * as T from '../../types';
 
 const propertyWhitelist = [
   'content',
@@ -12,21 +13,10 @@ const propertyWhitelist = [
   'tags',
 ];
 
-const MAX_REQUESTS_PER_SEC = 50;
-
 class CoreImporter extends EventEmitter {
-  constructor({ noteBucket, tagBucket }) {
+  constructor(addNote: (note: T.Note) => any) {
     super();
-    this.noteBucket = noteBucket;
-    this.tagBucket = tagBucket;
-
-    // Rate limiter for adding new notes to the bucket. Without this, the
-    // server may return 503 errors, which will result in unsynced notes.
-    this.limiter = new Bottleneck({
-      reservoir: MAX_REQUESTS_PER_SEC,
-      reservoirRefreshAmount: MAX_REQUESTS_PER_SEC,
-      reservoirRefreshInterval: 1000, // Must be divisible by 250. See https://github.com/SGrondin/bottleneck/issues/88
-    });
+    this.addNote = addNote;
   }
 
   importNote = (note, { isTrashed = false, isMarkdown = false } = {}) => {
@@ -71,15 +61,10 @@ class CoreImporter extends EventEmitter {
         if (isEmpty(tagName)) {
           return;
         }
-        // We use update() to set the id of the tag (as well as the name prop)
-        this.tagBucket.update(tagName, { name: tagName });
       });
     }
 
-    // Add to note bucket with rate limiting
-    return this.limiter
-      .schedule(() => this.noteBucket.add.bind(this.noteBucket)(importedNote))
-      .catch();
+    this.addNote(importedNote);
   };
 
   importNotes = (notes = {}, options) => {
