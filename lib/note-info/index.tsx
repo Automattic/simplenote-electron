@@ -20,7 +20,7 @@ type OwnProps = {
 type StateProps = {
   isMarkdown: boolean;
   isPinned: boolean;
-  note: T.NoteEntity | null;
+  note: T.Note;
 };
 
 type DispatchProps = {
@@ -54,17 +54,16 @@ export class NoteInfo extends Component<Props> {
 
   render() {
     const { isMarkdown, isPinned, note } = this.props;
-    const data = (note && note.data) || {};
     const formattedDate =
-      data.modificationDate && formatTimestamp(data.modificationDate);
-    const isPublished = includes(data.systemTags, 'published');
-    const publishURL = this.getPublishURL(data.publishURL);
+      note.modificationDate && formatTimestamp(note.modificationDate);
+    const isPublished = includes(note.systemTags, 'published');
+    const publishURL = this.getPublishURL(note.publishURL);
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
         <div className="note-info-panel note-info-stats theme-color-border">
           <div className="note-info-header">
-            <PanelTitle headingLevel="2">Info</PanelTitle>
+            <PanelTitle headingLevel={2}>Info</PanelTitle>
             <button
               type="button"
               className="about-done button button-borderless"
@@ -85,14 +84,14 @@ export class NoteInfo extends Component<Props> {
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {wordCount(data && data.content)} words
+                {wordCount(note.content)} words
               </span>
             </span>
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {characterCount(data && data.content)} characters
+                {characterCount(note.content)} characters
               </span>
             </span>
           </p>
@@ -199,11 +198,18 @@ function characterCount(content: string) {
   );
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ ui: { note } }) => ({
-  note,
-  isMarkdown: !!note && note.data.systemTags.includes('markdown'),
-  isPinned: !!note && note.data.systemTags.includes('pinned'),
-});
+const mapStateToProps: S.MapState<StateProps> = ({
+  data,
+  ui: { openedNote },
+}) => {
+  const note = data.notes.get(openedNote);
+
+  return {
+    note: note,
+    isMarkdown: note?.systemTags.includes('markdown'),
+    isPinned: note?.systemTags.includes('pinned'),
+  };
+};
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onMarkdownNote: (note, markdown = true) =>
