@@ -54,7 +54,7 @@ export class RevisionSelector extends Component<Props, ComponentState> {
     };
   }
 
-  componentWillReceiveProps({ revisions: nextRevisions }: Props) {
+  UNSAFE_componentWillReceiveProps({ revisions: nextRevisions }: Props) {
     const { revisions: prevRevisions } = this.props;
 
     if (nextRevisions === prevRevisions) {

@@ -75,7 +75,7 @@ export class NoteDetail extends Component<Props> {
 
   isValidNote = (note) => note && note.id;
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const isEditingNote = get(this.props, ['note', 'id'], false);
     if (isEditingNote === false) {
       return;
