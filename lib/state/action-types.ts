@@ -3,7 +3,14 @@ import * as T from '../types';
 export type Action<
   T extends string,
   Args extends { [extraProps: string]: unknown } = {}
-> = { type: T } & Args;
+> = { type: T } & Args & {
+    meta?: {
+      searchResults: {
+        noteIds: T.EntityId[];
+        tagIds: T.EntityId[];
+      };
+    };
+  };
 
 /*
  * Legacy action-creators that are more like global setters than Redux actions
@@ -52,7 +59,7 @@ export type CreateNoteWithId = Action<
   { noteId: T.EntityId; note?: Partial<T.Note> }
 >;
 export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
-export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
+export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
   { noteIds: T.EntityId[]; tagIds: T.EntityId[] }
@@ -67,7 +74,7 @@ export type RemoteNoteUpdate = Action<
   { noteId: T.EntityId; data: T.Note }
 >;
 export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
-export type RestoreNote = Action<'RESTORE_NOTE'>;
+export type RestoreOpenNote = Action<'RESTORE_OPEN_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectNote = Action<
   'SELECT_NOTE',
@@ -122,6 +129,10 @@ export type WindowResize = Action<'WINDOW_RESIZE', { innerWidth: number }>;
 /*
  * Note operations
  */
+export type DeleteNoteForever = Action<
+  'DELETE_NOTE_FOREVER',
+  { noteId: T.EntityId }
+>;
 export type EditNote = Action<
   'EDIT_NOTE',
   { noteId: T.EntityId; changes: Partial<T.Note> }
@@ -139,6 +150,7 @@ export type PinNote = Action<
   'PIN_NOTE',
   { noteId: T.EntityId; shouldPin: boolean }
 >;
+export type RestoreNote = Action<'RESTORE_NOTE', { noteId: T.EntityId }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
@@ -150,6 +162,7 @@ export type ActionType =
   | CreateNote
   | CreateNoteWithId
   | DecreaseFontSize
+  | DeleteOpenNoteForever
   | DeleteNoteForever
   | EditNote
   | FilterNotes
@@ -164,6 +177,7 @@ export type ActionType =
   | OpenTag
   | PinNote
   | ResetFontSize
+  | RestoreOpenNote
   | RestoreNote
   | Search
   | SelectNote

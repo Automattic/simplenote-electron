@@ -77,11 +77,12 @@ const noteRevisions: A.Reducer<T.NoteEntity[]> = (
 
 const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
+    case 'CLOSE_NOTE':
+    case 'DELETE_NOTE_FOREVER':
+      return null;
+
     case 'OPEN_NOTE':
       return action.noteId;
-
-    case 'CLOSE_NOTE':
-      return null;
 
     default:
       return state;

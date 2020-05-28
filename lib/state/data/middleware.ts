@@ -16,11 +16,31 @@ export const middleware: S.Middleware = (store) => (
         note: action.note,
       });
 
+    case 'DELETE_OPEN_NOTE_FOREVER':
+      if (!state.ui.openedNote) {
+        return;
+      }
+
+      return next({
+        type: 'DELETE_NOTE_FOREVER',
+        noteId: state.ui.openedNote,
+      });
+
     case 'IMPORT_NOTE':
       return next({
         type: 'IMPORT_NOTE_WITH_ID',
         noteId: uuid(),
         note: action.note,
+      });
+
+    case 'RESTORE_OPEN_NOTE':
+      if (!state.ui.openedNote) {
+        return;
+      }
+
+      return next({
+        type: 'RESTORE_NOTE',
+        noteId: state.ui.openedNote,
       });
 
     case 'TOGGLE_ANALYTICS':

@@ -177,6 +177,10 @@ export const middleware: S.Middleware = (store) => {
         });
         return next(withSearch(action));
 
+      case 'DELETE_NOTE_FOREVER':
+        searchState.notes.delete(action.noteId);
+        return next(withSearch(action));
+
       case 'EDIT_NOTE': {
         const note = searchState.notes.get(action.noteId)!;
         if ('undefined' !== typeof action.changes.content) {
@@ -210,6 +214,13 @@ export const middleware: S.Middleware = (store) => {
         searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
         return next(withSearch(action));
 
+      case 'RESTORE_NOTE':
+        if (!searchState.notes.has(action.noteId)) {
+          return;
+        }
+        searchState.notes.get(action.noteId)!.isTrashed = false;
+        return next(withSearch(action));
+
       case 'SELECT_TRASH':
         searchState.openedTag = null;
         searchState.showTrash = true;
@@ -226,14 +237,6 @@ export const middleware: S.Middleware = (store) => {
         searchState.searchTags = tagsFromSearch(action.searchQuery);
         return next(withSearch(action));
 
-      case 'DELETE_NOTE_FOREVER':
-        // @TODO
-        break;
-
-      case 'RESTORE_NOTE':
-        // @TODO
-        break;
-
       case 'setSortReversed':
         searchState.sortReversed = action.sortReversed;
         return next(withSearch(action));
@@ -247,6 +250,9 @@ export const middleware: S.Middleware = (store) => {
         return next(withSearch(action));
 
       case 'TRASH_NOTE':
+        if (!searchState.notes.has(action.noteId)) {
+          return;
+        }
         searchState.notes.get(action.noteId)!.isTrashed = true;
         return next(withSearch(action));
     }
