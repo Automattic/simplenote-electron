@@ -92,31 +92,4 @@ function isMarkdown(note: T.Note): boolean {
   return note.systemTags.includes('markdown');
 }
 
-/**
- * Clean the text so it is ready to be sorted alphabetically.
- *
- * @param {string} text - The string to be normalized.
- * @returns {string} The normalized string.
- */
-export const normalizeForSorting = (text) => {
-  const maxLength = 200;
-
-  let normalizedText = text
-    .replace(/^\s*#+\s*/, '') // Remove leading whitespace and Markdown heading
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, maxLength)
-    .toLowerCase();
-
-  // Remove accents/diacritics (https://stackoverflow.com/questions/990904)
-  // if `normalize()` is available.
-  if (isFunction(normalizedText.normalize)) {
-    normalizedText = normalizedText
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
-  }
-
-  return normalizedText;
-};
-
 export default noteTitleAndPreview;
