@@ -151,7 +151,6 @@ export class Auth extends Component<Props> {
             type="password"
             required
             minLength="4"
-            maxLength="64"
           />
 
           <button
