@@ -62,11 +62,10 @@ export const middleware: S.Middleware = (store) => {
     const {
       data,
       settings: { sortType, sortReversed },
-      tags,
       ui: { searchQuery },
     } = store.getState();
 
-    const filteredTags = filterTags(tags, searchQuery);
+    const filteredTags = filterTags(data.tags[0], searchQuery);
     const tagSuggestions = filteredTags.length > 0 ? filteredTags : emptyList;
 
     const unsortedNoteIds =
@@ -109,7 +108,7 @@ export const middleware: S.Middleware = (store) => {
       case 'OPEN_TAG':
         searchProcessor.postMessage({
           action: 'filterNotes',
-          openedTag: action.tag.data.name,
+          openedTag: prevState.data.tags[0].get(action.tagId).name,
           showTrash: false,
         });
         break;

@@ -19,11 +19,11 @@ export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = () => ({
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   noteIds: T.EntityId[],
-  tags: T.TagEntity[]
+  tagIds: T.EntityId[]
 ) => ({
   type: 'FILTER_NOTES',
   noteIds,
-  tags,
+  tagIds,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
@@ -49,9 +49,9 @@ export const openNote: A.ActionCreator<A.OpenNote> = (noteId: T.EntityId) => ({
   noteId,
 });
 
-export const openTag: A.ActionCreator<A.OpenTag> = (tag: T.TagEntity) => ({
+export const openTag: A.ActionCreator<A.OpenTag> = (tagId: T.EntityId) => ({
   type: 'OPEN_TAG',
-  tag,
+  tagId,
 });
 
 export const restoreNote: A.ActionCreator<A.RestoreNote> = () => ({

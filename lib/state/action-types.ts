@@ -55,13 +55,13 @@ export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteNoteForever = Action<'DELETE_NOTE_FOREVER'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
-  { noteIds: T.EntityId[]; tags: T.TagEntity[] }
+  { noteIds: T.EntityId[]; tagIds: T.EntityId[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
-export type OpenTag = Action<'OPEN_TAG', { tag: T.TagEntity }>;
+export type OpenTag = Action<'OPEN_TAG', { tagId: T.EntityId }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; data: T.Note }

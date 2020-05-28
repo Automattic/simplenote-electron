@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { v4 as uuid } from 'uuid';
 
 import * as A from '../action-types';
 import * as T from '../../types';
@@ -85,7 +86,64 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
   }
 };
 
+export const tags: A.Reducer<[
+  Map<T.EntityId, T.Tag>,
+  Map<string, T.EntityId>
+]> = (state = [new Map(), new Map()], action) => {
+  const [tagIds, tagNames] = state;
+
+  switch (action.type) {
+    case 'EDIT_NOTE': {
+      if (
+        !action.changes.tags?.some(
+          (tag) => !tagNames.has(tag.toLocaleLowerCase())
+        )
+      ) {
+        return state;
+      }
+
+      const nextIds = new Map(tagIds);
+      const nextNames = new Map(tagNames);
+
+      action.changes.tags.forEach((tag) => {
+        if (!nextNames.has(tag)) {
+          const id = uuid();
+          nextIds.set(id, { name: tag });
+          nextNames.set(tag.toLocaleLowerCase(), id);
+        }
+      });
+
+      return [nextIds, nextNames];
+    }
+
+    case 'IMPORT_NOTE_WITH_ID': {
+      if (
+        !action.note.tags?.some((tag) => !tagNames.has(tag.toLocaleLowerCase()))
+      ) {
+        return state;
+      }
+
+      const nextIds = new Map(tagIds);
+      const nextNames = new Map(tagNames);
+
+      action.note.tags.forEach((tag) => {
+        if (!nextNames.has(tag)) {
+          const id = uuid();
+          nextIds.set(id, { name: tag });
+          nextNames.set(tag.toLocaleLowerCase(), id);
+        }
+      });
+
+      return [nextIds, nextNames];
+    }
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   analyticsAllowed,
   notes,
+  tags,
 });
