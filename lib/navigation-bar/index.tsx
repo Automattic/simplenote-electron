@@ -9,7 +9,6 @@ import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
-import SyncStatus from '../components/sync-status';
 import { viewExternalUrl } from '../utils/url-utils';
 
 import { showDialog, toggleNavigation, selectTrash } from '../state/ui/actions';
@@ -125,10 +124,6 @@ export class NavigationBar extends Component<Props> {
             </div>
           </Fragment>
         )}
-
-        <div className="navigation-bar__sync-status theme-color-fg-dim theme-color-border">
-          <SyncStatus />
-        </div>
       </div>
     );
   }
