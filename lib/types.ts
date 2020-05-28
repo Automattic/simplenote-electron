@@ -17,7 +17,7 @@ export type SystemTag = 'markdown' | 'pinned' | 'published' | 'shared';
 export type Note = {
   content: string;
   creationDate: SecondsEpoch;
-  deleted: boolean;
+  deleted: boolean | 0 | 1;
   modificationDate: SecondsEpoch;
   publishURL?: string;
   shareURL?: string;

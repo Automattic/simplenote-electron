@@ -51,7 +51,13 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
 const filteredNotes: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
-) => ('FILTER_NOTES' === action.type ? action.noteIds : state);
+) => {
+  if ('undefined' === typeof action.meta?.searchResults) {
+    return state;
+  }
+
+  return action.meta.searchResults.noteIds;
+};
 
 const noteRevisions: A.Reducer<T.NoteEntity[]> = (
   state = emptyList as T.NoteEntity[],
@@ -207,7 +213,13 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
 const tagSuggestions: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action
-) => ('FILTER_NOTES' === action.type ? action.tagIds : state);
+) => {
+  if ('undefined' === typeof action.meta?.searchResults) {
+    return state;
+  }
+
+  return action.meta.searchResults.tagIds;
+};
 
 export default combineReducers({
   dialogs,

@@ -33,6 +33,16 @@ export const middleware: S.Middleware = (store) => (
             : !state.data.analyticsAllowed,
       });
 
+    case 'TRASH_OPEN_NOTE':
+      if (!state.ui.openedNote) {
+        return;
+      }
+
+      return next({
+        type: 'TRASH_NOTE',
+        noteId: state.ui.openedNote,
+      });
+
     default:
       return next(action);
   }

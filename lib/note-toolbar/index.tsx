@@ -170,7 +170,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   toggleNoteInfo: actions.ui.toggleNoteInfo,
   toggleNoteList: actions.ui.toggleNoteList,
   toggleRevisions: actions.ui.toggleRevisions,
-  trashNote: actions.data.trashNote,
+  trashNote: actions.ui.trashOpenNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);
