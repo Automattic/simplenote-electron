@@ -269,7 +269,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
     toggleSortOrder: () => dispatch(settingsActions.toggleSortOrder()),
     toggleSortTagsAlpha: () => dispatch(settingsActions.toggleSortTagsAlpha()),
     toggleSpellCheck: () => dispatch(settingsActions.toggleSpellCheck()),
-    trashNote: () => dispatch(actions.ui.trashNote()),
+    trashNote: () => dispatch(actions.ui.trashOpenNote()),
   };
 };
 

@@ -1,12 +1,39 @@
 import actions from '../state/actions';
-import { init, updateFilter, updateNote } from './worker';
 import { filterTags } from '../tag-suggestions';
+import { getTerms } from '../utils/filter-notes';
 
 import * as A from '../state/action-types';
 import * as S from '../state';
 import * as T from '../types';
 
 const emptyList = [] as T.NoteEntity[];
+
+type SearchNote = {
+  content: string;
+  tags: Set<T.TagName>;
+  isPinned: boolean;
+  isTrashed: boolean;
+};
+
+type SearchState = {
+  notes: Map<T.EntityId, SearchNote>;
+  openedTag: T.TagName | null;
+  searchTags: Set<T.TagName>;
+  searchTerms: string[];
+  showTrash: boolean;
+  sortType: T.SortType;
+  sortReversed: boolean;
+};
+
+const tagsFromSearch = (query: string) => {
+  const tagPattern = /(?:\btag:)([^\s,]+)/g;
+  const searchTags = new Set<T.TagName>();
+  let match;
+  while ((match = tagPattern.exec(query)) !== null) {
+    searchTags.add(match[1].toLocaleLowerCase());
+  }
+  return searchTags;
+};
 
 export const compareNotes = (
   notes: Map<T.EntityId, T.Note>,
@@ -53,10 +80,60 @@ export const compareNotes = (
 };
 
 export const middleware: S.Middleware = (store) => {
-  const {
-    port1: searchProcessor,
-    port2: _searchProcessor,
-  } = new MessageChannel();
+  const searchState: SearchState = {
+    notes: new Map(),
+    openedTag: null,
+    searchTags: new Set(),
+    searchTerms: [],
+    showTrash: false,
+    sortType: store.getState().settings.sortType,
+    sortReversed: store.getState().settings.sortReversed,
+  };
+
+  window.searchState = searchState;
+
+  const runSearch = (): Set<T.EntityId> => {
+    const {
+      notes,
+      openedTag,
+      searchTags,
+      searchTerms,
+      showTrash,
+    } = searchState;
+    const matches = new Set<T.EntityId>();
+
+    for (const [noteId, note] of notes.entries()) {
+      if (showTrash !== note.isTrashed) {
+        continue;
+      }
+
+      let hasAllTags = true;
+      for (const tagName of searchTags.values()) {
+        if (!note.tags.has(tagName)) {
+          hasAllTags = false;
+          break;
+        }
+      }
+      if (!hasAllTags) {
+        continue;
+      }
+
+      if (openedTag && !note.tags.has(openedTag)) {
+        continue;
+      }
+
+      if (
+        searchTerms.length > 0 &&
+        !searchTerms.every((term) => note.content.includes(term))
+      ) {
+        continue;
+      }
+
+      matches.add(noteId);
+    }
+
+    return matches;
+  };
 
   const setFilteredNotes = (noteIds: Set<T.EntityId>) => {
     const {
@@ -70,96 +147,104 @@ export const middleware: S.Middleware = (store) => {
 
     const unsortedNoteIds =
       noteIds.size > 0 ? noteIds.values() : data.notes.keys();
-    const sortedNoteIds = [...unsortedNoteIds].sort(
-      compareNotes(data.notes, sortType, sortReversed)
-    );
+    const sortedNoteIds =
+      false &&
+      [...unsortedNoteIds].sort(
+        compareNotes(data.notes, sortType, sortReversed)
+      );
 
-    store.dispatch(actions.ui.filterNotes(sortedNoteIds, tagSuggestions));
+    return { noteIds: [...unsortedNoteIds], tagIds: tagSuggestions };
   };
 
-  searchProcessor.onmessage = (event) => {
-    switch (event.data.action) {
-      case 'filterNotes': {
-        setFilteredNotes(event.data.noteIds);
-        break;
-      }
-    }
-  };
-
-  init(_searchProcessor);
+  const withSearch = (action: A.ActionType) => ({
+    ...action,
+    meta: {
+      ...action.meta,
+      searchResults: setFilteredNotes(runSearch()),
+    },
+  });
 
   return (next) => (action: A.ActionType) => {
-    const prevState = store.getState();
-    const result = next(action);
-    const nextState = store.getState();
+    const state = store.getState();
 
     switch (action.type) {
       case 'CREATE_NOTE_WITH_ID':
-      case 'EDIT_NOTE':
       case 'IMPORT_NOTE_WITH_ID':
-      case 'PIN_NOTE':
-        updateNote(action.noteId, nextState.data.notes.get(action.noteId));
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-          searchQuery: '',
+        searchState.notes.set(action.noteId, {
+          content: action.note?.content?.toLocaleLowerCase() ?? '',
+          isPinned: action.note?.systemTags?.includes('pinned') ?? false,
+          isTrashed: !!action.note?.deleted ?? false,
+          tags: new Set(
+            action.note?.tags?.map((tag) => tag.toLocaleLowerCase()) ?? []
+          ),
         });
-        break;
+        return next(withSearch(action));
+
+      case 'EDIT_NOTE': {
+        const note = searchState.notes.get(action.noteId)!;
+        if ('undefined' !== typeof action.changes.content) {
+          note.content = action.changes.content.toLocaleLowerCase();
+        }
+        if ('undefined' !== typeof action.changes.tags) {
+          note.tags = new Set(
+            action.changes.tags.map((tag) => tag.toLocaleLowerCase())
+          );
+        }
+        if ('undefined' !== typeof action.changes.deleted) {
+          note.isTrashed = !!action.changes.deleted;
+        }
+        if ('undefined' !== typeof action.changes.systemTags) {
+          note.isPinned = action.changes.systemTags.includes('pinned');
+        }
+        return next(withSearch(action));
+      }
+
+      case 'PIN_NOTE':
+        searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
+        return next(withSearch(action));
 
       case 'OPEN_TAG':
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-          openedTag: prevState.data.tags[0].get(action.tagId).name,
-          showTrash: false,
-        });
-        break;
+        searchState.openedTag = state.data.tags[0].get(action.tagId)!.name;
+        return next(withSearch(action));
 
       case 'SELECT_TRASH':
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-          openedTag: null,
-          showTrash: true,
-        });
-        break;
+        searchState.showTrash = true;
+        return next(withSearch(action));
 
       case 'SHOW_ALL_NOTES':
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-          openedTag: null,
-          showTrash: false,
-        });
-        break;
+        searchState.showTrash = false;
+        return next(withSearch(action));
 
       case 'SEARCH':
-        searchProcessor.postMessage({
-          action: 'filterNotes',
-          searchQuery: action.searchQuery,
-        });
-        break;
+        searchState.searchTerms = getTerms(action.searchQuery);
+        searchState.searchTags = tagsFromSearch(action.searchQuery);
+        return next(withSearch(action));
 
       case 'DELETE_NOTE_FOREVER':
+        // @TODO
+        break;
+
       case 'RESTORE_NOTE':
-        updateNote(prevState.ui.note.id, {
-          ...prevState.ui.note.data,
-          deleted: false,
-        });
-        setFilteredNotes(updateFilter('fullSearch'));
+        // @TODO
         break;
 
       case 'setSortReversed':
+        searchState.sortReversed = action.sortReversed;
+        return next(withSearch(action));
+
       case 'setSortType':
+        searchState.sortType = action.sortType;
+        return next(withSearch(action));
+
       case 'TOGGLE_SORT_ORDER':
-        setFilteredNotes(updateFilter('fullSearch'));
-        break;
+        searchState.sortReversed = !searchState.sortReversed;
+        return next(withSearch(action));
 
       case 'TRASH_NOTE':
-        updateNote(prevState.ui.note.id, {
-          ...prevState.ui.note.data,
-          deleted: true,
-        });
-        setFilteredNotes(updateFilter('fullSearch'));
-        break;
+        searchState.notes.get(action.noteId)!.isTrashed = true;
+        return next(withSearch(action));
     }
 
-    return result;
+    return next(action);
   };
 };

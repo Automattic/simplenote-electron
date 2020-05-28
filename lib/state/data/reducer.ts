@@ -81,6 +81,8 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return new Map(state).set(action.noteId, { ...note, systemTags });
     }
 
+    case 'TRASH_NOTE':
+
     default:
       return state;
   }

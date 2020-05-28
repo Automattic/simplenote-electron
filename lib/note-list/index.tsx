@@ -67,20 +67,10 @@ const renderNote = (
   }
 
   if ('tag-suggestions' === note || 'notes-header' === note) {
-    return (
-      <CellMeasurer
-        cache={heightCache}
-        columnIndex={0}
-        key={key}
-        parent={parent}
-        rowIndex={index}
-      >
-        {'tag-suggestions' === note ? (
-          <TagSuggestions />
-        ) : (
-          <div className="note-list-header">Notes</div>
-        )}
-      </CellMeasurer>
+    return 'tag-suggestions' === note ? (
+      <TagSuggestions />
+    ) : (
+      <div className="note-list-header">Notes</div>
     );
   }
 
@@ -139,10 +129,23 @@ export class NoteList extends Component<Props> {
       fixedWidth: true,
       keyMapper: (rowIndex) => {
         const { filteredNotes, searchQuery, tagResultsFound } = this.props;
+        if (filteredNotes.length === 0 && rowIndex === 0) {
+          return 'no-notes';
+        }
 
-        return searchQuery.length === 0 || tagResultsFound === 0
-          ? filteredNotes[rowIndex]
-          : rowIndex - 2;
+        if (searchQuery.length === 0 || tagResultsFound === 0) {
+          return filteredNotes[rowIndex];
+        }
+
+        if (rowIndex === 0) {
+          return 'tag-suggestions';
+        }
+
+        if (rowIndex === 1) {
+          return 'notes-header';
+        }
+
+        return filteredNotes[rowIndex - 2];
       },
     }),
     lastNoteDisplay: null,

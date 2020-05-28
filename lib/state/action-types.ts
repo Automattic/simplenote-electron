@@ -115,7 +115,8 @@ export type ToggleSortOrder = Action<'TOGGLE_SORT_ORDER'>;
 export type ToggleSpellcheck = Action<'TOGGLE_SPELLCHECK'>;
 export type ToggleTagDrawer = Action<'TAG_DRAWER_TOGGLE', { show: boolean }>;
 export type ToggleTagEditing = Action<'TAG_EDITING_TOGGLE'>;
-export type TrashNote = Action<'TRASH_NOTE'>;
+export type TrashNote = Action<'TRASH_NOTE', { noteId: T.EntityId }>;
+export type TrashOpenNote = Action<'TRASH_OPEN_NOTE'>;
 export type WindowResize = Action<'WINDOW_RESIZE', { innerWidth: number }>;
 
 /*
@@ -203,6 +204,7 @@ export type ActionType =
   | ToggleTagDrawer
   | ToggleTagEditing
   | TrashNote
+  | TrashOpenNote
   | WindowResize;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;

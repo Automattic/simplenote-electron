@@ -8,8 +8,9 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  filteredTags: T.TagEntity[];
+  filteredTags: T.EntityId[];
   searchQuery: string;
+  tags: Map<T.EntityId, T.Tag>;
 };
 
 type DispatchProps = {
@@ -35,7 +36,7 @@ export class TagSuggestions extends Component<Props> {
   };
 
   render() {
-    const { filteredTags } = this.props;
+    const { filteredTags, tags } = this.props;
 
     return (
       <Fragment>
@@ -43,15 +44,17 @@ export class TagSuggestions extends Component<Props> {
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
             <ul className="tag-suggestions-list">
-              {filteredTags.map((tag) => (
+              {filteredTags.map((tagId) => (
                 <li
-                  key={tag.id}
-                  id={tag.id}
+                  key={tagId}
+                  id={tagId}
                   className="tag-suggestion-row"
-                  onClick={() => this.updateSearch(`tag:${tag.data.name}`)}
+                  onClick={() =>
+                    this.updateSearch(`tag:${tags.get(tagId)!.name}`)
+                  }
                 >
-                  <div className="tag-suggestion" title={tag.data.name}>
-                    tag:{tag.data.name}
+                  <div className="tag-suggestion" title={tags.get(tagId)!.name}>
+                    tag:{tags.get(tagId)!.name}
                   </div>
                 </li>
               ))}
@@ -70,7 +73,7 @@ export const filterTags = (tags: Map<T.EntityId, T.Tag>, query: string) => {
   const tagTerm = query.trim().toLowerCase().split(' ').pop();
 
   if (!tagTerm) {
-    return [...tags.keys()];
+    return [];
   }
 
   // with `tag:` we don't want to suggest tags which have already been added
@@ -98,10 +101,12 @@ export const filterTags = (tags: Map<T.EntityId, T.Tag>, query: string) => {
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
+  data,
   ui: { searchQuery, tagSuggestions },
 }) => ({
   filteredTags: tagSuggestions,
   searchQuery,
+  tags: data.tags[0],
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
