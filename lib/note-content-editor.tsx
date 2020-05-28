@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MultiDecorator from 'draft-js-multidecorators';
-import { ContentState, Editor, EditorState, Modifier } from 'draft-js';
+import {
+  ContentState,
+  Editor,
+  EditorState,
+  getDefaultKeyBinding,
+  Modifier,
+} from 'draft-js';
 import { debounce, get, has, invoke, noop } from 'lodash';
 
 import {
@@ -269,18 +275,21 @@ class NoteContentEditor extends Component<Props> {
     return document.activeElement === get(this.editor, 'editor');
   };
 
-  onTab = (e) => {
+  onTab = (e: KeyboardEvent) => {
+    if (e.key !== 'Tab') {
+      return getDefaultKeyBinding(e);
+    }
     const { editorState } = this.state;
 
     // prevent moving focus to next input
     e.preventDefault();
 
     if (!editorState.getSelection().isCollapsed() && e.shiftKey) {
-      return;
+      return getDefaultKeyBinding(e);
     }
 
     if (e.altKey || e.ctrlKey || e.metaKey) {
-      return;
+      return getDefaultKeyBinding(e);
     }
 
     this.handleEditorStateChange(
@@ -392,7 +401,7 @@ class NoteContentEditor extends Component<Props> {
           stripPastedStyles
           onChange={this.handleEditorStateChange}
           editorState={this.state.editorState}
-          onTab={this.onTab}
+          keyBindingFn={this.onTab}
           handleReturn={this.handleReturn}
         />
       </div>
