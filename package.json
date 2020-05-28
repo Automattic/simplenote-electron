@@ -50,6 +50,7 @@
     "@babel/preset-react": "7.9.4",
     "@babel/preset-typescript": "7.9.0",
     "@types/classnames": "2.2.10",
+    "@types/clipboard": "2.0.1",
     "@types/cookie": "0.4.0",
     "@types/debug": "4.1.5",
     "@types/draft-js": "0.10.40",
@@ -119,7 +120,6 @@
   "dependencies": {
     "@automattic/color-studio": "2.3.0",
     "@material-ui/core": "4.9.14",
-    "@types/clipboard": "^2.0.1",
     "bottleneck": "2.19.5",
     "clipboard": "2.0.6",
     "cookie": "0.4.1",
