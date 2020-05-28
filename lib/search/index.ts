@@ -11,6 +11,8 @@ const emptyList = [] as T.NoteEntity[];
 type SearchNote = {
   content: string;
   tags: Set<T.TagName>;
+  creationDate: number;
+  modificationDate: number;
   isPinned: boolean;
   isTrashed: boolean;
 };
@@ -18,6 +20,7 @@ type SearchNote = {
 type SearchState = {
   notes: Map<T.EntityId, SearchNote>;
   openedTag: T.TagName | null;
+  searchQuery: string;
   searchTags: Set<T.TagName>;
   searchTerms: string[];
   showTrash: boolean;
@@ -36,7 +39,7 @@ const tagsFromSearch = (query: string) => {
 };
 
 export const compareNotes = (
-  notes: Map<T.EntityId, T.Note>,
+  notes: Map<T.EntityId, SearchNote>,
   sortType: T.SortType,
   sortReversed: boolean
 ) => (aId: T.EntityId, bId: T.EntityId): number => {
@@ -44,11 +47,9 @@ export const compareNotes = (
 
   const a = notes.get(aId)!;
   const b = notes.get(bId)!;
-  const aIsPinned = a.systemTags.includes('pinned');
-  const bIsPinned = b.systemTags.includes('pinned');
 
-  if (aIsPinned !== bIsPinned) {
-    return aIsPinned ? -1 : 1;
+  if (a.isPinned !== b.isPinned) {
+    return a.isPinned ? -1 : 1;
   }
 
   switch (sortType) {
@@ -83,6 +84,7 @@ export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
     notes: new Map(),
     openedTag: null,
+    searchQuery: '',
     searchTags: new Set(),
     searchTerms: [],
     showTrash: false,
@@ -136,24 +138,17 @@ export const middleware: S.Middleware = (store) => {
   };
 
   const setFilteredNotes = (noteIds: Set<T.EntityId>) => {
-    const {
-      data,
-      settings: { sortType, sortReversed },
-      ui: { searchQuery },
-    } = store.getState();
+    const { data } = store.getState();
+    const { searchQuery, sortReversed, sortType } = searchState;
 
     const filteredTags = filterTags(data.tags[0], searchQuery);
     const tagSuggestions = filteredTags.length > 0 ? filteredTags : emptyList;
 
-    const unsortedNoteIds =
-      noteIds.size > 0 ? noteIds.values() : data.notes.keys();
-    const sortedNoteIds =
-      false &&
-      [...unsortedNoteIds].sort(
-        compareNotes(data.notes, sortType, sortReversed)
-      );
+    const sortedNoteIds = [...noteIds.values()].sort(
+      compareNotes(searchState.notes, sortType, sortReversed)
+    );
 
-    return { noteIds: [...unsortedNoteIds], tagIds: tagSuggestions };
+    return { noteIds: [...sortedNoteIds], tagIds: tagSuggestions };
   };
 
   const withSearch = (action: A.ActionType) => ({
@@ -172,11 +167,13 @@ export const middleware: S.Middleware = (store) => {
       case 'IMPORT_NOTE_WITH_ID':
         searchState.notes.set(action.noteId, {
           content: action.note?.content?.toLocaleLowerCase() ?? '',
-          isPinned: action.note?.systemTags?.includes('pinned') ?? false,
-          isTrashed: !!action.note?.deleted ?? false,
           tags: new Set(
             action.note?.tags?.map((tag) => tag.toLocaleLowerCase()) ?? []
           ),
+          creationDate: action.note?.creationDate ?? Date.now() / 1000,
+          modificationDate: action.note?.creationDate ?? Date.now() / 1000,
+          isPinned: action.note?.systemTags?.includes('pinned') ?? false,
+          isTrashed: !!action.note?.deleted ?? false,
         });
         return next(withSearch(action));
 
@@ -190,6 +187,12 @@ export const middleware: S.Middleware = (store) => {
             action.changes.tags.map((tag) => tag.toLocaleLowerCase())
           );
         }
+        if ('undefined' !== typeof action.changes.creationDate) {
+          note.creationDate = action.changes.creationDate * 1000;
+        }
+        if ('undefined' !== typeof action.changes.modificationDate) {
+          note.modificationDate = action.changes.modificationDate * 1000;
+        }
         if ('undefined' !== typeof action.changes.deleted) {
           note.isTrashed = !!action.changes.deleted;
         }
@@ -199,23 +202,26 @@ export const middleware: S.Middleware = (store) => {
         return next(withSearch(action));
       }
 
-      case 'PIN_NOTE':
-        searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
-        return next(withSearch(action));
-
       case 'OPEN_TAG':
         searchState.openedTag = state.data.tags[0].get(action.tagId)!.name;
         return next(withSearch(action));
 
+      case 'PIN_NOTE':
+        searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
+        return next(withSearch(action));
+
       case 'SELECT_TRASH':
+        searchState.openedTag = null;
         searchState.showTrash = true;
         return next(withSearch(action));
 
       case 'SHOW_ALL_NOTES':
+        searchState.openedTag = null;
         searchState.showTrash = false;
         return next(withSearch(action));
 
       case 'SEARCH':
+        searchState.searchQuery = action.searchQuery;
         searchState.searchTerms = getTerms(action.searchQuery);
         searchState.searchTags = tagsFromSearch(action.searchQuery);
         return next(withSearch(action));
