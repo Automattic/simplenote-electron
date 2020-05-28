@@ -13,8 +13,8 @@ export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
 
-export const deleteNoteForever: A.ActionCreator<A.DeleteNoteForever> = () => ({
-  type: 'DELETE_NOTE_FOREVER',
+export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = () => ({
+  type: 'DELETE_OPEN_NOTE_FOREVER',
 });
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
@@ -54,8 +54,8 @@ export const openTag: A.ActionCreator<A.OpenTag> = (tagId: T.EntityId) => ({
   tagId,
 });
 
-export const restoreNote: A.ActionCreator<A.RestoreNote> = () => ({
-  type: 'RESTORE_NOTE',
+export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({
+  type: 'RESTORE_OPEN_NOTE',
 });
 
 export const selectRevision: A.ActionCreator<A.SelectRevision> = (

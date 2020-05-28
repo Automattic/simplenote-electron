@@ -34,6 +34,16 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         tags: [],
       });
 
+    case 'DELETE_NOTE_FOREVER': {
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      const next = new Map(state);
+      next.delete(action.noteId);
+      return next;
+    }
+
     case 'EDIT_NOTE':
       return state.has(action.noteId)
         ? new Map(state).set(action.noteId, {
@@ -81,7 +91,25 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return new Map(state).set(action.noteId, { ...note, systemTags });
     }
 
+    case 'RESTORE_NOTE':
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      return new Map(state).set(action.noteId, {
+        ...state.get(action.noteId)!,
+        deleted: false,
+      });
+
     case 'TRASH_NOTE':
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      return new Map(state).set(action.noteId, {
+        ...state.get(action.noteId)!,
+        deleted: true,
+      });
 
     default:
       return state;
