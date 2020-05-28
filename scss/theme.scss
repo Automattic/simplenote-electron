@@ -64,7 +64,10 @@
     }
   }
 
-  .icon-button,
+  .icon-button {
+    color: $studio-gray-30;
+  }
+
   a {
     color: $studio-simplenote-blue-30;
   }
@@ -112,12 +115,19 @@
     color: $studio-gray-5;
   }
 
-  .tab-panels__tab-list li {
-    color: $studio-gray-50;
+  .tab-panels__tab-list {
+    li {
+      color: $studio-gray-50;
 
-    &.is-active {
-      color: $studio-simplenote-blue-30;
-      border-bottom-color: $studio-simplenote-blue-30;
+      &.is-active {
+        color: $studio-simplenote-blue-30;
+        border-bottom-color: $studio-simplenote-blue-30;
+      }
+    }
+
+    li.button:active {
+      background-color: $studio-simplenote-blue-30;
+      color: $studio-white;
     }
   }
 
