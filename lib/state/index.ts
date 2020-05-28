@@ -22,7 +22,6 @@ import searchFieldMiddleware from './ui/search-field-middleware';
 import { reducer as browser, middleware as browserMiddleware } from './browser';
 import data from './data/reducer';
 import settings from './settings/reducer';
-import tags from './tags/reducer';
 import ui from './ui/reducer';
 
 import * as A from './action-types';
@@ -31,7 +30,6 @@ const reducers = combineReducers<State, A.ActionType>({
   browser,
   data,
   settings,
-  tags,
   ui,
 });
 
@@ -39,7 +37,6 @@ export type State = {
   browser: ReturnType<typeof browser>;
   data: ReturnType<typeof data>;
   settings: ReturnType<typeof settings>;
-  tags: ReturnType<typeof tags>;
   ui: ReturnType<typeof ui>;
 };
 

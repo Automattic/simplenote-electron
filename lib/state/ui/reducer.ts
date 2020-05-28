@@ -53,22 +53,6 @@ const filteredNotes: A.Reducer<T.EntityId[]> = (
   action
 ) => ('FILTER_NOTES' === action.type ? action.noteIds : state);
 
-const listTitle: A.Reducer<T.TranslatableString> = (
-  state = 'All Notes',
-  action
-) => {
-  switch (action.type) {
-    case 'SHOW_ALL_NOTES':
-      return 'All Notes';
-    case 'SELECT_TRASH':
-      return 'Trash';
-    case 'OPEN_TAG':
-      return action.tag.data.name;
-    default:
-      return state;
-  }
-};
-
 const noteRevisions: A.Reducer<T.NoteEntity[]> = (
   state = emptyList as T.NoteEntity[],
   action
@@ -98,13 +82,13 @@ const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
   }
 };
 
-const openedTag: A.Reducer<T.TagEntity | null> = (state = null, action) => {
+const openedTag: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
       return null;
     case 'OPEN_TAG':
-      return action.tag;
+      return action.tagId;
     default:
       return state;
   }
@@ -220,17 +204,16 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const tagSuggestions: A.Reducer<T.TagEntity[]> = (
-  state = emptyList as T.TagEntity[],
+const tagSuggestions: A.Reducer<T.EntityId[]> = (
+  state = emptyList as T.EntityId[],
   action
-) => ('FILTER_NOTES' === action.type ? action.tags : state);
+) => ('FILTER_NOTES' === action.type ? action.tagIds : state);
 
 export default combineReducers({
   dialogs,
   editMode,
   editingTags,
   filteredNotes,
-  listTitle,
   noteRevisions,
   openedNote,
   openedTag,

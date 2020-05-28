@@ -63,14 +63,14 @@ export class TagSuggestions extends Component<Props> {
   }
 }
 
-export const filterTags = (tags: T.TagEntity[], query: string) => {
+export const filterTags = (tags: Map<T.EntityId, T.Tag>, query: string) => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
   const tagTerm = query.trim().toLowerCase().split(' ').pop();
 
   if (!tagTerm) {
-    return tags;
+    return [...tags.keys()];
   }
 
   // with `tag:` we don't want to suggest tags which have already been added
@@ -79,12 +79,22 @@ export const filterTags = (tags: T.TagEntity[], query: string) => {
   const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
   const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
 
-  const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
-    ? ({ data: { name } }) =>
+  const matcher: (tag: T.Tag) => boolean = isPrefixMatch
+    ? ({ name }) =>
         name.toLowerCase() !== term && name.toLowerCase().startsWith(term)
-    : ({ data: { name } }) => name.toLowerCase().includes(term);
+    : ({ name }) => name.toLowerCase().includes(term);
 
-  return filterAtMost(tags, matcher, 5);
+  const filteredTags = [];
+  for (const [tagId, tag] of tags.entries()) {
+    if (matcher(tag)) {
+      filteredTags.push(tagId);
+    }
+
+    if (filteredTags.length >= 5) {
+      return filteredTags;
+    }
+  }
+  return filteredTags;
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
