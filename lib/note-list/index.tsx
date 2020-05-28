@@ -222,7 +222,8 @@ export class NoteList extends Component<Props> {
       prevProps.tagResultsFound !== this.props.tagResultsFound ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent ||
       prevProps.showNoteList !== this.props.showNoteList ||
-      prevProps.searchQuery !== this.props.searchQuery
+      prevProps.searchQuery !== this.props.searchQuery ||
+      prevProps.showTrash !== this.props.showTrash
     ) {
       heightCache.clearAll();
     }
@@ -244,6 +245,11 @@ export class NoteList extends Component<Props> {
       this.props.notes[this.state.selectedIndex]
     ) {
       this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
+    } else if (
+      this.props.selectedNote &&
+      this.props.selectedNote.data.deleted !== this.props.showTrash
+    ) {
+      this.props.onSelectNote(this.props.notes[0]);
     }
   }
 
