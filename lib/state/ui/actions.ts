@@ -44,7 +44,7 @@ export const publishNote: A.ActionCreator<A.SetSystemTag> = (
   shouldHaveTag: shoudlPublish,
 });
 
-export const openNote: A.ActionCreator<A.OpenNote> = (noteId: T.EntityId) => ({
+export const openNote: A.ActionCreator<A.OpenNote> = (noteId?: T.EntityId) => ({
   type: 'OPEN_NOTE',
   noteId,
 });
@@ -56,6 +56,14 @@ export const openTag: A.ActionCreator<A.OpenTag> = (tagId: T.EntityId) => ({
 
 export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({
   type: 'RESTORE_OPEN_NOTE',
+});
+
+export const selectNoteAbove: A.ActionCreator<A.SelectNoteAbove> = () => ({
+  type: 'SELECT_NOTE_ABOVE',
+});
+
+export const selectNoteBelow: A.ActionCreator<A.SelectNoteBelow> = () => ({
+  type: 'SELECT_NOTE_BELOW',
 });
 
 export const selectRevision: A.ActionCreator<A.SelectRevision> = (

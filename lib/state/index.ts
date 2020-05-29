@@ -17,6 +17,7 @@ import { omit } from 'lodash';
 
 import dataMiddleware from './data/middleware';
 import { middleware as searchMiddleware } from '../search';
+import uiMiddleware from './ui/middleware';
 import searchFieldMiddleware from './ui/search-field-middleware';
 
 import { reducer as browser, middleware as browserMiddleware } from './browser';
@@ -58,6 +59,7 @@ export const makeStore = (...middlewares: Middleware[]) =>
         browserMiddleware,
         searchMiddleware,
         searchFieldMiddleware,
+        uiMiddleware,
         ...middlewares
       )
     )

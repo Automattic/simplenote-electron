@@ -67,7 +67,7 @@ export type FilterNotes = Action<
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
-export type OpenNote = Action<'OPEN_NOTE', { noteId: T.EntityId }>;
+export type OpenNote = Action<'OPEN_NOTE', { noteId?: T.EntityId }>;
 export type OpenTag = Action<'OPEN_TAG', { tagId: T.EntityId }>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
@@ -76,10 +76,9 @@ export type RemoteNoteUpdate = Action<
 export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
 export type RestoreOpenNote = Action<'RESTORE_OPEN_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
-export type SelectNote = Action<
-  'SELECT_NOTE',
-  { note: T.NoteEntity; options?: { hasRemoteUpdate: boolean } }
->;
+export type SelectNote = Action<'SELECT_NOTE', { noteId: T.EntityId }>;
+export type SelectNoteAbove = Action<'SELECT_NOTE_ABOVE'>;
+export type SelectNoteBelow = Action<'SELECT_NOTE_BELOW'>;
 export type SelectRevision = Action<
   'SELECT_REVISION',
   { revision: T.NoteEntity }
@@ -181,6 +180,8 @@ export type ActionType =
   | RestoreNote
   | Search
   | SelectNote
+  | SelectNoteAbove
+  | SelectNoteBelow
   | SelectRevision
   | SelectTrash
   | SetAccountName
