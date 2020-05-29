@@ -64,10 +64,7 @@
     }
   }
 
-  .icon-button {
-    color: $studio-gray-30;
-  }
-
+  .icon-button,
   a {
     color: $studio-simplenote-blue-30;
   }
@@ -89,6 +86,15 @@
 
   .checkbox-control-base {
     border-color: $studio-gray-80;
+  }
+
+  .navigation-bar-item {
+    button {
+      color: $studio-white;
+    }
+    svg {
+      fill: $studio-white;
+    }
   }
 
   .navigation-bar-item.is-selected {
