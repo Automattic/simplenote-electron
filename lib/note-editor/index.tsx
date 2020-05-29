@@ -7,6 +7,7 @@ import * as selectors from '../state/selectors';
 
 import * as S from '../state';
 import * as T from '../types';
+import SimplenoteCompactLogo from '../icons/simplenote-compact';
 
 type StateProps = {
   allTags: Map<T.EntityId, T.Tag>;
@@ -108,6 +109,15 @@ export class NoteEditor extends Component<Props> {
 
   render() {
     const { editMode, note } = this.props;
+
+    if (!note) {
+      return (
+        <div className="note-detail-placeholder">
+          <SimplenoteCompactLogo />
+        </div>
+      );
+    }
+
     const isTrashed = !!note.deleted;
 
     return (

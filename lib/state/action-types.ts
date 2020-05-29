@@ -5,7 +5,8 @@ export type Action<
   Args extends { [extraProps: string]: unknown } = {}
 > = { type: T } & Args & {
     meta?: {
-      searchResults: {
+      nextNoteToOpen?: T.EntityId;
+      searchResults?: {
         noteIds: T.EntityId[];
         tagIds: T.EntityId[];
       };

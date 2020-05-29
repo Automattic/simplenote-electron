@@ -151,13 +151,37 @@ export const middleware: S.Middleware = (store) => {
     return { noteIds: [...sortedNoteIds], tagIds: tagSuggestions };
   };
 
-  const withSearch = (action: A.ActionType) => ({
+  const withSearch = <T extends A.ActionType>(action: T): T => ({
     ...action,
     meta: {
       ...action.meta,
       searchResults: setFilteredNotes(runSearch()),
     },
   });
+
+  const withNextNote = <T extends A.ActionType>(action: T): T => {
+    const {
+      ui: { filteredNotes, openedNote },
+    } = store.getState();
+
+    if (!openedNote) {
+      return action;
+    }
+
+    const noteAt = filteredNotes.findIndex((noteId) => noteId === openedNote);
+    const nextNoteToOpen =
+      noteAt === -1
+        ? filteredNotes[0] ?? null
+        : filteredNotes[noteAt + 1] ?? filteredNotes[noteAt - 1] ?? null;
+
+    return {
+      ...action,
+      meta: {
+        ...action.meta,
+        nextNoteToOpen,
+      },
+    };
+  };
 
   return (next) => (action: A.ActionType) => {
     const state = store.getState();
@@ -179,7 +203,7 @@ export const middleware: S.Middleware = (store) => {
 
       case 'DELETE_NOTE_FOREVER':
         searchState.notes.delete(action.noteId);
-        return next(withSearch(action));
+        return next(withNextNote(withSearch(action)));
 
       case 'EDIT_NOTE': {
         const note = searchState.notes.get(action.noteId)!;
@@ -219,7 +243,7 @@ export const middleware: S.Middleware = (store) => {
           return;
         }
         searchState.notes.get(action.noteId)!.isTrashed = false;
-        return next(withSearch(action));
+        return next(withNextNote(withSearch(action)));
 
       case 'SELECT_TRASH':
         searchState.openedTag = null;
@@ -254,7 +278,7 @@ export const middleware: S.Middleware = (store) => {
           return;
         }
         searchState.notes.get(action.noteId)!.isTrashed = true;
-        return next(withSearch(action));
+        return next(withNextNote(withSearch(action)));
     }
 
     return next(action);
