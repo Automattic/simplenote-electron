@@ -60,17 +60,41 @@ const renderNote = (
 
   if ('no-notes' === note) {
     return (
-      <div className="note-list is-empty" style={{ ...style, height: 200 }}>
-        <span className="note-list-placeholder">No Notes</span>
-      </div>
+      <CellMeasurer
+        cache={heightCache}
+        columnIndex={0}
+        key="no-notes"
+        parent={parent}
+        rowIndex={index}
+      >
+        <div className="note-list is-empty" style={{ ...style, height: 200 }}>
+          <span className="note-list-placeholder">No Notes</span>
+        </div>
+      </CellMeasurer>
     );
   }
 
   if ('tag-suggestions' === note || 'notes-header' === note) {
     return 'tag-suggestions' === note ? (
-      <TagSuggestions />
+      <CellMeasurer
+        cache={heightCache}
+        columnIndex={0}
+        key="tag-suggestions"
+        parent={parent}
+        rowIndex={index}
+      >
+        <TagSuggestions />
+      </CellMeasurer>
     ) : (
-      <div className="note-list-header">Notes</div>
+      <CellMeasurer
+        cache={heightCache}
+        columnIndex={-3}
+        key="notes-header"
+        parent={parent}
+        rowIndex={index}
+      >
+        <div className="note-list-header">Notes</div>
+      </CellMeasurer>
     );
   }
 
@@ -129,7 +153,8 @@ export class NoteList extends Component<Props> {
       fixedWidth: true,
       keyMapper: (rowIndex) => {
         const { filteredNotes, searchQuery, tagResultsFound } = this.props;
-        if (filteredNotes.length === 0 && rowIndex === 0) {
+
+        if (tagResultsFound === 0 && filteredNotes.length === 0) {
           return 'no-notes';
         }
 
@@ -155,6 +180,7 @@ export class NoteList extends Component<Props> {
   list = createRef<List>();
 
   static getDerivedStateFromProps = (props: Props, state) => {
+    state.heightCache.clear(0);
     if (props.noteDisplay !== state.lastNoteDisplay) {
       state.heightCache.clearAll();
 
