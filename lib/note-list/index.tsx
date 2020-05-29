@@ -181,6 +181,8 @@ export class NoteList extends Component<Props> {
 
   static getDerivedStateFromProps = (props: Props, state) => {
     state.heightCache.clear(0);
+    state.heightCache.clear(1);
+    state.heightCache.clear(2);
     if (props.noteDisplay !== state.lastNoteDisplay) {
       state.heightCache.clearAll();
 
