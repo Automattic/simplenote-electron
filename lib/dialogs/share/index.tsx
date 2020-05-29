@@ -6,12 +6,11 @@ import MD5 from 'md5.js';
 import analytics from '../../analytics';
 import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
-import { updateNoteTags } from '../../state/domain/notes';
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
 import ToggleControl from '../../controls/toggle';
-import { closeDialog, publishNote } from '../../state/ui/actions';
+import actions from '../../state/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
@@ -26,23 +25,15 @@ type StateProps = {
 
 type DispatchProps = {
   closeDialog: () => any;
-  publishNote: (
-    noteId: T.EntityId,
-    note: T.Note,
-    shouldPublish: boolean
-  ) => any;
-  updateNoteTags: (args: { noteId: T.EntityId; tags: T.TagName[] }) => any;
+  editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  publishNote: (noteId: T.EntityId, shouldPublish: boolean) => any;
 };
 
 type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
-  onTogglePublished = (event: React.MouseEvent<HTMLInputElement>) => {
-    this.props.publishNote(
-      this.props.noteId,
-      this.props.note,
-      event.currentTarget.checked
-    );
+  onTogglePublished = (shouldPublish: boolean) => {
+    this.props.publishNote(this.props.noteId, shouldPublish);
   };
 
   getPublishURL = (url) =>
@@ -59,21 +50,18 @@ export class ShareDialog extends Component<Props> {
     const isSelf = this.props.settings.accountName === collaborator;
 
     if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
-      this.props.updateNoteTags({
-        noteId,
-        tags: [...tags, collaborator],
-      });
+      this.props.editNote(noteId, { tags: [...tags, collaborator] });
       analytics.tracks.recordEvent('editor_note_collaborator_added');
     }
   };
 
   onRemoveCollaborator = (collaborator) => {
-    const { note } = this.props;
+    const { note, noteId } = this.props;
 
     let tags = note?.tags || [];
     tags = tags.filter((tag) => tag !== collaborator);
 
-    this.props.updateNoteTags({ noteId, tags });
+    this.props.editNote(noteId, { tags });
     analytics.tracks.recordEvent('editor_note_collaborator_removed');
   };
 
@@ -226,11 +214,10 @@ const mapStateToProps: S.MapState<StateProps> = ({
   note: data.notes.get(openedNote),
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  closeDialog: () => dispatch(closeDialog()),
-  publishNote: (note, shouldPublish) =>
-    dispatch(publishNote(note, shouldPublish)),
-  updateNoteTags: ({ note, tags }) => dispatch(updateNoteTags({ note, tags })),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  closeDialog: actions.ui.closeDialog,
+  editNote: actions.data.editNote,
+  publishNote: actions.data.publishNote,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareDialog);

@@ -91,6 +91,24 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return new Map(state).set(action.noteId, { ...note, systemTags });
     }
 
+    case 'PUBLISH_NOTE': {
+      if (!state.has(action.noteId)) {
+        return state;
+      }
+
+      const note = state.get(action.noteId)!;
+      const alreadyPinned = note.systemTags.includes('published');
+      if (alreadyPinned === action.shouldPublish) {
+        return state;
+      }
+
+      const systemTags = action.shouldPublish
+        ? [...note.systemTags, 'published' as T.SystemTag]
+        : note.systemTags.filter((tag) => tag !== 'published');
+
+      return new Map(state).set(action.noteId, { ...note, systemTags });
+    }
+
     case 'RESTORE_NOTE':
       if (!state.has(action.noteId)) {
         return state;

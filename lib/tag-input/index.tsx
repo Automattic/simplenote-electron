@@ -16,9 +16,6 @@ const KEY_ENTER = 13;
 const KEY_RIGHT = 39;
 const KEY_COMMA = 188;
 
-const startsWith = (prefix: string) => (text: string): boolean =>
-  text.trim().toLowerCase().startsWith(prefix.trim().toLowerCase());
-
 type OwnProps = {
   inputRef: (ref: RefObject<HTMLDivElement>) => any;
   onChange: (tagName: string, callback: () => any) => any;

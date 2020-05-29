@@ -149,6 +149,10 @@ export type PinNote = Action<
   'PIN_NOTE',
   { noteId: T.EntityId; shouldPin: boolean }
 >;
+export type PublishNote = Action<
+  'PUBLISH_NOTE',
+  { noteId: T.EntityId; shouldPublish: boolean }
+>;
 export type RestoreNote = Action<'RESTORE_NOTE', { noteId: T.EntityId }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
@@ -175,6 +179,7 @@ export type ActionType =
   | OpenNote
   | OpenTag
   | PinNote
+  | PublishNote
   | ResetFontSize
   | RestoreOpenNote
   | RestoreNote
