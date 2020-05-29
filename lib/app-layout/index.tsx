@@ -111,7 +111,7 @@ export class AppLayout extends Component<Props> {
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
               {false && <RevisionSelector />}
               <NoteToolbar />
-              {openedNote && <NoteEditor />}
+              <NoteEditor />
             </div>
           )}
         </Suspense>

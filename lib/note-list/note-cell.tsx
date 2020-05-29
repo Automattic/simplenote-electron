@@ -37,7 +37,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteCell extends Component<Props> {
   componentDidUpdate(prevProps) {
-    if (prevProps.note.content !== this.props.note.content) {
+    if (prevProps.note?.content !== this.props.note?.content) {
       this.props.invalidateHeight();
     }
   }
