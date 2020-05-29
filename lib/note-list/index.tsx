@@ -23,7 +23,8 @@ type StateProps = {
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
-  openedTag: T.TagEntity | null;
+  openedNote: T.EntityId | null;
+  openedTag: T.EntityId | null;
   searchQuery: string;
   showNoteList: boolean;
   showTrash: boolean;
@@ -32,7 +33,9 @@ type StateProps = {
 
 type DispatchProps = {
   onEmptyTrash: () => any;
-  openNote: (noteId: T.EntityId) => any;
+  openNote: () => any;
+  selectNoteAbove: () => any;
+  selectNoteBelow: () => any;
   toggleNoteList: () => any;
 };
 
@@ -174,7 +177,6 @@ export class NoteList extends Component<Props> {
       },
     }),
     lastNoteDisplay: null,
-    selectedIndex: null,
   };
 
   list = createRef<List>();
@@ -205,21 +207,11 @@ export class NoteList extends Component<Props> {
       return;
     }
     const { ctrlKey, code, metaKey, shiftKey } = event;
-    const { isSmallScreen, filteredNotes, showNoteList } = this.props;
-    const { selectedIndex } = this.state;
+    const { isSmallScreen, showNoteList } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
     if (cmdOrCtrl && shiftKey && code === 'KeyK') {
-      if (!filteredNotes.length) {
-        this.setState({ selectedIndex: null });
-      } else {
-        const nextIndex =
-          selectedIndex !== null ? Math.max(0, selectedIndex - 1) : 0;
-        const nextNote = filteredNotes[nextIndex];
-        this.setState({ selectedIndex: nextIndex }, () =>
-          this.props.openNote(nextNote)
-        );
-      }
+      this.props.selectNoteAbove();
 
       event.stopPropagation();
       event.preventDefault();
@@ -227,18 +219,7 @@ export class NoteList extends Component<Props> {
     }
 
     if (cmdOrCtrl && shiftKey && code === 'KeyJ') {
-      if (!filteredNotes.length) {
-        this.setState({ selectedIndex: null });
-      } else {
-        const nextIndex =
-          selectedIndex !== null
-            ? Math.min(filteredNotes.length - 1, selectedIndex + 1)
-            : 0;
-        const nextNote = filteredNotes[nextIndex];
-        this.setState({ selectedIndex: nextIndex }, () =>
-          this.props.openNote(nextNote)
-        );
-      }
+      this.props.selectNoteBelow();
 
       event.stopPropagation();
       event.preventDefault();
@@ -253,13 +234,8 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (
-      isSmallScreen &&
-      showNoteList &&
-      code === 'Enter' &&
-      selectedIndex !== null
-    ) {
-      this.props.openNote(filteredNotes[selectedIndex]);
+    if (isSmallScreen && showNoteList && code === 'Enter') {
+      this.props.openNote();
 
       event.stopPropagation();
       event.preventDefault();
@@ -283,11 +259,12 @@ export class NoteList extends Component<Props> {
       hasLoaded,
       noteDisplay,
       onEmptyTrash,
+      openedNote,
       searchQuery,
       showTrash,
       tagResultsFound,
     } = this.props;
-    const { heightCache, selectedIndex } = this.state;
+    const { heightCache } = this.state;
     console.log('render');
 
     const compositeNoteList = createCompositeNoteList(
@@ -296,9 +273,9 @@ export class NoteList extends Component<Props> {
       tagResultsFound
     );
 
-    const specialRows = compositeNoteList.length - filteredNotes.length;
-    const highlightedIndex =
-      selectedIndex !== null ? selectedIndex + specialRows : null;
+    const selectedIndex = compositeNoteList.findIndex(
+      (item) => item === openedNote
+    );
 
     const renderNoteRow = renderNote(compositeNoteList, { heightCache });
     const isEmptyList = compositeNoteList.length === 0;
@@ -335,7 +312,7 @@ export class NoteList extends Component<Props> {
                     rowCount={compositeNoteList.length}
                     rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
-                    scrollToIndex={highlightedIndex}
+                    scrollToIndex={selectedIndex}
                     width={width}
                   />
                 )}
@@ -356,6 +333,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
+    openedNote: state.ui.openedNote,
     openedTag: state.ui.openedTag,
     searchQuery: state.ui.searchQuery,
     showNoteList: state.ui.showNoteList,
@@ -364,12 +342,14 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   };
 };
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onEmptyTrash: () => {
     throw new Error('Empty trash!');
   },
-  openNote: (noteId) => dispatch(actions.ui.openNote(noteId)),
-  toggleNoteList: () => dispatch(actions.ui.toggleNoteList()),
-});
+  openNote: actions.ui.openNote,
+  selectNoteAbove: actions.ui.selectNoteAbove,
+  selectNoteBelow: actions.ui.selectNoteBelow,
+  toggleNoteList: actions.ui.toggleNoteList,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteList);

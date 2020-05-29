@@ -82,6 +82,9 @@ const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
       return null;
 
     case 'OPEN_NOTE':
+      return action?.noteId ?? state;
+
+    case 'SELECT_NOTE':
       return action.noteId;
 
     default:
