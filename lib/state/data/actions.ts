@@ -33,6 +33,15 @@ export const pinNote: A.ActionCreator<A.PinNote> = (
   shouldPin,
 });
 
+export const publishNote: A.ActionCreator<A.PublishNote> = (
+  noteId: T.EntityId,
+  shouldPublish: boolean
+) => ({
+  type: 'PUBLISH_NOTE',
+  noteId,
+  shouldPublish,
+});
+
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });

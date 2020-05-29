@@ -19,7 +19,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  toggleMarkdown: (noteId: T.EntityId, enableMarkdown: boolean) => any;
+  toggleMarkdown: (noteId: T.EntityId, shouldEnableMarkdown: boolean) => any;
   toggleNoteList: () => any;
   toggleEditMode: () => any;
 };
@@ -37,8 +37,7 @@ export class NoteEditor extends Component<Props> {
     this.toggleShortcuts(false);
   }
 
-  markdownEnabled = () =>
-    this.props.note?.systemTags.indexOf('markdown') !== -1;
+  markdownEnabled = () => this.props.note?.systemTags.includes('markdown');
 
   handleShortcut = (event: KeyboardEvent) => {
     if (!this.props.keyboardShortcuts) {
@@ -51,6 +50,7 @@ export class NoteEditor extends Component<Props> {
 
     // toggle Markdown enabled
     if (note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
+      console.log('toggling markdown');
       toggleMarkdown(noteId, !this.markdownEnabled());
       event.stopPropagation();
       event.preventDefault();
@@ -140,10 +140,10 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isSmallScreen: selectors.isSmallScreen(state),
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   toggleNoteList: actions.ui.toggleNoteList,
   toggleMarkdown: actions.data.markdownNote,
   toggleEditMode: actions.ui.toggleEditMode,
-});
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteEditor);
