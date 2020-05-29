@@ -30,9 +30,10 @@ type OwnState = {
 };
 
 type StateProps = {
-  allTags: T.TagEntity[];
+  allTags: Map<T.EntityId, T.Tag>;
   keyboardShortcuts: boolean;
-  note: T.NoteEntity | null;
+  noteId: T.EntityId;
+  note: T.Note;
 };
 
 type DispatchProps = {
@@ -246,7 +247,7 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex={-1}
             ref={this.storeHiddenTag}
           />
-          {note?.data.tags.filter(negate(isEmailTag)).map((tag) => (
+          {note?.tags.filter(negate(isEmailTag)).map((tag) => (
             <TagChip
               key={tag}
               tagName={tag}
@@ -261,11 +262,6 @@ export class TagField extends Component<Props, OwnState> {
             onSelect={this.addTag}
             storeFocusInput={this.storeFocusInput}
             storeHasFocus={this.storeHasFocus}
-            tagNames={differenceBy(
-              allTags.map((tag) => tag.data.name),
-              note?.data.tags,
-              (s) => s.toLocaleLowerCase()
-            )}
           />
           <Overlay
             container={this}
@@ -285,9 +281,10 @@ export class TagField extends Component<Props, OwnState> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  allTags: state.tags,
+  allTags: state.data.tags[0],
   keyboardShortcuts: state.settings.keyboardShortcuts,
-  note: state.ui.note,
+  noteId: state.ui.openedNote,
+  note: state.data.notes.get(state.ui.openedNote),
 });
 
 export default connect(mapStateToProps, {

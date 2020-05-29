@@ -5,8 +5,10 @@ import React, {
   KeyboardEvent,
   RefObject,
 } from 'react';
+import { connect } from 'react-redux';
 import { get, identity, invoke, noop } from 'lodash';
 
+import * as S from '../state';
 import * as T from '../types';
 
 const KEY_TAB = 9;
@@ -23,11 +25,15 @@ type OwnProps = {
   onSelect: (tagName: string) => any;
   storeFocusInput: (focusSetter: () => any) => any;
   storeHasFocus: (focusGetter: () => boolean) => any;
-  tagNames: T.TagName[];
   value: string;
 };
 
-type Props = OwnProps;
+type StateProps = {
+  note: T.Note;
+  tags: Map<T.EntityId, T.Tag>;
+};
+
+type Props = OwnProps & StateProps;
 
 export class TagInput extends Component<Props> {
   inputField?: RefObject<HTMLDivElement> | null;
@@ -73,13 +79,21 @@ export class TagInput extends Component<Props> {
   }
 
   completeSuggestion = (andThen: (...args: any[]) => any = identity) => {
-    const { onChange, tagNames, value } = this.props;
+    const { onChange, note, tags, value } = this.props;
 
     if (!value.length) {
       return;
     }
 
-    const suggestion = tagNames.find(startsWith(value));
+    let suggestion: string | null = null;
+    for (const tag of tags.values()) {
+      if (note.tags.includes(tag.name) || !tag.name.startsWith(value)) {
+        continue;
+      }
+
+      suggestion = tag.name;
+      break;
+    }
 
     if (suggestion) {
       onChange(suggestion, () => {
@@ -206,9 +220,20 @@ export class TagInput extends Component<Props> {
   };
 
   render() {
-    const { value, tagNames } = this.props;
+    const { note, tags, value } = this.props;
 
-    const suggestion = value.length && tagNames.find(startsWith(value));
+    let suggestion: string | null = null;
+    if (value.length > 0) {
+      for (const tag of tags.values()) {
+        if (note.tags.includes(tag.name) || !tag.name.startsWith(value)) {
+          continue;
+        }
+
+        suggestion = tag.name;
+        break;
+      }
+    }
+
     const shouldShowPlaceholder = value === '' && !this.state.isComposing;
 
     return (
@@ -239,4 +264,9 @@ export class TagInput extends Component<Props> {
   }
 }
 
-export default TagInput;
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  note: state.data.notes.get(state.ui.openedNote),
+  tags: state.data.tags[0],
+});
+
+export default connect(mapStateToProps)(TagInput);
