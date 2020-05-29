@@ -3,29 +3,28 @@ import { connect } from 'react-redux';
 import TagField from '../tag-field';
 import NoteDetail from '../note-detail';
 import actions from '../state/actions';
+import * as selectors from '../state/selectors';
 
 import * as S from '../state';
 import * as T from '../types';
 
-type OwnProps = {
-  isSmallScreen: boolean;
-};
-
 type StateProps = {
-  allTags: T.TagEntity[];
+  allTags: Map<T.EntityId, T.Tag>;
   editMode: boolean;
   isEditorActive: boolean;
+  isSmallScreen: boolean;
   keyboardShortcuts: boolean;
-  note: T.NoteEntity | null;
+  noteId: T.EntityId;
+  note: T.Note;
 };
 
 type DispatchProps = {
-  toggleMarkdown: (note: T.NoteEntity, enableMarkdown: boolean) => any;
+  toggleMarkdown: (noteId: T.EntityId, enableMarkdown: boolean) => any;
   toggleNoteList: () => any;
   toggleEditMode: () => any;
 };
 
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = DispatchProps & StateProps;
 
 export class NoteEditor extends Component<Props> {
   static displayName = 'NoteEditor';
@@ -39,20 +38,20 @@ export class NoteEditor extends Component<Props> {
   }
 
   markdownEnabled = () =>
-    this.props.note?.data.systemTags.indexOf('markdown') !== -1;
+    this.props.note?.systemTags.indexOf('markdown') !== -1;
 
   handleShortcut = (event: KeyboardEvent) => {
     if (!this.props.keyboardShortcuts) {
       return;
     }
     const { code, ctrlKey, metaKey, shiftKey } = event;
-    const { note, toggleMarkdown } = this.props;
+    const { note, noteId, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle Markdown enabled
     if (note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
-      toggleMarkdown(note, !this.markdownEnabled());
+      toggleMarkdown(noteId, !this.markdownEnabled());
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -109,7 +108,7 @@ export class NoteEditor extends Component<Props> {
 
   render() {
     const { editMode, note } = this.props;
-    const isTrashed = !!(note && note.data.deleted);
+    const isTrashed = !!note.deleted;
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
@@ -130,13 +129,15 @@ export class NoteEditor extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({ settings, tags, ui }) => ({
-  allTags: tags,
-  editMode: ui.editMode,
-  keyboardShortcuts: settings.keyboardShortcuts,
-  isEditorActive: !ui.showNavigation,
-  note: ui.note,
-  revision: ui.selectedRevision,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  allTags: state.data.tags[0],
+  editMode: state.ui.editMode,
+  keyboardShortcuts: state.settings.keyboardShortcuts,
+  isEditorActive: !state.ui.showNavigation,
+  noteId: state.ui.openedNote,
+  note: state.data.notes.get(state.ui.openedNote),
+  revision: state.ui.selectedRevision,
+  isSmallScreen: selectors.isSmallScreen(state),
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

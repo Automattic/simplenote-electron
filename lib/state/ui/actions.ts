@@ -108,21 +108,14 @@ export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({
   type: 'REVISIONS_TOGGLE',
 });
 
-export const toggleSimperiumConnectionStatus: A.ActionCreator<A.ToggleSimperiumConnectionStatus> = (
-  simperiumConnected: boolean
-) => ({
-  type: 'SIMPERIUM_CONNECTION_STATUS_TOGGLE',
-  simperiumConnected,
-});
-
 export const search: A.ActionCreator<A.Search> = (searchQuery: string) => ({
   type: 'SEARCH',
   searchQuery,
 });
 
 export const selectNote: A.ActionCreator<A.SelectNote> = (
-  note: T.NoteEntity
-) => ({ type: 'SELECT_NOTE', note });
+  noteId: T.EntityId
+) => ({ type: 'SELECT_NOTE', noteId });
 
 export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
   type: 'TOGGLE_EDIT_MODE',

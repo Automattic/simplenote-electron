@@ -11,6 +11,7 @@ import actions from '../state/actions';
 import * as selectors from '../state/selectors';
 
 import * as S from '../state';
+import * as T from '../types';
 
 const NoteList = React.lazy(() =>
   import(/* webpackChunkName: 'note-list' */ '../note-list')
@@ -28,6 +29,7 @@ type StateProps = {
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   keyboardShortcutsAreOpen: boolean;
+  openedNote: T.EntityId | null;
   showNoteList: boolean;
 };
 
@@ -78,6 +80,7 @@ export class AppLayout extends Component<Props> {
       isNoteInfoOpen,
       isNoteOpen,
       isSmallScreen,
+      openedNote,
     } = this.props;
 
     const mainClasses = classNames('app-layout', {
@@ -108,7 +111,7 @@ export class AppLayout extends Component<Props> {
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
               {false && <RevisionSelector />}
               <NoteToolbar />
-              <NoteEditor />
+              {openedNote && <NoteEditor />}
             </div>
           )}
         </Suspense>
@@ -125,6 +128,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isNoteInfoOpen: state.ui.showNoteInfo,
   isNoteOpen: !state.ui.showNoteList,
   isSmallScreen: selectors.isSmallScreen(state),
+  openedNote: state.ui.openedNote,
   showNoteList: state.ui.showNoteList,
 });
 
