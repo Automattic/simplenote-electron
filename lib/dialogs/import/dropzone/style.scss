@@ -6,8 +6,8 @@
   padding: 24px;
   border-width: 2px;
   border-style: dashed;
-  background: $studio-blue-5;
-  transition: padding .2s ease-out, background .2s ease-out;
+  background: $studio-simplenote-blue-5;
+  transition: padding 0.2s ease-out, background 0.2s ease-out;
 
   &:focus-within {
     overflow: hidden;
@@ -19,7 +19,7 @@
   }
 
   &.is-active {
-    opacity: .75;
+    opacity: 0.75;
   }
 
   &.is-accepted {

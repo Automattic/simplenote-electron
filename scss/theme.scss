@@ -54,12 +54,19 @@
   }
 
   .button-borderless {
+    color: $studio-simplenote-blue-30;
+
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
         fill: $studio-gray-60;
       }
     }
+  }
+
+  .icon-button,
+  a {
+    color: $studio-simplenote-blue-30;
   }
 
   input {
@@ -81,6 +88,27 @@
     border-color: $studio-gray-80;
   }
 
+  .navigation-bar-item {
+    button {
+      color: $studio-white;
+    }
+    svg {
+      fill: $studio-white;
+    }
+  }
+
+  .navigation-bar-item.is-selected {
+    button {
+      color: $studio-simplenote-blue-30;
+    }
+    svg {
+      fill: $studio-simplenote-blue-30;
+    }
+  }
+  .tag-list .tag-list-input.is-selected {
+    color: $studio-simplenote-blue-30;
+  }
+
   .tag-field input {
     background: transparent;
 
@@ -93,11 +121,19 @@
     color: $studio-gray-5;
   }
 
-  .tab-panels__tab-list li {
-    color: $studio-gray-50;
+  .tab-panels__tab-list {
+    li {
+      color: $studio-gray-50;
 
-    &.is-active {
-      color: $studio-blue-30;
+      &.is-active {
+        color: $studio-simplenote-blue-30;
+        border-bottom-color: $studio-simplenote-blue-30;
+      }
+    }
+
+    li.button:active {
+      background-color: $studio-simplenote-blue-30;
+      color: $studio-white;
     }
   }
 
