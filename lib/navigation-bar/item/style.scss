@@ -6,8 +6,18 @@
   white-space: nowrap;
   text-align: left;
 
+  button:active {
+    color: $studio-white;
+  }
+
   &.is-selected {
     .button {
+      &:active {
+        color: $studio-white;
+        svg[class^='icon-'] {
+          fill: $studio-white;
+        }
+      }
       color: $studio-simplenote-blue-50;
     }
 

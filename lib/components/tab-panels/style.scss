@@ -20,6 +20,9 @@
       color: $studio-simplenote-blue-50;
       border-bottom-color: $studio-simplenote-blue-50;
     }
+    &:active {
+      color: $studio-white;
+    }
   }
 }
 
