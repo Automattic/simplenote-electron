@@ -2,6 +2,16 @@
   z-index: 1000;
 }
 
+.login.is-electron {
+  input.validate:invalid {
+    box-shadow: 0 0 1.5px 1px red;
+  }
+
+  input.validate:invalid:focus {
+    outline-color: red;
+  }
+}
+
 .login {
   display: flex;
   flex: 1 1 auto;
