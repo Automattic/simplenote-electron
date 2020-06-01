@@ -265,7 +265,6 @@ export class NoteList extends Component<Props> {
       tagResultsFound,
     } = this.props;
     const { heightCache } = this.state;
-    console.log('render');
 
     const compositeNoteList = createCompositeNoteList(
       filteredNotes,

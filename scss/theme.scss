@@ -1,3 +1,25 @@
+@font-face {
+  font-family: 'SimplenoteTodo';
+  src: url('https://dmsnell.wpsandbox.me/font.php');
+  unicode-range: U+E000-E001;
+}
+
+.note-content-editor-shell {
+  height: 100%;
+  width: 100%;
+
+  font-family: 'SimplenoteTodo';
+
+  .note-title {
+    font-size: 20px;
+  }
+
+  .slider {
+    border-radius: 10px;
+    border: 3px solid gray;
+  }
+}
+
 .theme-light {
   background-color: $studio-white;
   color: $studio-gray-60;
@@ -19,6 +41,13 @@
   }
   .search-field {
     border-color: $studio-gray-10;
+  }
+
+  .monaco-editor-background,
+  .monaco-editor .margin,
+  .monaco-editor .scroll-decoration {
+    background-color: $studio-white;
+    box-shadow: none;
   }
 }
 
@@ -193,5 +222,12 @@
         background-color: $studio-gray-80;
       }
     }
+  }
+
+  .monaco-editor-background,
+  .monaco-editor .margin,
+  .monaco-editor .scroll-decoration {
+    background-color: $studio-gray-90;
+    box-shadow: none;
   }
 }

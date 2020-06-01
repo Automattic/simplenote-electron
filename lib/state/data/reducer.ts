@@ -44,16 +44,27 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return next;
     }
 
-    case 'EDIT_NOTE':
-      return state.has(action.noteId)
-        ? new Map(state).set(action.noteId, {
-            ...state.get(action.noteId)!,
-            ...action.changes,
-          })
-        : state;
+    case 'EDIT_NOTE': {
+      if (!state.has(action.noteId)) {
+        return state;
+      }
 
-    case 'IMPORT_NOTE_WITH_ID':
-      return new Map(state).set(action.noteId, action.note);
+      const next = { ...state.get(action.noteId)!, ...action.changes };
+      next.content = next.content
+        .replace(/^(\s*)- \[ \](\s)/gm, '$1\ue000$2')
+        .replace(/^(\s*)- \[x\](\s)/gim, '$1\ue001$2');
+
+      return new Map(state).set(action.noteId, next);
+    }
+
+    case 'IMPORT_NOTE_WITH_ID': {
+      const note = { ...action.note };
+      note.content = note.content
+        .replace(/^(\s*)- \[ \](\s)/gm, '$1\ue000$2')
+        .replace(/^(\s*)- \[x\](\s)/gim, '$1\ue001$2');
+
+      return new Map(state).set(action.noteId, note);
+    }
 
     case 'MARKDOWN_NOTE': {
       if (!state.has(action.noteId)) {
