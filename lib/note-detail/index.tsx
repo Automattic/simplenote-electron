@@ -40,8 +40,6 @@ export class NoteDetail extends Component<Props> {
 
   render() {
     const { fontSize, openedNote } = this.props;
-    const divStyle = { fontSize: `${fontSize}px` };
-
     return (
       <div className="note-detail-wrapper">
         {!openedNote ? (
@@ -52,7 +50,7 @@ export class NoteDetail extends Component<Props> {
           <div ref={this.noteDetail} className="note-detail">
             <div
               className="note-detail-textarea theme-color-bg theme-color-fg"
-              style={divStyle}
+              style={{ fontSize: `${fontSize}px`, overflowY: 'hidden' }}
             >
               <NoteContentEditor
                 storeFocusEditor={this.storeFocusContentEditor}
