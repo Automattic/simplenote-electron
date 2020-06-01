@@ -28,7 +28,7 @@ module.exports = function main() {
   const url =
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
-      : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
+      : 'https://app.simplenote.com';
 
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is GCed.
@@ -69,12 +69,7 @@ module.exports = function main() {
       },
     });
 
-    // and load the index of the app.
-    if (typeof mainWindow.loadURL === 'function') {
-      mainWindow.loadURL('https://app.simplenote.com');
-    } else {
-      mainWindow.loadUrl('https://app.simplenote.com');
-    }
+    mainWindow.loadURL(url);
 
     if (
       'test' !== process.env.NODE_ENV &&

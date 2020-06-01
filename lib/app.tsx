@@ -33,8 +33,6 @@ import actions from './state/actions';
 import * as S from './state';
 import * as T from './types';
 
-const ipc = getIpcRenderer();
-
 export type OwnProps = {
   noteBucket: object;
 };
@@ -134,9 +132,12 @@ export const App = connect(
     }
 
     componentDidMount() {
-      ipc.on('appCommand', this.onAppCommand);
-      ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
-      ipc.send('settingsUpdate', this.props.settings);
+      window.electron.receive('appCommand', this.onAppCommand);
+      window.electron.send(
+        'setAutoHideMenuBar',
+        this.props.settings.autoHideMenuBar
+      );
+      window.electron.send('settingsUpdate', this.props.settings);
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
@@ -177,15 +178,13 @@ export const App = connect(
 
     componentWillUnmount() {
       this.toggleShortcuts(false);
-
-      ipc.removeListener('appCommand', this.onAppCommand);
     }
 
     componentDidUpdate(prevProps) {
       const { settings } = this.props;
 
       if (settings !== prevProps.settings) {
-        ipc.send('settingsUpdate', settings);
+        window.electron.send('settingsUpdate', settings);
       }
     }
 

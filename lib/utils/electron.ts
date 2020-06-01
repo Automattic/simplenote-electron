@@ -5,7 +5,7 @@ import { noop } from 'lodash';
  */
 export function getIpcRenderer() {
   try {
-    return __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
+    return window.ipc; // eslint-disable-line no-undef
   } catch (e) {
     return {
       on: noop,

@@ -65,8 +65,6 @@ class NoteContentEditor extends Component<Props> {
     storeHasFocus: noop,
   };
 
-  ipc = getIpcRenderer();
-
   replaceRangeWithText = (rangeToReplace, newText) => {
     const { editorState } = this.state;
     const newContentState = Modifier.replaceText(
@@ -119,7 +117,7 @@ class NoteContentEditor extends Component<Props> {
     this.editor.blur();
 
     if (isElectron()) {
-      this.ipc.on('appCommand', this.onAppCommand);
+      window.electron.receive('appCommand', this.onAppCommand);
     }
 
     window.addEventListener('keydown', this.handleKeydown, false);
@@ -249,10 +247,6 @@ class NoteContentEditor extends Component<Props> {
   };
 
   componentWillUnmount() {
-    if (isElectron()) {
-      this.ipc.removeListener('appCommand', this.onAppCommand);
-    }
-
     window.removeEventListener('keydown', this.handleKeydown, false);
   }
 
