@@ -63,6 +63,18 @@ class NoteContentEditor extends Component<Props> {
       );
     });
 
+    document.oncopy = (event) => {
+      // @TODO: This is selecting everything in the app but we should only
+      //        need to intercept copy events coming from the editor
+      event.clipboardData.setData(
+        'text/plain',
+        event.clipboardData
+          .getData('text/plain')
+          .replace(/\ue000/g, '- [ ]')
+          .replace(/\ue001/g, '- [x]')
+      );
+    };
+
     if (lastCursorPosition.has(this.props.noteId)) {
       editor.setPosition(lastCursorPosition.get(this.props.noteId)!);
       editor.revealLine(
@@ -142,7 +154,6 @@ class NoteContentEditor extends Component<Props> {
             renderIndentGuides: false,
             renderLineHighlight: 'none',
             scrollbar: { horizontal: 'hidden' },
-            scrollBeyondLastLine: false,
             selectionHighlight: false,
             wordWrap: 'on',
             wrappingStrategy: 'advanced',
