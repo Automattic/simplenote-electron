@@ -1,5 +1,3 @@
-import { getIpcRenderer } from '../../utils/electron';
-
 import * as A from '../action-types';
 import { WindowScroller } from 'react-virtualized';
 

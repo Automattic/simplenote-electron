@@ -11,7 +11,6 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
-import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
 import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
@@ -124,10 +123,6 @@ export const App = connect(
     };
 
     UNSAFE_componentWillMount() {
-      if (isElectron) {
-        this.initializeElectron();
-      }
-
       this.onAuthChanged();
     }
 
@@ -255,6 +250,7 @@ export const App = connect(
     };
 
     onAppCommand = (event, command) => {
+      debugger;
       if ('exportZipArchive' === get(command, 'action')) {
         exportZipArchive();
       }
@@ -367,17 +363,6 @@ export const App = connect(
         systemTheme,
       } = this.props;
       return 'system' === theme ? systemTheme : theme;
-    };
-
-    initializeElectron = () => {
-      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
-
-      this.setState({
-        electron: {
-          currentWindow: remote.getCurrentWindow(),
-          Menu: remote.Menu,
-        },
-      });
     };
 
     onUpdateContent = (note, content, sync = false) => {
