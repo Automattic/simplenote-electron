@@ -5,8 +5,11 @@
 
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
-    background: $studio-blue-50 !important;
+    background: $studio-simplenote-blue-50 !important;
     color: $studio-white !important;
+    a {
+      color: $studio-white;
+    }
   }
 
   .dialog-content {

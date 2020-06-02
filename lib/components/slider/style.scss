@@ -23,7 +23,7 @@
   }
   &::-ms-track {
     height: 2px;
-    border-color: $studio-blue-50;
+    border-color: $studio-simplenote-blue-50;
     border-width: 7px 0;
     color: transparent;
   }
@@ -39,7 +39,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 2px solid $studio-blue-50;
+    border: 2px solid $studio-simplenote-blue-50;
     appearance: none;
     background: $studio-white;
     transition: 0.15s ease-in-out;
@@ -50,7 +50,7 @@
   }
   &::-moz-range-thumb {
     border-radius: 50%;
-    border: 2px solid $studio-blue-50;
+    border: 2px solid $studio-simplenote-blue-50;
     appearance: none;
     background: $studio-white;
     transition: 0.15s ease-in-out;
@@ -63,7 +63,7 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 2px solid $studio-blue-50;
+    border: 2px solid $studio-simplenote-blue-50;
     appearance: none;
     background: $studio-white;
     transition: 0.15s ease-in-out;
@@ -77,4 +77,3 @@
     display: none;
   }
 }
-

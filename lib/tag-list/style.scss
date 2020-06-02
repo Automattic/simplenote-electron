@@ -22,6 +22,9 @@
       .touch-enabled & {
         opacity: 1;
       }
+      &:active {
+        color: $studio-white;
+      }
     }
   }
 
@@ -52,7 +55,7 @@
     appearance: none;
 
     &.is-selected {
-      color: $studio-blue-50;
+      color: $studio-simplenote-blue-50;
     }
 
     &:focus {

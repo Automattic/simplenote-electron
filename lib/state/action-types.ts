@@ -160,14 +160,6 @@ type LegacyAction =
       }
     >
   | Action<
-      'App.loadAndSelectNote',
-      {
-        noteBucket: T.Bucket<T.Note>;
-        noteId: T.EntityId;
-        hasRemoteUpdate: boolean;
-      }
-    >
-  | Action<
       'App.loadPreferences',
       { callback?: Function; preferencesBucket: T.Bucket<T.Preferences> }
     >

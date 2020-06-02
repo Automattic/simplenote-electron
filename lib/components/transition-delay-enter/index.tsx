@@ -28,7 +28,7 @@ const TransitionDelayEnter: FunctionComponent<OwnProps> = ({
       setShouldRender(true);
     }, delay);
 
-    return () => window.clearTimeout(timer);
+    return (): void => window.clearTimeout(timer);
   }, []);
 
   return (

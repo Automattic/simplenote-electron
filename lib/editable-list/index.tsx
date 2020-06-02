@@ -41,14 +41,14 @@ export class EditableList extends Component<Props> {
     reorderingId: null,
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setState({
       items: this.props.items,
       reorderedItems: this.props.items ? this.props.items.slice() : [],
     });
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     if (nextProps.items !== this.state.items) {
       this.stopReordering();
 

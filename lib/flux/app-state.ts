@@ -119,16 +119,6 @@ export const actionMap = new ActionMap({
       });
     },
 
-    loadAndSelectNote: {
-      creator({ noteBucket, noteId, hasRemoteUpdate = false }) {
-        return (dispatch) => {
-          noteBucket.get(noteId, (e, note) => {
-            dispatch(actions.ui.selectNote(note, { hasRemoteUpdate }));
-          });
-        };
-      },
-    },
-
     /**
      * A note is being changed from somewhere else! If the same
      * note is also open and being edited, we need to make sure
