@@ -3,11 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 
 import PublishIcon from '../icons/feed';
-import {
-  checkboxDecorator,
-  decorateWith,
-  makeFilterDecorator,
-} from './decorators';
+import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
 import actions from '../state/actions';
@@ -67,8 +63,7 @@ export class NoteCell extends Component<Props> {
       'published-note': isPublished,
     });
 
-    const terms = getTerms(searchQuery).map(makeFilterDecorator);
-    const decorators = [checkboxDecorator, ...terms];
+    const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
     return (
       <div style={style} className={classes}>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TagField from '../tag-field';
 import NoteDetail from '../note-detail';
+import NotePreview from '../components/note-preview';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
 
@@ -108,7 +109,7 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note } = this.props;
+    const { editMode, note, noteId } = this.props;
 
     if (!note) {
       return (
@@ -122,11 +123,13 @@ export class NoteEditor extends Component<Props> {
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
-        {editMode && (
+        {editMode ? (
           <NoteDetail
             storeFocusEditor={this.storeFocusEditor}
             storeHasFocus={this.storeEditorHasFocus}
           />
+        ) : (
+          <NotePreview noteId={noteId} />
         )}
         {note && !isTrashed && (
           <TagField
