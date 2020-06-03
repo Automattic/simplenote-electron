@@ -51,7 +51,7 @@ PUBLISH ?= onTag
 
 # Main targets
 .PHONY: start
-start: rebuild-deps
+start:
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
 
 .PHONY: dev
@@ -158,10 +158,6 @@ endif
 # Utils
 .PHONY: config-release
 config-release: config.json install
-
-.PHONY: rebuild-deps
-rebuild-deps:
-	@npx electron-rebuild -v $(ELECTRON_VERSION)
 
 .PHONY: format
 format:

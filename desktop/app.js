@@ -17,6 +17,7 @@ const createMenuTemplate = require('./menus');
 const platform = require('./detect/platform');
 const updater = require('./updater');
 const { isDev } = require('./env');
+const spellcheck = require('./spellchecker');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
@@ -74,6 +75,8 @@ module.exports = function main() {
     } else {
       mainWindow.loadUrl(url);
     }
+
+    spellcheck(mainWindow);
 
     if (
       'test' !== process.env.NODE_ENV &&
