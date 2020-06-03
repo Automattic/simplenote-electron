@@ -9,12 +9,18 @@ export const middleware: S.Middleware = (store) => (
   const state = store.getState();
 
   switch (action.type) {
-    case 'CREATE_NOTE':
+    case 'CREATE_NOTE': {
+      const noteId = uuid();
+
       return next({
         type: 'CREATE_NOTE_WITH_ID',
-        noteId: uuid(),
+        noteId,
         note: action.note,
+        meta: {
+          nextNoteToOpen: noteId,
+        },
       });
+    }
 
     case 'DELETE_OPEN_NOTE_FOREVER':
       if (!state.ui.openedNote) {
