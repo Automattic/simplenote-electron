@@ -15,9 +15,7 @@ export const start = (client: Client, { dispatch, getState }: S.Store) => {
   setInterval(() => {
     const timeSinceLastMessage = Date.now() - lastMessageAt;
     const currentStatus = getState().simperium.connectionStatus;
-    if (timeSinceLastMessage > 5000 && currentStatus === 'green') {
-      dispatch({ type: 'CHANGE_CONNECTION_STATUS', status: 'yellow' });
-    } else if (timeSinceLastMessage > 10000 && currentStatus !== 'red') {
+    if (timeSinceLastMessage > 8000 && currentStatus === 'green') {
       dispatch({ type: 'CHANGE_CONNECTION_STATUS', status: 'red' });
     }
   }, 1000);
@@ -33,6 +31,9 @@ export const start = (client: Client, { dispatch, getState }: S.Store) => {
   });
 
   client.on('disconnect', () => {
-    dispatch({ type: 'CHANGE_CONNECTION_STATUS', status: 'red' });
+    dispatch({
+      type: 'CHANGE_CONNECTION_STATUS',
+      status: navigator.onLine ? 'red' : 'offline',
+    });
   });
 };

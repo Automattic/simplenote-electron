@@ -61,7 +61,7 @@ export type Bucket<T = unknown> = {
 ///////////////////////////////////////
 // Simperium Types
 ///////////////////////////////////////
-export type ConnectionState = 'green' | 'yellow' | 'red' | 'offline';
+export type ConnectionState = 'green' | 'red' | 'offline';
 
 ///////////////////////////////////////
 // Application Types

@@ -4,6 +4,7 @@ import onClickOutside from 'react-onclickoutside';
 
 import analytics from '../analytics';
 import { isElectron } from '../utils/platform';
+import ConnectionStatus from '../connection-status';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
@@ -85,6 +86,11 @@ export class NavigationBar extends Component<Props> {
         </div>
         <div className="navigation-bar__tags theme-color-border">
           <TagList />
+        </div>
+        <div className="navigation-bar__tools theme-color-border">
+          <div className="navigation-bar__footer">
+            <ConnectionStatus />
+          </div>
         </div>
 
         {(!isElectron || autoHideMenuBar) && (
