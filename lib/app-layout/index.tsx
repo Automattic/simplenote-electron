@@ -2,6 +2,7 @@ import React, { Component, Suspense } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
+import ConnectionStatus from '../connection-status';
 import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchBar from '../search-bar';
@@ -106,6 +107,7 @@ export class AppLayout extends Component<Props> {
           <div className="app-layout__source-column theme-color-bg theme-color-fg">
             <SearchBar />
             <NoteList />
+            <ConnectionStatus />
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">

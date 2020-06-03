@@ -14,6 +14,7 @@ import { makeStore } from './state';
 import actions from './state/actions';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { initSimperium } from './state/simperium/middleware';
 
 import '../scss/style.scss';
 
@@ -29,7 +30,9 @@ export const bootWithToken = (
 ) => {
   Modal.setAppElement('#root');
 
-  const store = makeStore();
+  const store = makeStore(
+    initSimperium(logout, token, username, createWelcomeNote)
+  );
   store.dispatch(actions.settings.setAccountName(username));
 
   Object.defineProperties(window, {

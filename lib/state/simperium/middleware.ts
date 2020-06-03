@@ -1,9 +1,8 @@
-import type { Client } from 'simperium';
+import { default as createClient } from 'simperium';
 
 import debugFactory from 'debug';
 import actions from '../actions';
-
-import { toggleSystemTag } from '../domain/notes';
+import { start as startConnectionMonitor } from './connection-monitor';
 
 import * as A from '../action-types';
 import * as S from '../';
@@ -15,9 +14,12 @@ export const initSimperium = (
   logout: () => any,
   token: string,
   username: string | null,
-  createWelcomeNote: boolean,
-  client: Client<'note' | 'preferences' | 'tag'>
+  createWelcomeNote: boolean
 ): S.Middleware => (store) => {
+  const client = createClient('chalk-bump-f49', token);
+
+  startConnectionMonitor(client, store);
+
   client.on('message', (message: string) => {
     if (!message.startsWith('0:auth:')) {
       return;
@@ -62,32 +64,6 @@ export const initSimperium = (
     });
   }
 
-  const fetchRevisions = (store: S.Store, state: S.State) => {
-    if (!state.ui.showRevisions || !state.ui.note) {
-      return;
-    }
-
-    const note = state.ui.note;
-
-    noteBucket.getRevisions(
-      note.id,
-      (error: unknown, revisions: T.NoteEntity[]) => {
-        if (error) {
-          return debug(
-            `Failed to load revisions for note ${note.id}: ${error}`
-          );
-        }
-
-        const thisState = store.getState();
-        if (!(thisState.ui.note && note.id === thisState.ui.note.id)) {
-          return;
-        }
-
-        store.dispatch(actions.ui.storeRevisions(note.id, revisions));
-      }
-    );
-  };
-
   return (next) => (action: A.ActionType) => {
     const result = next(action);
     const nextState = store.getState();
@@ -97,18 +73,6 @@ export const initSimperium = (
         throw new Error('logged out!');
         // client.reset().then(() => logout());
         return result;
-
-      case 'SET_SYSTEM_TAG':
-        noteBucket.update(
-          action.note.id,
-          toggleSystemTag(action.note, action.tagName, action.shouldHaveTag)
-            .data
-        );
-        break;
-
-      case 'REVISIONS_TOGGLE':
-        fetchRevisions(store, nextState);
-        break;
     }
 
     return result;

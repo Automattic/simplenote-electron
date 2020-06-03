@@ -159,7 +159,16 @@ export type SetSystemTag = Action<
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
 >;
 
+/*
+ * Simperium operations
+ */
+export type ChangeConnectionStatus = Action<
+  'CHANGE_CONNECTION_STATUS',
+  { status: T.ConnectionState }
+>;
+
 export type ActionType =
+  | ChangeConnectionStatus
   | CloseNote
   | CloseDialog
   | CreateNote
