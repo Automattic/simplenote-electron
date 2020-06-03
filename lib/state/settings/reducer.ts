@@ -1,5 +1,3 @@
-import { clamp } from 'lodash';
-
 import { combineReducers } from 'redux';
 
 import * as A from '../action-types';
@@ -36,14 +34,15 @@ const focusModeEnabled: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const fontSizes = [10, 14, 16, 20, 24, 34];
 const fontSize: A.Reducer<number> = (state = 16, action) => {
   switch (action.type) {
-    case 'setFontSize':
-      return clamp(action.fontSize || 16, 10, 30);
     case 'DECREASE_FONT_SIZE':
-      return clamp(state - 1, 10, 30);
+      return fontSizes[Math.max(0, fontSizes.indexOf(state) - 1)];
     case 'INCREASE_FONT_SIZE':
-      return clamp(state + 1, 10, 30);
+      return fontSizes[
+        Math.min(fontSizes.length - 1, fontSizes.indexOf(state) + 1)
+      ];
     case 'RESET_FONT_SIZE':
       return 16;
     default:

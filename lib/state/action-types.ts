@@ -25,7 +25,6 @@ export type SetFocusMode = Action<
   'setFocusMode',
   { focusModeEnabled: boolean }
 >;
-export type SetFontSize = Action<'setFontSize', { fontSize?: number }>;
 export type SetLineLength = Action<
   'setLineLength',
   { lineLength: T.LineLength }
@@ -194,7 +193,6 @@ export type ActionType =
   | SetAnalytics
   | SetAutoHideMenuBar
   | SetFocusMode
-  | SetFontSize
   | SetLineLength
   | SetNoteDisplay
   | SetSortReversed

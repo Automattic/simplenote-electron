@@ -5,13 +5,6 @@ import * as T from '../../types';
 
 const ipc = getIpcRenderer();
 
-export const setFontSize: A.ActionCreator<A.SetFontSize> = (
-  fontSize?: number
-) => ({
-  type: 'setFontSize',
-  fontSize,
-});
-
 export const increaseFontSize: A.ActionCreator<A.IncreaseFontSize> = () => ({
   type: 'INCREASE_FONT_SIZE',
 });

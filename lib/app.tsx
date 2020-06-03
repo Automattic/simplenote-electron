@@ -178,6 +178,18 @@ class AppComponent extends Component<Props> {
       return this.props.createNote();
     }
 
+    if ('increaseFontSize' === command.action) {
+      return this.props.increaseFontSize();
+    }
+
+    if ('decreaseFontSize' === command.action) {
+      return this.props.decreaseFontSize();
+    }
+
+    if ('resetFontSize' === command.action) {
+      return this.props.resetFontSize();
+    }
+
     console.log(command.action);
   };
 

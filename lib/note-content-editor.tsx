@@ -13,6 +13,7 @@ import * as T from './types';
 const lastCursorPosition: Map<T.EntityId, IPosition> = new Map();
 
 type StateProps = {
+  fontSize: number;
   keyboardShortcuts: boolean;
   noteId: T.EntityId;
   note: T.Note;
@@ -124,7 +125,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { noteId, note, theme } = this.props;
+    const { fontSize, noteId, note, theme } = this.props;
     const isMarkdown = note.systemTags.includes('markdown');
 
     return (
@@ -142,9 +143,9 @@ class NoteContentEditor extends Component<Props> {
             folding: false,
             fontFamily:
               'SimplenoteTodo, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
-            fontSize: 16,
+            fontSize,
             hideCursorInOverviewRuler: true,
-            lineHeight: 24,
+            lineHeight: fontSize > 20 ? 42 : 24,
             lineNumbers: 'off',
             links: true,
             minimap: { enabled: false },
@@ -166,6 +167,7 @@ class NoteContentEditor extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  fontSize: state.settings.fontSize,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
