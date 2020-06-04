@@ -1,11 +1,24 @@
 # Changelog
 
+## [v1.18.0]
+
+### Enhancements
+
+- Updated Blue to Simplenote Blue [#2043](https://github.com/Automattic/simplenote-electron/pull/2043)
+- Simplify login form validation [#2095](https://github.com/Automattic/simplenote-electron/pull/2095)
+
+### Other Changes
+
+- Added types to react-tabs module [#2096](https://github.com/Automattic/simplenote-electron/pull/2096)
+- Added UNSAFE to deprecated React methods [#2123](https://github.com/Automattic/simplenote-electron/pull/2123)
+- Updated Publisher display name for Windows Store [#2131](https://github.com/Automattic/simplenote-electron/pull/2131)
+
 ## [v1.17.0]
 
 ### Enhancements
 
 - Added option to disable keyboard shortcuts [#2075](https://github.com/Automattic/simplenote-electron/pull/2075)
-- Added a password validation utility [#2086](https://github.com/Automattic/simplenote-electron/pull/2086) and stricter password requirements on signup [#2087](https://github.com/Automattic/simplenote-electron/pull/2087) and login [#2088](https://github.com/Automattic/simplenote-electron/pull/2088)
+- Added a password validation utility [#2086](https://github.com/Automattic/simplenote-electron/pull/2086), [#2114](https://github.com/Automattic/simplenote-electron/pull/2114) and stricter password requirements on signup [#2087](https://github.com/Automattic/simplenote-electron/pull/2087) and login [#2088](https://github.com/Automattic/simplenote-electron/pull/2088)
 
 ### Fixes
 
