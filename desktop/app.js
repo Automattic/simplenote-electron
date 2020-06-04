@@ -47,11 +47,6 @@ module.exports = function main() {
       defaultHeight: 768,
     });
 
-    // Create the browser window.
-    const iconPath = path.join(
-      __dirname,
-      '../lib/icons/app-icon/icon_256x256.png'
-    );
     mainWindow = new BrowserWindow({
       backgroundColor: '#fff',
       x: mainWindowState.x,
@@ -60,7 +55,6 @@ module.exports = function main() {
       height: mainWindowState.height,
       minWidth: 370,
       minHeight: 520,
-      icon: iconPath,
       titleBarStyle: 'hidden',
       show: false,
       webPreferences: {
