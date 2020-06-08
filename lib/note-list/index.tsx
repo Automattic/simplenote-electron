@@ -228,28 +228,15 @@ export class NoteList extends Component<Props> {
       heightCache.clearAll();
     }
 
-    // reselect when a note is removed
-    if (
-      !this.props.selectedNote &&
-      this.state.selectedIndex !== null &&
-      this.props.notes[this.state.selectedIndex]
-    ) {
-      this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
-    }
-
     // reselect when a note should be removed
     if (
-      this.props.selectedNote &&
-      this.props.selectedNote.data.deleted !== this.props.showTrash &&
+      prevProps.selectedNote &&
+      prevProps.selectedNote.data.deleted &&
+      prevProps.selectedNote.data.deleted !== this.props.showTrash &&
       this.state.selectedIndex &&
       this.props.notes[this.state.selectedIndex]
     ) {
       this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
-    } else if (
-      this.props.selectedNote &&
-      this.props.selectedNote.data.deleted !== this.props.showTrash
-    ) {
-      this.props.onSelectNote(this.props.notes[0]);
     }
   }
 
@@ -363,7 +350,7 @@ export class NoteList extends Component<Props> {
 
     const specialRows = compositeNoteList.length - notes.length;
     const highlightedIndex =
-      selectedIndex !== null ? selectedIndex + specialRows : 0;
+      selectedIndex !== null ? selectedIndex + specialRows : null;
 
     const renderNoteRow = renderNote(compositeNoteList, {
       searchQuery,
