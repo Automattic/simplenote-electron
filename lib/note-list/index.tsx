@@ -215,42 +215,24 @@ export class NoteList extends Component<Props> {
     this.toggleShortcuts(true);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
-    if (
-      nextProps.noteDisplay !== this.props.noteDisplay ||
-      nextProps.notes !== this.props.notes ||
-      nextProps.tagResultsFound !== this.props.tagResultsFound ||
-      nextProps.selectedNoteContent !== this.props.selectedNoteContent ||
-      nextProps.showNoteList !== this.props.showNoteList
-    ) {
-      heightCache.clearAll();
-    }
-  }
-
   componentDidUpdate(prevProps: Props) {
     if (
       prevProps.noteDisplay !== this.props.noteDisplay ||
       prevProps.notes !== this.props.notes ||
       prevProps.tagResultsFound !== this.props.tagResultsFound ||
       prevProps.selectedNoteContent !== this.props.selectedNoteContent ||
-      prevProps.showNoteList !== this.props.showNoteList
+      prevProps.showNoteList !== this.props.showNoteList ||
+      prevProps.searchQuery !== this.props.searchQuery ||
+      prevProps.showTrash !== this.props.showTrash
     ) {
       heightCache.clearAll();
     }
 
-    // reselect when a note is removed
-    if (
-      !this.props.selectedNote &&
-      this.state.selectedIndex !== null &&
-      this.props.notes[this.state.selectedIndex]
-    ) {
-      this.props.onSelectNote(this.props.notes[this.state.selectedIndex]);
-    }
-
     // reselect when a note should be removed
     if (
-      this.props.selectedNote &&
-      this.props.selectedNote.data.deleted !== this.props.showTrash &&
+      prevProps.selectedNote &&
+      prevProps.selectedNote.data.deleted &&
+      prevProps.selectedNote.data.deleted !== this.props.showTrash &&
       this.state.selectedIndex &&
       this.props.notes[this.state.selectedIndex]
     ) {
@@ -266,6 +248,7 @@ export class NoteList extends Component<Props> {
 
       return { selectedIndex: -1 === noteAt ? null : noteAt };
     }
+    return {};
   }
 
   componentWillUnmount() {
