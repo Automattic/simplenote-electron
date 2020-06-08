@@ -215,6 +215,18 @@ export class NoteList extends Component<Props> {
     this.toggleShortcuts(true);
   }
 
+  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
+    if (
+      nextProps.noteDisplay !== this.props.noteDisplay ||
+      nextProps.notes !== this.props.notes ||
+      nextProps.tagResultsFound !== this.props.tagResultsFound ||
+      nextProps.selectedNoteContent !== this.props.selectedNoteContent ||
+      nextProps.showNoteList !== this.props.showNoteList
+    ) {
+      heightCache.clearAll();
+    }
+  }
+
   componentDidUpdate(prevProps: Props) {
     if (
       prevProps.noteDisplay !== this.props.noteDisplay ||
@@ -231,7 +243,6 @@ export class NoteList extends Component<Props> {
     // reselect when a note should be removed
     if (
       prevProps.selectedNote &&
-      prevProps.selectedNote.data.deleted &&
       prevProps.selectedNote.data.deleted !== this.props.showTrash &&
       this.state.selectedIndex &&
       this.props.notes[this.state.selectedIndex]
