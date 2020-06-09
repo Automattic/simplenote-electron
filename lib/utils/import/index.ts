@@ -2,7 +2,7 @@ import Bottleneck from 'bottleneck';
 import { EventEmitter } from 'events';
 import { isEmpty, get, pick } from 'lodash';
 
-const propertyWhitelist = [
+const propertyAllowList = [
   'content',
   'creationDate',
   'deleted',
@@ -30,7 +30,7 @@ class CoreImporter extends EventEmitter {
   }
 
   importNote = (note, { isTrashed = false, isMarkdown = false } = {}) => {
-    const importedNote = pick(note, propertyWhitelist);
+    const importedNote = pick(note, propertyAllowList);
     // We don't want to allow these properties to be imported, but they need to be set
     importedNote.publishURL = '';
     importedNote.shareURL = '';
