@@ -101,7 +101,7 @@
     button {
       color: $studio-simplenote-blue-30;
     }
-    svg {
+    svg[class^='icon-'] {
       fill: $studio-simplenote-blue-30;
     }
   }
