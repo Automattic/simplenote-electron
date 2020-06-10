@@ -6,7 +6,6 @@ import getConfig from '../../get-config';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 import { validatePassword } from '../utils/validate-password';
-
 import { isElectron, isMac } from '../utils/platform';
 import { viewExternalUrl } from '../utils/url-utils';
 
@@ -338,91 +337,51 @@ export class Auth extends Component<Props> {
 
   onWPLogin = () => {
     const config = getConfig();
-    this.setupAuthWindow();
-
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
     this.authState = `app-${cryptoRandomString(20)}`;
     const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;
 
-    this.authWindow.loadURL(authUrl);
-    this.authWindow.show();
-  };
+    window.electron.send('wpLogin', authUrl);
 
-  setupAuthWindow = () => {
-    // eslint-disable-next-line no-undef
-    const { BrowserWindow, session } = __non_webpack_require__(
-      'electron'
-    ).remote;
+    window.electron.receive('wpLogin', (url) => {
+      const { searchParams } = new URL(url);
 
-    this.authWindow = new BrowserWindow({
-      width: 640,
-      height: 640,
-      show: false,
-      webPreferences: {
-        nodeIntegration: false,
-        session: session.fromPartition(`fresh-session-${Math.random()}`),
-      },
-    });
+      const errorCode = searchParams.get('error')
+        ? searchParams.get('code')
+        : false;
+      const authState = searchParams.get('state');
+      const userEmail = searchParams.get('user');
+      const simpToken = searchParams.get('token');
+      const wpccToken = searchParams.get('wp_token');
 
-    this.authWindow.on('closed', () => {
-      // make sure to release this from memory
-      this.authWindow = null;
-    });
-
-    this.authWindow.webContents.session.protocol.registerHttpProtocol(
-      'simplenote',
-      (req, callback) => {
-        const { searchParams } = new URL(req.url);
-
-        // cancel the request by running callback() with no parameters
-        // we're going to close the window and continue processing the
-        // information we received in args of the simplenote://auth URL
-        callback();
-
-        const errorCode = searchParams.get('error')
-          ? searchParams.get('code')
-          : false;
-        const authState = searchParams.get('state');
-        const userEmail = searchParams.get('user');
-        const simpToken = searchParams.get('token');
-        const wpccToken = searchParams.get('wp_token');
-
-        // Display an error message if authorization failed.
-        switch (errorCode) {
-          case false:
-            break;
-          case '1':
-            return this.authError(
-              'Please activate your WordPress.com account via email and try again.'
-            );
-          case '2':
-            return this.authError(
-              'Please confirm your account with the confirmation email before signing in to Simplenote.'
-            );
-          default:
-            return this.authError('An error was encountered while signing in.');
-        }
-
-        this.closeAuthWindow();
-
-        if (authState !== this.authState) {
-          return;
-        }
-
-        this.props.tokenLogin(userEmail, simpToken);
+      // Display an error message if authorization failed.
+      switch (errorCode) {
+        case false:
+          break;
+        case '1':
+          return this.authError(
+            'Please activate your WordPress.com account via email and try again.'
+          );
+        case '2':
+          return this.authError(
+            'Please confirm your account with the confirmation email before signing in to Simplenote.'
+          );
+        default:
+          return this.authError('An error was encountered while signing in.');
       }
-    );
+
+      if (authState !== this.authState) {
+        return;
+      }
+      this.props.tokenLogin(userEmail, simpToken);
+    });
   };
 
   authError = (errorMessage) => {
-    this.closeAuthWindow();
-
     this.setState({
       passwordErrorMessage: errorMessage,
     });
   };
-
-  closeAuthWindow = () => this.authWindow && this.authWindow.close();
 
   onForgot = (event) => {
     event.preventDefault();
