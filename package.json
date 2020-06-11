@@ -13,10 +13,10 @@
   "scripts": {
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
-    "test-e2e": "npx jest --config=./jest.config.e2e.js --runInBand",
-    "test": "npx jest --config=./jest.config.js",
-    "lint": "npx eslint --ignore-path .gitignore '**/*.{js,jsx,ts,tsx}'",
-    "format": "npx prettier --ignore-path .gitignore --write '**/*.{js,jsx,json,sass,ts,tsx}'",
+    "test-e2e": "jest --config=./jest.config.e2e.js --runInBand",
+    "test": "jest --config=./jest.config.js",
+    "lint": "eslint --ignore-path .gitignore '**/*.{js,jsx,ts,tsx}'",
+    "format": "prettier --ignore-path .gitignore --write '**/*.{js,jsx,json,sass,ts,tsx}'",
     "build": "make build",
     "deploy": "./bin/deploy.sh"
   },
