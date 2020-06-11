@@ -64,11 +64,6 @@ dev-server:
 
 	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
 
-.PHONY: test
-test:
-	@npx jest --config=./jest.config.js
-
-
 # Build web app
 .PHONY: build
 build:
@@ -162,11 +157,3 @@ config-release: config.json install
 .PHONY: rebuild-deps
 rebuild-deps:
 	@npx electron-rebuild -v $(ELECTRON_VERSION)
-
-.PHONY: format
-format:
-	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass,ts,tsx}"
-
-.PHONY: lint
-lint:
-	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"
