@@ -55,7 +55,6 @@
     "deleteAppDataOnUninstall": true
   },
   "linux": {
-    "icon": "resources/images/",
     "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
     "target": [
       {
