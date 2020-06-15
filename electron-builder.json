@@ -78,7 +78,6 @@
     "synopsis": "The simplest way to keep notes",
     "category": "Utility",
     "executableName": "simplenote",
-    "executableArgs": ["--no-sandbox"],
     "desktop": {
       "Name": "Simplenote",
       "Comment": "Simplenote for Linux",
