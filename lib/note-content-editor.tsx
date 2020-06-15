@@ -246,10 +246,6 @@ class NoteContentEditor extends Component<Props> {
   };
 
   componentWillUnmount() {
-    if (isElectron()) {
-      window.electron.receive('appCommand', this.onAppCommand);
-    }
-
     window.removeEventListener('keydown', this.handleKeydown, false);
   }
 

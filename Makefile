@@ -52,7 +52,7 @@ PUBLISH ?= onTag
 # Main targets
 .PHONY: start
 start:
-	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --debug
+	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron .
 
 .PHONY: dev
 dev:
