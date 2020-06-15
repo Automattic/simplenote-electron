@@ -1,5 +1,9 @@
 'use strict';
 
+const unhandled = require('electron-unhandled');
+
+unhandled();
+
 const {
   app,
   BrowserWindow,

@@ -130,6 +130,7 @@
     "draft-js-simpledecorator": "1.0.2",
     "electron-fetch": "1.4.0",
     "electron-progressbar": "1.2.0",
+    "electron-unhandled": "^3.0.2",
     "electron-updater": "4.3.1",
     "electron-window-state": "5.0.3",
     "file-saver": "2.0.2",
