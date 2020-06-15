@@ -11,7 +11,6 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
-import { getIpcRenderer } from './utils/electron';
 import exportZipArchive from './utils/export';
 import { isElectron, isMac } from './utils/platform';
 import { activityHooks, getUnsyncedNoteIds, nudgeUnsynced } from './utils/sync';
@@ -32,8 +31,6 @@ import * as settingsActions from './state/settings/actions';
 import actions from './state/actions';
 import * as S from './state';
 import * as T from './types';
-
-const ipc = getIpcRenderer();
 
 export type OwnProps = {
   noteBucket: object;
@@ -126,17 +123,16 @@ export const App = connect(
     };
 
     UNSAFE_componentWillMount() {
-      if (isElectron) {
-        this.initializeElectron();
-      }
-
       this.onAuthChanged();
     }
 
     componentDidMount() {
-      ipc.on('appCommand', this.onAppCommand);
-      ipc.send('setAutoHideMenuBar', this.props.settings.autoHideMenuBar);
-      ipc.send('settingsUpdate', this.props.settings);
+      window.electron.receive('appCommand', this.onAppCommand);
+      window.electron.send(
+        'setAutoHideMenuBar',
+        this.props.settings.autoHideMenuBar
+      );
+      window.electron.send('settingsUpdate', this.props.settings);
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
@@ -177,15 +173,13 @@ export const App = connect(
 
     componentWillUnmount() {
       this.toggleShortcuts(false);
-
-      ipc.removeListener('appCommand', this.onAppCommand);
     }
 
     componentDidUpdate(prevProps) {
       const { settings } = this.props;
 
       if (settings !== prevProps.settings) {
-        ipc.send('settingsUpdate', settings);
+        window.electron.send('settingsUpdate', settings);
       }
     }
 
@@ -255,24 +249,24 @@ export const App = connect(
       return true;
     };
 
-    onAppCommand = (event, command) => {
-      if ('exportZipArchive' === get(command, 'action')) {
+    onAppCommand = (event) => {
+      if ('exportZipArchive' === event.action) {
         exportZipArchive();
       }
 
-      if ('printNote' === command.action) {
+      if ('printNote' === event.action) {
         return window.print();
       }
 
-      if ('focusSearchField' === command.action) {
+      if ('focusSearchField' === event.action) {
         return this.props.focusSearchField();
       }
 
-      if ('showDialog' === command.action) {
-        return this.props.showDialog(command.dialog);
+      if ('showDialog' === event.action) {
+        return this.props.showDialog(event.dialog);
       }
 
-      if ('trashNote' === command.action && this.props.ui.note) {
+      if ('trashNote' === event.action && this.props.ui.note) {
         return this.props.actions.trashNote({
           noteBucket: this.props.noteBucket,
           note: this.props.ui.note,
@@ -288,19 +282,19 @@ export const App = connect(
         (o) => has(this.props.actions, o.action) || has(this.props, o.action)
       );
 
-      if (canRun(command)) {
+      if (canRun(event)) {
         // newNote expects a bucket to be passed in, but the action method itself wouldn't do that
-        if (command.action === 'newNote') {
+        if (event.action === 'newNote') {
           this.props.actions.newNote({
             noteBucket: this.props.noteBucket,
           });
           analytics.tracks.recordEvent('list_note_created');
-        } else if (has(this.props, command.action)) {
-          const { action, ...args } = command;
+        } else if (has(this.props, event.action)) {
+          const { action, ...args } = event;
 
           this.props[action](...values(args));
         } else {
-          this.props.actions[command.action](command);
+          this.props.actions[event.action](event);
         }
       }
     };
@@ -368,17 +362,6 @@ export const App = connect(
         systemTheme,
       } = this.props;
       return 'system' === theme ? systemTheme : theme;
-    };
-
-    initializeElectron = () => {
-      const { remote } = __non_webpack_require__('electron'); // eslint-disable-line no-undef
-
-      this.setState({
-        electron: {
-          currentWindow: remote.getCurrentWindow(),
-          Menu: remote.Menu,
-        },
-      });
     };
 
     onUpdateContent = (note, content, sync = false) => {

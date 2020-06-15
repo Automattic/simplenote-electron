@@ -17,6 +17,7 @@ const buildRadioGroup = ({ action, propName, settings }) => {
 const appCommandSender = (arg) => {
   return (item, focusedWindow) => {
     if (focusedWindow) {
+      debugger;
       focusedWindow.webContents.send('appCommand', arg);
     }
   };

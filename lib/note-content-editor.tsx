@@ -24,7 +24,6 @@ import checkboxDecorator from './editor/checkbox-decorator';
 import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
-import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 import * as S from './state';
@@ -64,8 +63,6 @@ class NoteContentEditor extends Component<Props> {
     storeFocusEditor: noop,
     storeHasFocus: noop,
   };
-
-  ipc = getIpcRenderer();
 
   replaceRangeWithText = (rangeToReplace, newText) => {
     const { editorState } = this.state;
@@ -119,7 +116,7 @@ class NoteContentEditor extends Component<Props> {
     this.editor.blur();
 
     if (isElectron()) {
-      this.ipc.on('appCommand', this.onAppCommand);
+      window.electron.receive('appCommand', this.onAppCommand);
     }
 
     window.addEventListener('keydown', this.handleKeydown, false);
@@ -250,7 +247,7 @@ class NoteContentEditor extends Component<Props> {
 
   componentWillUnmount() {
     if (isElectron()) {
-      this.ipc.removeListener('appCommand', this.onAppCommand);
+      window.electron.receive('appCommand', this.onAppCommand);
     }
 
     window.removeEventListener('keydown', this.handleKeydown, false);
