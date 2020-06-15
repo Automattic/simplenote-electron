@@ -17,4 +17,5 @@ contextBridge.exposeInMainWorld('electron', {
       });
     }
   },
+  isMac: process.platform === 'darwin',
 });
