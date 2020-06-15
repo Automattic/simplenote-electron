@@ -257,7 +257,7 @@ export class Auth extends Component<Props> {
     }
 
     const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.';
+      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
 
     if (this.state.isCreatingAccount) {
       const username = get(this.usernameInput, 'value');
@@ -305,7 +305,7 @@ export class Auth extends Component<Props> {
     const username = get(this.usernameInput, 'value');
     const password = get(this.passwordInput, 'value');
     const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not include your email address.';
+      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
 
     // signup - stricter password requirements apply
     if (this.state.isCreatingAccount) {
