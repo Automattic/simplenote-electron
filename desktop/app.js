@@ -62,6 +62,7 @@ module.exports = function main() {
       titleBarStyle: 'hidden',
       show: false,
       webPreferences: {
+        contextIsolation: true,
         nodeIntegration: false,
         preload: path.join(__dirname, './preload.js'),
       },

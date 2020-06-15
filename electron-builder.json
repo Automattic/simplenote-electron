@@ -1,10 +1,9 @@
 {
   "productName": "Simplenote",
   "appId": "com.automattic.simplenote",
-  "asar": false,
   "directories": {
-    "output": "release",
-    "buildResources": "resources"
+    "output": "./release",
+    "buildResources": "./resources"
   },
   "files": ["desktop", "dist", "shared"],
   "mac": {
@@ -78,14 +77,13 @@
     "synopsis": "The simplest way to keep notes",
     "category": "Utility",
     "executableName": "simplenote",
-    "executableArgs": ["--no-sandbox"],
     "desktop": {
       "Name": "Simplenote",
       "Comment": "Simplenote for Linux",
       "GenericName": "Note Taking Application",
       "Type": "Application",
       "Icon": "simplenote",
-      "StartupNotify": "true",
+      "StartupNotify": true,
       "Categories": "Utility"
     },
     "vendor": "Automattic, Inc.",
