@@ -75,7 +75,7 @@ module.exports = () => {
         'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
           .stdout.toString('utf8')
           .replace('\n', ''),
-        favicon: process.cwd() + '/public_html/favicon.ico',
+        favicon: process.cwd() + '/resources/images/favicon.ico',
         'node-version': process.version,
         template: 'index.ejs',
         title: 'Simplenote',
