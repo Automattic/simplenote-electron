@@ -21,8 +21,7 @@ const clearStorage = () =>
     indexedDB.deleteDatabase('ghost');
     indexedDB.deleteDatabase('simplenote');
     if (isElectron) {
-      const ipcRenderer = __non_webpack_require__('electron').ipcRenderer; // eslint-disable-line no-undef
-      ipcRenderer.send('clearCookies');
+      window.electron.send('clearCookies');
     }
 
     // let everything settle

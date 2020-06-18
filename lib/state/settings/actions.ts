@@ -1,8 +1,4 @@
-import { getIpcRenderer } from '../../utils/electron';
-
 import * as A from '../action-types';
-
-const ipc = getIpcRenderer();
 
 export const setFontSize: A.ActionCreator<A.SetFontSize> = (
   fontSize?: number
@@ -96,7 +92,7 @@ export const toggleSpellCheck = () => (dispatch, getState) => {
 export const toggleAutoHideMenuBar = () => (dispatch, getState) => {
   const newValue = !getState().settings.autoHideMenuBar;
 
-  ipc.send('setAutoHideMenuBar', newValue);
+  window.electron.send('setAutoHideMenuBar', newValue);
 
   dispatch({
     type: 'setAutoHideMenuBar',

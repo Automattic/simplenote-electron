@@ -19,24 +19,17 @@ import {
   isLonelyBullet,
 } from './editor/text-manipulation-helpers';
 import { filterHasText, searchPattern } from './utils/filter-notes';
+import { isElectron } from './utils/platform';
 import matchingTextDecorator from './editor/matching-text-decorator';
 import checkboxDecorator from './editor/checkbox-decorator';
 import { removeCheckbox, shouldRemoveCheckbox } from './editor/checkbox-utils';
 import { taskRegex } from './note-detail/toggle-task/constants';
 import insertOrRemoveCheckboxes from './editor/insert-or-remove-checkboxes';
-import { getIpcRenderer } from './utils/electron';
 import analytics from './analytics';
 
 import * as S from './state';
 
 const TEXT_DELIMITER = '\n';
-
-const isElectron = (() => {
-  // https://github.com/atom/electron/issues/2288
-  const foundElectron = has(window, 'process.type');
-
-  return () => foundElectron;
-})();
 
 type StateProps = {
   editingEnabled: boolean;
@@ -64,8 +57,6 @@ class NoteContentEditor extends Component<Props> {
     storeFocusEditor: noop,
     storeHasFocus: noop,
   };
-
-  ipc = getIpcRenderer();
 
   replaceRangeWithText = (rangeToReplace, newText) => {
     const { editorState } = this.state;
@@ -118,8 +109,8 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
     this.editor.blur();
 
-    if (isElectron()) {
-      this.ipc.on('appCommand', this.onAppCommand);
+    if (isElectron) {
+      window.electron.receive('appCommand', this.onAppCommand);
     }
 
     window.addEventListener('keydown', this.handleKeydown, false);
@@ -249,10 +240,6 @@ class NoteContentEditor extends Component<Props> {
   };
 
   componentWillUnmount() {
-    if (isElectron()) {
-      this.ipc.removeListener('appCommand', this.onAppCommand);
-    }
-
     window.removeEventListener('keydown', this.handleKeydown, false);
   }
 
@@ -353,8 +340,8 @@ class NoteContentEditor extends Component<Props> {
     return true;
   };
 
-  onAppCommand = (event, command) => {
-    if (get(command, 'action') === 'insertChecklist') {
+  onAppCommand = (event) => {
+    if (event.action === 'insertChecklist') {
       this.handleEditorStateChange(
         insertOrRemoveCheckboxes(this.state.editorState)
       );

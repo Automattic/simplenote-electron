@@ -2,8 +2,8 @@
   "productName": "Simplenote",
   "appId": "com.automattic.simplenote",
   "directories": {
-    "output": "release",
-    "buildResources": "resources"
+    "output": "./release",
+    "buildResources": "./resources"
   },
   "files": ["desktop", "dist", "shared"],
   "mac": {
@@ -55,7 +55,6 @@
     "deleteAppDataOnUninstall": true
   },
   "linux": {
-    "icon": "resources/images/",
     "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
     "target": [
       {
@@ -84,7 +83,7 @@
       "GenericName": "Note Taking Application",
       "Type": "Application",
       "Icon": "simplenote",
-      "StartupNotify": "true",
+      "StartupNotify": true,
       "Categories": "Utility"
     },
     "vendor": "Automattic, Inc.",
