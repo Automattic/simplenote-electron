@@ -3,7 +3,12 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electron', {
   send: (channel, data) => {
     // whitelist channels
-    let validChannels = ['appCommand', 'setAutoHideMenuBar', 'settingsUpdate'];
+    let validChannels = [
+      'appCommand',
+      'clearCookies',
+      'setAutoHideMenuBar',
+      'settingsUpdate',
+    ];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }

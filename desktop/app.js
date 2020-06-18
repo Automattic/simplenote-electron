@@ -110,6 +110,7 @@ module.exports = function main() {
           );
         });
       });
+      mainWindow.reload();
     });
 
     ipcMain.on('setAutoHideMenuBar', function (event, autoHideMenuBar) {
