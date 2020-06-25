@@ -109,9 +109,7 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
     this.editor.blur();
 
-    if (isElectron) {
-      window.electron.receive('appCommand', this.onAppCommand);
-    }
+    window.electron?.receive('appCommand', this.onAppCommand);
 
     window.addEventListener('keydown', this.handleKeydown, false);
   }

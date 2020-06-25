@@ -20,9 +20,7 @@ const clearStorage = () =>
     localStorage.removeItem('stored_user');
     indexedDB.deleteDatabase('ghost');
     indexedDB.deleteDatabase('simplenote');
-    if (isElectron) {
-      window.electron.send('clearCookies');
-    }
+    window.electron?.send('clearCookies');
 
     // let everything settle
     setTimeout(() => resolve(), 500);
