@@ -143,7 +143,12 @@ export class NoteDetail extends Component<Props> {
       // open markdown preview links in a new window
       if (node.tagName === 'A') {
         event.preventDefault();
-        viewExternalUrl(node.href);
+
+        // skip internal note links (e.g. anchor links, footnotes)
+        if (!node.href.startsWith('http://localhost')) {
+          viewExternalUrl(node.href);
+        }
+
         break;
       }
 
