@@ -127,12 +127,14 @@ export const App = connect(
     }
 
     componentDidMount() {
-      window.electron.receive('appCommand', this.onAppCommand);
-      window.electron.send(
-        'setAutoHideMenuBar',
-        this.props.settings.autoHideMenuBar
-      );
-      window.electron.send('settingsUpdate', this.props.settings);
+      if (isElectron) {
+        window.electron.receive('appCommand', this.onAppCommand);
+        window.electron.send(
+          'setAutoHideMenuBar',
+          this.props.settings.autoHideMenuBar
+        );
+        window.electron.send('settingsUpdate', this.props.settings);
+      }
 
       this.props.noteBucket
         .on('index', this.onNotesIndex)
@@ -178,7 +180,7 @@ export const App = connect(
     componentDidUpdate(prevProps) {
       const { settings } = this.props;
 
-      if (settings !== prevProps.settings) {
+      if (settings !== prevProps.settings && isElectron) {
         window.electron.send('settingsUpdate', settings);
       }
     }
