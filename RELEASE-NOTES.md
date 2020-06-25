@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.19.0]
+
+### Fixes
+
+- Fixed an issue causing note selection to unexpectedly change [#2111](https://github.com/Automattic/simplenote-electron/pull/2111)
+
+### Other Changes
+
+- Change "whitelist" to "allowlist" [#2146](https://github.com/Automattic/simplenote-electron/pull/2146)
+- Added draft-js types [#2121](https://github.com/Automattic/simplenote-electron/pull/2121)
+- Moved clipboard types to dev dependencies [#2122](https://github.com/Automattic/simplenote-electron/pull/2122)
+
 ## [v1.18.0]
 
 ### Enhancements
