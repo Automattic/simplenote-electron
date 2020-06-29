@@ -51,3 +51,8 @@ For other platforms, see:
 - [simplenote-macos](https://github.com/Automattic/simplenote-macos)
 - [simplenote-ios](https://github.com/Automattic/simplenote-ios)
 - [simplenote-android](https://github.com/Automattic/simplenote-android)
+
+## Privacy Policy
+
+Privacy Policy: https://automattic.com/privacy/
+California users privacy notice: https://wp.me/Pe4R-d/#california-consumer-privacy-act-ccpa
