@@ -5,6 +5,7 @@
 ### Enhancements
 
 - Updated all icons to use the new Simplenote Blue [#2158](https://github.com/Automattic/simplenote-electron/pull/2158)
+- Added Privacy Notice for California Users [#2177](https://github.com/Automattic/simplenote-electron/pull/2177)
 
 ### Fixes
 
