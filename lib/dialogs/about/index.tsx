@@ -103,6 +103,15 @@ export class AboutDialog extends Component<Props> {
             <p>
               <a
                 target="_blank"
+                href="https://automattic.com/privacy/#california-consumer-privacy-act-ccpa"
+                rel="noopener noreferrer"
+              >
+                Privacy Notice for California Users
+              </a>
+            </p>
+            <p>
+              <a
+                target="_blank"
                 href="https://automattic.com/"
                 rel="noopener noreferrer"
               >

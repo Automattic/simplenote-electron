@@ -1,5 +1,21 @@
 # Changelog
 
+## [v1.20.0]
+
+### Enhancements
+
+- Updated all icons to use the new Simplenote Blue [#2158](https://github.com/Automattic/simplenote-electron/pull/2158)
+- Added Privacy Notice for California Users [#2177](https://github.com/Automattic/simplenote-electron/pull/2177)
+
+### Fixes
+
+- Prevent relative links in preview from opening a broken link in a new window [#2167](https://github.com/Automattic/simplenote-electron/pull/2167)
+
+### Other Changes
+
+- Updated Electron and associated dependencies to the latest [#2102](https://github.com/Automattic/simplenote-electron/pull/2102), [#2168](https://github.com/Automattic/simplenote-electron/pull/2168)
+- Deleted deprecated "master" branch and updated configuration [#2159](https://github.com/Automattic/simplenote-electron/pull/2159)
+
 ## [v1.19.0]
 
 ### Fixes
