@@ -333,7 +333,7 @@ class NoteContentEditor extends Component<Props> {
               scrollbar: { horizontal: 'hidden' },
               selectionHighlight: false,
               wordWrap: 'on',
-              wrappingStrategy: 'advanced',
+              wrappingStrategy: 'simple',
             }}
             value={content}
           />
