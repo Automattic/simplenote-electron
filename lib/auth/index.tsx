@@ -209,6 +209,39 @@ export class Auth extends Component<Props> {
             </a>
           </p>
         </form>
+        <div className="footer">
+          <a
+            target="_blank"
+            href="https://simplenote.com/privacy/"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          &nbsp;&bull;&nbsp;
+          <a
+            target="_blank"
+            href="https://simplenote.com/terms/"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>
+          &nbsp;&bull;&nbsp;
+          <a
+            target="_blank"
+            href="https://automattic.com/privacy/#california-consumer-privacy-act-ccpa"
+            rel="noopener noreferrer"
+          >
+            Privacy Notice for California Users
+          </a>
+          &nbsp;&bull;&nbsp;
+          <a
+            target="_blank"
+            href="https://automattic.com/"
+            rel="noopener noreferrer"
+          >
+            &copy; {new Date().getFullYear()} Automattic, Inc.
+          </a>
+        </div>
       </div>
     );
   }

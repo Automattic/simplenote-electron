@@ -12,6 +12,16 @@
   }
 }
 
+.footer {
+  position: absolute;
+  bottom: 20px;
+  text-decoration: none;
+
+  a {
+    text-decoration: none;
+  }
+}
+
 .login {
   display: flex;
   flex: 1 1 auto;
