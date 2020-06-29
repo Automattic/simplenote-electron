@@ -112,6 +112,9 @@ class NoteContentEditor extends Component<Props> {
     window.electron?.receive('appCommand', this.onAppCommand);
 
     window.addEventListener('keydown', this.handleKeydown, false);
+
+    this.queueDecoratorUpdate();
+    this.queueDecoratorUpdate.flush();
   }
 
   handleEditorStateChange = (editorState) => {
