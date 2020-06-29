@@ -23,9 +23,18 @@ const openDB = (): Promise<IDBDatabase> =>
     };
   });
 
-export const loadState = () =>
+export const loadState = (): Promise<
+  [T.RecursivePartial<S.State>, S.Middleware | null]
+> =>
   new Promise(async (resolve) => {
-    const tx = (await openDB()).transaction(['state', 'revisions'], 'readonly');
+    let db;
+    try {
+      db = await openDB();
+    } catch (e) {
+      resolve([{}, null]);
+      return;
+    }
+    const tx = db.transaction(['state', 'revisions'], 'readonly');
 
     const stateRequest = tx.objectStore('state').get('state');
     stateRequest.onsuccess = () => {
@@ -34,7 +43,7 @@ export const loadState = () =>
       try {
         const tags = new Map(state.tags);
 
-        const data: Partial<S.State> = {
+        const data: T.RecursivePartial<S.State> = {
           data: {
             notes: new Map(state.notes),
             tags: [
@@ -65,22 +74,25 @@ export const loadState = () =>
             noteRevisions.set(cursor.key, new Map(cursor.value));
             cursor.continue();
           } else {
-            resolve({
-              ...data,
-              data: {
-                ...data.data,
-                noteRevisions,
+            resolve([
+              {
+                ...data,
+                data: {
+                  ...data.data,
+                  noteRevisions,
+                },
               },
-            });
+              middleware,
+            ]);
           }
         };
-        revisionsRequest.onerror = () => resolve(data);
+        revisionsRequest.onerror = () => resolve([data, middleware]);
       } catch (e) {
-        resolve({});
+        resolve([{}, middleware]);
       }
     };
 
-    stateRequest.onerror = () => resolve({});
+    stateRequest.onerror = () => resolve([{}, middleware]);
   });
 
 const persistRevisions = async (
