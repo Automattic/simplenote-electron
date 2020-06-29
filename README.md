@@ -54,5 +54,5 @@ For other platforms, see:
 
 ## Privacy Policy
 
-Privacy Policy: https://automattic.com/privacy/
-California users privacy notice: https://wp.me/Pe4R-d/#california-consumer-privacy-act-ccpa
+- Privacy Policy: https://automattic.com/privacy/
+- California users privacy notice: https://wp.me/Pe4R-d/#california-consumer-privacy-act-ccpa
