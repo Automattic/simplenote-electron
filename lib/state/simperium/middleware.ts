@@ -231,7 +231,7 @@ export const initSimperium = (
       case 'RESTORE_NOTE':
       case 'RESTORE_NOTE_REVISION':
       case 'TRASH_NOTE':
-        setTimeout(() => noteBucket.touch(action.noteId), 10);
+        queueNoteUpdate(action.noteId, 10);
         return result;
 
       case 'DELETE_NOTE_FOREVER':
