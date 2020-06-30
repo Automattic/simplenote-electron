@@ -16,6 +16,7 @@ export class BucketQueue<BucketName, EntityType> {
     // we should be able to send changes as soon as indexing is done
     // so reschedule to cull the 1s delay normally set when indexing
     bucket.on('index', () => this.schedule());
+    window.addEventListener('online', () => this.schedule());
 
     this.schedule();
   }
@@ -31,6 +32,10 @@ export class BucketQueue<BucketName, EntityType> {
     this.schedule();
   }
 
+  has(entityId: EntityId): boolean {
+    return this.queue.has(entityId);
+  }
+
   private run(): void {
     this.process();
     this.schedule();
@@ -40,13 +45,20 @@ export class BucketQueue<BucketName, EntityType> {
     this.runTimer && clearTimeout(this.runTimer);
     this.runTimer = setTimeout(
       () => this.run(),
-      this.bucket.isIndexing ? 1000 : this.nextDeadline - Date.now()
+      this.bucket.isIndexing || !navigator.onLine
+        ? 10000
+        : this.nextDeadline - Date.now()
     );
   }
 
   private process(): void {
     if (this.bucket.isIndexing) {
       this.log('skipping processing run because bucket is indexing');
+      return;
+    }
+
+    if (!navigator.onLine) {
+      this.log('skipping processing run because browser is offline');
       return;
     }
 
