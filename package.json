@@ -69,6 +69,7 @@
     "@types/redux": "3.6.0",
     "@types/redux-localstorage": "1.0.8",
     "@types/rimraf": "3.0.0",
+    "@types/simperium": "1.1.0",
     "@types/uuid": "8.0.0",
     "@types/valid-url": "1.0.3",
     "@types/webdriverio": "5.0.0",
