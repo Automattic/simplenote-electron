@@ -2,6 +2,7 @@ import { default as createClient } from 'simperium';
 
 import debugFactory from 'debug';
 import actions from '../actions';
+import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
 import { NoteBucket } from './functions/note-bucket';
 import { ReduxGhost } from './functions/redux-ghost';
@@ -119,25 +120,18 @@ export const initSimperium = (
     });
   }
 
-  const changedNotes = new Map<T.EntityId, any>();
-  const queueNoteUpdate = (noteId: T.EntityId) => {
-    if (changedNotes.has(noteId)) {
-      clearTimeout(changedNotes.get(noteId));
-    }
+  const noteQueue = new BucketQueue(noteBucket);
+  const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
+    noteQueue.add(noteId, Date.now() + delay);
 
-    const timer = setTimeout(() => noteBucket.touch(noteId), 2000);
-    changedNotes.set(noteId, timer);
-  };
+  const tagQueue = new BucketQueue(tagBucket);
+  const queueTagUpdate = (tagId: T.EntityId, delay = 20) =>
+    tagQueue.add(tagId, Date.now() + delay);
 
-  const changedTags = new Map<T.EntityId, any>();
-  const queueTagUpdate = (tagId: T.EntityId) => {
-    if (changedTags.has(tagId)) {
-      clearTimeout(changedTags.get(tagId));
-    }
-
-    const timer = setTimeout(() => tagBucket.touch(tagId), 20);
-    changedTags.set(tagId, timer);
-  };
+  if ('production' !== process.env.NODE_ENV) {
+    window.noteQueue = noteQueue;
+    window.tagQueue = tagQueue;
+  }
 
   return (next) => (action: A.ActionType) => {
     console.log(action);
