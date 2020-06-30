@@ -53,15 +53,4 @@ describe('noteTitleAndPreview', () => {
     expect(sentinel.length).toBeGreaterThan(0);
     expect((s * 1000 + ns / 1000 / 1000) / count).toBeLessThan(1);
   });
-
-  it('should have enough text for an Expanded preview, even if the title is very long', () => {
-    // Longer than the char limits
-    const title = 'A really long title'.repeat(100);
-    const paragraph = 'A really long paragraph'.repeat(100);
-
-    note.content = title + '\n' + paragraph;
-    const result = noteTitleAndPreview(note);
-    expect(result.title).toHaveLength(maxTitleChars);
-    expect(result.preview).toHaveLength(maxPreviewChars);
-  });
 });
