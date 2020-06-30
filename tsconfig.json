@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "*": ["lib/typings/*"]
-    },
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
@@ -13,8 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "esModuleInterop": true,
-    "typeRoots": ["./lib/typings", "./node_modules/@types"]
+    "esModuleInterop": true
   },
   "include": ["lib/**/*"]
 }
