@@ -1,5 +1,3 @@
-import exportZipArchive from '../../utils/export';
-
 import actions from '../actions';
 
 import * as S from '../';
@@ -7,8 +5,8 @@ import * as S from '../';
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
   window.electron.receive('appCommand', (command) => {
     switch (command.action) {
-      case 'exportZipArchive':
-        exportZipArchive();
+      case 'exportNotes':
+        dispatch(actions.data.exportNotes());
         return;
 
       case 'printNote':
