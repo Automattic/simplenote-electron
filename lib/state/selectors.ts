@@ -14,7 +14,10 @@ export const getTheme: S.Selector<'light' | 'dark'> = (state) =>
     ? state.browser.systemTheme
     : state.settings.theme;
 
-const notesAreEqual = (a: T.Note | undefined, b: T.Note | undefined): boolean =>
+export const notesAreEqual = (
+  a: T.Note | undefined,
+  b: T.Note | undefined
+): boolean =>
   !!(
     a &&
     b &&

@@ -5,6 +5,7 @@ import actions from '../actions';
 import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
 import { NoteBucket } from './functions/note-bucket';
+import { NoteDoctor } from './functions/note-doctor';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
@@ -132,6 +133,9 @@ export const initSimperium = (
     window.noteQueue = noteQueue;
     window.tagQueue = tagQueue;
   }
+
+  // walk notes and queue any for sync which have discrepancies with their ghost
+  new NoteDoctor(store, noteQueue);
 
   return (next) => (action: A.ActionType) => {
     console.log(action);
