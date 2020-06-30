@@ -23,17 +23,17 @@ const openDB = (): Promise<IDBDatabase> =>
     };
   });
 
-export const loadState = (): Promise<
+export const loadState = async (): Promise<
   [T.RecursivePartial<S.State>, S.Middleware | null]
-> =>
-  new Promise(async (resolve) => {
-    let db;
-    try {
-      db = await openDB();
-    } catch (e) {
-      resolve([{}, null]);
-      return;
-    }
+> => {
+  let db: IDBDatabase;
+  try {
+    db = await openDB();
+  } catch (e) {
+    return [{}, null];
+  }
+
+  return new Promise((resolve) => {
     const tx = db.transaction(['state', 'revisions'], 'readonly');
 
     const stateRequest = tx.objectStore('state').get('state');
@@ -94,6 +94,7 @@ export const loadState = (): Promise<
 
     stateRequest.onerror = () => resolve([{}, middleware]);
   });
+};
 
 const persistRevisions = async (
   noteId: T.EntityId,
