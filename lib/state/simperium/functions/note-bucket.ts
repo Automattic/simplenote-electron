@@ -6,7 +6,6 @@ import type {
 } from 'simperium';
 import * as S from '../../';
 import * as T from '../../../types';
-import actions from '../../actions';
 
 export class NoteBucket implements BucketStore<T.Note> {
   store: S.Store;
@@ -33,7 +32,7 @@ export class NoteBucket implements BucketStore<T.Note> {
 
   remove(noteId: T.EntityId, callback: (error: null) => void) {
     this.store.dispatch({
-      type: 'REMOTE_NOTE_DELETE_FOREVER',
+      type: 'NOTE_BUCKET_REMOVE',
       noteId,
     });
     callback(null);
@@ -45,7 +44,12 @@ export class NoteBucket implements BucketStore<T.Note> {
     isIndexing: boolean,
     callback: EntityCallback<BucketObject<T.Note>>
   ) {
-    this.store.dispatch(actions.simperium.remoteNoteUpdate(noteId, note));
+    this.store.dispatch({
+      type: 'NOTE_BUCKET_UPDATE',
+      noteId,
+      note,
+      isIndexing,
+    });
     callback(null, { id: noteId, data: note });
   }
 }

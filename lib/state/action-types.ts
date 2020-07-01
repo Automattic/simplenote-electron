@@ -233,6 +233,14 @@ export type LoadRevisions = Action<
   'LOAD_REVISIONS',
   { noteId: T.EntityId; revisions: [number, T.Note][] }
 >;
+export type NoteBucketRemove = Action<
+  'NOTE_BUCKET_REMOVE',
+  { noteId: EntityId }
+>;
+export type NoteBucketUpdate = Action<
+  'NOTE_BUCKET_UPDATE',
+  { noteId: EntityId; note: T.Note; isIndexing: boolean }
+>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; note: T.Note; remoteInfo?: RemoteInfo<T.Note> }
@@ -262,6 +270,11 @@ export type SubmitPendingChange = Action<
     entityId: T.EntityId;
     ccid: string;
   }
+>;
+export type TagBucketRemove = Action<'TAG_BUCKET_REMOVE', { tagId: EntityId }>;
+export type TagBucketUpdate = Action<
+  'TAG_BUCKET_UPDATE',
+  { tagId: EntityId; tag: T.Tag; isIndexing: boolean }
 >;
 
 export type ActionType =
@@ -293,6 +306,8 @@ export type ActionType =
   | LoadRevisions
   | Logout
   | MarkdownNote
+  | NoteBucketRemove
+  | NoteBucketUpdate
   | OpenNote
   | OpenRevision
   | OpenTag
@@ -333,6 +348,8 @@ export type ActionType =
   | StoreEditorSelection
   | SubmitPendingChange
   | SystemThemeUpdate
+  | TagBucketRemove
+  | TagBucketUpdate
   | ToggleAnalytics
   | ToggleAutoHideMenuBar
   | ToggleEditMode

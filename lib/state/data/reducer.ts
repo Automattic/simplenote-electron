@@ -55,6 +55,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
     }
 
     case 'DELETE_NOTE_FOREVER':
+    case 'NOTE_BUCKET_REMOVE':
     case 'REMOTE_NOTE_DELETE_FOREVER': {
       if (!state.has(action.noteId)) {
         return state;
@@ -66,6 +67,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
     }
 
     case 'EDIT_NOTE':
+    case 'NOTE_BUCKET_UPDATE':
     case 'REMOTE_NOTE_UPDATE': {
       const prev = state.get(action.noteId) ?? {
         content: '',
@@ -311,7 +313,8 @@ export const tags: A.Reducer<[
       return [nextIds, nextNames];
     }
 
-    case 'REMOTE_TAG_DELETE': {
+    case 'REMOTE_TAG_DELETE':
+    case 'TAG_BUCKET_REMOVE': {
       if (!tagIds.has(action.tagId)) {
         return state;
       }
@@ -326,6 +329,7 @@ export const tags: A.Reducer<[
     }
 
     case 'REMOTE_TAG_UPDATE':
+    case 'TAG_BUCKET_UPDATE':
       if (tagIds.has(action.tagId)) {
         const nextTags = new Map(tagIds);
         nextTags.set(action.tagId, action.tag);
