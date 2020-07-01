@@ -160,6 +160,8 @@ export const initSimperium = (
     tagQueue.add(tagId, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
+    window.noteBucket = noteBucket;
+    window.tagBucket = tagBucket;
     window.noteQueue = noteQueue;
     window.tagQueue = tagQueue;
   }
