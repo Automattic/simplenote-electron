@@ -66,6 +66,20 @@ export const initSimperium = (
     });
   });
 
+  noteBucket.channel.on('update', (noteId) => {
+    const content = store.getState().data.notes.get(noteId)?.content;
+
+    if (!content) {
+      return;
+    }
+
+    const notification = new Notification('Note Updated!', {
+      body: content,
+    });
+
+    notification.onclick = () => dispatch(actions.ui.openNote(noteId));
+  });
+
   noteBucket.channel.localQueue.on('send', (change) => {
     dispatch({
       type: 'SUBMIT_PENDING_CHANGE',
