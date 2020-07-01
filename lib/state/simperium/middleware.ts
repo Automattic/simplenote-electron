@@ -8,6 +8,7 @@ import { NoteBucket } from './functions/note-bucket';
 import { NoteDoctor } from './functions/note-doctor';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
+import { announceNoteUpdates } from './functions/change-announcer';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { getAccountName } from './functions/username-monitor';
@@ -57,29 +58,23 @@ export const initSimperium = (
   startConnectionMonitor(client, store);
 
   const noteBucket = client.bucket('note');
-  noteBucket.on('update', (entityId, updatedEntity, remoteInfo) => {
-    dispatch({
-      type: 'REMOTE_NOTE_UPDATE',
-      noteId: entityId,
-      note: updatedEntity,
-      remoteInfo,
-    });
-  });
-
-  noteBucket.channel.on('update', (noteId, note) => {
-    if (note.deleted) {
-      new Notification('Note Trashed', {
-        body: note.content.slice(0, 200) || '(no content)',
+  noteBucket.channel.on(
+    'update',
+    (entityId, updatedEntity, original, patch, isIndexing) => {
+      dispatch({
+        type: 'REMOTE_NOTE_UPDATE',
+        noteId: entityId,
+        note: updatedEntity,
+        remoteInfo: {
+          original,
+          patch,
+          isIndexing,
+        },
       });
-      return;
     }
+  );
 
-    const notification = new Notification('Note Updated!', {
-      body: note.content.slice(0, 200) || '(no content)',
-    });
-
-    notification.onclick = () => dispatch(actions.ui.openNote(noteId));
-  });
+  noteBucket.channel.on('update', announceNoteUpdates(store));
 
   noteBucket.channel.localQueue.on('send', (change) => {
     dispatch({
