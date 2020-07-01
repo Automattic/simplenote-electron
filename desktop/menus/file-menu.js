@@ -20,7 +20,7 @@ const submenu = [
     label: '&Export Notes…',
     accelerator: 'CommandOrControl+Shift+E',
     click: appCommandSender({
-      action: 'exportZipArchive',
+      action: 'exportNotes',
     }),
   },
   { type: 'separator' },

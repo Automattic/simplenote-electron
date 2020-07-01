@@ -10,6 +10,10 @@ export const editNote: A.ActionCreator<A.EditNote> = (
   changes,
 });
 
+export const exportNotes: A.ActionCreator<A.ExportNotes> = () => ({
+  type: 'EXPORT_NOTES',
+});
+
 export const importNote: A.ActionCreator<A.ImportNote> = (note: T.Note) => ({
   type: 'IMPORT_NOTE',
   note,

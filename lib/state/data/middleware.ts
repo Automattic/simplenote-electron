@@ -1,5 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
+import exportZipArchive from '../../utils/export';
+
 import * as A from '../action-types';
 import * as S from '../';
 
@@ -31,6 +33,10 @@ export const middleware: S.Middleware = (store) => (
         type: 'DELETE_NOTE_FOREVER',
         noteId: state.ui.openedNote,
       });
+
+    case 'EXPORT_NOTES':
+      exportZipArchive(state.data.notes);
+      return next(action);
 
     case 'IMPORT_NOTE':
       return next({
