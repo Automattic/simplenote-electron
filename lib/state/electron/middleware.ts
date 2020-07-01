@@ -51,8 +51,28 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         dispatch(actions.settings.resetFontSize());
         return;
 
+      case 'setLineLength':
+        dispatch(actions.settings.setLineLength(command.lineLength));
+        return;
+
       case 'setNoteDisplay':
         dispatch(actions.settings.setNoteDisplay(command.noteDisplay));
+        return;
+
+      case 'setSortType':
+        dispatch(actions.settings.setSortType(command.sortType));
+        return;
+
+      case 'toggleFocusMode':
+        dispatch(actions.settings.toggleFocusMode());
+        return;
+
+      case 'toggleSortOrder':
+        dispatch(actions.settings.toggleSortOrder());
+        return;
+
+      case 'toggleSortTagsAlpha':
+        dispatch(actions.settings.toggleSortTagsAlpha());
         return;
 
       case 'toggleSpellCheck':
