@@ -32,7 +32,7 @@ export class TagBucket implements BucketStore<T.Tag> {
 
   remove(tagId: T.EntityId, callback: (error: null) => void) {
     this.store.dispatch({
-      type: 'REMOTE_TAG_DELETE',
+      type: 'TAG_BUCKET_REMOVE',
       tagId,
     });
     callback(null);
@@ -45,9 +45,10 @@ export class TagBucket implements BucketStore<T.Tag> {
     callback: EntityCallback<BucketObject<T.Tag>>
   ) {
     this.store.dispatch({
-      type: 'REMOTE_TAG_UPDATE',
+      type: 'TAG_BUCKET_UPDATE',
       tagId,
       tag,
+      isIndexing,
     });
     callback(null, { id: tagId, data: tag });
   }

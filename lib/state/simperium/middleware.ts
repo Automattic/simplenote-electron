@@ -73,6 +73,12 @@ export const initSimperium = (
       });
     }
   );
+  noteBucket.channel.on('remove', (noteId) =>
+    dispatch({
+      type: 'REMOTE_NOTE_DELETE_FOREVER',
+      noteId,
+    })
+  );
 
   noteBucket.channel.on('update', announceNoteUpdates(store));
 
@@ -93,14 +99,27 @@ export const initSimperium = (
   });
 
   const tagBucket = client.bucket('tag');
-  tagBucket.on('update', (entityId, updatedEntity, remoteInfo) => {
+  tagBucket.channel.on(
+    'update',
+    (entityId, updatedEntity, original, patch, isIndexing) => {
+      dispatch({
+        type: 'REMOTE_TAG_UPDATE',
+        tagId: entityId,
+        tag: updatedEntity,
+        remoteInfo: {
+          original,
+          patch,
+          isIndexing,
+        },
+      });
+    }
+  );
+  tagBucket.channel.on('remove', (tagId) =>
     dispatch({
-      type: 'REMOTE_TAG_UPDATE',
-      tagId: entityId,
-      tag: updatedEntity,
-      remoteInfo,
-    });
-  });
+      type: 'REMOTE_TAG_DELETE',
+      tagId,
+    })
+  );
 
   const preferencesBucket = client.bucket('preferences');
   preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
