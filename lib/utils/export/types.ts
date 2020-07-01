@@ -13,6 +13,6 @@ export type ExportNote = {
 };
 
 export type GroupedExportNotes = {
-  activeNotes: ExportNote[] | [];
-  trashedNotes: ExportNote[] | [];
+  activeNotes: ExportNote[];
+  trashedNotes: ExportNote[];
 };
