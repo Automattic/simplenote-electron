@@ -8,6 +8,7 @@ declare global {
   interface Window {
     analyticsEnabled: boolean;
     electron: {
+      confirmLogout(changes: string): boolean;
       isMac: boolean;
       receive(command: 'appCommand', callback: (event: any) => any);
       send(command: 'clearCookies'): void;
