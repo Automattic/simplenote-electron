@@ -86,6 +86,27 @@ export const announceNoteUpdates = ({ dispatch }: S.Store) => {
           return;
         }
 
+        if (!original?.publishURL && note.publishURL?.length) {
+          noteIfy(
+            noteId,
+            'Note Published',
+            note.content.slice(0, 200) || '(no content)'
+          );
+          return;
+        }
+
+        if (
+          original?.systemTags?.includes('published') &&
+          !note.systemTags.includes('published')
+        ) {
+          noteIfy(
+            noteId,
+            'Note Unpublished',
+            note.content.slice(0, 200) || '(no content)'
+          );
+          return;
+        }
+
         if (patch.tags && !patch.content) {
           const oldTags = new Set<string>(original?.tags || []);
           const newTags = new Set<string>(note.tags);
@@ -108,6 +129,25 @@ export const announceNoteUpdates = ({ dispatch }: S.Store) => {
               .filter(Boolean)
               .join('\n')
           );
+          return;
+        }
+
+        // other publish events are covered by the earlier checks
+        if (
+          Object.getOwnPropertyNames(patch).length === 1 &&
+          ((patch.systemTags &&
+            original?.systemTags.includes('published') !==
+              note.systemTags.includes('published')) ||
+            patch.publishURL)
+        ) {
+          return;
+        }
+
+        // ignore pinned and markdown and other system tag changes
+        if (
+          Object.getOwnPropertyNames(patch).length === 1 &&
+          patch.systemTags
+        ) {
           return;
         }
 
