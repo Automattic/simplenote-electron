@@ -66,15 +66,14 @@ export const initSimperium = (
     });
   });
 
-  noteBucket.channel.on('update', (noteId) => {
-    const content = store.getState().data.notes.get(noteId)?.content;
-
-    if (!content) {
+  noteBucket.channel.on('update', (noteId, note) => {
+    if (note.deleted) {
+      new Notification('Note Trashed', { body: note.content });
       return;
     }
 
     const notification = new Notification('Note Updated!', {
-      body: content,
+      body: note.content,
     });
 
     notification.onclick = () => dispatch(actions.ui.openNote(noteId));
