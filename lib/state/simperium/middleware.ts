@@ -8,6 +8,7 @@ import { NoteBucket } from './functions/note-bucket';
 import { NoteDoctor } from './functions/note-doctor';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
+import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { getAccountName } from './functions/username-monitor';
 
@@ -297,10 +298,43 @@ export const initSimperium = (
         return result;
       }
 
-      case 'LOGOUT':
+      case 'LOGOUT': {
+        const changes = getUnconfirmedChanges(nextState);
+        changes.notes.forEach((noteId) => noteQueue.add(noteId, Date.now()));
+        const changesString =
+          changes.notes.length < 4
+            ? changes.notes
+                .map((noteId) => {
+                  const hasGhost = nextState.simperium.ghosts[1]
+                    .get('note')
+                    ?.get(noteId);
+
+                  const note = nextState.data.notes.get(noteId);
+                  const content = note?.content ?? '';
+                  const newlineAt = content.indexOf('\n');
+                  const length = newlineAt >= 0 ? Math.min(newlineAt, 60) : 60;
+
+                  const prefix = !hasGhost
+                    ? 'new'
+                    : note?.deleted
+                    ? 'trashed'
+                    : 'changed';
+
+                  const preview = content.slice(0, length) || '(Blank note)';
+
+                  return `(${prefix}) ${preview}`;
+                })
+                .join('\n')
+            : `${changes.notes.length} notes may not be synchronized`;
+
+        if (changes && !window.electron?.confirmLogout(changesString)) {
+          return result;
+        }
+
         client.end();
         logout();
         return result;
+      }
     }
 
     return result;
