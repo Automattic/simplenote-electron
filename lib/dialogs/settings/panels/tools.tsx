@@ -1,18 +1,17 @@
 import React, { FunctionComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import exportZipArchive from '../../../utils/export';
-
+import actions from '../../../state/actions';
 import PanelTitle from '../../../components/panel-title';
 import ButtonGroup from '../../button-group';
 import SettingsGroup, { Item } from '../../settings-group';
 import { showDialog } from '../../../state/ui/actions';
 import ToggleGroup from '../../toggle-settings-group';
-import { toggleKeyboardShortcuts } from '../../../state/settings/actions';
 
 import * as S from '../../../state';
 
 type DispatchProps = {
+  exportNotes: () => any;
   showImportDialog: () => any;
   toggleShortcuts: () => any;
 };
@@ -24,6 +23,7 @@ type StateProps = {
 type Props = DispatchProps & StateProps;
 
 const ToolsPanel: FunctionComponent<Props> = ({
+  exportNotes,
   keyboardShortcuts,
   showImportDialog,
   toggleShortcuts,
@@ -32,7 +32,7 @@ const ToolsPanel: FunctionComponent<Props> = ({
     if (item.slug === 'import') {
       showImportDialog();
     } else if (item.slug === 'export') {
-      exportZipArchive();
+      exportNotes();
     }
   };
 
@@ -73,8 +73,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+  exportNotes: () => dispatch(actions.data.exportNotes()),
   showImportDialog: () => dispatch(showDialog('IMPORT')),
-  toggleShortcuts: () => dispatch(toggleKeyboardShortcuts()),
+  toggleShortcuts: () => dispatch(actions.settings.toggleKeyboardShortcuts()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolsPanel);

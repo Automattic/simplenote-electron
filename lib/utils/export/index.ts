@@ -4,10 +4,12 @@ import { get } from 'lodash';
 import exportNotes from './export-notes';
 import exportToZip from './to-zip';
 
+import * as T from '../../types';
+
 const filename = 'notes.zip';
 
-const exportZipArchive = () => {
-  return exportNotes()
+const exportZipArchive = (notes: T.Note[]) => {
+  return exportNotes(notes)
     .then(exportToZip)
     .then((zip) =>
       zip.generateAsync({

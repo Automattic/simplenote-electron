@@ -62,6 +62,7 @@ export type CreateNoteWithId = Action<
 >;
 export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
+export type ExportNotes = Action<'EXPORT_NOTES'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
   { noteIds: T.EntityId[]; tagIds: T.EntityId[] }
@@ -278,6 +279,7 @@ export type ActionType =
   | DeleteOpenNoteForever
   | DeleteNoteForever
   | EditNote
+  | ExportNotes
   | FilterNotes
   | FocusSearchField
   | GhostRemoveEntity
