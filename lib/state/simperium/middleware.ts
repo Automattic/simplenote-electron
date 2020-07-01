@@ -342,7 +342,10 @@ export const initSimperium = (
                 .join('\n')
             : `${changes.notes.length} notes may not be synchronized`;
 
-        if (changes && !window.electron?.confirmLogout(changesString)) {
+        if (
+          changes.notes.length > 0 &&
+          !window.electron?.confirmLogout(changesString)
+        ) {
           return result;
         }
 
