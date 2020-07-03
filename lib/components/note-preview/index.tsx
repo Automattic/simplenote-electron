@@ -15,6 +15,8 @@ type OwnProps = {
 
 type StateProps = {
   fontSize: number;
+  isDialogOpen: boolean;
+  isNoteInfoOpen: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
   searchQuery: string;
@@ -29,11 +31,45 @@ type Props = OwnProps & StateProps & DispatchProps;
 export const NotePreview: FunctionComponent<Props> = ({
   editNote,
   fontSize,
+  isDialogOpen,
+  isNoteInfoOpen,
   note,
   noteId,
   searchQuery,
 }) => {
   const previewNode = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const copyRenderedNote = (event: ClipboardEvent) => {
+      console.log(isNoteInfoOpen);
+      // TODO this isn't working - these are false when I log them, but in console they are true
+      // e.g. state.ui.showNoteInfo in console will print "true"
+      // Only copy if not viewing the note info panel or a dialog
+      if (isNoteInfoOpen || isDialogOpen) {
+        return true;
+      }
+
+      // Only copy the rendered content if nothing is selected
+      if (!document.getSelection().isCollapsed) {
+        return true;
+      }
+
+      const node = document.createDocumentFragment();
+      const div = document.createElement('div');
+      renderToNode(div, note!.content, searchQuery);
+      node.appendChild(div);
+
+      // TODO this is a bug
+      console.log(div); // innerHTML shows up here in console
+      console.log(div.innerHTML); // innerHTML is now an empty string???????
+
+      event.clipboardData.setData('text/plain', div.innerHTML);
+      event.preventDefault();
+    };
+
+    document.addEventListener('copy', copyRenderedNote, false);
+    return () => document.removeEventListener('copy', copyRenderedNote, false);
+  }, []);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -106,6 +142,8 @@ export const NotePreview: FunctionComponent<Props> = ({
 
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
   fontSize: state.settings.fontSize,
+  isDialogOpen: state.ui.dialogs.length > 0,
+  isNoteInfoOpen: state.ui.showNoteInfo,
   note: props.note ?? state.data.notes.get(props.noteId),
   noteId: props.noteId ?? state.ui.openedNote,
   searchQuery: state.ui.searchQuery,
