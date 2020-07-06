@@ -91,7 +91,7 @@ const renderNote = (
     ) : (
       <CellMeasurer
         cache={heightCache}
-        columnIndex={-3}
+        columnIndex={0}
         key="notes-header"
         parent={parent}
         rowIndex={index}

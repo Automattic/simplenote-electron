@@ -203,7 +203,9 @@ export const middleware: S.Middleware = (store) => {
 
       if (
         searchTerms.length > 0 &&
-        !searchTerms.every((term) => note.content.includes(term))
+        !searchTerms.every((term) =>
+          note.content.includes(term.toLocaleLowerCase())
+        )
       ) {
         continue;
       }
