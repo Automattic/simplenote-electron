@@ -22,18 +22,22 @@ const spellcheck = require('./spellchecker');
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
 module.exports = function main() {
+  // Keep a global reference of the window object, if you don't, the window will
+  // be closed automatically when the JavaScript object is GCed.
+  let mainWindow = null;
+
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
+    app.on('open-url', function (event, url) {
+      event.preventDefault();
+      mainWindow.webContents.send('wpLogin', url);
+    });
   });
 
   const url =
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
       : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
-
-  // Keep a global reference of the window object, if you don't, the window will
-  // be closed automatically when the JavaScript object is GCed.
-  let mainWindow = null;
 
   const activateWindow = function () {
     // Only allow a single window
@@ -118,6 +122,10 @@ module.exports = function main() {
       mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
+    ipcMain.on('wpLogin', function (event, url) {
+      shell.openExternal(url);
+    });
+
     mainWindowState.manage(mainWindow);
 
     mainWindow.webContents.on('new-window', function (event, linkUrl) {
@@ -165,6 +173,11 @@ module.exports = function main() {
 
   if (!gotTheLock) {
     return app.quit();
+  }
+
+  if (!app.isDefaultProtocolClient('simplenote')) {
+    // Define custom protocol handler. This allows for deeplinking into the app from simplenote://
+    app.setAsDefaultProtocolClient('simplenote');
   }
 
   // Quit when all windows are closed.

@@ -2,6 +2,9 @@ import React, { Component, Suspense } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
+import NoteList from '../note-list';
+import NoteEditor from '../note-editor';
+
 import NoteToolbarContainer from '../note-toolbar-container';
 import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
@@ -12,14 +15,6 @@ import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
-
-const NoteList = React.lazy(() =>
-  import(/* webpackChunkName: 'note-list' */ '../note-list')
-);
-
-const NoteEditor = React.lazy(() =>
-  import(/* webpackChunkName: 'note-editor' */ '../note-editor')
-);
 
 type OwnProps = {
   isFocusMode: boolean;
@@ -100,37 +95,27 @@ export class AppLayout extends Component<Props> {
 
     const editorVisible = !(showNoteList && isSmallScreen);
 
-    const placeholder = (
-      <TransitionDelayEnter delay={1000}>
-        <div className="app-layout__placeholder">
-          <SimplenoteCompactLogo />
-        </div>
-      </TransitionDelayEnter>
-    );
-
     return (
       <div className={mainClasses}>
-        <Suspense fallback={placeholder}>
-          <div className="app-layout__source-column theme-color-bg theme-color-fg">
-            <SearchBar noteBucket={noteBucket} />
-            <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
+        <div className="app-layout__source-column theme-color-bg theme-color-fg">
+          <SearchBar noteBucket={noteBucket} />
+          <NoteList noteBucket={noteBucket} isSmallScreen={isSmallScreen} />
+        </div>
+        {editorVisible && (
+          <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
+            <RevisionSelector onUpdateContent={onUpdateContent} />
+            <NoteToolbarContainer
+              noteBucket={noteBucket}
+              toolbar={<NoteToolbar />}
+            />
+            <NoteEditor
+              isSmallScreen={isSmallScreen}
+              noteBucket={noteBucket}
+              onUpdateContent={onUpdateContent}
+              syncNote={syncNote}
+            />
           </div>
-          {editorVisible && (
-            <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-              <RevisionSelector onUpdateContent={onUpdateContent} />
-              <NoteToolbarContainer
-                noteBucket={noteBucket}
-                toolbar={<NoteToolbar />}
-              />
-              <NoteEditor
-                isSmallScreen={isSmallScreen}
-                noteBucket={noteBucket}
-                onUpdateContent={onUpdateContent}
-                syncNote={syncNote}
-              />
-            </div>
-          )}
-        </Suspense>
+        )}
       </div>
     );
   };
