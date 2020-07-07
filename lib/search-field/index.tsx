@@ -7,8 +7,8 @@ import { search } from '../state/ui/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 const KEY_ESC = 27;
 
@@ -105,7 +105,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   data,
   ui: { openedTag, searchQuery, showTrash },
 }: State) => ({
-  openedTag: openedTag ? data.tags[0].get(openedTag) ?? null : null,
+  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
   searchQuery,
   showTrash,
 });

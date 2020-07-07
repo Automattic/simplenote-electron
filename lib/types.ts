@@ -1,8 +1,8 @@
-import type { EntityId } from 'simperium';
-
 ///////////////////////////////////////
 // Simplenote Data Model
 ///////////////////////////////////////
+
+export type EntityId = Brand<string, 'EntityId'>;
 
 export type SecondsEpoch = number;
 export type Entity<T> = {
@@ -11,7 +11,8 @@ export type Entity<T> = {
   version: number;
 };
 
-export type TagName = string;
+export type TagHash = Brand<string, 'TagHash'> | EntityId;
+export type TagName = Brand<string, 'TagName'>;
 export type SystemTag = 'markdown' | 'pinned' | 'published' | 'shared';
 
 export type Note = {
@@ -43,7 +44,6 @@ export type PreferencesEntity = Entity<Preferences>;
 ///////////////////////////////////////
 // Simperium Types
 ///////////////////////////////////////
-export type { EntityId } from 'simperium';
 export type ConnectionState = 'green' | 'red' | 'offline';
 
 ///////////////////////////////////////
@@ -59,11 +59,13 @@ export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
 export type Theme = 'system' | 'light' | 'dark';
-export type TranslatableString = string;
+export type TranslatableString = Brand<string, 'TranslatableString'>;
 
 ///////////////////////////////////////
 // Language and Platform
 ///////////////////////////////////////
+
+export type Brand<T, Name> = T & { __type__: Name };
 
 export type JSONValue =
   | null

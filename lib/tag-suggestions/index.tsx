@@ -2,15 +2,15 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import analytics from '../analytics';
 import { search } from '../state/ui/actions';
-import filterAtMost from '../utils/filter-at-most';
+import { tagHashOf } from '../utils/tag-hash';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 type StateProps = {
-  filteredTags: T.EntityId[];
+  filteredTags: T.TagHash[];
   searchQuery: string;
-  tags: Map<T.EntityId, T.Tag>;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type DispatchProps = {
@@ -67,13 +67,14 @@ export class TagSuggestions extends Component<Props> {
 }
 
 export const filterTags = (
-  tags: Map<T.EntityId, T.Tag>,
+  tags: Map<T.TagHash, T.Tag>,
+  noteTags: Map<T.TagHash, Set<T.EntityId>>,
   query: string
-): T.EntityId[] => {
+): T.TagHash[] => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
-  const tagTerm = query.trim().toLowerCase().split(' ').pop();
+  const tagTerm = query.trim().split(' ').pop();
 
   if (!tagTerm) {
     return [];
@@ -83,24 +84,40 @@ export const filterTags = (
   // to the search bar, so we make it an explicit prefix match, meaning we
   // don't match inside the tag and we don't match full-text matches
   const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
-  const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
+  const term: T.TagHash = tagHashOf(
+    (isPrefixMatch ? tagTerm.slice(4) : tagTerm) as T.TagName
+  );
 
-  const matcher: (tag: T.Tag) => boolean = isPrefixMatch
-    ? ({ name }) =>
-        name.toLowerCase() !== term && name.toLowerCase().startsWith(term)
-    : ({ name }) => name.toLowerCase().includes(term);
+  const matcher: (tagHash: T.TagHash) => boolean = isPrefixMatch
+    ? (tagHash) => tagHash !== term && tagHash.startsWith(term)
+    : (tagHash) => tagHash.includes(term);
 
   const filteredTags = [];
-  for (const [tagId, tag] of tags.entries()) {
-    if (matcher(tag)) {
-      filteredTags.push(tagId);
-    }
-
-    if (filteredTags.length >= 5) {
-      return filteredTags;
+  for (const tagHash of tags.keys()) {
+    if (matcher(tagHash)) {
+      filteredTags.push(tagHash);
     }
   }
-  return filteredTags;
+
+  return filteredTags
+    .sort((a, b) => {
+      const aStarts = a.startsWith(term);
+      const bStarts = b.startsWith(term);
+
+      if (aStarts !== bStarts) {
+        return aStarts ? -1 : 1;
+      }
+
+      const aCount = noteTags.get(a)?.size ?? 0;
+      const bCount = noteTags.get(b)?.size ?? 0;
+
+      if (aCount !== bCount) {
+        return bCount - aCount;
+      }
+
+      return a.localeCompare(b);
+    })
+    .slice(0, 5);
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
@@ -109,7 +126,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 }) => ({
   filteredTags: tagSuggestions,
   searchQuery,
-  tags: data.tags[0],
+  tags: data.tags,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

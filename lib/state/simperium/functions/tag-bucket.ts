@@ -4,8 +4,8 @@ import type {
   EntityCallback,
   EntitiesCallback,
 } from 'simperium';
-import * as S from '../../';
-import * as T from '../../../types';
+import type * as S from '../../';
+import type * as T from '../../../types';
 
 export class TagBucket implements BucketStore<T.Tag> {
   store: S.Store;
@@ -15,7 +15,7 @@ export class TagBucket implements BucketStore<T.Tag> {
   }
 
   get(tagId: T.EntityId, callback: EntityCallback<BucketObject<T.Tag>>) {
-    const tag = this.store.getState().data.tags[0].get(tagId);
+    const tag = this.store.getState().data.tags.get(tagId);
 
     callback(null, { id: tagId, data: tag });
   }
@@ -23,8 +23,8 @@ export class TagBucket implements BucketStore<T.Tag> {
   find(query: {}, callback: EntitiesCallback<BucketObject<T.Tag>>) {
     callback(
       null,
-      [...this.store.getState().data.tags[0].entries()].map(([tagId, tag]) => ({
-        id: tagId,
+      [...this.store.getState().data.tags.entries()].map(([tagHash, tag]) => ({
+        id: tagHash,
         data: tag,
       }))
     );
@@ -33,7 +33,7 @@ export class TagBucket implements BucketStore<T.Tag> {
   remove(tagId: T.EntityId, callback: (error: null) => void) {
     this.store.dispatch({
       type: 'TAG_BUCKET_REMOVE',
-      tagId,
+      tagHash: tagId,
     });
     callback(null);
   }
@@ -46,7 +46,7 @@ export class TagBucket implements BucketStore<T.Tag> {
   ) {
     this.store.dispatch({
       type: 'TAG_BUCKET_UPDATE',
-      tagId,
+      tagHash: tagId,
       tag,
       isIndexing,
     });

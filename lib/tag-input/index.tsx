@@ -8,8 +8,8 @@ import React, {
 import { connect } from 'react-redux';
 import { get, identity, invoke, noop } from 'lodash';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
@@ -27,7 +27,7 @@ type OwnProps = {
 
 type StateProps = {
   note: T.Note;
-  tags: Map<T.EntityId, T.Tag>;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type Props = OwnProps & StateProps;
@@ -263,7 +263,7 @@ export class TagInput extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   note: state.data.notes.get(state.ui.openedNote),
-  tags: state.data.tags[0],
+  tags: state.data.tags,
 });
 
 export default connect(mapStateToProps)(TagInput);

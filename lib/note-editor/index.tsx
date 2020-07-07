@@ -11,7 +11,7 @@ import * as T from '../types';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 
 type StateProps = {
-  allTags: Map<T.EntityId, T.Tag>;
+  allTags: Map<T.TagHash, T.Tag>;
   editMode: boolean;
   isEditorActive: boolean;
   isSmallScreen: boolean;
@@ -150,7 +150,7 @@ export class NoteEditor extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  allTags: state.data.tags[0],
+  allTags: state.data.tags,
   editMode: state.ui.editMode,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   isEditorActive: !state.ui.showNavigation,

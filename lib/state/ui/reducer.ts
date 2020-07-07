@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 
-import * as A from '../action-types';
-import * as T from '../../types';
+import { tagHashOf } from '../../utils/tag-hash';
+
+import type * as A from '../action-types';
+import type * as T from '../../types';
 
 const emptyList: unknown[] = [];
 
@@ -215,13 +217,15 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
-const openedTag: A.Reducer<T.EntityId | null> = (state = null, action) => {
+const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
   switch (action.type) {
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
       return null;
     case 'OPEN_TAG':
-      return action.tagId;
+      return tagHashOf(action.tagName);
+    case 'TRASH_TAG':
+      return tagHashOf(action.tagName) === state ? null : state;
     default:
       return state;
   }
@@ -322,15 +326,15 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const tagSuggestions: A.Reducer<T.EntityId[]> = (
-  state = emptyList as T.EntityId[],
+const tagSuggestions: A.Reducer<T.TagHash[]> = (
+  state = emptyList as T.TagHash[],
   action
 ) => {
   if ('undefined' === typeof action.meta?.searchResults) {
     return state;
   }
 
-  return action.meta.searchResults.tagIds;
+  return action.meta.searchResults.tagHashes;
 };
 
 export default combineReducers({

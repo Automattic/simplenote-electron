@@ -4,8 +4,7 @@ import type {
   EntityCallback,
   EntitiesCallback,
 } from 'simperium';
-import * as S from '../../';
-import * as T from '../../../types';
+import type * as T from '../../../types';
 
 export class InMemoryBucket<U> implements BucketStore<U> {
   entities: Map<T.EntityId, U>;

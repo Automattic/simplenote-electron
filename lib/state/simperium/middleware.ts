@@ -12,10 +12,11 @@ import { announceNoteUpdates } from './functions/change-announcer';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { getAccountName } from './functions/username-monitor';
+import { tagHashOf as t } from '../../utils/tag-hash';
 
-import * as A from '../action-types';
-import * as S from '../';
-import * as T from '../../types';
+import type * as A from '../action-types';
+import type * as S from '../';
+import type * as T from '../../types';
 
 const debug = debugFactory('simperium-middleware');
 
@@ -61,16 +62,24 @@ export const initSimperium = (
   noteBucket.channel.on(
     'update',
     (entityId, updatedEntity, original, patch, isIndexing) => {
-      dispatch({
-        type: 'REMOTE_NOTE_UPDATE',
-        noteId: entityId,
-        note: updatedEntity,
-        remoteInfo: {
-          original,
-          patch,
-          isIndexing,
-        },
-      });
+      if (original && patch && 'undefined' !== typeof isIndexing) {
+        dispatch({
+          type: 'REMOTE_NOTE_UPDATE',
+          noteId: entityId as T.EntityId,
+          note: updatedEntity,
+          remoteInfo: {
+            original,
+            patch,
+            isIndexing,
+          },
+        });
+      } else {
+        dispatch({
+          type: 'REMOTE_NOTE_UPDATE',
+          noteId: entityId as T.EntityId,
+          note: updatedEntity,
+        });
+      }
     }
   );
   noteBucket.channel.on('remove', (noteId) =>
@@ -85,7 +94,7 @@ export const initSimperium = (
   noteBucket.channel.localQueue.on('send', (change) => {
     dispatch({
       type: 'SUBMIT_PENDING_CHANGE',
-      entityId: change.id,
+      entityId: change.id as T.EntityId,
       ccid: change.ccid,
     });
   });
@@ -93,7 +102,7 @@ export const initSimperium = (
   noteBucket.channel.on('acknowledge', (entityId, change) => {
     dispatch({
       type: 'ACKNOWLEDGE_PENDING_CHANGE',
-      entityId: entityId,
+      entityId: entityId as T.EntityId,
       ccid: change.ccid,
     });
   });
@@ -102,22 +111,30 @@ export const initSimperium = (
   tagBucket.channel.on(
     'update',
     (entityId, updatedEntity, original, patch, isIndexing) => {
-      dispatch({
-        type: 'REMOTE_TAG_UPDATE',
-        tagId: entityId,
-        tag: updatedEntity,
-        remoteInfo: {
-          original,
-          patch,
-          isIndexing,
-        },
-      });
+      if (original && patch && 'undefined' !== typeof isIndexing) {
+        dispatch({
+          type: 'REMOTE_TAG_UPDATE',
+          tagHash: (entityId as string) as T.TagHash,
+          tag: updatedEntity,
+          remoteInfo: {
+            original,
+            patch,
+            isIndexing,
+          },
+        });
+      } else {
+        dispatch({
+          type: 'REMOTE_TAG_UPDATE',
+          tagHash: (entityId as string) as T.TagHash,
+          tag: updatedEntity,
+        });
+      }
     }
   );
   tagBucket.channel.on('remove', (tagId) =>
     dispatch({
       type: 'REMOTE_TAG_DELETE',
-      tagId,
+      tagHash: (tagId as string) as T.TagHash,
     })
   );
 
@@ -156,8 +173,8 @@ export const initSimperium = (
     noteQueue.add(noteId, Date.now() + delay);
 
   const tagQueue = new BucketQueue(tagBucket);
-  const queueTagUpdate = (tagId: T.EntityId, delay = 20) =>
-    tagQueue.add(tagId, Date.now() + delay);
+  const queueTagUpdate = (tagHash: T.TagHash, delay = 20) =>
+    tagQueue.add(tagHash, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
     window.noteBucket = noteBucket;
@@ -177,22 +194,8 @@ export const initSimperium = (
 
     switch (action.type) {
       case 'ADD_NOTE_TAG':
-        if (prevState.data.tags[1].has(action.tagName.toLocaleLowerCase())) {
-          queueTagUpdate(
-            nextState.data.tags[1].get(action.tagName.toLocaleLowerCase())
-          );
-        } else {
-          tagBucket.add({ name: action.tagName }).then((tag) =>
-            dispatch({
-              type: 'CONFIRM_NEW_TAG',
-              tagName: action.tagName,
-              originalTagId: nextState.data.tags[1].get(
-                action.tagName.toLocaleLowerCase()
-              ),
-              newTagId: tag.id,
-              tag: tag.data,
-            })
-          );
+        if (!prevState.data.tags.has(t(action.tagName))) {
+          queueTagUpdate(t(action.tagName));
         }
         queueNoteUpdate(action.noteId);
         return result;
@@ -220,7 +223,7 @@ export const initSimperium = (
             dispatch({
               type: 'CONFIRM_NEW_NOTE',
               originalNoteId: action.noteId,
-              newNoteId: note.id,
+              newNoteId: note.id as T.EntityId,
               note: note.data,
             })
           );
@@ -247,7 +250,10 @@ export const initSimperium = (
                   type: 'LOAD_REVISIONS',
                   noteId: noteId,
                   revisions: revisions
-                    .map(({ data, version }) => [version, data])
+                    .map(({ data, version }): [number, T.Note] => [
+                      version,
+                      data,
+                    ])
                     .sort((a, b) => a[0] - b[0]),
                 });
               });
@@ -275,19 +281,15 @@ export const initSimperium = (
         return result;
 
       case 'RENAME_TAG': {
-        const tagId = prevState.data.tags[1].get(
-          action.oldTagName.toLocaleLowerCase()
-        );
-        if (tagId) {
-          queueTagUpdate(tagId);
-        }
+        // @TODO: Remove old tag once done updating all notes?
+        queueTagUpdate(t(action.newTagName));
         return result;
       }
 
       case 'REORDER_TAG':
         // if one tag changes order we likely have to synchronize all tags…
-        nextState.data.tags[0].forEach((tag, tagId) => {
-          queueTagUpdate(tagId);
+        nextState.data.tags.forEach((tag, tagHash) => {
+          queueTagUpdate(tagHash);
         });
         return result;
 
@@ -318,14 +320,7 @@ export const initSimperium = (
         return result;
 
       case 'TRASH_TAG': {
-        const tagId = prevState.data.tags[1].get(
-          action.tagName.toLocaleLowerCase()
-        );
-
-        if (tagId) {
-          tagBucket.remove(tagId);
-        }
-
+        tagBucket.remove(t(action.tagName));
         return result;
       }
 
@@ -340,7 +335,7 @@ export const initSimperium = (
                     .get('note')
                     ?.get(noteId);
 
-                  const note = nextState.data.notes.get(noteId);
+                  const note = nextState.data.notes.get(noteId as T.EntityId);
                   const content = note?.content ?? '';
                   const newlineAt = content.indexOf('\n');
                   const length = newlineAt >= 0 ? Math.min(newlineAt, 60) : 60;

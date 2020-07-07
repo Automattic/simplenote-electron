@@ -41,20 +41,18 @@ export const loadState = async (): Promise<
       const state = stateRequest.result;
 
       try {
-        const tags = new Map(state.tags);
+        const noteTags = new Map(
+          state.noteTags.map(([tagHash, noteIds]) => [
+            tagHash,
+            new Set(noteIds),
+          ])
+        );
 
         const data: T.RecursivePartial<S.State> = {
           data: {
             notes: new Map(state.notes),
-            tags: [
-              tags,
-              new Map(
-                [...tags.entries()].map(([tagId, tag]) => [
-                  tag.name.toLocaleLowerCase(),
-                  tagId,
-                ])
-              ),
-            ],
+            noteTags,
+            tags: new Map(state.tags),
           },
           simperium: {
             ghosts: [new Map(state.cvs), new Map(state.ghosts)],
@@ -108,7 +106,7 @@ const persistRevisions = async (
     const savedRevisions = readRequest.result;
 
     // so merge them to store as many as we can
-    const merged: [number, T.Note] = savedRevisions?.slice() ?? [];
+    const merged: [number, T.Note][] = savedRevisions?.slice() ?? [];
     const seen = new Set<number>(merged.map(([version]) => version));
 
     revisions.forEach(([version, note]) => {
@@ -130,7 +128,11 @@ const persistRevisions = async (
 export const saveState = async (state: S.State) => {
   const editorSelection = Array.from(state.ui.editorSelection);
   const notes = Array.from(state.data.notes);
-  const tags = Array.from(state.data.tags[0]);
+  const noteTags = Array.from(state.data.noteTags).map(([tagHash, noteIds]) => [
+    tagHash,
+    Array.from(noteIds),
+  ]);
+  const tags = Array.from(state.data.tags);
   const cvs = Array.from(state.simperium.ghosts[0]);
   const ghosts = Array.from(state.simperium.ghosts[1]);
   const lastRemoteUpdate = Array.from(state.simperium.lastRemoteUpdate);
@@ -139,6 +141,7 @@ export const saveState = async (state: S.State) => {
   const data = {
     editorSelection,
     notes,
+    noteTags,
     tags,
     cvs,
     ghosts,

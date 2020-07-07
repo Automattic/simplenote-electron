@@ -1,8 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ElementType } from 'react';
 import { Tooltip } from '@material-ui/core';
 
-export const IconButton = ({ icon, title, ...props }) => (
+type OwnProps = {
+  disableTooltip: boolean;
+  icon: ElementType;
+  title: string;
+};
+
+type Props = OwnProps;
+
+export const IconButton = ({ icon, title, ...props }: Props) => (
   <Tooltip
     classes={{ tooltip: 'icon-button__tooltip' }}
     enterDelay={200}
@@ -13,11 +20,5 @@ export const IconButton = ({ icon, title, ...props }) => (
     </button>
   </Tooltip>
 );
-
-IconButton.propTypes = {
-  disableTooltip: PropTypes.bool,
-  icon: PropTypes.element.isRequired,
-  title: PropTypes.string.isRequired,
-};
 
 export default IconButton;

@@ -1,5 +1,5 @@
-import type { ChangeVersion, EntityId, Ghost, RemoteInfo } from 'simperium';
-import * as T from '../types';
+import type { ChangeVersion, Ghost, RemoteInfo } from 'simperium';
+import type * as T from '../types';
 
 export type Action<
   T extends string,
@@ -9,7 +9,7 @@ export type Action<
       nextNoteToOpen?: T.EntityId;
       searchResults?: {
         noteIds: T.EntityId[];
-        tagIds: T.EntityId[];
+        tagHashes: T.TagHash[];
       };
     };
   };
@@ -65,7 +65,7 @@ export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
 export type ExportNotes = Action<'EXPORT_NOTES'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
-  { noteIds: T.EntityId[]; tagIds: T.EntityId[] }
+  { noteIds: T.EntityId[]; tagHashes: T.TagHash[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
@@ -75,7 +75,7 @@ export type OpenRevision = Action<
   'OPEN_REVISION',
   { noteId: T.EntityId; version: number }
 >;
-export type OpenTag = Action<'OPEN_TAG', { tagId: T.EntityId }>;
+export type OpenTag = Action<'OPEN_TAG', { tagName: T.TagName }>;
 export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
 export type RestoreOpenNote = Action<'RESTORE_OPEN_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
@@ -125,7 +125,7 @@ export type WindowResize = Action<'WINDOW_RESIZE', { innerWidth: number }>;
  */
 export type AddNoteTag = Action<
   'ADD_NOTE_TAG',
-  { noteId: T.EntityId; tagName: string }
+  { noteId: T.EntityId; tagName: T.TagName }
 >;
 export type DeleteNoteForever = Action<
   'DELETE_NOTE_FOREVER',
@@ -162,15 +162,15 @@ export type PublishNote = Action<
 >;
 export type RemoveNoteTag = Action<
   'REMOVE_NOTE_TAG',
-  { noteId: T.EntityId; tagName: string }
+  { noteId: T.EntityId; tagName: T.TagName }
 >;
 export type RenameTag = Action<
   'RENAME_TAG',
-  { oldTagName: string; newTagName: string }
+  { oldTagName: T.TagName; newTagName: T.TagName }
 >;
 export type ReorderTag = Action<
   'REORDER_TAG',
-  { tagName: string; newIndex: number }
+  { tagName: T.TagName; newIndex: number }
 >;
 export type RestoreNote = Action<'RESTORE_NOTE', { noteId: T.EntityId }>;
 export type RestoreNoteRevision = Action<
@@ -181,7 +181,7 @@ export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
 >;
-export type TrashTag = Action<'TRASH_TAG', { tagName: string }>;
+export type TrashTag = Action<'TRASH_TAG', { tagName: T.TagName }>;
 
 /*
  * Simperium operations
@@ -206,13 +206,13 @@ export type ConfirmNewTag = Action<
   {
     originalTagId: T.EntityId;
     newTagId: T.EntityId;
-    tagName: string;
+    tagName: T.TagName;
     tag: T.Tag;
   }
 >;
 export type GhostRemoveEntity = Action<
   'GHOST_REMOVE_ENTITY',
-  { bucketName: string; entityId: EntityId }
+  { bucketName: string; entityId: T.EntityId }
 >;
 export type GhostSetChangeVersion = Action<
   'GHOST_SET_CHANGE_VERSION',
@@ -225,7 +225,7 @@ export type GhostSetEntity = Action<
   'GHOST_SET_ENTITY',
   {
     bucketName: string;
-    entityId: EntityId;
+    entityId: T.EntityId;
     ghost: Ghost<unknown>;
   }
 >;
@@ -235,11 +235,11 @@ export type LoadRevisions = Action<
 >;
 export type NoteBucketRemove = Action<
   'NOTE_BUCKET_REMOVE',
-  { noteId: EntityId }
+  { noteId: T.EntityId }
 >;
 export type NoteBucketUpdate = Action<
   'NOTE_BUCKET_UPDATE',
-  { noteId: EntityId; note: T.Note; isIndexing: boolean }
+  { noteId: T.EntityId; note: T.Note; isIndexing: boolean }
 >;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
@@ -251,11 +251,11 @@ export type RemoteNoteDeleteForever = Action<
 >;
 export type RemoteTagDelete = Action<
   'REMOTE_TAG_DELETE',
-  { tagId: T.EntityId }
+  { tagHash: T.TagHash }
 >;
 export type RemoteTagUpdate = Action<
   'REMOTE_TAG_UPDATE',
-  { tagId: T.EntityId; tag: T.Tag; remoteInfo?: RemoteInfo<T.Tag> }
+  { tagHash: T.TagHash; tag: T.Tag; remoteInfo?: RemoteInfo<T.Tag> }
 >;
 export type SetChangeVersion = Action<
   'SET_CHANGE_VERSION',
@@ -271,10 +271,17 @@ export type SubmitPendingChange = Action<
     ccid: string;
   }
 >;
-export type TagBucketRemove = Action<'TAG_BUCKET_REMOVE', { tagId: EntityId }>;
+export type TagBucketRemove = Action<
+  'TAG_BUCKET_REMOVE',
+  { tagHash: T.TagHash }
+>;
 export type TagBucketUpdate = Action<
   'TAG_BUCKET_UPDATE',
-  { tagId: EntityId; tag: T.Tag; isIndexing: boolean }
+  { tagHash: T.TagHash; tag: T.Tag; isIndexing: boolean }
+>;
+export type TagRefresh = Action<
+  'TAG_REFRESH',
+  { noteTags: Map<T.TagHash, Set<T.EntityId>> }
 >;
 
 export type ActionType =
@@ -350,6 +357,7 @@ export type ActionType =
   | SystemThemeUpdate
   | TagBucketRemove
   | TagBucketUpdate
+  | TagRefresh
   | ToggleAnalytics
   | ToggleAutoHideMenuBar
   | ToggleEditMode

@@ -1,6 +1,6 @@
 import { notesAreEqual } from '../../selectors';
 
-import * as S from '../../';
+import type * as S from '../../';
 import type { EntityId } from 'simperium';
 
 const getUnconfirmedNotes = (state: S.State): EntityId[] => {

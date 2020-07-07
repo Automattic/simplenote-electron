@@ -1,22 +1,18 @@
-import React, {
-  Component,
-  KeyboardEventHandler,
-  MouseEvent,
-  RefObject,
-  createRef,
-} from 'react';
+import React, { Component, RefObject, createRef } from 'react';
 import { connect } from 'react-redux';
 import { Overlay } from 'react-overlays';
+import { invoke, negate } from 'lodash';
+
 import isEmailTag from '../utils/is-email-tag';
 import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
 import analytics from '../analytics';
-import { invoke, negate } from 'lodash';
+import { tagHashOf } from '../utils/tag-hash';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 type OwnProps = {
   storeFocusTagField: (focusSetter: () => any) => any;
@@ -30,15 +26,15 @@ type OwnState = {
 };
 
 type StateProps = {
-  allTags: Map<T.EntityId, T.Tag>;
+  allTags: Map<T.TagHash, T.Tag>;
   keyboardShortcuts: boolean;
   noteId: T.EntityId;
   note: T.Note;
 };
 
 type DispatchProps = {
-  addTag: (noteId: T.EntityId, tagName: string) => any;
-  removeTag: (noteId: T.EntityId, tagName: string) => any;
+  addTag: (noteId: T.EntityId, tagName: T.TagName) => any;
+  removeTag: (noteId: T.EntityId, tagName: T.TagName) => any;
 };
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -57,7 +53,7 @@ export class TagField extends Component<Props, OwnState> {
   static displayName = 'TagField';
 
   state = {
-    selectedTag: '',
+    selectedTag: '' as T.TagName,
     showEmailTooltip: false,
     tagInput: '',
   };
@@ -83,21 +79,20 @@ export class TagField extends Component<Props, OwnState> {
 
   addTag = (tags: string) => {
     const { note, noteId } = this.props;
-    const newTags = tags.trim().replace(/\s+/g, ',').split(',');
+    const newTags = tags.trim().replace(/\s+/g, ',').split(',') as T.TagName[];
 
     if (newTags.some(isEmailTag)) {
       this.showEmailTooltip();
     }
 
-    const sameTags = new Set(note.tags.map((t) => t.toLocaleLowerCase()));
-    const nextTags = [...note.tags];
+    const sameTags = new Set(note.tags.map(tagHashOf));
 
     newTags.forEach((tag) => {
-      if (sameTags.has(tag.toLocaleLowerCase())) {
+      if (sameTags.has(tagHashOf(tag))) {
         return;
       }
 
-      sameTags.add(tag.toLocaleLowerCase());
+      sameTags.add(tagHashOf(tag));
       this.props.addTag(noteId, tag);
     });
 
@@ -110,13 +105,15 @@ export class TagField extends Component<Props, OwnState> {
     this.state.selectedTag && !!this.state.selectedTag.length;
 
   deleteTag = (tagName: T.TagName) => {
-    const { note, noteId } = this.props;
+    const { noteId } = this.props;
     const { selectedTag } = this.state;
 
     this.props.removeTag(noteId, tagName);
 
     if (selectedTag === tagName) {
-      this.setState({ selectedTag: '' }, () => this.tagInput?.current?.focus());
+      this.setState({ selectedTag: '' as T.TagName }, () =>
+        this.tagInput?.current?.focus()
+      );
     }
 
     analytics.tracks.recordEvent('editor_tag_removed');
@@ -124,17 +121,17 @@ export class TagField extends Component<Props, OwnState> {
 
   deleteSelection = () => {
     if (this.hasSelection()) {
-      this.deleteTag(this.state.selectedTag);
+      this.deleteTag(this.state.selectedTag as T.TagName);
     }
   };
 
   hideEmailTooltip = () => this.setState({ showEmailTooltip: false });
 
-  hasFocus = () => this.inputHasFocus && this.inputHasFocus();
+  hasFocus = () => !!this.inputHasFocus && this.inputHasFocus();
 
   focusTagField = () => this.focusInput && this.focusInput();
 
-  interceptKeys: KeyboardEventHandler = (e) => {
+  interceptKeys: React.KeyboardEventHandler = (e) => {
     if (KEY_BACKSPACE === e.which) {
       if (this.hasSelection()) {
         this.deleteSelection();
@@ -171,7 +168,7 @@ export class TagField extends Component<Props, OwnState> {
     const cmdOrCtrl = ctrlKey || metaKey;
 
     if (cmdOrCtrl && shiftKey && 'KeyY' === code) {
-      this.setState({ selectedTag: '' });
+      this.setState({ selectedTag: '' as T.TagName });
     }
 
     return true;
@@ -179,12 +176,12 @@ export class TagField extends Component<Props, OwnState> {
 
   selectLastTag = () =>
     this.setState({
-      selectedTag: this.props.note?.tags.slice(-1).shift(),
+      selectedTag: this.props.note?.tags.slice(-1).shift() as T.TagName,
     });
 
-  selectTag = (event: MouseEvent<HTMLDivElement>) => {
+  selectTag = (event: React.MouseEvent<HTMLDivElement>) => {
     const {
-      target: {
+      currentTarget: {
         dataset: { tagName },
       },
     } = event;
@@ -192,7 +189,7 @@ export class TagField extends Component<Props, OwnState> {
     event.preventDefault();
     event.stopPropagation();
 
-    this.deleteTag(tagName);
+    this.deleteTag(tagName as T.TagName);
   };
 
   showEmailTooltip = () => {
@@ -209,24 +206,24 @@ export class TagField extends Component<Props, OwnState> {
     return this.interceptKeys(e);
   };
 
-  storeFocusInput = (f) => (this.focusInput = f);
+  storeFocusInput = (f: () => any) => (this.focusInput = f);
 
-  storeHasFocus = (f) => (this.inputHasFocus = f);
+  storeHasFocus = (f: () => any) => (this.inputHasFocus = f);
 
-  storeHiddenTag = (r) => (this.hiddenTag = r);
+  storeHiddenTag = (r: RefObject<HTMLInputElement>) => (this.hiddenTag = r);
 
-  storeInputRef = (r) => (this.tagInput = r);
+  storeInputRef = (r: RefObject<HTMLDivElement>) => (this.tagInput = r);
 
   storeTagInput = (value: string, callback?: (...args: any) => any) =>
     this.setState({ tagInput: value }, callback);
 
-  unselect = (event: React.KeyboardEvent) => {
+  unselect = (event: React.KeyboardEvent | MouseEvent) => {
     if (!this.state.selectedTag) {
       return;
     }
 
     if (this.hiddenTag?.current !== event.relatedTarget) {
-      this.setState({ selectedTag: '' });
+      this.setState({ selectedTag: '' as T.TagName });
     }
   };
 
@@ -282,7 +279,7 @@ export class TagField extends Component<Props, OwnState> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  allTags: state.data.tags[0],
+  allTags: state.data.tags,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),

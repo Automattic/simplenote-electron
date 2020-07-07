@@ -4,7 +4,6 @@ import onClickOutside from 'react-onclickoutside';
 import format from 'date-fns/format';
 import classNames from 'classnames';
 import Slider from '../components/slider';
-import { selectRevision, toggleRevisions } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';

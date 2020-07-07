@@ -1,16 +1,19 @@
 import { filterTags } from '../tag-suggestions';
 import { getTerms } from '../utils/filter-notes';
+import { tagHashOf as t } from '../utils/tag-hash';
 
-import * as A from '../state/action-types';
-import * as S from '../state';
-import * as T from '../types';
+import type * as A from '../state/action-types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 const emptyList = [] as unknown[];
 
+// @TODO: Refactor search state into Redux for access
+//        and to prevent needing to recalculate separately
 type SearchNote = {
   content: string;
   casedContent: string;
-  tags: Set<T.TagName>;
+  tags: Set<T.TagHash>;
   creationDate: number;
   modificationDate: number;
   isPinned: boolean;
@@ -20,9 +23,9 @@ type SearchNote = {
 type SearchState = {
   hasSelectedFirstNote: boolean;
   notes: Map<T.EntityId, SearchNote>;
-  openedTag: T.TagName | null;
+  openedTag: T.TagHash | null;
   searchQuery: string;
-  searchTags: Set<T.TagName>;
+  searchTags: Set<T.TagHash>;
   searchTerms: string[];
   showTrash: boolean;
   sortType: T.SortType;
@@ -32,7 +35,7 @@ type SearchState = {
 const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
   content: note.content?.toLocaleLowerCase() ?? '',
   casedContent: note.content ?? '',
-  tags: new Set(note.tags?.map((tag) => tag.toLocaleLowerCase()) ?? []),
+  tags: new Set(note.tags?.map(t) ?? []),
   creationDate: note.creationDate ?? Date.now() / 1000,
   modificationDate: note.modificationDate ?? Date.now() / 1000,
   isPinned: note.systemTags?.includes('pinned') ?? false,
@@ -41,10 +44,10 @@ const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
 
 const tagsFromSearch = (query: string) => {
   const tagPattern = /(?:\btag:)([^\s,]+)/g;
-  const searchTags = new Set<T.TagName>();
+  const searchTags = new Set<T.TagHash>();
   let match;
   while ((match = tagPattern.exec(query)) !== null) {
-    searchTags.add(match[1].toLocaleLowerCase());
+    searchTags.add(t(match[1] as T.TagName));
   }
   return searchTags;
 };
@@ -153,10 +156,12 @@ export const middleware: S.Middleware = (store) => {
     });
   };
 
-  window.indexAlphabetical = indexAlphabetical;
-  window.indexCreationDate = indexCreationDate;
-  window.indexModification = indexModification;
-  window.searchState = searchState;
+  if ('production' !== process.env.NODE_ENV) {
+    window.indexAlphabetical = indexAlphabetical;
+    window.indexCreationDate = indexCreationDate;
+    window.indexModification = indexModification;
+    window.searchState = searchState;
+  }
 
   const runSearch = (): T.EntityId[] => {
     const {
@@ -181,6 +186,10 @@ export const middleware: S.Middleware = (store) => {
     for (let i = 0; i < sortIndex.length; i++) {
       const noteId = sortIndex[sortReversed ? sortIndex.length - i - 1 : i];
       const note = notes.get(noteId);
+
+      if (!note) {
+        continue;
+      }
 
       if (showTrash !== note.isTrashed) {
         continue;
@@ -222,15 +231,15 @@ export const middleware: S.Middleware = (store) => {
 
   const setFilteredNotes = (
     noteIds: T.EntityId[]
-  ): { noteIds: T.EntityId[]; tagIds: T.EntityId[] } => {
+  ): { noteIds: T.EntityId[]; tagHashes: T.TagHash[] } => {
     const { data } = store.getState();
     const { searchQuery } = searchState;
 
-    const filteredTags = filterTags(data.tags[0], searchQuery);
+    const filteredTags = filterTags(data.tags, data.noteTags, searchQuery);
     const tagSuggestions =
-      filteredTags.length > 0 ? filteredTags : (emptyList as T.EntityId[]);
+      filteredTags.length > 0 ? filteredTags : (emptyList as T.TagHash[]);
 
-    return { noteIds, tagIds: tagSuggestions };
+    return { noteIds, tagHashes: tagSuggestions };
   };
 
   const withSearch = <T extends A.ActionType>(action: T): T => ({
@@ -265,7 +274,7 @@ export const middleware: S.Middleware = (store) => {
     };
   };
 
-  let searchTimer: number | null = null;
+  let searchTimer: ReturnType<typeof setTimeout> | null = null;
   const queueSearch = () => {
     clearTimeout(searchTimer!);
 
@@ -289,12 +298,10 @@ export const middleware: S.Middleware = (store) => {
   queueSearch();
 
   return (rawNext) => (action: A.ActionType) => {
-    const state = store.getState();
-
     const next = (action: A.ActionType) => {
       if (
         !searchState.hasSelectedFirstNote &&
-        action.meta?.searchResults?.noteIds.length > 0
+        action.meta?.searchResults?.noteIds.length
       ) {
         searchState.hasSelectedFirstNote = true;
         return rawNext({
@@ -310,6 +317,10 @@ export const middleware: S.Middleware = (store) => {
     };
 
     switch (action.type) {
+      case 'ADD_NOTE_TAG':
+        searchState.notes.get(action.noteId)?.tags.add(t(action.tagName));
+        return next(withSearch(action));
+
       case 'CONFIRM_NEW_NOTE': {
         searchState.notes.delete(action.originalNoteId);
         searchState.notes.set(action.newNoteId, toSearchNote(action.note));
@@ -339,9 +350,7 @@ export const middleware: S.Middleware = (store) => {
           note.casedContent = action.changes.content;
         }
         if ('undefined' !== typeof action.changes.tags) {
-          note.tags = new Set(
-            action.changes.tags.map((tag) => tag.toLocaleLowerCase())
-          );
+          note.tags = new Set(action.changes.tags.map(t));
         }
         if ('undefined' !== typeof action.changes.creationDate) {
           note.creationDate = action.changes.creationDate * 1000;
@@ -360,13 +369,37 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'OPEN_TAG':
-        searchState.openedTag = state.data.tags[0].get(action.tagId)!.name;
+        searchState.openedTag = t(action.tagName);
         return next(withSearch(action));
 
       case 'PIN_NOTE':
         searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
         indexNote(action.noteId);
         return next(withSearch(action));
+
+      case 'REMOVE_NOTE_TAG':
+        searchState.notes.get(action.noteId)?.tags.delete(t(action.tagName));
+        return next(withSearch(action));
+
+      case 'RENAME_TAG': {
+        const oldHash = t(action.oldTagName);
+        const newHash = t(action.newTagName);
+
+        if (oldHash === newHash) {
+          return next(action);
+        }
+
+        if (searchState.openedTag === oldHash) {
+          searchState.openedTag = newHash;
+        }
+
+        searchState.notes.forEach((note, noteId) => {
+          // only adds the new one if the old one was there and deleted
+          note.tags.delete(oldHash) && note.tags.add(newHash);
+        });
+
+        return next(withSearch(action));
+      }
 
       case 'RESTORE_NOTE':
         if (!searchState.notes.has(action.noteId)) {
@@ -410,6 +443,20 @@ export const middleware: S.Middleware = (store) => {
         }
         searchState.notes.get(action.noteId)!.isTrashed = true;
         return next(withNextNote(withSearch(action)));
+
+      case 'TRASH_TAG': {
+        const tagHash = t(action.tagName);
+
+        // only update the search if we have a trashed tag open
+        // it's okay to leave tag search terms in because we
+        // can always search for non-existent tags
+        if (searchState.openedTag !== tagHash) {
+          return next(action);
+        }
+
+        searchState.openedTag = null;
+        return next(withSearch(action));
+      }
     }
 
     return next(action);

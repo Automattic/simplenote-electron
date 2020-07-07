@@ -1,10 +1,10 @@
 import debugFactory from 'debug';
 import { notesAreEqual } from '../../selectors';
+import { tagHashOf } from '../../../utils/tag-hash';
 
-import * as S from '../../';
-import * as T from '../../../types';
+import type * as S from '../../';
+import type * as T from '../../../types';
 
-import type { EntityId } from 'simperium';
 import type { BucketQueue } from './bucket-queue';
 
 interface IdleDeadline {
@@ -13,21 +13,22 @@ interface IdleDeadline {
 }
 
 export class NoteDoctor {
+  firstRun: boolean;
   log: ReturnType<typeof debugFactory>;
-  notes: Set<EntityId>;
+  noteTags: Map<T.TagHash, Set<T.EntityId>>;
+  notes: Set<T.EntityId>;
   queue: BucketQueue<'note', T.Note>;
   store: S.Store;
 
   constructor(store: S.Store, noteQueue: BucketQueue<'note', T.Note>) {
+    this.firstRun = true;
     this.log = debugFactory('note-doctor');
+    this.noteTags = new Map();
     this.notes = new Set();
     this.queue = noteQueue;
     this.store = store;
 
-    setTimeout(() => {
-      this.refreshNoteList();
-      this.schedule();
-    }, 1000);
+    this.schedule();
   }
 
   private schedule(): void {
@@ -37,10 +38,13 @@ export class NoteDoctor {
       if (this.notes.size > 0) {
         this.schedule();
       } else {
-        setTimeout(() => {
-          this.refreshNoteList();
-          this.schedule();
-        }, 10000);
+        setTimeout(
+          () => {
+            this.refreshNoteList();
+            this.schedule();
+          },
+          this.firstRun ? 1000 : 10000
+        );
       }
     });
   }
@@ -52,6 +56,14 @@ export class NoteDoctor {
       const note = state.data.notes.get(noteId);
       const ghost = state.simperium.ghosts[1].get('note')?.get(noteId)?.data;
       this.notes.delete(noteId);
+
+      note?.tags.forEach((tagName) => {
+        const tagHash = tagHashOf(tagName);
+        const tag = this.noteTags.get(tagHash) ?? new Set();
+
+        tag.add(noteId);
+        this.noteTags.set(tagHash, tag);
+      });
 
       if (!this.queue.has(noteId) && (!ghost || !notesAreEqual(note, ghost))) {
         this.log(`found note discrepancy: adding ${noteId}`);
@@ -73,7 +85,15 @@ export class NoteDoctor {
       return;
     }
 
+    !this.firstRun &&
+      this.store.dispatch({
+        type: 'TAG_REFRESH',
+        noteTags: this.noteTags,
+      });
+    this.firstRun = false;
+
     this.notes = new Set(this.store.getState().data.notes.keys());
+    this.noteTags = new Map();
   }
 
   private requestIdleCallback(callback: (idleDeadline: IdleDeadline) => any) {

@@ -13,22 +13,22 @@ import TrashIcon from '../icons/trash';
 import TagListInput from './input';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 type StateProps = {
   editingTags: boolean;
-  openedTag: T.EntityId | null;
+  openedTag: T.TagHash | null;
   sortTagsAlpha: boolean;
-  tags: Map<T.EntityId, T.Tag>;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type DispatchProps = {
   onEditTags: () => any;
-  openTag: (tagId: T.EntityId) => any;
-  renameTag: (oldTagName: string, newTagName: string) => any;
-  reorderTag: (tagName: string, newIndex: number) => any;
-  trashTag: (tagName: string) => any;
+  openTag: (tagName: T.TagName) => any;
+  renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+  reorderTag: (tagName: T.TagName, newIndex: number) => any;
+  trashTag: (tagName: T.TagName) => any;
 };
 
 type Props = StateProps & DispatchProps;
@@ -43,24 +43,24 @@ const SortableTag = SortableElement(
     renameTag,
     selectTag,
     trashTag,
-    value: [tagId, tag],
+    value: [tagHash, tag],
   }: {
     allowReordering: boolean;
     editingActive: boolean;
     isSelected: boolean;
-    renameTag: (oldTagName: string, newTagName: string) => any;
-    selectTag: (tagId: T.EntityId) => any;
-    trashTag: (tagName: string) => any;
-    value: [T.EntityId, T.Tag];
+    renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+    selectTag: (tagName: T.TagName) => any;
+    trashTag: (tagName: T.TagName) => any;
+    value: [T.TagHash, T.Tag];
   }) => (
-    <li key={tagId} className="tag-list-item" data-tag-name={tag.name}>
+    <li key={tagHash} className="tag-list-item" data-tag-name={tag.name}>
       {editingActive && <TrashIcon onClick={() => trashTag(tag.name)} />}
       <TagListInput
         editable={editingActive}
         isSelected={isSelected}
-        onClick={() => !editingActive && selectTag(tagId)}
+        onClick={() => !editingActive && selectTag(tag.name)}
         onDone={(event) => {
-          const newTagName = event.target?.value;
+          const newTagName = event.target?.value as T.TagName;
 
           if (newTagName && newTagName !== tag.name) {
             renameTag(tag.name, newTagName);
@@ -84,17 +84,17 @@ const SortableTagList = SortableContainer(
     trashTheTag,
   }: {
     editingTags: boolean;
-    items: [T.EntityId, T.Tag][];
-    openedTag: T.EntityId | null;
-    openTag: (tagId: T.EntityId) => any;
-    renameTheTag: (oldTagName: string, newTagName: string) => any;
+    items: [T.TagHash, T.Tag][];
+    openedTag: T.TagHash | null;
+    openTag: (tagName: T.TagName) => any;
+    renameTheTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
     sortTagsAlpha: boolean;
-    trashTheTag: (tagName: string) => any;
+    trashTheTag: (tagName: T.TagName) => any;
   }) => (
     <ul className="tag-list-items">
       {items.map((value, index) => (
         <SortableTag
-          key={value[1].name}
+          key={value[0]}
           allowReordering={!sortTagsAlpha}
           editingActive={editingTags}
           index={index}
@@ -182,7 +182,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 }) => ({
   editingTags,
   sortTagsAlpha,
-  tags: data.tags[0],
+  tags: data.tags,
   openedTag,
 });
 

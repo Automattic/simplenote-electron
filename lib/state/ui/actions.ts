@@ -1,5 +1,5 @@
-import * as A from '../action-types';
-import * as T from '../../types';
+import type * as A from '../action-types';
+import type * as T from '../../types';
 
 export const closeDialog: A.ActionCreator<A.CloseDialog> = () => ({
   type: 'CLOSE_DIALOG',
@@ -19,11 +19,11 @@ export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = (
 
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   noteIds: T.EntityId[],
-  tagIds: T.EntityId[]
+  tagHashes: T.TagHash[]
 ) => ({
   type: 'FILTER_NOTES',
   noteIds,
-  tagIds,
+  tagHashes,
 });
 
 export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
@@ -39,9 +39,9 @@ export const openNote: A.ActionCreator<A.OpenNote> = (noteId?: T.EntityId) => ({
   noteId,
 });
 
-export const openTag: A.ActionCreator<A.OpenTag> = (tagId: T.EntityId) => ({
+export const openTag: A.ActionCreator<A.OpenTag> = (tagName: T.TagName) => ({
   type: 'OPEN_TAG',
-  tagId,
+  tagName,
 });
 
 export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({

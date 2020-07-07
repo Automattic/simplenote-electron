@@ -2,8 +2,9 @@ import { v4 as uuid } from 'uuid';
 
 import exportZipArchive from '../../utils/export';
 
-import * as A from '../action-types';
-import * as S from '../';
+import type * as A from '../action-types';
+import type * as S from '../';
+import type * as T from '../../types';
 
 export const middleware: S.Middleware = (store) => (
   next: (action: A.ActionType) => A.ActionType
@@ -12,7 +13,7 @@ export const middleware: S.Middleware = (store) => (
 
   switch (action.type) {
     case 'CREATE_NOTE': {
-      const noteId = uuid();
+      const noteId = uuid() as T.EntityId;
 
       return next({
         type: 'CREATE_NOTE_WITH_ID',
@@ -35,13 +36,13 @@ export const middleware: S.Middleware = (store) => (
       });
 
     case 'EXPORT_NOTES':
-      exportZipArchive(state.data.notes);
+      exportZipArchive([...state.data.notes.values()]);
       return next(action);
 
     case 'IMPORT_NOTE':
       return next({
         type: 'IMPORT_NOTE_WITH_ID',
-        noteId: uuid(),
+        noteId: uuid() as T.EntityId,
         note: action.note,
       });
 
