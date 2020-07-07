@@ -81,6 +81,10 @@
     cursor: inherit;
   }
 
+  .checkbox {
+    cursor: pointer;
+  }
+
   &::first-line {
     font-size: 120%;
   }
