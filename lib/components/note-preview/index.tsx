@@ -48,10 +48,10 @@ export const NotePreview: FunctionComponent<Props> = ({
         return true;
       }
 
-      const node = document.createDocumentFragment();
+      // const node = document.createDocumentFragment();
       const div = document.createElement('div');
       renderToNode(div, note!.content, searchQuery);
-      node.appendChild(div);
+      // node.appendChild(div);
 
       // TODO this is a bug
       console.log(div); // innerHTML shows up here in console
