@@ -15,8 +15,7 @@ type OwnProps = {
 
 type StateProps = {
   fontSize: number;
-  isDialogOpen: boolean;
-  isNoteInfoOpen: boolean;
+  isFocused: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
   searchQuery: string;
@@ -31,8 +30,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 export const NotePreview: FunctionComponent<Props> = ({
   editNote,
   fontSize,
-  isDialogOpen,
-  isNoteInfoOpen,
+  isFocused,
   note,
   noteId,
   searchQuery,
@@ -41,11 +39,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const copyRenderedNote = (event: ClipboardEvent) => {
-      console.log(isNoteInfoOpen);
-      // TODO this isn't working - these are false when I log them, but in console they are true
-      // e.g. state.ui.showNoteInfo in console will print "true"
-      // Only copy if not viewing the note info panel or a dialog
-      if (isNoteInfoOpen || isDialogOpen) {
+      if (!isFocused) {
         return true;
       }
 
@@ -69,7 +63,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
     document.addEventListener('copy', copyRenderedNote, false);
     return () => document.removeEventListener('copy', copyRenderedNote, false);
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -142,8 +136,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
   fontSize: state.settings.fontSize,
-  isDialogOpen: state.ui.dialogs.length > 0,
-  isNoteInfoOpen: state.ui.showNoteInfo,
+  isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
   note: props.note ?? state.data.notes.get(props.noteId),
   noteId: props.noteId ?? state.ui.openedNote,
   searchQuery: state.ui.searchQuery,
