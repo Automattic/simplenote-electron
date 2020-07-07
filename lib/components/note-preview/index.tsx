@@ -48,22 +48,31 @@ export const NotePreview: FunctionComponent<Props> = ({
         return true;
       }
 
-      // const node = document.createDocumentFragment();
       const div = document.createElement('div');
-      renderToNode(div, note!.content, searchQuery);
-      // node.appendChild(div);
+      renderToNode(div, note.content, searchQuery).then(() => {
+        // try {
+        /* this works in Chrome but not Firefox */
+        // event.clipboardData.setData('text/plain', div.innerHTML);
+        // } catch (DOMException) {
+        // console.log("that didn't work, trying something else");
+        /* try it the Firefox way - this works in Firefox and Chrome */
+        navigator.clipboard.writeText(div.innerHTML).then(
+          () => {
+            /* success */
+          },
+          () => {
+            console.log("it didn't work :(");
+          }
+        );
+        // }
+      });
 
-      // TODO this is a bug
-      console.log(div); // innerHTML shows up here in console
-      console.log(div.innerHTML); // innerHTML is now an empty string???????
-
-      event.clipboardData.setData('text/plain', div.innerHTML);
       event.preventDefault();
     };
 
     document.addEventListener('copy', copyRenderedNote, false);
     return () => document.removeEventListener('copy', copyRenderedNote, false);
-  }, [isFocused]);
+  }, [isFocused, searchQuery]);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
