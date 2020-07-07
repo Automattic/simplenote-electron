@@ -281,8 +281,16 @@ export const initSimperium = (
         return result;
 
       case 'RENAME_TAG': {
-        // @TODO: Remove old tag once done updating all notes?
-        queueTagUpdate(t(action.newTagName));
+        const oldHash = t(action.oldTagName);
+        const newHash = t(action.newTagName);
+
+        if (newHash !== oldHash) {
+          // only remove the old tag if its tag hash changed
+          // and we had to create a new one
+          setTimeout(() => tagBucket.remove(oldHash), 10);
+        }
+
+        queueTagUpdate(newHash);
         return result;
       }
 

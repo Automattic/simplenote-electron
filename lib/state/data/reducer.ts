@@ -347,6 +347,7 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
       return next;
     }
 
+    case 'CONFIRM_NEW_NOTE':
     case 'EDIT_NOTE':
     case 'IMPORT_NOTE_WITH_ID': {
       const newTags =
@@ -455,6 +456,22 @@ export const noteTags: A.Reducer<Map<T.TagHash, Set<T.EntityId>>> = (
         tagHash,
         (state.get(tagHash) ?? new Set()).add(action.noteId)
       );
+    }
+
+    case 'CONFIRM_NEW_NOTE': {
+      const next = new Map(state);
+
+      next.forEach((notes, tagHash) => {
+        if (notes.has(action.originalNoteId)) {
+          const nextNotes = new Set(notes);
+          nextNotes.delete(action.originalNoteId);
+          nextNotes.add(action.newNoteId);
+
+          next.set(tagHash, nextNotes);
+        }
+      });
+
+      return next;
     }
 
     case 'EDIT_NOTE':
