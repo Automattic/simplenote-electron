@@ -15,6 +15,7 @@ type OwnProps = {
 
 type StateProps = {
   fontSize: number;
+  isFocused: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
   searchQuery: string;
@@ -29,11 +30,41 @@ type Props = OwnProps & StateProps & DispatchProps;
 export const NotePreview: FunctionComponent<Props> = ({
   editNote,
   fontSize,
+  isFocused,
   note,
   noteId,
   searchQuery,
 }) => {
   const previewNode = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const copyRenderedNote = (event: ClipboardEvent) => {
+      if (!isFocused) {
+        return true;
+      }
+
+      // Only copy the rendered content if nothing is selected
+      if (!document.getSelection().isCollapsed) {
+        return true;
+      }
+
+      const div = document.createElement('div');
+      renderToNode(div, note.content, searchQuery).then(() => {
+        try {
+          // this works in Chrome and Safari but not Firefox
+          event.clipboardData.setData('text/plain', div.innerHTML);
+        } catch (DOMException) {
+          // try it the Firefox way - this works in Firefox and Chrome
+          navigator.clipboard.writeText(div.innerHTML);
+        }
+      });
+
+      event.preventDefault();
+    };
+
+    document.addEventListener('copy', copyRenderedNote, false);
+    return () => document.removeEventListener('copy', copyRenderedNote, false);
+  }, [isFocused, searchQuery]);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -106,6 +137,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
   fontSize: state.settings.fontSize,
+  isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
   note: props.note ?? state.data.notes.get(props.noteId),
   noteId: props.noteId ?? state.ui.openedNote,
   searchQuery: state.ui.searchQuery,
