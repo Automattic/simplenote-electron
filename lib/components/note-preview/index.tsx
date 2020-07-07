@@ -50,21 +50,13 @@ export const NotePreview: FunctionComponent<Props> = ({
 
       const div = document.createElement('div');
       renderToNode(div, note.content, searchQuery).then(() => {
-        // try {
-        /* this works in Chrome but not Firefox */
-        // event.clipboardData.setData('text/plain', div.innerHTML);
-        // } catch (DOMException) {
-        // console.log("that didn't work, trying something else");
-        /* try it the Firefox way - this works in Firefox and Chrome */
-        navigator.clipboard.writeText(div.innerHTML).then(
-          () => {
-            /* success */
-          },
-          () => {
-            console.log("it didn't work :(");
-          }
-        );
-        // }
+        try {
+          // this works in Chrome and Safari but not Firefox
+          event.clipboardData.setData('text/plain', div.innerHTML);
+        } catch (DOMException) {
+          // try it the Firefox way - this works in Firefox and Chrome
+          navigator.clipboard.writeText(div.innerHTML);
+        }
       });
 
       event.preventDefault();
