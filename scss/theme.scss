@@ -18,6 +18,16 @@
     border-radius: 10px;
     border: 3px solid gray;
   }
+
+  textarea {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    outline: none;
+  }
 }
 
 .note-detail-textarea .note-content-editor-shell.cursor-pointer div {
@@ -45,13 +55,6 @@
   }
   .search-field {
     border-color: $studio-gray-10;
-  }
-
-  .monaco-editor-background,
-  .monaco-editor .margin,
-  .monaco-editor .scroll-decoration {
-    background-color: $studio-white;
-    box-shadow: none;
   }
 }
 
@@ -226,12 +229,5 @@
         background-color: $studio-gray-80;
       }
     }
-  }
-
-  .monaco-editor-background,
-  .monaco-editor .margin,
-  .monaco-editor .scroll-decoration {
-    background-color: $studio-gray-90;
-    box-shadow: none;
   }
 }

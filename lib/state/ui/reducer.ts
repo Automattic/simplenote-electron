@@ -17,7 +17,7 @@ const withCheckboxSyntax = (s: string): string =>
 
 const editorSelection: A.Reducer<Map<
   T.EntityId,
-  [number, number, 'RTL' | 'LTR']
+  [number, number, 'forward' | 'backward' | 'none']
 >> = (state = new Map(), action) => {
   switch (action.type) {
     case 'CONFIRM_NEW_NOTE': {

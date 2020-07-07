@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import Monaco, { ChangeHandler, EditorDidMount } from 'react-monaco-editor';
-import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
 
 import actions from './state/actions';
 import * as selectors from './state/selectors';
@@ -20,7 +18,7 @@ const withCheckboxSyntax = (s: string): string =>
   s.replace(/\ue000/g, '- [ ]').replace(/\ue001/g, '- [x]');
 
 type StateProps = {
-  editorSelection: [number, number, 'RTL' | 'LTR'];
+  editorSelection: [number, number, 'forward' | 'backward' | 'none'];
   fontSize: number;
   keyboardShortcuts: boolean;
   noteId: T.EntityId;
@@ -37,7 +35,7 @@ type DispatchProps = {
     noteId: T.EntityId,
     start: number,
     end: number,
-    direction: 'LTR' | 'RTL'
+    direction: 'forward' | 'backward' | 'none'
   ) => any;
 };
 
@@ -51,7 +49,7 @@ type OwnState = {
 };
 
 class NoteContentEditor extends Component<Props> {
-  editor: Editor.IStandaloneCodeEditor | null = null;
+  editor = createRef<HTMLTextAreaElement>();
 
   state: OwnState = {
     content: '',
@@ -63,7 +61,9 @@ class NoteContentEditor extends Component<Props> {
   static getDerivedStateFromProps(props: Props, state: OwnState) {
     if (props.noteId !== state.noteId) {
       return {
-        content: props.note.content.slice(0, props.editorSelection[1] + 5000),
+        content: withCheckboxCharacters(
+          props.note.content.slice(0, props.editorSelection[1] + 5000)
+        ),
         editor: 'fast',
         noteId: props.noteId,
       };
@@ -85,13 +85,74 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
+
+    this.editor.current.oncopy = (event) => {
+      const text = window.getSelection();
+      if (!event.clipboardData || !text) {
+        return;
+      }
+
+      const toCopy = withCheckboxSyntax(text.toString());
+      try {
+        event.clipboardData.setData('text/plain', toCopy); // Safari + Chrome
+      } catch (DOMException) {
+        navigator.clipboard.writeText(toCopy); // Firefox + Chrome
+      }
+      event.preventDefault();
+    };
+
+    this.editor.current.addEventListener(
+      'click',
+      () => {
+        const { editNote, noteId } = this.props;
+        const { content } = this.state;
+
+        if (!this.editor.current) {
+          return;
+        }
+
+        const { selectionStart, selectionEnd } = this.editor.current;
+        if (selectionStart !== selectionEnd) {
+          // only accept clicks - not selection spans
+          return;
+        }
+
+        const clickAt = selectionStart;
+        const boxAtClick =
+          content[clickAt] === '\ue000' || content[clickAt] === '\ue001';
+        const boxBeforeClick =
+          !boxAtClick &&
+          clickAt > 0 &&
+          (content[clickAt - 1] === '\ue000' ||
+            content[clickAt - 1] === '\ue001');
+
+        if (!boxAtClick && !boxBeforeClick) {
+          return;
+        }
+
+        const boxAt = boxAtClick ? clickAt : clickAt - 1;
+        const isChecked = content[boxAt] === '\ue001';
+
+        this.editor.current.setSelectionRange(boxAt, boxAt + 1, 'forward');
+        document.execCommand(
+          'insertText',
+          false,
+          isChecked ? '\ue000' : '\ue001'
+        );
+      },
+      true
+    );
+    //
+    // const [start, end, direction] = this.props.editorSelection;
+    // this.editor.current.setSelectionRange(start, end, direction);
+    // this.editor.current.focus();
   }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleKeys, true);
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props, prevState: OwnState) {
     const {
       editorSelection: [prevStart, prevEnd, prevDirection],
     } = prevProps;
@@ -101,26 +162,16 @@ class NoteContentEditor extends Component<Props> {
     } = this.props;
 
     if (
-      this.editor &&
-      this.state.editor === 'full' &&
-      (prevStart !== thisStart ||
-        prevEnd !== thisEnd ||
-        prevDirection !== thisDirection)
+      this.editor.current &&
+      ((this.state.editor === 'full' &&
+        (prevStart !== thisStart ||
+          prevEnd !== thisEnd ||
+          prevDirection !== thisDirection)) ||
+        prevProps.noteId !== this.props.noteId ||
+        prevState.editor !== this.state.editor)
     ) {
-      const start = this.editor.getModel()?.getPositionAt(thisStart);
-      const end = this.editor.getModel()?.getPositionAt(thisEnd);
-
-      this.editor.setSelection(
-        Selection.createWithDirection(
-          start?.lineNumber,
-          start?.column,
-          end?.lineNumber,
-          end?.column,
-          thisDirection === 'RTL'
-            ? SelectionDirection.RTL
-            : SelectionDirection.LTR
-        )
-      );
+      this.editor.current.setSelectionRange(thisStart, thisEnd, thisDirection);
+      this.editor.current.focus();
     }
 
     // @TODO is this really a smart thing? It's super fast when navigating
@@ -156,188 +207,44 @@ class NoteContentEditor extends Component<Props> {
     return true;
   };
 
-  editorReady: EditorDidMount = (editor, monaco) => {
-    // @TODO remove these
-    window.editor = editor;
-    window.monaco = monaco;
-    this.editor = editor;
+  storeSelection = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const {
+      currentTarget: { selectionStart, selectionEnd, selectionDirection },
+    } = event;
 
-    const titleDecoration = (line: number) => ({
-      range: new monaco.Range(line, 1, line, 1),
-      options: {
-        isWholeLine: true,
-        inlineClassName: 'note-title',
-        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-      },
-    });
+    if (this.state.editor === 'fast') {
+      return;
+    }
 
-    let decorations: string[] = [];
-    const decorateFirstLine = () => {
-      const model = editor.getModel();
-      if (!model) {
-        decorations = [];
-        return;
-      }
-
-      for (let i = 1; i <= model.getLineCount(); i++) {
-        const line = model.getLineContent(i);
-        if (line.trim().length > 0) {
-          decorations = editor.deltaDecorations(decorations, [
-            titleDecoration(i),
-          ]);
-          break;
-        }
-      }
-    };
-
-    decorateFirstLine();
-    editor.onDidChangeModelContent(() => decorateFirstLine());
-
-    document.oncopy = (event) => {
-      // @TODO: This is selecting everything in the app but we should only
-      //        need to intercept copy events coming from the editor
-      event.clipboardData.setData(
-        'text/plain',
-        withCheckboxSyntax(event.clipboardData.getData('text/plain'))
-      );
-    };
-
-    const [startOffset, endOffset, direction] = this.props.editorSelection;
-    const start = this.editor.getModel()?.getPositionAt(startOffset);
-    const end = this.editor.getModel()?.getPositionAt(endOffset);
-
-    this.editor.setSelection(
-      Selection.createWithDirection(
-        start?.lineNumber,
-        start?.column,
-        end?.lineNumber,
-        end?.column,
-        direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
-      )
+    this.props.storeEditorSelection(
+      this.props.noteId,
+      selectionStart,
+      selectionEnd,
+      selectionDirection
     );
-
-    editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
-    editor.focus();
-
-    editor.onDidChangeCursorSelection((e) => {
-      if (
-        e.reason === Editor.CursorChangeReason.Undo ||
-        e.reason === Editor.CursorChangeReason.Redo
-      ) {
-        // @TODO: Adjust selection in Undo/Redo
-        return;
-      }
-
-      const start = editor
-        .getModel()
-        ?.getOffsetAt(e.selection.getStartPosition());
-      const end = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
-      const direction =
-        e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
-
-      this.props.storeEditorSelection(this.props.noteId, start, end, direction);
-    });
-
-    // @TODO: Is this really slow and dumb?
-    editor.onMouseMove((e) => {
-      const { content } = this.state;
-      const {
-        target: { range },
-      } = e;
-
-      const offset = editor.getModel()!.getOffsetAt({
-        lineNumber: range!.startLineNumber,
-        column: range!.startColumn,
-      });
-
-      this.setState({
-        overTodo: content[offset] === '\ue000' || content[offset] === '\ue001',
-      });
-    });
-
-    editor.onMouseDown((event) => {
-      const { editNote, noteId } = this.props;
-      const { content } = this.state;
-      const {
-        target: { range },
-      } = event;
-
-      const offset = editor.getModel()!.getOffsetAt({
-        lineNumber: range!.startLineNumber,
-        column: range!.startColumn,
-      });
-
-      if (content[offset] === '\ue000') {
-        editNote(noteId, {
-          content:
-            content.slice(0, offset) + '\ue001' + content.slice(offset + 1),
-        });
-      } else if (content[offset] === '\ue001') {
-        editNote(noteId, {
-          content:
-            content.slice(0, offset) + '\ue000' + content.slice(offset + 1),
-        });
-      }
-    });
   };
 
-  updateNote: ChangeHandler = (nextValue, event) => {
+  updateNote: React.FormEventHandler<HTMLTextAreaElement> = (event) => {
     const { editNote, noteId } = this.props;
 
-    editNote(noteId, { content: withCheckboxSyntax(nextValue) });
+    editNote(noteId, {
+      content: withCheckboxSyntax(event.currentTarget.value),
+    });
   };
 
   render() {
-    const { fontSize, noteId, theme } = this.props;
-    const { content, editor, overTodo } = this.state;
+    const { content, editor } = this.state;
 
     return (
-      <div
-        className={`note-content-editor-shell${
-          overTodo ? ' cursor-pointer' : ''
-        }`}
-      >
-        {editor === 'fast' ? (
-          <div style={{ padding: '0.7em', whiteSpace: 'pre-wrap' }}>
-            {content}
-          </div>
-        ) : (
-          <Monaco
-            key={noteId}
-            editorDidMount={this.editorReady}
-            language="plaintext"
-            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
-            onChange={this.updateNote}
-            options={{
-              autoClosingBrackets: 'never',
-              autoClosingQuotes: 'never',
-              autoIndent: 'keep',
-              autoSurround: 'never',
-              automaticLayout: true,
-              codeLens: false,
-              contextmenu: false,
-              folding: false,
-              fontFamily:
-                '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
-              fontSize,
-              hideCursorInOverviewRuler: true,
-              lineHeight: fontSize > 20 ? 42 : 24,
-              lineNumbers: 'off',
-              links: true,
-              minimap: { enabled: false },
-              occurrencesHighlight: false,
-              overviewRulerBorder: false,
-              quickSuggestions: false,
-              renderIndentGuides: false,
-              renderLineHighlight: 'none',
-              scrollbar: { horizontal: 'hidden' },
-              selectionHighlight: false,
-              wordWrap: 'on',
-              wrappingStrategy: 'simple',
-            }}
-            value={content}
-          />
-        )}
+      <div className="note-content-editor-shell">
+        <textarea
+          ref={this.editor}
+          value={content}
+          dir="auto"
+          onChange={this.updateNote}
+          onSelect={this.storeSelection}
+          readOnly={editor === 'fast'}
+        />
       </div>
     );
   }
@@ -347,7 +254,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   editorSelection: state.ui.editorSelection.get(state.ui.openedNote) ?? [
     0,
     0,
-    'LTR',
+    'none',
   ],
   fontSize: state.settings.fontSize,
   keyboardShortcuts: state.settings.keyboardShortcuts,

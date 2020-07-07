@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
@@ -89,7 +88,6 @@ module.exports = () => {
         filename: isDevMode ? '[name].css' : '[name].[hash].css',
         chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
       }),
-      new MonacoWebpackPlugin(),
       new webpack.DefinePlugin({
         __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),
         config: JSON.stringify(config),
