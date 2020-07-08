@@ -55,7 +55,7 @@ module.exports = async function (window) {
           '\n\n' +
           `${path.basename(file)}`,
         detail:
-          'For help with an issue, please contact help@wordpress.com and share your logs.',
+          'For help with an issue, please contact support@simplenote.com and share your logs.',
       });
     };
 
@@ -66,7 +66,7 @@ module.exports = async function (window) {
       title: 'Error getting application logs',
       message: 'Error getting application logs',
       detail:
-        'Please contact help@wordpress.com and mention the error details below:' +
+        'Please contact support@simplenote.com and mention the error details below:' +
         '\n\n' +
         error.stack +
         '\n\n' +
