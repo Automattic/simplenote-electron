@@ -58,7 +58,7 @@ module.exports = (namespace, options) => {
   );
 
   const logPath = path.join(
-    app.getPath('appData'),
+    (app && app.getPath('appData')) || '',
     'logs',
     'simplenote-main.log'
   );

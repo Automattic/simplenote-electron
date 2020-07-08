@@ -17,7 +17,7 @@ const log = require('.')('desktop:get-logs');
  * Module variables
  */
 const logPath = path.join(
-  app.getPath('appData'),
+  (app && app.getPath('appData')) || '',
   'logs',
   'simplenote-main.log'
 );
@@ -43,7 +43,7 @@ const localDateTime = () => {
   );
 };
 
-module.exports = async function (window) {
+module.exports = function (window) {
   const onZipped = (file) =>
     function () {
       dialog.showMessageBox(window, {
@@ -78,8 +78,7 @@ module.exports = async function (window) {
     const timestamp = localDateTime();
     const desktop = app.getPath('desktop');
     const dst = path.join(desktop, `simplenote-${timestamp}.zip`);
-
-    zipContents([logPath], dst, onZipped(dst));
+    return zipContents([logPath], dst, onZipped(dst));
   } catch (error) {
     log.error('Failed to zip logs: ', error);
     onError(error);

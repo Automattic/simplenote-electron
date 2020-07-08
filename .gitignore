@@ -2,6 +2,7 @@ node_modules/**/*
 config-local.json
 desktop-build/
 dist/
+logs/
 release/
 *.pvk
 *.p12
