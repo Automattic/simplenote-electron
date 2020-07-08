@@ -78,7 +78,7 @@ module.exports = function (window) {
     const timestamp = localDateTime();
     const desktop = app.getPath('desktop');
     const dst = path.join(desktop, `simplenote-${timestamp}.zip`);
-    return zipContents([logPath], dst, onZipped(dst));
+    return zipContents(logPath, dst, onZipped(dst));
   } catch (error) {
     log.error('Failed to zip logs: ', error);
     onError(error);

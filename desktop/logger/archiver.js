@@ -4,8 +4,7 @@
  * External dependencies
  */
 const fs = require('fs');
-const path = require('path');
-const archiver = require('archiver');
+var JSZip = require('jszip');
 
 /**
  * Internal dependencies
@@ -20,43 +19,42 @@ module.exports = {
    * @param {String} dst Path to destination archive
    * @param {function():void} onZipped Callback invoked when archive is complete
    */
-  zipContents: (contents, dst, onZipped) => {
-    let output = fs.createWriteStream(dst);
-    let archive = archiver('zip', {
-      zlib: { level: 9 },
+  zipContents: (logPath, dst, onZipped) => {
+    const zip = new JSZip();
+    const contentPromise = new JSZip.external.Promise(function (
+      resolve,
+      reject
+    ) {
+      fs.readFile(logPath, function (err, data) {
+        if (err) {
+          log.warn('Unexpected error: ', err);
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
     });
+    zip.file('simplenote.log', contentPromise);
 
-    output.on('close', function () {
-      log.debug('Archive finalized: %s bytes written', archive.pointer());
-      if (typeof onZipped === 'function') {
-        onZipped();
-      }
-    });
+    let output = fs.createWriteStream(dst);
 
     // Catch warnings (e.g. stat failures and other non-blocking errors)
-    archive.on('warning', function (err) {
+    output.on('warning', function (err) {
       log.warn('Unexpected error: ', err);
     });
 
-    archive.on('error', function (err) {
+    output.on('error', function (err) {
       throw err;
     });
 
-    archive.pipe(output);
-
-    for (let i = 0; i < contents.length; i++) {
-      const src = contents[i];
-      const zipSubdir = path.basename(dst).replace('.zip', '');
-      const dstInZipSubdir = path.join(zipSubdir, path.basename(src));
-
-      const stat = fs.lstatSync(src);
-      if (stat.isDirectory()) {
-        archive.directory(path.join(src, path.sep), dstInZipSubdir);
-        continue;
-      }
-      archive.file(src, { name: dstInZipSubdir });
-    }
-
-    archive.finalize();
+    zip
+      .generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+      .pipe(output)
+      .on('finish', function () {
+        log.debug('Archive finalized');
+        if (typeof onZipped === 'function') {
+          onZipped();
+        }
+      });
   },
 };
