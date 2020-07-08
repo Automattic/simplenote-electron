@@ -5,9 +5,9 @@ const fileMenu = require('./file-menu');
 const buildEditMenu = require('./edit-menu');
 const buildViewMenu = require('./view-menu');
 const formatMenu = require('./format-menu');
-const helpMenu = require('./help-menu');
+const buildHelpMenu = require('./help-menu');
 
-function createMenuTemplate(settings) {
+function createMenuTemplate(settings, mainWindow) {
   const windowMenu = {
     role: 'window',
     submenu: [
@@ -25,7 +25,7 @@ function createMenuTemplate(settings) {
     buildViewMenu(settings),
     formatMenu,
     platform.isOSX() ? windowMenu : null,
-    helpMenu,
+    buildHelpMenu(mainWindow),
   ].filter((menu) => menu !== null);
 }
 

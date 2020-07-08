@@ -1,6 +1,7 @@
 const EventEmitter = require('events').EventEmitter;
 const { app, dialog, shell } = require('electron');
 const platform = require('../../detect/platform');
+const log = require('../../logger')('desktop:updater');
 
 class Updater extends EventEmitter {
   constructor(changelogUrl, options) {
@@ -21,7 +22,7 @@ class Updater extends EventEmitter {
   ping() {}
 
   onDownloaded(event) {
-    console.log('Update downloaded'); // eslint-disable-line no-console
+    log.info('Update downloaded');
 
     // electron-updater provides us with new version
     if (event.version) {
@@ -32,11 +33,11 @@ class Updater extends EventEmitter {
   }
 
   onNotAvailable() {
-    console.log('Update is not available'); // eslint-disable-line no-console
+    log.info('Update is not available');
   }
 
   onError(event) {
-    console.log('Update error', event); // eslint-disable-line no-console
+    log.error('Update error', event);
   }
 
   onConfirm() {}
