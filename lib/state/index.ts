@@ -49,32 +49,34 @@ export type State = {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const makeStore = (...middlewares: Middleware[]) =>
-  persistence.loadState().then(([initialData, persistenceMiddleware]) =>
-    createStore<State, A.ActionType, {}, {}>(
-      reducers,
-      initialData,
-      composeEnhancers(
-        persistState('settings', {
-          key: 'simpleNote',
-          slicer: (path) => (state) => ({
-            // Omit property from persisting
-            [path]: omit(state[path], ['accountName', 'focusModeEnabled']),
+export const makeStore = (accountName: string, ...middlewares: Middleware[]) =>
+  persistence
+    .loadState(accountName)
+    .then(([initialData, persistenceMiddleware]) =>
+      createStore<State, A.ActionType, {}, {}>(
+        reducers,
+        initialData,
+        composeEnhancers(
+          persistState('settings', {
+            key: 'simpleNote',
+            slicer: (path) => (state) => ({
+              // Omit property from persisting
+              [path]: omit(state[path], ['accountName', 'focusModeEnabled']),
+            }),
           }),
-        }),
-        applyMiddleware(
-          dataMiddleware,
-          browserMiddleware,
-          searchMiddleware,
-          searchFieldMiddleware,
-          uiMiddleware,
-          ...(isElectron ? [electronMiddleware] : []),
-          ...middlewares,
-          ...(persistenceMiddleware ? [persistenceMiddleware] : [])
+          applyMiddleware(
+            dataMiddleware,
+            browserMiddleware,
+            searchMiddleware,
+            searchFieldMiddleware,
+            uiMiddleware,
+            ...(isElectron ? [electronMiddleware] : []),
+            ...middlewares,
+            ...(persistenceMiddleware ? [persistenceMiddleware] : [])
+          )
         )
       )
-    )
-  );
+    );
 
 export type Store = {
   dispatch: Dispatch;

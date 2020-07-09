@@ -3,6 +3,11 @@ import * as S from './';
 import * as T from '../types';
 
 const DB_VERSION = 2020065;
+let keepSyncing = true;
+
+export const stopSyncing = (): void => {
+  keepSyncing = false;
+};
 
 const openDB = (): Promise<IDBDatabase> =>
   new Promise((resolve, reject) => {
@@ -23,76 +28,98 @@ const openDB = (): Promise<IDBDatabase> =>
     };
   });
 
-export const loadState = async (): Promise<
-  [T.RecursivePartial<S.State>, S.Middleware | null]
-> => {
-  let db: IDBDatabase;
-  try {
-    db = await openDB();
-  } catch (e) {
-    return [{}, null];
-  }
+export const loadState = (
+  accountName: string | null
+): Promise<[T.RecursivePartial<S.State>, S.Middleware | null]> =>
+  openDB().then(
+    (db) =>
+      new Promise((resolve) => {
+        let stillGood = true;
 
-  return new Promise((resolve) => {
-    const tx = db.transaction(['state', 'revisions'], 'readonly');
+        const tx = db.transaction(['state', 'revisions'], 'readonly');
 
-    const stateRequest = tx.objectStore('state').get('state');
-    stateRequest.onsuccess = () => {
-      const state = stateRequest.result;
-
-      try {
-        const noteTags = new Map(
-          state.noteTags.map(([tagHash, noteIds]) => [
-            tagHash,
-            new Set(noteIds),
-          ])
-        );
-
-        const data: T.RecursivePartial<S.State> = {
-          data: {
-            notes: new Map(state.notes),
-            noteTags,
-            tags: new Map(state.tags),
-          },
-          simperium: {
-            ghosts: [new Map(state.cvs), new Map(state.ghosts)],
-            lastRemoteUpdate: new Map(state.lastRemoteUpdate),
-            lastSync: new Map(state.lastSync),
-          },
-          ui: {
-            editorSelection: new Map(state.editorSelection),
-          },
+        db.onversionchange = () => {
+          stillGood = false;
+          resolve([{}, middleware]);
         };
 
-        const revisionsRequest = tx.objectStore('revisions').openCursor();
-        const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
-        revisionsRequest.onsuccess = () => {
-          const cursor = revisionsRequest.result;
-          if (cursor) {
-            noteRevisions.set(cursor.key, new Map(cursor.value));
-            cursor.continue();
-          } else {
-            resolve([
-              {
-                ...data,
-                data: {
-                  ...data.data,
-                  noteRevisions,
-                },
+        const stateRequest = tx.objectStore('state').get('state');
+        stateRequest.onsuccess = () => {
+          if (!stillGood) {
+            resolve([{}, middleware]);
+            return;
+          }
+
+          const state = stateRequest.result;
+          if (!state) {
+            resolve([{}, middleware]);
+            return;
+          }
+
+          try {
+            if (state.accountName !== accountName) {
+              resolve([{}, middleware]);
+              return;
+            }
+
+            const noteTags = new Map(
+              state.noteTags.map(([tagHash, noteIds]) => [
+                tagHash,
+                new Set(noteIds),
+              ])
+            );
+
+            const data: T.RecursivePartial<S.State> = {
+              data: {
+                notes: new Map(state.notes),
+                noteTags,
+                tags: new Map(state.tags),
               },
-              middleware,
-            ]);
+              simperium: {
+                ghosts: [new Map(state.cvs), new Map(state.ghosts)],
+                lastRemoteUpdate: new Map(state.lastRemoteUpdate),
+                lastSync: new Map(state.lastSync),
+              },
+              ui: {
+                editorSelection: new Map(state.editorSelection),
+              },
+            };
+
+            const revisionsRequest = tx.objectStore('revisions').openCursor();
+            const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
+            revisionsRequest.onsuccess = () => {
+              if (!stillGood) {
+                resolve([data, middleware]);
+                return;
+              }
+
+              const cursor = revisionsRequest.result;
+              if (cursor) {
+                noteRevisions.set(cursor.key, new Map(cursor.value));
+                cursor.continue();
+              } else {
+                resolve([
+                  {
+                    ...data,
+                    data: {
+                      ...data.data,
+                      noteRevisions,
+                    },
+                  },
+                  middleware,
+                ]);
+              }
+            };
+            revisionsRequest.onerror = () => resolve([data, middleware]);
+          } catch (e) {
+            resolve([{}, middleware]);
           }
         };
-        revisionsRequest.onerror = () => resolve([data, middleware]);
-      } catch (e) {
-        resolve([{}, middleware]);
-      }
-    };
 
-    stateRequest.onerror = () => resolve([{}, middleware]);
-  });
-};
+        stateRequest.onerror = () => resolve([{}, middleware]);
+      }),
+    () => [{}, null]
+  );
 
 const persistRevisions = async (
   noteId: T.EntityId,
@@ -125,7 +152,7 @@ const persistRevisions = async (
   };
 };
 
-export const saveState = async (state: S.State) => {
+export const saveState = (state: S.State) => {
   const editorSelection = Array.from(state.ui.editorSelection);
   const notes = Array.from(state.data.notes);
   const noteTags = Array.from(state.data.noteTags).map(([tagHash, noteIds]) => [
@@ -139,6 +166,7 @@ export const saveState = async (state: S.State) => {
   const lastSync = Array.from(state.simperium.lastRemoteUpdate);
 
   const data = {
+    accountName: state.settings.accountName,
     editorSelection,
     notes,
     noteTags,
@@ -149,10 +177,10 @@ export const saveState = async (state: S.State) => {
     lastSync,
   };
 
-  const tx = (await openDB()).transaction('state', 'readwrite');
-  const objectStore = tx.objectStore('state');
-
-  objectStore.put(data, 'state');
+  return openDB().then((db) => {
+    const tx = db.transaction('state', 'readwrite');
+    tx.objectStore('state').put(data, 'state');
+  });
 };
 
 export const middleware: S.Middleware = ({ dispatch, getState }) => (next) => {
@@ -164,7 +192,9 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => (next) => {
     if (worker) {
       clearTimeout(worker);
     }
-    worker = setTimeout(() => saveState(getState()), 100);
+    if (keepSyncing) {
+      worker = setTimeout(() => keepSyncing && saveState(getState()), 1000);
+    }
 
     if (action.type === 'LOAD_REVISIONS' && action.revisions.length > 0) {
       persistRevisions(action.noteId, action.revisions);

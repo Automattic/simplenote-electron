@@ -30,29 +30,30 @@ export const bootWithToken = (
 ) => {
   Modal.setAppElement('#root');
 
-  makeStore(initSimperium(logout, token, username, createWelcomeNote)).then(
-    (store) => {
-      store.dispatch(actions.settings.setAccountName(username));
+  makeStore(
+    username,
+    initSimperium(logout, token, username, createWelcomeNote)
+  ).then((store) => {
+    store.dispatch(actions.settings.setAccountName(username));
 
-      Object.defineProperties(window, {
-        dispatch: {
-          get() {
-            return store.dispatch;
-          },
+    Object.defineProperties(window, {
+      dispatch: {
+        get() {
+          return store.dispatch;
         },
-        state: {
-          get() {
-            return store.getState();
-          },
+      },
+      state: {
+        get() {
+          return store.getState();
         },
-      });
+      },
+    });
 
-      render(
-        <Provider store={store}>
-          <App isDevConfig={isDevConfig(config?.development)} />
-        </Provider>,
-        document.getElementById('root')
-      );
-    }
-  );
+    render(
+      <Provider store={store}>
+        <App isDevConfig={isDevConfig(config?.development)} />
+      </Provider>,
+      document.getElementById('root')
+    );
+  });
 };

@@ -13,6 +13,7 @@ import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { getAccountName } from './functions/username-monitor';
 import { tagHashOf as t } from '../../utils/tag-hash';
+import { stopSyncing } from '../persistence';
 
 import type * as A from '../action-types';
 import type * as S from '../';
@@ -185,6 +186,14 @@ export const initSimperium = (
 
   // walk notes and queue any for sync which have discrepancies with their ghost
   new NoteDoctor(store, noteQueue);
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'simplenote_logout') {
+      stopSyncing();
+      client.end();
+      logout();
+    }
+  });
 
   return (next) => (action: A.ActionType) => {
     console.log(action);
@@ -368,6 +377,8 @@ export const initSimperium = (
           return result;
         }
 
+        stopSyncing();
+        localStorage.setItem('simplenote_logout', Math.random().toString());
         client.end();
         logout();
         return result;

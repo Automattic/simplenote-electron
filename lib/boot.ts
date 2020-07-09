@@ -9,7 +9,7 @@ import { boot as bootLoggingOut } from './logging-out';
 
 const config = getConfig();
 
-const clearStorage = () =>
+const clearStorage = (): Promise<void> =>
   new Promise((resolve) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('lastSyncedTime');
@@ -17,12 +17,28 @@ const clearStorage = () =>
     localStorage.removeItem('localQueue:preferences');
     localStorage.removeItem('localQueue:tag');
     localStorage.removeItem('stored_user');
-    indexedDB.deleteDatabase('ghost');
-    indexedDB.deleteDatabase('simplenote');
-    window.electron?.send('clearCookies');
 
-    // let everything settle
-    setTimeout(() => resolve(), 500);
+    Promise.all([
+      new Promise((resolve) => {
+        const r = indexedDB.deleteDatabase('ghost');
+        r.onupgradeneeded = resolve;
+        r.onblocked = resolve;
+        r.onsuccess = resolve;
+        r.onerror = resolve;
+      }),
+      new Promise((resolve) => {
+        const r = indexedDB.deleteDatabase('simplenote');
+        r.onupgradeneeded = resolve;
+        r.onblocked = resolve;
+        r.onsuccess = resolve;
+        r.onerror = resolve;
+      }),
+    ])
+      .then(() => {
+        window.electron?.send('clearCookies');
+        resolve();
+      })
+      .catch(() => resolve());
   });
 
 const forceReload = () => history.go();
@@ -106,6 +122,11 @@ const run = (
       );
     });
   } else {
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'stored_user') {
+        forceReload();
+      }
+    });
     bootWithoutAuth(
       (token: string, username: string, createWelcomeNote: boolean) => {
         saveAccount(token, username);
