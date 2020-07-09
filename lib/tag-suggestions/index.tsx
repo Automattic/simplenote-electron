@@ -26,7 +26,7 @@ export class TagSuggestions extends Component<Props> {
     const { searchQuery, onSearch } = this.props;
 
     // replace last word in current searchQuery with requested tag match
-    let newQuery = searchQuery.trim().split(' ');
+    const newQuery = searchQuery.trim().split(' ');
     newQuery.splice(-1, 1, nextSearch);
     let querystring = newQuery.join(' ');
 

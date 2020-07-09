@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { v4 as uuid } from 'uuid';
 
 import { tagHashOf as t, tagNameOf } from '../../utils/tag-hash';
 
@@ -9,6 +8,7 @@ import type * as T from '../../types';
 // @TODO: Move this into some framework spot
 // still no IE support
 // https://tc39.github.io/ecma262/#sec-array.prototype.findindex
+/* eslint disable */
 if (!Array.prototype.findIndex) {
   Object.defineProperty(Array.prototype, 'findIndex', {
     value: function (predicate: Function) {
@@ -54,6 +54,7 @@ if (!Array.prototype.findIndex) {
     writable: true,
   });
 }
+/* eslint enable */
 
 export const analyticsAllowed: A.Reducer<boolean | null> = (
   state = null,

@@ -2,7 +2,7 @@ import CoreImporter from './';
 
 describe('CoreImporter', () => {
   let importer;
-  let addNote = jest.fn();
+  const addNote = jest.fn();
 
   beforeEach(() => {
     importer = new CoreImporter(addNote);

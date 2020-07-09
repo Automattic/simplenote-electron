@@ -24,7 +24,7 @@ const waitForEvent = async (
   return new Promise((resolve, reject) => {
     const f = async () => {
       const result = await app.client.execute(function () {
-        var events = window.testEvents;
+        const events = window.testEvents;
 
         if (!events.length) {
           return undefined;
