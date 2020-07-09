@@ -4,7 +4,7 @@
  * External dependencies
  */
 const fs = require('fs');
-var JSZip = require('jszip');
+const JSZip = require('jszip');
 
 /**
  * Internal dependencies

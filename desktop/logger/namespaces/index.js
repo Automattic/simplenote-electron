@@ -27,17 +27,23 @@ module.exports = {
    */
   check: function (namespace) {
     if (!this.populated) this.populate();
-    if (this.namespaces.indexOf('*') !== -1) return true;
-    if (this.namespaces.indexOf(namespace) !== -1) return true;
+    if (this.namespaces.indexOf('*') !== -1) {
+      return true;
+    }
+    if (this.namespaces.indexOf(namespace) !== -1) {
+      return true;
+    }
     /* If it is as 'server:api:controller', it could have a wildcard as 'server:*' */
     if (namespace.indexOf(':') !== -1) {
       /* Different levels of the namespace. Using the example of above: 'server' is level 0, 'api' is level 1 and
        * 'controller' is level 2. */
-      let levels = namespace.split(':');
+      const levels = namespace.split(':');
       let level;
       for (let i = 1; i < levels.length; i++) {
         level = levels.slice(0, i).join(':') + ':*';
-        if (this.namespaces.indexOf(level) !== -1) return true;
+        if (this.namespaces.indexOf(level) !== -1) {
+          return true;
+        }
       }
     }
     return false;
