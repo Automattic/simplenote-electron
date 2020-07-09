@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Modal from 'react-modal';
 
 import AboutDialog from '../dialogs/about';
+import BetaWarning from '../dialogs/beta-warning';
 import ImportDialog from '../dialogs/import';
 import KeybindingsDialog from '../dialogs/keybindings';
 import SettingsDialog from '../dialogs/settings';
@@ -48,6 +49,8 @@ export class DialogRenderer extends Component<Props> {
           >
             {'ABOUT' === dialog ? (
               <AboutDialog key="about" />
+            ) : 'BETA-WARNING' === dialog ? (
+              <BetaWarning key="beta-warning" />
             ) : 'IMPORT' === dialog ? (
               <ImportDialog key="import" />
             ) : 'KEYBINDINGS' === dialog ? (

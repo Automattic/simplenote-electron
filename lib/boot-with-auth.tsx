@@ -1,3 +1,5 @@
+import { showDialog } from './state/ui/actions';
+
 if (__TEST__) {
   window.testEvents = [];
 }
@@ -48,6 +50,8 @@ export const bootWithToken = (
         },
       },
     });
+
+    store.dispatch(showDialog('BETA-WARNING'));
 
     render(
       <Provider store={store}>

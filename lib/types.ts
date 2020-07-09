@@ -51,6 +51,7 @@ export type ConnectionState = 'green' | 'red' | 'offline';
 ///////////////////////////////////////
 export type DialogType =
   | 'ABOUT'
+  | 'BETA-WARNING'
   | 'KEYBINDINGS'
   | 'IMPORT'
   | 'SETTINGS'
