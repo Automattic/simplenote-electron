@@ -8,7 +8,7 @@ import type * as T from '../../types';
 // @TODO: Move this into some framework spot
 // still no IE support
 // https://tc39.github.io/ecma262/#sec-array.prototype.findindex
-/* eslint disable */
+/* eslint-disable */
 if (!Array.prototype.findIndex) {
   Object.defineProperty(Array.prototype, 'findIndex', {
     value: function (predicate: Function) {
@@ -54,7 +54,7 @@ if (!Array.prototype.findIndex) {
     writable: true,
   });
 }
-/* eslint enable */
+/* eslint-enable */
 
 export const analyticsAllowed: A.Reducer<boolean | null> = (
   state = null,
