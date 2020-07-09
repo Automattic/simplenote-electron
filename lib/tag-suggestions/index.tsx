@@ -83,14 +83,23 @@ export const filterTags = (
   // with `tag:` we don't want to suggest tags which have already been added
   // to the search bar, so we make it an explicit prefix match, meaning we
   // don't match inside the tag and we don't match full-text matches
-  const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
-  const term: T.TagHash = tagHashOf(
-    (isPrefixMatch ? tagTerm.slice(4) : tagTerm) as T.TagName
-  );
+  const term = tagHashOf(tagTerm as T.TagName);
+  const prefixTerm =
+    tagTerm.startsWith('tag:') && tagTerm.length > 4
+      ? tagHashOf(tagTerm.slice(4) as T.TagName)
+      : null;
 
-  const matcher: (tagHash: T.TagHash) => boolean = isPrefixMatch
-    ? (tagHash) => tagHash !== term && tagHash.startsWith(term)
-    : (tagHash) => tagHash.includes(term);
+  const matcher = (tagHash: T.TagHash): boolean => {
+    if (
+      prefixTerm &&
+      tagHash !== prefixTerm &&
+      tagHash.startsWith(prefixTerm)
+    ) {
+      return true;
+    }
+
+    return tagHash.includes(term);
+  };
 
   const filteredTags = [];
   for (const tagHash of tags.keys()) {
