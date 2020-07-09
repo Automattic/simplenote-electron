@@ -88,6 +88,22 @@ const noteDisplay: A.Reducer<T.ListDisplayMode> = (state = 'comfy', action) => {
       return state;
   }
 };
+
+const sendNotifications: A.Reducer<boolean> = (
+  state = Notification.permission === 'granted',
+  action
+) => {
+  switch (action.type) {
+    case 'REQUEST_NOTIFICATIONS':
+      return action.sendNotifications
+        ? Notification.permission === 'granted'
+        : false;
+
+    default:
+      return state && Notification.permission === 'granted';
+  }
+};
+
 const sortReversed: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setSortReversed':
@@ -148,6 +164,7 @@ export default combineReducers({
   lineLength,
   markdownEnabled,
   noteDisplay,
+  sendNotifications,
   sortReversed,
   sortTagsAlpha,
   sortType,

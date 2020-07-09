@@ -10,14 +10,16 @@ import ToggleGroup from '../../toggle-settings-group';
 
 import * as S from '../../../state';
 
-type DispatchProps = {
-  exportNotes: () => any;
-  showImportDialog: () => any;
-  toggleShortcuts: () => any;
-};
-
 type StateProps = {
   keyboardShortcuts: boolean;
+  sendNotifications: boolean;
+};
+
+type DispatchProps = {
+  exportNotes: () => any;
+  requestNotifications: (sendNotifications: boolean) => any;
+  showImportDialog: () => any;
+  toggleShortcuts: () => any;
 };
 
 type Props = DispatchProps & StateProps;
@@ -25,6 +27,8 @@ type Props = DispatchProps & StateProps;
 const ToolsPanel: FunctionComponent<Props> = ({
   exportNotes,
   keyboardShortcuts,
+  requestNotifications,
+  sendNotifications,
   showImportDialog,
   toggleShortcuts,
 }) => {
@@ -62,20 +66,34 @@ const ToolsPanel: FunctionComponent<Props> = ({
       >
         <Item title="Keyboard Shortcuts" slug="keyboardShortcuts" />
       </SettingsGroup>
+
+      <SettingsGroup
+        slug="allowNotifications"
+        activeSlug={sendNotifications ? 'allowNotifications' : ''}
+        onChange={() => requestNotifications(!sendNotifications)}
+        renderer={ToggleGroup}
+      >
+        <Item title="Notify on remote changes" slug="allowNotifications" />
+      </SettingsGroup>
     </Fragment>
   );
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  settings: { keyboardShortcuts },
+  settings: { keyboardShortcuts, sendNotifications },
 }) => ({
   keyboardShortcuts,
+  sendNotifications,
 });
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  exportNotes: () => dispatch(actions.data.exportNotes()),
-  showImportDialog: () => dispatch(showDialog('IMPORT')),
-  toggleShortcuts: () => dispatch(actions.settings.toggleKeyboardShortcuts()),
-});
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  exportNotes: () => actions.data.exportNotes(),
+  requestNotifications: (sendNotifications) => ({
+    type: 'REQUEST_NOTIFICATIONS',
+    sendNotifications,
+  }),
+  showImportDialog: () => showDialog('IMPORT'),
+  toggleShortcuts: () => actions.settings.toggleKeyboardShortcuts(),
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ToolsPanel);

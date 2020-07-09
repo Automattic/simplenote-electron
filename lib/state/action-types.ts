@@ -76,6 +76,10 @@ export type OpenRevision = Action<
   { noteId: T.EntityId; version: number }
 >;
 export type OpenTag = Action<'OPEN_TAG', { tagName: T.TagName }>;
+export type RequestNotifications = Action<
+  'REQUEST_NOTIFICATIONS',
+  { sendNotifications: boolean }
+>;
 export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
 export type RestoreOpenNote = Action<'RESTORE_OPEN_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
@@ -327,6 +331,7 @@ export type ActionType =
   | RemoveNoteTag
   | RenameTag
   | ReorderTag
+  | RequestNotifications
   | ResetFontSize
   | RestoreOpenNote
   | RestoreNote

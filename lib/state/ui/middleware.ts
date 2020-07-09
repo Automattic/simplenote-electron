@@ -71,6 +71,21 @@ export const middleware: S.Middleware = (store) => (
         },
       });
 
+    case 'REQUEST_NOTIFICATIONS':
+      if (action.sendNotifications && Notification.permission === 'default') {
+        const finisher = () =>
+          store.dispatch({
+            type: 'REQUEST_NOTIFICATIONS',
+            sendNotifications: true,
+          });
+
+        const response = Notification.requestPermission(finisher);
+        if ('function' === typeof response.then) {
+          response.then(finisher);
+        }
+      }
+      return next(action);
+
     default:
       return next(action);
   }
