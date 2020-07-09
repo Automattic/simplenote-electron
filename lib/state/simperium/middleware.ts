@@ -18,6 +18,7 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
+import exportZipArchive from '../../utils/export';
 
 const debug = debugFactory('simperium-middleware');
 
@@ -370,11 +371,21 @@ export const initSimperium = (
                 .join('\n')
             : `${changes.notes.length} notes may not be synchronized`;
 
-        if (
-          changes.notes.length > 0 &&
-          !window.electron?.confirmLogout(changesString)
-        ) {
-          return result;
+        if (changes.notes.length > 0) {
+          const action = window.electron?.confirmLogout(changesString);
+
+          switch (action) {
+            case 'export':
+              exportZipArchive(
+                changes.notes.map((noteId) =>
+                  nextState.data.notes.get(noteId as T.EntityId)
+                )
+              );
+              return result;
+
+            case 'reconsider':
+              return result;
+          }
         }
 
         stopSyncing();

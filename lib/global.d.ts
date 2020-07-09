@@ -8,7 +8,7 @@ declare global {
   interface Window {
     analyticsEnabled: boolean;
     electron: {
-      confirmLogout(changes: string): boolean;
+      confirmLogout(changes: string): 'logout' | 'reconsider' | 'export';
       isMac: boolean;
       receive(command: 'appCommand', callback: (event: any) => any);
       receive(command: 'wpLogin', callback: (event: any) => any);

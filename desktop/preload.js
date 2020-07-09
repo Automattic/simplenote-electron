@@ -2,18 +2,30 @@ const { contextBridge, ipcRenderer, remote } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
   confirmLogout: (changes) => {
-    return (
-      0 ===
-      remote.dialog.showMessageBoxSync({
-        type: 'warning',
-        buttons: ['Lose Changes and Logout', "Don't Logout Yet"],
-        title: 'Unsynced Notes Detected',
-        message:
-          'Logging out will delete any unsynced notes. ' +
-          'Do you want to continue or give it a little more time to finish trying to sync?\n\n' +
-          changes,
-      })
-    );
+    const response = remote.dialog.showMessageBoxSync({
+      type: 'warning',
+      buttons: [
+        'Export Unsynced Notes',
+        "Don't Logout Yet",
+        'Lose Changes and Logout',
+      ],
+      title: 'Unsynced Notes Detected',
+      message:
+        'Logging out will delete any unsynced notes. ' +
+        'Do you want to continue or give it a little more time to finish trying to sync?\n\n' +
+        changes,
+    });
+
+    switch (response) {
+      case 0:
+        return 'export';
+
+      case 1:
+        return 'reconsider';
+
+      case 2:
+        return 'logout';
+    }
   },
   send: (channel, data) => {
     // whitelist channels
