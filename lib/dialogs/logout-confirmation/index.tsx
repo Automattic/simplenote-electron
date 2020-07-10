@@ -41,8 +41,9 @@ export class LogoutConfirmation extends Component<Props> {
             <p className="explanation">
               If you logout now Simplenote will not be able to remember any of
               your unsynchronized changes. If you wait a few more seconds it
-              might catch up with the changes but if it doesn't you can always
-              export a copy of the notes with those changes just to be safe.
+              might catch up with the changes but if it doesn&apos;t you can
+              always export a copy of the notes with those changes just to be
+              safe.
             </p>
           )}
 
@@ -74,7 +75,7 @@ export class LogoutConfirmation extends Component<Props> {
             <button onClick={reallyLogout}>
               {notes.size > 0 ? 'Lose changes and logout' : 'Safely logout'}
             </button>
-            <button onClick={closeDialog}>Don't logout yet</button>
+            <button onClick={closeDialog}>Don&apos;t logout yet</button>
             <button
               onClick={this.exportUnsyncedNotes}
               disabled={notes.size === 0}
