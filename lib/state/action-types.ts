@@ -97,7 +97,12 @@ export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type StoreEditorSelection = Action<
   'STORE_EDITOR_SELECTION',
-  { noteId: T.EntityId; start: number; end: number; direction: 'LTR' | 'RTL' }
+  {
+    noteId: T.EntityId;
+    start: number;
+    end: number;
+    direction: 'forward' | 'backward' | 'none';
+  }
 >;
 export type SystemThemeUpdate = Action<
   'SYSTEM_THEME_UPDATE',

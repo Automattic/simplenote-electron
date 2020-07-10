@@ -50,13 +50,31 @@ export const middleware: S.Middleware = (store) => (
       if (!state.ui.openedNote) {
         return;
       } else {
+        const noteId = state.ui.openedNote;
+        const selection = state.ui.editorSelection.get(noteId);
+        if (selection) {
+          setTimeout(() => {
+            if (noteId !== store.getState().ui.openedNote) {
+              return;
+            }
+
+            store.dispatch({
+              type: 'STORE_EDITOR_SELECTION',
+              noteId,
+              start: selection[0],
+              end: selection[1],
+              direction: selection[2],
+            });
+          }, 10);
+        }
+
         return next({
           type: 'INSERT_TASK_INTO_NOTE',
           noteId: state.ui.openedNote,
           selection: state.ui.editorSelection.get(state.ui.openedNote) ?? [
             0,
             0,
-            'LTR',
+            'forward',
           ],
         });
       }

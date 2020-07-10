@@ -139,6 +139,9 @@ class NoteContentEditor extends Component<Props> {
           false,
           isChecked ? '\ue000' : '\ue001'
         );
+        editNote(noteId, {
+          content: withCheckboxSyntax(this.editor.current.value),
+        });
       },
       true
     );
