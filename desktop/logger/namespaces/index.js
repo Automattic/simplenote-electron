@@ -9,13 +9,12 @@ module.exports = {
    */
   populated: false,
   /**
-   * Populates the private data 'namespaces' as an array with the different namespaces from the DEBUG
+   * Populates the private data 'namespaces' as an array with the environment from the NODE_ENV
    * environment variable. It splits the data with ',' as separator.
    * @private
    */
   populate: function () {
-    let envString = process.env.DEBUG;
-    this.namespaces = envString ? envString.split(',') : [];
+    this.namespaces = [process.env.NODE_ENV];
     this.populated = true;
   },
   /**
@@ -26,26 +25,22 @@ module.exports = {
    * @returns {boolean} Whether or not the namespace is available.
    */
   check: function (namespace) {
-    if (!this.populated) this.populate();
-    if (this.namespaces.indexOf('*') !== -1) {
+    if (!this.populated) {
+      this.populate();
+    }
+
+    if (this.namespaces.includes('*')) {
       return true;
     }
-    if (this.namespaces.indexOf(namespace) !== -1) {
+
+    if (this.namespaces.includes(namespace)) {
       return true;
     }
-    /* If it is as 'server:api:controller', it could have a wildcard as 'server:*' */
-    if (namespace.indexOf(':') !== -1) {
-      /* Different levels of the namespace. Using the example of above: 'server' is level 0, 'api' is level 1 and
-       * 'controller' is level 2. */
-      const levels = namespace.split(':');
-      let level;
-      for (let i = 1; i < levels.length; i++) {
-        level = levels.slice(0, i).join(':') + ':*';
-        if (this.namespaces.indexOf(level) !== -1) {
-          return true;
-        }
-      }
-    }
-    return false;
+
+    return namespace
+      .split(':')
+      .some((_, level, levels) =>
+        this.namespaces.includes(levels.slice(0, level).join(':') + ':*')
+      );
   },
 };

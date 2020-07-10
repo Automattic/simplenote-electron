@@ -21,22 +21,21 @@ module.exports = {
    */
   zipContents: (logPath, dst, onZipped) => {
     const zip = new JSZip();
-    const contentPromise = new JSZip.external.Promise(function (
-      resolve,
-      reject
-    ) {
-      fs.readFile(logPath, function (err, data) {
-        if (err) {
-          log.warn('Unexpected error: ', err);
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
-    zip.file('simplenote.log', contentPromise);
+    zip.file(
+      'simplenote.log',
+      new Promise((resolve, reject) =>
+        fs.readFile(logPath, (error, data) => {
+          if (error) {
+            log.warn('Unexpected error: ', error);
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        })
+      )
+    );
 
-    let output = fs.createWriteStream(dst);
+    const output = fs.createWriteStream(dst);
 
     // Catch warnings (e.g. stat failures and other non-blocking errors)
     output.on('warning', function (err) {

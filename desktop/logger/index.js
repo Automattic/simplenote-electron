@@ -8,7 +8,7 @@
  * initializing each logger object. This maintains the same logger initialization API
  * as the prior logging solution (`debug` module).
  *
- * 2. Maintain prior log filtering behavior with the `DEBUG` environment variable
+ * 2. Maintain prior log filtering behavior with the `NODE_ENV` environment variable
  * (instead of the `LOG_NAMESPACES` variable used in winston-namespace).
  */
 
@@ -79,8 +79,8 @@ module.exports = (namespace, options) => {
   };
 
   const enabled = namespaces.check(namespace);
-  let logger = createLogger({ ...baseOptions, ...options });
-  if (process.env.DEBUG) {
+  const logger = createLogger({ ...baseOptions, ...options });
+  if (process.env.NODE_ENV !== 'production') {
     logger.add(
       new transports.Console({
         format: baseformat,
