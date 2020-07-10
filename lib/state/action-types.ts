@@ -76,6 +76,7 @@ export type OpenRevision = Action<
   { noteId: T.EntityId; version: number }
 >;
 export type OpenTag = Action<'OPEN_TAG', { tagName: T.TagName }>;
+export type ReallyLogout = Action<'REALLY_LOGOUT'>;
 export type RequestNotifications = Action<
   'REQUEST_NOTIFICATIONS',
   { sendNotifications: boolean }
@@ -324,6 +325,7 @@ export type ActionType =
   | OpenTag
   | PinNote
   | PublishNote
+  | ReallyLogout
   | RemoteNoteUpdate
   | RemoteNoteDeleteForever
   | RemoteTagDelete

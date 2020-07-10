@@ -18,7 +18,6 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
-import exportZipArchive from '../../utils/export';
 
 const debug = debugFactory('simperium-middleware');
 
@@ -345,47 +344,13 @@ export const initSimperium = (
       case 'LOGOUT': {
         const changes = getUnconfirmedChanges(nextState);
         changes.notes.forEach((noteId) => noteQueue.add(noteId, Date.now()));
-        const changesString =
-          changes.notes.length < 4
-            ? changes.notes
-                .map((noteId) => {
-                  const hasGhost = nextState.simperium.ghosts[1]
-                    .get('note')
-                    ?.get(noteId);
-
-                  const note = nextState.data.notes.get(noteId as T.EntityId);
-                  const content = note?.content ?? '';
-                  const newlineAt = content.indexOf('\n');
-                  const length = newlineAt >= 0 ? Math.min(newlineAt, 60) : 60;
-
-                  const prefix = !hasGhost
-                    ? 'new'
-                    : note?.deleted
-                    ? 'trashed'
-                    : 'changed';
-
-                  const preview = content.slice(0, length) || '(Blank note)';
-
-                  return `(${prefix}) ${preview}`;
-                })
-                .join('\n')
-            : `${changes.notes.length} notes may not be synchronized`;
 
         if (changes.notes.length > 0) {
-          const action = window.electron?.confirmLogout(changesString);
-
-          switch (action) {
-            case 'export':
-              exportZipArchive(
-                changes.notes.map((noteId) =>
-                  nextState.data.notes.get(noteId as T.EntityId)
-                )
-              );
-              return result;
-
-            case 'reconsider':
-              return result;
-          }
+          store.dispatch({
+            type: 'SHOW_DIALOG',
+            dialog: 'LOGOUT-CONFIRMATION',
+          });
+          return result;
         }
 
         stopSyncing();
@@ -394,6 +359,13 @@ export const initSimperium = (
         logout();
         return result;
       }
+
+      case 'REALLY_LOGOUT':
+        stopSyncing();
+        localStorage.setItem('simplenote_logout', Math.random().toString());
+        client.end();
+        logout();
+        return result;
     }
 
     return result;

@@ -1,0 +1,79 @@
+.logoutConfirmation {
+  .dialog {
+    max-height: 600px;
+    max-width: 640px;
+    margin: auto;
+
+    h1 {
+      font-size: 18px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-left: 16px;
+      font-size: 16px;
+    }
+
+    p.explanation {
+      max-width: 90%;
+      margin: auto;
+      margin-bottom: 16px;
+    }
+
+    section.change-list {
+      height: 60%;
+      max-height: 400px;
+      overflow-y: scroll;
+
+      ul {
+        list-style: none;
+      }
+
+      li {
+        max-width: 90%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 8px;
+
+        .note-title {
+          color: $studio-blue;
+          margin-right: 6px;
+        }
+      }
+    }
+
+    section.action-buttons {
+      margin: auto;
+      margin-top: 24px;
+      margin-bottom: 24px;
+
+      button {
+        margin: 12px;
+
+        background-color: $studio-blue;
+        padding: 2px 4px;
+        border-radius: 4px;
+        border: 1px solid $studio-blue;
+
+        &[disabled] {
+          opacity: 0.2;
+
+          &:hover {
+            background-color: $studio-blue;
+            border: 1px solid $studio-blue;
+          }
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        &:hover {
+          background-color: $studio-blue-30;
+          border: 1px solid $studio-blue-90;
+        }
+      }
+    }
+  }
+}

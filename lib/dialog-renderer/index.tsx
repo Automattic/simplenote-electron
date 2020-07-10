@@ -6,6 +6,7 @@ import AboutDialog from '../dialogs/about';
 import BetaWarning from '../dialogs/beta-warning';
 import ImportDialog from '../dialogs/import';
 import KeybindingsDialog from '../dialogs/keybindings';
+import LogoutConfirmation from '../dialogs/logout-confirmation';
 import SettingsDialog from '../dialogs/settings';
 import ShareDialog from '../dialogs/share';
 import { closeDialog } from '../state/ui/actions';
@@ -55,6 +56,8 @@ export class DialogRenderer extends Component<Props> {
               <ImportDialog key="import" />
             ) : 'KEYBINDINGS' === dialog ? (
               <KeybindingsDialog key="keybindings" />
+            ) : 'LOGOUT-CONFIRMATION' === dialog ? (
+              <LogoutConfirmation key="logout-confirmation" />
             ) : 'SETTINGS' === dialog ? (
               <SettingsDialog key="settings" />
             ) : 'SHARE' === dialog ? (

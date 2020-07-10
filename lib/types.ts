@@ -52,8 +52,9 @@ export type ConnectionState = 'green' | 'red' | 'offline';
 export type DialogType =
   | 'ABOUT'
   | 'BETA-WARNING'
-  | 'KEYBINDINGS'
   | 'IMPORT'
+  | 'KEYBINDINGS'
+  | 'LOGOUT-CONFIRMATION'
   | 'SETTINGS'
   | 'SHARE';
 export type LineLength = 'full' | 'narrow';
