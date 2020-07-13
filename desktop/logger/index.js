@@ -66,7 +66,7 @@ module.exports = (namespace, options) => {
   );
 
   const baseOptions = {
-    level: process.env.LOG_LEVEL || 'silly',
+    level: process.env.LOG_LEVEL || 'warn',
     transports: [
       new transports.File({
         dirname: path.dirname(logPath),
@@ -95,11 +95,6 @@ module.exports = (namespace, options) => {
     debug: (message, meta) => {
       if (enabled) {
         logger.debug(message, meta);
-      }
-    },
-    silly: (message, meta) => {
-      if (enabled) {
-        logger.silly(message, meta);
       }
     },
   };

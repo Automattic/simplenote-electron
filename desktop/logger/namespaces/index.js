@@ -14,7 +14,7 @@ module.exports = {
    * @private
    */
   populate: function () {
-    this.namespaces = [process.env.NODE_ENV];
+    this.namespaces = [process.env.NODE_ENV === 'production' ? '' : '*'];
     this.populated = true;
   },
   /**
