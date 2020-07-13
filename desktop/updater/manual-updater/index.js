@@ -11,6 +11,7 @@ const semver = require('semver');
 /**
  * Internal dependencies
  */
+const log = require('../../logger')('desktop:updater');
 const Updater = require('../lib/Updater');
 const setupProgressUpdates = require('../lib/setup-progress-updates');
 
@@ -41,7 +42,7 @@ class ManualUpdater extends Updater {
 
       if (releaseResp.status !== 200) {
         this.emit('error');
-        console.log(releaseResp); // eslint-disable-line no-console
+        log.error(releaseResp);
         return;
       }
 
@@ -58,7 +59,7 @@ class ManualUpdater extends Updater {
 
         if (configResp.status !== 200) {
           this.emit('error');
-          console.log(configResp); // eslint-disable-line no-console
+          log.error(configResp);
           return;
         }
 
@@ -67,7 +68,7 @@ class ManualUpdater extends Updater {
 
         if (semver.lt(app.getVersion(), releaseConfig.version)) {
           // eslint-disable-next-line no-console
-          console.log(
+          log.info(
             'New update is available, prompting user to update to',
             releaseConfig.version
           );
@@ -80,7 +81,7 @@ class ManualUpdater extends Updater {
       }
     } catch (err) {
       this.emit('error');
-      console.log(err.message); // eslint-disable-line no-console
+      log.error(err.message);
     }
   }
 
