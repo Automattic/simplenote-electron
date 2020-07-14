@@ -24,7 +24,6 @@ type OwnProps = {
 type StateProps = {
   autoHideMenuBar: boolean;
   hotkeysEnabled: boolean;
-  isOffline: boolean;
   isSmallScreen: boolean;
   lineLength: T.LineLength;
   showNavigation: boolean;
@@ -137,7 +136,6 @@ class AppComponent extends Component<Props> {
   render() {
     const {
       isDevConfig,
-      isOffline,
       lineLength,
       showNavigation,
       showNoteInfo,
@@ -159,7 +157,6 @@ class AppComponent extends Component<Props> {
     return (
       <div className={appClasses}>
         {isDevConfig && <DevBadge />}
-        {isOffline && <div className="dev-badge">OFFLINE</div>}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
           <AppLayout />
@@ -174,7 +171,6 @@ class AppComponent extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   autoHideMenuBar: state.settings.autoHideMenuBar,
   hotkeysEnabled: state.settings.keyboardShortcuts,
-  isOffline: state.simperium.connectionStatus === 'offline',
   isSmallScreen: selectors.isSmallScreen(state),
   lineLength: state.settings.lineLength,
   showNavigation: state.ui.showNavigation,

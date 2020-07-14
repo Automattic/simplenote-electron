@@ -6,6 +6,24 @@
   border-bottom: 1px solid $studio-gray-5;
 }
 
+.note-toolbar-wrapper .offline-badge {
+  border: solid 1px $studio-gray-5;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  color: $studio-gray-50;
+  font-size: 12px;
+  height: 24px;
+  margin-top: 16px;
+  text-align: center;
+  width: 64px;
+}
+
+.theme-dark .note-toolbar-wrapper .offline-badge {
+  border: solid 1px $studio-gray-80;
+  box-shadow: 0 2px 4px 0 rgba(255, 255, 255, 0.02);
+  color: $studio-gray-50;
+}
+
 .note-toolbar {
   display: flex;
   justify-content: space-between;
