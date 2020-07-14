@@ -126,9 +126,8 @@ export class NoteEditor extends Component<Props> {
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
-        <div>
-          Note last updated: {Math.floor((Date.now() - lastUpdated) / 1000)}s
-          ago ({new Date(lastUpdated).toLocaleTimeString()})
+        <div className="last-sync">
+          Last synced: {new Date(lastUpdated).toLocaleString()}
         </div>
         {editMode || !note.systemTags.includes('markdown') ? (
           <NoteDetail
