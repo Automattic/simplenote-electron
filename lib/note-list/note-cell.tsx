@@ -2,7 +2,9 @@ import React, { Component, CSSProperties } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
+import AttentionIcon from '../icons/attention';
 import PublishIcon from '../icons/feed';
+import PinnedIcon from '../icons/pinned';
 import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
@@ -86,25 +88,34 @@ export class NoteCell extends Component<Props> {
       'published-note': isPublished,
     });
 
+    const pinnerClasses = classNames('note-list-item-pinner', {
+      'note-list-item-pinned': isPinned,
+    });
+
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
     return (
       <div style={style} className={classes}>
-        <div
-          className="note-list-item-pinner"
-          tabIndex={0}
-          onClick={() => pinNote(noteId, !isPinned)}
-        />
+        <div className="note-list-item-status">
+          <div
+            className={pinnerClasses}
+            tabIndex={0}
+            onClick={() => pinNote(noteId, !isPinned)}
+          >
+            <PinnedIcon />
+          </div>
+          <div className="note-list-item-pending-changes">
+            {hasPendingChanges && <AttentionIcon />}
+          </div>
+        </div>
+
         <div
           className="note-list-item-text theme-color-border"
           tabIndex={0}
           onClick={() => openNote(noteId)}
         >
           <div className="note-list-item-title">
-            <span>
-              {hasPendingChanges && '⚠️ '}
-              {decorateWith(decorators, title)}
-            </span>
+            <span>{decorateWith(decorators, title)}</span>
             {isPublished && (
               <div className="note-list-item-published-icon">
                 <PublishIcon />
