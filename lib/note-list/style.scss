@@ -77,35 +77,33 @@
   padding-left: 8px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-family: 'Simplenote Tasks', sans-serif;
+  min-height: 64px;
 
-  .note-list-item-pinner {
-    flex: none;
+  .note-list-item-status {
+    padding: 11px 8px 0 0;
+  }
+
+  .note-list-item-pinner,
+  .note-list-item-pending-changes {
     height: 14px;
     width: 14px;
-    margin-right: 8px;
-    margin-top: 14px;
-    border-radius: 50%;
-
-    &:focus {
-      outline: none;
-    }
   }
 
-  &:hover .note-list-item-pinner {
-    box-shadow: inset 0 0 0 2px $studio-gray-10, inset 0 0 0 3px $studio-white;
-
-    &:hover {
-      background: $studio-gray-50;
-    }
+  .note-list-item-pinner {
+    color: transparent;
   }
 
-  &.note-list-item-pinned .note-list-item-pinner {
-    background: $studio-gray-80;
-    box-shadow: inset 0 0 0 2px $studio-gray-5, inset 0 0 0 3px $studio-white;
+  .note-list-item-pinner:hover {
+    color: $studio-simplenote-blue-50;
+  }
 
-    &:hover {
-      background: $studio-gray-10;
-    }
+  .note-list-item-pinner.note-list-item-pinned {
+    color: $studio-simplenote-blue-50;
+  }
+
+  .note-list-item-pending-changes {
+    color: $studio-orange-30;
+    margin-top: 10px;
   }
 
   .note-list-item-text {
