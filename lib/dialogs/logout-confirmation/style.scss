@@ -1,79 +1,83 @@
-.logoutConfirmation {
-  .dialog {
-    max-height: 600px;
-    max-width: 640px;
-    margin: auto;
+.logoutConfirmation .dialog {
+  max-width: 360px;
 
-    h1 {
-      font-size: 18px;
-      text-align: center;
+  .dialog-title-side:first-child {
+    display: none;
+  }
+
+  .dialog-title-text {
+    font-size: 16px;
+    font-weight: 600;
+    padding-left: 16px;
+    text-align: left;
+  }
+
+  .dialog-title-side svg {
+    height: 16px;
+    width: 16px;
+    color: $studio-gray-50;
+  }
+
+  .explanation,
+  .explanation-secondary {
+    font-size: 14px;
+    margin: 12px 0;
+    padding-left: 16px;
+  }
+
+  .explanation-secondary {
+    color: $studio-gray-50;
+  }
+
+  .change-list {
+    border-bottom: 1px solid #dcdcde;
+    border-top: 1px solid #dcdcde;
+
+    ul {
+      list-style: none;
+      padding: 6px 0 6px 17px;
+      margin: 0;
     }
 
-    h2 {
-      margin-left: 16px;
-      font-size: 16px;
+    li {
+      display: flex;
+      padding: 4px 0;
     }
 
-    p.explanation {
-      max-width: 90%;
-      margin: auto;
-      margin-bottom: 16px;
+    li span {
+      padding-left: 17px;
     }
 
-    section.change-list {
-      height: 60%;
-      max-height: 400px;
-      overflow-y: scroll;
-
-      ul {
-        list-style: none;
-      }
-
-      li {
-        max-width: 90%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-bottom: 8px;
-
-        .note-title {
-          color: $studio-blue;
-          margin-right: 6px;
-        }
-      }
+    .icon-attention {
+      color: $studio-orange-30;
+      height: 25px;
+      width: 19px;
     }
+  }
 
-    section.action-buttons {
-      margin: auto;
-      margin-top: 24px;
-      margin-bottom: 24px;
+  .export-unsyncronized {
+    color: $studio-simplenote-blue-50;
+    padding: 17px;
+    text-align: left;
+  }
 
-      button {
-        margin: 12px;
+  .action-button {
+    display: flex;
+    justify-content: flex-end;
 
-        background-color: $studio-blue;
-        padding: 2px 4px;
-        border-radius: 4px;
-        border: 1px solid $studio-blue;
-
-        &[disabled] {
-          opacity: 0.2;
-
-          &:hover {
-            background-color: $studio-blue;
-            border: 1px solid $studio-blue;
-          }
-        }
-
-        &:last-child {
-          margin-right: 0;
-        }
-
-        &:hover {
-          background-color: $studio-blue-30;
-          border: 1px solid $studio-blue-90;
-        }
-      }
+    .log-out {
+      border-radius: 4px;
+      background-color: #3361cc;
+      color: #ffffff;
+      font-size: 14px;
+      padding: 6px 12px;
+      margin: 14px 12px;
     }
+  }
+}
+
+.theme-dark .logoutConfirmation .dialog {
+  .change-list {
+    border-color: #2c3338;
   }
 }
