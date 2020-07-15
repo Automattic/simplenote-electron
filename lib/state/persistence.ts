@@ -26,100 +26,102 @@ const openDB = (): Promise<IDBDatabase> =>
         db.createObjectStore('revisions');
       }
     };
+    r.onblocked = () => reject();
   });
 
 export const loadState = (
   accountName: string | null
 ): Promise<[T.RecursivePartial<S.State>, S.Middleware | null]> =>
-  openDB().then(
-    (db) =>
-      new Promise((resolve) => {
-        let stillGood = true;
+  openDB()
+    .then(
+      (db): Promise<[T.RecursivePartial<S.State>, S.Middleware | null]> =>
+        new Promise((resolve) => {
+          let stillGood = true;
 
-        const tx = db.transaction(['state', 'revisions'], 'readonly');
+          const tx = db.transaction(['state', 'revisions'], 'readonly');
 
-        db.onversionchange = () => {
-          stillGood = false;
-          resolve([{}, middleware]);
-        };
-
-        const stateRequest = tx.objectStore('state').get('state');
-        stateRequest.onsuccess = () => {
-          if (!stillGood) {
+          db.onversionchange = () => {
+            stillGood = false;
             resolve([{}, middleware]);
-            return;
-          }
+          };
 
-          const state = stateRequest.result;
-          if (!state) {
-            resolve([{}, middleware]);
-            return;
-          }
-
-          try {
-            if (state.accountName !== accountName) {
+          const stateRequest = tx.objectStore('state').get('state');
+          stateRequest.onsuccess = () => {
+            if (!stillGood) {
               resolve([{}, middleware]);
               return;
             }
 
-            const noteTags = new Map(
-              state.noteTags.map(([tagHash, noteIds]) => [
-                tagHash,
-                new Set(noteIds),
-              ])
-            );
+            const state = stateRequest.result;
+            if (!state) {
+              resolve([{}, middleware]);
+              return;
+            }
 
-            const data: T.RecursivePartial<S.State> = {
-              data: {
-                notes: new Map(state.notes),
-                noteTags,
-                tags: new Map(state.tags),
-              },
-              simperium: {
-                ghosts: [new Map(state.cvs), new Map(state.ghosts)],
-                lastRemoteUpdate: new Map(state.lastRemoteUpdate),
-                lastSync: new Map(state.lastSync),
-              },
-              ui: {
-                editorSelection: new Map(state.editorSelection),
-              },
-            };
-
-            const revisionsRequest = tx.objectStore('revisions').openCursor();
-            const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
-            revisionsRequest.onsuccess = () => {
-              if (!stillGood) {
-                resolve([data, middleware]);
+            try {
+              if (state.accountName !== accountName) {
+                resolve([{}, middleware]);
                 return;
               }
 
-              const cursor = revisionsRequest.result;
-              if (cursor) {
-                noteRevisions.set(cursor.key, new Map(cursor.value));
-                cursor.continue();
-              } else {
-                resolve([
-                  {
-                    ...data,
-                    data: {
-                      ...data.data,
-                      noteRevisions,
-                    },
-                  },
-                  middleware,
-                ]);
-              }
-            };
-            revisionsRequest.onerror = () => resolve([data, middleware]);
-          } catch (e) {
-            resolve([{}, middleware]);
-          }
-        };
+              const noteTags = new Map(
+                state.noteTags.map(([tagHash, noteIds]) => [
+                  tagHash,
+                  new Set(noteIds),
+                ])
+              );
 
-        stateRequest.onerror = () => resolve([{}, middleware]);
-      }),
-    () => [{}, null]
-  );
+              const data: T.RecursivePartial<S.State> = {
+                data: {
+                  notes: new Map(state.notes),
+                  noteTags,
+                  tags: new Map(state.tags),
+                },
+                simperium: {
+                  ghosts: [new Map(state.cvs), new Map(state.ghosts)],
+                  lastRemoteUpdate: new Map(state.lastRemoteUpdate),
+                  lastSync: new Map(state.lastSync),
+                },
+                ui: {
+                  editorSelection: new Map(state.editorSelection),
+                },
+              };
+
+              const revisionsRequest = tx.objectStore('revisions').openCursor();
+              const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
+              revisionsRequest.onsuccess = () => {
+                if (!stillGood) {
+                  resolve([data, middleware]);
+                  return;
+                }
+
+                const cursor = revisionsRequest.result;
+                if (cursor) {
+                  noteRevisions.set(cursor.key, new Map(cursor.value));
+                  cursor.continue();
+                } else {
+                  resolve([
+                    {
+                      ...data,
+                      data: {
+                        ...data.data,
+                        noteRevisions,
+                      },
+                    },
+                    middleware,
+                  ]);
+                }
+              };
+              revisionsRequest.onerror = () => resolve([data, middleware]);
+            } catch (e) {
+              resolve([{}, middleware]);
+            }
+          };
+
+          stateRequest.onerror = () => resolve([{}, middleware]);
+        })
+    )
+    .catch(() => [{}, null]);
 
 const persistRevisions = async (
   noteId: T.EntityId,
