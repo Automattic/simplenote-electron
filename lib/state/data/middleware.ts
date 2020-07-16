@@ -35,6 +35,16 @@ export const middleware: S.Middleware = (store) => (
         noteId: state.ui.openedNote,
       });
 
+    case 'EMPTY_TRASH': {
+      const result = next(action);
+      state.data.notes.forEach((note, noteId) => {
+        if (note.deleted) {
+          store.dispatch({ type: 'DELETE_NOTE_FOREVER', noteId: noteId });
+        }
+      });
+      return result;
+    }
+
     case 'EXPORT_NOTES':
       exportZipArchive([...state.data.notes.values()]);
       return next(action);

@@ -342,9 +342,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onEmptyTrash: () => {
-    throw new Error('Empty trash!');
-  },
+  onEmptyTrash: actions.ui.emptyTrash,
   openNote: actions.ui.openNote,
   selectNoteAbove: actions.ui.selectNoteAbove,
   selectNoteBelow: actions.ui.selectNoteBelow,

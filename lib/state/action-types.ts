@@ -145,6 +145,7 @@ export type EditNote = Action<
   'EDIT_NOTE',
   { noteId: T.EntityId; changes: Partial<T.Note> }
 >;
+export type EmptyTrash = Action<'EMPTY_TRASH'>;
 export type ImportNote = Action<'IMPORT_NOTE', { note: T.Note }>;
 export type ImportNoteWithId = Action<
   'IMPORT_NOTE_WITH_ID',
@@ -309,6 +310,7 @@ export type ActionType =
   | DeleteOpenNoteForever
   | DeleteNoteForever
   | EditNote
+  | EmptyTrash
   | ExportNotes
   | FilterNotes
   | FocusSearchField
