@@ -10,7 +10,6 @@
   flex-direction: column;
   flex: 1 1 auto;
   overflow: hidden;
-  overflow-y: scroll;
 
   .tag-list-title {
     display: flex;
@@ -48,6 +47,7 @@
   flex: 1 1 auto;
   list-style: none;
   padding-inline-start: 20px;
+  overflow-y: scroll;
 }
 
 .tag-list-input {
