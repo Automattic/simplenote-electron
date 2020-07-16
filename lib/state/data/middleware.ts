@@ -35,6 +35,24 @@ export const middleware: S.Middleware = (store) => (
         noteId: state.ui.openedNote,
       });
 
+    case 'EMPTY_TRASH': {
+      // loop through all notes - how??
+      // const next = new Map(state);
+      // next.forEach((note, noteId) => { // this only works in the reducer??
+      // if (note.deleted) {
+      // console.log(note);
+      // next isn't callable in the reducer, omly in the middleware
+      // next({
+      // type: 'DELETE_NOTE_FOREVER',
+      // noteId: noteId,
+      // });
+      // next.delete(noteId);  // this maybe needs to be called in the middleware?
+      // }
+      // });
+      // return next;
+      return next(action);
+    }
+
     case 'EXPORT_NOTES':
       exportZipArchive([...state.data.notes.values()]);
       return next(action);
