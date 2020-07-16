@@ -10,7 +10,6 @@
   flex-direction: column;
   flex: 1 1 auto;
   overflow: hidden;
-  overflow-y: scroll;
 
   .tag-list-title {
     display: flex;
@@ -19,6 +18,7 @@
     align-items: center;
     line-height: 1.25em;
     margin-bottom: 0.25em;
+    box-shadow: 0 1px 1px lightgray;
 
     h2 {
       margin-bottom: 0;
@@ -42,12 +42,34 @@
       opacity: 1;
     }
   }
+
+  &.tag-list-editing .tag-list-items {
+    padding-inline-start: 6px;
+  }
 }
 
 .tag-list-items {
   flex: 1 1 auto;
   list-style: none;
   padding-inline-start: 20px;
+  padding-inline-end: 16px;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow-y: scroll;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  svg {
+    cursor: pointer;
+  }
+
+  .icon-trash {
+    margin-right: 5px;
+    &:hover {
+      color: red;
+    }
+  }
 }
 
 .tag-list-input {
