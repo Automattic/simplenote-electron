@@ -10,10 +10,6 @@ export const editNote: A.ActionCreator<A.EditNote> = (
   changes,
 });
 
-export const emptyTrash: A.ActionCreator<A.EmptyTrash> = () => ({
-  type: 'EMPTY_TRASH',
-});
-
 export const exportNotes: A.ActionCreator<A.ExportNotes> = () => ({
   type: 'EXPORT_NOTES',
 });

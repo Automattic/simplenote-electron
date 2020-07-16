@@ -17,6 +17,10 @@ export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = (
   type: 'DELETE_OPEN_NOTE_FOREVER',
 });
 
+export const emptyTrash: A.ActionCreator<A.EmptyTrash> = () => ({
+  type: 'EMPTY_TRASH',
+});
+
 export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   noteIds: T.EntityId[],
   tagHashes: T.TagHash[]

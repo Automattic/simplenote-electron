@@ -118,23 +118,6 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return next;
     }
 
-    case 'EMPTY_TRASH': {
-      // loop through all notes
-      const next = new Map(state);
-      next.forEach((note, noteId) => {
-        if (note.deleted) {
-          console.log(note);
-          // next isn't callable here; this is copied from the middleware
-          // next({
-          // type: 'DELETE_NOTE_FOREVER',
-          // noteId: noteId,
-          // });
-          // next.delete(noteId);  // this seems to work but the notes don't get actually deleted
-        }
-      });
-      return next;
-    }
-
     case 'EDIT_NOTE':
     case 'NOTE_BUCKET_UPDATE':
     case 'REMOTE_NOTE_UPDATE': {

@@ -36,21 +36,13 @@ export const middleware: S.Middleware = (store) => (
       });
 
     case 'EMPTY_TRASH': {
-      // loop through all notes - how??
-      // const next = new Map(state);
-      // next.forEach((note, noteId) => { // this only works in the reducer??
-      // if (note.deleted) {
-      // console.log(note);
-      // next isn't callable in the reducer, only in the middleware
-      // next({
-      // type: 'DELETE_NOTE_FOREVER',
-      // noteId: noteId,
-      // });
-      // next.delete(noteId);  // this maybe needs to be called in the reducer?
-      // }
-      // });
-      // return next;
-      return next(action);
+      const result = next(action);
+      state.data.notes.forEach((note, noteId) => {
+        if (note.deleted) {
+          store.dispatch({ type: 'DELETE_NOTE_FOREVER', noteId: noteId });
+        }
+      });
+      return result;
     }
 
     case 'EXPORT_NOTES':
