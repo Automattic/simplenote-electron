@@ -3,21 +3,13 @@ import { connect } from 'react-redux';
 
 import actions from './state/actions';
 import * as selectors from './state/selectors';
+import {
+  withCheckboxCharacters,
+  withCheckboxSyntax,
+} from './utils/task-transform';
 
 import * as S from './state';
 import * as T from './types';
-
-const withCheckboxCharacters = (s: string): string =>
-  s.replace(
-    /^(\s*)- \[( |x|X)\](\s)/gm,
-    (match, prespace, inside, postspace) =>
-      prespace + (inside === ' ' ? '\ue000' : '\ue001') + postspace
-  );
-
-const withCheckboxSyntax = (s: string): string =>
-  s.replace(/\ue000|\ue001/g, (match) =>
-    match === '\ue000' ? '- [ ]' : '- [x]'
-  );
 
 const getCurrentLine = (
   document: string,
@@ -40,7 +32,8 @@ const getCurrentLine = (
   return [line, prevNewline, nextNewline];
 };
 
-const leadingIndent = /^(\s*(?:[-+*\u2022\ue000\ue001]\s))/g;
+const leadingIndent = /^(\s*(?:[-+*\u2022\ue000\ue001]\s)?)/g;
+const taskLeader = /^(\s*(?:[-+*\u2022]\s)?)/g;
 const toCodeUnits = (s: string) =>
   s
     .split('')
@@ -276,8 +269,8 @@ class NoteContentEditor extends Component<Props> {
 
     const [line, lineStart, lineEnd] = getCurrentLine(content, start);
 
-    leadingWhitespace.lastIndex = 0;
-    const whitespace = leadingWhitespace.exec(line)?.[0] ?? '';
+    taskLeader.lastIndex = 0;
+    const whitespace = taskLeader.exec(line)?.[0] ?? '';
 
     if (
       line[whitespace.length] === '\ue000' ||
