@@ -41,6 +41,10 @@ const toCodeUnits = (s: string) =>
     .join(' ');
 
 const getIndentFor = (document: string, offset: number): string => {
+  if (document[offset] === '\n' && document[offset - 1] === '\n') {
+    return '';
+  }
+
   const [thisLine, thisStart, thisEnd] = getCurrentLine(document, offset);
 
   if (thisStart === 0) {
@@ -259,6 +263,48 @@ class NoteContentEditor extends Component<Props> {
     return true;
   };
 
+  indent = () => {
+    if (!this.editor) {
+      return;
+    }
+
+    const content = this.editor.value;
+    const start = this.editor.selectionStart;
+    const end = this.editor.selectionEnd;
+    const direction = this.editor.selectionDirection;
+
+    // only indent if we are at the start of a line
+    // if the selection is collapsed
+    if (start === end) {
+      const prevNewline = content.lastIndexOf(
+        '\n',
+        content[start] === '\n' ? start - 1 : start
+      );
+      if (
+        !/^\s*([-+*\u2022]\s?)?([\ue000\ue001]\s?)?$/.test(
+          content.slice(prevNewline, start)
+        )
+      ) {
+        document.execCommand('insertText', false, '\t');
+        return;
+      }
+    }
+
+    const [thisLine, thisStart, thisEnd] = getCurrentLine(content, start);
+    const leadingChange = content
+      .slice(thisStart, start)
+      .replace(/\n/gm, '\n\t');
+    const newContent = content.slice(thisStart, end).replace(/\n/gm, '\n\t');
+
+    this.editor.setSelectionRange(thisStart, end);
+    document.execCommand('insertText', false, newContent);
+    this.editor.setSelectionRange(
+      start + (leadingChange.length - (start - thisStart)),
+      end + (newContent.length - (end - thisStart)),
+      direction
+    );
+  };
+
   insertTask = () => {
     if (!this.editor) {
       return;
@@ -293,11 +339,64 @@ class NoteContentEditor extends Component<Props> {
   };
 
   keyDown: React.KeyboardEventHandler = (event) => {
+    console.log({
+      key: event.key,
+      charCode: event.charCode,
+      keyCode: event.keyCode,
+      metaKey: event.metaKey,
+      shiftKey: event.shiftKey,
+      ctrlKey: event.ctrlKey,
+      altKey: event.altKey,
+    });
     if (event.key === 'Enter') {
       this.continueList();
       event.preventDefault();
       event.stopPropagation();
+      return;
     }
+
+    if (event.key === 'Tab' && event.ctrlKey && event.altKey) {
+      this.editor?.focus();
+      document.execCommand('insertText', false, '\t');
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    if (
+      event.key === 'Tab' &&
+      !event.metaKey &&
+      !event.altKey &&
+      !event.ctrlKey
+    ) {
+      event.shiftKey ? this.outdent() : this.indent();
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+  };
+
+  outdent = () => {
+    if (!this.editor) {
+      return;
+    }
+
+    const content = this.editor.value;
+    const start = this.editor.selectionStart;
+    const end = this.editor.selectionEnd;
+    const direction = this.editor.selectionDirection;
+
+    const [thisLine, thisStart, thisEnd] = getCurrentLine(content, start);
+    const leadingChange = content.slice(thisStart, start).replace(/^\t/gm, '');
+    const newContent = content.slice(thisStart, end).replace(/^\t/gm, '');
+
+    this.editor.setSelectionRange(thisStart, end);
+    document.execCommand('insertText', false, newContent);
+    this.editor.setSelectionRange(
+      start + (leadingChange.length - (start - thisStart)),
+      end + (newContent.length - (end - thisStart)),
+      direction
+    );
   };
 
   storeSelection = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
