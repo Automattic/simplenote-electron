@@ -7,8 +7,6 @@ import * as selectors from './state/selectors';
 import * as S from './state';
 import * as T from './types';
 
-const SPEED_DELAY = 120;
-
 const withCheckboxCharacters = (s: string): string =>
   s.replace(
     /^(\s*)- \[( |x|X)\](\s)/gm,
@@ -47,9 +45,7 @@ type Props = StateProps & DispatchProps;
 
 type OwnState = {
   content: string;
-  editor: 'fast' | 'full';
-  noteId: T.EntityId | null;
-  overTodo: boolean;
+  rawContent: string;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -57,38 +53,21 @@ class NoteContentEditor extends Component<Props> {
 
   state: OwnState = {
     content: '',
-    editor: 'fast',
-    noteId: null,
-    overTodo: false,
+    rawContent: '',
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
-    if (props.noteId !== state.noteId) {
-      return {
-        content: withCheckboxCharacters(
-          props.note.content.slice(0, props.editorSelection[1] + 5000)
-        ),
-        editor: 'fast',
-        noteId: props.noteId,
-      };
-    }
-
-    return props.note.content !== state.content
-      ? { content: withCheckboxCharacters(props.note.content) }
+    // only update if the non-transformed content of the note has changed
+    return props.note.content !== state.rawContent
+      ? {
+          content: withCheckboxCharacters(props.note.content),
+          rawContent: props.note.content,
+        }
       : null;
   }
 
   componentDidMount() {
-    const { noteId } = this.props;
     window.addEventListener('keydown', this.handleKeys, true);
-    setTimeout(() => {
-      if (noteId === this.props.noteId) {
-        this.setState({
-          editor: 'full',
-          content: withCheckboxCharacters(this.props.note.content),
-        });
-      }
-    }, SPEED_DELAY);
 
     this.editor.current.oncopy = (event) => {
       const text = window.getSelection();
@@ -149,10 +128,10 @@ class NoteContentEditor extends Component<Props> {
       },
       true
     );
-    //
-    // const [start, end, direction] = this.props.editorSelection;
-    // this.editor.current.setSelectionRange(start, end, direction);
-    // this.editor.current.focus();
+
+    const [start, end, direction] = this.props.editorSelection;
+    this.editor.current.setSelectionRange(start, end, direction);
+    this.editor.current.focus();
   }
 
   componentWillUnmount() {
@@ -164,35 +143,17 @@ class NoteContentEditor extends Component<Props> {
       editorSelection: [prevStart, prevEnd, prevDirection],
     } = prevProps;
     const {
-      noteId,
       editorSelection: [thisStart, thisEnd, thisDirection],
     } = this.props;
 
     if (
       this.editor.current &&
-      ((this.state.editor === 'full' &&
-        (prevStart !== thisStart ||
-          prevEnd !== thisEnd ||
-          prevDirection !== thisDirection)) ||
-        prevProps.noteId !== this.props.noteId ||
-        prevState.editor !== this.state.editor)
+      (prevStart !== thisStart ||
+        prevEnd !== thisEnd ||
+        prevDirection !== thisDirection)
     ) {
       this.editor.current.setSelectionRange(thisStart, thisEnd, thisDirection);
       this.editor.current.focus();
-    }
-
-    // @TODO is this really a smart thing? It's super fast when navigating
-    //       through the notes but also could be jerky and sensitive to
-    //       tuning of the delay
-    if (this.state.editor === 'fast') {
-      setTimeout(() => {
-        if (noteId === this.props.noteId) {
-          this.setState({
-            editor: 'full',
-            content: withCheckboxCharacters(this.props.note.content),
-          });
-        }
-      }, SPEED_DELAY);
     }
   }
 
@@ -219,10 +180,6 @@ class NoteContentEditor extends Component<Props> {
       currentTarget: { selectionStart, selectionEnd, selectionDirection },
     } = event;
 
-    if (this.state.editor === 'fast') {
-      return;
-    }
-
     this.props.storeEditorSelection(
       this.props.noteId,
       selectionStart,
@@ -240,7 +197,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { content, editor } = this.state;
+    const { content } = this.state;
 
     return (
       <div className="note-content-editor-shell">
@@ -250,7 +207,6 @@ class NoteContentEditor extends Component<Props> {
           dir="auto"
           onChange={this.updateNote}
           onSelect={this.storeSelection}
-          readOnly={editor === 'fast'}
         />
       </div>
     );
