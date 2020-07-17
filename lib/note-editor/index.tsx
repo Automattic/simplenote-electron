@@ -124,8 +124,9 @@ export class NoteEditor extends Component<Props> {
 
     const isTrashed = !!note.deleted;
 
-    const lastUpdatedDate =
-      (lastUpdated && new Date(lastUpdated).toLocaleString()) || 'Unknown';
+    const lastUpdatedDate = lastUpdated
+      ? new Date(lastUpdated).toLocaleString()
+      : 'Unknown';
 
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
