@@ -7,6 +7,7 @@ import {
   SortableHandle,
   SortEndHandler,
 } from 'react-sortable-hoc';
+import isEmailTag from '../utils/is-email-tag';
 import PanelTitle from '../components/panel-title';
 import ReorderIcon from '../icons/reorder';
 import TrashIcon from '../icons/trash';
@@ -134,21 +135,24 @@ export class TagList extends Component<Props> {
       'tag-list-editing': this.props.editingTags,
     });
 
-    const sortedTags = Array.from(tags).sort(([aId, aTag], [bId, bTag]) =>
-      sortTagsAlpha
-        ? aTag.name.localeCompare(bTag.name)
-        : 'undefined' !== typeof aTag.index && 'undefined' !== typeof bTag.index
-        ? aTag.index - bTag.index
-        : 'undefined' === typeof aTag.index
-        ? 1
-        : -1
-    );
+    const sortedTags = Array.from(tags)
+      .filter(([_, { name }]) => !isEmailTag(name))
+      .sort(([aId, aTag], [bId, bTag]) =>
+        sortTagsAlpha
+          ? aTag.name.localeCompare(bTag.name)
+          : 'undefined' !== typeof aTag.index &&
+            'undefined' !== typeof bTag.index
+          ? aTag.index - bTag.index
+          : 'undefined' === typeof aTag.index
+          ? 1
+          : -1
+      );
 
     return (
       <div className={classes}>
         <div className="tag-list-title">
           <PanelTitle headingLevel={2}>Tags</PanelTitle>
-          {tags.size > 0 && (
+          {sortedTags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"
               tabIndex={0}
