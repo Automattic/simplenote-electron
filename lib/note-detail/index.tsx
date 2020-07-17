@@ -53,6 +53,7 @@ export class NoteDetail extends Component<Props> {
               style={{ fontSize: `${fontSize}px`, overflowY: 'hidden' }}
             >
               <NoteContentEditor
+                key={openedNote}
                 storeFocusEditor={this.storeFocusContentEditor}
                 storeHasFocus={this.storeEditorHasFocus}
               />

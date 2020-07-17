@@ -8,6 +8,8 @@ import PinnedIcon from '../icons/pinned';
 import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
+import { withCheckboxCharacters } from '../utils/task-transform';
+
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
 
@@ -115,7 +117,9 @@ export class NoteCell extends Component<Props> {
           onClick={() => openNote(noteId)}
         >
           <div className="note-list-item-title">
-            <span>{decorateWith(decorators, title)}</span>
+            <span>
+              {decorateWith(decorators, withCheckboxCharacters(title))}
+            </span>
             {isPublished && (
               <div className="note-list-item-published-icon">
                 <PublishIcon />
@@ -124,17 +128,22 @@ export class NoteCell extends Component<Props> {
           </div>
           {'expanded' === displayMode && preview.length > 0 && (
             <div className="note-list-item-excerpt">
-              {preview.split('\n').map((line, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && <br />}
-                  {decorateWith(decorators, line.slice(0, 200))}
-                </React.Fragment>
-              ))}
+              {withCheckboxCharacters(preview)
+                .split('\n')
+                .map((line, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && <br />}
+                    {decorateWith(decorators, line.slice(0, 200))}
+                  </React.Fragment>
+                ))}
             </div>
           )}
           {'comfy' === displayMode && preview.length > 0 && (
             <div className="note-list-item-excerpt">
-              {decorateWith(decorators, preview.slice(0, 200))}
+              {decorateWith(
+                decorators,
+                withCheckboxCharacters(preview).slice(0, 200)
+              )}
             </div>
           )}
         </div>
