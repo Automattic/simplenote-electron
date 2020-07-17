@@ -54,10 +54,10 @@
 
 @media only screen and (max-width: $single-column) {
   .offline-badge {
-    margin-right: 25px;
+    margin: 0 25px;
   }
 
-  .note-toolbar__column-left {
+  .note-toolbar__button-sidebar {
     display: none;
   }
 

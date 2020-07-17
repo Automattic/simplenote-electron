@@ -64,7 +64,7 @@ export class NoteToolbar extends Component<Props> {
     ) : (
       <div className="note-toolbar">
         <div className="note-toolbar__column-left">
-          <div className="note-toolbar__button">
+          <div className="note-toolbar__button note-toolbar__button-sidebar">
             <IconButton
               icon={<SidebarIcon />}
               onClick={this.props.toggleFocusMode}
