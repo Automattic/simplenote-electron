@@ -18,6 +18,7 @@ import * as T from '../types';
 type StateProps = {
   editMode: boolean;
   hasRevisions: boolean;
+  isOffline: boolean;
   markdownEnabled: boolean;
   note: T.Note | null;
 };
@@ -40,7 +41,7 @@ export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   render() {
-    const { note } = this.props;
+    const { isOffline, note } = this.props;
 
     return (
       <div className="note-toolbar-wrapper theme-color-border">
@@ -53,6 +54,7 @@ export class NoteToolbar extends Component<Props> {
     const {
       editMode,
       hasRevisions,
+      isOffline,
       markdownEnabled,
       note,
       toggleNoteInfo,
@@ -62,15 +64,13 @@ export class NoteToolbar extends Component<Props> {
     ) : (
       <div className="note-toolbar">
         <div className="note-toolbar__column-left">
-          <div className="note-toolbar__button">
+          <div className="note-toolbar__button note-toolbar__button-sidebar">
             <IconButton
               icon={<SidebarIcon />}
               onClick={this.props.toggleFocusMode}
               title="Toggle Sidebar"
             />
           </div>
-        </div>
-        <div className="note-toolbar__column-right">
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
@@ -78,6 +78,9 @@ export class NoteToolbar extends Component<Props> {
               title="Back • Ctrl+Shift+L"
             />
           </div>
+        </div>
+        {isOffline && <div className="offline-badge">OFFLINE</div>}
+        <div className="note-toolbar__column-right">
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
@@ -131,6 +134,7 @@ export class NoteToolbar extends Component<Props> {
             title="Back • Ctrl+Shift+L"
           />
         </div>
+        {isOffline && <div className="offline-badge">OFFLINE</div>}
         <div className="note-toolbar__column-right">
           <div className="note-toolbar__button">
             <button
@@ -159,12 +163,14 @@ export class NoteToolbar extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = ({
   data,
   ui: { editMode, openedNote, selectedRevision },
+  simperium: { connectionStatus },
 }) => {
   const note = openedNote ? data.notes.get(openedNote) ?? null : null;
 
   return {
     editMode,
     hasRevisions: !!data.noteRevisions.get(openedNote)?.size,
+    isOffline: connectionStatus === 'offline',
     markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
   };
