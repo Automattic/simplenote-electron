@@ -225,6 +225,12 @@ class NoteContentEditor extends Component<Props> {
     const start = this.editor.selectionStart;
 
     const [prevLine, prevStart, prevEnd] = getCurrentLine(content, start);
+
+    if (prevLine === '') {
+      document.execCommand('insertText', false, '\n');
+      return;
+    }
+
     leadingIndent.lastIndex = 0;
     const match = leadingIndent.exec(prevLine)?.[0] ?? '';
     // remove previous indent
