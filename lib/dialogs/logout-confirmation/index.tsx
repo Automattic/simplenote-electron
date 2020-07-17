@@ -34,31 +34,33 @@ export class LogoutConfirmation extends Component<Props> {
 
     return (
       <div className="logoutConfirmation">
-        <Dialog onDone={closeDialog} title="Unsynced Notes">
+        <Dialog onDone={closeDialog} title="Unsynchronized Notes">
           <p className="explanation">
             {notes.size > 0
-              ? 'Logging out will delete any unsynced notes.'
-              : 'All notes have syncronized!'}
+              ? 'Logging out will delete any unsynchronized notes.'
+              : 'All notes have synchronized!'}
           </p>
 
-          <p className="explanation-secondary">
-            {notes.size > 0 && 'Possibly unsynchronized notes'}
-          </p>
           {notes.size > 0 && (
-            <section className="change-list">
-              <ul>
-                {[...notes.entries()].map(([noteId, note]) => {
-                  const { title, preview } = noteTitleAndPreview(note);
+            <Fragment>
+              <p className="explanation-secondary">
+                Possibly unsynchronized notes
+              </p>
+              <section className="change-list">
+                <ul>
+                  {[...notes.entries()].map(([noteId, note]) => {
+                    const { title, preview } = noteTitleAndPreview(note);
 
-                  return (
-                    <li key={noteId}>
-                      <AttentionIcon />
-                      <span className="note-title">{title}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
+                    return (
+                      <li key={noteId}>
+                        <AttentionIcon />
+                        <span className="note-title">{title}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            </Fragment>
           )}
           {notes.size > 0 && (
             <button
