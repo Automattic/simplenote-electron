@@ -40,7 +40,7 @@ const getCurrentLine = (
   return [line, prevNewline, nextNewline];
 };
 
-const leadingWhitespace = /^(\s*)/g;
+const leadingIndent = /^(\s*(?:[-+*\u2022\ue000\ue001]\s))/g;
 const toCodeUnits = (s: string) =>
   s
     .split('')
@@ -48,29 +48,24 @@ const toCodeUnits = (s: string) =>
     .join(' ');
 
 const getIndentFor = (document: string, offset: number): string => {
-  if (document[offset - 1] === '\n') {
-    return '\t';
-  }
-
   const [thisLine, thisStart, thisEnd] = getCurrentLine(document, offset);
 
-  if (thisStart === 0 || document[thisStart - 1] === '\n') {
+  if (thisStart === 0) {
     return '\t';
   }
 
-  const [prevLine, prevStart, prevEnd] = getCurrentLine(
-    document,
-    thisStart - 1
-  );
-
-  if (prevStart === 0 || prevLine === '') {
+  if (thisLine === '') {
     return '\t';
   }
 
-  leadingWhitespace.lastIndex = 0;
-  const whitespace = leadingWhitespace.exec(prevLine)?.[0] ?? '\t';
+  leadingIndent.lastIndex = 0;
+  const indent = leadingIndent.exec(thisLine)?.[0] ?? '\t';
 
-  return whitespace;
+  if (indent === thisLine) {
+    return '';
+  }
+
+  return indent;
 };
 
 type StateProps = {
@@ -224,6 +219,35 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
+  continueList = () => {
+    if (!this.editor) {
+      return;
+    }
+
+    const content = this.editor.value;
+    const start = this.editor.selectionStart;
+
+    const [prevLine, prevStart, prevEnd] = getCurrentLine(content, start);
+    leadingIndent.lastIndex = 0;
+    const match = leadingIndent.exec(prevLine)?.[0] ?? '';
+    // remove previous indent
+    if (match.length > 0 && match === prevLine) {
+      this.editor.setSelectionRange(prevStart, prevEnd, 'forward');
+      document.execCommand('insertText', false, '\n');
+      return;
+    }
+
+    const indent = getIndentFor(content, start);
+
+    this.editor.setSelectionRange(start, start, 'forward');
+    document.execCommand('insertText', false, '\n' + indent);
+    this.editor.setSelectionRange(
+      start + indent.length + 1,
+      start + indent.length + 1,
+      'forward'
+    );
+  };
+
   handleKeys = (event: KeyboardEvent) => {
     if (!this.props.keyboardShortcuts) {
       return;
@@ -275,6 +299,14 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
+  keyDown: React.KeyboardEventHandler = (event) => {
+    if (event.key === 'Enter') {
+      this.continueList();
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
   storeSelection = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const {
       currentTarget: { selectionStart, selectionEnd, selectionDirection },
@@ -306,6 +338,7 @@ class NoteContentEditor extends Component<Props> {
           value={content}
           dir="auto"
           onChange={this.updateNote}
+          onKeyDown={this.keyDown}
           onSelect={this.storeSelection}
         />
       </div>
