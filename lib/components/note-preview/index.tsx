@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import renderToNode from '../../note-detail/render-to-node';
 import { viewExternalUrl } from '../../utils/url-utils';
+import { withCheckboxCharacters } from '../../utils/task-transform';
+
 import actions from '../../state/actions';
 
 import * as S from '../../state';
@@ -110,12 +112,16 @@ export const NotePreview: FunctionComponent<Props> = ({
   }, []);
 
   useEffect(() => {
-    if (
-      previewNode.current &&
-      note?.content &&
-      note?.systemTags.includes('markdown')
-    ) {
+    if (!previewNode.current) {
+      return;
+    }
+
+    if (note?.content && note?.systemTags.includes('markdown')) {
       renderToNode(previewNode.current, note!.content, searchQuery);
+    } else {
+      previewNode.current.innerText = withCheckboxCharacters(
+        note?.content ?? ''
+      );
     }
   }, [note?.content, note?.systemTags, searchQuery]);
 
@@ -128,7 +134,9 @@ export const NotePreview: FunctionComponent<Props> = ({
           data-markdown-root
           style={{ fontSize: `${fontSize}px` }}
         >
-          <div style={{ whiteSpace: 'pre' }}>{note?.content}</div>
+          <div style={{ whiteSpace: 'pre' }}>
+            {withCheckboxCharacters(note?.content ?? '')}
+          </div>
         </div>
       </div>
     </div>

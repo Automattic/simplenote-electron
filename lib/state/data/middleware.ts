@@ -15,10 +15,23 @@ export const middleware: S.Middleware = (store) => (
     case 'CREATE_NOTE': {
       const noteId = uuid() as T.EntityId;
 
+      // preserve last markdown setting
+      const topNoteId = state.ui.filteredNotes[0];
+      const topNote = topNoteId && state.data.notes.get(topNoteId);
+      const useMarkdown = topNote?.systemTags.includes('markdown');
+      const markdownInNote = action.note?.systemTags?.indexOf('markdown') ?? -1;
+      const systemTags = action.note?.systemTags?.slice() ?? [];
+
+      if (useMarkdown && -1 === markdownInNote) {
+        systemTags.push('markdown');
+      } else if (!useMarkdown && markdownInNote >= 0) {
+        systemTags.splice(markdownInNote, 1);
+      }
+
       return next({
         type: 'CREATE_NOTE_WITH_ID',
         noteId,
-        note: action.note,
+        note: { ...action.note, systemTags },
         meta: {
           nextNoteToOpen: noteId,
         },
