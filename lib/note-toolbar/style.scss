@@ -53,12 +53,16 @@
 }
 
 @media only screen and (max-width: $single-column) {
+  .offline-badge {
+    margin-right: 25px;
+  }
+
   .note-toolbar__column-left {
     display: none;
   }
 
   .note-toolbar__column-right {
-    width: 100%;
+    width: 80%;
     justify-content: space-between;
   }
 }

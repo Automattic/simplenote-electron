@@ -71,9 +71,6 @@ export class NoteToolbar extends Component<Props> {
               title="Toggle Sidebar"
             />
           </div>
-        </div>
-        {isOffline && <div className="offline-badge">OFFLINE</div>}
-        <div className="note-toolbar__column-right">
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
@@ -81,6 +78,9 @@ export class NoteToolbar extends Component<Props> {
               title="Back • Ctrl+Shift+L"
             />
           </div>
+        </div>
+        {isOffline && <div className="offline-badge">OFFLINE</div>}
+        <div className="note-toolbar__column-right">
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
