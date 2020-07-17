@@ -19,6 +19,60 @@ const withCheckboxSyntax = (s: string): string =>
     match === '\ue000' ? '- [ ]' : '- [x]'
   );
 
+const getCurrentLine = (
+  document: string,
+  offset: number
+): [string, number, number] => {
+  // the start of the line is the last newline before our offset
+  // or the current offset if we're at the beginning of the document
+  // or the newline before that one if we're already at the end of the line
+  const prevNewline = Math.max(
+    0,
+    document.lastIndexOf('\n', document[offset] === '\n' ? offset - 1 : offset)
+  );
+
+  const nextNewline = document.indexOf('\n', offset);
+  const line = document.slice(
+    prevNewline <= 0 ? 0 : prevNewline + 1,
+    nextNewline
+  );
+
+  return [line, prevNewline, nextNewline];
+};
+
+const leadingWhitespace = /^(\s*)/g;
+const toCodeUnits = (s: string) =>
+  s
+    .split('')
+    .map((c) => c.charCodeAt(0).toString(16))
+    .join(' ');
+
+const getIndentFor = (document: string, offset: number): string => {
+  if (document[offset - 1] === '\n') {
+    return '\t';
+  }
+
+  const [thisLine, thisStart, thisEnd] = getCurrentLine(document, offset);
+
+  if (thisStart === 0 || document[thisStart - 1] === '\n') {
+    return '\t';
+  }
+
+  const [prevLine, prevStart, prevEnd] = getCurrentLine(
+    document,
+    thisStart - 1
+  );
+
+  if (prevStart === 0 || prevLine === '') {
+    return '\t';
+  }
+
+  leadingWhitespace.lastIndex = 0;
+  const whitespace = leadingWhitespace.exec(prevLine)?.[0] ?? '\t';
+
+  return whitespace;
+};
+
 type StateProps = {
   editorSelection: [number, number, 'forward' | 'backward' | 'none'];
   fontSize: number;
@@ -188,7 +242,38 @@ class NoteContentEditor extends Component<Props> {
     return true;
   };
 
-  insertTask = () => {};
+  insertTask = () => {
+    if (!this.editor) {
+      return;
+    }
+
+    const content = this.editor.value;
+    const start = this.editor.selectionStart;
+
+    const [line, lineStart, lineEnd] = getCurrentLine(content, start);
+
+    leadingWhitespace.lastIndex = 0;
+    const whitespace = leadingWhitespace.exec(line)?.[0] ?? '';
+
+    if (
+      line[whitespace.length] === '\ue000' ||
+      line[whitespace.length] === '\ue001'
+    ) {
+      this.editor.setSelectionRange(
+        lineStart + whitespace.length + 1 - (lineStart === 0 ? 1 : 0),
+        lineStart + whitespace.length + 3 - (lineStart === 0 ? 1 : 0),
+        'forward'
+      );
+      document.execCommand('insertText', false, '');
+    } else {
+      this.editor.setSelectionRange(
+        lineStart + whitespace.length + (lineStart === 0 ? 0 : 1),
+        lineStart + whitespace.length + (lineStart === 0 ? 0 : 1),
+        'forward'
+      );
+      document.execCommand('insertText', false, '\ue000 ');
+    }
+  };
 
   storeSelection = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const {
