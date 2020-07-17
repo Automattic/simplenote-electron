@@ -23,11 +23,23 @@
     height: 100%;
     width: 100%;
     margin: 0;
-    padding: 0;
     border: none;
     box-shadow: none;
     outline: none;
+    padding: 0 calc((100% - 768px) / 2);
     resize: none;
+  }
+
+  @media only screen and (max-width: 1400px) {
+    textarea {
+      padding: 0 10%;
+    }
+  }
+}
+
+.is-line-length-full {
+  .note-content-editor-shell textarea {
+    padding: 25px;
   }
 }
 
