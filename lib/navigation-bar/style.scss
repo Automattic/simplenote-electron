@@ -50,6 +50,15 @@
   color: $studio-gray-80;
 }
 
+.navigation-bar__server-connection {
+  display: flex;
+  flex: none;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 20px 0 20px;
+  color: $studio-gray-80;
+}
+
 .navigation-bar__footer-item {
   margin-right: 10px;
 

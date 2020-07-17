@@ -88,7 +88,7 @@ export class NavigationBar extends Component<Props> {
           <TagList />
         </div>
         <div className="navigation-bar__tools theme-color-border">
-          <div className="navigation-bar__footer">
+          <div className="navigation-bar__server-connection">
             <ConnectionStatus />
           </div>
         </div>
