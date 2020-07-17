@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+
+import AttentionIcon from '../../icons/attention';
 import Dialog from '../../dialog';
 import { closeDialog } from '../../state/ui/actions';
 import { getUnconfirmedChanges } from '../../state/simperium/functions/unconfirmed-changes';
@@ -32,55 +34,46 @@ export class LogoutConfirmation extends Component<Props> {
 
     return (
       <div className="logoutConfirmation">
-        <Dialog onDone={closeDialog} title="Unsynchronized Notes Found">
-          <section>
-            <h1>Are you sure you want to logout?</h1>
-          </section>
+        <Dialog onDone={closeDialog} title="Unsynchronized Notes">
+          <p className="explanation">
+            {notes.size > 0
+              ? 'Logging out will delete any unsynchronized notes.'
+              : 'All notes have synchronized!'}
+          </p>
 
           {notes.size > 0 && (
-            <p className="explanation">
-              If you logout now Simplenote will not be able to remember any of
-              your unsynchronized changes. If you wait a few more seconds it
-              might catch up with the changes but if it doesn&apos;t you can
-              always export a copy of the notes with those changes just to be
-              safe.
-            </p>
-          )}
-
-          <section className="change-list">
-            {notes.size > 0 ? (
-              <Fragment>
-                <h2>Possibly unsynchronized notes</h2>
+            <Fragment>
+              <p className="explanation-secondary">
+                Possibly unsynchronized notes
+              </p>
+              <section className="change-list">
                 <ul>
                   {[...notes.entries()].map(([noteId, note]) => {
                     const { title, preview } = noteTitleAndPreview(note);
 
                     return (
                       <li key={noteId}>
+                        <AttentionIcon />
                         <span className="note-title">{title}</span>
-                        {preview.replace(/\n/g, ' ¶ ')}
                       </li>
                     );
                   })}
                 </ul>
-              </Fragment>
-            ) : (
-              <h2 style={{ textAlign: 'center' }}>
-                All notes have syncronized!
-              </h2>
-            )}
-          </section>
-
-          <section className="action-buttons">
-            <button onClick={reallyLogout}>
-              {notes.size > 0 ? 'Lose changes and logout' : 'Safely logout'}
-            </button>
-            <button onClick={closeDialog}>Don&apos;t logout yet</button>
+              </section>
+            </Fragment>
+          )}
+          {notes.size > 0 && (
             <button
+              className="export-unsyncronized"
               onClick={this.exportUnsyncedNotes}
-              disabled={notes.size === 0}
             >
               Export unsynchronized notes
+            </button>
+          )}
+
+          <section className="action-button">
+            <button className="log-out" onClick={reallyLogout}>
+              {notes.size > 0 ? 'Log out' : 'Safely log out'}
             </button>
           </section>
         </Dialog>
