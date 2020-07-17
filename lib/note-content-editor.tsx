@@ -68,6 +68,11 @@ class NoteContentEditor extends Component<Props> {
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeys, true);
+    window.electron?.receive('appCommand', (command) => {
+      if ('insertChecklist' === command.action) {
+        this.insertTask();
+      }
+    });
 
     this.editor.current.oncopy = (event) => {
       const text = window.getSelection();
@@ -166,7 +171,7 @@ class NoteContentEditor extends Component<Props> {
     const cmdOrCtrl = ctrlKey || metaKey;
 
     if (cmdOrCtrl && shiftKey && 'KeyC' === code) {
-      this.props.insertTask();
+      this.insertTask();
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -174,6 +179,8 @@ class NoteContentEditor extends Component<Props> {
 
     return true;
   };
+
+  insertTask = () => {};
 
   storeSelection = (event: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const {

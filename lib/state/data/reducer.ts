@@ -147,38 +147,6 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return new Map(state).set(action.noteId, action.note);
     }
 
-    case 'INSERT_TASK_INTO_NOTE': {
-      const note = state.get(action.noteId);
-      if (!note) {
-        return state;
-      }
-
-      const rawOffset = Math.min(action.selection[0], action.selection[1]);
-      const offset =
-        note.content[rawOffset] === '\n' ? rawOffset - 1 : rawOffset;
-      const closestLineStart = note.content.lastIndexOf('\n', offset) + 1;
-
-      if (/^(\s*- \[ |x] )/i.test(note.content.slice(closestLineStart))) {
-        // we already got one - zap it
-        return new Map(state).set(action.noteId, {
-          ...note,
-          content:
-            note.content.slice(0, closestLineStart) +
-            note.content
-              .slice(closestLineStart)
-              .replace(/^(\s*- \[(?: |x)\] )/i, ''),
-        });
-      }
-
-      return new Map(state).set(action.noteId, {
-        ...note,
-        content:
-          note.content.slice(0, closestLineStart) +
-          ' - [ ] ' +
-          note.content.slice(closestLineStart),
-      });
-    }
-
     case 'MARKDOWN_NOTE': {
       if (!state.has(action.noteId)) {
         return state;
