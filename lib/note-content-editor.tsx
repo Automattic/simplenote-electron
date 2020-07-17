@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import actions from './state/actions';
@@ -49,7 +49,7 @@ type OwnState = {
 };
 
 class NoteContentEditor extends Component<Props> {
-  editor = createRef<HTMLTextAreaElement>();
+  editor: HTMLTextAreaElement | null = null;
 
   state: OwnState = {
     content: '',
@@ -73,8 +73,16 @@ class NoteContentEditor extends Component<Props> {
         this.insertTask();
       }
     });
+  }
 
-    this.editor.current.oncopy = (event) => {
+  bootEditor = (editor: HTMLTextAreaElement) => {
+    if (null === editor) {
+      return;
+    }
+
+    this.editor = editor;
+
+    editor.oncopy = (event) => {
       const text = window.getSelection();
       if (!event.clipboardData || !text) {
         return;
@@ -89,17 +97,17 @@ class NoteContentEditor extends Component<Props> {
       event.preventDefault();
     };
 
-    this.editor.current.addEventListener(
+    editor.addEventListener(
       'click',
       () => {
         const { editNote, noteId } = this.props;
         const { content } = this.state;
 
-        if (!this.editor.current) {
+        if (!this.editor) {
           return;
         }
 
-        const { selectionStart, selectionEnd } = this.editor.current;
+        const { selectionStart, selectionEnd } = this.editor;
         if (selectionStart !== selectionEnd) {
           // only accept clicks - not selection spans
           return;
@@ -121,23 +129,23 @@ class NoteContentEditor extends Component<Props> {
         const boxAt = boxAtClick ? clickAt : clickAt - 1;
         const isChecked = content[boxAt] === '\ue001';
 
-        this.editor.current.setSelectionRange(boxAt, boxAt + 1, 'forward');
+        editor.setSelectionRange(boxAt, boxAt + 1, 'forward');
         document.execCommand(
           'insertText',
           false,
           isChecked ? '\ue000' : '\ue001'
         );
         editNote(noteId, {
-          content: withCheckboxSyntax(this.editor.current.value),
+          content: withCheckboxSyntax(editor.value),
         });
       },
       true
     );
 
     const [start, end, direction] = this.props.editorSelection;
-    this.editor.current.setSelectionRange(start, end, direction);
-    this.editor.current.focus();
-  }
+    editor.setSelectionRange(start, end, direction);
+    editor.focus();
+  };
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.handleKeys, true);
@@ -152,13 +160,13 @@ class NoteContentEditor extends Component<Props> {
     } = this.props;
 
     if (
-      this.editor.current &&
+      this.editor &&
       (prevStart !== thisStart ||
         prevEnd !== thisEnd ||
         prevDirection !== thisDirection)
     ) {
-      this.editor.current.setSelectionRange(thisStart, thisEnd, thisDirection);
-      this.editor.current.focus();
+      this.editor.setSelectionRange(thisStart, thisEnd, thisDirection);
+      this.editor.focus();
     }
   }
 
@@ -209,7 +217,7 @@ class NoteContentEditor extends Component<Props> {
     return (
       <div className="note-content-editor-shell">
         <textarea
-          ref={this.editor}
+          ref={this.bootEditor}
           value={content}
           dir="auto"
           onChange={this.updateNote}

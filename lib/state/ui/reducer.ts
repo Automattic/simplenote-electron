@@ -8,12 +8,16 @@ import type * as T from '../../types';
 const emptyList: unknown[] = [];
 
 const withCheckboxCharacters = (s: string): string =>
-  s
-    .replace(/^(\s*)- \[ \](\s)/gm, '$1\ue000$2')
-    .replace(/^(\s*)- \[x\](\s)/gim, '$1\ue001$2');
+  s.replace(
+    /^(\s*)- \[( |x|X)\](\s)/gm,
+    (match, prespace, inside, postspace) =>
+      prespace + (inside === ' ' ? '\ue000' : '\ue001') + postspace
+  );
 
 const withCheckboxSyntax = (s: string): string =>
-  s.replace(/\ue000/g, '- [ ]').replace(/\ue001/g, '- [x]');
+  s.replace(/\ue000|\ue001/g, (match) =>
+    match === '\ue000' ? '- [ ]' : '- [x]'
+  );
 
 const editorSelection: A.Reducer<Map<
   T.EntityId,
