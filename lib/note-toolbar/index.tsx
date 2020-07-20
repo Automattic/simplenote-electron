@@ -41,7 +41,7 @@ export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   render() {
-    const { isOffline, note } = this.props;
+    const { note } = this.props;
 
     return (
       <div className="note-toolbar-wrapper theme-color-border">
@@ -125,6 +125,8 @@ export class NoteToolbar extends Component<Props> {
   };
 
   renderTrashed = () => {
+    const { isOffline } = this.props;
+
     return (
       <div className="note-toolbar-trashed">
         <div className="note-toolbar__column-left">
@@ -162,7 +164,7 @@ export class NoteToolbar extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   data,
-  ui: { editMode, openedNote, selectedRevision },
+  ui: { editMode, openedNote },
   simperium: { connectionStatus },
 }) => {
   const note = openedNote ? data.notes.get(openedNote) ?? null : null;
