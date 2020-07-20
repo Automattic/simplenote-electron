@@ -26,7 +26,7 @@ export class LogoutConfirmation extends Component<Props> {
   exportUnsyncedNotes = () => {
     const { closeDialog, notes } = this.props;
 
-    exportZipArchive([...notes.values()]).then(closeDialog);
+    exportZipArchive(notes).then(closeDialog);
   };
 
   render() {
