@@ -56,6 +56,7 @@ const AccountPanel: FunctionComponent<Props> = ({
             title="Privacy"
             slug="shareAnalytics"
             activeSlug={analyticsEnabled ? 'enabled' : ''}
+            isEnabled={analyticsEnabled}
             description="Help us improve Simplenote by sharing usage data with our analytics tool."
             onChange={toggleAnalytics}
             learnMoreURL="https://automattic.com/cookies"

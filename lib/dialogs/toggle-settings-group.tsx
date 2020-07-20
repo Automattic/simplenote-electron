@@ -1,11 +1,11 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, Fragment } from 'react';
 
 import ToggleControl from '../controls/toggle';
 
 type OwnProps = {
   groupSlug: string;
   slug: string;
-  isEnabled: boolean;
+  isEnabled: boolean | null;
   onChange: () => any;
 };
 
@@ -17,13 +17,19 @@ const ToggleGroup: FunctionComponent<Props> = ({
   isEnabled,
   onChange,
 }) => (
-  <ToggleControl
-    name={groupSlug}
-    value={slug}
-    id={`settings-field-${groupSlug}-${slug}`}
-    checked={isEnabled}
-    onChange={onChange}
-  />
+  <Fragment>
+    {isEnabled === null ? (
+      <span>Loading</span>
+    ) : (
+      <ToggleControl
+        name={groupSlug}
+        value={slug}
+        id={`settings-field-${groupSlug}-${slug}`}
+        checked={isEnabled}
+        onChange={onChange}
+      />
+    )}
+  </Fragment>
 );
 
 export default ToggleGroup;

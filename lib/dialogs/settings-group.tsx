@@ -10,6 +10,7 @@ export const SettingsGroup = ({
   slug: groupSlug,
   activeSlug,
   description,
+  isEnabled,
   onChange,
   learnMoreURL,
   renderer,
@@ -47,7 +48,8 @@ export const SettingsGroup = ({
                 groupSlug,
                 slug,
                 title,
-                isEnabled: slug === activeSlug,
+                isEnabled:
+                  isEnabled === undefined ? slug === activeSlug : isEnabled,
                 onChange,
               })}
             </div>
