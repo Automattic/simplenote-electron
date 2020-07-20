@@ -2,7 +2,7 @@ import React, { Component, CSSProperties } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
-import AttentionIcon from '../icons/attention';
+import CloudSyncIcon from '../icons/cloud-sync';
 import PublishIcon from '../icons/feed';
 import PinnedIcon from '../icons/pinned';
 import { decorateWith, makeFilterDecorator } from './decorators';
@@ -107,7 +107,7 @@ export class NoteCell extends Component<Props> {
             <PinnedIcon />
           </div>
           <div className="note-list-item-pending-changes">
-            {hasPendingChanges && <AttentionIcon />}
+            {hasPendingChanges && <CloudSyncIcon />}
           </div>
         </div>
 
