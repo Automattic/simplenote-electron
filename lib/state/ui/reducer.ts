@@ -1,117 +1,11 @@
 import { combineReducers } from 'redux';
 
 import { tagHashOf } from '../../utils/tag-hash';
-import {
-  withCheckboxCharacters,
-  withCheckboxSyntax,
-} from '../../utils/task-transform';
 
 import type * as A from '../action-types';
 import type * as T from '../../types';
 
 const emptyList: unknown[] = [];
-
-const editorSelection: A.Reducer<Map<
-  T.EntityId,
-  [number, number, 'forward' | 'backward' | 'none']
->> = (state = new Map(), action) => {
-  switch (action.type) {
-    case 'CONFIRM_NEW_NOTE': {
-      const prev = state.get(action.originalNoteId);
-      if (!prev) {
-        return state;
-      }
-
-      const next = new Map(state).set(action.newNoteId, prev);
-      next.delete(action.originalNoteId);
-
-      return next;
-    }
-
-    case 'REMOTE_NOTE_UPDATE': {
-      if (
-        action.remoteInfo?.patch?.content?.o !== 'd' ||
-        !state.has(action.noteId)
-      ) {
-        return state;
-      }
-
-      const [_prevStart, _prevEnd, direction] = state.get(action.noteId)!;
-      const patches = action.remoteInfo.patch.content.v.split('\t');
-
-      const original = action.remoteInfo.original.content;
-      const prevStart = withCheckboxSyntax(
-        withCheckboxCharacters(original).slice(0, _prevStart)
-      ).length;
-      const prevEnd = withCheckboxSyntax(
-        withCheckboxCharacters(original).slice(0, _prevEnd)
-      ).length;
-
-      const [_nextStart, _nextEnd] = patches.reduce(
-        (offsets: [number, number, number], patch) => {
-          const [start, end, offset] = offsets;
-
-          if (offset > start && offset > end) {
-            return offsets;
-          }
-
-          const op = patch[0];
-          const data = patch.slice(1);
-
-          switch (op) {
-            case '=':
-              return [start, end, offset + parseInt(data, 10)];
-
-            case '-': {
-              const delta = parseInt(data, 10);
-
-              return [
-                start > offset ? start - delta : start,
-                end > offset ? end - delta : end,
-                offset,
-              ];
-            }
-
-            case '+': {
-              const insertion = decodeURIComponent(data);
-              const delta = insertion.length;
-
-              return [
-                start > offset ? start + delta : start,
-                end > offset ? end + delta : end,
-                offset,
-              ];
-            }
-
-            default:
-              // this should be unreachable
-              return offsets;
-          }
-        },
-        [prevStart, prevEnd, 0]
-      );
-
-      const nextStart = withCheckboxCharacters(
-        action.note.content.slice(0, _nextStart)
-      ).length;
-      const nextEnd = withCheckboxCharacters(
-        action.note.content.slice(0, _nextEnd)
-      ).length;
-
-      return new Map(state).set(action.noteId, [nextStart, nextEnd, direction]);
-    }
-
-    case 'STORE_EDITOR_SELECTION':
-      return new Map(state).set(action.noteId, [
-        action.start,
-        action.end,
-        action.direction,
-      ]);
-
-    default:
-      return state;
-  }
-};
 
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
@@ -334,7 +228,6 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 };
 
 export default combineReducers({
-  editorSelection,
   dialogs,
   editMode,
   editingTags,

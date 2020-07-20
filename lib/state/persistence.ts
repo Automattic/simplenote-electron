@@ -82,9 +82,6 @@ export const loadState = (
                   lastRemoteUpdate: new Map(state.lastRemoteUpdate),
                   lastSync: new Map(state.lastSync),
                 },
-                ui: {
-                  editorSelection: new Map(state.editorSelection),
-                },
               };
 
               const revisionsRequest = tx.objectStore('revisions').openCursor();
@@ -155,7 +152,6 @@ const persistRevisions = async (
 };
 
 export const saveState = (state: S.State) => {
-  const editorSelection = Array.from(state.ui.editorSelection);
   const notes = Array.from(state.data.notes);
   const noteTags = Array.from(state.data.noteTags).map(([tagHash, noteIds]) => [
     tagHash,
@@ -169,7 +165,6 @@ export const saveState = (state: S.State) => {
 
   const data = {
     accountName: state.settings.accountName,
-    editorSelection,
     notes,
     noteTags,
     tags,
