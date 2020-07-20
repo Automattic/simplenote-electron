@@ -29,6 +29,7 @@ type StateProps = {
   showNoteList: boolean;
   showTrash: boolean;
   tagResultsFound: number;
+  windowWidth: number;
 };
 
 type DispatchProps = {
@@ -177,6 +178,7 @@ export class NoteList extends Component<Props> {
       },
     }),
     lastNoteDisplay: null,
+    windowWidth: null,
   };
 
   list = createRef<List>();
@@ -185,10 +187,16 @@ export class NoteList extends Component<Props> {
     state.heightCache.clear(0);
     state.heightCache.clear(1);
     state.heightCache.clear(2);
-    if (props.noteDisplay !== state.lastNoteDisplay) {
+    if (
+      props.noteDisplay !== state.lastNoteDisplay ||
+      props.windowWidth !== state.windowWidth
+    ) {
       state.heightCache.clearAll();
 
-      return { lastNoteDisplay: props.noteDisplay };
+      return {
+        lastNoteDisplay: props.noteDisplay,
+        windowWidth: props.windowWidth,
+      };
     }
 
     return null;
@@ -338,6 +346,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     showNoteList: state.ui.showNoteList,
     showTrash: state.ui.showTrash,
     tagResultsFound: state.ui.tagSuggestions.length,
+    windowWidth: state.browser.windowWidth,
   };
 };
 
