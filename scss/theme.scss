@@ -202,6 +202,12 @@
     }
   }
 
+  .note-list-item-pinner:hover,
+  .note-list-item-pinner.note-list-item-pinned,
+  .note-list-item-pending-changes {
+    color: $studio-simplenote-blue-20;
+  }
+
   .note-detail-markdown {
     @import '../node_modules/highlight.js/scss/solarized-dark.scss';
 
