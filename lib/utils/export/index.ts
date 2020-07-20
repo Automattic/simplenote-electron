@@ -8,7 +8,7 @@ import * as T from '../../types';
 
 const filename = 'notes.zip';
 
-const exportZipArchive = (notes: T.Note[]) => {
+const exportZipArchive = (notes: Map<T.EntityId, T.Note>) => {
   return exportNotes(notes)
     .then(exportToZip)
     .then((zip) =>

@@ -7,11 +7,11 @@ import { ExportNote } from './types';
 
 export const LF_ONLY_NEWLINES = /(?!\r)\n/g;
 
-const exportNotes = (notes: T.Note[]) => {
+const exportNotes = (notes: Map<T.EntityId, T.Note>) => {
   const activeNotes: ExportNote[] = [];
   const trashedNotes: ExportNote[] = [];
-
-  notes.forEach((note, id) => {
+  [...notes.entries()].forEach((notePair) => {
+    const [id, note] = notePair;
     const [collaboratorEmails, tags] = partition(
       sortBy(note.tags, (a) => a.toLocaleLowerCase()),
       isEmailTag

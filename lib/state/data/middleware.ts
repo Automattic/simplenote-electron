@@ -59,7 +59,7 @@ export const middleware: S.Middleware = (store) => (
     }
 
     case 'EXPORT_NOTES':
-      exportZipArchive([...state.data.notes.values()]);
+      exportZipArchive(state.data.notes);
       return next(action);
 
     case 'IMPORT_NOTE':
