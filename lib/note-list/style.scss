@@ -126,13 +126,13 @@
 
   .note-list-item-status-right {
     display: flex;
-    padding: 9px 10px 0 0;
+    padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
     border-bottom: 1px solid $studio-gray-5;
   }
 
   .note-list-item-pending-changes,
   .note-list-item-published-icon {
-    margin-left: 8px;
+    padding: 0 4px;
 
     & svg {
       fill: $studio-gray-50;
