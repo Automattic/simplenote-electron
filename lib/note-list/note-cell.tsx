@@ -139,7 +139,7 @@ export class NoteCell extends Component<Props> {
             </div>
           )}
         </div>
-        <div className="note-list-item-status-right">
+        <div className="note-list-item-status-right theme-color-border">
           {hasPendingChanges && (
             <span className="note-list-item-pending-changes">
               <SmallSyncIcon />
