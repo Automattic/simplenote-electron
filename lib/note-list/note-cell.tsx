@@ -2,9 +2,9 @@ import React, { Component, CSSProperties } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
-import CloudSyncIcon from '../icons/cloud-sync';
-import PublishIcon from '../icons/feed';
-import PinnedIcon from '../icons/pinned';
+import PublishIcon from '../icons/published-small';
+import SmallPinnedIcon from '../icons/pinned-small';
+import SmallSyncIcon from '../icons/sync-small';
 import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
@@ -104,10 +104,7 @@ export class NoteCell extends Component<Props> {
             tabIndex={0}
             onClick={() => pinNote(noteId, !isPinned)}
           >
-            <PinnedIcon />
-          </div>
-          <div className="note-list-item-pending-changes">
-            {hasPendingChanges && <CloudSyncIcon />}
+            <SmallPinnedIcon />
           </div>
         </div>
 
@@ -120,11 +117,6 @@ export class NoteCell extends Component<Props> {
             <span>
               {decorateWith(decorators, withCheckboxCharacters(title))}
             </span>
-            {isPublished && (
-              <div className="note-list-item-published-icon">
-                <PublishIcon />
-              </div>
-            )}
           </div>
           {'expanded' === displayMode && preview.length > 0 && (
             <div className="note-list-item-excerpt">
@@ -145,6 +137,18 @@ export class NoteCell extends Component<Props> {
                 withCheckboxCharacters(preview).slice(0, 200)
               )}
             </div>
+          )}
+        </div>
+        <div className="note-list-item-status-right theme-color-border">
+          {hasPendingChanges && (
+            <span className="note-list-item-pending-changes">
+              <SmallSyncIcon />
+            </span>
+          )}
+          {isPublished && (
+            <span className="note-list-item-published-icon">
+              <PublishIcon />
+            </span>
           )}
         </div>
       </div>

@@ -87,13 +87,12 @@
   min-height: 64px;
 
   .note-list-item-status {
-    padding: 11px 8px 0 0;
+    padding: 9px 8px 0 0;
   }
 
-  .note-list-item-pinner,
-  .note-list-item-pending-changes {
-    height: 14px;
-    width: 14px;
+  .note-list-item-pinner {
+    height: 16px;
+    width: 16px;
   }
 
   .note-list-item-pinner {
@@ -101,13 +100,8 @@
   }
 
   .note-list-item-pinner:hover,
-  .note-list-item-pinner.note-list-item-pinned,
-  .note-list-item-pending-changes {
+  .note-list-item-pinner.note-list-item-pinned {
     color: $studio-simplenote-blue-50;
-  }
-
-  .note-list-item-pending-changes {
-    margin-top: 10px;
   }
 
   .note-list-item-text {
@@ -137,14 +131,20 @@
     animation-iteration-count: 3;
   }
 
+  .note-list-item-status-right {
+    display: flex;
+    padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
+    border-bottom: 1px solid $studio-gray-5;
+  }
+
+  .note-list-item-pending-changes,
   .note-list-item-published-icon {
-    margin-left: 4px;
-    margin-right: 10px;
+    padding: 0 4px;
 
     & svg {
       fill: $studio-gray-50;
-      height: 12px;
-      width: 12px;
+      height: 16px;
+      width: 16px;
     }
   }
 
