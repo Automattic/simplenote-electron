@@ -95,6 +95,10 @@ export type SetUnsyncedNoteIds = Action<
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
+export type StoreEditorSelection = Action<
+  'STORE_EDITOR_SELECTION',
+  { noteId: T.EntityId; start: number; end: number; direction: 'RTL' | 'LTR' }
+>;
 export type SystemThemeUpdate = Action<
   'SYSTEM_THEME_UPDATE',
   { prefers: 'light' | 'dark' }
@@ -357,6 +361,7 @@ export type ActionType =
   | SetUnsyncedNoteIds
   | ShowAllNotes
   | ShowDialog
+  | StoreEditorSelection
   | SubmitPendingChange
   | SystemThemeUpdate
   | TagBucketRemove

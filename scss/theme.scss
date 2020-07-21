@@ -20,17 +20,6 @@
     border: 3px solid gray;
   }
 
-  textarea {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    border: none;
-    box-shadow: none;
-    outline: none;
-    padding: 0 calc((100% - 768px) / 2);
-    resize: none;
-  }
-
   @media only screen and (max-width: 1400px) {
     textarea {
       padding: 0 10%;
@@ -69,6 +58,13 @@
   }
   .search-field {
     border-color: $studio-gray-10;
+  }
+
+  .monaco-editor-background,
+  .monaco-editor .margin,
+  .monaco-editor .scroll-decoration {
+    background-color: $studio-white;
+    box-shadow: none;
   }
 }
 
@@ -231,5 +227,12 @@
         background-color: $studio-gray-80;
       }
     }
+  }
+
+  .monaco-editor-background,
+  .monaco-editor .margin,
+  .monaco-editor .scroll-decoration {
+    background-color: $studio-gray-90;
+    box-shadow: none;
   }
 }
