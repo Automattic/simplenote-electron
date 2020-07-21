@@ -80,13 +80,12 @@
   min-height: 64px;
 
   .note-list-item-status {
-    padding: 11px 8px 0 0;
+    padding: 9px 8px 0 0;
   }
 
-  .note-list-item-pinner,
-  .note-list-item-pending-changes {
-    height: 14px;
-    width: 14px;
+  .note-list-item-pinner {
+    height: 12px;
+    width: 12px;
   }
 
   .note-list-item-pinner {
@@ -94,13 +93,8 @@
   }
 
   .note-list-item-pinner:hover,
-  .note-list-item-pinner.note-list-item-pinned,
-  .note-list-item-pending-changes {
+  .note-list-item-pinner.note-list-item-pinned {
     color: $studio-simplenote-blue-50;
-  }
-
-  .note-list-item-pending-changes {
-    margin-top: 10px;
   }
 
   .note-list-item-text {
@@ -130,9 +124,16 @@
     animation-iteration-count: 3;
   }
 
+  .note-list-item-status-right {
+    margin-right: 10px;
+    display: flex;
+    padding: 9px 8px 0 0;
+    border-bottom: 1px solid $studio-gray-5;
+  }
+
+  .note-list-item-pending-changes,
   .note-list-item-published-icon {
     margin-left: 4px;
-    margin-right: 10px;
 
     & svg {
       fill: $studio-gray-50;
