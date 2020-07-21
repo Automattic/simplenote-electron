@@ -21,6 +21,13 @@
     white-space: nowrap;
   }
 
+  .condensed .note-list-item {
+    min-height: 16px;
+  }
+  .condensed .note-list-item-text {
+    padding-bottom: 0;
+  }
+
   .condensed .note-list-item-excerpt {
     display: none;
   }
