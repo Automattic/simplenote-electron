@@ -151,11 +151,14 @@
     padding: 0 4px;
 
     & svg {
-      animation: 2s spin infinite linear;
       fill: $studio-gray-50;
       height: 16px;
       width: 16px;
     }
+  }
+
+  .note-list-item-pending-changes svg {
+    animation: 2s spin infinite linear;
   }
 
   .note-list-item-title {
