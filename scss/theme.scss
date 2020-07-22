@@ -20,16 +20,20 @@
     border: 3px solid gray;
   }
 
+  .lines-content.monaco-editor-background {
+    padding: 0 calc((100% - 768px) / 2);
+  }
+
   @media only screen and (max-width: 1400px) {
-    textarea {
+    .lines-content.monaco-editor-background {
       padding: 0 10%;
     }
   }
 }
 
 .is-line-length-full {
-  .note-content-editor-shell textarea {
-    padding: 25px;
+  .lines-content.monaco-editor-background {
+    padding: 0 25px;
   }
 }
 
