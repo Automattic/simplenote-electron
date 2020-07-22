@@ -90,17 +90,21 @@ const noteDisplay: A.Reducer<T.ListDisplayMode> = (state = 'comfy', action) => {
 };
 
 const sendNotifications: A.Reducer<boolean> = (
-  state = Notification.permission === 'granted',
+  state = 'Notification' in window && Notification.permission === 'granted',
   action
 ) => {
   switch (action.type) {
     case 'REQUEST_NOTIFICATIONS':
-      return action.sendNotifications
+      return action.sendNotifications && 'Notification' in window
         ? Notification.permission === 'granted'
         : false;
 
     default:
-      return state && Notification.permission === 'granted';
+      return (
+        state &&
+        'Notification' in window &&
+        Notification.permission === 'granted'
+      );
   }
 };
 
