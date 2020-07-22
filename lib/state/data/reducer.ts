@@ -28,13 +28,19 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
   action
 ) => {
   switch (action.type) {
+    case 'ADD_COLLABORATOR':
     case 'ADD_NOTE_TAG': {
       const note = state.get(action.noteId);
       if (!note) {
         return state;
       }
 
-      const tags = withTag(note.tags, action.tagName);
+      const tagName =
+        action.type === 'ADD_COLLABORATOR'
+          ? action.collaboratorAccount
+          : action.tagName;
+
+      const tags = withTag(note.tags, tagName);
 
       return tags !== note.tags
         ? new Map(state).set(action.noteId, { ...note, tags })
@@ -149,13 +155,19 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return new Map(state).set(action.noteId, { ...note, systemTags });
     }
 
+    case 'REMOVE_COLLABORATOR':
     case 'REMOVE_NOTE_TAG': {
       const note = state.get(action.noteId);
       if (!note) {
         return state;
       }
 
-      const tags = withoutTag(note.tags, action.tagName);
+      const tagName =
+        action.type === 'REMOVE_COLLABORATOR'
+          ? action.collaboratorAccount
+          : action.tagName;
+
+      const tags = withoutTag(note.tags, tagName);
 
       return tags !== note.tags
         ? new Map(state).set(action.noteId, { ...note, tags })
@@ -271,10 +283,17 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
   action
 ) => {
   switch (action.type) {
-    case 'ADD_NOTE_TAG':
-      return state.has(t(action.tagName))
+    case 'ADD_COLLABORATOR':
+    case 'ADD_NOTE_TAG': {
+      const tagName =
+        action.type === 'ADD_COLLABORATOR'
+          ? action.collaboratorAccount
+          : action.tagName;
+
+      return state.has(t(tagName))
         ? state
-        : new Map(state).set(t(action.tagName), { name: action.tagName });
+        : new Map(state).set(t(tagName), { name: tagName });
+    }
 
     case 'EDIT_NOTE':
     case 'IMPORT_NOTE_WITH_ID': {
@@ -378,8 +397,13 @@ export const noteTags: A.Reducer<Map<T.TagHash, Set<T.EntityId>>> = (
   action
 ) => {
   switch (action.type) {
+    case 'ADD_COLLABORATOR':
     case 'ADD_NOTE_TAG': {
-      const tagHash = t(action.tagName);
+      const tagHash = t(
+        action.type === 'ADD_COLLABORATOR'
+          ? action.collaboratorAccount
+          : action.tagName
+      );
       return new Map(state).set(
         tagHash,
         (state.get(tagHash) ?? new Set()).add(action.noteId)
@@ -425,8 +449,13 @@ export const noteTags: A.Reducer<Map<T.TagHash, Set<T.EntityId>>> = (
       return next.delete(action.tagHash) ? next : state;
     }
 
+    case 'REMOVE_COLLABORATOR':
     case 'REMOVE_NOTE_TAG': {
-      const tagHash = t(action.tagName);
+      const tagHash = t(
+        action.type === 'REMOVE_COLLABORATOR'
+          ? action.collaboratorAccount
+          : action.tagName
+      );
       const tagNotes = state.get(tagHash);
       if (!tagNotes) {
         return state;

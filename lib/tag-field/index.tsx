@@ -8,7 +8,6 @@ import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
-import analytics from '../analytics';
 import { tagHashOf } from '../utils/tag-hash';
 
 import type * as S from '../state';
@@ -98,7 +97,6 @@ export class TagField extends Component<Props, OwnState> {
 
     this.storeTagInput('');
     invoke(this, 'tagInput.focus');
-    analytics.tracks.recordEvent('editor_tag_added');
   };
 
   hasSelection = () =>
@@ -115,8 +113,6 @@ export class TagField extends Component<Props, OwnState> {
         this.tagInput?.current?.focus()
       );
     }
-
-    analytics.tracks.recordEvent('editor_tag_removed');
   };
 
   deleteSelection = () => {

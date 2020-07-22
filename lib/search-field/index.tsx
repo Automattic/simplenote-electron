@@ -1,7 +1,6 @@
 import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
-import analytics from '../analytics';
 import { State } from '../state';
 import { search } from '../state/ui/actions';
 
@@ -113,7 +112,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 

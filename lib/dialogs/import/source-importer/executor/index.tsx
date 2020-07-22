@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { throttle } from 'lodash';
 
-import analytics from '../../../../analytics';
 import actions from '../../../../state/actions';
+import { recordEvent } from '../../../../state/analytics/middleware';
 
 import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
@@ -47,6 +47,7 @@ type OwnProps = {
 
 type DispatchProps = {
   importNote: (note: T.Note) => any;
+  recordEvent: (eventName: string, eventProperties: T.JSONSerializable) => any;
 };
 
 type Props = OwnProps & DispatchProps;
@@ -82,7 +83,7 @@ class ImportExecutor extends Component<Props> {
               finalNoteCount: arg,
               isDone: true,
             });
-            analytics.tracks.recordEvent('importer_import_completed', {
+            this.props.recordEvent('importer_import_completed', {
               source: sourceSlug,
               note_count: arg,
             });
@@ -180,6 +181,7 @@ class ImportExecutor extends Component<Props> {
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   importNote: actions.data.importNote,
+  recordEvent,
 };
 
 export default connect(null, mapDispatchToProps)(ImportExecutor);

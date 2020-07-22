@@ -211,13 +211,23 @@ export const initSimperium = (
     const nextState = store.getState();
 
     switch (action.type) {
-      case 'ADD_NOTE_TAG':
-        if (!prevState.data.tags.has(t(action.tagName))) {
-          queueTagUpdate(t(action.tagName));
+      case 'ADD_COLLABORATOR':
+      case 'ADD_NOTE_TAG': {
+        const tagHash = t(
+          action.type === 'ADD_COLLABORATOR'
+            ? action.collaboratorAccount
+            : action.tagName
+        );
+
+        if (!prevState.data.tags.has(tagHash)) {
+          queueTagUpdate(tagHash);
         }
+
         queueNoteUpdate(action.noteId);
         return result;
+      }
 
+      case 'REMOVE_COLLABORATOR':
       case 'REMOVE_NOTE_TAG':
         queueNoteUpdate(action.noteId);
         return result;

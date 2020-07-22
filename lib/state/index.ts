@@ -17,6 +17,7 @@ import { omit } from 'lodash';
 import { isElectron } from '../utils/platform';
 
 import * as persistence from './persistence';
+import { middleware as analyticsMiddleware } from './analytics/middleware';
 import dataMiddleware from './data/middleware';
 import electronMiddleware from './electron/middleware';
 import { middleware as searchMiddleware } from '../search';
@@ -69,6 +70,7 @@ export const makeStore = (accountName: string, ...middlewares: Middleware[]) =>
             }),
           }),
           applyMiddleware(
+            analyticsMiddleware,
             dataMiddleware,
             browserMiddleware,
             searchMiddleware,

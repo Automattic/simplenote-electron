@@ -1,6 +1,15 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
+export const addCollaborator: A.ActionCreator<A.AddCollaborator> = (
+  noteId: T.EntityId,
+  collaboratorAccount: T.TagName
+) => ({
+  type: 'ADD_COLLABORATOR',
+  noteId,
+  collaboratorAccount,
+});
+
 export const editNote: A.ActionCreator<A.EditNote> = (
   noteId: T.EntityId,
   changes: Partial<T.Note>
@@ -44,6 +53,15 @@ export const publishNote: A.ActionCreator<A.PublishNote> = (
   type: 'PUBLISH_NOTE',
   noteId,
   shouldPublish,
+});
+
+export const removeCollaborator: A.ActionCreator<A.RemoveCollaborator> = (
+  noteId: T.EntityId,
+  collaboratorAccount: T.TagName
+) => ({
+  type: 'REMOVE_COLLABORATOR',
+  noteId,
+  collaboratorAccount,
 });
 
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({

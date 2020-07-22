@@ -9,6 +9,7 @@ import DialogRenderer from './dialog-renderer';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
 import { createNote, closeNote, toggleNavigation } from './state/ui/actions';
+import { recordEvent } from './state/analytics/middleware';
 
 import * as settingsActions from './state/settings/actions';
 
@@ -36,7 +37,6 @@ type DispatchProps = {
   createNote: () => any;
   focusSearchField: () => any;
   openTagList: () => any;
-  setAccountName: (name: string) => any;
   setLineLength: (length: T.LineLength) => any;
   setNoteDisplay: (displayMode: T.ListDisplayMode) => any;
   setSortType: (sortType: T.SortType) => any;
@@ -57,6 +57,7 @@ class AppComponent extends Component<Props> {
 
     this.toggleShortcuts(true);
 
+    recordEvent('application_opened');
     __TEST__ && window.testEvents.push('booted');
   }
 
@@ -186,7 +187,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
     createNote: () => dispatch(createNote()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
     openTagList: () => dispatch(toggleNavigation()),
-    setAccountName: (name) => dispatch(settingsActions.setAccountName(name)),
     setLineLength: (length) => dispatch(settingsActions.setLineLength(length)),
     setNoteDisplay: (displayMode) =>
       dispatch(settingsActions.setNoteDisplay(displayMode)),

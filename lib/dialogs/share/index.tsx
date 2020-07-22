@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
-import analytics from '../../analytics';
 import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import Dialog from '../../dialog';
@@ -24,9 +23,11 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  addCollaborator: (noteId: T.EntityId, collaborator: T.TagName) => any;
   closeDialog: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
   publishNote: (noteId: T.EntityId, shouldPublish: boolean) => any;
+  removeCollaborator: (noteId: T.EntityId, collaborator: T.TagName) => any;
 };
 
 type Props = StateProps & DispatchProps;
@@ -40,8 +41,7 @@ export class ShareDialog extends Component<Props> {
     isEmpty(url) ? undefined : `http://simp.ly/p/${url}`;
 
   onAddCollaborator = (event) => {
-    const { note, noteId } = this.props;
-    const tags = note?.tags || [];
+    const { noteId } = this.props;
     const collaborator = this.collaboratorElement.value.trim();
 
     event.preventDefault();
@@ -49,20 +49,15 @@ export class ShareDialog extends Component<Props> {
 
     const isSelf = this.props.settings.accountName === collaborator;
 
-    if (collaborator !== '' && tags.indexOf(collaborator) === -1 && !isSelf) {
-      this.props.editNote(noteId, { tags: [...tags, collaborator] });
-      analytics.tracks.recordEvent('editor_note_collaborator_added');
+    if (collaborator !== '' && !isSelf) {
+      this.props.addCollaborator(noteId, collaborator);
     }
   };
 
   onRemoveCollaborator = (collaborator) => {
-    const { note, noteId } = this.props;
+    const { noteId } = this.props;
 
-    let tags = note?.tags || [];
-    tags = tags.filter((tag) => tag !== collaborator);
-
-    this.props.editNote(noteId, { tags });
-    analytics.tracks.recordEvent('editor_note_collaborator_removed');
+    this.props.removeCollaborator(noteId, collaborator);
   };
 
   collaborators = () => {
@@ -215,9 +210,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  addCollaborator: actions.data.addCollaborator,
   closeDialog: actions.ui.closeDialog,
   editNote: actions.data.editNote,
   publishNote: actions.data.publishNote,
+  removeCollaborator: actions.data.removeCollaborator,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShareDialog);

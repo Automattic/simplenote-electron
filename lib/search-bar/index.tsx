@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from '../analytics';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import SearchField from '../search-field';
@@ -69,7 +68,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
 ) => ({
   onNewNote: (content: string) => {
     dispatch(createNote(content));
-    analytics.tracks.recordEvent('list_note_created');
   },
   toggleNavigation: () => {
     dispatch(toggleNavigation());

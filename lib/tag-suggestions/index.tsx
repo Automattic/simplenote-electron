@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import analytics from '../analytics';
 import { search } from '../state/ui/actions';
 import { tagHashOf } from '../utils/tag-hash';
 
@@ -141,7 +140,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 
