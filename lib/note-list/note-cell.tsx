@@ -25,6 +25,7 @@ type OwnProps = {
 type StateProps = {
   displayMode: T.ListDisplayMode;
   hasPendingChanges: boolean;
+  isOffline: boolean;
   isOpened: boolean;
   lastUpdated: number;
   note?: T.Note;
@@ -64,6 +65,7 @@ export class NoteCell extends Component<Props> {
     const {
       displayMode,
       hasPendingChanges,
+      isOffline,
       isOpened,
       lastUpdated,
       noteId,
@@ -141,7 +143,11 @@ export class NoteCell extends Component<Props> {
         </div>
         <div className="note-list-item-status-right theme-color-border">
           {hasPendingChanges && (
-            <span className="note-list-item-pending-changes">
+            <span
+              className={classNames('note-list-item-pending-changes', {
+                'is-offline': isOffline,
+              })}
+            >
               <SmallSyncIcon />
             </span>
           )}
@@ -162,6 +168,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
 ) => ({
   displayMode: state.settings.noteDisplay,
   hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
+  isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),

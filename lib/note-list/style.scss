@@ -157,8 +157,19 @@
     }
   }
 
-  .note-list-item-pending-changes svg {
-    animation: 2s spin infinite linear;
+  .note-list-item-pending-changes {
+    & svg {
+      animation: 2s spin infinite linear;
+    }
+
+    &.is-offline svg {
+      animation: none;
+      fill: $studio-gray-20;
+    }
+
+    .theme-dark &.is-offline svg {
+      fill: $studio-gray-70;
+    }
   }
 
   .note-list-item-title {
