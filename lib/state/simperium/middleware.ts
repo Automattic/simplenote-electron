@@ -13,6 +13,7 @@ import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { confirmBeforeClosingTab } from './functions/tab-close-confirmation';
 import { getAccountName } from './functions/username-monitor';
+import { isElectron } from '../../utils/platform';
 import { tagHashOf as t } from '../../utils/tag-hash';
 import { stopSyncing } from '../persistence';
 
@@ -59,7 +60,9 @@ export const initSimperium = (
   });
 
   startConnectionMonitor(client, store);
-  confirmBeforeClosingTab(store);
+  if (!isElectron) {
+    confirmBeforeClosingTab(store);
+  }
 
   const noteBucket = client.bucket('note');
   noteBucket.channel.on(
