@@ -203,10 +203,6 @@ export type ChangeConnectionStatus = Action<
   'CHANGE_CONNECTION_STATUS',
   { status: T.ConnectionState }
 >;
-export type ConfirmNewNote = Action<
-  'CONFIRM_NEW_NOTE',
-  { originalNoteId: T.EntityId; newNoteId: T.EntityId; note: T.Note }
->;
 export type ConfirmNewTag = Action<
   'CONFIRM_NEW_TAG',
   {
@@ -297,7 +293,6 @@ export type ActionType =
   | CloseNote
   | CloseDialog
   | CloseRevision
-  | ConfirmNewNote
   | ConfirmNewTag
   | CreateNote
   | CreateNoteWithId

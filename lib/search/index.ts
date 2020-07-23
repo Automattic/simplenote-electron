@@ -321,14 +321,6 @@ export const middleware: S.Middleware = (store) => {
         searchState.notes.get(action.noteId)?.tags.add(t(action.tagName));
         return next(withSearch(action));
 
-      case 'CONFIRM_NEW_NOTE': {
-        searchState.notes.delete(action.originalNoteId);
-        searchState.notes.set(action.newNoteId, toSearchNote(action.note));
-        removeNoteFromIndex(action.originalNoteId);
-        indexNote(action.newNoteId);
-        return next(withSearch(action));
-      }
-
       case 'CREATE_NOTE_WITH_ID':
       case 'IMPORT_NOTE_WITH_ID':
       case 'REMOTE_NOTE_UPDATE':

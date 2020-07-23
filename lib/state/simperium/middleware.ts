@@ -218,31 +218,7 @@ export const initSimperium = (
         queueNoteUpdate(action.noteId);
         return result;
 
-      // while editing we should debounce
-      // updates to prevent thrashing
       case 'CREATE_NOTE_WITH_ID':
-        noteBucket
-          .add({
-            content: '',
-            tags: [],
-            creationDate: Date.now() / 1000,
-            modificationDate: Date.now() / 1000,
-            deleted: false,
-            systemTags: [],
-            shareURL: '',
-            publishURL: '',
-            ...action.note,
-          })
-          .then((note) =>
-            dispatch({
-              type: 'CONFIRM_NEW_NOTE',
-              originalNoteId: action.noteId,
-              newNoteId: note.id as T.EntityId,
-              note: note.data,
-            })
-          );
-        return result;
-
       case 'INSERT_TASK_INTO_NOTE':
       case 'EDIT_NOTE':
         queueNoteUpdate(action.noteId);

@@ -16,15 +16,6 @@ const editorSelection: A.Reducer<Map<
   [number, number, 'RTL' | 'LTR']
 >> = (state = new Map(), action) => {
   switch (action.type) {
-    case 'CONFIRM_NEW_NOTE': {
-      const prev = state.get(action.originalNoteId);
-      if (!prev) {
-        return state;
-      }
-      const next = new Map(state).set(action.newNoteId, prev);
-      next.delete(action.originalNoteId);
-      return next;
-    }
     case 'REMOTE_NOTE_UPDATE': {
       if (
         action.remoteInfo?.patch?.content?.o !== 'd' ||
@@ -161,9 +152,6 @@ const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
     case 'CLOSE_NOTE':
       return null;
-
-    case 'CONFIRM_NEW_NOTE':
-      return state === action.originalNoteId ? action.newNoteId : state;
 
     case 'OPEN_NOTE':
       return action?.noteId ?? state;
