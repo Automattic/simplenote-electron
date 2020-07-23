@@ -3,7 +3,9 @@ const platform = require('../detect/platform');
 const { appCommandSender } = require('./utils');
 
 const buildFileMenu = (isAuthenticated) => {
+  var defaultSubmenuAdditions = [{ role: 'quit' }];
   isAuthenticated = isAuthenticated || false;
+
   const submenu = [
     {
       label: '&New Note',
@@ -35,8 +37,6 @@ const buildFileMenu = (isAuthenticated) => {
       click: appCommandSender({ action: 'printNote' }),
     },
   ];
-
-  var defaultSubmenuAdditions = [{ role: 'quit' }];
 
   if (isAuthenticated) {
     defaultSubmenuAdditions = [
