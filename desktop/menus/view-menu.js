@@ -1,14 +1,16 @@
 const { buildRadioGroup, appCommandSender } = require('./utils');
 const platform = require('../detect/platform');
 
-const buildViewMenu = (settings) => {
+const buildViewMenu = (settings, isAuthenticated) => {
   settings = settings || {};
+  isAuthenticated = isAuthenticated || false;
 
   const menu = {
     label: '&View',
     submenu: [
       {
         label: '&Sort Type',
+        visible: isAuthenticated,
         submenu: [
           {
             label: 'Date &modified',
@@ -44,6 +46,7 @@ const buildViewMenu = (settings) => {
       },
       {
         label: '&Note Display',
+        visible: isAuthenticated,
         submenu: [
           {
             label: '&Comfy',
@@ -67,6 +70,7 @@ const buildViewMenu = (settings) => {
       },
       {
         label: '&Line Length',
+        visible: isAuthenticated,
         submenu: [
           {
             label: '&Narrow',
@@ -86,6 +90,7 @@ const buildViewMenu = (settings) => {
       },
       {
         label: '&Tags',
+        visible: isAuthenticated,
         submenu: [
           {
             label: '&Sort Alphabetically',
@@ -137,6 +142,7 @@ const buildViewMenu = (settings) => {
       },
       {
         label: 'Focus Mode',
+        visible: isAuthenticated,
         accelerator: 'CommandOrControl+Shift+F',
         type: 'checkbox',
         checked: settings.focusModeEnabled,

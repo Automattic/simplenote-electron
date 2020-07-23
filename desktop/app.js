@@ -91,7 +91,7 @@ module.exports = function main() {
 
     ipcMain.on('settingsUpdate', function (event, settings) {
       Menu.setApplicationMenu(
-        Menu.buildFromTemplate(createMenuTemplate(settings))
+        Menu.buildFromTemplate(createMenuTemplate(settings), mainWindow)
       );
     });
 
