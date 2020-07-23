@@ -40,6 +40,8 @@ class AppWithoutAuth extends Component<Props, State> {
       return;
     }
 
+    username = username.trim().toLowerCase();
+
     this.setState({ authStatus: 'submitting' }, () => {
       auth
         .authorize(username, password)
@@ -70,6 +72,8 @@ class AppWithoutAuth extends Component<Props, State> {
     if (!(username && password)) {
       return;
     }
+
+    username = username.trim().toLowerCase();
 
     this.setState({ authStatus: 'submitting' }, () => {
       auth
