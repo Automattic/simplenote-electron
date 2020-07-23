@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.21.0]
+
+### Enhancements
+
+- Added logging and ability to download logs [#2194](https://github.com/Automattic/simplenote-electron/pull/2194)
+
+### Fixes
+
+- Fixed a bug preventing login if capital letters were used in email address [#2226](https://github.com/Automattic/simplenote-electron/pull/2226)
+- Show pointer cursor on checkboxes [#2189](https://github.com/Automattic/simplenote-electron/pull/2189)
+
 ## [v1.20.0]
 
 ### Enhancements
