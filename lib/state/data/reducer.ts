@@ -300,15 +300,6 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
         ? state
         : new Map(state).set(t(action.tagName), { name: action.tagName });
 
-    case 'CONFIRM_NEW_TAG': {
-      const next = new Map(state).set(
-        (action.newTagId as string) as T.TagHash,
-        action.tag
-      );
-      next.delete((action.originalTagId as string) as T.TagHash);
-      return next;
-    }
-
     case 'EDIT_NOTE':
     case 'IMPORT_NOTE_WITH_ID': {
       const newTags =

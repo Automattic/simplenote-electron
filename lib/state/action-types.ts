@@ -203,15 +203,6 @@ export type ChangeConnectionStatus = Action<
   'CHANGE_CONNECTION_STATUS',
   { status: T.ConnectionState }
 >;
-export type ConfirmNewTag = Action<
-  'CONFIRM_NEW_TAG',
-  {
-    originalTagId: T.EntityId;
-    newTagId: T.EntityId;
-    tagName: T.TagName;
-    tag: T.Tag;
-  }
->;
 export type GhostRemoveEntity = Action<
   'GHOST_REMOVE_ENTITY',
   { bucketName: string; entityId: T.EntityId }
@@ -293,7 +284,6 @@ export type ActionType =
   | CloseNote
   | CloseDialog
   | CloseRevision
-  | ConfirmNewTag
   | CreateNote
   | CreateNoteWithId
   | DecreaseFontSize

@@ -13,10 +13,6 @@ import actions from '../state/actions';
 import * as S from '../state';
 import * as T from '../types';
 
-type OwnProps = {
-  markdownEnabled: boolean;
-};
-
 type StateProps = {
   isMarkdown: boolean;
   isPinned: boolean;
@@ -30,7 +26,7 @@ type DispatchProps = {
   pinNote: (noteId: T.EntityId, shouldPin: boolean) => any;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 export class NoteInfo extends Component<Props> {
   static displayName = 'NoteInfo';
