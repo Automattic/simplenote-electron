@@ -138,6 +138,22 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
           return false;
       }
 
+    case 'th':
+    case 'td':
+      switch (attrName) {
+        case 'style':
+          switch (value) {
+            case 'text-align:center;':
+            case 'text-align:left;':
+            case 'text-align:right;':
+              return true;
+            default:
+              return false;
+          }
+        default:
+          return false;
+      }
+
     default:
       return false;
   }
