@@ -72,30 +72,6 @@ export class SettingsDialog extends Component<Props> {
   };
 
   showUnsyncedWarning = () => {
-    isElectron ? this.showElectronWarningDialog() : this.showWebWarningDialog();
-  };
-
-  showElectronWarningDialog = () => {
-    const dialog = __non_webpack_require__('electron').remote.dialog; // eslint-disable-line no-undef
-    dialog
-      .showMessageBox({
-        type: 'warning',
-        buttons: ['Delete Notes', 'Cancel', 'Visit Web App'],
-        title: 'Unsynced Notes Detected',
-        message:
-          'Logging out will delete any unsynced notes. You can verify your ' +
-          'synced notes by logging in to the Web App.',
-      })
-      .then(({ response }) => {
-        if (response === 0) {
-          this.props.logout();
-        } else if (response === 2) {
-          viewExternalUrl('https://app.simplenote.com');
-        }
-      });
-  };
-
-  showWebWarningDialog = () => {
     const shouldReallySignOut = confirm(
       'Warning: Unsynced notes were detected.\n\n' +
         'Logging out will delete any notes that have not synced. ' +
