@@ -19,7 +19,6 @@ export const renderNoteToHtml = (content: string) => {
       markdownConverter.setOption('smoothLivePreview', true);
       markdownConverter.setOption('tables', true); // table syntax
       markdownConverter.setOption('strikethrough', true); // ~~strikethrough~~
-      // markdownConverter.setOption('emoji', true); // emoji support like :smile:
 
       const withNormalizedBullets = content.replace(
         /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
