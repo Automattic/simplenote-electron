@@ -26,7 +26,7 @@ const importNotes = (filePath, mainWindow) => {
   let importedNoteCount = 0;
 
   saxStream.on('error', function () {
-    mainWindow.webContents.send('notesImported', []);
+    mainWindow.webContents.send('noteImportChannel', { error: true });
   });
 
   saxStream.on('opentag', (node) => {
@@ -77,17 +77,12 @@ const importNotes = (filePath, mainWindow) => {
   saxStream.on('closetag', (node) => {
     // Add the currentNote to the array
     if (node === 'note') {
-      notes.push(currentNote);
-      importedNoteCount++;
+      mainWindow.webContents.send('noteImportChannel', { note: currentNote });
     }
   });
 
   saxStream.on('end', () => {
-    if (importedNoteCount === 0) {
-      return;
-    }
-
-    mainWindow.webContents.send('notesImported', notes);
+    mainWindow.webContents.send('noteImportChannel', { complete: true });
   });
 
   // Read the file via stream

@@ -33,22 +33,30 @@ class EvernoteImporter extends EventEmitter {
       tagBucket: this.tagBucket,
     });
 
-    const addNotesToApp = (notes) => {
-      if (!notes.length) {
-        this.emit(
-          'status',
-          'error',
-          'Error processing Evernote data or it did not contain any notes.'
-        );
+    let importedNoteCount = 0;
+
+    const addNotesToApp = (response) => {
+      if (response.error) {
+        this.emit('status', 'error', 'Error processing Evernote data.');
         return;
       }
-      notes.forEach((note) => {
-        coreImporter.importNote(note, this.options);
-      });
-      this.emit('status', 'complete', notes.length);
+      if (response.note) {
+        importedNoteCount++;
+        this.emit('status', 'progress', importedNoteCount);
+        coreImporter.importNote(response.note, this.options);
+        return;
+      }
+      if (response.complete) {
+        if (importedNoteCount === 0) {
+          this.emit('status', 'error', 'No notes were found to import.');
+          return;
+        }
+        this.emit('status', 'complete', importedNoteCount);
+        window.electron?.removeListener('noteImportChannel', addNotesToApp);
+      }
     };
 
-    window.electron?.once('notesImported', addNotesToApp);
+    window.electron?.receive('noteImportChannel', addNotesToApp);
     window.electron?.send('importNotes', file.path);
   };
 

@@ -4,7 +4,7 @@ const validChannels = [
   'appCommand',
   'clearCookies',
   'importNotes',
-  'notesImported',
+  'noteImportChannel',
   'setAutoHideMenuBar',
   'settingsUpdate',
   'wpLogin',
@@ -23,10 +23,9 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.on(channel, newCallback);
     }
   },
-  once: (channel, callback) => {
+  removeListener: (channel) => {
     if (validChannels.includes(channel)) {
-      const newCallback = (_, data) => callback(data);
-      ipcRenderer.once(channel, newCallback);
+      ipcRenderer.removeAllListeners(channel);
     }
   },
   isMac: process.platform === 'darwin',
