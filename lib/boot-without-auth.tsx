@@ -35,7 +35,9 @@ class AppWithoutAuth extends Component<Props, State> {
     authStatus: 'unsubmitted',
   };
 
-  authenticate = (username: string, password: string) => {
+  authenticate = (usernameArg: string, password: string) => {
+    const username = usernameArg.trim().toLowerCase();
+
     if (!(username && password)) {
       return;
     }
@@ -66,7 +68,8 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   };
 
-  createUser = (username: string, password: string) => {
+  createUser = (usernameArg: string, password: string) => {
+    const username = usernameArg.trim().toLowerCase();
     if (!(username && password)) {
       return;
     }
