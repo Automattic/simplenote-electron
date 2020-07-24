@@ -10,6 +10,7 @@
 ### Fixes
 
 - Fixed Evernote import [#2201](https://github.com/Automattic/simplenote-electron/pull/2201)
+- Fixed unsynced note dialog on logout [#2230](https://github.com/Automattic/simplenote-electron/pull/2230)
 - Fixed a bug preventing login if capital letters were used in email address [#2226](https://github.com/Automattic/simplenote-electron/pull/2226)
 - Show pointer cursor on checkboxes [#2189](https://github.com/Automattic/simplenote-electron/pull/2189)
 - Disable menu items if user isn't logged in [#2228](https://github.com/Automattic/simplenote-electron/pull/2228)
