@@ -20,10 +20,8 @@ const importNotes = (filePath, mainWindow) => {
     return;
   }
 
-  const notes = [];
   const saxStream = createStream(true, false);
   let currentNote = {}; // The current note we are parsing
-  let importedNoteCount = 0;
 
   saxStream.on('error', function () {
     mainWindow.webContents.send('noteImportChannel', { error: true });

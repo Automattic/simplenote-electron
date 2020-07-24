@@ -9,12 +9,10 @@ declare global {
     analyticsEnabled: boolean;
     electron: {
       isMac: boolean;
-      once(
-        command: 'notesImported',
-        callback: (event: any, notes: array) => any
-      );
       receive(command: 'appCommand', callback: (event: any) => any);
+      receive(command: 'noteImportChannel', callback: (event: any) => any);
       receive(command: 'wpLogin', callback: (event: any) => any);
+      removeListener(command: 'noteImportChannel');
       send(command: 'clearCookies'): void;
       send(command: 'importNotes', filePath: string);
       send(command: 'setAutoHideMenuBar', newValue: boolean);

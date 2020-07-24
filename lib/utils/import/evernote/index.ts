@@ -15,12 +15,14 @@ class EvernoteImporter extends EventEmitter {
   importNotes = (filesArray) => {
     if (!filesArray || filesArray.length === 0) {
       this.emit('status', 'error', 'Invalid Evernote export file.');
+      return;
     }
 
     // We will always process only the first item in the array
     const file = filesArray[0];
     if (!file || !file.path) {
       this.emit('status', 'error', 'Could not find Evernote export file.');
+      return;
     }
 
     if (!file.path || !endsWith(file.path.toLowerCase(), '.enex')) {
@@ -38,6 +40,7 @@ class EvernoteImporter extends EventEmitter {
     const addNotesToApp = (response) => {
       if (response.error) {
         this.emit('status', 'error', 'Error processing Evernote data.');
+        window.electron?.removeListener('noteImportChannel');
         return;
       }
       if (response.note) {
@@ -49,10 +52,11 @@ class EvernoteImporter extends EventEmitter {
       if (response.complete) {
         if (importedNoteCount === 0) {
           this.emit('status', 'error', 'No notes were found to import.');
+          window.electron?.removeListener('noteImportChannel');
           return;
         }
         this.emit('status', 'complete', importedNoteCount);
-        window.electron?.removeListener('noteImportChannel', addNotesToApp);
+        window.electron?.removeListener('noteImportChannel');
       }
     };
 
