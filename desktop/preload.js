@@ -1,26 +1,32 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+const validChannels = [
+  'appCommand',
+  'clearCookies',
+  'importNotes',
+  'notesImported',
+  'setAutoHideMenuBar',
+  'settingsUpdate',
+  'wpLogin',
+];
+
 contextBridge.exposeInMainWorld('electron', {
   send: (channel, data) => {
     // whitelist channels
-    let validChannels = [
-      'appCommand',
-      'clearCookies',
-      'setAutoHideMenuBar',
-      'settingsUpdate',
-      'wpLogin',
-    ];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
-  receive: (channel, func) => {
-    let validChannels = ['appCommand', 'wpLogin'];
+  receive: (channel, callback) => {
     if (validChannels.includes(channel)) {
-      // Deliberately strip event as it includes `sender`
-      ipcRenderer.on(channel, (event, ...args) => {
-        return func(...args);
-      });
+      const newCallback = (_, data) => callback(data);
+      ipcRenderer.on(channel, newCallback);
+    }
+  },
+  once: (channel, callback) => {
+    if (validChannels.includes(channel)) {
+      const newCallback = (_, data) => callback(data);
+      ipcRenderer.once(channel, newCallback);
     }
   },
   isMac: process.platform === 'darwin',

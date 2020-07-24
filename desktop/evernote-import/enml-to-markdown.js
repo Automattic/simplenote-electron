@@ -1,5 +1,5 @@
-import TurndownService from 'turndown';
-import { identity, startsWith } from 'lodash';
+const TurndownService = require('turndown');
+const { identity, startsWith } = require('lodash');
 
 const mediaPlaceholderFor = (node) => {
   const alt = node.getAttribute('alt');
@@ -111,4 +111,4 @@ const enmlToMarkdown = (enml) => {
   return turndownService.turndown(enml);
 };
 
-export default enmlToMarkdown;
+module.exports = enmlToMarkdown;

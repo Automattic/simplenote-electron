@@ -14,6 +14,7 @@ const windowStateKeeper = require('electron-window-state');
 
 const config = require('./config');
 const createMenuTemplate = require('./menus');
+const importNotes = require('./evernote-import');
 const platform = require('./detect/platform');
 const updater = require('./updater');
 const { isDev } = require('./env');
@@ -124,6 +125,10 @@ module.exports = function main() {
 
     ipcMain.on('wpLogin', function (event, url) {
       shell.openExternal(url);
+    });
+
+    ipcMain.on('importNotes', function (event, filePath) {
+      importNotes(filePath, mainWindow);
     });
 
     mainWindowState.manage(mainWindow);
