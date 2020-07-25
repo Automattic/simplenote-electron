@@ -13,7 +13,7 @@
 - Fixed unsynced note dialog on logout [#2230](https://github.com/Automattic/simplenote-electron/pull/2230)
 - Fixed a bug preventing login if capital letters were used in email address [#2226](https://github.com/Automattic/simplenote-electron/pull/2226)
 - Show pointer cursor on checkboxes [#2189](https://github.com/Automattic/simplenote-electron/pull/2189)
-- Disable menu items if user isn't logged in [#2228](https://github.com/Automattic/simplenote-electron/pull/2228)
+- Disable menu items if user isn't logged in [#2228](https://github.com/Automattic/simplenote-electron/pull/2228), [#2232](https://github.com/Automattic/simplenote-electron/pull/2232)
 - Restore ability to view About dialog while logged out [#2231](https://github.com/Automattic/simplenote-electron/pull/2231)
 
 ## [v1.20.0]
