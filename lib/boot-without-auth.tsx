@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 import { render } from 'react-dom';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
 import analytics from './analytics';
 import { validatePassword } from './utils/validate-password';
+import Modal from 'react-modal';
+import classNames from 'classnames';
+import AboutDialog from './dialogs/about';
 
 import getConfig from '../get-config';
 
@@ -20,6 +25,7 @@ type State = {
     | 'insecure-password'
     | 'invalid-credentials'
     | 'unknown-error';
+  showAbout: boolean;
 };
 
 type User = {
@@ -33,6 +39,21 @@ const auth = new SimperiumAuth(config.app_id, config.app_key);
 class AppWithoutAuth extends Component<Props, State> {
   state: State = {
     authStatus: 'unsubmitted',
+    showAbout: false,
+  };
+
+  componentDidMount() {
+    window.electron?.receive('appCommand', this.onAppCommand);
+  }
+
+  onAppCommand = (event) => {
+    if ('showDialog' === event.action && 'ABOUT' === event.dialog) {
+      this.setState({ showAbout: true });
+    }
+  };
+
+  onDismissDialog = (event) => {
+    this.setState({ showAbout: false });
   };
 
   authenticate = (usernameArg: string, password: string) => {
@@ -115,6 +136,22 @@ class AppWithoutAuth extends Component<Props, State> {
           tokenLogin={this.tokenLogin}
           resetErrors={() => this.setState({ authStatus: 'unsubmitted' })}
         />
+        {this.state.showAbout && (
+          <Modal
+            key="aboutDialogModal"
+            className="dialog-renderer__content"
+            contentLabel=""
+            isOpen
+            onRequestClose={this.onDismissDialog}
+            overlayClassName="dialog-renderer__overlay"
+            portalClassName={classNames(
+              'dialog-renderer__portal',
+              'theme-' + systemTheme
+            )}
+          >
+            <AboutDialog key="about" closeDialog={this.onDismissDialog} />
+          </Modal>
+        )}
       </div>
     );
   }
@@ -123,5 +160,13 @@ class AppWithoutAuth extends Component<Props, State> {
 export const boot = (
   onAuth: (token: string, username: string, createWelcomeNote: boolean) => any
 ) => {
-  render(<AppWithoutAuth onAuth={onAuth} />, document.getElementById('root'));
+  const reducer = (state, action) => state;
+  const store = createStore(reducer);
+  Modal.setAppElement('#root');
+  render(
+    <Provider store={store}>
+      <AppWithoutAuth onAuth={onAuth} />
+    </Provider>,
+    document.getElementById('root')
+  );
 };
