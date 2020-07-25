@@ -15,6 +15,7 @@
 - Show pointer cursor on checkboxes [#2189](https://github.com/Automattic/simplenote-electron/pull/2189)
 - Disable menu items if user isn't logged in [#2228](https://github.com/Automattic/simplenote-electron/pull/2228), [#2232](https://github.com/Automattic/simplenote-electron/pull/2232)
 - Restore ability to view About dialog while logged out [#2231](https://github.com/Automattic/simplenote-electron/pull/2231)
+- Restore missing keyboard shortcut hint for Insert Checklist [#2233](https://github.com/Automattic/simplenote-electron/pull/2233)
 
 ## [v1.20.0]
 
