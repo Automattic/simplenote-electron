@@ -26,7 +26,7 @@ function createMenuTemplate(settings, mainWindow) {
     buildViewMenu(settings, isAuthenticated),
     buildFormatMenu(isAuthenticated),
     platform.isOSX() ? windowMenu : null,
-    buildHelpMenu(mainWindow),
+    buildHelpMenu(mainWindow, isAuthenticated),
   ].filter((menu) => menu !== null);
 }
 
