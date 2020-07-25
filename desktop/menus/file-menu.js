@@ -3,7 +3,6 @@ const platform = require('../detect/platform');
 const { appCommandSender } = require('./utils');
 
 const buildFileMenu = (isAuthenticated) => {
-  var defaultSubmenuAdditions = [{ role: 'quit' }];
   isAuthenticated = isAuthenticated || false;
 
   const submenu = [
@@ -33,19 +32,18 @@ const buildFileMenu = (isAuthenticated) => {
     { type: 'separator' },
     {
       label: '&Print…',
+      visible: isAuthenticated,
       accelerator: 'CommandOrControl+P',
       click: appCommandSender({ action: 'printNote' }),
     },
   ];
 
-  if (isAuthenticated) {
-    defaultSubmenuAdditions = [
-      { type: 'separator' },
-      menuItems.preferences,
-      { type: 'separator' },
-      { role: 'quit' },
-    ];
-  }
+  const defaultSubmenuAdditions = [
+    { type: 'separator' },
+    menuItems.preferences(isAuthenticated),
+    { type: 'separator' },
+    { role: 'quit' },
+  ];
 
   const fileMenu = {
     label: '&File',
@@ -53,6 +51,11 @@ const buildFileMenu = (isAuthenticated) => {
       ? submenu
       : submenu.concat(defaultSubmenuAdditions),
   };
+
+  // we have nothing to show in the File menu on OSX logged out
+  if (!isAuthenticated && platform.isOSX()) {
+    fileMenu.visible = false;
+  }
 
   return fileMenu;
 };

@@ -16,13 +16,16 @@ const checkForUpdates = {
   click: updater.pingAndShowProgress.bind(updater),
 };
 
-const preferences = {
-  label: 'P&references…',
-  accelerator: 'CommandOrControl+,',
-  click: appCommandSender({
-    action: 'showDialog',
-    dialog: 'SETTINGS',
-  }),
+const preferences = (isAuthenticated) => {
+  return {
+    label: 'P&references…',
+    visible: isAuthenticated,
+    accelerator: 'CommandOrControl+,',
+    click: appCommandSender({
+      action: 'showDialog',
+      dialog: 'SETTINGS',
+    }),
+  };
 };
 
 module.exports = {
