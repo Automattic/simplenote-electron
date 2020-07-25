@@ -21,6 +21,7 @@ const clearStorage = () =>
     indexedDB.deleteDatabase('ghost');
     indexedDB.deleteDatabase('simplenote');
     window.electron?.send('clearCookies');
+    window.electron?.send('settingsUpdate', {});
 
     // let everything settle
     setTimeout(() => resolve(), 500);

@@ -1,13 +1,14 @@
 const platform = require('../detect/platform');
 
-const macAppMenu = require('./mac-app-menu');
-const fileMenu = require('./file-menu');
+const buildMacAppMenu = require('./mac-app-menu');
+const buildFileMenu = require('./file-menu');
 const buildEditMenu = require('./edit-menu');
 const buildViewMenu = require('./view-menu');
-const formatMenu = require('./format-menu');
+const buildFormatMenu = require('./format-menu');
 const buildHelpMenu = require('./help-menu');
 
 function createMenuTemplate(settings, mainWindow) {
+  const isAuthenticated = settings && 'accountName' in settings;
   const windowMenu = {
     role: 'window',
     submenu: [
@@ -19,11 +20,11 @@ function createMenuTemplate(settings, mainWindow) {
   };
 
   return [
-    platform.isOSX() ? macAppMenu : null,
-    fileMenu,
-    buildEditMenu(settings),
-    buildViewMenu(settings),
-    formatMenu,
+    platform.isOSX() ? buildMacAppMenu(isAuthenticated) : null,
+    buildFileMenu(isAuthenticated),
+    buildEditMenu(settings, isAuthenticated),
+    buildViewMenu(settings, isAuthenticated),
+    buildFormatMenu(isAuthenticated),
     platform.isOSX() ? windowMenu : null,
     buildHelpMenu(mainWindow),
   ].filter((menu) => menu !== null);

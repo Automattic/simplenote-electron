@@ -1,15 +1,21 @@
 const { appCommandSender } = require('./utils');
 
-const submenu = [
-  {
-    label: 'Insert &Checklist',
-    click: appCommandSender({ action: 'insertChecklist' }),
-  },
-];
+const buildFormatMenu = (isAuthenticated) => {
+  isAuthenticated = isAuthenticated || false;
+  const submenu = [
+    {
+      label: 'Insert &Checklist',
+      click: appCommandSender({ action: 'insertChecklist' }),
+    },
+  ];
 
-const formatMenu = {
-  label: 'F&ormat',
-  submenu,
+  const formatMenu = {
+    label: 'F&ormat',
+    submenu,
+    visible: isAuthenticated,
+  };
+
+  return formatMenu;
 };
 
-module.exports = formatMenu;
+module.exports = buildFormatMenu;

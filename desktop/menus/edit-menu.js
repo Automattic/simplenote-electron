@@ -1,7 +1,8 @@
 const { appCommandSender } = require('./utils');
 
-const buildEditMenu = (settings) => {
+const buildEditMenu = (settings, isAuthenticated) => {
   settings = settings || {};
+  isAuthenticated = isAuthenticated || false;
 
   return {
     label: '&Edit',
@@ -36,16 +37,19 @@ const buildEditMenu = (settings) => {
       { type: 'separator' },
       {
         label: '&Trash Note',
+        visible: isAuthenticated,
         click: appCommandSender({ action: 'trashNote' }),
       },
       { type: 'separator' },
       {
         label: 'Search &Notes…',
+        visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
       },
       { type: 'separator' },
       {
         label: 'C&heck Spelling',
+        visible: isAuthenticated,
         type: 'checkbox',
         checked: settings.spellCheckEnabled,
         click: appCommandSender({ action: 'toggleSpellCheck' }),

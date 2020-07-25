@@ -304,6 +304,8 @@ export const App = connect(
         appState: { accountName },
       } = this.props;
 
+      window.electron?.send('settingsUpdate', this.props.settings);
+
       analytics.initialize(accountName);
       this.onLoadPreferences();
 

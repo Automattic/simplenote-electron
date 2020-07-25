@@ -3,13 +3,15 @@ const { app } = require('electron');
 const menuItems = require('./menu-items');
 const build = require('../detect/build');
 
-const macAppMenu = {
-  label: app.name,
-  submenu: [
+const buildMacAppMenu = (isAuthenticated) => {
+  var submenu = [];
+  isAuthenticated = isAuthenticated || false;
+
+  submenu = [
     menuItems.about,
     ...(build.isMAS() ? [] : [menuItems.checkForUpdates]),
     { type: 'separator' },
-    menuItems.preferences,
+    menuItems.preferences(isAuthenticated),
     { type: 'separator' },
     {
       role: 'services',
@@ -21,7 +23,14 @@ const macAppMenu = {
     { role: 'unhide' },
     { type: 'separator' },
     { role: 'quit' },
-  ],
+  ];
+
+  const menu = {
+    label: app.name,
+    submenu: submenu,
+  };
+
+  return menu;
 };
 
-module.exports = macAppMenu;
+module.exports = buildMacAppMenu;
