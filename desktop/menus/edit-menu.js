@@ -49,6 +49,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
       { type: 'separator' },
       {
         label: 'C&heck Spelling',
+        visible: isAuthenticated,
         type: 'checkbox',
         checked: settings.spellCheckEnabled,
         click: appCommandSender({ action: 'toggleSpellCheck' }),
