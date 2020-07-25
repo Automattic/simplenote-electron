@@ -46,6 +46,10 @@ class AppWithoutAuth extends Component<Props, State> {
     window.electron?.receive('appCommand', this.onAppCommand);
   }
 
+  componentWillUnmount() {
+    window.electron?.removeListener('appCommand');
+  }
+
   onAppCommand = (event) => {
     if ('showDialog' === event.action && 'ABOUT' === event.dialog) {
       this.setState({ showAbout: true });
