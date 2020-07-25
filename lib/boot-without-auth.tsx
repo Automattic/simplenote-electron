@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
 import { render } from 'react-dom';
 import { Auth as AuthApp } from './auth';
 import { Auth as SimperiumAuth } from 'simperium';
@@ -164,13 +162,6 @@ class AppWithoutAuth extends Component<Props, State> {
 export const boot = (
   onAuth: (token: string, username: string, createWelcomeNote: boolean) => any
 ) => {
-  const reducer = (state, action) => state;
-  const store = createStore(reducer);
   Modal.setAppElement('#root');
-  render(
-    <Provider store={store}>
-      <AppWithoutAuth onAuth={onAuth} />
-    </Provider>,
-    document.getElementById('root')
-  );
+  render(<AppWithoutAuth onAuth={onAuth} />, document.getElementById('root'));
 };
