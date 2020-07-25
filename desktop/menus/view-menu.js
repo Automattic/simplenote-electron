@@ -102,6 +102,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
       },
       {
         label: 'T&heme',
+        visible: isAuthenticated,
         submenu: [
           {
             label: '&Light',
@@ -121,24 +122,29 @@ const buildViewMenu = (settings, isAuthenticated) => {
       },
       {
         type: 'separator',
+        visible: isAuthenticated,
       },
       {
         label: 'Zoom &In',
+        visible: isAuthenticated,
         accelerator: 'CommandOrControl+=',
         click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
         label: 'Zoom &Out',
+        visible: isAuthenticated,
         accelerator: 'CommandOrControl+-',
         click: appCommandSender({ action: 'decreaseFontSize' }),
       },
       {
         label: '&Actual Size',
+        visible: isAuthenticated,
         accelerator: 'CommandOrControl+0',
         click: appCommandSender({ action: 'resetFontSize' }),
       },
       {
         type: 'separator',
+        visible: isAuthenticated,
       },
       {
         label: 'Focus Mode',
