@@ -327,6 +327,7 @@ class NoteContentEditor extends Component<Props> {
               renderIndentGuides: false,
               renderLineHighlight: 'none',
               scrollbar: { horizontal: 'hidden' },
+              scrollBeyondLastLine: false,
               selectionHighlight: false,
               wordWrap: 'on',
               wrappingStrategy: 'simple',
