@@ -5,6 +5,22 @@
   unicode-range: U+E000-E001;
 }
 
+.note-detail {
+  padding: 0 calc((100% - 768px) / 2);
+}
+
+@media only screen and (max-width: 1400px) {
+  .note-detail {
+    padding: 0 10%;
+  }
+}
+
+.is-line-length-full {
+  .note-detail {
+    padding: 0 25px;
+  }
+}
+
 .note-content-editor-shell {
   height: 100%;
   width: 100%;
@@ -18,22 +34,6 @@
   .slider {
     border-radius: 10px;
     border: 3px solid gray;
-  }
-
-  .lines-content.monaco-editor-background {
-    padding: 0 calc((100% - 768px) / 2);
-  }
-
-  @media only screen and (max-width: 1400px) {
-    .lines-content.monaco-editor-background {
-      padding: 0 10%;
-    }
-  }
-}
-
-.is-line-length-full {
-  .lines-content.monaco-editor-background {
-    padding: 0 25px;
   }
 }
 
