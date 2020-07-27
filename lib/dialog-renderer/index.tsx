@@ -48,7 +48,7 @@ export class DialogRenderer extends Component<Props> {
             portalClassName={classNames('dialog-renderer__portal', themeClass)}
           >
             {'ABOUT' === dialog ? (
-              <AboutDialog key="about" />
+              <AboutDialog key="about" closeDialog={closeDialog} />
             ) : 'IMPORT' === dialog ? (
               <ImportDialog key="import" buckets={buckets} />
             ) : 'KEYBINDINGS' === dialog ? (
