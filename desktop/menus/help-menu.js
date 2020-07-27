@@ -8,7 +8,8 @@ const zipLogs = require('../logger/zip-logs');
 
 const { appCommandSender } = require('./utils');
 
-const buildHelpMenu = (mainWindow) => {
+const buildHelpMenu = (mainWindow, isAuthenticated) => {
+  isAuthenticated = isAuthenticated || false;
   const submenu = [
     {
       label: 'Help && &Support',
@@ -17,6 +18,7 @@ const buildHelpMenu = (mainWindow) => {
     },
     {
       label: '&Keyboard Shortcuts',
+      visible: isAuthenticated,
       click: appCommandSender({ action: 'showDialog', dialog: 'KEYBINDINGS' }),
     },
     { type: 'separator' },
