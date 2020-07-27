@@ -4,17 +4,14 @@ import SimplenoteLogo from '../../icons/simplenote';
 import CrossIcon from '../../icons/cross';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
 import Dialog from '../../dialog';
-import { closeDialog } from '../../state/ui/actions';
-
-import * as S from '../../state';
 
 const appVersion = config.version; // eslint-disable-line no-undef
 
-type DispatchProps = {
+type OwnProps = {
   closeDialog: () => any;
 };
 
-type Props = DispatchProps;
+type Props = OwnProps;
 
 export class AboutDialog extends Component<Props> {
   render() {
@@ -134,8 +131,4 @@ export class AboutDialog extends Component<Props> {
   }
 }
 
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  closeDialog,
-};
-
-export default connect(null, mapDispatchToProps)(AboutDialog);
+export default AboutDialog;
