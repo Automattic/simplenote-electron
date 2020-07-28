@@ -36,7 +36,6 @@ export class RevisionSelector extends Component<Props> {
 
   onAcceptRevision = () => {
     const { noteId, openedRevision, restoreRevision } = this.props;
-
     restoreRevision(noteId, openedRevision);
   };
 
@@ -66,7 +65,9 @@ export class RevisionSelector extends Component<Props> {
       revisions && openedRevision
         ? [...revisions.keys()].indexOf(openedRevision)
         : -1;
-    const isNewest = openedRevision && selectedIndex === revisions?.size - 1;
+    const isNewest =
+      !openedRevision ||
+      (openedRevision && selectedIndex === revisions?.size - 1);
 
     const revisionDate = format(
       (openedRevision
@@ -74,10 +75,6 @@ export class RevisionSelector extends Component<Props> {
         : note.modificationDate) * 1000,
       'MMM d, yyyy h:mm a'
     );
-
-    const revisionButtonStyle: CSSProperties = isNewest
-      ? { opacity: '0.5', pointerEvents: 'none' }
-      : {};
 
     const mainClasses = classNames('revision-selector', {
       'is-visible': isViewingRevisions,
@@ -105,7 +102,7 @@ export class RevisionSelector extends Component<Props> {
             Cancel
           </button>
           <button
-            style={revisionButtonStyle}
+            disabled={isNewest}
             className="button button-primary button-compact"
             onClick={this.onAcceptRevision}
           >
