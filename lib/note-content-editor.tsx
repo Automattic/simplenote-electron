@@ -294,7 +294,7 @@ class NoteContentEditor extends Component<Props> {
         }`}
       >
         {editor === 'fast' ? (
-          <div style={{ padding: '0.7em', whiteSpace: 'pre-wrap' }}>
+          <div style={{ padding: '0 10px', whiteSpace: 'pre-wrap' }}>
             {content}
           </div>
         ) : (
