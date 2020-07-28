@@ -19,6 +19,7 @@ type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
   fontSize: number;
   keyboardShortcuts: boolean;
+  lineLength: string;
   noteId: T.EntityId;
   note: T.Note;
   searchQuery: string;
@@ -131,6 +132,11 @@ class NoteContentEditor extends Component<Props> {
           });
         }
       }, SPEED_DELAY);
+    }
+    if (prevProps.lineLength !== this.props.lineLength) {
+      setTimeout(() => {
+        window?.editor.layout();
+      }, 400);
     }
   }
 
@@ -348,6 +354,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   ],
   fontSize: state.settings.fontSize,
   keyboardShortcuts: state.settings.keyboardShortcuts,
+  lineLength: state.settings.lineLength,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
   searchQuery: state.ui.searchQuery,
