@@ -12,7 +12,7 @@ const buildMacAppMenu = (isAuthenticated) => {
     ...(build.isMAS() ? [] : [menuItems.checkForUpdates]),
     { type: 'separator' },
     menuItems.preferences(isAuthenticated),
-    { type: 'separator' },
+    ...(isAuthenticated ? [{ type: 'separator' }] : []),
     {
       role: 'services',
       submenu: [],
