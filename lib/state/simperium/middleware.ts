@@ -8,7 +8,6 @@ import { NoteBucket } from './functions/note-bucket';
 import { NoteDoctor } from './functions/note-doctor';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
-import { announceNoteUpdates } from './functions/change-announcer';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
 import { start as startConnectionMonitor } from './functions/connection-monitor';
 import { confirmBeforeClosingTab } from './functions/tab-close-confirmation';
@@ -95,7 +94,13 @@ export const initSimperium = (
     })
   );
 
-  noteBucket.channel.on('update', announceNoteUpdates(store));
+  if ('Notification' in window) {
+    import(
+      /* webpackChunkName: 'change-announcer' */ './functions/change-announcer'
+    ).then(({ announceNoteUpdates }) =>
+      noteBucket.channel.on('update', announceNoteUpdates(store))
+    );
+  }
 
   noteBucket.channel.localQueue.on('send', (change) => {
     dispatch({
