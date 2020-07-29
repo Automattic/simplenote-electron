@@ -33,6 +33,13 @@ const clearStorage = (): Promise<void> =>
         r.onsuccess = resolve;
         r.onerror = resolve;
       }),
+      new Promise((resolve) => {
+        const r = indexedDB.deleteDatabase('simplenote_v2');
+        r.onupgradeneeded = resolve;
+        r.onblocked = resolve;
+        r.onsuccess = resolve;
+        r.onerror = resolve;
+      }),
     ])
       .then(() => {
         window.electron?.send('clearCookies');
