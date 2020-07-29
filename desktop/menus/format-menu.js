@@ -13,10 +13,10 @@ const buildFormatMenu = (isAuthenticated) => {
   const formatMenu = {
     label: 'F&ormat',
     submenu,
-    visible: isAuthenticated,
   };
 
-  return formatMenu;
+  // we have nothing to show in this menu if not logged in
+  return isAuthenticated ? formatMenu : null;
 };
 
 module.exports = buildFormatMenu;
