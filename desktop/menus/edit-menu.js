@@ -34,19 +34,19 @@ const buildEditMenu = (settings, isAuthenticated) => {
         label: '&Select All',
         role: 'selectall',
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: '&Trash Note',
         visible: isAuthenticated,
         click: appCommandSender({ action: 'trashNote' }),
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Search &Notes…',
         visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'C&heck Spelling',
         visible: isAuthenticated,

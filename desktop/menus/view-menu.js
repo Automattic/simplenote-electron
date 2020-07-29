@@ -120,10 +120,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
           })
         ),
       },
-      {
-        type: 'separator',
-        visible: isAuthenticated,
-      },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Zoom &In',
         visible: isAuthenticated,
@@ -142,10 +139,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
         accelerator: 'CommandOrControl+0',
         click: appCommandSender({ action: 'resetFontSize' }),
       },
-      {
-        type: 'separator',
-        visible: isAuthenticated,
-      },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Focus Mode',
         visible: isAuthenticated,
