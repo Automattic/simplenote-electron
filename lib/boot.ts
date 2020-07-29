@@ -104,13 +104,21 @@ if (config.is_app_engine && !storedToken) {
   });
 }
 
+const ensureNormalization = () =>
+  !('normalize' in String.prototype)
+    ? import(/* webpackChunkName: 'unorm' */ 'unorm')
+    : Promise.resolve();
+
 const run = (
   token: string | null,
   username: string | null,
   createWelcomeNote: boolean
 ) => {
   if (token) {
-    import('./boot-with-auth').then(({ bootWithToken }) => {
+    Promise.all([
+      ensureNormalization(),
+      import(/* webpackChunkName: 'boot-with-auth' */ './boot-with-auth'),
+    ]).then(([unormPolyfillLoaded, { bootWithToken }]) => {
       bootWithToken(
         () => {
           bootLoggingOut();

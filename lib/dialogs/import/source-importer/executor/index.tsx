@@ -9,25 +9,27 @@ import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
 import ImportProgress from '../progress';
 
-import EvernoteImporter from '../../../../utils/import/evernote';
-import SimplenoteImporter from '../../../../utils/import/simplenote';
-import TextFileImporter from '../../../../utils/import/text-files';
-
-import * as S from '../../../../state/';
-import * as T from '../../../../types';
+import type * as S from '../../../../state/';
+import type * as T from '../../../../types';
 
 type ImporterSource = 'evernote' | 'plaintext' | 'simplenote';
 
-const getImporter = (importer: ImporterSource) => {
+const getImporter = (importer: ImporterSource): Promise<object> => {
   switch (importer) {
     case 'evernote':
-      return EvernoteImporter;
+      return import(
+        /* webpackChunkName: 'utils-import-evernote' */ '../../../../utils/import/evernote'
+      );
 
     case 'plaintext':
-      return TextFileImporter;
+      return import(
+        /* webpackChunkName: 'utils-import-text-files' */ '../../../../utils/import/text-files'
+      );
 
     case 'simplenote':
-      return SimplenoteImporter;
+      return import(
+        /* webpackChunkName: 'utils-import-simplenote' */ '../../../../utils/import/simplenote'
+      );
   }
 };
 
@@ -61,51 +63,54 @@ class ImportExecutor extends Component<Props> {
 
   initImporter = () => {
     const { slug: sourceSlug } = this.props.source;
-    const Importer = getImporter(sourceSlug);
 
-    const thisImporter = new Importer(this.props.importNote, {
-      isMarkdown: this.state.setMarkdown,
-    });
-    const updateProgress = throttle((arg) => {
-      this.setState({ importedNoteCount: arg });
-    }, 20);
+    return getImporter(sourceSlug).then(({ default: Importer }) => {
+      const thisImporter = new Importer(this.props.importNote, {
+        isMarkdown: this.state.setMarkdown,
+      });
+      const updateProgress = throttle((arg) => {
+        this.setState({ importedNoteCount: arg });
+      }, 20);
 
-    thisImporter.on('status', (type, arg) => {
-      switch (type) {
-        case 'progress':
-          updateProgress(arg);
-          break;
-        case 'complete':
-          this.setState({
-            finalNoteCount: arg,
-            isDone: true,
-          });
-          analytics.tracks.recordEvent('importer_import_completed', {
-            source: sourceSlug,
-            note_count: arg,
-          });
-          break;
-        case 'error':
-          this.setState({
-            errorMessage: arg,
-            shouldShowProgress: false,
-          });
-          window.setTimeout(() => {
-            this.setState({ isDone: true });
-          }, 200);
-          break;
-        default:
-      }
+      thisImporter.on('status', (type, arg) => {
+        switch (type) {
+          case 'progress':
+            updateProgress(arg);
+            break;
+          case 'complete':
+            this.setState({
+              finalNoteCount: arg,
+              isDone: true,
+            });
+            analytics.tracks.recordEvent('importer_import_completed', {
+              source: sourceSlug,
+              note_count: arg,
+            });
+            break;
+          case 'error':
+            this.setState({
+              errorMessage: arg,
+              shouldShowProgress: false,
+            });
+            window.setTimeout(() => {
+              this.setState({ isDone: true });
+            }, 200);
+            break;
+          default:
+        }
+      });
+
+      return thisImporter;
     });
-    return thisImporter;
   };
 
   startImport = () => {
     this.setState({ shouldShowProgress: true });
     this.props.onStart();
 
-    const importer = this.initImporter();
-    importer.importNotes(this.props.files);
+    this.initImporter().then((importer) => {
+      importer.importNotes(this.props.files);
+    });
   };
 
   render() {

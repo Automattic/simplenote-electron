@@ -6,7 +6,6 @@ if (__TEST__) {
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import 'unorm';
 
 import React from 'react';
 import App from './app';
