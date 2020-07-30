@@ -157,6 +157,7 @@ class NoteContentEditor extends Component<Props> {
     window.editor = editor;
     window.monaco = monaco;
     this.editor = editor;
+    this.monaco = monaco;
 
     const titleDecoration = (line: number) => ({
       range: new monaco.Range(line, 1, line, 1),
@@ -241,9 +242,14 @@ class NoteContentEditor extends Component<Props> {
         target: { range },
       } = e;
 
-      const offset = editor.getModel()!.getOffsetAt({
-        lineNumber: range!.startLineNumber,
-        column: range!.startColumn,
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+
+      const offset = model.getOffsetAt({
+        lineNumber: range.startLineNumber,
+        column: range.startColumn,
       });
 
       this.setState({
@@ -258,9 +264,14 @@ class NoteContentEditor extends Component<Props> {
         target: { range },
       } = event;
 
-      const offset = editor.getModel()!.getOffsetAt({
-        lineNumber: range!.startLineNumber,
-        column: range!.startColumn,
+      const model = editor.getModel();
+      if (!model) {
+        return;
+      }
+
+      const offset = model.getOffsetAt({
+        lineNumber: range.startLineNumber,
+        column: range.startColumn,
       });
 
       if (content[offset] === '\ue000') {
@@ -277,10 +288,91 @@ class NoteContentEditor extends Component<Props> {
     });
   };
 
-  updateNote: ChangeHandler = (nextValue, event) => {
+  updateNote: ChangeHandler = (value, event) => {
     const { editNote, noteId } = this.props;
 
-    editNote(noteId, { content: withCheckboxSyntax(nextValue) });
+    if (!this.editor) {
+      return;
+    }
+
+    const autolist = () => {
+      // perform list auto-complete
+      if (!this.editor || event.isRedoing || event.isUndoing) {
+        return;
+      }
+
+      const change = event.changes.find(
+        ({ text }) => text[0] === '\n' && text.trim() === ''
+      );
+
+      if (!change) {
+        return;
+      }
+
+      const lineNumber = change.range.startLineNumber;
+      if (
+        lineNumber === 0 ||
+        // the newline change starts and ends on one line
+        lineNumber !== change.range.endLineNumber
+      ) {
+        return;
+      }
+
+      const model = this.editor.getModel();
+      const prevLine = model.getLineContent(lineNumber);
+
+      const prevList = /^(\s+)([-+*\u2022])(\s+)/.exec(prevLine);
+      if (null === prevList) {
+        return;
+      }
+
+      const thisLine = model.getLineContent(lineNumber + 1);
+      if (!/^\s*$/.test(thisLine)) {
+        return;
+      }
+
+      const lineStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 1,
+      });
+
+      const nextStart = model.getOffsetAt({
+        column: 0,
+        lineNumber: lineNumber + 2,
+      });
+
+      const range = new this.monaco.Range(
+        lineNumber + 1,
+        0,
+        lineNumber + 1,
+        thisLine.length
+      );
+      const identifier = { major: 1, minor: 1 };
+      const text = prevList[0];
+      const op = { identifier, range, text, forceMoveMarkers: true };
+      this.editor.executeEdits('autolist', [op]);
+
+      // for some reason this wasn't updating
+      // the cursor position when executed immediately
+      // so we are running it on the next micro-task
+      Promise.resolve().then(() =>
+        this.editor.setPosition({
+          column: prevList[0].length + 1,
+          lineNumber: lineNumber + 1,
+        })
+      );
+
+      return (
+        value.slice(0, lineStart) +
+        prevList[0] +
+        event.eol +
+        value.slice(nextStart)
+      );
+    };
+
+    const content = autolist() || value;
+
+    editNote(noteId, { content: withCheckboxSyntax(content) });
   };
 
   render() {
