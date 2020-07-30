@@ -135,7 +135,7 @@ class NoteContentEditor extends Component<Props> {
     }
     if (prevProps.lineLength !== this.props.lineLength) {
       setTimeout(() => {
-        window?.editor.layout();
+        window?.editor?.layout();
       }, 400);
     }
   }
