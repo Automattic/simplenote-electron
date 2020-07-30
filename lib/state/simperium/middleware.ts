@@ -206,7 +206,6 @@ export const initSimperium = (
   });
 
   return (next) => (action: A.ActionType) => {
-    console.log(action);
     const prevState = store.getState();
     const result = next(action);
     const nextState = store.getState();

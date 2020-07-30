@@ -249,6 +249,10 @@ class NoteContentEditor extends Component<Props> {
         target: { range },
       } = e;
 
+      if (!range) {
+        return;
+      }
+
       const model = editor.getModel();
       if (!model) {
         return;
@@ -270,6 +274,10 @@ class NoteContentEditor extends Component<Props> {
       const {
         target: { range },
       } = event;
+
+      if (!range) {
+        return;
+      }
 
       const model = editor.getModel();
       if (!model) {
@@ -328,7 +336,7 @@ class NoteContentEditor extends Component<Props> {
       const model = this.editor.getModel();
       const prevLine = model.getLineContent(lineNumber);
 
-      const prevList = /^(\s+)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
+      const prevList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
       if (null === prevList) {
         return;
       }
