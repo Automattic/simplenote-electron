@@ -57,16 +57,23 @@ class NoteContentEditor extends Component<Props> {
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
+    const {
+      note: { content },
+    } = props;
+    const goFast = content.length > 5000;
+
     if (props.noteId !== state.noteId) {
       return {
-        content: props.note.content.slice(0, props.editorSelection[1] + 5000),
-        editor: 'fast',
+        content: goFast
+          ? content.slice(0, props.editorSelection[1] + 5000)
+          : withCheckboxCharacters(content),
+        editor: goFast ? 'fast' : 'full',
         noteId: props.noteId,
       };
     }
 
-    return props.note.content !== state.content
-      ? { content: withCheckboxCharacters(props.note.content) }
+    return content !== state.content
+      ? { content: withCheckboxCharacters(content) }
       : null;
   }
 
