@@ -328,7 +328,7 @@ class NoteContentEditor extends Component<Props> {
       const model = this.editor.getModel();
       const prevLine = model.getLineContent(lineNumber);
 
-      const prevList = /^(\s+)([-+*\u2022])(\s+)/.exec(prevLine);
+      const prevList = /^(\s+)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
       if (null === prevList) {
         return;
       }
