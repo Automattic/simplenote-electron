@@ -5,11 +5,36 @@ import { isElectron } from '../../utils/platform';
 const BetaBar = () => {
   const [isVisible, setIsVisible] = useState(true);
 
-  return !isElectron && isVisible ? (
+  const shouldShowBanner = () => {
+    if (isElectron) {
+      return false;
+    }
+    try {
+      const stored = localStorage.getItem('betaBannerDismissedAt');
+      const dismissedAt = stored ? parseInt(stored, 10) : -Infinity;
+
+      return (
+        isNaN(dismissedAt) || Date.now() - dismissedAt > 7 * 24 * 60 * 60 * 1000
+      );
+    } catch (e) {
+      return true;
+    }
+  };
+
+  const dismissBanner = () => {
+    setIsVisible(false);
+    try {
+      localStorage.setItem('betaBannerDismissedAt', Date.now().toString());
+    } catch (e) {
+      // pass
+    }
+  };
+
+  return isVisible && shouldShowBanner() ? (
     <div className="beta-bar">
       You&lsquo;re invited to try Simplenote Beta.
       <a href="https://staging.simplenote.com">Try it now.</a>
-      <a className="icon" onClick={() => setIsVisible(false)}>
+      <a className="icon" onClick={dismissBanner}>
         <SmallCrossIcon />
       </a>
     </div>
