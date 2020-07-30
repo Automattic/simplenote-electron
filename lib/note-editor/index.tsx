@@ -124,13 +124,13 @@ export class NoteEditor extends Component<Props> {
 
     const isTrashed = !!note.deleted;
 
-    const lastUpdatedDate = lastUpdated
-      ? new Date(lastUpdated).toLocaleString()
-      : 'Unknown';
-
     return (
       <div className="note-editor theme-color-bg theme-color-fg">
-        <div className="last-sync">Last synced: {lastUpdatedDate}</div>
+        <div className="last-sync">
+          {lastUpdated && (
+            <span>Last synced: {new Date(lastUpdated).toLocaleString()}</span>
+          )}
+        </div>
         {editMode || !note.systemTags.includes('markdown') ? (
           <NoteDetail
             storeFocusEditor={this.storeFocusEditor}
