@@ -48,6 +48,7 @@ type OwnState = {
 
 class NoteContentEditor extends Component<Props> {
   editor: Editor.IStandaloneCodeEditor | null = null;
+  monaco: Monaco | null = null;
 
   state: OwnState = {
     content: '',
@@ -160,9 +161,6 @@ class NoteContentEditor extends Component<Props> {
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
-    // @TODO remove these
-    window.editor = editor;
-    window.monaco = monaco;
     this.editor = editor;
     this.monaco = monaco;
 

@@ -20,7 +20,6 @@ type DiffOp<T> =
 
 type JSONDiff<T> = { [K in keyof T]?: DiffOp<T[K]> };
 
-// @TODO: No support in IE - don't load…
 export const announceNoteUpdates = ({ dispatch, getState }: S.Store) => {
   const noteIfy = (noteId: EntityId, title: string, body: string) =>
     (new Notification(title, { body, tag: noteId }).onclick = () =>
