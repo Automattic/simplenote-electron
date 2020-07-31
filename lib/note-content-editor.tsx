@@ -47,6 +47,7 @@ type OwnState = {
 };
 
 class NoteContentEditor extends Component<Props> {
+  bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
 
@@ -81,7 +82,7 @@ class NoteContentEditor extends Component<Props> {
   componentDidMount() {
     const { noteId } = this.props;
     window.addEventListener('keydown', this.handleKeys, true);
-    setTimeout(() => {
+    this.bootTimer = setTimeout(() => {
       if (noteId === this.props.noteId) {
         this.setState({
           editor: 'full',
@@ -92,6 +93,9 @@ class NoteContentEditor extends Component<Props> {
   }
 
   componentWillUnmount() {
+    if (this.bootTimer) {
+      clearTimeout(this.bootTimer);
+    }
     window.removeEventListener('keydown', this.handleKeys, true);
   }
 
@@ -125,20 +129,6 @@ class NoteContentEditor extends Component<Props> {
             : SelectionDirection.LTR
         )
       );
-    }
-
-    // @TODO is this really a smart thing? It's super fast when navigating
-    //       through the notes but also could be jerky and sensitive to
-    //       tuning of the delay
-    if (this.state.editor === 'fast') {
-      setTimeout(() => {
-        if (noteId === this.props.noteId) {
-          this.setState({
-            editor: 'full',
-            content: withCheckboxCharacters(this.props.note.content),
-          });
-        }
-      }, SPEED_DELAY);
     }
   }
 
