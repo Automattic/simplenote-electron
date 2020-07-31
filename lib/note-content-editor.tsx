@@ -289,13 +289,15 @@ class NoteContentEditor extends Component<Props> {
 
       if (content[offset] === '\ue000') {
         editNote(noteId, {
-          content:
-            content.slice(0, offset) + '\ue001' + content.slice(offset + 1),
+          content: withCheckboxSyntax(
+            content.slice(0, offset) + '\ue001' + content.slice(offset + 1)
+          ),
         });
       } else if (content[offset] === '\ue001') {
         editNote(noteId, {
-          content:
-            content.slice(0, offset) + '\ue000' + content.slice(offset + 1),
+          content: withCheckboxSyntax(
+            content.slice(0, offset) + '\ue000' + content.slice(offset + 1)
+          ),
         });
       }
     });
