@@ -26,7 +26,8 @@ const storeOptOut = () => {
 const BetaBar = () => {
   const [isVisible, setIsVisible] = useState(loadOptOut());
   const dismissBanner = () => {
-    storeOptOut(), setIsVisible(false);
+    storeOptOut();
+    setIsVisible(false);
   };
 
   return !isElectron && isVisible ? (
