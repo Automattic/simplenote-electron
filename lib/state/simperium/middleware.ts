@@ -5,7 +5,7 @@ import actions from '../actions';
 import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
 import { NoteBucket } from './functions/note-bucket';
-import { NoteDoctor } from './functions/note-doctor';
+// import { NoteDoctor } from './functions/note-doctor';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
@@ -195,7 +195,7 @@ export const initSimperium = (
   }
 
   // walk notes and queue any for sync which have discrepancies with their ghost
-  new NoteDoctor(store, noteQueue);
+  // new NoteDoctor(store, noteQueue);
 
   window.addEventListener('storage', (event) => {
     if (event.key === 'simplenote_logout') {
