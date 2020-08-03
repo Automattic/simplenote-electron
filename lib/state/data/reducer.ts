@@ -18,6 +18,9 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
     case 'SET_ANALYTICS':
       return action.allowAnalytics;
 
+    case 'TOGGLE_ANALYTICS':
+      return state === null ? false : !state;
+
     default:
       return state;
   }

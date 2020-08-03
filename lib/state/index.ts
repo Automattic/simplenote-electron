@@ -50,13 +50,16 @@ export type State = {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export const makeStore = (accountName: string, ...middlewares: Middleware[]) =>
+export const makeStore = (
+  accountName: string | null,
+  ...middlewares: Middleware[]
+) =>
   persistence
     .loadState(accountName)
     .then(([initialData, persistenceMiddleware]) =>
       createStore<State, A.ActionType, {}, {}>(
         reducers,
-        initialData,
+        { ...initialData, settings: { ...initialData.settings, accountName } },
         composeEnhancers(
           persistState('settings', {
             key: 'simpleNote',

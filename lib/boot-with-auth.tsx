@@ -35,8 +35,6 @@ export const bootWithToken = (
     username,
     initSimperium(logout, token, username, createWelcomeNote)
   ).then((store) => {
-    store.dispatch(actions.settings.setAccountName(username));
-
     Object.defineProperties(window, {
       dispatch: {
         get() {

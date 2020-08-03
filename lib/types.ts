@@ -39,6 +39,8 @@ export type Preferences = {
   analytics_enabled: boolean | null;
 };
 
+export type AnalyticsRecord = [string, JSONSerializable | undefined];
+
 export type PreferencesEntity = Entity<Preferences>;
 
 ///////////////////////////////////////

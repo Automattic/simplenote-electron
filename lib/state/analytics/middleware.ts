@@ -1,10 +1,10 @@
 import analytics from '../../analytics';
 
-import * as A from '../action-types';
-import * as S from '../';
-import * as T from '../types';
+import type * as A from '../action-types';
+import type * as S from '../';
+import type * as T from '../../types';
 
-let eventQueue = [];
+let eventQueue: T.AnalyticsRecord[] = [];
 
 export const recordEvent = (
   name: string,
@@ -14,17 +14,24 @@ export const recordEvent = (
 };
 
 export const middleware: S.Middleware = (store) => {
-  let record = recordEvent;
-  if (store.getState().data.analyticsAllowed === true) {
-    record = analytics.tracks.recordEvent;
-  } else if (store.getState().data.analyticsAllowed === false) {
-    record = (name: string, properties: T.JSONSerializable = {}) => {
-      return; // discard events while analytics is opted-out
-    };
-  }
+  const record = (name: string, properties: T.JSONSerializable = {}) => {
+    switch (store.getState().data.analyticsAllowed) {
+      case true:
+        analytics.tracks.recordEvent(name, properties);
+        return;
+
+      case false:
+        return;
+
+      case null:
+        eventQueue.push([name, properties]);
+        return;
+    }
+  };
 
   return (next) => (action: A.ActionType) => {
     const result = next(action);
+    const nextState = store.getState();
 
     /* catch-all meta used by redux components for these events:
          - importer_import_completed
@@ -37,8 +44,9 @@ export const middleware: S.Middleware = (store) => {
 
     switch (action.type) {
       case 'SET_ANALYTICS':
-        // @todo the simperium middleware SHOULD be dispatching this on preferences loaded, but it never fires
-        if (action.allowAnalytics === true) {
+      case 'TOGGLE_ANALYTICS':
+        console.log(action);
+        if (nextState.data.analyticsAllowed === true) {
           // make sure that tracking starts after preferences are loaded
           eventQueue.forEach(([name, properties]) =>
             analytics.tracks.recordEvent(name, properties)
@@ -95,8 +103,6 @@ export const middleware: S.Middleware = (store) => {
         record('list_trash_viewed');
         break;
       case 'setAccountName':
-        // @todo this action gets dispatched twice on login. one is in initSimperium and one is in boot.tsx
-        // on page refresh when already logged in, it gets dispatched once
         analytics.initialize(action.accountName);
         record('user_signed_in');
         break;

@@ -162,12 +162,18 @@ export const initSimperium = (
   });
 
   preferencesBucket.channel.on('ready', () =>
-    preferencesBucket.touch('preferences-key').then((updatedEntity) =>
+    preferencesBucket.touch('preferences-key').then(() => {
+      const analyticsAllowed = store.getState().data.analyticsAllowed;
+
+      if (null === analyticsAllowed) {
+        return;
+      }
+
       dispatch({
         type: 'SET_ANALYTICS',
-        allowAnalytics: !!updatedEntity.analytics_enabled,
-      })
-    )
+        allowAnalytics: analyticsAllowed,
+      });
+    })
   );
 
   if (createWelcomeNote) {
