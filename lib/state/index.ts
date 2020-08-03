@@ -59,14 +59,19 @@ export const makeStore = (
     .then(([initialData, persistenceMiddleware]) =>
       createStore<State, A.ActionType, {}, {}>(
         reducers,
-        { ...initialData, settings: { ...initialData.settings, accountName } },
+        {
+          ...initialData,
+          settings: {
+            ...initialData.settings,
+            accountName: initialData.settings?.accountName ?? accountName,
+          },
+        },
         composeEnhancers(
           persistState('settings', {
             key: 'simpleNote',
             slicer: (path) => (state) => ({
               // Omit property from persisting
               [path]: omit(state[path], [
-                'accountName',
                 'allowNotifications',
                 'focusModeEnabled',
               ]),

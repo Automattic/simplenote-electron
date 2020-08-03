@@ -18,6 +18,12 @@ const clearStorage = (): Promise<void> =>
     localStorage.removeItem('localQueue:tag');
     localStorage.removeItem('stored_user');
 
+    const settings = localStorage.getItem('simpleNote');
+    if (settings) {
+      const { accountName, ...otherSettings } = settings;
+      localStorage.setItem('simpleNote', otherSettings);
+    }
+
     Promise.all([
       new Promise((resolve) => {
         const r = indexedDB.deleteDatabase('ghost');

@@ -59,7 +59,7 @@ export const loadState = (
             }
 
             try {
-              if (state.accountName !== accountName) {
+              if (accountName !== null && state.accountName !== accountName) {
                 resolve([{}, middleware]);
                 return;
               }
@@ -77,6 +77,9 @@ export const loadState = (
                   notes: new Map(state.notes),
                   noteTags,
                   tags: new Map(state.tags),
+                },
+                settings: {
+                  accountName: state.accountName,
                 },
                 simperium: {
                   ghosts: [new Map(state.cvs), new Map(state.ghosts)],
