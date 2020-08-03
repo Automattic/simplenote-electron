@@ -73,8 +73,8 @@ export const makeStore = (
             }),
           }),
           applyMiddleware(
-            analyticsMiddleware,
             dataMiddleware,
+            analyticsMiddleware,
             browserMiddleware,
             searchMiddleware,
             searchFieldMiddleware,

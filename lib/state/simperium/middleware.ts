@@ -162,18 +162,7 @@ export const initSimperium = (
   });
 
   preferencesBucket.channel.on('ready', () =>
-    preferencesBucket.touch('preferences-key').then(() => {
-      const analyticsAllowed = store.getState().data.analyticsAllowed;
-
-      if (null === analyticsAllowed) {
-        return;
-      }
-
-      dispatch({
-        type: 'SET_ANALYTICS',
-        allowAnalytics: analyticsAllowed,
-      });
-    })
+    preferencesBucket.channel.sendIndexRequest()
   );
 
   if (createWelcomeNote) {
@@ -203,6 +192,7 @@ export const initSimperium = (
     tagQueue.add(tagHash, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
+    window.preferencesBucket = preferencesBucket;
     window.noteBucket = noteBucket;
     window.tagBucket = tagBucket;
     window.noteQueue = noteQueue;
@@ -327,19 +317,6 @@ export const initSimperium = (
             {
               ...preferences.data,
               analytics_enabled: action.allowAnalytics,
-            },
-            { sync: true }
-          );
-        });
-        return result;
-
-      case 'TOGGLE_ANALYTICS':
-        preferencesBucket.get('preferences-key').then((preferences) => {
-          preferencesBucket.update(
-            'preferences-key',
-            {
-              ...preferences.data,
-              analytics_enabled: !preferences.data.analytics_enabled,
             },
             { sync: true }
           );

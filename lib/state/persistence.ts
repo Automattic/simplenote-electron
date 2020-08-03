@@ -73,6 +73,7 @@ export const loadState = (
 
               const data: T.RecursivePartial<S.State> = {
                 data: {
+                  analyticsAllowed: state.allowAnalytics ?? null,
                   notes: new Map(state.notes),
                   noteTags,
                   tags: new Map(state.tags),
@@ -165,6 +166,7 @@ export const saveState = (state: S.State) => {
 
   const data = {
     accountName: state.settings.accountName,
+    allowAnalytics: state.data.analyticsAllowed,
     notes,
     noteTags,
     tags,

@@ -44,8 +44,6 @@ export const middleware: S.Middleware = (store) => {
 
     switch (action.type) {
       case 'SET_ANALYTICS':
-      case 'TOGGLE_ANALYTICS':
-        console.log(action);
         if (nextState.data.analyticsAllowed === true) {
           // make sure that tracking starts after preferences are loaded
           eventQueue.forEach(([name, properties]) =>
