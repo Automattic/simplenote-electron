@@ -64,6 +64,7 @@ module.exports = function main() {
       show: false,
       webPreferences: {
         contextIsolation: true,
+        enableRemoteModule: false,
         nodeIntegration: false,
         preload: path.join(__dirname, './preload.js'),
       },
