@@ -1,60 +1,14 @@
 import { combineReducers } from 'redux';
 
-import { tagHashOf as t, tagNameOf } from '../../utils/tag-hash';
+import {
+  tagHashOf as t,
+  tagNameOf,
+  withTag,
+  withoutTag,
+} from '../../utils/tag-hash';
 
 import type * as A from '../action-types';
 import type * as T from '../../types';
-
-// @TODO: Move this into some framework spot
-// still no IE support
-// https://tc39.github.io/ecma262/#sec-array.prototype.findindex
-/* eslint-disable */
-if (!Array.prototype.findIndex) {
-  Object.defineProperty(Array.prototype, 'findIndex', {
-    value: function (predicate: Function) {
-      // 1. Let O be ? ToObject(this value).
-      if (this == null) {
-        throw new TypeError('"this" is null or not defined');
-      }
-
-      var o = Object(this);
-
-      // 2. Let len be ? ToLength(? Get(O, "length")).
-      var len = o.length >>> 0;
-
-      // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-      if (typeof predicate !== 'function') {
-        throw new TypeError('predicate must be a function');
-      }
-
-      // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-      var thisArg = arguments[1];
-
-      // 5. Let k be 0.
-      var k = 0;
-
-      // 6. Repeat, while k < len
-      while (k < len) {
-        // a. Let Pk be ! ToString(k).
-        // b. Let kValue be ? Get(O, Pk).
-        // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-        // d. If testResult is true, return k.
-        var kValue = o[k];
-        if (predicate.call(thisArg, kValue, k, o)) {
-          return k;
-        }
-        // e. Increase k by 1.
-        k++;
-      }
-
-      // 7. Return -1.
-      return -1;
-    },
-    configurable: true,
-    writable: true,
-  });
-}
-/* eslint-enable */
 
 export const analyticsAllowed: A.Reducer<boolean | null> = (
   state = null,
@@ -80,10 +34,11 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         return state;
       }
 
-      return new Map(state).set(action.noteId, {
-        ...note,
-        tags: [...note.tags, action.tagName],
-      });
+      const tags = withTag(note.tags, action.tagName);
+
+      return tags !== note.tags
+        ? new Map(state).set(action.noteId, { ...note, tags })
+        : state;
     }
 
     case 'CREATE_NOTE_WITH_ID':
@@ -200,29 +155,50 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         return state;
       }
 
-      return new Map(state).set(action.noteId, {
-        ...note,
-        tags: note.tags.filter((tag) => tag !== action.tagName),
-      });
+      const tags = withoutTag(note.tags, action.tagName);
+
+      return tags !== note.tags
+        ? new Map(state).set(action.noteId, { ...note, tags })
+        : state;
     }
 
     case 'RENAME_TAG': {
       const oldHash = t(action.oldTagName);
+      const newHash = t(action.newTagName);
 
       const next = new Map(state);
       next.forEach((note, noteId) => {
-        const tagAt = note.tags.findIndex((tagName) => t(tagName) === oldHash);
+        const newTags: T.TagName[] = [];
+        const hashes = new Set<T.TagHash>();
+        let hasRenamedTag = false;
 
-        if (-1 !== tagAt) {
-          next.set(noteId, {
-            ...note,
-            tags: [
-              ...note.tags.slice(0, tagAt),
-              action.newTagName,
-              ...note.tags.slice(tagAt + 1),
-            ],
-          });
+        note.tags.forEach((tagName) => {
+          const hash = t(tagName);
+
+          // if we get through this and haven't seen the renamed tag then we
+          // can return the original tag state and avoid modifying the note
+          hasRenamedTag = hasRenamedTag || hash === oldHash || hash === newHash;
+
+          if (hashes.has(hash)) {
+            return;
+          }
+
+          if (oldHash !== hash) {
+            hashes.add(hash);
+            newTags.push(tagName);
+          }
+
+          if (!hashes.has(newHash)) {
+            hashes.add(newHash);
+            newTags.push(action.newTagName);
+          }
+        });
+
+        if (!hasRenamedTag) {
+          return;
         }
+
+        next.set(noteId, { ...note, tags: newTags });
       });
 
       return next;
@@ -249,21 +225,21 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       });
 
     case 'TRASH_TAG': {
-      const tagHash = t(action.tagName);
       const next = new Map(state);
+      let changedIt = false;
 
       next.forEach((note, noteId) => {
-        const tagAt = note.tags.findIndex((tagName) => t(tagName) === tagHash);
+        const tags = withoutTag(note.tags, action.tagName);
 
-        if (-1 !== tagAt) {
-          next.set(noteId, {
-            ...note,
-            tags: [...note.tags.slice(0, tagAt), ...note.tags.slice(tagAt + 1)],
-          });
+        if (tags === note.tags) {
+          return;
         }
+
+        changedIt = true;
+        next.set(noteId, { ...note, tags });
       });
 
-      return next;
+      return changedIt ? next : state;
     }
 
     default:
