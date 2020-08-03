@@ -161,6 +161,15 @@ export const initSimperium = (
     });
   });
 
+  preferencesBucket.channel.on('ready', () =>
+    preferencesBucket.touch('preferences-key').then((updatedEntity) =>
+      dispatch({
+        type: 'SET_ANALYTICS',
+        allowAnalytics: !!updatedEntity.analytics_enabled,
+      })
+    )
+  );
+
   if (createWelcomeNote) {
     import(
       /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
