@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { throttle } from 'lodash';
 
 import actions from '../../../../state/actions';
-import { recordEvent } from '../../../../state/analytics/middleware';
 
 import PanelTitle from '../../../../components/panel-title';
 import TransitionFadeInOut from '../../../../components/transition-fade-in-out';
@@ -98,6 +97,7 @@ class ImportExecutor extends Component<Props> {
             }, 200);
             break;
           default:
+            break;
         }
       });
 
@@ -181,7 +181,7 @@ class ImportExecutor extends Component<Props> {
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   importNote: actions.data.importNote,
-  recordEvent,
+  recordEvent: actions.analytics.recordEvent,
 };
 
 export default connect(null, mapDispatchToProps)(ImportExecutor);

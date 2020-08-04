@@ -31,7 +31,6 @@ export const middleware: S.Middleware = (store) => {
 
   return (next) => (action: A.ActionType) => {
     const result = next(action);
-    const nextState = store.getState();
 
     /* catch-all meta used by redux components for these events:
          - importer_import_completed
