@@ -4,7 +4,6 @@ import 'focus-visible/dist/focus-visible.js';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
-import BetaBar from './components/beta-bar';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { isElectron, isMac } from './utils/platform';
@@ -162,7 +161,6 @@ class AppComponent extends Component<Props> {
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
           <AppLayout />
-          <BetaBar />
           {showNoteInfo && <NoteInfo />}
         </div>
         <DialogRenderer appProps={this.props} />
