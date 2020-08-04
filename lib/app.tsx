@@ -9,6 +9,7 @@ import browserShell from './browser-shell';
 import NoteInfo from './note-info';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
+import BetaBar from './components/beta-bar';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import exportZipArchive from './utils/export';
@@ -452,6 +453,7 @@ export const App = connect(
       return (
         <div className={appClasses}>
           {isDevConfig && <DevBadge />}
+          <BetaBar />
           <div className={mainClasses}>
             {showNavigation && <NavigationBar />}
             <AppLayout
