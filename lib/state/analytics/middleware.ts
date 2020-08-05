@@ -1,11 +1,16 @@
 import analytics from '../../analytics';
-import * as Sentry from '@sentry/react';
+import getConfig from '../../../get-config';
+import isDevConfig from '../../utils/is-dev-config';
+
+const config = getConfig();
 
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
 
 let eventQueue: T.AnalyticsRecord[] = [];
+
+let Sentry;
 
 export const recordEvent = (
   name: string,
@@ -49,15 +54,22 @@ export const middleware: S.Middleware = (store) => {
 
         if (action.allowAnalytics) {
           // make sure that tracking starts after preferences are loaded
-          Sentry.init({
-            dsn:
-              'https://e5349c4269ef4665bfc44be218a786c2@o248881.ingest.sentry.io/5378892',
-          });
+          if (!isDevConfig(config?.development)) {
+            import(/* webpackChunkName: 'sentry' */ '@sentry/react').then(
+              (SentryModule) => {
+                Sentry = SentryModule;
+                Sentry.init({
+                  dsn:
+                    'https://e5349c4269ef4665bfc44be218a786c2@o248881.ingest.sentry.io/5378892',
+                });
+              }
+            );
+          }
           eventQueue.forEach(([name, properties]) =>
             analytics.tracks.recordEvent(name, properties)
           );
         } else {
-          Sentry.close(0);
+          Sentry?.close(0);
         }
 
         eventQueue = [];
