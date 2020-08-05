@@ -5,7 +5,6 @@ import './utils/ensure-platform-support';
 
 import { parse } from 'cookie';
 
-import analytics from './analytics';
 import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
 import { boot as bootLoggingOut } from './logging-out';
@@ -24,8 +23,13 @@ const clearStorage = (): Promise<void> =>
 
     const settings = localStorage.getItem('simpleNote');
     if (settings) {
-      const { accountName, ...otherSettings } = settings;
-      localStorage.setItem('simpleNote', otherSettings);
+      try {
+        const { accountName, ...otherSettings } = JSON.parse(settings);
+        localStorage.setItem('simpleNote', JSON.stringify(otherSettings));
+      } catch (e) {
+        // pass - we only care if we can successfully do this,
+        //        not if we fail to do it
+      }
     }
 
     Promise.all([

@@ -44,8 +44,9 @@ class AppWithoutAuth extends Component<Props, State> {
     window.electron?.receive('appCommand', this.onAppCommand);
   }
 
-  componentWillUnmount() {
+  login(token: string, username: string, createWelcomeNote: boolean) {
     window.electron?.removeListener('appCommand');
+    this.props.onAuth(token, username, createWelcomeNote);
   }
 
   onAppCommand = (event) => {
@@ -76,7 +77,7 @@ class AppWithoutAuth extends Component<Props, State> {
           if (!user.access_token) {
             throw new Error('missing access token');
           }
-          this.props.onAuth(user.access_token, username, false);
+          this.login(user.access_token, username, false);
         })
         .catch((error: unknown) => {
           if (
@@ -106,7 +107,7 @@ class AppWithoutAuth extends Component<Props, State> {
           }
 
           recordEvent('user_account_created');
-          this.props.onAuth(user.access_token, username, true);
+          this.login(user.access_token, username, true);
         })
         .catch(() => {
           this.setState({ authStatus: 'unknown-error' });
@@ -115,7 +116,7 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   tokenLogin = (username: string, token: string) => {
-    this.props.onAuth(token, username, false);
+    this.login(token, username, false);
   };
 
   render() {
