@@ -212,3 +212,7 @@
     box-shadow: inset 0 0 0 #959da5;
   }
 }
+
+.monaco-editor.monaco-editor .detected-link {
+  text-underline-position: initial;
+}
