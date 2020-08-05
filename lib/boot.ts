@@ -1,3 +1,6 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import './utils/ensure-platform-support';
 
 import { parse } from 'cookie';

@@ -4,9 +4,6 @@ if (__TEST__) {
   window.testEvents = [];
 }
 
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
 import React from 'react';
 import App from './app';
 import Modal from 'react-modal';
