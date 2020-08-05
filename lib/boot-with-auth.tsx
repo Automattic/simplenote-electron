@@ -12,7 +12,6 @@ import App from './app';
 import Modal from 'react-modal';
 import getConfig from '../get-config';
 import { makeStore } from './state';
-import actions from './state/actions';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { initSimperium } from './state/simperium/middleware';
