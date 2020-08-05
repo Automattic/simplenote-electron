@@ -1,4 +1,5 @@
 import analytics from '../../analytics';
+import * as Sentry from '@sentry/react';
 
 import type * as A from '../action-types';
 import type * as S from '../';
@@ -48,9 +49,15 @@ export const middleware: S.Middleware = (store) => {
 
         if (action.allowAnalytics) {
           // make sure that tracking starts after preferences are loaded
+          Sentry.init({
+            dsn:
+              'https://e5349c4269ef4665bfc44be218a786c2@o248881.ingest.sentry.io/5378892',
+          });
           eventQueue.forEach(([name, properties]) =>
             analytics.tracks.recordEvent(name, properties)
           );
+        } else {
+          Sentry.close(0);
         }
 
         eventQueue = [];
