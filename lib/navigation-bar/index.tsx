@@ -1,8 +1,7 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 
-import { isElectron } from '../utils/platform';
 import ConnectionStatus from '../connection-status';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
@@ -91,42 +90,38 @@ export class NavigationBar extends Component<Props> {
           </div>
         </div>
 
-        {(!isElectron || autoHideMenuBar) && (
-          <Fragment>
-            <div className="navigation-bar__tools theme-color-border">
-              <NavigationBarItem
-                icon={<SettingsIcon />}
-                label="Settings"
-                onClick={onSettings}
-              />
-            </div>
-            <div className="navigation-bar__footer">
-              <button
-                type="button"
-                className="navigation-bar__footer-item theme-color-fg-dim"
-                onClick={this.props.showKeyboardShortcuts}
-              >
-                Keyboard Shortcuts
-              </button>
-            </div>
-            <div className="navigation-bar__footer">
-              <button
-                type="button"
-                className="navigation-bar__footer-item theme-color-fg-dim"
-                onClick={this.onHelpClicked}
-              >
-                Help &amp; Support
-              </button>
-              <button
-                type="button"
-                className="navigation-bar__footer-item theme-color-fg-dim"
-                onClick={onAbout}
-              >
-                About
-              </button>
-            </div>
-          </Fragment>
-        )}
+        <div className="navigation-bar__tools theme-color-border">
+          <NavigationBarItem
+            icon={<SettingsIcon />}
+            label="Settings"
+            onClick={onSettings}
+          />
+        </div>
+        <div className="navigation-bar__footer">
+          <button
+            type="button"
+            className="navigation-bar__footer-item theme-color-fg-dim"
+            onClick={this.props.showKeyboardShortcuts}
+          >
+            Keyboard Shortcuts
+          </button>
+        </div>
+        <div className="navigation-bar__footer">
+          <button
+            type="button"
+            className="navigation-bar__footer-item theme-color-fg-dim"
+            onClick={this.onHelpClicked}
+          >
+            Help &amp; Support
+          </button>
+          <button
+            type="button"
+            className="navigation-bar__footer-item theme-color-fg-dim"
+            onClick={onAbout}
+          >
+            About
+          </button>
+        </div>
       </div>
     );
   }
