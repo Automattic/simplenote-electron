@@ -299,6 +299,12 @@ export const initSimperium = (
           setTimeout(() => tagBucket.remove(oldHash), 10);
         }
 
+        nextState.data.notes.forEach((note, noteId) => {
+          if (prevState.data.notes.get(noteId) !== note) {
+            queueNoteUpdate(noteId);
+          }
+        });
+
         queueTagUpdate(newHash);
         return result;
       }
