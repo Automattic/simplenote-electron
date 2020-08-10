@@ -250,12 +250,15 @@ export const middleware: S.Middleware = (store) => {
     },
   });
 
-  const withNextNote = <T extends A.ActionType>(action: T): T => {
+  const withNextNote = <T extends A.ActionType>(
+    noteId: T.EntityId,
+    action: T
+  ): T => {
     const {
       ui: { filteredNotes, openedNote },
     } = store.getState();
 
-    if (!openedNote) {
+    if (!openedNote || openedNote !== noteId) {
       return action;
     }
 
@@ -333,7 +336,7 @@ export const middleware: S.Middleware = (store) => {
       case 'REMOTE_NOTE_DELETE_FOREVER':
         searchState.notes.delete(action.noteId);
         removeNoteFromIndex(action.noteId);
-        return next(withNextNote(withSearch(action)));
+        return next(withNextNote(action.noteId, withSearch(action)));
 
       case 'EDIT_NOTE': {
         const note = searchState.notes.get(action.noteId)!;
@@ -399,7 +402,7 @@ export const middleware: S.Middleware = (store) => {
         }
         searchState.notes.get(action.noteId)!.isTrashed = false;
         indexNote(action.noteId);
-        return next(withNextNote(withSearch(action)));
+        return next(withNextNote(action.noteId, withSearch(action)));
 
       case 'SELECT_TRASH':
         searchState.openedTag = null;
@@ -434,7 +437,7 @@ export const middleware: S.Middleware = (store) => {
           return;
         }
         searchState.notes.get(action.noteId)!.isTrashed = true;
-        return next(withNextNote(withSearch(action)));
+        return next(withNextNote(action.noteId, withSearch(action)));
 
       case 'TRASH_TAG': {
         const tagHash = t(action.tagName);
