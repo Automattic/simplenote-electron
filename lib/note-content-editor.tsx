@@ -353,7 +353,7 @@ class NoteContentEditor extends Component<Props> {
         thisLine.length
       );
       const identifier = { major: 1, minor: 1 };
-      const text = prevList[0];
+      const text = prevList[0].replace('\ue001', '\ue000');
       const op = { identifier, range, text, forceMoveMarkers: true };
       this.editor.executeEdits('autolist', [op]);
 
@@ -369,7 +369,7 @@ class NoteContentEditor extends Component<Props> {
 
       return (
         value.slice(0, lineStart) +
-        prevList[0] +
+        prevList[0].replace('\ue001', '\ue000') +
         event.eol +
         value.slice(nextStart)
       );
