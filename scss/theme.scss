@@ -63,13 +63,6 @@
   .search-field {
     border-color: $studio-gray-10;
   }
-
-  .monaco-editor-background,
-  .monaco-editor .margin,
-  .monaco-editor .scroll-decoration {
-    background-color: $studio-white;
-    box-shadow: none;
-  }
 }
 
 .theme-dark {
@@ -194,7 +187,7 @@
 
   .note-list-item {
     &.note-list-item-selected {
-      background: #2c3338;
+      background: $studio-gray-80;
     }
 
     .note-list-item-excerpt {
@@ -231,12 +224,5 @@
         background-color: $studio-gray-80;
       }
     }
-  }
-
-  .monaco-editor-background,
-  .monaco-editor .margin,
-  .monaco-editor .scroll-decoration {
-    background-color: $studio-gray-90;
-    box-shadow: none;
   }
 }
