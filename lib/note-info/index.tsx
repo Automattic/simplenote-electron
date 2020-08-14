@@ -33,6 +33,24 @@ export class NoteInfo extends Component<Props> {
 
   handleClickOutside = this.props.onOutsideClick;
 
+  copyNoteLink = (event: React.MouseEvent) => {
+    const copyButton = event.currentTarget;
+    const linkArea = copyButton.previousSibling;
+    if (null === linkArea) {
+      // @TODO: Handle the failure case - this should never happen
+      return;
+    }
+
+    (linkArea as HTMLInputElement).select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      // @TODO: Make sure we don't fail - add missing browser compatability?
+    }
+
+    copyButton.focus();
+  };
+
   copyPublishURL = () => {
     this.publishUrlElement.select();
 
@@ -50,7 +68,7 @@ export class NoteInfo extends Component<Props> {
   };
 
   render() {
-    const { isMarkdown, isPinned, note } = this.props;
+    const { isMarkdown, isPinned, noteId, note } = this.props;
     const formattedDate =
       note.modificationDate && formatTimestamp(note.modificationDate);
     const isPublished = includes(note.systemTags, 'published');
@@ -134,6 +152,25 @@ export class NoteInfo extends Component<Props> {
               />
             </span>
           </label>
+        </div>
+        <div className="note-info-panel note-info-internal-link theme-color-border">
+          <span className="note-info-item-text">
+            <span className="note-info-name">Inter-Note link</span>
+            <div className="note-info-form">
+              <input
+                className="note-info-detail note-info-link-text"
+                value={`simplenote://note/${noteId}`}
+                spellCheck={false}
+              />
+              <button
+                type="button"
+                className="button button-borderless note-info-copy-button"
+                onClick={this.copyNoteLink}
+              >
+                Copy
+              </button>
+            </div>
+          </span>
         </div>
         {isPublished && (
           <div className="note-info-panel note-info-public-link theme-color-border">

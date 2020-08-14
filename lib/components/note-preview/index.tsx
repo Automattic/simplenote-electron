@@ -25,6 +25,7 @@ type StateProps = {
 
 type DispatchProps = {
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  openNote: (noteId: T.EntityId) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -35,6 +36,7 @@ export const NotePreview: FunctionComponent<Props> = ({
   isFocused,
   note,
   noteId,
+  openNote,
   searchQuery,
 }) => {
   const previewNode = useRef<HTMLDivElement>();
@@ -71,13 +73,27 @@ export const NotePreview: FunctionComponent<Props> = ({
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       for (let node = event.target; node !== null; node = node.parentNode) {
-        if (note.tagName === 'A') {
+        if (node.tagName === 'A') {
           event.preventDefault();
           event.stopPropagation();
 
+          const tag = node as HTMLAnchorElement;
+
+          // Intercept inter-note links
+          if (tag.href.startsWith('simplenote://note/')) {
+            const match = /^simplenote:\/\/note\/(.+)$/.exec(tag.href);
+            if (!match) {
+              return;
+            }
+
+            const [fullMatch, linkedNoteId] = match;
+            openNote(linkedNoteId);
+            return;
+          }
+
           // skip internal note links (e.g. anchor links, footnotes)
-          if (!node.href.startsWith('http://localhost')) {
-            viewExternalUrl(node.href);
+          if (!tag.href.startsWith('http://localhost')) {
+            viewExternalUrl(tag.href);
           }
 
           return;
@@ -153,6 +169,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   editNote: actions.data.editNote,
+  openNote: actions.ui.selectNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NotePreview);
