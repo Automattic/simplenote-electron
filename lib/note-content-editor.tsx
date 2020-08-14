@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Monaco, { ChangeHandler, EditorDidMount } from 'react-monaco-editor';
+import Monaco, {
+  ChangeHandler,
+  EditorDidMount,
+  EditorWillMount,
+} from 'react-monaco-editor';
 import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
 
 import actions from './state/actions';
@@ -148,6 +152,37 @@ class NoteContentEditor extends Component<Props> {
     }
 
     return true;
+  };
+
+  editorInit: EditorWillMount = () => {
+    Editor.defineTheme('simplenote', {
+      base: 'vs',
+      inherit: true,
+      rules: [{ background: 'FFFFFF' }],
+      colors: {
+        'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
+        'editor.background': '#ffffff',
+        'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
+        'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30
+        'scrollbarSlider.background': '#c3c4c7', // $studio-gray-10
+        'scrollbarSlider.hoverBackground': '#a7aaad', // $studio-gray-20
+        'textLink.foreground': '#1d4fc4', // $studio-simplenote-blue-60
+      },
+    });
+    Editor.defineTheme('simplenote-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ background: '1d2327' }],
+      colors: {
+        'editor.foreground': '#ffffff',
+        'editor.background': '#1d2327', // $studio-gray-90
+        'editor.selectionBackground': '#50575e', // $studio-gray-60
+        'scrollbarSlider.activeBackground': '#646970', // $studio-gray-50
+        'scrollbarSlider.background': '#2c3338', // $studio-gray-80
+        'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90
+        'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
+      },
+    });
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
@@ -425,8 +460,9 @@ class NoteContentEditor extends Component<Props> {
           <Monaco
             key={noteId}
             editorDidMount={this.editorReady}
+            editorWillMount={this.editorInit}
             language="plaintext"
-            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+            theme={theme === 'dark' ? 'simplenote-dark' : 'simplenote'}
             onChange={this.updateNote}
             options={{
               autoClosingBrackets: 'never',
@@ -450,7 +486,7 @@ class NoteContentEditor extends Component<Props> {
               quickSuggestions: false,
               renderIndentGuides: false,
               renderLineHighlight: 'none',
-              scrollbar: { horizontal: 'hidden' },
+              scrollbar: { horizontal: 'hidden', useShadows: false },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               wordWrap: 'on',
