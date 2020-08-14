@@ -18,9 +18,9 @@ export const middleware: S.Middleware = () => {
           window.editor.setSelection(range);
           window.editor.getAction('actions.find').run();
         } else {
-          window.editor.setSelection();
-          window.editor.getAction('actions.find').run();
+          window.editor.trigger('keyboard', 'closeFindWidget');
         }
+        searchFields.forEach((focus) => focus());
         break;
       }
       case 'FOCUS_SEARCH_FIELD':
