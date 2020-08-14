@@ -336,6 +336,33 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
+      // Lonely bullets occur when we continue a list in order
+      // to terminate the list. We expect the previous list bullet
+      // to disappear and return us to the normal text flow
+      const isLonelyBullet =
+        thisLine.trim().length === 0 && prevLine.length === prevList[0].length;
+      if (isLonelyBullet) {
+        const prevLineStart = model.getOffsetAt({
+          column: 0,
+          lineNumber: lineNumber,
+        });
+
+        const thisLineStart = model.getOffsetAt({
+          column: 0,
+          lineNumber: lineNumber + 1,
+        });
+
+        const range = new this.monaco.Range(lineNumber, 0, lineNumber + 1, 0);
+        const identifier = { major: 1, minor: 1 };
+        const op = { identifier, range, text: '', forceMoveMarkers: true };
+        this.editor.executeEdits('autolist', [op]);
+
+        return (
+          value.slice(0, Math.max(0, prevLineStart - 1)) +
+          value.slice(thisLineStart)
+        );
+      }
+
       const lineStart = model.getOffsetAt({
         column: 0,
         lineNumber: lineNumber + 1,
