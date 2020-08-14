@@ -188,6 +188,7 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
+    window.editor = editor;
     this.monaco = monaco;
 
     window.electron?.receive('editorCommand', (command) => {
