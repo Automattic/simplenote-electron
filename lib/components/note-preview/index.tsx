@@ -87,7 +87,7 @@ export const NotePreview: FunctionComponent<Props> = ({
             }
 
             const [fullMatch, linkedNoteId] = match;
-            openNote(linkedNoteId);
+            openNote(linkedNoteId as T.EntityId);
             return;
           }
 

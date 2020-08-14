@@ -7,6 +7,7 @@ import format from 'date-fns/format';
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
 import CrossIcon from '../icons/cross';
+import getNoteTitleAndPreview from '../utils/note-utils';
 
 import actions from '../state/actions';
 
@@ -35,19 +36,24 @@ export class NoteInfo extends Component<Props> {
 
   copyNoteLink = (event: React.MouseEvent) => {
     const copyButton = event.currentTarget;
-    const linkArea = copyButton.previousSibling;
-    if (null === linkArea) {
+    const previousSibling = copyButton.previousSibling;
+    if (null === previousSibling) {
       // @TODO: Handle the failure case - this should never happen
       return;
     }
 
-    (linkArea as HTMLInputElement).select();
+    const linkArea = previousSibling as HTMLInputElement;
+
+    const { title } = getNoteTitleAndPreview(this.props.note);
+    linkArea.value = `[${title}](simplenote://note/${this.props.noteId})`;
+    linkArea.select();
     try {
       document.execCommand('copy');
     } catch (err) {
       // @TODO: Make sure we don't fail - add missing browser compatability?
     }
 
+    linkArea.value = `simplenote://note/${this.props.noteId}`;
     copyButton.focus();
   };
 
