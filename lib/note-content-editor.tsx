@@ -100,7 +100,7 @@ class NoteContentEditor extends Component<Props> {
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
     }
-    window?.electron.removeListener('editorCommand');
+    window.electron?.removeListener('editorCommand');
     window.removeEventListener('keydown', this.handleKeys, true);
   }
 
@@ -190,7 +190,7 @@ class NoteContentEditor extends Component<Props> {
     this.editor = editor;
     this.monaco = monaco;
 
-    window?.electron.receive('editorCommand', (command) => {
+    window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
         case 'redo':
           editor.trigger('', 'redo');
