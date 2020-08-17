@@ -19,7 +19,10 @@ const buildHelpMenu = (mainWindow, isAuthenticated) => {
     {
       label: '&Keyboard Shortcuts',
       visible: isAuthenticated,
-      click: appCommandSender({ action: 'showDialog', dialog: 'KEYBINDINGS' }),
+      click: appCommandSender('appCommnad', {
+        action: 'showDialog',
+        dialog: 'KEYBINDINGS',
+      }),
     },
     { type: 'separator' },
     {

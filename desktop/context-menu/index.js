@@ -14,7 +14,7 @@ module.exports = function (mainWindow) {
       {
         id: 'selectAll',
         label: 'Select All',
-        click: appCommandSender({ action: 'selectAll' }),
+        click: appCommandSender('editorCommand', { action: 'selectAll' }),
         enabled: editFlags.canSelectAll,
       },
       {

@@ -6,7 +6,7 @@ const buildFormatMenu = (isAuthenticated) => {
     {
       label: 'Insert &Checklist',
       accelerator: 'CommandOrControl+Shift+C',
-      click: appCommandSender({ action: 'insertChecklist' }),
+      click: appCommandSender('appCommnad', { action: 'insertChecklist' }),
     },
   ];
 

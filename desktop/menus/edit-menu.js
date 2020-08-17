@@ -9,11 +9,11 @@ const buildEditMenu = (settings, isAuthenticated) => {
     submenu: [
       {
         label: '&Undo',
-        click: appCommandSender({ action: 'undo' }),
+        click: appCommandSender('editorCommand', { action: 'undo' }),
       },
       {
         label: '&Redo',
-        click: appCommandSender({ action: 'redo' }),
+        click: appCommandSender('editorCommand', { action: 'redo' }),
       },
       {
         type: 'separator',
@@ -32,19 +32,19 @@ const buildEditMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Select All',
-        click: appCommandSender({ action: 'selectAll' }),
+        click: appCommandSender('editorCommand', { action: 'selectAll' }),
       },
       { type: 'separator' },
       {
         label: '&Trash Note',
         visible: isAuthenticated,
-        click: appCommandSender({ action: 'trashNote' }),
+        click: appCommandSender('appCommnad', { action: 'trashNote' }),
       },
       { type: 'separator' },
       {
         label: 'Search &Notes…',
         visible: isAuthenticated,
-        click: appCommandSender({ action: 'focusSearchField' }),
+        click: appCommandSender('appCommnad', { action: 'focusSearchField' }),
       },
       { type: 'separator' },
       {
@@ -52,7 +52,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
         visible: isAuthenticated,
         type: 'checkbox',
         checked: settings.spellCheckEnabled,
-        click: appCommandSender({ action: 'toggleSpellCheck' }),
+        click: appCommandSender('appCommnad', { action: 'toggleSpellCheck' }),
       },
     ],
   };

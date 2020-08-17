@@ -40,7 +40,9 @@ const buildViewMenu = (settings, isAuthenticated) => {
               label: '&Reversed',
               type: 'checkbox',
               checked: settings.sortReversed,
-              click: appCommandSender({ action: 'toggleSortOrder' }),
+              click: appCommandSender('appCommnad', {
+                action: 'toggleSortOrder',
+              }),
             },
           ]),
       },
@@ -96,7 +98,9 @@ const buildViewMenu = (settings, isAuthenticated) => {
             label: '&Sort Alphabetically',
             type: 'checkbox',
             checked: settings.sortTagsAlpha,
-            click: appCommandSender({ action: 'toggleSortTagsAlpha' }),
+            click: appCommandSender('appCommnad', {
+              action: 'toggleSortTagsAlpha',
+            }),
           },
         ],
       },
@@ -128,19 +132,19 @@ const buildViewMenu = (settings, isAuthenticated) => {
         label: 'Zoom &In',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+=',
-        click: appCommandSender({ action: 'increaseFontSize' }),
+        click: appCommandSender('appCommnad', { action: 'increaseFontSize' }),
       },
       {
         label: 'Zoom &Out',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+-',
-        click: appCommandSender({ action: 'decreaseFontSize' }),
+        click: appCommandSender('appCommnad', { action: 'decreaseFontSize' }),
       },
       {
         label: '&Actual Size',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+0',
-        click: appCommandSender({ action: 'resetFontSize' }),
+        click: appCommandSender('appCommnad', { action: 'resetFontSize' }),
       },
       {
         type: 'separator',
@@ -152,7 +156,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
         accelerator: 'CommandOrControl+Shift+F',
         type: 'checkbox',
         checked: settings.focusModeEnabled,
-        click: appCommandSender({ action: 'toggleFocusMode' }),
+        click: appCommandSender('appCommnad', { action: 'toggleFocusMode' }),
       },
       {
         type: 'separator',
