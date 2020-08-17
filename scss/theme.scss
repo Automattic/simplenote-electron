@@ -41,6 +41,10 @@
   cursor: pointer;
 }
 
+.note-content-print {
+  display: none;
+}
+
 .theme-light {
   background-color: $studio-white;
   color: $studio-gray-60;

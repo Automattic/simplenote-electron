@@ -1,51 +1,51 @@
-.theme-dark .theme-color-bg {
-  background-color: #ffffff;
-  padding-top: 20px;
-}
+@media print {
+  .theme-dark .theme-color-bg {
+    background-color: #ffffff;
+  }
 
-.app-layout__source-column {
-  display: none;
-}
+  .app-layout__note-column {
+    border: 0;
+  }
 
-.app-layout__note-column {
-  border: 0;
-}
+  .dev-badge,
+  .app-layout__source-column,
+  .tag-field,
+  .note-toolbar-wrapper,
+  .last-sync,
+  .react-monaco-editor-container {
+    display: none;
+  }
 
-.dev-badge {
-  display: none;
-}
+  /* Firefox only prints the first page if any divs are display: flex */
+  .app,
+  .simplenote-app,
+  .app-layout,
+  .app-layout__note-column,
+  .note-editor,
+  .note-detail-wrapper,
+  .note-detail,
+  .note-detail-textarea,
+  .note-content-editor-shell,
+  .note-detail-wrapper {
+    overflow: visible;
+  }
 
-.tag-field,
-.note-toolbar-wrapper,
-.last-sync {
-  display: none;
-}
-
-/* Firefox only prints the first page if any divs are display: flex */
-.app,
-.simplenote-app,
-.app-layout,
-.app-layout__note-column,
-.note-editor,
-.note-detail-wrapper,
-.note-detail {
-  overflow: visible;
-}
-
-.note-detail-wrapper {
-  overflow: visible;
-}
-x .note-detail {
-  overflow: visible;
-}
-
-[class^='note-detail-'] {
-  max-width: 100%;
-  width: 100%;
-  color: $studio-black;
-
-  &.theme-color-fg {
+  [class^='note-detail-'] {
+    max-width: 100%;
+    width: 100%;
     color: $studio-black;
-    overflow-y: auto !important;
+
+    &.theme-color-fg {
+      color: $studio-black;
+      overflow-y: auto !important;
+    }
+  }
+
+  .note-content-print {
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    display: inherit;
+    white-space: pre-wrap;
   }
 }

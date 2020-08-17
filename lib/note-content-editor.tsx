@@ -44,7 +44,6 @@ type OwnState = {
   editor: 'fast' | 'full';
   noteId: T.EntityId | null;
   overTodo: boolean;
-  print: boolean;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -57,7 +56,6 @@ class NoteContentEditor extends Component<Props> {
     editor: 'fast',
     noteId: null,
     overTodo: false,
-    print: false,
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
@@ -92,16 +90,6 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
-    window.addEventListener('beforeprint', () => {
-      this.setState({
-        print: true,
-      });
-    });
-    window.addEventListener('afterprint', () => {
-      this.setState({
-        print: false,
-      });
-    });
   }
 
   componentWillUnmount() {
@@ -394,7 +382,7 @@ class NoteContentEditor extends Component<Props> {
 
   render() {
     const { fontSize, noteId, theme } = this.props;
-    const { content, editor, overTodo, print } = this.state;
+    const { content, editor, overTodo } = this.state;
 
     return (
       <div
@@ -402,7 +390,8 @@ class NoteContentEditor extends Component<Props> {
           overTodo ? ' cursor-pointer' : ''
         }`}
       >
-        {editor === 'fast' || true ? (
+        <div className="note-content-print">{content}</div>
+        {editor === 'fast' ? (
           <div style={{ padding: '0 10px', whiteSpace: 'pre-wrap' }}>
             {content}
           </div>
