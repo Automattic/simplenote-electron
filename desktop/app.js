@@ -18,7 +18,7 @@ const importNotes = require('./evernote-import');
 const platform = require('./detect/platform');
 const updater = require('./updater');
 const { isDev } = require('./env');
-const spellcheck = require('./spellchecker');
+const contextMenu = require('./context-menu');
 
 require('module').globalPaths.push(path.resolve(path.join(__dirname)));
 
@@ -76,7 +76,7 @@ module.exports = function main() {
       mainWindow.loadUrl(url);
     }
 
-    spellcheck(mainWindow);
+    contextMenu(mainWindow);
 
     if (
       'test' !== process.env.NODE_ENV &&

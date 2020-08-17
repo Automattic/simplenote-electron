@@ -100,6 +100,7 @@ class NoteContentEditor extends Component<Props> {
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
     }
+    window?.electron.removeListener('editorCommand');
     window.removeEventListener('keydown', this.handleKeys, true);
   }
 
@@ -188,6 +189,20 @@ class NoteContentEditor extends Component<Props> {
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
     this.monaco = monaco;
+
+    window?.electron.receive('editorCommand', (command) => {
+      switch (command.action) {
+        case 'redo':
+          editor.trigger('', 'redo');
+          return;
+        case 'selectAll':
+          editor.setSelection(editor.getModel().getFullModelRange());
+          return;
+        case 'undo':
+          editor.trigger('', 'undo');
+          return;
+      }
+    });
 
     const titleDecoration = (line: number) => ({
       range: new monaco.Range(line, 1, line, 1),

@@ -9,11 +9,11 @@ const buildEditMenu = (settings, isAuthenticated) => {
     submenu: [
       {
         label: '&Undo',
-        role: 'undo',
+        click: appCommandSender({ action: 'undo' }),
       },
       {
         label: '&Redo',
-        role: 'redo',
+        click: appCommandSender({ action: 'redo' }),
       },
       {
         type: 'separator',
@@ -32,7 +32,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Select All',
-        role: 'selectall',
+        click: appCommandSender({ action: 'selectAll' }),
       },
       { type: 'separator' },
       {
