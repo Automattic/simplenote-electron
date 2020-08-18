@@ -97,7 +97,6 @@ module.exports = () => {
           '!codelens',
           '!colorDetector',
           '!comment',
-          '!contextmenu',
           '!folding',
           '!gotoError',
           '!gotoLine',

@@ -64,6 +64,17 @@
   }
 }
 
+.monaco-editor .editor-widget {
+  display: none !important;
+}
+
+.monaco-menu .monaco-action-bar.vertical .action-item:first-child,
+.monaco-menu .monaco-action-bar.vertical .action-item:last-child,
+.monaco-menu .monaco-action-bar.vertical .action-label.separator:first-child,
+.monaco-menu .monaco-action-bar.vertical .action-label.separator:last-child {
+  display: none !important;
+}
+
 .note-detail-textarea .note-content-editor-shell.cursor-pointer div {
   cursor: pointer;
 }
