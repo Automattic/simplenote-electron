@@ -18,8 +18,8 @@ const appCommandSender = (arg) => {
   commandSender('appCommand', arg);
 };
 
-const editCommandSender = (arg) => {
-  commandSender('editCommand', arg);
+const editorCommandSender = (arg) => {
+  commandSender('editorCommand', arg);
 };
 
 const commandSender = (commandName, arg) => {
@@ -33,5 +33,5 @@ const commandSender = (commandName, arg) => {
 module.exports = {
   buildRadioGroup,
   appCommandSender,
-  editCommandSender,
+  editorCommandSender,
 };

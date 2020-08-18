@@ -1,4 +1,4 @@
-const { appCommandSender, editCommandSender } = require('./utils');
+const { appCommandSender, editorCommandSender } = require('./utils');
 
 const buildEditMenu = (settings, isAuthenticated) => {
   settings = settings || {};
@@ -9,11 +9,11 @@ const buildEditMenu = (settings, isAuthenticated) => {
     submenu: [
       {
         label: '&Undo',
-        click: editCommandSender({ action: 'undo' }),
+        click: editorCommandSender({ action: 'undo' }),
       },
       {
         label: '&Redo',
-        click: editCommandSender({ action: 'redo' }),
+        click: editorCommandSender({ action: 'redo' }),
       },
       {
         type: 'separator',
@@ -32,7 +32,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Select All',
-        click: editCommandSender({ action: 'selectAll' }),
+        click: editorCommandSender({ action: 'selectAll' }),
       },
       { type: 'separator' },
       {

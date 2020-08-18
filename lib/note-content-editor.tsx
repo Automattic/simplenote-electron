@@ -191,6 +191,7 @@ class NoteContentEditor extends Component<Props> {
     this.monaco = monaco;
 
     window.electron?.receive('editorCommand', (command) => {
+      debugger;
       switch (command.action) {
         case 'redo':
           editor.trigger('', 'redo');

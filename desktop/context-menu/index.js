@@ -5,16 +5,16 @@
  */
 const { Menu } = require('electron');
 
-const { editCommandSender } = require('../menus/utils');
+const { editorCommandSender } = require('../menus/utils');
 
 module.exports = function (mainWindow) {
   mainWindow.webContents.on('context-menu', (event, params) => {
     const { editFlags } = params;
-    const template = [
+    Menu.buildFromTemplate([
       {
         id: 'selectAll',
         label: 'Select All',
-        click: editCommandSender({ action: 'selectAll' }),
+        click: editorCommandSender({ action: 'selectAll' }),
         enabled: editFlags.canSelectAll,
       },
       {
@@ -38,8 +38,6 @@ module.exports = function (mainWindow) {
       {
         type: 'separator',
       },
-    ];
-    const menu = Menu.buildFromTemplate(template);
-    menu.popup({});
+    ]).popup({});
   });
 };
