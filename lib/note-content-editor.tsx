@@ -391,9 +391,7 @@ class NoteContentEditor extends Component<Props> {
         }`}
       >
         <div
-          className={`note-content-print${
-            editor === 'fast' ? ' note-content-fast' : ''
-          }`}
+          className={`note-content-print${editor === 'fast' ? ' visible' : ''}`}
         >
           {content}
         </div>

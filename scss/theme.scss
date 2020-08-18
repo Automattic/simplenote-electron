@@ -43,12 +43,12 @@
 
 .note-content-print {
   display: none;
-}
 
-.note-content-fast {
-  display: inherit;
-  padding: 0 10px;
-  white-space: pre-wrap;
+  &.visible {
+    display: inherit;
+    padding: 0 10px;
+    white-space: pre-wrap;
+  }
 }
 
 .theme-light {
