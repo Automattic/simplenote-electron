@@ -16,12 +16,12 @@ type OwnProps = {
 };
 
 type StateProps = {
+  editMode: boolean;
   fontSize: number;
   isFocused: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
   searchQuery: string;
-  showRevisions: boolean;
 };
 
 type DispatchProps = {
@@ -32,6 +32,7 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export const NotePreview: FunctionComponent<Props> = ({
+  editMode,
   editNote,
   fontSize,
   isFocused,
@@ -39,7 +40,6 @@ export const NotePreview: FunctionComponent<Props> = ({
   noteId,
   openNote,
   searchQuery,
-  showRevisions,
 }) => {
   const previewNode = useRef<HTMLDivElement>();
 
@@ -134,11 +134,7 @@ export const NotePreview: FunctionComponent<Props> = ({
       return;
     }
 
-    if (
-      note?.content &&
-      note?.systemTags.includes('markdown') &&
-      !showRevisions
-    ) {
+    if (note?.content && note?.systemTags.includes('markdown') && !editMode) {
       renderToNode(previewNode.current, note!.content, searchQuery);
     } else {
       previewNode.current.innerText = withCheckboxCharacters(
@@ -171,7 +167,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
   note: props.note ?? state.data.notes.get(props.noteId),
   noteId: props.noteId ?? state.ui.openedNote,
   searchQuery: state.ui.searchQuery,
-  showRevisions: state.ui.showRevisions,
+  editMode: state.ui.editMode,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
