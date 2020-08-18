@@ -15,11 +15,11 @@ const buildRadioGroup = ({ action, propName, settings }) => {
 };
 
 const appCommandSender = (arg) => {
-  commandSender('appCommand', arg);
+  return commandSender('appCommand', arg);
 };
 
 const editorCommandSender = (arg) => {
-  commandSender('editorCommand', arg);
+  return commandSender('editorCommand', arg);
 };
 
 const commandSender = (commandName, arg) => {
