@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer, remote } = require('electron');
 const validChannels = [
   'appCommand',
   'clearCookies',
+  'editorCommand',
   'importNotes',
   'noteImportChannel',
   'setAutoHideMenuBar',

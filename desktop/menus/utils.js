@@ -15,9 +15,17 @@ const buildRadioGroup = ({ action, propName, settings }) => {
 };
 
 const appCommandSender = (arg) => {
+  return commandSender('appCommand', arg);
+};
+
+const editorCommandSender = (arg) => {
+  return commandSender('editorCommand', arg);
+};
+
+const commandSender = (commandName, arg) => {
   return (item, focusedWindow) => {
     if (focusedWindow) {
-      focusedWindow.webContents.send('appCommand', arg);
+      focusedWindow.webContents.send(commandName, arg);
     }
   };
 };
@@ -25,4 +33,5 @@ const appCommandSender = (arg) => {
 module.exports = {
   buildRadioGroup,
   appCommandSender,
+  editorCommandSender,
 };

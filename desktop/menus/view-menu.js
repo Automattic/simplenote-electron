@@ -40,7 +40,9 @@ const buildViewMenu = (settings, isAuthenticated) => {
               label: '&Reversed',
               type: 'checkbox',
               checked: settings.sortReversed,
-              click: appCommandSender({ action: 'toggleSortOrder' }),
+              click: appCommandSender({
+                action: 'toggleSortOrder',
+              }),
             },
           ]),
       },
@@ -96,7 +98,9 @@ const buildViewMenu = (settings, isAuthenticated) => {
             label: '&Sort Alphabetically',
             type: 'checkbox',
             checked: settings.sortTagsAlpha,
-            click: appCommandSender({ action: 'toggleSortTagsAlpha' }),
+            click: appCommandSender({
+              action: 'toggleSortTagsAlpha',
+            }),
           },
         ],
       },
