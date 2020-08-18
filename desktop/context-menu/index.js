@@ -5,7 +5,7 @@
  */
 const { Menu } = require('electron');
 
-const { appCommandSender } = require('../menus/utils');
+const { editCommandSender } = require('../menus/utils');
 
 module.exports = function (mainWindow) {
   mainWindow.webContents.on('context-menu', (event, params) => {
@@ -14,7 +14,7 @@ module.exports = function (mainWindow) {
       {
         id: 'selectAll',
         label: 'Select All',
-        click: appCommandSender('editorCommand', { action: 'selectAll' }),
+        click: editCommandSender({ action: 'selectAll' }),
         enabled: editFlags.canSelectAll,
       },
       {

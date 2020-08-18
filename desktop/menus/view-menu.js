@@ -40,7 +40,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
               label: '&Reversed',
               type: 'checkbox',
               checked: settings.sortReversed,
-              click: appCommandSender('appCommnad', {
+              click: appCommandSender({
                 action: 'toggleSortOrder',
               }),
             },
@@ -98,7 +98,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
             label: '&Sort Alphabetically',
             type: 'checkbox',
             checked: settings.sortTagsAlpha,
-            click: appCommandSender('appCommnad', {
+            click: appCommandSender({
               action: 'toggleSortTagsAlpha',
             }),
           },
@@ -132,19 +132,19 @@ const buildViewMenu = (settings, isAuthenticated) => {
         label: 'Zoom &In',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+=',
-        click: appCommandSender('appCommnad', { action: 'increaseFontSize' }),
+        click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
         label: 'Zoom &Out',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+-',
-        click: appCommandSender('appCommnad', { action: 'decreaseFontSize' }),
+        click: appCommandSender({ action: 'decreaseFontSize' }),
       },
       {
         label: '&Actual Size',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+0',
-        click: appCommandSender('appCommnad', { action: 'resetFontSize' }),
+        click: appCommandSender({ action: 'resetFontSize' }),
       },
       {
         type: 'separator',
@@ -156,7 +156,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
         accelerator: 'CommandOrControl+Shift+F',
         type: 'checkbox',
         checked: settings.focusModeEnabled,
-        click: appCommandSender('appCommnad', { action: 'toggleFocusMode' }),
+        click: appCommandSender({ action: 'toggleFocusMode' }),
       },
       {
         type: 'separator',

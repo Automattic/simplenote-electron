@@ -1,4 +1,4 @@
-const { appCommandSender } = require('./utils');
+const { appCommandSender, editCommandSender } = require('./utils');
 
 const buildEditMenu = (settings, isAuthenticated) => {
   settings = settings || {};
@@ -9,11 +9,11 @@ const buildEditMenu = (settings, isAuthenticated) => {
     submenu: [
       {
         label: '&Undo',
-        click: appCommandSender('editorCommand', { action: 'undo' }),
+        click: editCommandSender({ action: 'undo' }),
       },
       {
         label: '&Redo',
-        click: appCommandSender('editorCommand', { action: 'redo' }),
+        click: editCommandSender({ action: 'redo' }),
       },
       {
         type: 'separator',
@@ -32,19 +32,19 @@ const buildEditMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Select All',
-        click: appCommandSender('editorCommand', { action: 'selectAll' }),
+        click: editCommandSender({ action: 'selectAll' }),
       },
       { type: 'separator' },
       {
         label: '&Trash Note',
         visible: isAuthenticated,
-        click: appCommandSender('appCommnad', { action: 'trashNote' }),
+        click: appCommandSender({ action: 'trashNote' }),
       },
       { type: 'separator' },
       {
         label: 'Search &Notes…',
         visible: isAuthenticated,
-        click: appCommandSender('appCommnad', { action: 'focusSearchField' }),
+        click: appCommandSender({ action: 'focusSearchField' }),
       },
       { type: 'separator' },
       {
@@ -52,7 +52,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
         visible: isAuthenticated,
         type: 'checkbox',
         checked: settings.spellCheckEnabled,
-        click: appCommandSender('appCommnad', { action: 'toggleSpellCheck' }),
+        click: appCommandSender({ action: 'toggleSpellCheck' }),
       },
     ],
   };

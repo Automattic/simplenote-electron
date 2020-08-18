@@ -5,7 +5,7 @@ const updater = require('../updater');
 
 const about = {
   label: '&About ' + app.name,
-  click: appCommandSender('appCommnad', {
+  click: appCommandSender({
     action: 'showDialog',
     dialog: 'ABOUT',
   }),
@@ -20,7 +20,7 @@ const emptyTrash = (isAuthenticated) => {
   return {
     label: '&Empty Trash',
     visible: isAuthenticated,
-    click: appCommandSender('appCommnad', { action: 'emptyTrash' }),
+    click: appCommandSender({ action: 'emptyTrash' }),
   };
 };
 
@@ -29,7 +29,7 @@ const preferences = (isAuthenticated) => {
     label: 'P&references…',
     visible: isAuthenticated,
     accelerator: 'CommandOrControl+,',
-    click: appCommandSender('appCommnad', {
+    click: appCommandSender({
       action: 'showDialog',
       dialog: 'SETTINGS',
     }),
@@ -40,7 +40,7 @@ const signout = (isAuthenticated) => {
   return {
     label: '&Sign Out',
     visible: isAuthenticated,
-    click: appCommandSender('appCommnad', {
+    click: appCommandSender({
       action: 'logout',
     }),
   };

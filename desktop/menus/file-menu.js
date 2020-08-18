@@ -10,13 +10,13 @@ const buildFileMenu = (isAuthenticated) => {
       label: '&New Note',
       visible: isAuthenticated,
       accelerator: 'CommandOrControl+Shift+I',
-      click: appCommandSender('appCommnad', { action: 'newNote' }),
+      click: appCommandSender({ action: 'newNote' }),
     },
     { type: 'separator' },
     {
       label: '&Import Notes…',
       visible: isAuthenticated,
-      click: appCommandSender('appCommnad', {
+      click: appCommandSender({
         action: 'showDialog',
         dialog: 'IMPORT',
       }),
@@ -25,7 +25,7 @@ const buildFileMenu = (isAuthenticated) => {
       label: '&Export Notes…',
       visible: isAuthenticated,
       accelerator: 'CommandOrControl+Shift+E',
-      click: appCommandSender('appCommnad', {
+      click: appCommandSender({
         action: 'exportNotes',
       }),
     },
@@ -34,7 +34,7 @@ const buildFileMenu = (isAuthenticated) => {
       label: '&Print…',
       visible: isAuthenticated,
       accelerator: 'CommandOrControl+P',
-      click: appCommandSender('appCommnad', { action: 'printNote' }),
+      click: appCommandSender({ action: 'printNote' }),
     },
   ];
 
