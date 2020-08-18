@@ -45,6 +45,12 @@
   display: none;
 }
 
+.note-content-fast {
+  display: inherit;
+  padding: 0 10px;
+  white-space: pre-wrap;
+}
+
 .theme-light {
   background-color: $studio-white;
   color: $studio-gray-60;

@@ -390,49 +390,50 @@ class NoteContentEditor extends Component<Props> {
           overTodo ? ' cursor-pointer' : ''
         }`}
       >
-        <div className="note-content-print">{content}</div>
-        {editor === 'fast' ? (
-          <div style={{ padding: '0 10px', whiteSpace: 'pre-wrap' }}>
-            {content}
-          </div>
-        ) : (
-          <Monaco
-            key={noteId}
-            editorDidMount={this.editorReady}
-            language="plaintext"
-            theme={theme === 'dark' ? 'vs-dark' : 'vs'}
-            onChange={this.updateNote}
-            options={{
-              autoClosingBrackets: 'never',
-              autoClosingQuotes: 'never',
-              autoIndent: 'keep',
-              autoSurround: 'never',
-              automaticLayout: true,
-              codeLens: false,
-              contextmenu: false,
-              folding: false,
-              fontFamily:
-                '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
-              fontSize,
-              hideCursorInOverviewRuler: true,
-              lineHeight: fontSize > 20 ? 42 : 24,
-              lineNumbers: 'off',
-              links: true,
-              minimap: { enabled: false },
-              occurrencesHighlight: false,
-              overviewRulerBorder: false,
-              quickSuggestions: false,
-              renderIndentGuides: false,
-              renderLineHighlight: 'none',
-              scrollbar: { horizontal: 'hidden' },
-              scrollBeyondLastLine: false,
-              selectionHighlight: false,
-              wordWrap: 'on',
-              wrappingStrategy: 'simple',
-            }}
-            value={content}
-          />
-        )}
+        {/* <div
+          className={`note-content-print${
+            editor === 'fast' ? ' note-content-fast' : ''
+          }`}
+        >
+          {content}
+        </div> */}
+
+        <Monaco
+          key={noteId}
+          editorDidMount={this.editorReady}
+          language="plaintext"
+          theme={theme === 'dark' ? 'vs-dark' : 'vs'}
+          onChange={this.updateNote}
+          options={{
+            autoClosingBrackets: 'never',
+            autoClosingQuotes: 'never',
+            autoIndent: 'keep',
+            autoSurround: 'never',
+            automaticLayout: true,
+            codeLens: false,
+            contextmenu: false,
+            folding: false,
+            fontFamily:
+              '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
+            fontSize,
+            hideCursorInOverviewRuler: true,
+            lineHeight: fontSize > 20 ? 42 : 24,
+            lineNumbers: 'off',
+            links: true,
+            minimap: { enabled: false },
+            occurrencesHighlight: false,
+            overviewRulerBorder: false,
+            quickSuggestions: false,
+            renderIndentGuides: false,
+            renderLineHighlight: 'none',
+            scrollbar: { horizontal: 'hidden' },
+            scrollBeyondLastLine: false,
+            selectionHighlight: false,
+            wordWrap: 'on',
+            wrappingStrategy: 'simple',
+          }}
+          value={content}
+        />
       </div>
     );
   }
