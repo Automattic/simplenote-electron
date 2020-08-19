@@ -211,6 +211,7 @@ class NoteContentEditor extends Component<Props> {
       'actions.findWithSelection',
       'editor.action.addSelectionToNextFindMatch',
       'editor.action.nextMatchFindAction',
+      'editor.action.selectHighlights',
     ];
     shortcutsToDisable.forEach(function (action) {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
