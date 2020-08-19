@@ -495,6 +495,7 @@ class NoteContentEditor extends Component<Props> {
               lineHeight: fontSize > 20 ? 42 : 24,
               lineNumbers: 'off',
               links: true,
+              matchBrackets: 'never',
               minimap: { enabled: false },
               occurrencesHighlight: false,
               overviewRulerBorder: false,
