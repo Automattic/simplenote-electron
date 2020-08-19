@@ -86,7 +86,6 @@ class NoteContentEditor extends Component<Props> {
 
   componentDidMount() {
     const { noteId } = this.props;
-    window.addEventListener('keydown', this.handleKeys, true);
     this.bootTimer = setTimeout(() => {
       if (noteId === this.props.noteId) {
         this.setState({
@@ -102,7 +101,7 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
-    window.removeEventListener('keydown', this.handleKeys, true);
+    window.electron?.removeListener('appCommand');
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -147,22 +146,34 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  handleKeys = (event: KeyboardEvent) => {
-    if (!this.props.keyboardShortcuts) {
+  insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
+    // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
+    const model = editor.getModel();
+    if (!model) {
       return;
     }
 
-    const { code, ctrlKey, metaKey, shiftKey } = event;
-    const cmdOrCtrl = ctrlKey || metaKey;
+    const position = editor.getPosition();
+    if (!position) {
+      return;
+    }
+    const lineNumber = position.lineNumber;
+    const thisLine = model.getLineContent(lineNumber);
 
-    if (cmdOrCtrl && shiftKey && 'KeyC' === code) {
-      this.props.insertTask();
-      event.stopPropagation();
-      event.preventDefault();
-      return false;
+    let range = new this.monaco.Range(lineNumber, 0, lineNumber, 0);
+    let text = '\ue000 ';
+
+    // if line already starts with a checkbox, remove it
+    if (thisLine.startsWith('\ue000 ') || thisLine.startsWith('\ue001 ')) {
+      range = new this.monaco.Range(lineNumber, 0, lineNumber, 3);
+      text = '';
     }
 
-    return true;
+    const identifier = { major: 1, minor: 1 };
+    const op = { identifier, range, text, forceMoveMarkers: true };
+    editor.executeEdits('insertOrRemoveCheckboxes', [op]);
+
+    this.props.insertTask();
   };
 
   editorInit: EditorWillMount = () => {
@@ -219,6 +230,18 @@ class NoteContentEditor extends Component<Props> {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
     });
 
+    editor.addAction({
+      id: 'insertChecklist',
+      label: 'Insert Checklist',
+      // we don't need to add keybindings for Electron since it is handled by appCommand
+      keybindings: window.electron
+        ? []
+        : [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C],
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 2.5,
+      run: this.insertOrRemoveCheckboxes,
+    });
+
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
         case 'redo':
@@ -229,6 +252,14 @@ class NoteContentEditor extends Component<Props> {
           return;
         case 'undo':
           editor.trigger('', 'undo');
+          return;
+      }
+    });
+
+    window.electron?.receive('appCommand', (command) => {
+      switch (command.action) {
+        case 'insertChecklist':
+          editor.trigger('appCommand', 'insertChecklist', null);
           return;
       }
     });

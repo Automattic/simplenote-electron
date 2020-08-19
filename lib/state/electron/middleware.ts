@@ -29,10 +29,6 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         dispatch(actions.ui.focusSearchField());
         return;
 
-      case 'insertChecklist':
-        dispatch({ type: 'INSERT_TASK' });
-        return;
-
       case 'showDialog':
         dispatch(actions.ui.showDialog(command.dialog));
         return;
