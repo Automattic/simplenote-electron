@@ -202,10 +202,12 @@ class NoteContentEditor extends Component<Props> {
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
+      'cursorUndo', // meta+U
       'editor.action.commentLine', // meta+/
+      'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
       'editor.action.triggerSuggest', // ctrl+space
-      'expandLineSelection',
+      'expandLineSelection', // meta+L
       // search shortcuts
       'actions.find',
       'actions.findWithSelection',
