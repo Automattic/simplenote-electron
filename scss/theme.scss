@@ -1,6 +1,28 @@
+/*
+ * Regenerate the Simplenote Tasks font with the following script.
+ * Download the SVG task icons from the Simplecons repo
+ *
+ * // gen.js
+ * const wfg = require('webfonts-generator');
+ *
+ * wfg({
+ * 	files: [
+ * 		'svg/task-unchecked.svg',
+ * 		'svg/task-checked.svg'
+ * 	],
+ * 	dest: 'font/',
+ * 	fontName: 'Simplenote Tasks',
+ * 	types: ['woff'],
+ * 	startCodepoint: 0xE000,
+ * 	descent: 3, // needed to vertically align the tasks
+ * }, () => {} );
+ *
+ * Once the script finishes copy the output here
+ * ~$ node gen.js && cat font/Simplenote\ Tasks.woff | base64 | pbcopy
+ */
 @font-face {
   font-family: 'Simplenote Tasks';
-  src: url('data:application/x-font-woff;charset=utf8-8;base64,d09GMgABAAAAAAKsAAsAAAAABrwAAAJgAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHFQGVgCCfgqBCIEaATYCJAMMCwgABCAFhHMHRxsBBhEVjFWyLyEnG10gRANNvePKYcPIOR8GOhAH2ApfQAQAAAAAxMPXIfb+7qa1Yq2Pp3PGA9i5AgU4QNEcH3eRw5s0QIAZePjP2/vHFJGbrl5ITRKMnmwuVQntgMVCZT9heLtRFnf88lj6s/Ud+bX3nwg0lXkYu+3zfz/5L0Tm1+dc1fRm1RgFVjhe4847viiyie6bzslwQ31V3iNQa9m2dPj6fYbGKyUFehXubFAUxpW3CqqVsKIgXy1UdtCa21SgSTNyoqkbXp1UZO7Zo70ssHuXbqTISzB6BTLmUYiLTveRjPS8rNZ0F+M4XgR/9TV/iaziqoJE/HU+WQ+mkUn8JYDg7wMSyKASBXNYAL+dXUmqaG4uEdRGV+06uL/WPT7Fw41qoD8N9xyTRnf++2OIoJ/xWvFbMLqdS0zZ6cmSXwSCb/80bf5Tpxt+eIqk07XVz/AEU6SRZIsqX58HRAEZyDoXiiJlrRfji+tt9rncG5onkyRVmgtlzrRdYAp/ChXqrKBSk33UmnNMr9PmWhalRhj2SkgavSMb9sEU/i9U6PQflQZrqKW4NrHyDp5z8nlNVFgIz6rFdiS7JVXbala/uVJtngtO/dguFm99o0JVCS14+8f2Y2cRg6ZyxlcuQikxrpUDaekdsuthGIz6oV5zhhMvWyWkYIKgM6WJmiNtztokSp3Y1NChK1I1HtP6aNIbF1TI6rcO0RK16rx8gW7+oeaHNRPCQEbFMqlftz4kSJIwlEXdpwKiiZ5bkFwdDF4vM9Xd05uMsAf3QN6ZkjKP8g9C3Va0Ix3V92WpbAIA')
+  src: url('data:application/x-font-woff;charset=utf8-8;base64,d09GRgABAAAAAAQgAAsAAAAABrwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADsAAABUIIslek9TLzIAAAFEAAAAPwAAAFYpRjXwY21hcAAAAYQAAABPAAABfmBD5KlnbHlmAAAB1AAAAGAAAACINxFu0WhlYWQAAAI0AAAAMAAAADYV/A6waGhlYQAAAmQAAAAcAAAAJAAtABlobXR4AAACgAAAAAwAAAAMADAAAGxvY2EAAAKMAAAACAAAAAgAIABEbWF4cAAAApQAAAAeAAAAIAEPACJuYW1lAAACtAAAAT8AAAJzQ72hRHBvc3QAAAP0AAAAKgAAAEeHVaHleJxjYGRgYOBiMGCwY2BycfMJYeDLSSzJY5BiYGGAAJA8MpsxJzM9kYEDxgPKsYBpDiBmg4gCACY7BUgAeJxjYGQQYJzAwMrAwMDPIAAkmaE0NwMjAxsDAxMDKzMDVhCQ5prC4PCA4QEjg+j/v0CFogwglYwgOQC9ZgaRAHic7ZCxDYAwDATPiaFAjEFBwTBUzM8mydtmDF66k/7lysACdHEJB3swIrdWy72z5e4ceeOxvzaGTFjd001a+bOnz6+1+FNRnytoE7boCy0AeJxjYGJg+P+fQYxBiIGFQYSBwdxQVNnUXFmJTZZRRMya0cjMltFETZiPj48RCECEAB8fE4QFIhgYEPr5GUSB+tG0squbi5uLC8O1c7EwMrMzCiFM4GMFCjAxAAC/8AuCeJxjYGRgYADiawd0bOP5bb4ycDNIAEUYbidnHEXQ//8ziDEIAbkcDEwgUQA3/ArKeJxjYGRgYBD9/xdISjCAgBgDIwMqYAYAQWsCRQAAAAAAGAAAABgAAAAAAAAAIABEeJxjYGRgYGBmEGNgYgABEMkFhAwM/8F8BgAK7wEyAAB4nIWOy2rCQBSG/3grVWgLQrsrs2oXhXjZFFx2oeuquI860WiSCZNRELrvso/SJ3Dbt+ijFPqbHhCkYIZkvvNfDgFwgy94ODweGcIlXHD64zLpTrhCfhSuooFn4Rqu8SJcxxNehRto4o0bvMolFYUP4RKu8Clcpr4XrpC/hau4xY9wDfdeU7iOidcRbuDBex9FSRbr1DitxkG+zod6sYkDeyqfzhNt88ikquO3j1bhDHSqbeD0XE13Kt8uus6FKrQmUX2TOh3HRmXWrPTM+Uvnsl6rFYruz0yCESIkyBBDI4WB460wRoAca75Dzgts6AewZ9Pn/Alnyzuil9LpwEf739axMyjUQy8onDl7U+z4zbHlv3WpOoScQ2YMNyn0i/2HdMxjqGSFt6Iyo+5jWbQy9NDiCU/yPlPc9As0/naZAHicY2BiwA+YGZkYmRlZGPhKEouzdUvzkjNSk7NTU3jAXCiHgQEAqZ8KXQAA')
     format('woff2');
   unicode-range: U+E000-E001;
 }
