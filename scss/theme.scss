@@ -43,11 +43,11 @@
 
 .note-content-plaintext {
   display: none;
+  white-space: pre-wrap;
 
   &.visible {
     display: inherit;
     padding: 0 10px;
-    white-space: pre-wrap;
   }
 }
 
