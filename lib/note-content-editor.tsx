@@ -467,11 +467,14 @@ class NoteContentEditor extends Component<Props> {
           overTodo ? ' cursor-pointer' : ''
         }`}
       >
-        {editor === 'fast' ? (
-          <div style={{ padding: '0 10px', whiteSpace: 'pre-wrap' }}>
-            {content}
-          </div>
-        ) : (
+        <div
+          className={`note-content-plaintext${
+            editor === 'fast' ? ' visible' : ''
+          }`}
+        >
+          {content}
+        </div>
+        {editor !== 'fast' && (
           <Monaco
             key={noteId}
             editorDidMount={this.editorReady}

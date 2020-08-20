@@ -64,6 +64,16 @@
   cursor: pointer;
 }
 
+.note-content-plaintext {
+  display: none;
+  white-space: pre-wrap;
+
+  &.visible {
+    display: inherit;
+    padding: 0 10px;
+  }
+}
+
 .theme-light {
   background-color: $studio-white;
   color: $studio-gray-60;
