@@ -137,11 +137,13 @@ class NoteContentEditor extends Component<Props> {
     }
 
     if (this.props.lineLength !== prevProps.lineLength) {
-      Promise.resolve().then(() => {
+      // @TODO: This timeout is necessary for no apparent reason
+      //        Figure out why and take it out!
+      setTimeout(() => {
         if (this.editor) {
           this.editor.layout();
         }
-      });
+      }, 400);
     }
   }
 
