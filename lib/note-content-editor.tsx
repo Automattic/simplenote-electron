@@ -113,6 +113,17 @@ class NoteContentEditor extends Component<Props> {
       editorSelection: [thisStart, thisEnd, thisDirection],
     } = this.props;
 
+    if (this.editor && this.props.searchQuery) {
+      const model = this.editor.getModel();
+      const range = model.findMatches(this.props.searchQuery)[0]?.range;
+      if (range) {
+        this.editor.setSelection(range);
+        this.editor.getAction('actions.find').run();
+      } else {
+        this.editor.trigger('keyboard', 'closeFindWidget');
+      }
+    }
+
     if (
       this.editor &&
       this.state.editor === 'full' &&
@@ -164,6 +175,8 @@ class NoteContentEditor extends Component<Props> {
         'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
         'editor.background': '#ffffff',
         'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
+        'editor.findMatchHighlightBackground': '#3361cc', // $studio-simplenote-blue-50
+        'editorOverviewRuler.findMatchForeground': '#3361cc', // Editor marker navigation widget error color.
         'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30
         'scrollbarSlider.background': '#c3c4c7', // $studio-gray-10
         'scrollbarSlider.hoverBackground': '#a7aaad', // $studio-gray-20
@@ -178,6 +191,8 @@ class NoteContentEditor extends Component<Props> {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90
         'editor.selectionBackground': '#50575e', // $studio-gray-60
+        'editor.findMatchHighlightBackground': '#3361cc', // $studio-simplenote-blue-50
+        'editorOverviewRuler.findMatchForeground': '#3361cc', // Editor marker navigation widget error color.
         'scrollbarSlider.activeBackground': '#646970', // $studio-gray-50
         'scrollbarSlider.background': '#2c3338', // $studio-gray-80
         'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90
@@ -188,7 +203,6 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    window.editor = editor;
     this.monaco = monaco;
 
     window.electron?.receive('editorCommand', (command) => {
