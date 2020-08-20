@@ -113,28 +113,4 @@ export const middleware: S.Middleware = (store) => (
   }
 };
 
-if ('development' === process.env.NODE_ENV) {
-  window.prefill = () =>
-    Promise.all([
-      import(
-        /* webpackChunkName: 'utils-import-simplenote' */ '../../utils/import/simplenote'
-      ),
-      import(/* webpackChunkName: 'utils-import' */ '../../utils/import'),
-      import(/* webpackChunkName: 'test-account' */ './test_account.json'),
-    ]).then(([Simplenote, CoreImporter, data]) => {
-      const notes = {
-        activeNotes: Simplenote.convertModificationDates(data.activeNotes),
-        trashedNotes: Simplenote.convertModificationDates(data.trashedNotes),
-      };
-
-      new CoreImporter.default((note) =>
-        window.dispatch({
-          type: 'IMPORT_NOTE_WITH_ID',
-          noteId: uuid(),
-          note,
-        })
-      ).importNotes(notes);
-    });
-}
-
 export default middleware;
