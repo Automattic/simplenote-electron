@@ -160,14 +160,28 @@ class NoteContentEditor extends Component<Props> {
     const lineNumber = position.lineNumber;
     const thisLine = model.getLineContent(lineNumber);
 
-    let range = new this.monaco.Range(lineNumber, 0, lineNumber, 0);
-    let text = '\ue000 ';
-
-    // if line already starts with a checkbox, remove it
-    if (thisLine.startsWith('\ue000 ') || thisLine.startsWith('\ue001 ')) {
-      range = new this.monaco.Range(lineNumber, 0, lineNumber, 3);
-      text = '';
+    // "(1)A line without leading space"
+    // "(1   )A line with leading space"
+    // "(1   )(3\ue000 )A line with a task and leading space"
+    // "(1   )(2- )A line with a bullet"
+    // "(1  )(2* )(3\ue001  )Bulleted task"
+    const match = /^(\s*)([-+*\u2022]\s*)?([\ue000\ue001]\s+)?/.exec(thisLine);
+    if (!match) {
+      // this shouldn't be able to fail since it requires no characters
+      return;
     }
+
+    const [fullMatch, prefixSpace, bullet, existingTask] = match;
+    const hasTask = 'undefined' !== typeof existingTask;
+
+    const lineOffset = prefixSpace.length + (bullet?.length ?? 0) + 1;
+    const text = hasTask ? '' : '\ue000 ';
+    const range = new this.monaco.Range(
+      lineNumber,
+      lineOffset,
+      lineNumber,
+      lineOffset + (existingTask?.length ?? 0)
+    );
 
     const identifier = { major: 1, minor: 1 };
     const op = { identifier, range, text, forceMoveMarkers: true };
