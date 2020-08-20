@@ -167,16 +167,16 @@ module.exports = function main() {
   const gotTheLock = app.requestSingleInstanceLock();
   if (gotTheLock) {
     app.on('second-instance', (e, argv) => {
-      // Someone tried to run a second instance, we should focus our window.
-      // Protocol handler for win32
+      // Protocol handler for platforms other than macOS
       // argv: An array of the second instance’s (command line / deep linked) arguments
+      // The last index of argv is the full deeplink url (simplenote://SOME_URL)
+      // second-instance should not be called by macOS however we should check
       if (process.platform !== 'darwin') {
-        // Keep only command line / deep linked arguments
-        const url =
-          (argv.slice(-1) && argv.slice(-1).length && argv.slice(-1)[0]) || '';
+        const url = argv[argv.length - 1] || '';
         mainWindow.webContents.send('wpLogin', url);
       }
 
+      // Someone tried to run a second instance, we should focus our window.
       if (mainWindow) {
         if (mainWindow.isMinimized()) {
           mainWindow.restore();
