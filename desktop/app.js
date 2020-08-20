@@ -27,6 +27,14 @@ module.exports = function main() {
   // be closed automatically when the JavaScript object is GCed.
   let mainWindow = null;
 
+  app.on('will-finish-launching', function () {
+    setTimeout(updater.ping.bind(updater), config.updater.delay);
+    app.on('open-url', function (event, url) {
+      event.preventDefault();
+      mainWindow.webContents.send('wpLogin', url);
+    });
+  });
+
   const url =
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
@@ -155,14 +163,6 @@ module.exports = function main() {
     // wait until window is presentable
     mainWindow.once('ready-to-show', mainWindow.show);
   };
-
-  app.on('will-finish-launching', function () {
-    setTimeout(updater.ping.bind(updater), config.updater.delay);
-    app.on('open-url', function (event, url) {
-      event.preventDefault();
-      mainWindow.webContents.send('wpLogin', url);
-    });
-  });
 
   const gotTheLock = app.requestSingleInstanceLock();
   if (gotTheLock) {
