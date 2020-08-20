@@ -141,7 +141,7 @@ export const NotePreview: FunctionComponent<Props> = ({
         note?.content ?? ''
       );
     }
-  }, [note?.content, note?.systemTags, searchQuery]);
+  }, [note?.content, searchQuery, showRenderedView]);
 
   return (
     <div className="note-detail-wrapper">
@@ -153,7 +153,7 @@ export const NotePreview: FunctionComponent<Props> = ({
           style={{ fontSize: `${fontSize}px` }}
         >
           <div style={{ whiteSpace: 'pre' }}>
-            {withCheckboxCharacters(note?.content ?? '')}
+            {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
           </div>
         </div>
       </div>
@@ -161,15 +161,20 @@ export const NotePreview: FunctionComponent<Props> = ({
   );
 };
 
-const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => ({
-  fontSize: state.settings.fontSize,
-  isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
-  note: props.note ?? state.data.notes.get(props.noteId),
-  noteId: props.noteId ?? state.ui.openedNote,
-  searchQuery: state.ui.searchQuery,
-  showRenderedView:
-    props.note?.systemTags.includes('markdown') && !state.ui.editMode,
-});
+const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
+  const noteId = props.noteId ?? state.ui.openedNote;
+  const note = props.note ?? state.data.notes.get(noteId);
+
+  return {
+    fontSize: state.settings.fontSize,
+    isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
+    note,
+    noteId,
+    searchQuery: state.ui.searchQuery,
+    showRenderedView:
+      !!note?.systemTags.includes('markdown') && !state.ui.editMode,
+  };
+};
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   editNote: actions.data.editNote,
