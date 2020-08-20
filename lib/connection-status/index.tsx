@@ -1,9 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
+import ConnectionIcon from '../icons/connection';
+import NoConnectionIcon from '../icons/no-connection';
 
 import * as S from '../state';
 import * as T from '../types';
+
+import './style';
 
 type StateProps = {
   connectionStatus: T.ConnectionState;
@@ -26,7 +30,14 @@ export const ConnectionStatus: FunctionComponent<Props> = ({
           : "Simplenote hasn't communicated with the server in a while; changes may not be synchronized with the server until the connection improves."
       }
     >
-      <p>Server connection: {connectionStatus === 'green' ? '🟢' : '🔴'}</p>
+      <p>
+        {connectionStatus === 'green' ? (
+          <ConnectionIcon />
+        ) : (
+          <NoConnectionIcon />
+        )}
+        <span className="server-connection__label">Server connection</span>
+      </p>
     </Tooltip>
   </div>
 );
