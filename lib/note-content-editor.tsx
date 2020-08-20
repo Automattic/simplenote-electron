@@ -23,6 +23,7 @@ type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
   fontSize: number;
   keyboardShortcuts: boolean;
+  lineLength: T.LineLength;
   noteId: T.EntityId;
   note: T.Note;
   searchQuery: string;
@@ -109,7 +110,6 @@ class NoteContentEditor extends Component<Props> {
       editorSelection: [prevStart, prevEnd, prevDirection],
     } = prevProps;
     const {
-      noteId,
       editorSelection: [thisStart, thisEnd, thisDirection],
     } = this.props;
 
@@ -134,6 +134,14 @@ class NoteContentEditor extends Component<Props> {
             : SelectionDirection.LTR
         )
       );
+    }
+
+    if (this.props.lineLength !== prevProps.lineLength) {
+      Promise.resolve().then(() => {
+        if (this.editor) {
+          this.editor.layout();
+        }
+      });
     }
   }
 
@@ -527,6 +535,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   ],
   fontSize: state.settings.fontSize,
   keyboardShortcuts: state.settings.keyboardShortcuts,
+  lineLength: state.settings.lineLength,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
   searchQuery: state.ui.searchQuery,
