@@ -41,6 +41,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export class NoteCell extends Component<Props> {
   createdAt: number;
+  updateScheduled: ReturnType<typeof setTimeout> | undefined;
 
   constructor(props: Props) {
     super(props);
@@ -59,6 +60,10 @@ export class NoteCell extends Component<Props> {
     if (this.props.lastUpdated < 1000 && !this.updateScheduled) {
       this.updateScheduled = setTimeout(() => this.forceUpdate(), 1000);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.updateScheduled);
   }
 
   render() {
