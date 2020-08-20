@@ -165,30 +165,29 @@ module.exports = function main() {
   };
 
   const gotTheLock = app.requestSingleInstanceLock();
-  if (gotTheLock) {
-    app.on('second-instance', (e, argv) => {
-      if (process.platform === 'darwin') {
-        // macOS communicates deep-linking via the `open-url` event (see above)
-        // but we might still end up with this message so ignore it if we do
-        return;
-      }
-      // Protocol handler for platforms other than macOS
-      // argv: An array of the second instance’s (command line / deep linked) arguments
-      // The last index of argv is the full deeplink url (simplenote://SOME_URL)
-      mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
-
-      // Someone tried to run a second instance, we should focus our window.
-      if (mainWindow) {
-        if (mainWindow.isMinimized()) {
-          mainWindow.restore();
-        }
-        mainWindow.focus();
-      }
-    });
-  } else {
-    app.quit();
-    return;
+  if (!gotTheLock) {
+    return app.quit();
   }
+
+  app.on('second-instance', (e, argv) => {
+    if (process.platform === 'darwin') {
+      // macOS communicates deep-linking via the `open-url` event (see above)
+      // but we might still end up with this message so ignore it if we do
+      return;
+    }
+    // Protocol handler for platforms other than macOS
+    // argv: An array of the second instance’s (command line / deep linked) arguments
+    // The last index of argv is the full deeplink url (simplenote://SOME_URL)
+    mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
+
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus();
+    }
+  });
 
   if (!app.isDefaultProtocolClient('simplenote')) {
     // Define custom protocol handler. This allows for deeplinking into the app from simplenote://
