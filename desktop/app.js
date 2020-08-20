@@ -27,14 +27,6 @@ module.exports = function main() {
   // be closed automatically when the JavaScript object is GCed.
   let mainWindow = null;
 
-  app.on('will-finish-launching', function () {
-    setTimeout(updater.ping.bind(updater), config.updater.delay);
-    app.on('open-url', function (event, url) {
-      event.preventDefault();
-      mainWindow.webContents.send('wpLogin', url);
-    });
-  });
-
   const url =
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
@@ -164,20 +156,37 @@ module.exports = function main() {
     mainWindow.once('ready-to-show', mainWindow.show);
   };
 
-  const gotTheLock = app.requestSingleInstanceLock();
-
-  app.on('second-instance', () => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore();
-      }
-      mainWindow.focus();
-    }
+  app.on('will-finish-launching', function () {
+    setTimeout(updater.ping.bind(updater), config.updater.delay);
+    app.on('open-url', function (event, url) {
+      event.preventDefault();
+      mainWindow.webContents.send('wpLogin', url);
+    });
   });
 
-  if (!gotTheLock) {
-    return app.quit();
+  const gotTheLock = app.requestSingleInstanceLock();
+  if (gotTheLock) {
+    app.on('second-instance', (e, argv) => {
+      // Someone tried to run a second instance, we should focus our window.
+      // Protocol handler for win32
+      // argv: An array of the second instance’s (command line / deep linked) arguments
+      if (process.platform !== 'darwin') {
+        // Keep only command line / deep linked arguments
+        const url =
+          (argv.slice(-1) && argv.slice(-1).length && argv.slice(-1)[0]) || '';
+        mainWindow.webContents.send('wpLogin', url);
+      }
+
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+          mainWindow.restore();
+        }
+        mainWindow.focus();
+      }
+    });
+  } else {
+    app.quit();
+    return;
   }
 
   if (!app.isDefaultProtocolClient('simplenote')) {

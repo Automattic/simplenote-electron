@@ -89,6 +89,12 @@
     "vendor": "Automattic, Inc.",
     "maintainer": "Automattic, Inc. <support@simplenote.com>"
   },
+  "protocols": [
+    {
+      "name": "simplenote",
+      "schemes": ["simplenote"]
+    }
+  ],
   "deb": {
     "depends": ["gconf2"]
   },
