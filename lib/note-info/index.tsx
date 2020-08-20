@@ -166,6 +166,7 @@ export class NoteInfo extends Component<Props> {
               <input
                 className="note-info-detail note-info-link-text"
                 value={`simplenote://note/${noteId}`}
+                readOnly={true}
                 spellCheck={false}
               />
               <button
@@ -187,6 +188,7 @@ export class NoteInfo extends Component<Props> {
                   ref={(e) => (this.publishUrlElement = e)}
                   className="note-info-detail note-info-link-text"
                   value={publishURL}
+                  readOnly={true}
                   spellCheck={false}
                 />
                 <button

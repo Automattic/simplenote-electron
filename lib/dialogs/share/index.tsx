@@ -182,6 +182,7 @@ export class ShareDialog extends Component<Props> {
                         isPublished ? 'Publishing note…' : 'Note not published'
                       }
                       value={publishURL}
+                      readOnly={true}
                       spellCheck={false}
                     />
                     <div className="settings-item-control">
