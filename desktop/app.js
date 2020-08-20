@@ -165,9 +165,6 @@ module.exports = function main() {
   };
 
   const gotTheLock = app.requestSingleInstanceLock();
-  if (!gotTheLock) {
-    return app.quit();
-  }
 
   app.on('second-instance', (e, argv) => {
     // Someone tried to run a second instance, we should focus our window.
@@ -188,6 +185,10 @@ module.exports = function main() {
     // The last index of argv is the full deeplink url (simplenote://SOME_URL)
     mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
   });
+
+  if (!gotTheLock) {
+    return app.quit();
+  }
 
   if (!app.isDefaultProtocolClient('simplenote')) {
     // Define custom protocol handler. This allows for deeplinking into the app from simplenote://
