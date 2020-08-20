@@ -1,5 +1,12 @@
 # Changelog
 
+
+## [v1.21.1]
+
+### Fixes
+
+- Updated WordPress.com login flow to work on all platforms [#2285](https://github.com/Automattic/simplenote-electron/pull/2285)
+
 ## [v1.21.0]
 
 ### Enhancements
