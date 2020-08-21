@@ -117,13 +117,14 @@ class NoteContentEditor extends Component<Props> {
     if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
       const model = this.editor.getModel();
       const range = model?.findMatches(this.props.searchQuery)[0]?.range;
+      const searchArea = document.activeElement;
       if (range) {
         this.editor.setSelection(range);
         this.editor.getAction('actions.find').run();
       } else {
         this.editor.trigger('keyboard', 'closeFindWidget');
       }
-      this.props.focusSearch();
+      searchArea?.focus();
     }
 
     if (
@@ -550,7 +551,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   editNote: actions.data.editNote,
-  focusSearch: actions.ui.focusSearchField,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',

@@ -26,7 +26,7 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         return;
 
       case 'focusSearchField':
-        dispatch(actions.ui.focusSearchField(true));
+        dispatch(actions.ui.focusSearchField());
         return;
 
       case 'insertChecklist':

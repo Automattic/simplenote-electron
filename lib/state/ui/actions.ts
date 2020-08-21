@@ -30,11 +30,8 @@ export const filterNotes: A.ActionCreator<A.FilterNotes> = (
   tagHashes,
 });
 
-export const focusSearchField: A.ActionCreator<A.FocusSearchField> = (
-  select?: boolean
-) => ({
+export const focusSearchField: A.ActionCreator<A.FocusSearchField> = () => ({
   type: 'FOCUS_SEARCH_FIELD',
-  select,
 });
 
 export const logout: A.ActionCreator<A.Logout> = () => ({
