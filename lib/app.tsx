@@ -185,7 +185,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
       dispatch(settingsActions.activateTheme(theme)),
     closeNote: () => dispatch(closeNote()),
     createNote: () => dispatch(createNote()),
-    focusSearchField: () => dispatch(actions.ui.focusSearchField()),
+    focusSearchField: () => dispatch(actions.ui.focusSearchField(true)),
     openTagList: () => dispatch(toggleNavigation()),
     setLineLength: (length) => dispatch(settingsActions.setLineLength(length)),
     setNoteDisplay: (displayMode) =>

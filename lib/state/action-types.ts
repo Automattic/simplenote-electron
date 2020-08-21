@@ -68,7 +68,10 @@ export type FilterNotes = Action<
   'FILTER_NOTES',
   { noteIds: T.EntityId[]; tagHashes: T.TagHash[] }
 >;
-export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type FocusSearchField = Action<
+  'FOCUS_SEARCH_FIELD',
+  { select?: boolean }
+>;
 export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId?: T.EntityId }>;

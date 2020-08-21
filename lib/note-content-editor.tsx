@@ -32,6 +32,7 @@ type StateProps = {
 
 type DispatchProps = {
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  focusSearch: () => any;
   insertTask: () => any;
   storeEditorSelection: (
     noteId: T.EntityId,
@@ -113,7 +114,7 @@ class NoteContentEditor extends Component<Props> {
       editorSelection: [thisStart, thisEnd, thisDirection],
     } = this.props;
 
-    if (this.editor && this.props.searchQuery) {
+    if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
       const model = this.editor.getModel();
       const range = model.findMatches(this.props.searchQuery)[0]?.range;
       if (range) {
@@ -122,6 +123,7 @@ class NoteContentEditor extends Component<Props> {
       } else {
         this.editor.trigger('keyboard', 'closeFindWidget');
       }
+      this.props.focusSearch();
     }
 
     if (
@@ -548,6 +550,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   editNote: actions.data.editNote,
+  focusSearch: actions.ui.focusSearchField,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
