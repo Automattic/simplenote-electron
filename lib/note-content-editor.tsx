@@ -255,15 +255,22 @@ class NoteContentEditor extends Component<Props> {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
     });
 
+    // disable editor keybindings for Electron since it is handled by appCommand
+    // doing it this way will always show the keyboard hint in the context menu!
+    editor.createContextKey(
+      'allowBrowserKeybinding',
+      window.electron ? false : true
+    );
+
     editor.addAction({
       id: 'insertChecklist',
       label: 'Insert Checklist',
-      // we don't need to add keybindings for Electron since it is handled by appCommand
-      keybindings: window.electron
-        ? []
-        : [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C],
-      contextMenuGroupId: '1_modification',
-      contextMenuOrder: 2.5,
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+      ],
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 9,
+      keybindingContext: 'allowBrowserKeybinding',
       run: this.insertOrRemoveCheckboxes,
     });
 
