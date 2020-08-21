@@ -19,6 +19,11 @@ import * as T from './types';
 
 const SPEED_DELAY = 120;
 
+type OwnProps = {
+  storeFocusEditor: (focusSetter: () => any) => any;
+  storeHasFocus: (focusGetter: () => boolean) => any;
+};
+
 type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
   fontSize: number;
@@ -42,7 +47,7 @@ type DispatchProps = {
   ) => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 type OwnState = {
   content: string;
@@ -94,6 +99,8 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
+    this.props.storeFocusEditor(this.focusEditor);
+    this.props.storeHasFocus(this.hasFocus);
   }
 
   componentWillUnmount() {
@@ -145,6 +152,10 @@ class NoteContentEditor extends Component<Props> {
       }, 400);
     }
   }
+
+  focusEditor = () => this.editor?.focus();
+
+  hasFocus = () => this.editor?.hasTextFocus();
 
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
