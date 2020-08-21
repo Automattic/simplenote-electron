@@ -2,6 +2,8 @@ import analytics from '../../analytics';
 import getConfig from '../../../get-config';
 import isDevConfig from '../../utils/is-dev-config';
 
+import { debounce } from 'lodash';
+
 const config = getConfig();
 
 import type * as A from '../action-types';
@@ -34,6 +36,7 @@ export const middleware: S.Middleware = (store) => {
         return;
     }
   };
+  const recordNoteEdit = debounce(() => record('editor_note_edited'), 2000);
 
   return (next) => (action: A.ActionType) => {
     const result = next(action);
@@ -87,7 +90,7 @@ export const middleware: S.Middleware = (store) => {
         record('list_note_created');
         break;
       case 'EDIT_NOTE':
-        record('editor_note_edited');
+        recordNoteEdit();
         break;
       case 'INSERT_TASK':
         record('editor_checklist_inserted');
