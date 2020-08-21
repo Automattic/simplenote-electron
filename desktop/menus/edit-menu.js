@@ -33,6 +33,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
       {
         label: '&Select All',
         click: editorCommandSender({ action: 'selectAll' }),
+        role: 'selectAll',
       },
       { type: 'separator' },
       {
