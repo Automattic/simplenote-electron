@@ -1,4 +1,4 @@
-const { appCommandSender } = require('./utils');
+const { editorCommandSender } = require('./utils');
 
 const buildFormatMenu = (isAuthenticated) => {
   isAuthenticated = isAuthenticated || false;
@@ -6,7 +6,7 @@ const buildFormatMenu = (isAuthenticated) => {
     {
       label: 'Insert &Checklist',
       accelerator: 'CommandOrControl+Shift+C',
-      click: appCommandSender({ action: 'insertChecklist' }),
+      click: editorCommandSender({ action: 'insertChecklist' }),
     },
   ];
 

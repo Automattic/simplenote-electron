@@ -19,6 +19,11 @@ import * as T from './types';
 
 const SPEED_DELAY = 120;
 
+type OwnProps = {
+  storeFocusEditor: (focusSetter: () => any) => any;
+  storeHasFocus: (focusGetter: () => boolean) => any;
+};
+
 type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
   fontSize: number;
@@ -42,7 +47,7 @@ type DispatchProps = {
   ) => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 type OwnState = {
   content: string;
@@ -86,7 +91,6 @@ class NoteContentEditor extends Component<Props> {
 
   componentDidMount() {
     const { noteId } = this.props;
-    window.addEventListener('keydown', this.handleKeys, true);
     this.bootTimer = setTimeout(() => {
       if (noteId === this.props.noteId) {
         this.setState({
@@ -95,6 +99,8 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
+    this.props.storeFocusEditor(this.focusEditor);
+    this.props.storeHasFocus(this.hasFocus);
   }
 
   componentWillUnmount() {
@@ -102,7 +108,6 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
-    window.removeEventListener('keydown', this.handleKeys, true);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -147,22 +152,52 @@ class NoteContentEditor extends Component<Props> {
     }
   }
 
-  handleKeys = (event: KeyboardEvent) => {
-    if (!this.props.keyboardShortcuts) {
+  focusEditor = () => this.editor?.focus();
+
+  hasFocus = () => this.editor?.hasTextFocus();
+
+  insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
+    // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
+    const model = editor.getModel();
+    if (!model) {
       return;
     }
 
-    const { code, ctrlKey, metaKey, shiftKey } = event;
-    const cmdOrCtrl = ctrlKey || metaKey;
+    const position = editor.getPosition();
+    if (!position) {
+      return;
+    }
+    const lineNumber = position.lineNumber;
+    const thisLine = model.getLineContent(lineNumber);
 
-    if (cmdOrCtrl && shiftKey && 'KeyC' === code) {
-      this.props.insertTask();
-      event.stopPropagation();
-      event.preventDefault();
-      return false;
+    // "(1)A line without leading space"
+    // "(1   )A line with leading space"
+    // "(1   )(3\ue000 )A line with a task and leading space"
+    // "(1   )(2- )A line with a bullet"
+    // "(1  )(2* )(3\ue001  )Bulleted task"
+    const match = /^(\s*)([-+*\u2022]\s*)?([\ue000\ue001]\s+)?/.exec(thisLine);
+    if (!match) {
+      // this shouldn't be able to fail since it requires no characters
+      return;
     }
 
-    return true;
+    const [fullMatch, prefixSpace, bullet, existingTask] = match;
+    const hasTask = 'undefined' !== typeof existingTask;
+
+    const lineOffset = prefixSpace.length + (bullet?.length ?? 0) + 1;
+    const text = hasTask ? '' : '\ue000 ';
+    const range = new this.monaco.Range(
+      lineNumber,
+      lineOffset,
+      lineNumber,
+      lineOffset + (existingTask?.length ?? 0)
+    );
+
+    const identifier = { major: 1, minor: 1 };
+    const op = { identifier, range, text, forceMoveMarkers: true };
+    editor.executeEdits('insertOrRemoveCheckboxes', [op]);
+
+    this.props.insertTask();
   };
 
   editorInit: EditorWillMount = () => {
@@ -200,16 +235,61 @@ class NoteContentEditor extends Component<Props> {
     this.editor = editor;
     this.monaco = monaco;
 
+    // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
+    const shortcutsToDisable = [
+      'cursorUndo', // meta+U
+      'editor.action.commentLine', // meta+/
+      'editor.action.jumpToBracket', // shift+meta+\
+      'editor.action.transposeLetters', // ctrl+T
+      'editor.action.triggerSuggest', // ctrl+space
+      'expandLineSelection', // meta+L
+      // search shortcuts
+      'actions.find',
+      'actions.findWithSelection',
+      'editor.action.addSelectionToNextFindMatch',
+      'editor.action.nextMatchFindAction',
+      'editor.action.selectHighlights',
+    ];
+    // let Electron menus trigger these
+    if (window.electron) {
+      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
+    }
+    shortcutsToDisable.forEach(function (action) {
+      editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
+    });
+
+    // disable editor keybindings for Electron since it is handled by editorCommand
+    // doing it this way will always show the keyboard hint in the context menu!
+    editor.createContextKey(
+      'allowBrowserKeybinding',
+      window.electron ? false : true
+    );
+
+    editor.addAction({
+      id: 'insertChecklist',
+      label: 'Insert Checklist',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+      ],
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 9,
+      keybindingContext: 'allowBrowserKeybinding',
+      run: this.insertOrRemoveCheckboxes,
+    });
+
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
+        case 'insertChecklist':
+          editor.trigger('editorCommand', 'insertChecklist', null);
+          return;
         case 'redo':
-          editor.trigger('', 'redo');
+          editor.trigger('editorCommand', 'redo', null);
           return;
         case 'selectAll':
           editor.setSelection(editor.getModel().getFullModelRange());
           return;
         case 'undo':
-          editor.trigger('', 'undo');
+          editor.trigger('editorCommand', 'undo', null);
           return;
       }
     });

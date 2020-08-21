@@ -36,7 +36,6 @@ type DispatchProps = {
   closeNote: () => any;
   createNote: () => any;
   focusSearchField: () => any;
-  openTagList: () => any;
   setLineLength: (length: T.LineLength) => any;
   setNoteDisplay: (displayMode: T.ListDisplayMode) => any;
   setSortType: (sortType: T.SortType) => any;
@@ -45,6 +44,7 @@ type DispatchProps = {
   toggleSortOrder: () => any;
   toggleSortTagsAlpha: () => any;
   toggleSpellCheck: () => any;
+  toggleTagList: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -76,13 +76,8 @@ class AppComponent extends Component<Props> {
     const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
     // open tag list
-    if (
-      cmdOrCtrl &&
-      shiftKey &&
-      'KeyU' === code &&
-      !this.props.showNavigation
-    ) {
-      this.props.openTagList();
+    if (cmdOrCtrl && shiftKey && 'KeyU' === code) {
+      this.props.toggleTagList();
 
       event.stopPropagation();
       event.preventDefault();
@@ -186,7 +181,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
     closeNote: () => dispatch(closeNote()),
     createNote: () => dispatch(createNote()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
-    openTagList: () => dispatch(toggleNavigation()),
     setLineLength: (length) => dispatch(settingsActions.setLineLength(length)),
     setNoteDisplay: (displayMode) =>
       dispatch(settingsActions.setNoteDisplay(displayMode)),
@@ -197,6 +191,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
     toggleSortOrder: () => dispatch(settingsActions.toggleSortOrder()),
     toggleSortTagsAlpha: () => dispatch(settingsActions.toggleSortTagsAlpha()),
     toggleSpellCheck: () => dispatch(settingsActions.toggleSpellCheck()),
+    toggleTagList: () => dispatch(toggleNavigation()),
   };
 };
 
