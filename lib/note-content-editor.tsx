@@ -116,7 +116,7 @@ class NoteContentEditor extends Component<Props> {
 
     if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
       const model = this.editor.getModel();
-      const range = model.findMatches(this.props.searchQuery)[0]?.range;
+      const range = model?.findMatches(this.props.searchQuery)[0]?.range;
       if (range) {
         this.editor.setSelection(range);
         this.editor.getAction('actions.find').run();
