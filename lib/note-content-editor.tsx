@@ -108,7 +108,6 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
-    window.electron?.removeListener('appCommand');
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -255,7 +254,7 @@ class NoteContentEditor extends Component<Props> {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
     });
 
-    // disable editor keybindings for Electron since it is handled by appCommand
+    // disable editor keybindings for Electron since it is handled by editorCommand
     // doing it this way will always show the keyboard hint in the context menu!
     editor.createContextKey(
       'allowBrowserKeybinding',
@@ -276,6 +275,9 @@ class NoteContentEditor extends Component<Props> {
 
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
+        case 'insertChecklist':
+          editor.trigger('editorCommand', 'insertChecklist', null);
+          return;
         case 'redo':
           editor.trigger('', 'redo');
           return;
@@ -284,14 +286,6 @@ class NoteContentEditor extends Component<Props> {
           return;
         case 'undo':
           editor.trigger('', 'undo');
-          return;
-      }
-    });
-
-    window.electron?.receive('appCommand', (command) => {
-      switch (command.action) {
-        case 'insertChecklist':
-          editor.trigger('appCommand', 'insertChecklist', null);
           return;
       }
     });
