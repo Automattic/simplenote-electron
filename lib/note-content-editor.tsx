@@ -250,6 +250,10 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.nextMatchFindAction',
       'editor.action.selectHighlights',
     ];
+    // let Electron menus trigger these
+    if (window.electron) {
+      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
+    }
     shortcutsToDisable.forEach(function (action) {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
     });
@@ -279,13 +283,13 @@ class NoteContentEditor extends Component<Props> {
           editor.trigger('editorCommand', 'insertChecklist', null);
           return;
         case 'redo':
-          editor.trigger('', 'redo');
+          editor.trigger('editorCommand', 'redo', null);
           return;
         case 'selectAll':
           editor.setSelection(editor.getModel().getFullModelRange());
           return;
         case 'undo':
-          editor.trigger('', 'undo');
+          editor.trigger('editorCommand', 'undo', null);
           return;
       }
     });

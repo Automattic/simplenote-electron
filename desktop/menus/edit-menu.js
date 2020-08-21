@@ -10,10 +10,12 @@ const buildEditMenu = (settings, isAuthenticated) => {
       {
         label: '&Undo',
         click: editorCommandSender({ action: 'undo' }),
+        accelerator: 'CommandOrControl+Z',
       },
       {
         label: '&Redo',
         click: editorCommandSender({ action: 'redo' }),
+        accelerator: 'CommandOrControl+Shift+Z',
       },
       {
         type: 'separator',
@@ -33,7 +35,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
       {
         label: '&Select All',
         click: editorCommandSender({ action: 'selectAll' }),
-        role: 'selectAll',
+        accelerator: 'CommandOrControl+A',
       },
       { type: 'separator' },
       {
@@ -46,6 +48,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
         label: 'Search &Notes…',
         visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
+        accelerator: 'CommandOrControl+Shift+S',
       },
       { type: 'separator' },
       {
