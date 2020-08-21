@@ -115,14 +115,20 @@ class NoteContentEditor extends Component<Props> {
 
     if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
       const model = this.editor.getModel();
+      // Look to see if the current note has matches for the search term and get range of first match
       const range = model?.findMatches(this.props.searchQuery)[0]?.range;
+      // get the currently active element, to be restored later
       const { activeElement } = document;
       if (range) {
+        // if range exists select it
         this.editor.setSelection(range);
+        // open Monaco search widget, will populate with selected range
         this.editor.getAction('actions.find').run();
       } else {
+        // if no range close widget
         this.editor.trigger('keyboard', 'closeFindWidget');
       }
+      // restore focus to previously active element
       activeElement?.focus();
     }
 
