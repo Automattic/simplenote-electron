@@ -1,8 +1,8 @@
+import { debounce } from 'lodash';
+
 import analytics from '../../analytics';
 import getConfig from '../../../get-config';
 import isDevConfig from '../../utils/is-dev-config';
-
-import { debounce } from 'lodash';
 
 const config = getConfig();
 
@@ -36,6 +36,7 @@ export const middleware: S.Middleware = (store) => {
         return;
     }
   };
+
   const recordNoteEdit = debounce(() => record('editor_note_edited'), 2000);
 
   return (next) => (action: A.ActionType) => {
