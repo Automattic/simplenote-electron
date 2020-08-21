@@ -32,7 +32,6 @@ type StateProps = {
 
 type DispatchProps = {
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
-  focusSearch: () => any;
   insertTask: () => any;
   storeEditorSelection: (
     noteId: T.EntityId,
