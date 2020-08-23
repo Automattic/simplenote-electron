@@ -9,9 +9,10 @@ import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
 
 import actions from './state/actions';
 import * as selectors from './state/selectors';
+import { getTerms } from './utils/filter-notes';
 import {
-  withCheckboxSyntax,
   withCheckboxCharacters,
+  withCheckboxSyntax,
 } from './utils/task-transform';
 
 import * as S from './state';
@@ -200,7 +201,7 @@ class NoteContentEditor extends Component<Props> {
     this.props.insertTask();
   };
 
-  editorInit: EditorWillMount = () => {
+  editorInit: EditorWillMount = (monaco) => {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
@@ -227,6 +228,56 @@ class NoteContentEditor extends Component<Props> {
         'scrollbarSlider.background': '#2c3338', // $studio-gray-80
         'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90
         'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
+      },
+    });
+
+    monaco.languages.registerDocumentHighlightProvider('plaintext', {
+      provideDocumentHighlights: (model) => {
+        const terms = getTerms(this.props.searchQuery)
+          .map((term) => term.normalize().toLowerCase())
+          .filter((term) => term.trim().length > 0);
+
+        if (terms.length === 0) {
+          return [];
+        }
+
+        const content = model.getValue().normalize().toLowerCase();
+
+        const highlights = terms.reduce(
+          (matches: monaco.languages.DocumentHighlight, term) => {
+            let termAt = null;
+            let startAt = 0;
+
+            while (termAt !== -1) {
+              termAt = content.indexOf(term, startAt);
+              if (termAt === -1) {
+                break;
+              }
+
+              startAt = termAt + term.length;
+
+              const start = model.getPositionAt(termAt);
+              const end = model.getPositionAt(termAt + term.length);
+
+              matches.push({
+                kind: monaco.languages.DocumentHighlightKind.Text,
+                range: {
+                  startLineNumber: start.lineNumber,
+                  startColumn: start.column,
+                  endLineNumber: end.lineNumber,
+                  endColumn: end.column,
+                },
+              });
+            }
+
+            return matches;
+          },
+          []
+        );
+
+        console.log(highlights);
+
+        return highlights;
       },
     });
   };
@@ -590,7 +641,7 @@ class NoteContentEditor extends Component<Props> {
               links: true,
               matchBrackets: 'never',
               minimap: { enabled: false },
-              occurrencesHighlight: false,
+              occurrencesHighlight: true,
               overviewRulerBorder: false,
               quickSuggestions: false,
               renderIndentGuides: false,
