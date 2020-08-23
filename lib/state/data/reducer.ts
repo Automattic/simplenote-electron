@@ -23,6 +23,13 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
   }
 };
 
+const modified = <Entity extends { modificationDate: number }>(
+  entity: Entity
+): Entity => ({
+  ...entity,
+  modificationDate: Date.now() / 1000,
+});
+
 export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
   state = new Map(),
   action
@@ -43,7 +50,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       const tags = withTag(note.tags, tagName);
 
       return tags !== note.tags
-        ? new Map(state).set(action.noteId, { ...note, tags })
+        ? new Map(state).set(action.noteId, modified({ ...note, tags }))
         : state;
     }
 
@@ -72,9 +79,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       return next;
     }
 
-    case 'EDIT_NOTE':
-    case 'NOTE_BUCKET_UPDATE':
-    case 'REMOTE_NOTE_UPDATE': {
+    case 'EDIT_NOTE': {
       const prev = state.get(action.noteId) ?? {
         content: '',
         creationDate: Date.now() / 1000,
@@ -86,13 +91,19 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         tags: [],
       };
 
-      return new Map(state).set(action.noteId, {
-        ...prev,
-        ...('EDIT_NOTE' === action.type ? action.changes : action.note),
-      });
+      return new Map(state).set(
+        action.noteId,
+        modified({ ...prev, ...action.changes })
+      );
     }
 
+    case 'NOTE_BUCKET_UPDATE':
+    case 'REMOTE_NOTE_UPDATE':
+      return new Map(state).set(action.noteId, action.note);
+
     case 'RESTORE_NOTE_REVISION':
+      // don't update the modified stamp here. we want to borrow the original
+      // to make it clearer that this copy of the note came from history
       return action.note
         ? new Map(state).set(action.noteId, action.note)
         : state;
@@ -116,7 +127,10 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         ? [...note.systemTags, 'markdown' as T.SystemTag]
         : note.systemTags.filter((tag) => tag !== 'markdown');
 
-      return new Map(state).set(action.noteId, { ...note, systemTags });
+      return new Map(state).set(
+        action.noteId,
+        modified({ ...note, systemTags })
+      );
     }
 
     case 'PIN_NOTE': {
@@ -134,7 +148,10 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         ? [...note.systemTags, 'pinned' as T.SystemTag]
         : note.systemTags.filter((tag) => tag !== 'pinned');
 
-      return new Map(state).set(action.noteId, { ...note, systemTags });
+      return new Map(state).set(
+        action.noteId,
+        modified({ ...note, systemTags })
+      );
     }
 
     case 'PUBLISH_NOTE': {
@@ -152,7 +169,10 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         ? [...note.systemTags, 'published' as T.SystemTag]
         : note.systemTags.filter((tag) => tag !== 'published');
 
-      return new Map(state).set(action.noteId, { ...note, systemTags });
+      return new Map(state).set(
+        action.noteId,
+        modified({ ...note, systemTags })
+      );
     }
 
     case 'REMOVE_COLLABORATOR':
@@ -170,7 +190,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
       const tags = withoutTag(note.tags, tagName);
 
       return tags !== note.tags
-        ? new Map(state).set(action.noteId, { ...note, tags })
+        ? new Map(state).set(action.noteId, modified({ ...note, tags }))
         : state;
     }
 
@@ -210,7 +230,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
           return;
         }
 
-        next.set(noteId, { ...note, tags: newTags });
+        next.set(noteId, modified({ ...note, tags: newTags }));
       });
 
       return next;
@@ -221,20 +241,26 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         return state;
       }
 
-      return new Map(state).set(action.noteId, {
-        ...state.get(action.noteId)!,
-        deleted: false,
-      });
+      return new Map(state).set(
+        action.noteId,
+        modified({
+          ...state.get(action.noteId)!,
+          deleted: false,
+        })
+      );
 
     case 'TRASH_NOTE':
       if (!state.has(action.noteId)) {
         return state;
       }
 
-      return new Map(state).set(action.noteId, {
-        ...state.get(action.noteId)!,
-        deleted: true,
-      });
+      return new Map(state).set(
+        action.noteId,
+        modified({
+          ...state.get(action.noteId)!,
+          deleted: true,
+        })
+      );
 
     case 'TRASH_TAG': {
       const next = new Map(state);
@@ -248,7 +274,7 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
         }
 
         changedIt = true;
-        next.set(noteId, { ...note, tags });
+        next.set(noteId, modified({ ...note, tags }));
       });
 
       return changedIt ? next : state;

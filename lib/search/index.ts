@@ -320,9 +320,17 @@ export const middleware: S.Middleware = (store) => {
     };
 
     switch (action.type) {
-      case 'ADD_NOTE_TAG':
-        searchState.notes.get(action.noteId)?.tags.add(t(action.tagName));
+      case 'ADD_NOTE_TAG': {
+        const note = searchState.notes.get(action.noteId);
+        if (!note) {
+          return next(action);
+        }
+
+        note.tags.add(t(action.tagName));
+        note.modificationDate = Date.now() / 1000;
+        indexNote(action.noteId);
         return next(withSearch(action));
+      }
 
       case 'CREATE_NOTE_WITH_ID':
       case 'IMPORT_NOTE_WITH_ID':
@@ -348,11 +356,14 @@ export const middleware: S.Middleware = (store) => {
           note.tags = new Set(action.changes.tags.map(t));
         }
         if ('undefined' !== typeof action.changes.creationDate) {
-          note.creationDate = action.changes.creationDate * 1000;
+          note.creationDate = action.changes.creationDate;
         }
-        if ('undefined' !== typeof action.changes.modificationDate) {
-          note.modificationDate = action.changes.modificationDate * 1000;
-        }
+
+        note.modificationDate =
+          'undefined' !== typeof action.changes.modificationDate
+            ? action.changes.modificationDate
+            : Date.now() / 1000;
+
         if ('undefined' !== typeof action.changes.deleted) {
           note.isTrashed = !!action.changes.deleted;
         }
@@ -367,42 +378,66 @@ export const middleware: S.Middleware = (store) => {
         searchState.openedTag = t(action.tagName);
         return next(withSearch(action));
 
-      case 'PIN_NOTE':
-        searchState.notes.get(action.noteId)!.isPinned = action.shouldPin;
-        indexNote(action.noteId);
-        return next(withSearch(action));
+      case 'PIN_NOTE': {
+        const note = searchState.notes.get(action.noteId);
+        if (!note) {
+          return next(action);
+        }
 
-      case 'REMOVE_NOTE_TAG':
-        searchState.notes.get(action.noteId)?.tags.delete(t(action.tagName));
+        note.isPinned = action.shouldPin;
+        note.modificationDate = Date.now() / 1000;
+        indexNote(action.noteId);
+
         return next(withSearch(action));
+      }
+
+      case 'REMOVE_NOTE_TAG': {
+        const note = searchState.notes.get(action.noteId);
+        if (!note) {
+          return next(action);
+        }
+
+        note.tags.delete(t(action.tagName));
+        note.modificationDate = Date.now() / 1000;
+        indexNote(action.noteId);
+
+        return next(withSearch(action));
+      }
 
       case 'RENAME_TAG': {
         const oldHash = t(action.oldTagName);
         const newHash = t(action.newTagName);
-
-        if (oldHash === newHash) {
-          return next(action);
-        }
 
         if (searchState.openedTag === oldHash) {
           searchState.openedTag = newHash;
         }
 
         searchState.notes.forEach((note, noteId) => {
-          // only adds the new one if the old one was there and deleted
-          note.tags.delete(oldHash) && note.tags.add(newHash);
+          if (!note.tags.has(oldHash)) {
+            return;
+          }
+
+          note.tags.delete(oldHash);
+          note.tags.add(newHash);
+          note.modificationDate = Date.now() / 1000;
+          indexNote(noteId);
         });
 
         return next(withSearch(action));
       }
 
-      case 'RESTORE_NOTE':
-        if (!searchState.notes.has(action.noteId)) {
-          return;
+      case 'RESTORE_NOTE': {
+        const note = searchState.notes.get(action.noteId);
+        if (!note) {
+          return next(action);
         }
-        searchState.notes.get(action.noteId)!.isTrashed = false;
+
+        note.isTrashed = false;
+        note.modificationDate = Date.now() / 1000;
         indexNote(action.noteId);
+
         return next(withNextNote(action.noteId, withSearch(action)));
+      }
 
       case 'SELECT_TRASH':
         searchState.openedTag = null;
@@ -432,15 +467,31 @@ export const middleware: S.Middleware = (store) => {
         searchState.sortReversed = !searchState.sortReversed;
         return next(withSearch(action));
 
-      case 'TRASH_NOTE':
-        if (!searchState.notes.has(action.noteId)) {
-          return;
+      case 'TRASH_NOTE': {
+        const note = searchState.notes.get(action.noteId);
+        if (!note) {
+          return next(action);
         }
-        searchState.notes.get(action.noteId)!.isTrashed = true;
+
+        note.isTrashed = true;
+        note.modificationDate = Date.now() / 100;
+        indexNote(action.noteId);
+
         return next(withNextNote(action.noteId, withSearch(action)));
+      }
 
       case 'TRASH_TAG': {
         const tagHash = t(action.tagName);
+
+        searchState.notes.forEach((note, noteId) => {
+          if (!note.tags.has(tagHash)) {
+            return;
+          }
+
+          note.tags.delete(tagHash);
+          note.modificationDate = Date.now() / 1000;
+          indexNote(noteId);
+        });
 
         // only update the search if we have a trashed tag open
         // it's okay to leave tag search terms in because we
