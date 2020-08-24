@@ -646,7 +646,7 @@ class NoteContentEditor extends Component<Props> {
               links: true,
               matchBrackets: 'never',
               minimap: { enabled: false },
-              occurrencesHighlight: true,
+              occurrencesHighlight: false,
               overviewRulerBorder: false,
               quickSuggestions: false,
               renderIndentGuides: false,
