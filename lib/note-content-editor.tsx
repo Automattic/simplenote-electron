@@ -162,7 +162,11 @@ class NoteContentEditor extends Component<Props> {
       }, 400);
     }
 
-    if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      prevProps.searchQuery !== this.props.searchQuery
+    ) {
       this.setDecorators();
     }
   }
