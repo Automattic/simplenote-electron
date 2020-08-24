@@ -191,7 +191,7 @@ class NoteContentEditor extends Component<Props> {
 
           matches.push({
             options: {
-              inlineClassName: 'myInlineDecoration',
+              inlineClassName: 'search-decoration',
               overviewRuler: { color: '#3361cc' },
             },
             range: {
