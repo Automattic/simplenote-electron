@@ -267,8 +267,6 @@ class NoteContentEditor extends Component<Props> {
         'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
         'editor.background': '#ffffff',
         'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
-        'editor.selectionHighlightBackground': '#3361cc', // $studio-simplenote-blue-50
-        'editorOverviewRuler.selectionHighlightForeground': '#3361cc', // $studio-simplenote-blue-50
         'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30
         'scrollbarSlider.background': '#c3c4c7', // $studio-gray-10
         'scrollbarSlider.hoverBackground': '#a7aaad', // $studio-gray-20
@@ -283,8 +281,6 @@ class NoteContentEditor extends Component<Props> {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90
         'editor.selectionBackground': '#50575e', // $studio-gray-60
-        'editor.selectionHighlightBackground': '#3361cc', // $studio-simplenote-blue-50
-        'editorOverviewRuler.selectionHighlightForeground': '#3361cc', // $studio-simplenote-blue-50
         'scrollbarSlider.activeBackground': '#646970', // $studio-gray-50
         'scrollbarSlider.background': '#2c3338', // $studio-gray-80
         'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90
