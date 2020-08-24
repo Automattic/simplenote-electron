@@ -64,14 +64,21 @@
   }
 }
 
-.monaco-editor .editor-widget {
+/* Hide unwanted items in the context menu.
+   This removes the first item (Change All Occurrences) and the last (Command Palette).
+   We may need to adjust these rules if a Monaco update adds more default items!
+   See: https://github.com/microsoft/monaco-editor/issues/1280
+*/
+.monaco-menu .monaco-action-bar.vertical .action-item:first-child,
+.monaco-menu .monaco-action-bar.vertical .action-item:last-child,
+.monaco-menu .action-label.separator {
   display: none !important;
 }
 
-.monaco-menu .monaco-action-bar.vertical .action-item:first-child,
-.monaco-menu .monaco-action-bar.vertical .action-item:last-child,
-.monaco-menu .monaco-action-bar.vertical .action-label.separator:first-child,
-.monaco-menu .monaco-action-bar.vertical .action-label.separator:last-child {
+/* Hide the suggestion popup
+  See: https://github.com/microsoft/monaco-editor/issues/1681#issuecomment-580751164
+*/
+.monaco-editor .suggest-widget {
   display: none !important;
 }
 
