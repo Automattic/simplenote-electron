@@ -55,9 +55,9 @@
   font-size: 16px;
   color: $studio-gray-60;
   background: $studio-white;
-
   resize: none;
   -webkit-tap-highlight-color: transparent;
+  word-break: break-word;
 
   &:focus {
     outline: none;
