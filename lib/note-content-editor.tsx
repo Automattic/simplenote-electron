@@ -283,13 +283,25 @@ class NoteContentEditor extends Component<Props> {
           editor.trigger('editorCommand', 'insertChecklist', null);
           return;
         case 'redo':
-          editor.trigger('editorCommand', 'redo', null);
+          if (editor.hasTextFocus()) {
+            editor.trigger('editorCommand', 'redo', null);
+          } else {
+            document.execCommand('redo');
+          }
           return;
         case 'selectAll':
-          editor.setSelection(editor.getModel().getFullModelRange());
+          if (editor.hasTextFocus()) {
+            editor.setSelection(editor.getModel().getFullModelRange());
+          } else {
+            document.execCommand('selectAll');
+          }
           return;
         case 'undo':
-          editor.trigger('editorCommand', 'undo', null);
+          if (editor.hasTextFocus()) {
+            editor.trigger('editorCommand', 'undo', null);
+          } else {
+            document.execCommand('undo');
+          }
           return;
       }
     });
