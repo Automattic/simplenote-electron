@@ -120,6 +120,7 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
+    window.removeEventListener('input', this.handleUndoRedo, true);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -249,6 +250,21 @@ class NoteContentEditor extends Component<Props> {
   focusEditor = () => this.editor?.focus();
 
   hasFocus = () => this.editor?.hasTextFocus();
+
+  handleUndoRedo = (event: InputEvent) => {
+    switch (event.inputType) {
+      case 'historyUndo':
+        this.editor?.trigger('browserMenu', 'undo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      case 'historyRedo':
+        this.editor?.trigger('browserMenu', 'redo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
+  };
 
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
@@ -454,8 +470,44 @@ class NoteContentEditor extends Component<Props> {
       }
     });
 
+    // handle undo and redo from menu in browser
+    if (!window.electron) {
+      window.addEventListener('input', this.handleUndoRedo, true);
+    }
+
     this.setDecorators();
     editor.onDidChangeModelContent(() => this.setDecorators());
+
+    const titleDecoration = (line: number) => ({
+      range: new monaco.Range(line, 1, line, 1),
+      options: {
+        isWholeLine: true,
+        inlineClassName: 'note-title',
+        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+      },
+    });
+
+    let decorations: string[] = [];
+    const decorateFirstLine = () => {
+      const model = editor.getModel();
+      if (!model) {
+        decorations = [];
+        return;
+      }
+
+      for (let i = 1; i <= model.getLineCount(); i++) {
+        const line = model.getLineContent(i);
+        if (line.trim().length > 0) {
+          decorations = editor.deltaDecorations(decorations, [
+            titleDecoration(i),
+          ]);
+          break;
+        }
+      }
+    };
+
+    decorateFirstLine();
+    editor.onDidChangeModelContent(() => decorateFirstLine());
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
