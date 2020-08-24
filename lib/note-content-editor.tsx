@@ -19,7 +19,7 @@ import * as S from './state';
 import * as T from './types';
 
 const SPEED_DELAY = 120;
-let decorations = [];
+let decorations: string[] = [];
 
 type OwnProps = {
   storeFocusEditor: (focusSetter: () => any) => any;
@@ -154,15 +154,41 @@ class NoteContentEditor extends Component<Props> {
     }
 
     if (this.editor && prevProps.searchQuery !== this.props.searchQuery) {
-      const model = this.editor.getModel();
-      decorations = this.editor.deltaDecorations(
-        decorations,
-        this.provideDocumentHighlights(model)
-      );
+      this.setDecorators();
     }
   }
 
-  provideDocumentHighlights = (model) => {
+  setDecorators = () => {
+    decorations = this.editor.deltaDecorations(decorations, [
+      ...this.searchMatches(),
+      this.getTitleDecoration(),
+    ]);
+  };
+
+  getTitleDecoration = () => {
+    const model = this.editor.getModel();
+    if (!model) {
+      return;
+    }
+    const titleDecoration = (line: number) => ({
+      range: new monaco.Range(line, 1, line, 1),
+      options: {
+        isWholeLine: true,
+        inlineClassName: 'note-title',
+        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+      },
+    });
+
+    for (let i = 1; i <= model.getLineCount(); i++) {
+      const line = model.getLineContent(i);
+      if (line.trim().length > 0) {
+        return titleDecoration(i);
+      }
+    }
+  };
+
+  searchMatches = () => {
+    const model = this.editor.getModel();
     const terms = getTerms(this.props.searchQuery)
       .map((term) => term.normalize().toLowerCase())
       .filter((term) => term.trim().length > 0);
@@ -352,36 +378,8 @@ class NoteContentEditor extends Component<Props> {
       }
     });
 
-    const titleDecoration = (line: number) => ({
-      range: new monaco.Range(line, 1, line, 1),
-      options: {
-        isWholeLine: true,
-        inlineClassName: 'note-title',
-        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-      },
-    });
-
-    let decorations: string[] = [];
-    const decorateFirstLine = () => {
-      const model = editor.getModel();
-      if (!model) {
-        decorations = [];
-        return;
-      }
-
-      for (let i = 1; i <= model.getLineCount(); i++) {
-        const line = model.getLineContent(i);
-        if (line.trim().length > 0) {
-          decorations = editor.deltaDecorations(decorations, [
-            titleDecoration(i),
-          ]);
-          break;
-        }
-      }
-    };
-
-    decorateFirstLine();
-    editor.onDidChangeModelContent(() => decorateFirstLine());
+    this.setDecorators();
+    editor.onDidChangeModelContent(() => this.setDecorators());
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
