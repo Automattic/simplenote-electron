@@ -363,23 +363,12 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.addAction({
-      id: 'SelectAll',
-      label: 'Select All',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 5,
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
-      keybindingContext: 'allowBrowserKeybinding',
-      run: () => {
-        editor.setSelection(editor.getModel().getFullModelRange());
-      },
-    });
-    editor.addAction({
       id: 'undo_model',
       label: 'Undo',
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
       keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 3,
+      contextMenuGroupId: '1_undoredo',
+      contextMenuOrder: 1,
       // precondition: 'undo',
       run: () => {
         editor.trigger('contextMenu', 'undo', null);
@@ -389,14 +378,38 @@ class NoteContentEditor extends Component<Props> {
       id: 'redo_model',
       label: 'Redo',
       keybindings: [
+        monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+        // @todo can we switch these so Windows displays the default ^Y?
       ],
       keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 4,
+      contextMenuGroupId: '1_undoredo',
+      contextMenuOrder: 2,
       // precondition: 'redo',
       run: () => {
         editor.trigger('contextMenu', 'redo', null);
+      },
+    });
+    editor.addAction({
+      id: 'paste',
+      label: 'Paste',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 3,
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+      run: () => {
+        document.execCommand('paste');
+      },
+    });
+
+    editor.addAction({
+      id: 'select_all',
+      label: 'Select All',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 4,
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindingContext: 'allowBrowserKeybinding',
+      run: () => {
+        editor.setSelection(editor.getModel().getFullModelRange());
       },
     });
 
