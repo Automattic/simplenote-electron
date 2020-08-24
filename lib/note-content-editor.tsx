@@ -9,15 +9,25 @@ import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
 
 import actions from './state/actions';
 import * as selectors from './state/selectors';
+import { getTerms } from './utils/filter-notes';
 import {
-  withCheckboxSyntax,
   withCheckboxCharacters,
+  withCheckboxSyntax,
 } from './utils/task-transform';
 
 import * as S from './state';
 import * as T from './types';
 
 const SPEED_DELAY = 120;
+
+const titleDecorationForLine = (line: number) => ({
+  range: new monaco.Range(line, 1, line, 1),
+  options: {
+    isWholeLine: true,
+    inlineClassName: 'note-title',
+    stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+  },
+});
 
 type OwnProps = {
   storeFocusEditor: (focusSetter: () => any) => any;
@@ -60,6 +70,7 @@ class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
+  decorations: string[] = [];
 
   state: OwnState = {
     content: '',
@@ -150,7 +161,89 @@ class NoteContentEditor extends Component<Props> {
         }
       }, 400);
     }
+
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      prevProps.searchQuery !== this.props.searchQuery
+    ) {
+      this.setDecorators();
+    }
   }
+
+  setDecorators = () => {
+    const searchMatches = this.searchMatches() ?? [];
+    const titleDecoration = this.getTitleDecoration() ?? [];
+
+    this.decorations = this.editor.deltaDecorations(this.decorations, [
+      ...searchMatches,
+      ...titleDecoration,
+    ]);
+  };
+
+  getTitleDecoration = () => {
+    const model = this.editor.getModel();
+    if (!model) {
+      return;
+    }
+
+    for (let i = 1; i <= model.getLineCount(); i++) {
+      const line = model.getLineContent(i);
+      if (line.trim().length > 0) {
+        return [titleDecorationForLine(i)];
+      }
+    }
+    return;
+  };
+
+  searchMatches = () => {
+    const model = this.editor.getModel();
+    const terms = getTerms(this.props.searchQuery)
+      .map((term) => term.normalize().toLowerCase())
+      .filter((term) => term.trim().length > 0);
+
+    if (terms.length === 0) {
+      return [];
+    }
+
+    const content = model.getValue().normalize().toLowerCase();
+
+    const highlights = terms.reduce(
+      (matches: monaco.languages.DocumentHighlight, term) => {
+        let termAt = null;
+        let startAt = 0;
+
+        while (termAt !== -1) {
+          termAt = content.indexOf(term, startAt);
+          if (termAt === -1) {
+            break;
+          }
+
+          startAt = termAt + term.length;
+
+          const start = model.getPositionAt(termAt);
+          const end = model.getPositionAt(termAt + term.length);
+
+          matches.push({
+            options: {
+              inlineClassName: 'search-decoration',
+              overviewRuler: { color: '#3361cc' },
+            },
+            range: {
+              startLineNumber: start.lineNumber,
+              startColumn: start.column,
+              endLineNumber: end.lineNumber,
+              endColumn: end.column,
+            },
+          });
+        }
+
+        return matches;
+      },
+      []
+    );
+    return highlights;
+  };
 
   focusEditor = () => this.editor?.focus();
 
@@ -200,7 +293,7 @@ class NoteContentEditor extends Component<Props> {
     this.props.insertTask();
   };
 
-  editorInit: EditorWillMount = () => {
+  editorInit: EditorWillMount = (monaco) => {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
@@ -306,36 +399,8 @@ class NoteContentEditor extends Component<Props> {
       }
     });
 
-    const titleDecoration = (line: number) => ({
-      range: new monaco.Range(line, 1, line, 1),
-      options: {
-        isWholeLine: true,
-        inlineClassName: 'note-title',
-        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-      },
-    });
-
-    let decorations: string[] = [];
-    const decorateFirstLine = () => {
-      const model = editor.getModel();
-      if (!model) {
-        decorations = [];
-        return;
-      }
-
-      for (let i = 1; i <= model.getLineCount(); i++) {
-        const line = model.getLineContent(i);
-        if (line.trim().length > 0) {
-          decorations = editor.deltaDecorations(decorations, [
-            titleDecoration(i),
-          ]);
-          break;
-        }
-      }
-    };
-
-    decorateFirstLine();
-    editor.onDidChangeModelContent(() => decorateFirstLine());
+    this.setDecorators();
+    editor.onDidChangeModelContent(() => this.setDecorators());
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only

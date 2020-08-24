@@ -58,6 +58,10 @@
     border-radius: 10px;
     border: 3px solid gray;
   }
+
+  .search-decoration {
+    background-color: $studio-simplenote-blue-50 !important;
+  }
 }
 
 .note-detail-textarea .note-content-editor-shell.cursor-pointer div {
@@ -95,6 +99,10 @@
   }
   .search-field {
     border-color: $studio-gray-10;
+  }
+
+  .search-decoration {
+    color: $studio-white;
   }
 }
 
