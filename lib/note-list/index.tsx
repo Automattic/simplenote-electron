@@ -87,7 +87,7 @@ const renderNote = (
         parent={parent}
         rowIndex={index}
       >
-        <TagSuggestions />
+        <TagSuggestions style={{ ...style }} />
       </CellMeasurer>
     ) : (
       <CellMeasurer
@@ -97,7 +97,9 @@ const renderNote = (
         parent={parent}
         rowIndex={index}
       >
-        <div className="note-list-header">Notes</div>
+        <div className="note-list-header" style={{ ...style }}>
+          Notes
+        </div>
       </CellMeasurer>
     );
   }
