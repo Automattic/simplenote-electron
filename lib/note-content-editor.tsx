@@ -19,7 +19,15 @@ import * as S from './state';
 import * as T from './types';
 
 const SPEED_DELAY = 120;
-let decorations: string[] = [];
+
+const titleDecorationForLine = (line: number) => ({
+  range: new monaco.Range(line, 1, line, 1),
+  options: {
+    isWholeLine: true,
+    inlineClassName: 'note-title',
+    stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+  },
+});
 
 type OwnProps = {
   storeFocusEditor: (focusSetter: () => any) => any;
@@ -62,6 +70,7 @@ class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
+  decorations: string[] = [];
 
   state: OwnState = {
     content: '',
@@ -159,15 +168,13 @@ class NoteContentEditor extends Component<Props> {
   }
 
   setDecorators = () => {
-    const searchMatches = this.searchMatches();
-    const titleDecoration = this.getTitleDecoration();
-    if (!searchMatches.length && !titleDecoration) {
-      return;
-    }
-    if (titleDecoration) {
-      searchMatches.push(titleDecoration);
-    }
-    decorations = this.editor.deltaDecorations(decorations, [...searchMatches]);
+    const searchMatches = this.searchMatches() ?? [];
+    const titleDecoration = this.getTitleDecoration() ?? [];
+
+    this.decorations = this.editor.deltaDecorations(this.decorations, [
+      ...searchMatches,
+      ...titleDecoration,
+    ]);
   };
 
   getTitleDecoration = () => {
@@ -175,19 +182,11 @@ class NoteContentEditor extends Component<Props> {
     if (!model) {
       return;
     }
-    const titleDecoration = (line: number) => ({
-      range: new monaco.Range(line, 1, line, 1),
-      options: {
-        isWholeLine: true,
-        inlineClassName: 'note-title',
-        stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-      },
-    });
 
     for (let i = 1; i <= model.getLineCount(); i++) {
       const line = model.getLineContent(i);
       if (line.trim().length > 0) {
-        return titleDecoration(i);
+        return [titleDecorationForLine(i)];
       }
     }
     return;
