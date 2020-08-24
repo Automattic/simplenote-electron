@@ -159,10 +159,15 @@ class NoteContentEditor extends Component<Props> {
   }
 
   setDecorators = () => {
-    decorations = this.editor.deltaDecorations(decorations, [
-      ...this.searchMatches(),
-      this.getTitleDecoration(),
-    ]);
+    const searchMatches = this.searchMatches();
+    const titleDecoration = this.getTitleDecoration();
+    if (!searchMatches.length && !titleDecoration) {
+      return;
+    }
+    if (titleDecoration) {
+      searchMatches.push(titleDecoration);
+    }
+    decorations = this.editor.deltaDecorations(decorations, [...searchMatches]);
   };
 
   getTitleDecoration = () => {
@@ -185,6 +190,7 @@ class NoteContentEditor extends Component<Props> {
         return titleDecoration(i);
       }
     }
+    return;
   };
 
   searchMatches = () => {
