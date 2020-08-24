@@ -327,9 +327,9 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    this.monaco = monaco;
-
     window.editor = editor;
+
+    this.monaco = monaco;
     window.monaco = monaco;
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
@@ -363,14 +363,52 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.addAction({
+      id: 'SelectAll',
+      label: 'Select All',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 5,
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindingContext: 'allowBrowserKeybinding',
+      run: () => {
+        editor.setSelection(editor.getModel().getFullModelRange());
+      },
+    });
+    editor.addAction({
+      id: 'undo_model',
+      label: 'Undo',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 3,
+      // precondition: 'undo',
+      run: () => {
+        editor.trigger('contextMenu', 'undo', null);
+      },
+    });
+    editor.addAction({
+      id: 'redo_model',
+      label: 'Redo',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+      ],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 4,
+      // precondition: 'redo',
+      run: () => {
+        editor.trigger('contextMenu', 'redo', null);
+      },
+    });
+
+    editor.addAction({
       id: 'insertChecklist',
       label: 'Insert Checklist',
       keybindings: [
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
       ],
+      keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 9,
-      keybindingContext: 'allowBrowserKeybinding',
       run: this.insertOrRemoveCheckboxes,
     });
 
@@ -511,39 +549,6 @@ class NoteContentEditor extends Component<Props> {
           ),
         });
       }
-    });
-
-    editor.addAction({
-      id: 'SelectAll',
-      label: 'Select All',
-      contextMenuGroupId: 'z',
-      run: () => {
-        editor.setSelection(editor.getModel().getFullModelRange());
-      },
-    });
-    editor.addAction({
-      id: 'undo_model',
-      label: 'Undo',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
-      contextMenuGroupId: 'undoredo',
-      contextMenuOrder: 0,
-      // precondition: 'undo',
-      run: () => {
-        editor.trigger('', 'undo');
-      },
-    });
-    editor.addAction({
-      id: 'redo_model',
-      label: 'Redo',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
-      ],
-      contextMenuGroupId: 'undoredo',
-      contextMenuOrder: 0,
-      // precondition: 'redo',
-      run: () => {
-        editor.trigger('', 'redo');
-      },
     });
   };
 
