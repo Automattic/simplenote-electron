@@ -120,6 +120,7 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
+    window.removeEventListener('input', this.handleUndoRedo, true);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -250,6 +251,21 @@ class NoteContentEditor extends Component<Props> {
 
   hasFocus = () => this.editor?.hasTextFocus();
 
+  handleUndoRedo = (event: InputEvent) => {
+    switch (event.inputType) {
+      case 'historyUndo':
+        this.editor?.trigger('browserMenu', 'undo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      case 'historyRedo':
+        this.editor?.trigger('browserMenu', 'redo', null);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
+  };
+
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
     const model = editor.getModel();
@@ -360,14 +376,98 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.addAction({
+      id: 'context_undo',
+      label: 'Undo',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 2,
+      // precondition: 'undo',
+      run: () => {
+        editor.trigger('contextMenu', 'undo', null);
+      },
+    });
+    editor.addAction({
+      id: 'context_redo',
+      label: 'Redo',
+      keybindings: [
+        monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+        // @todo can we switch these so Windows displays the default ^Y?
+      ],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 3,
+      // precondition: 'redo',
+      run: () => {
+        editor.trigger('contextMenu', 'redo', null);
+      },
+    });
+
+    // add a new Cut and Copy that show keyboard shortcuts
+    editor.addAction({
+      id: 'context_cut',
+      label: 'Cut',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 1,
+      run: () => {
+        editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
+      },
+    });
+    editor.addAction({
+      id: 'context_copy',
+      label: 'Copy',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 2,
+      run: () => {
+        editor.trigger(
+          'contextMenu',
+          'editor.action.clipboardCopyAction',
+          null
+        );
+      },
+    });
+
+    /* paste doesn't work in the browser due to security issues */
+    if (window.electron) {
+      editor.addAction({
+        id: 'paste',
+        label: 'Paste',
+        contextMenuGroupId: '9_cutcopypaste',
+        contextMenuOrder: 3,
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+        keybindingContext: 'allowBrowserKeybinding',
+        run: () => {
+          document.execCommand('paste');
+        },
+      });
+    }
+
+    editor.addAction({
+      id: 'select_all',
+      label: 'Select All',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 4,
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindingContext: 'allowBrowserKeybinding',
+      run: () => {
+        editor.setSelection(editor.getModel().getFullModelRange());
+      },
+    });
+
+    editor.addAction({
       id: 'insertChecklist',
       label: 'Insert Checklist',
       keybindings: [
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
       ],
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 9,
       keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '10_checklist',
+      contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
     });
 
@@ -399,6 +499,11 @@ class NoteContentEditor extends Component<Props> {
           return;
       }
     });
+
+    // handle undo and redo from menu in browser
+    if (!window.electron) {
+      window.addEventListener('input', this.handleUndoRedo, true);
+    }
 
     this.setDecorators();
     editor.onDidChangeModelContent(() => this.setDecorators());
@@ -657,7 +762,6 @@ class NoteContentEditor extends Component<Props> {
               autoSurround: 'never',
               automaticLayout: true,
               codeLens: false,
-              contextmenu: false,
               folding: false,
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
