@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef, RefObject } from 'react';
 import { connect } from 'react-redux';
 import Monaco, {
   ChangeHandler,
@@ -75,6 +75,7 @@ class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
+  contentDiv: RefObject<HTMLDivElement> = createRef();
   decorations: string[] = [];
   matchesInNote: [] = [];
 
@@ -811,8 +812,23 @@ class NoteContentEditor extends Component<Props> {
     const { fontSize, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
+
+    let editorPadding = 25;
+
+    if (lineLength === 'narrow' && this.contentDiv?.current) {
+      const width = this.contentDiv.current?.offsetWidth;
+      if (width <= 1400) {
+        // should be 10% up to 1400px wide
+        editorPadding = width * 0.1;
+      } else {
+        // after 1400, calc((100% - 768px) / 2);
+        editorPadding = (width - 768) / 2;
+      }
+    }
+
     return (
       <div
+        ref={this.contentDiv}
         className={`note-content-editor-shell${
           overTodo ? ' cursor-pointer' : ''
         }`}
@@ -844,6 +860,7 @@ class NoteContentEditor extends Component<Props> {
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
               fontSize,
               hideCursorInOverviewRuler: true,
+              lineDecorationsWidth: 0,
               lineHeight: fontSize > 20 ? 42 : 24,
               lineNumbers: 'off',
               links: true,
@@ -854,7 +871,11 @@ class NoteContentEditor extends Component<Props> {
               quickSuggestions: false,
               renderIndentGuides: false,
               renderLineHighlight: 'none',
-              scrollbar: { horizontal: 'hidden', useShadows: false },
+              scrollbar: {
+                horizontal: 'hidden',
+                useShadows: false,
+                verticalScrollbarSize: editorPadding,
+              },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               wordWrap: 'bounded',

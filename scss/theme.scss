@@ -27,21 +27,49 @@
   unicode-range: U+E000-E001;
 }
 
-.note-detail,
-.note-content-editor-shell {
+/*.note-detail,
+.note-content-editor-shell {*/
+.note-detail-textarea {
+  padding-left: calc((100% - 768px) / 2);
+}
+.note-detail-preview {
   padding: 0 calc((100% - 768px) / 2);
 }
 
 @media only screen and (max-width: 1400px) {
-  .note-detail,
-  .note-content-editor-shell {
+/*  .note-detail,
+  .note-content-editor-shell {*/
+  .note-detail-textarea {
+    padding-left: 10%;
+  }
+  .note-detail-preview {
     padding: 0 10%;
   }
 }
 
+.react-monaco-editor-container {
+  .scrollbar.vertical {
+    width: 10px !important;
+    right: 0 !important;
+
+    .slider {
+      width: 10px !important;
+    }
+  }
+}
+// scrollbar search highlights
+.decorationsOverviewRuler {
+  width: 10px !important;
+  right: -2px !important;
+}
+
 .is-line-length-full {
-  .note-detail,
-  .note-content-editor-shell {
+/*  .note-detail,
+  .note-content-editor-shell { */
+  .note-detail-textarea {
+    padding-left: 25px;
+  }
+  .note-detail-preview {
     padding: 0 25px;
   }
 }
