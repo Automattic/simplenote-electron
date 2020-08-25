@@ -13,7 +13,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -53,6 +53,7 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
+  overflow-x: hidden;
   color: $studio-gray-60;
   background: $studio-white;
 
