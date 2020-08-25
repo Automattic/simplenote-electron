@@ -145,7 +145,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
   return (
     <div className="note-detail-wrapper">
-      <div className="note-detail">
+      <div className="note-detail note-detail-preview">
         <div
           ref={previewNode}
           className="note-detail-markdown theme-color-bg theme-color-fg"
