@@ -13,7 +13,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -22,6 +21,10 @@
   div[data-contents] {
     padding-bottom: 20px;
   }
+}
+
+.note-detail-preview {
+  overflow: auto;
 }
 
 .note-detail-placeholder {
@@ -53,7 +56,6 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
-  overflow-x: hidden;
   color: $studio-gray-60;
   background: $studio-white;
 
