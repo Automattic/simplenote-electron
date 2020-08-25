@@ -434,16 +434,21 @@ class NoteContentEditor extends Component<Props> {
         );
       },
     });
-    editor.addAction({
-      id: 'paste',
-      label: 'Paste',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 3,
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
-      run: () => {
-        document.execCommand('paste');
-      },
-    });
+
+    /* paste doesn't work in the browser due to security issues */
+    if (window.electron) {
+      editor.addAction({
+        id: 'paste',
+        label: 'Paste',
+        contextMenuGroupId: '9_cutcopypaste',
+        contextMenuOrder: 3,
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+        keybindingContext: 'allowBrowserKeybinding',
+        run: () => {
+          document.execCommand('paste');
+        },
+      });
+    }
 
     editor.addAction({
       id: 'select_all',
