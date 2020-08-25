@@ -415,7 +415,6 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 1,
-      // precondition: 'undo',
       run: () => {
         editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
       },
@@ -427,7 +426,6 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 2,
-      // precondition: 'undo',
       run: () => {
         editor.trigger(
           'contextMenu',
