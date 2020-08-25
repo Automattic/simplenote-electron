@@ -10,6 +10,7 @@ import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
+import { isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
   withCheckboxSyntax,
@@ -675,8 +676,9 @@ class NoteContentEditor extends Component<Props> {
               scrollbar: { horizontal: 'hidden', useShadows: false },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
-              wordWrap: 'on',
-              wrappingStrategy: 'simple',
+              wordWrap: 'bounded',
+              wrappingStrategy: isSafari ? 'simple' : 'advanced',
+              wordWrapColumn: 400,
             }}
             value={content}
           />
