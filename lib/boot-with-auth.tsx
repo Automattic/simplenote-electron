@@ -45,7 +45,7 @@ export const bootWithToken = (
     });
 
     window.electron?.send('settingsUpdate', store.getState().settings);
-    store.dispatch(showDialog('BETA-WARNING'));
+    // store.dispatch(showDialog('BETA-WARNING'));
 
     render(
       <Provider store={store}>
