@@ -343,10 +343,7 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    window.editor = editor;
-
     this.monaco = monaco;
-    window.monaco = monaco;
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
