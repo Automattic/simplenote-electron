@@ -379,19 +379,19 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.addAction({
-      id: 'undo_model',
+      id: 'context_undo',
       label: 'Undo',
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
       keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '1_undoredo',
-      contextMenuOrder: 1,
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 2,
       // precondition: 'undo',
       run: () => {
         editor.trigger('contextMenu', 'undo', null);
       },
     });
     editor.addAction({
-      id: 'redo_model',
+      id: 'context_redo',
       label: 'Redo',
       keybindings: [
         monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
@@ -399,11 +399,41 @@ class NoteContentEditor extends Component<Props> {
         // @todo can we switch these so Windows displays the default ^Y?
       ],
       keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '1_undoredo',
-      contextMenuOrder: 2,
+      contextMenuGroupId: '1_modification',
+      contextMenuOrder: 3,
       // precondition: 'redo',
       run: () => {
         editor.trigger('contextMenu', 'redo', null);
+      },
+    });
+
+    // add a new Cut and Copy that show keyboard shortcuts
+    editor.addAction({
+      id: 'context_cut',
+      label: 'Cut',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 1,
+      // precondition: 'undo',
+      run: () => {
+        editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
+      },
+    });
+    editor.addAction({
+      id: 'context_copy',
+      label: 'Copy',
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C],
+      keybindingContext: 'allowBrowserKeybinding',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 2,
+      // precondition: 'undo',
+      run: () => {
+        editor.trigger(
+          'contextMenu',
+          'editor.action.clipboardCopyAction',
+          null
+        );
       },
     });
     editor.addAction({
@@ -436,8 +466,8 @@ class NoteContentEditor extends Component<Props> {
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
       ],
       keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 9,
+      contextMenuGroupId: '10_checklist',
+      contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
     });
 
