@@ -243,30 +243,22 @@ export const initSimperium = (
         queueNoteUpdate(action.noteId);
         return result;
 
-      case 'FILTER_NOTES':
-      case 'OPEN_NOTE':
-      case 'SELECT_NOTE': {
-        const noteId =
-          action.noteId ??
-          action.meta?.nextNoteToOpen ??
-          getState().ui.openedNote;
+      case 'REVISIONS_TOGGLE': {
+        const state = getState();
+        const showRevisions = state.ui.showRevisions;
+        const noteId = state.ui.openedNote;
 
-        if (noteId) {
+        if (noteId && showRevisions) {
           setTimeout(() => {
-            if (getState().ui.openedNote === noteId) {
-              noteBucket.getRevisions(noteId).then((revisions) => {
-                dispatch({
-                  type: 'LOAD_REVISIONS',
-                  noteId: noteId,
-                  revisions: revisions
-                    .map(({ data, version }): [number, T.Note] => [
-                      version,
-                      data,
-                    ])
-                    .sort((a, b) => a[0] - b[0]),
-                });
+            noteBucket.getRevisions(noteId).then((revisions) => {
+              dispatch({
+                type: 'LOAD_REVISIONS',
+                noteId: noteId,
+                revisions: revisions
+                  .map(({ data, version }): [number, T.Note] => [version, data])
+                  .sort((a, b) => a[0] - b[0]),
               });
-            }
+            });
           }, 250);
         }
 
