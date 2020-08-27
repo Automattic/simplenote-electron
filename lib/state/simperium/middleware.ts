@@ -246,14 +246,13 @@ export const initSimperium = (
       case 'FILTER_NOTES':
       case 'OPEN_NOTE':
       case 'SELECT_NOTE': {
-        const state = getState();
         const noteId =
           action.noteId ??
           action.meta?.nextNoteToOpen ??
           getState().ui.openedNote;
 
         //  Preload the revisions when opening a note but only do it if no revisions are in memory
-        if (noteId && !state.data.noteRevisions.get(noteId)?.size) {
+        if (noteId && !nextState.data.noteRevisions.get(noteId)?.size) {
           setTimeout(() => {
             if (getState().ui.openedNote === noteId) {
               noteBucket.getRevisions(noteId).then((revisions) => {
