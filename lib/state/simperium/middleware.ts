@@ -161,9 +161,9 @@ export const initSimperium = (
     });
   });
 
-  preferencesBucket.channel.on('ready', () =>
-    preferencesBucket.channel.sendIndexRequest()
-  );
+  // preferencesBucket.channel.on('ready', () =>
+  //   preferencesBucket.channel.sendIndexRequest()
+  // );
 
   if (createWelcomeNote) {
     import(
