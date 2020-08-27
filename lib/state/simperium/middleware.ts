@@ -187,6 +187,8 @@ export const initSimperium = (
   const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
     noteQueue.add(noteId, Date.now() + delay);
 
+  const hasRequestedRevisions = new Set<T.EntityId>();
+
   const tagQueue = new BucketQueue(tagBucket);
   const queueTagUpdate = (tagHash: T.TagHash, delay = 20) =>
     tagQueue.add(tagHash, Date.now() + delay);
@@ -251,7 +253,13 @@ export const initSimperium = (
           action.meta?.nextNoteToOpen ??
           getState().ui.openedNote;
 
-        if (noteId) {
+        //  Preload the revisions when opening a note but only do it if no revisions are in memory
+        if (
+          noteId &&
+          !nextState.data.noteRevisions.get(noteId)?.size &&
+          !hasRequestedRevisions.has(noteId)
+        ) {
+          hasRequestedRevisions.add(noteId);
           setTimeout(() => {
             if (getState().ui.openedNote === noteId) {
               noteBucket.getRevisions(noteId).then((revisions) => {
@@ -268,6 +276,24 @@ export const initSimperium = (
               });
             }
           }, 250);
+        }
+        return result;
+      }
+
+      case 'REVISIONS_TOGGLE': {
+        const showRevisions = nextState.ui.showRevisions;
+        const noteId = nextState.ui.openedNote;
+
+        if (noteId && showRevisions) {
+          noteBucket.getRevisions(noteId).then((revisions) => {
+            dispatch({
+              type: 'LOAD_REVISIONS',
+              noteId: noteId,
+              revisions: revisions
+                .map(({ data, version }): [number, T.Note] => [version, data])
+                .sort((a, b) => a[0] - b[0]),
+            });
+          });
         }
 
         return result;
