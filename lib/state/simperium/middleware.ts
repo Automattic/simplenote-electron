@@ -1,4 +1,5 @@
 import { default as createClient } from 'simperium';
+import { once } from 'lodash';
 
 import debugFactory from 'debug';
 import actions from '../actions';
@@ -161,9 +162,8 @@ export const initSimperium = (
     });
   });
 
-  // preferencesBucket.channel.on('ready', () =>
-  //   preferencesBucket.channel.sendIndexRequest()
-  // );
+  const preferencesIndex = () => preferencesBucket.channel.sendIndexRequest();
+  preferencesBucket.channel.on('ready', once(preferencesIndex));
 
   if (createWelcomeNote) {
     import(
