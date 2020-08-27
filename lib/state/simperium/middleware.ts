@@ -274,7 +274,7 @@ export const initSimperium = (
       }
 
       case 'REVISIONS_TOGGLE': {
-        const state = getState();
+        const state = nextState;
         const showRevisions = state.ui.showRevisions;
         const noteId = state.ui.openedNote;
 
