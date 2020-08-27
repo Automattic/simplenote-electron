@@ -68,6 +68,7 @@
 }
 
 .note-detail-textarea {
+  overflow-x: hidden;
   min-height: 100%;
   cursor: text;
 
@@ -78,10 +79,6 @@
 
   .checkbox {
     cursor: pointer;
-  }
-
-  &::first-line {
-    font-size: 120%;
   }
 }
 
