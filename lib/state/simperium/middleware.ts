@@ -187,6 +187,8 @@ export const initSimperium = (
   const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
     noteQueue.add(noteId, Date.now() + delay);
 
+  const hasRequestedRevisions = new Set<T.EntityId>();
+
   const tagQueue = new BucketQueue(tagBucket);
   const queueTagUpdate = (tagHash: T.TagHash, delay = 20) =>
     tagQueue.add(tagHash, Date.now() + delay);
@@ -252,7 +254,12 @@ export const initSimperium = (
           getState().ui.openedNote;
 
         //  Preload the revisions when opening a note but only do it if no revisions are in memory
-        if (noteId && !nextState.data.noteRevisions.get(noteId)?.size) {
+        if (
+          noteId &&
+          !nextState.data.noteRevisions.get(noteId)?.size &&
+          !hasRequestedRevisions.has(noteId)
+        ) {
+          hasRequestedRevisions.add(noteId);
           setTimeout(() => {
             if (getState().ui.openedNote === noteId) {
               noteBucket.getRevisions(noteId).then((revisions) => {
