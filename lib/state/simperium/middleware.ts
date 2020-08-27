@@ -243,6 +243,32 @@ export const initSimperium = (
         queueNoteUpdate(action.noteId);
         return result;
 
+      case 'FILTER_NOTES':
+      case 'OPEN_NOTE':
+      case 'SELECT_NOTE': {
+        const state = getState();
+        const noteId =
+          action.noteId ??
+          action.meta?.nextNoteToOpen ??
+          getState().ui.openedNote;
+
+        //  Preload the revisions when opening a note but only do it if no revisions are in memory
+        if (noteId && !state.data.noteRevisions.get(noteId)?.size) {
+          setTimeout(() => {
+            noteBucket.getRevisions(noteId).then((revisions) => {
+              dispatch({
+                type: 'LOAD_REVISIONS',
+                noteId: noteId,
+                revisions: revisions
+                  .map(({ data, version }): [number, T.Note] => [version, data])
+                  .sort((a, b) => a[0] - b[0]),
+              });
+            });
+          }, 250);
+        }
+        return result;
+      }
+
       case 'REVISIONS_TOGGLE': {
         const state = getState();
         const showRevisions = state.ui.showRevisions;
