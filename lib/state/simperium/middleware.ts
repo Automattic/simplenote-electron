@@ -274,9 +274,8 @@ export const initSimperium = (
       }
 
       case 'REVISIONS_TOGGLE': {
-        const state = nextState;
-        const showRevisions = state.ui.showRevisions;
-        const noteId = state.ui.openedNote;
+        const showRevisions = nextState.ui.showRevisions;
+        const noteId = nextState.ui.openedNote;
 
         if (noteId && showRevisions) {
           noteBucket.getRevisions(noteId).then((revisions) => {
