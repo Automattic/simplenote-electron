@@ -155,9 +155,15 @@ export const initSimperium = (
       return;
     }
 
-    dispatch({
-      type: 'SET_ANALYTICS',
-      allowAnalytics: !!updatedEntity.analytics_enabled,
+    preferencesBucket.get('preferences-key').then((preferences) => {
+      if (
+        updatedEntity.analytics_enabled !== preferences.data.analytics_enabled
+      ) {
+        dispatch({
+          type: 'SET_ANALYTICS',
+          allowAnalytics: !!updatedEntity.analytics_enabled,
+        });
+      }
     });
   });
 
