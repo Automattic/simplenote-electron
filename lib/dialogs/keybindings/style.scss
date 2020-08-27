@@ -56,7 +56,7 @@
 .keybindings__sections {
   position: relative;
   max-height: 480px;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   section {
     margin-right: 2em;
