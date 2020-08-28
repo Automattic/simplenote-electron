@@ -19,7 +19,6 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
-import { update } from 'lodash';
 
 const debug = debugFactory('simperium-middleware');
 
