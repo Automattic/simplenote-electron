@@ -155,15 +155,9 @@ export const initSimperium = (
       return;
     }
 
-    preferencesBucket.get('preferences-key').then((preferences) => {
-      if (
-        updatedEntity.analytics_enabled !== preferences.data.analytics_enabled
-      ) {
-        dispatch({
-          type: 'SET_ANALYTICS',
-          allowAnalytics: !!updatedEntity.analytics_enabled,
-        });
-      }
+    dispatch({
+      type: 'SET_ANALYTICS',
+      allowAnalytics: !!updatedEntity.analytics_enabled,
     });
   });
 
