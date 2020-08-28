@@ -155,7 +155,9 @@ export const initSimperium = (
       return;
     }
 
-    if (updatedEntity.analytics_enabled !== getState().data.analyticsAllowed) {
+    if (
+      !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
+    ) {
       dispatch({
         type: 'SET_ANALYTICS',
         allowAnalytics: !!updatedEntity.analytics_enabled,
