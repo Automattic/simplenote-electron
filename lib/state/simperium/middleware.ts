@@ -19,6 +19,7 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
+import { update } from 'lodash';
 
 const debug = debugFactory('simperium-middleware');
 
@@ -155,10 +156,12 @@ export const initSimperium = (
       return;
     }
 
-    dispatch({
-      type: 'SET_ANALYTICS',
-      allowAnalytics: !!updatedEntity.analytics_enabled,
-    });
+    if (updatedEntity.analytics_enabled !== getState().data.analyticsAllowed) {
+      dispatch({
+        type: 'SET_ANALYTICS',
+        allowAnalytics: !!updatedEntity.analytics_enabled,
+      });
+    }
   });
 
   // preferencesBucket.channel.on('ready', () =>
