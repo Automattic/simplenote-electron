@@ -249,7 +249,7 @@ class NoteContentEditor extends Component<Props> {
 
   focusEditor = () => this.editor?.focus();
 
-  hasFocus = () => this.editor?.hasTextFocus();
+  hasFocus = () => this.editor?.hasWidgetFocus();
 
   handleUndoRedo = (event: InputEvent) => {
     switch (event.inputType) {
@@ -466,6 +466,7 @@ class NoteContentEditor extends Component<Props> {
       run: () => {
         editor.setSelection(editor.getModel().getFullModelRange());
       },
+      precondition: '!findWidgetVisible',
     });
 
     editor.addAction({
@@ -478,6 +479,7 @@ class NoteContentEditor extends Component<Props> {
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
+      precondition: '!findWidgetVisible',
     });
 
     window.electron?.receive('editorCommand', (command) => {
