@@ -23,8 +23,6 @@ type Props = OwnProps & StateProps;
 export class NoteDetail extends Component<Props> {
   static displayName = 'NoteDetail';
 
-  noteDetail = createRef<HTMLDivElement>();
-
   componentDidMount() {
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
@@ -47,18 +45,11 @@ export class NoteDetail extends Component<Props> {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <div ref={this.noteDetail} className="note-detail">
-            <div
-              className="note-detail-textarea theme-color-bg theme-color-fg"
-              style={{ fontSize: `${fontSize}px`, overflowY: 'hidden' }}
-            >
-              <NoteContentEditor
-                key={openedNote}
-                storeFocusEditor={this.storeFocusContentEditor}
-                storeHasFocus={this.storeEditorHasFocus}
-              />
-            </div>
-          </div>
+          <NoteContentEditor
+            key={openedNote}
+            storeFocusEditor={this.storeFocusContentEditor}
+            storeHasFocus={this.storeEditorHasFocus}
+          />
         )}
       </div>
     );
