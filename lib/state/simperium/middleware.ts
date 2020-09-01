@@ -348,13 +348,20 @@ export const initSimperium = (
 
       case 'SET_ANALYTICS':
         preferencesBucket.get('preferences-key').then((preferences) => {
+          if (
+            preferences.data &&
+            !!preferences.data.analytics_enabled === action.allowAnalytics
+          ) {
+            return;
+          }
+
           preferencesBucket.update(
             'preferences-key',
             {
               ...preferences.data,
               analytics_enabled: action.allowAnalytics,
             },
-            { sync: true }
+            { sync: false }
           );
         });
         return result;
