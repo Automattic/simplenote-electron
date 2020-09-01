@@ -365,9 +365,10 @@ class NoteContentEditor extends Component<Props> {
     if (window.electron) {
       shortcutsToDisable.push(
         'actions.find',
-        'undo',
+        'editor.action.nextMatchFindAction',
+        'editor.action.selectAll',
         'redo',
-        'editor.action.selectAll'
+        'undo'
       );
     }
     shortcutsToDisable.forEach(function (action) {
