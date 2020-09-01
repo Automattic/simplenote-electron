@@ -64,7 +64,7 @@ export class LogoutConfirmation extends Component<Props> {
           )}
           {notes.size > 0 && (
             <button
-              className="export-unsyncronized"
+              className="export-unsynchronized"
               onClick={this.exportUnsyncedNotes}
             >
               Export unsynchronized notes
