@@ -8,7 +8,12 @@ import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
-import { createNote, closeNote, toggleNavigation } from './state/ui/actions';
+import {
+  createNote,
+  closeNote,
+  search,
+  toggleNavigation,
+} from './state/ui/actions';
 import { recordEvent } from './state/analytics/middleware';
 
 import * as settingsActions from './state/settings/actions';
@@ -27,12 +32,14 @@ type StateProps = {
   hotkeysEnabled: boolean;
   isSmallScreen: boolean;
   lineLength: T.LineLength;
+  isSearchActive: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
   theme: 'light' | 'dark';
 };
 
 type DispatchProps = {
+  clearSearch: () => any;
   closeNote: () => any;
   createNote: () => any;
   focusSearchField: () => any;
@@ -86,13 +93,17 @@ class AppComponent extends Component<Props> {
 
     if (
       (cmdOrCtrl && shiftKey && 'KeyS' === code) ||
-      (isElectron && cmdOrCtrl && !shiftKey && 'KeyF' === code)
+      (cmdOrCtrl && !shiftKey && 'KeyF' === code)
     ) {
       this.props.focusSearchField();
 
       event.stopPropagation();
       event.preventDefault();
       return false;
+    }
+
+    if (('Escape' === code || 'Esc' === code) && this.props.isSearchActive) {
+      this.props.clearSearch();
     }
 
     if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
@@ -111,9 +122,8 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
-    // prevent default browser behavior for search
-    // will bubble up from note-detail
-    if (cmdOrCtrl && 'KeyG' === code) {
+    // prevent default browser behavior for search and find
+    if (cmdOrCtrl && ('KeyG' === code || 'KeyF' === code)) {
       event.stopPropagation();
       event.preventDefault();
     }
@@ -167,6 +177,7 @@ class AppComponent extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   autoHideMenuBar: state.settings.autoHideMenuBar,
   hotkeysEnabled: state.settings.keyboardShortcuts,
+  isSearchActive: !!state.ui.searchQuery.length,
   isSmallScreen: selectors.isSmallScreen(state),
   lineLength: state.settings.lineLength,
   showNavigation: state.ui.showNavigation,
@@ -178,6 +189,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => {
   return {
     activateTheme: (theme: T.Theme) =>
       dispatch(settingsActions.activateTheme(theme)),
+    clearSearch: () => dispatch(search('')),
     closeNote: () => dispatch(closeNote()),
     createNote: () => dispatch(createNote()),
     focusSearchField: () => dispatch(actions.ui.focusSearchField()),
