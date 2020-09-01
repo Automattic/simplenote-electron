@@ -30,8 +30,8 @@
   }
 
   .change-list {
-    border-bottom: 1px solid #dcdcde;
-    border-top: 1px solid #dcdcde;
+    border-bottom: 1px solid $studio-gray-5;
+    border-top: 1px solid $studio-gray-5;
 
     ul {
       list-style: none;
@@ -67,8 +67,8 @@
 
     .log-out {
       border-radius: 4px;
-      background-color: #3361cc;
-      color: #ffffff;
+      background-color: $studio-simplenote-blue-50;
+      color: $studio-white;
       font-size: 14px;
       padding: 6px 12px;
       margin: 14px 12px;
@@ -78,7 +78,7 @@
 
 .theme-dark .logoutConfirmation .dialog {
   .change-list {
-    border-color: #2c3338;
+    border-color: $studio-gray-80;
   }
 
   .export-unsyncronized {
