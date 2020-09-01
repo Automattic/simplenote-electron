@@ -51,13 +51,13 @@ const buildEditMenu = (settings, isAuthenticated) => {
         accelerator: 'CommandOrControl+Shift+S',
       },
       {
-        label: 'Find in Note',
+        label: '&Find in Note',
         visible: isAuthenticated,
         click: editorCommandSender({ action: 'find' }),
         accelerator: 'CommandOrControl+F',
       },
       {
-        label: 'Find Again',
+        label: 'Find A&gain',
         visible: isAuthenticated,
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
