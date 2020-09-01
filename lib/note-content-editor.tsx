@@ -363,7 +363,12 @@ class NoteContentEditor extends Component<Props> {
 
     // let Electron menus trigger these
     if (window.electron) {
-      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
+      shortcutsToDisable.push(
+        'actions.find',
+        'undo',
+        'redo',
+        'editor.action.selectAll'
+      );
     }
     shortcutsToDisable.forEach(function (action) {
       editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
@@ -476,6 +481,9 @@ class NoteContentEditor extends Component<Props> {
 
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
+        case 'find':
+          editor.trigger('editorCommand', 'actions.find', null);
+          return;
         case 'insertChecklist':
           editor.trigger('editorCommand', 'insertChecklist', null);
           return;
