@@ -351,18 +351,16 @@ class NoteContentEditor extends Component<Props> {
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
+      'actions.findWithSelection', // meta+E
       'cursorUndo', // meta+U
+      'editor.action.addSelectionToNextFindMatch', // meta+D
       'editor.action.commentLine', // meta+/
       'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
       'editor.action.triggerSuggest', // ctrl+space
       'expandLineSelection', // meta+L
-      // search shortcuts
-      'actions.findWithSelection',
-      'editor.action.addSelectionToNextFindMatch',
-      'editor.action.nextMatchFindAction',
-      'editor.action.selectHighlights',
     ];
+
     // let Electron menus trigger these
     if (window.electron) {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
@@ -376,12 +374,6 @@ class NoteContentEditor extends Component<Props> {
     editor.createContextKey(
       'allowBrowserKeybinding',
       window.electron ? false : true
-    );
-
-    // map Meta+G to next match
-    editor._standaloneKeybindingService.addDynamicKeybinding(
-      'editor.action.nextMatchFindAction',
-      [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_G]
     );
 
     editor.addAction({
