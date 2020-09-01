@@ -484,6 +484,13 @@ class NoteContentEditor extends Component<Props> {
         case 'find':
           editor.trigger('editorCommand', 'actions.find', null);
           return;
+        case 'findAgain':
+          editor.trigger(
+            'editorCommand',
+            'editor.action.nextMatchFindAction',
+            null
+          );
+          return;
         case 'insertChecklist':
           editor.trigger('editorCommand', 'insertChecklist', null);
           return;

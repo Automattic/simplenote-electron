@@ -84,10 +84,7 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
-    if (
-      (cmdOrCtrl && shiftKey && 'KeyS' === code) ||
-      (isElectron && cmdOrCtrl && !shiftKey && 'KeyF' === code)
-    ) {
+    if (cmdOrCtrl && shiftKey && 'KeyS' === code) {
       this.props.focusSearchField();
 
       event.stopPropagation();
@@ -114,7 +111,7 @@ class AppComponent extends Component<Props> {
     // prevent default browser behavior for search and find
     // do NOT stopPropagation because note-detail still needs to catch it!
     // @todo it would be great if this could focus the note and send an editor command to Monaco
-    if (cmdOrCtrl && ('KeyG' === code || 'KeyF' === code)) {
+    if (!isElectron && cmdOrCtrl && ('KeyG' === code || 'KeyF' === code)) {
       event.preventDefault();
     }
 

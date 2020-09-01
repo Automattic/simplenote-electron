@@ -56,6 +56,12 @@ const buildEditMenu = (settings, isAuthenticated) => {
         click: editorCommandSender({ action: 'find' }),
         accelerator: 'CommandOrControl+F',
       },
+      {
+        label: 'Find Again',
+        visible: isAuthenticated,
+        click: editorCommandSender({ action: 'findAgain' }),
+        accelerator: 'CommandOrControl+G',
+      },
       { type: 'separator' },
       {
         label: 'C&heck Spelling',
