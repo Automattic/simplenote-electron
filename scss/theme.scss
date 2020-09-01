@@ -27,18 +27,21 @@
   unicode-range: U+E000-E001;
 }
 
-.note-detail {
+.note-detail,
+.note-content-editor-shell {
   padding: 0 calc((100% - 768px) / 2);
 }
 
 @media only screen and (max-width: 1400px) {
-  .note-detail {
+  .note-detail,
+  .note-content-editor-shell {
     padding: 0 10%;
   }
 }
 
 .is-line-length-full {
-  .note-detail {
+  .note-detail,
+  .note-content-editor-shell {
     padding: 0 25px;
   }
 }
