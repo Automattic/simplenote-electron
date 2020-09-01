@@ -111,10 +111,10 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
-    // prevent default browser behavior for search
-    // will bubble up from note-detail
-    if (cmdOrCtrl && 'KeyG' === code) {
-      event.stopPropagation();
+    // prevent default browser behavior for search and find
+    // do NOT stopPropagation because note-detail still needs to catch it!
+    // @todo it would be great if this could focus the note and send an editor command to Monaco
+    if (cmdOrCtrl && ('KeyG' === code || 'KeyF' === code)) {
       event.preventDefault();
     }
 

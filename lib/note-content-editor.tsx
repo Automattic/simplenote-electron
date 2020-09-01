@@ -374,6 +374,12 @@ class NoteContentEditor extends Component<Props> {
       window.electron ? false : true
     );
 
+    // map Meta+G to next match
+    editor._standaloneKeybindingService.addDynamicKeybinding(
+      'editor.action.nextMatchFindAction',
+      [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_G]
+    );
+
     editor.addAction({
       id: 'context_undo',
       label: 'Undo',
