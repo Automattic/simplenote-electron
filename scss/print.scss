@@ -26,7 +26,8 @@
   .note-detail-textarea,
   .note-content-editor-shell,
   .note-detail-wrapper {
-    overflow: visible;
+    overflow: auto;
+    position: relative;
   }
 
   [class^='note-detail-'] {
