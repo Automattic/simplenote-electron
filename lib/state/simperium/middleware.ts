@@ -3,9 +3,9 @@ import { default as createClient } from 'simperium';
 import debugFactory from 'debug';
 import actions from '../actions';
 import { BucketQueue } from './functions/bucket-queue';
-import { InMemoryBucket } from './functions/in-memory-bucket';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
+import { PreferencesBucket } from './functions/preferences-bucket';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
@@ -43,7 +43,7 @@ export const initSimperium = (
           return new NoteBucket(store);
 
         case 'preferences':
-          return new InMemoryBucket();
+          return new PreferencesBucket(store);
 
         case 'tag':
           return new TagBucket(store);

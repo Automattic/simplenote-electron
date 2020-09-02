@@ -88,6 +88,14 @@ export const loadState = (
                 },
               };
 
+              const hasPreferences = 'preferences' in state;
+              if (!hasPreferences) {
+                data.simperium.ghosts[0].delete('preferences');
+                data.simperium.ghosts[1].delete('preferences');
+              } else {
+                data.data.preferences = new Map(state.preferences);
+              }
+
               const revisionsRequest = tx.objectStore('revisions').openCursor();
               const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
               revisionsRequest.onsuccess = () => {
@@ -161,6 +169,7 @@ export const saveState = (state: S.State) => {
     tagHash,
     Array.from(noteIds),
   ]);
+  const preferences = Array.from(state.data.preferences);
   const tags = Array.from(state.data.tags);
   const cvs = Array.from(state.simperium.ghosts[0]);
   const ghosts = Array.from(state.simperium.ghosts[1]);
@@ -172,6 +181,7 @@ export const saveState = (state: S.State) => {
     allowAnalytics: state.data.analyticsAllowed,
     notes,
     noteTags,
+    preferences,
     tags,
     cvs,
     ghosts,

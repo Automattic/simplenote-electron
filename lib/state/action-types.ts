@@ -247,6 +247,14 @@ export type NoteBucketUpdate = Action<
   'NOTE_BUCKET_UPDATE',
   { noteId: T.EntityId; note: T.Note; isIndexing: boolean }
 >;
+export type PreferencesBucketRemove = Action<
+  'PREFERENCES_BUCKET_REMOVE',
+  { id: T.EntityId }
+>;
+export type PreferencesBucketUpdate = Action<
+  'PREFERENCES_BUCKET_UPDATE',
+  { id: T.EntityId; data: T.Preferences }
+>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; note: T.Note; remoteInfo?: RemoteInfo<T.Note> }
@@ -325,6 +333,8 @@ export type ActionType =
   | OpenRevision
   | OpenTag
   | PinNote
+  | PreferencesBucketRemove
+  | PreferencesBucketUpdate
   | PublishNote
   | ReallyLogout
   | RecordEvent

@@ -304,6 +304,24 @@ export const noteRevisions: A.Reducer<Map<T.EntityId, Map<number, T.Note>>> = (
   }
 };
 
+export const preferences: A.Reducer<Map<T.EntityId, T.Preferences>> = (
+  state = new Map(),
+  action
+) => {
+  switch (action.type) {
+    case 'PREFERENCES_BUCKET_REMOVE': {
+      const next = new Map(state);
+      return next.delete(action.id) ? next : state;
+    }
+
+    case 'PREFERENCES_BUCKET_UPDATE':
+      return new Map(state).set(action.id, action.data);
+
+    default:
+      return state;
+  }
+};
+
 export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
   state = new Map(),
   action
@@ -508,5 +526,6 @@ export default combineReducers({
   notes,
   noteRevisions,
   noteTags,
+  preferences,
   tags,
 });
