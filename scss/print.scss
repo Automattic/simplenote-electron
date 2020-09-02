@@ -26,6 +26,7 @@
   .note-detail-textarea,
   .note-content-editor-shell,
   .note-detail-wrapper {
+    display: block;
     overflow: auto;
     position: relative;
   }
