@@ -89,6 +89,12 @@
   display: none !important;
 }
 
+/* Safari requires that it be displayed absolute so that it takes the full height
+*/
+.react-monaco-editor-container {
+  position: absolute;
+}
+
 .note-detail-textarea .note-content-editor-shell.cursor-pointer div {
   cursor: pointer;
 }
