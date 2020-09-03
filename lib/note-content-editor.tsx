@@ -199,6 +199,9 @@ class NoteContentEditor extends Component<Props> {
   };
 
   searchMatches = () => {
+    if (!this.editor || !this.props.searchQuery) {
+      return;
+    }
     const model = this.editor.getModel();
     const terms = getTerms(this.props.searchQuery)
       .map((term) => term.normalize().toLowerCase())
