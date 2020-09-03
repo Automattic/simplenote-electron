@@ -10,12 +10,12 @@ type OwnProps = {
 type Props = OwnProps;
 
 export const IconButton = ({ icon, title, ...props }: Props) => (
-  <span>
-    <Tooltip
-      classes={{ tooltip: 'icon-button__tooltip' }}
-      enterDelay={200}
-      title={title}
-    >
+  <Tooltip
+    classes={{ tooltip: 'icon-button__tooltip' }}
+    enterDelay={200}
+    title={title}
+  >
+    <span>
       <button
         className="icon-button"
         type="button"
@@ -24,8 +24,8 @@ export const IconButton = ({ icon, title, ...props }: Props) => (
       >
         {icon}
       </button>
-    </Tooltip>
-  </span>
+    </span>
+  </Tooltip>
 );
 
 export default IconButton;
