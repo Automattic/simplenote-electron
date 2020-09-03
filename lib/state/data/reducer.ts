@@ -14,13 +14,14 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
   state = null,
   action
 ) => {
-  switch (action.type) {
-    case 'SET_ANALYTICS':
-      return action.allowAnalytics;
-
-    default:
-      return state;
-  }
+  return false;
+  // switch (action.type) {
+  //   case 'SET_ANALYTICS':
+  //     return action.allowAnalytics;
+  //
+  //   default:
+  //     return state;
+  // }
 };
 
 const modified = <Entity extends { modificationDate: number }>(
