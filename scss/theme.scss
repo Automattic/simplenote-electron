@@ -27,21 +27,11 @@
   unicode-range: U+E000-E001;
 }
 
-/*.note-detail,
-.note-content-editor-shell {*/
-.note-detail-textarea {
-  padding-left: calc((100% - 768px) / 2);
-}
 .note-detail-preview {
   padding: 0 calc((100% - 768px) / 2);
 }
 
 @media only screen and (max-width: 1400px) {
-/*  .note-detail,
-  .note-content-editor-shell {*/
-  .note-detail-textarea {
-    padding-left: 10%;
-  }
   .note-detail-preview {
     padding: 0 10%;
   }
@@ -64,11 +54,6 @@
 }
 
 .is-line-length-full {
-/*  .note-detail,
-  .note-content-editor-shell { */
-  .note-detail-textarea {
-    padding-left: 25px;
-  }
   .note-detail-preview {
     padding: 0 25px;
   }
@@ -82,7 +67,7 @@
   font-family: 'Simplenote Tasks', sans-serif;
 
   .note-title {
-    font-size: 120%;
+    // font-size: 120%;
   }
 
   .slider {

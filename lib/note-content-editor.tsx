@@ -860,7 +860,7 @@ class NoteContentEditor extends Component<Props> {
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
               fontSize,
               hideCursorInOverviewRuler: true,
-              lineDecorationsWidth: 0,
+              lineDecorationsWidth: editorPadding,
               lineHeight: fontSize > 20 ? 42 : 24,
               lineNumbers: 'off',
               links: true,
