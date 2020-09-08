@@ -50,6 +50,18 @@ const buildEditMenu = (settings, isAuthenticated) => {
         click: appCommandSender({ action: 'focusSearchField' }),
         accelerator: 'CommandOrControl+Shift+S',
       },
+      {
+        label: '&Find in Note',
+        visible: isAuthenticated,
+        click: editorCommandSender({ action: 'find' }),
+        accelerator: 'CommandOrControl+F',
+      },
+      {
+        label: 'Find A&gain',
+        visible: isAuthenticated,
+        click: editorCommandSender({ action: 'findAgain' }),
+        accelerator: 'CommandOrControl+G',
+      },
       { type: 'separator' },
       {
         label: 'C&heck Spelling',

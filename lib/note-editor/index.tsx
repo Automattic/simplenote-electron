@@ -14,6 +14,7 @@ type StateProps = {
   allTags: Map<T.TagHash, T.Tag>;
   editMode: boolean;
   isEditorActive: boolean;
+  isSearchActive: boolean;
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   lastUpdated: number;
@@ -73,7 +74,7 @@ export class NoteEditor extends Component<Props> {
     // toggle between tag editor and note editor
     if (shiftKey && cmdOrCtrl && 'KeyY' === code && this.props.isEditorActive) {
       // prefer focusing the edit field first
-      if (!this.editFieldHasFocus()) {
+      if (!this.editFieldHasFocus() || this.props.isSearchActive) {
         this.focusNoteEditor?.();
 
         event.stopPropagation();
@@ -159,6 +160,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
   revision: state.ui.selectedRevision,
+  isSearchActive: !!state.ui.searchQuery.length,
   isSmallScreen: selectors.isSmallScreen(state),
 });
 

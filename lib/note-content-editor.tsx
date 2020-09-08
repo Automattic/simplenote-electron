@@ -15,6 +15,8 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
+import IconButton from './icon-button';
+import ChevronRightIcon from './icons/chevron-right';
 
 import * as S from './state';
 import * as T from './types';
@@ -65,6 +67,8 @@ type OwnState = {
   editor: 'fast' | 'full';
   noteId: T.EntityId | null;
   overTodo: boolean;
+  searchQuery: string;
+  selectedSearchMatchIndex: number | null;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -72,33 +76,41 @@ class NoteContentEditor extends Component<Props> {
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
   decorations: string[] = [];
+  matchesInNote: [] = [];
 
   state: OwnState = {
     content: '',
     editor: 'fast',
     noteId: null,
     overTodo: false,
+    searchQuery: '',
+    selectedSearchMatchIndex: null,
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
-    const {
-      note: { content },
-    } = props;
-    const goFast = content.length > 5000;
+    const goFast = props.note.content.length > 5000;
+    const contentChanged = props.note.content !== state.content;
+    const noteChanged = props.noteId !== state.noteId;
 
-    if (props.noteId !== state.noteId) {
-      return {
-        content: goFast
-          ? content.slice(0, props.editorSelection[1] + 5000)
-          : withCheckboxCharacters(content),
-        editor: goFast ? 'fast' : 'full',
-        noteId: props.noteId,
-      };
-    }
+    const content = contentChanged
+      ? noteChanged && goFast
+        ? props.note.content.slice(0, props.editorSelection[1] + 5000)
+        : withCheckboxCharacters(props.note.content)
+      : state.content;
 
-    return content !== state.content
-      ? { content: withCheckboxCharacters(content) }
-      : null;
+    const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
+
+    const searchChanged = props.searchQuery !== state.searchQuery;
+    const selectedSearchMatchIndex =
+      noteChanged || searchChanged ? null : state.selectedSearchMatchIndex;
+
+    return {
+      content,
+      editor,
+      noteId: props.noteId,
+      searchQuery: props.searchQuery,
+      selectedSearchMatchIndex,
+    };
   }
 
   componentDidMount() {
@@ -113,6 +125,7 @@ class NoteContentEditor extends Component<Props> {
     }, SPEED_DELAY);
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
+    this.toggleShortcuts(true);
   }
 
   componentWillUnmount() {
@@ -121,7 +134,35 @@ class NoteContentEditor extends Component<Props> {
     }
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
+    this.toggleShortcuts(false);
   }
+
+  toggleShortcuts = (doEnable: boolean) => {
+    if (doEnable) {
+      window.addEventListener('keydown', this.handleShortcut, true);
+    } else {
+      window.removeEventListener('keydown', this.handleShortcut, true);
+    }
+  };
+
+  handleShortcut = (event: KeyboardEvent) => {
+    const { ctrlKey, code, metaKey, shiftKey } = event;
+
+    const cmdOrCtrl = ctrlKey || metaKey;
+    if (cmdOrCtrl && shiftKey && code === 'KeyG') {
+      this.setPrevSearchSelection();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
+    if (cmdOrCtrl && !shiftKey && code === 'KeyG') {
+      this.setNextSearchSelection();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+  };
 
   componentDidUpdate(prevProps: Props) {
     const {
@@ -174,11 +215,11 @@ class NoteContentEditor extends Component<Props> {
   }
 
   setDecorators = () => {
-    const searchMatches = this.searchMatches() ?? [];
+    this.matchesInNote = this.searchMatches() ?? [];
     const titleDecoration = this.getTitleDecoration() ?? [];
 
     this.decorations = this.editor.deltaDecorations(this.decorations, [
-      ...searchMatches,
+      ...this.matchesInNote,
       ...titleDecoration,
     ]);
   };
@@ -232,7 +273,10 @@ class NoteContentEditor extends Component<Props> {
           matches.push({
             options: {
               inlineClassName: 'search-decoration',
-              overviewRuler: { color: '#3361cc' },
+              overviewRuler: {
+                color: '#3361cc',
+                position: Editor.OverviewRulerLane.Full,
+              },
             },
             range: {
               startLineNumber: start.lineNumber,
@@ -476,6 +520,9 @@ class NoteContentEditor extends Component<Props> {
 
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
+        case 'findAgain':
+          this.setNextSearchSelection();
+          return;
         case 'insertChecklist':
           editor.trigger('editorCommand', 'insertChecklist', null);
           return;
@@ -509,6 +556,8 @@ class NoteContentEditor extends Component<Props> {
     }
 
     this.setDecorators();
+    // make component rerender after the decorators are set.
+    this.setState({});
     editor.onDidChangeModelContent(() => this.setDecorators());
 
     document.oncopy = (event) => {
@@ -733,10 +782,35 @@ class NoteContentEditor extends Component<Props> {
     editNote(noteId, { content: withCheckboxSyntax(content) });
   };
 
-  render() {
-    const { fontSize, noteId, theme } = this.props;
-    const { content, editor, overTodo } = this.state;
+  setNextSearchSelection = () => {
+    const { selectedSearchMatchIndex: index } = this.state;
+    const total = this.matchesInNote.length;
+    const newIndex = (total + (index ?? -1) + 1) % total;
+    this.setSearchSelection(newIndex);
+  };
 
+  setPrevSearchSelection = () => {
+    const { selectedSearchMatchIndex: index } = this.state;
+    const total = this.matchesInNote.length;
+    const newIndex = (total + (index ?? total) - 1) % total;
+    this.setSearchSelection(newIndex);
+  };
+
+  setSearchSelection = (index) => {
+    if (!this.matchesInNote.length) {
+      return;
+    }
+    const range = this.matchesInNote[index].range;
+    this.setState({ selectedSearchMatchIndex: index });
+    this.editor.setSelection(range);
+    this.editor.revealLineInCenter(range.startLineNumber);
+    this.focusEditor();
+  };
+
+  render() {
+    const { fontSize, noteId, searchQuery, theme } = this.props;
+    const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
+    const searchMatches = searchQuery ? this.searchMatches() : [];
     return (
       <div
         className={`note-content-editor-shell${
@@ -789,6 +863,31 @@ class NoteContentEditor extends Component<Props> {
             }}
             value={content}
           />
+        )}
+        {searchQuery.length > 0 && searchMatches && (
+          <div className="search-results">
+            <div>
+              {selectedSearchMatchIndex === null
+                ? `${searchMatches.length} Results`
+                : `${selectedSearchMatchIndex + 1} of ${searchMatches.length}`}
+            </div>
+            <span className="search-results-next">
+              <IconButton
+                disabled={searchMatches.length <= 1}
+                icon={<ChevronRightIcon />}
+                onClick={this.setNextSearchSelection}
+                title="Next"
+              />
+            </span>
+            <span className="search-results-prev">
+              <IconButton
+                disabled={searchMatches.length <= 1}
+                icon={<ChevronRightIcon />}
+                onClick={this.setPrevSearchSelection}
+                title="Prev"
+              />
+            </span>
+          </div>
         )}
       </div>
     );
