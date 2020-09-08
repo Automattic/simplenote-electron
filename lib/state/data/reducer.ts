@@ -14,14 +14,14 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
   state = null,
   action
 ) => {
-  return false;
-  // switch (action.type) {
-  //   case 'SET_ANALYTICS':
-  //     return action.allowAnalytics;
-  //
-  //   default:
-  //     return state;
-  // }
+  switch (action.type) {
+    case 'REMOTE_ANALYTICS_UPDATE':
+    case 'SET_ANALYTICS':
+      return action.allowAnalytics;
+
+    default:
+      return state;
+  }
 };
 
 const modified = <Entity extends { modificationDate: number }>(
@@ -310,6 +310,12 @@ export const preferences: A.Reducer<Map<T.EntityId, T.Preferences>> = (
   action
 ) => {
   switch (action.type) {
+    case 'SET_ANALYTICS':
+      return new Map(state).set('preferences-key', {
+        ...(state.get('preferences-key') ?? {}),
+        analytics_enabled: action.allowAnalytics,
+      });
+
     case 'PREFERENCES_BUCKET_REMOVE': {
       const next = new Map(state);
       return next.delete(action.id) ? next : state;

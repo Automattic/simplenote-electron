@@ -52,6 +52,7 @@ export const middleware: S.Middleware = (store) => {
     }
 
     switch (action.type) {
+      case 'REMOTE_ANALYTICS_UPDATE':
       case 'SET_ANALYTICS':
         // Global to be checked in analytics.tracks.recordEvent()
         window.analyticsEnabled = action.allowAnalytics;

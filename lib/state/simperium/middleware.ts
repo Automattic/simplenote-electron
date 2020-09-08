@@ -5,7 +5,7 @@ import actions from '../actions';
 import { BucketQueue } from './functions/bucket-queue';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
-// import { PreferencesBucket } from './functions/preferences-bucket';
+import { PreferencesBucket } from './functions/preferences-bucket';
 import { ReduxGhost } from './functions/redux-ghost';
 import { TagBucket } from './functions/tag-bucket';
 import { getUnconfirmedChanges } from './functions/unconfirmed-changes';
@@ -24,7 +24,7 @@ const debug = debugFactory('simperium-middleware');
 
 type Buckets = {
   note: T.Note;
-  // preferences: T.Preferences;
+  preferences: T.Preferences;
   tag: T.Tag;
 };
 
@@ -42,9 +42,9 @@ export const initSimperium = (
         case 'note':
           return new NoteBucket(store);
 
-        // case 'preferences':
-        //   return new PreferencesBucket(store);
-        //
+        case 'preferences':
+          return new PreferencesBucket(store);
+
         case 'tag':
           return new TagBucket(store);
       }
@@ -149,25 +149,21 @@ export const initSimperium = (
     })
   );
 
-  // const preferencesBucket = client.bucket('preferences');
-  // preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
-  //   if ('preferences-key' !== entityId) {
-  //     return;
-  //   }
-  //
-  //   if (
-  //     !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
-  //   ) {
-  //     dispatch({
-  //       type: 'SET_ANALYTICS',
-  //       allowAnalytics: !!updatedEntity.analytics_enabled,
-  //     });
-  //   }
-  // });
+  const preferencesBucket = client.bucket('preferences');
+  preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
+    if ('preferences-key' !== entityId) {
+      return;
+    }
 
-  // preferencesBucket.channel.on('ready', () =>
-  //   preferencesBucket.channel.sendIndexRequest()
-  // );
+    if (
+      !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
+    ) {
+      dispatch({
+        type: 'REMOTE_ANALYTICS_UPDATE',
+        allowAnalytics: !!updatedEntity.analytics_enabled,
+      });
+    }
+  });
 
   if (createWelcomeNote) {
     import(
@@ -196,6 +192,10 @@ export const initSimperium = (
   const tagQueue = new BucketQueue(tagBucket);
   const queueTagUpdate = (tagHash: T.TagHash, delay = 20) =>
     tagQueue.add(tagHash, Date.now() + delay);
+
+  const preferencesQueue = new BucketQueue(preferencesBucket);
+  const queuePreferencesUpdate = (entityId: T.EntityId, delay = 20) =>
+    preferencesQueue.add(entityId, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
     // window.preferencesBucket = preferencesBucket;
@@ -347,23 +347,7 @@ export const initSimperium = (
         return result;
 
       case 'SET_ANALYTICS':
-        // preferencesBucket.get('preferences-key').then((preferences) => {
-        //   if (
-        //     preferences.data &&
-        //     !!preferences.data.analytics_enabled === action.allowAnalytics
-        //   ) {
-        //     return;
-        //   }
-        //
-        //   preferencesBucket.update(
-        //     'preferences-key',
-        //     {
-        //       ...preferences.data,
-        //       analytics_enabled: action.allowAnalytics,
-        //     },
-        //     { sync: false }
-        //   );
-        // });
+        queuePreferencesUpdate('preferences-key' as T.EntityId);
         return result;
 
       case 'TRASH_TAG': {

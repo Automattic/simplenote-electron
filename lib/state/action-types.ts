@@ -255,6 +255,10 @@ export type PreferencesBucketUpdate = Action<
   'PREFERENCES_BUCKET_UPDATE',
   { id: T.EntityId; data: T.Preferences }
 >;
+export type RemoteAnalyticsUpdate = Action<
+  'REMOTE_ANALYTICS_UPDATE',
+  { allowAnalytics: boolean }
+>;
 export type RemoteNoteUpdate = Action<
   'REMOTE_NOTE_UPDATE',
   { noteId: T.EntityId; note: T.Note; remoteInfo?: RemoteInfo<T.Note> }
@@ -338,6 +342,7 @@ export type ActionType =
   | PublishNote
   | ReallyLogout
   | RecordEvent
+  | RemoteAnalyticsUpdate
   | RemoteNoteUpdate
   | RemoteNoteDeleteForever
   | RemoteTagDelete
