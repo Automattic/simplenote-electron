@@ -91,15 +91,12 @@ class NoteContentEditor extends Component<Props> {
     const goFast = props.note.content.length > 5000;
     const contentChanged = props.note.content !== state.content;
     const noteChanged = props.noteId !== state.noteId;
-    const needsNewContent = contentChanged || noteChanged;
 
-    const content = noteChanged
-      ? goFast
+    const content = contentChanged
+      ? noteChanged && goFast
         ? props.note.content.slice(0, props.editorSelection[1] + 5000)
         : withCheckboxCharacters(props.note.content)
-      : contentChanged
-      ? withCheckboxCharacters(props.note.content)
-      : null;
+      : state.content;
 
     const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
 
