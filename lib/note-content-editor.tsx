@@ -617,6 +617,11 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
+      // a range spanning more than one column means we're over the gutter
+      if (range.endColumn - range.startColumn > 1) {
+        return;
+      }
+
       const model = editor.getModel();
       if (!model) {
         return;
@@ -640,6 +645,11 @@ class NoteContentEditor extends Component<Props> {
       } = event;
 
       if (!range) {
+        return;
+      }
+
+      // a range spanning more than one column means we're over the gutter
+      if (range.endColumn - range.startColumn > 1) {
         return;
       }
 
