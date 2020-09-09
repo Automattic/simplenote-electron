@@ -29,12 +29,12 @@
 
 .theme-light {
   .tag-suggestion {
-    border-color: $studio-gray-5;
+    border-color: var(--studio-gray-5);
   }
 }
 
 .theme-dark {
   .tag-suggestion {
-    border-color: $studio-gray-80;
+    border-color: var(--studio-gray-80);
   }
 }

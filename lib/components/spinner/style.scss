@@ -1,12 +1,12 @@
 .spinner__circle {
   @at-root .theme-light & {
-    color: $studio-gray-5;
+    color: var(--studio-gray-5);
   }
   @at-root .theme-dark & {
-    color: $studio-gray-80;
+    color: var(--studio-gray-80);
   }
 
   &.is-white {
-    color: $studio-white;
+    color: var(--studio-white);
   }
 }

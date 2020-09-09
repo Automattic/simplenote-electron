@@ -33,7 +33,7 @@ svg {
 }
 
 a {
-  color: $studio-simplenote-blue-50;
+  color: var(--studio-simplenote-blue-50);
 }
 
 b,
@@ -114,13 +114,13 @@ optgroup {
 }
 
 .search-match {
-  background-color: $studio-simplenote-blue-50;
+  background-color: var(--studio-simplenote-blue-50);
   border-radius: 3px;
   padding-left: 2px;
   padding-right: 2px;
-  color: $studio-white;
+  color: var(--studio-white);
 
   &[data-current-match='true'] {
-    background-color: $studio-yellow-60;
+    background-color: var(--studio-yellow-60);
   }
 }

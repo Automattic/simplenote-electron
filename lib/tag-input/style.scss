@@ -12,7 +12,7 @@
     min-width: 140px;
     outline: none;
     font: 14px/1.5 $sans;
-    color: $studio-gray-80;
+    color: var(--studio-gray-80);
     background: transparent;
   }
 }
@@ -20,7 +20,7 @@
 .tag-input__placeholder {
   position: absolute;
   display: block;
-  color: $studio-gray-60;
+  color: var(--studio-gray-60);
   background: transparent;
   user-select: none;
 }
@@ -44,5 +44,5 @@
 }
 
 .tag-input__suggestion {
-  color: $studio-gray-40;
+  color: var(--studio-gray-40);
 }

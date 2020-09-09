@@ -54,7 +54,7 @@
 }
 
 .note-list-placeholder {
-  color: $studio-gray-50;
+  color: var(--studio-gray-50);
   font-size: 1.3em;
 }
 
@@ -71,7 +71,7 @@
 .note-list-empty-trash {
   flex: none;
   padding: 10px 20px;
-  border-top: 1px solid $studio-gray-5;
+  border-top: 1px solid var(--studio-gray-5);
   text-align: center;
 }
 
@@ -81,8 +81,8 @@
   font-size: 14px;
   font-weight: 500;
   line-height: normal;
-  color: $studio-gray-70;
-  background: rgba($studio-gray-5, 0.5);
+  color: var(--studio-gray-70);
+  background: rgba(var(--studio-gray-5-rgb), 0.5);
   padding: 5px 30px;
 }
 
@@ -109,14 +109,14 @@
 
   .note-list-item-pinner:hover,
   .note-list-item-pinner.note-list-item-pinned {
-    color: $studio-simplenote-blue-50;
+    color: var(--studio-simplenote-blue-50);
   }
 
   .note-list-item-text {
     flex: 1 1 auto;
     overflow: hidden;
     padding: 9px 0;
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid var(--studio-gray-5);
 
     &:focus {
       outline: none;
@@ -131,7 +131,7 @@
   }
 
   &.note-list-item-selected {
-    background: $studio-simplenote-blue-5;
+    background: var(--studio-simplenote-blue-5);
   }
 
   &.note-recently-updated {
@@ -142,7 +142,7 @@
   .note-list-item-status-right {
     display: flex;
     padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid var(--studio-gray-5);
   }
 
   .note-list-item-pending-changes,
@@ -150,7 +150,7 @@
     padding: 0 4px;
 
     & svg {
-      fill: $studio-gray-50;
+      fill: var(--studio-gray-50);
       height: 16px;
       width: 16px;
     }
@@ -163,11 +163,11 @@
 
     &.is-offline svg {
       animation: none;
-      fill: $studio-gray-20;
+      fill: var(--studio-gray-20);
     }
 
     .theme-dark &.is-offline svg {
-      fill: $studio-gray-70;
+      fill: var(--studio-gray-70);
     }
   }
 
@@ -183,6 +183,6 @@
   }
 
   .note-list-item-excerpt {
-    color: $studio-gray-80;
+    color: var(--studio-gray-80);
   }
 }

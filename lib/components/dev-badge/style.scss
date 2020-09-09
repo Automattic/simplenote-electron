@@ -1,12 +1,12 @@
 .dev-badge {
   position: absolute;
-  opacity: .8;
+  opacity: 0.8;
   z-index: 1;
   right: 12px;
   bottom: 12px;
   padding: 2px 4px;
-  background: $studio-gray-5;
-  color: $studio-gray-80;
-  font-size: .75rem;
+  background: var(--studio-gray-5);
+  color: var(--studio-gray-80);
+  font-size: 0.75rem;
   line-height: 1;
 }

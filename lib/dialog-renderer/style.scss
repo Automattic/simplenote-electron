@@ -7,12 +7,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba($studio-white, .75);
+  background: rgba(var(--studio-white-rgb), 0.75);
 }
 
 .theme-dark {
   .dialog-renderer__overlay {
-    background: rgba($studio-gray-100, .75);
+    background: rgba(var(--studio-gray-100-rgb), 0.75);
   }
 }
 

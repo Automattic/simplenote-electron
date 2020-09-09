@@ -6,26 +6,26 @@
   border-radius: 14px;
   line-height: 1.25em;
   white-space: nowrap;
-  background: $studio-gray-5;
+  background: var(--studio-gray-5);
   text-decoration: none;
   font-size: 14px;
   -webkit-tap-highlight-color: transparent;
 
   &.selected,
   &:hover {
-    background: $studio-simplenote-blue-5;
+    background: var(--studio-simplenote-blue-5);
   }
 }
 
 .theme-dark {
   .tag-chip {
-    background: $studio-gray-70;
-    color: $studio-gray-20;
+    background: var(--studio-gray-70);
+    color: var(--studio-gray-20);
 
     &.selected,
     &:hover {
-      background: $studio-gray-70;
-      color: $studio-white;
+      background: var(--studio-gray-70);
+      color: var(--studio-white);
     }
   }
 }

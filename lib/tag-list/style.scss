@@ -30,7 +30,7 @@
         opacity: 1;
       }
       &:active {
-        color: $studio-white;
+        color: var(--studio-white);
       }
     }
   }
@@ -87,7 +87,7 @@
   appearance: none;
 
   &.is-selected {
-    color: $studio-simplenote-blue-50;
+    color: var(--studio-simplenote-blue-50);
   }
 
   &:focus {
@@ -179,11 +179,11 @@
     margin-right: 4px;
 
     svg {
-      fill: $studio-red-40;
+      fill: var(--studio-red-40);
     }
 
     &:focus svg {
-      fill: darken($studio-red-40, 20%);
+      fill: var(--studio-red-70);
     }
   }
 
@@ -194,11 +194,11 @@
     transform: translateX(24px);
 
     svg {
-      fill: $studio-gray-50;
+      fill: var(--studio-gray-50);
     }
 
     &:focus svg {
-      fill: $studio-gray-80;
+      fill: var(--studio-gray-80);
     }
   }
 

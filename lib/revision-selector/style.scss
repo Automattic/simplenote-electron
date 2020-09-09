@@ -1,7 +1,7 @@
 .revision-selector {
-  background: $studio-simplenote-blue-50;
+  background: var(--studio-simplenote-blue-50);
   padding: 10px 20px 20px 20px;
-  color: $studio-white;
+  color: var(--studio-white);
   z-index: 1000;
   height: 114px;
   transition: all 0.3s ease-in-out;
@@ -24,24 +24,24 @@
   }
 
   .button-primary {
-    background: $studio-white;
-    color: $studio-simplenote-blue-50;
-    border-color: $studio-white;
+    background: var(--studio-white);
+    color: var(--studio-simplenote-blue-50);
+    border-color: var(--studio-white);
 
     &:active {
-      background: $studio-simplenote-blue-5;
-      border-color: $studio-simplenote-blue-5;
+      background: var(--studio-simplenote-blue-5);
+      border-color: var(--studio-simplenote-blue-5);
     }
   }
 
   .button-secondary {
-    border-color: $studio-white;
-    color: $studio-white;
+    border-color: var(--studio-white);
+    color: var(--studio-white);
     margin-right: 10px;
 
     &:active {
-      background: $studio-white;
-      color: $studio-simplenote-blue-50;
+      background: var(--studio-white);
+      color: var(--studio-simplenote-blue-50);
     }
   }
 
@@ -53,7 +53,7 @@
 
   .revision-date {
     width: 100%;
-    color: $studio-white;
+    color: var(--studio-white);
     text-align: center;
     margin-bottom: 10px;
   }

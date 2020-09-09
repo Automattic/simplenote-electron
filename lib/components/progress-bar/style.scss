@@ -1,12 +1,12 @@
 .progress-bar {
   @at-root .theme-light & {
-    background-color: $studio-gray-5;
+    background-color: var(--studio-gray-5);
   }
   @at-root .theme-dark & {
-    background-color: $studio-gray-80;
+    background-color: var(--studio-gray-80);
   }
 }
 
 .progress-bar__bar {
-  background-color: $studio-gray-50 !important;
+  background-color: var(--studio-gray-50) !important;
 }

@@ -23,6 +23,9 @@ import * as selectors from './state/selectors';
 import * as S from './state';
 import * as T from './types';
 
+import '@automattic/color-studio/dist/color-properties';
+import '@automattic/color-studio/dist/color-properties-rgb';
+
 type OwnProps = {
   isDevConfig: boolean;
 };

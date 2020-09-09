@@ -34,10 +34,10 @@
   [class^='note-detail-'] {
     max-width: 100%;
     width: 100%;
-    color: $studio-black;
+    color: var(--studio-black);
 
     &.theme-color-fg {
-      color: $studio-black;
+      color: var(--studio-black);
       overflow-y: auto !important;
     }
   }

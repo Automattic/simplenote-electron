@@ -7,21 +7,21 @@
   text-align: left;
 
   .button:active {
-    color: $studio-white;
+    color: var(--studio-white);
   }
 
   &.is-selected {
     .button {
-      color: $studio-simplenote-blue-50;
+      color: var(--studio-simplenote-blue-50);
 
       svg[class^='icon-'] {
-        fill: $studio-simplenote-blue-50;
+        fill: var(--studio-simplenote-blue-50);
       }
 
       &:active {
-        color: $studio-white;
+        color: var(--studio-white);
         svg[class^='icon-'] {
-          fill: $studio-white;
+          fill: var(--studio-white);
         }
       }
     }

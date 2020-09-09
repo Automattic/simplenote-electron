@@ -4,13 +4,13 @@
   width: calc(100vw - 2rem);
   background: white;
   border-radius: $border-radius;
-  border: 1px solid $studio-gray-5;
-  box-shadow: 0 2px 4px 2px rgba($studio-gray-90, 0.15);
+  border: 1px solid var(--studio-gray-5);
+  box-shadow: 0 2px 4px 2px rgba(var(--studio-gray-90-rgb), 0.15);
 }
 
 .dialog-title-bar {
   display: flex;
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid var(--studio-gray-5);
 }
 
 .dialog-title-side {

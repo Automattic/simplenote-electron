@@ -28,10 +28,10 @@ button {
   transition: $anim-fast;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
-  border-color: $studio-simplenote-blue-50;
+  border-color: var(--studio-simplenote-blue-50);
   border-style: solid;
   border-width: 2px;
-  color: $studio-simplenote-blue-50;
+  color: var(--studio-simplenote-blue-50);
   font-size: 14px;
   line-height: 1.5;
   font-weight: $bold;
@@ -40,8 +40,8 @@ button {
 
   &:active,
   &.active {
-    background: $studio-simplenote-blue-50;
-    color: $studio-white;
+    background: var(--studio-simplenote-blue-50);
+    color: var(--studio-white);
   }
   &[disabled],
   &:disabled {
@@ -51,7 +51,7 @@ button {
 
 // Primary buttons. Solid buttons.
 .button-primary {
-  background: $studio-simplenote-blue-50;
+  background: var(--studio-simplenote-blue-50);
   color: white;
 }
 
@@ -64,12 +64,12 @@ button {
 
 // Danger buttons
 .button-danger {
-  color: $studio-red-40;
-  border-color: $studio-red-40;
+  color: var(--studio-red-40);
+  border-color: var(--studio-red-40);
 
   &:active {
-    background: $studio-red-40;
-    color: $studio-white;
+    background: var(--studio-red-40);
+    color: var(--studio-white);
   }
 }
 
@@ -85,7 +85,7 @@ button {
 
 .button-borderless.button-danger {
   &:active {
-    color: darken($studio-red-40, 20%);
+    fill: var(--studio-red-70);
   }
 }
 

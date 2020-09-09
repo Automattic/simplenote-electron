@@ -33,7 +33,7 @@
   }
 
   .login__auth-message.is-error {
-    color: $studio-red-60;
+    color: var(--studio-red-60);
     font-size: 16px;
     margin: 0 auto 16px;
     max-width: 347px;
@@ -47,8 +47,8 @@
 
   input,
   button[type='submit'] {
-    background-color: $studio-white;
-    border: solid 1px $studio-gray-5;
+    background-color: var(--studio-white);
+    border: solid 1px var(--studio-gray-5);
     border-radius: 4px;
     box-sizing: border-box;
     display: block;
@@ -62,23 +62,23 @@
   }
 
   button[type='submit'] {
-    background-color: $studio-simplenote-blue-50;
+    background-color: var(--studio-simplenote-blue-50);
     border: none;
-    color: $studio-white;
+    color: var(--studio-white);
     font-weight: 500;
     margin: 16px auto 8px;
     padding: 0px 15px 2px;
   }
 
   a.login__forgot {
-    color: $studio-gray-60;
+    color: var(--studio-gray-60);
     text-decoration: none;
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-60;
+    color: var(--studio-gray-60);
     display: block;
     font-size: 14px;
     margin: 16px auto;
@@ -88,14 +88,14 @@
 
   .login__signup a,
   .terms a {
-    color: $studio-simplenote-blue-50;
+    color: var(--studio-simplenote-blue-50);
     margin-left: 5px;
     text-decoration: none;
   }
 
   .or {
-    background: $studio-white;
-    color: $studio-gray-60;
+    background: var(--studio-white);
+    color: var(--studio-gray-60);
     display: block;
     font-size: 15px;
     font-style: italic;
@@ -108,7 +108,7 @@
   }
 
   .or-line {
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid var(--studio-gray-5);
     margin: -20px auto;
     max-width: 320px;
     text-align: center;
@@ -118,10 +118,10 @@
   }
 
   .wpcc-button {
-    background-color: $studio-wordpress-blue-50;
+    background-color: var(--studio-wordpress-blue-50);
     border-radius: 4px;
     box-sizing: border-box;
-    color: $studio-white;
+    color: var(--studio-white);
     display: block;
     font-size: 16px;
     font-weight: 500;
@@ -137,32 +137,32 @@
 
 .theme-dark .login {
   h1 {
-    color: $studio-white;
+    color: var(--studio-white);
   }
   a.login__forgot {
-    color: $studio-gray-20;
+    color: var(--studio-gray-20);
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-20;
+    color: var(--studio-gray-20);
   }
 
   .login__signup a,
   .terms a {
-    color: $studio-simplenote-blue-30;
+    color: var(--studio-simplenote-blue-30);
   }
 
   .login__auth-message.is-error {
-    color: $studio-red-20;
+    color: var(--studio-red-20);
   }
 
   .or {
-    background: $studio-gray-90;
-    color: $studio-gray-20;
+    background: var(--studio-gray-90);
+    color: var(--studio-gray-20);
   }
   .or-line {
-    border-color: $studio-gray-80;
+    border-color: var(--studio-gray-80);
   }
 }

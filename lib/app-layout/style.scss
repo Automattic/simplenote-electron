@@ -84,7 +84,7 @@
     animation: pulse 2s infinite ease-in-out;
 
     path {
-      fill: $studio-gray-5;
+      fill: var(--studio-gray-5);
     }
   }
 

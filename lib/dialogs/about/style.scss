@@ -5,10 +5,10 @@
 
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
-    background: $studio-simplenote-blue-50 !important;
-    color: $studio-white !important;
+    background: var(--studio-simplenote-blue-50) !important;
+    color: var(--studio-white) !important;
     a {
-      color: $studio-white;
+      color: var(--studio-white);
     }
   }
 
@@ -54,10 +54,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba($studio-white, 0.25);
+    border-bottom: 1px solid rgba(var(--studio-white-rgb), 0.25);
 
     &:first-child {
-      border-top: 1px solid rgba($studio-white, 0.25);
+      border-top: 1px solid rgba(var(--studio-white-rgb), 0.25);
     }
   }
 

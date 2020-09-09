@@ -62,7 +62,7 @@
     border: 3px solid gray;
   }
   .search-decoration {
-    background-color: rgba($studio-simplenote-blue-40, 0.6);
+    background-color: rgba(var(--studio-simplenote-blue-40-rgb), 0.6);
   }
 }
 
@@ -106,8 +106,8 @@
   height: 56px;
   line-height: 56px;
   z-index: 100;
-  border-top: 1px solid $studio-gray-5;
-  background-color: $studio-white;
+  border-top: 1px solid var(--studio-gray-5);
+  background-color: var(--studio-white);
   text-align: center;
   user-select: none;
 
@@ -123,7 +123,7 @@
     height: 100%;
 
     svg {
-      fill: $studio-simplenote-blue-50;
+      fill: var(--studio-simplenote-blue-50);
     }
   }
   .search-results-next {
@@ -158,114 +158,114 @@
 }
 
 .theme-light {
-  background-color: $studio-white;
-  color: $studio-gray-60;
+  background-color: var(--studio-white);
+  color: var(--studio-gray-60);
 
   .theme-color-bg {
-    background-color: $studio-white;
+    background-color: var(--studio-white);
   }
   .theme-color-bg-lighter {
-    background-color: $studio-white;
+    background-color: var(--studio-white);
   }
   .theme-color-fg {
-    color: $studio-gray-80;
+    color: var(--studio-gray-80);
   }
   .theme-color-fg-dim {
-    color: $studio-gray-50;
+    color: var(--studio-gray-50);
   }
   .theme-color-border {
-    border-color: $studio-gray-5;
+    border-color: var(--studio-gray-5);
   }
   .search-field {
-    border-color: $studio-gray-10;
+    border-color: var(--studio-gray-10);
   }
 }
 
 .theme-dark {
-  background-color: $studio-gray-90;
-  color: $studio-gray-20;
+  background-color: var(--studio-gray-90);
+  color: var(--studio-gray-20);
 
   .theme-color-bg {
-    background-color: $studio-gray-90;
+    background-color: var(--studio-gray-90);
   }
   .theme-color-bg-lighter {
-    background-color: $studio-gray-90;
+    background-color: var(--studio-gray-90);
   }
   .theme-color-fg {
-    color: $studio-white;
+    color: var(--studio-white);
   }
   .theme-color-fg-dim {
-    color: $studio-gray-30;
+    color: var(--studio-gray-30);
   }
   .theme-color-border {
-    border-color: $studio-gray-80;
+    border-color: var(--studio-gray-80);
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: $studio-gray-80;
-    border-color: $studio-gray-60;
+    background-color: var(--studio-gray-80);
+    border-color: var(--studio-gray-60);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: $studio-gray-90;
+    background-color: var(--studio-gray-90);
   }
   ::-webkit-scrollbar-thumb:active {
-    background-color: $studio-gray-50;
+    background-color: var(--studio-gray-50);
   }
 
   .button-borderless {
-    color: $studio-simplenote-blue-30;
+    color: var(--studio-simplenote-blue-30);
 
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
-        fill: $studio-gray-60;
+        fill: var(--studio-gray-60);
       }
     }
   }
 
   .icon-button,
   a {
-    color: $studio-simplenote-blue-30;
+    color: var(--studio-simplenote-blue-30);
   }
 
   input {
-    color: $studio-white;
+    color: var(--studio-white);
   }
 
   input,
   textarea {
-    border-color: $studio-gray-70;
+    border-color: var(--studio-gray-70);
     background-color: transparent;
   }
 
   .transparent-input::placeholder,
   input::placeholder {
-    color: $studio-gray-20;
+    color: var(--studio-gray-20);
   }
 
   .checkbox-control-base {
-    border-color: $studio-gray-80;
+    border-color: var(--studio-gray-80);
   }
 
   .navigation-bar-item {
     button {
-      color: $studio-white;
+      color: var(--studio-white);
     }
     svg {
-      fill: $studio-white;
+      fill: var(--studio-white);
     }
   }
 
   .navigation-bar-item.is-selected {
     button {
-      color: $studio-simplenote-blue-30;
+      color: var(--studio-simplenote-blue-30);
     }
     svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-30;
+      fill: var(--studio-simplenote-blue-30);
     }
   }
   .tag-list .tag-list-input.is-selected {
-    color: $studio-simplenote-blue-30;
+    color: var(--studio-simplenote-blue-30);
   }
 
   .tag-field {
@@ -277,83 +277,83 @@
     background: transparent;
 
     &::placeholder {
-      color: $studio-gray-20;
+      color: var(--studio-gray-20);
     }
   }
 
   .settings-group p {
-    color: $studio-gray-5;
+    color: var(--studio-gray-5);
   }
 
   .tab-panels__tab-list {
     li {
-      color: $studio-gray-50;
+      color: var(--studio-gray-50);
 
       &.is-active {
-        color: $studio-simplenote-blue-30;
-        border-bottom-color: $studio-simplenote-blue-30;
+        color: var(--studio-simplenote-blue-30);
+        border-bottom-color: var(--studio-simplenote-blue-30);
       }
     }
 
     li.button:active {
-      background-color: $studio-simplenote-blue-30;
-      color: $studio-white;
+      background-color: var(--studio-simplenote-blue-30);
+      color: var(--studio-white);
     }
   }
 
   .note-list-header {
-    color: $studio-gray-30;
+    color: var(--studio-gray-30);
     background-color: rgba(50, 52, 54, 0.5);
   }
 
   .note-list-item {
     &.note-list-item-selected {
-      background: $studio-gray-80;
+      background: var(--studio-gray-80);
     }
 
     .note-list-item-excerpt {
-      color: $studio-gray-20;
+      color: var(--studio-gray-20);
     }
   }
 
   .note-list-item-pinner:hover,
   .note-list-item-pinner.note-list-item-pinned {
-    color: $studio-simplenote-blue-20;
+    color: var(--studio-simplenote-blue-20);
   }
 
   .note-detail-markdown {
     @import '../node_modules/highlight.js/scss/solarized-dark.scss';
 
     hr {
-      border-color: $studio-gray-80;
+      border-color: var(--studio-gray-80);
     }
 
     blockquote {
-      border-color: $studio-gray-80;
+      border-color: var(--studio-gray-80);
     }
 
     pre {
-      border-color: $studio-gray-80;
+      border-color: var(--studio-gray-80);
     }
 
     table {
       th,
       td {
-        border-color: $studio-gray-60;
+        border-color: var(--studio-gray-60);
       }
       tr:nth-child(2n) {
-        background-color: $studio-gray-80;
+        background-color: var(--studio-gray-80);
       }
     }
   }
 
   .search-results {
-    color: $studio-gray-10;
-    border-color: $studio-gray-80;
-    background-color: $studio-gray-90;
+    color: var(--studio-gray-10);
+    border-color: var(--studio-gray-80);
+    background-color: var(--studio-gray-90);
 
     button svg {
-      fill: $studio-simplenote-blue-30;
+      fill: var(--studio-simplenote-blue-30);
     }
   }
 }

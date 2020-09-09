@@ -7,7 +7,7 @@
   width: $navigation-bar-width;
   height: 100%;
   overflow: hidden;
-  border-right: 1px solid $studio-gray-5;
+  border-right: 1px solid var(--studio-gray-5);
   background: white;
 }
 
@@ -24,7 +24,7 @@
   overflow: hidden;
   min-height: 9em;
   padding: 12px 0 0;
-  border-top: 1px solid $studio-gray-5;
+  border-top: 1px solid var(--studio-gray-5);
 
   .tag-list-title {
     padding: 8px 20px 0;
@@ -38,7 +38,7 @@
 .navigation-bar__tools {
   flex: 1 0 auto;
   padding: 10px 0;
-  border-top: 1px solid $studio-gray-5;
+  border-top: 1px solid var(--studio-gray-5);
 }
 
 .navigation-bar__footer {
@@ -47,7 +47,7 @@
   justify-content: flex-start;
   align-items: center;
   padding: 0 20px 20px 20px;
-  color: $studio-gray-80;
+  color: var(--studio-gray-80);
 }
 
 .navigation-bar__server-connection {
@@ -56,7 +56,7 @@
   justify-content: flex-start;
   align-items: center;
   padding: 0 20px 0 20px;
-  color: $studio-gray-80;
+  color: var(--studio-gray-80);
 }
 
 .navigation-bar__footer-item {
@@ -68,5 +68,5 @@
 }
 
 .navigation-bar__sync-status {
-  border-top: 1px solid $studio-gray-5;
+  border-top: 1px solid var(--studio-gray-5);
 }
