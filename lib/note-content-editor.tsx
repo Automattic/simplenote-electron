@@ -632,9 +632,11 @@ class NoteContentEditor extends Component<Props> {
         column: range.startColumn,
       });
 
-      this.setState({
-        overTodo: content[offset] === '\ue000' || content[offset] === '\ue001',
-      });
+      const overTodo =
+        content[offset] === '\ue000' || content[offset] === '\ue001';
+      if (this.state.overTodo !== overTodo) {
+        this.setState({ overTodo });
+      }
     });
 
     editor.onMouseDown((event) => {
@@ -819,7 +821,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { fontSize, noteId, searchQuery, theme } = this.props;
+    const { fontSize, lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
