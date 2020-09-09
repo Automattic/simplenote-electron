@@ -1,4 +1,4 @@
-import React, { Component, createRef, RefObject } from 'react';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Monaco, {
   ChangeHandler,
@@ -31,6 +31,20 @@ const titleDecorationForLine = (line: number) => ({
     stickiness: Editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
   },
 });
+
+const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
+  if (lineLength === 'full' || 'undefined' === typeof width) {
+    return 25;
+  }
+
+  if (width <= 1400) {
+    // should be 10% up to 1400px wide
+    return width * 0.1;
+  } else {
+    // after 1400, calc((100% - 768px) / 2);
+    return (width - 768) / 2;
+  }
+};
 
 type OwnProps = {
   storeFocusEditor: (focusSetter: () => any) => any;
@@ -75,7 +89,7 @@ class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
-  contentDiv: RefObject<HTMLDivElement> = createRef();
+  contentDiv = createRef<HTMLDivElement>();
   decorations: string[] = [];
   matchesInNote: [] = [];
 
@@ -825,18 +839,10 @@ class NoteContentEditor extends Component<Props> {
     const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
-    let editorPadding = 25;
-
-    if (lineLength === 'narrow' && this.contentDiv?.current) {
-      const width = this.contentDiv.current?.offsetWidth;
-      if (width <= 1400) {
-        // should be 10% up to 1400px wide
-        editorPadding = width * 0.1;
-      } else {
-        // after 1400, calc((100% - 768px) / 2);
-        editorPadding = (width - 768) / 2;
-      }
-    }
+    const editorPadding = getEditorPadding(
+      lineLength,
+      this.contentDiv.current?.offsetWidth
+    );
 
     return (
       <div
