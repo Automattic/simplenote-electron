@@ -88,6 +88,9 @@
   display: none !important;
 }
 
+/* Monaco adds the dir='ltr' attribute to rtl languages.
+   This does the opposite of what you think it should do.
+*/
 span[dir='ltr'] {
   float: right;
 }
