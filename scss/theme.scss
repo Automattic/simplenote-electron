@@ -88,6 +88,10 @@
   display: none !important;
 }
 
+span[dir='ltr'] {
+  float: right;
+}
+
 /* Safari requires that it be displayed absolute so that it takes the full height
 */
 .note-content-editor-shell {
