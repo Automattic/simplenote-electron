@@ -77,7 +77,8 @@ class AppComponent extends Component<Props> {
     if (!hotkeysEnabled) {
       return;
     }
-    const { key, ctrlKey, metaKey, shiftKey } = event;
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
 
     // Is either cmd or ctrl pressed? (But not both)
     const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;

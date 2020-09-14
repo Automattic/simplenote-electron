@@ -161,17 +161,18 @@ class NoteContentEditor extends Component<Props> {
   };
 
   handleShortcut = (event: KeyboardEvent) => {
-    const { ctrlKey, code, metaKey, shiftKey } = event;
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
 
     const cmdOrCtrl = ctrlKey || metaKey;
-    if (cmdOrCtrl && shiftKey && code === 'KeyG') {
+    if (cmdOrCtrl && shiftKey && key === 'g') {
       this.setPrevSearchSelection();
       event.stopPropagation();
       event.preventDefault();
       return false;
     }
 
-    if (cmdOrCtrl && !shiftKey && code === 'KeyG') {
+    if (cmdOrCtrl && !shiftKey && key === 'g') {
       this.setNextSearchSelection();
       event.stopPropagation();
       event.preventDefault();

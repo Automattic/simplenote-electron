@@ -49,7 +49,9 @@ export class NoteEditor extends Component<Props> {
     if (!this.props.keyboardShortcuts) {
       return;
     }
-    const { key, ctrlKey, metaKey, shiftKey } = event;
+
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
     const { note, noteId, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;

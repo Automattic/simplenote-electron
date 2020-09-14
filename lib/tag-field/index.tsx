@@ -163,7 +163,7 @@ export class TagField extends Component<Props, OwnState> {
     }
     const cmdOrCtrl = ctrlKey || metaKey;
 
-    if (cmdOrCtrl && shiftKey && 'y' === key) {
+    if (cmdOrCtrl && shiftKey && 'y' === key.toLowerCase()) {
       this.setState({ selectedTag: '' as T.TagName });
     }
 
