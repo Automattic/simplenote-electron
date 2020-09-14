@@ -154,7 +154,7 @@ export class TagField extends Component<Props, OwnState> {
 
   preventStealingFocus = ({
     ctrlKey,
-    code,
+    key,
     metaKey,
     shiftKey,
   }: KeyboardEvent) => {
@@ -163,7 +163,7 @@ export class TagField extends Component<Props, OwnState> {
     }
     const cmdOrCtrl = ctrlKey || metaKey;
 
-    if (cmdOrCtrl && shiftKey && 'KeyY' === code) {
+    if (cmdOrCtrl && shiftKey && 'y' === key.toLowerCase()) {
       this.setState({ selectedTag: '' as T.TagName });
     }
 

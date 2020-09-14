@@ -216,11 +216,12 @@ export class NoteList extends Component<Props> {
     if (!this.props.keyboardShortcuts) {
       return;
     }
-    const { ctrlKey, code, metaKey, shiftKey } = event;
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
     const { isSmallScreen, showNoteList } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
-    if (cmdOrCtrl && shiftKey && code === 'KeyK') {
+    if (cmdOrCtrl && shiftKey && key === 'k') {
       this.props.selectNoteAbove();
 
       event.stopPropagation();
@@ -228,7 +229,7 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (cmdOrCtrl && shiftKey && code === 'KeyJ') {
+    if (cmdOrCtrl && shiftKey && key === 'j') {
       this.props.selectNoteBelow();
 
       event.stopPropagation();
@@ -236,7 +237,7 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (isSmallScreen && cmdOrCtrl && shiftKey && code === 'KeyL') {
+    if (isSmallScreen && cmdOrCtrl && shiftKey && key === 'l') {
       this.props.toggleNoteList();
 
       event.stopPropagation();
@@ -244,7 +245,7 @@ export class NoteList extends Component<Props> {
       return false;
     }
 
-    if (isSmallScreen && showNoteList && code === 'Enter') {
+    if (isSmallScreen && showNoteList && key === 'Enter') {
       this.props.openNote();
 
       event.stopPropagation();

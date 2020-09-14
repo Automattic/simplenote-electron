@@ -65,11 +65,12 @@ export class AppLayout extends Component<Props> {
       keyboardShortcutsAreOpen,
       showKeyboardShortcuts,
     } = this.props;
-    const { ctrlKey, code, metaKey } = event;
+    const { ctrlKey, metaKey } = event;
+    const key = event.key.toLowerCase();
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
-    if (cmdOrCtrl && code === 'Slash') {
+    if (cmdOrCtrl && key === '/') {
       keyboardShortcutsAreOpen
         ? hideKeyboardShortcuts()
         : showKeyboardShortcuts();

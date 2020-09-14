@@ -49,13 +49,15 @@ export class NoteEditor extends Component<Props> {
     if (!this.props.keyboardShortcuts) {
       return;
     }
-    const { code, ctrlKey, metaKey, shiftKey } = event;
+
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
     const { note, noteId, toggleMarkdown } = this.props;
 
     const cmdOrCtrl = ctrlKey || metaKey;
 
     // toggle Markdown enabled
-    if (note && cmdOrCtrl && shiftKey && 'KeyM' === code) {
+    if (note && cmdOrCtrl && shiftKey && 'm' === key) {
       console.log('toggling markdown');
       toggleMarkdown(noteId, !this.markdownEnabled());
       event.stopPropagation();
@@ -64,7 +66,7 @@ export class NoteEditor extends Component<Props> {
     }
 
     // toggle editor mode
-    if (cmdOrCtrl && shiftKey && 'KeyP' === code && this.markdownEnabled()) {
+    if (cmdOrCtrl && shiftKey && 'p' === key && this.markdownEnabled()) {
       this.props.toggleEditMode();
       event.stopPropagation();
       event.preventDefault();
@@ -72,7 +74,7 @@ export class NoteEditor extends Component<Props> {
     }
 
     // toggle between tag editor and note editor
-    if (shiftKey && cmdOrCtrl && 'KeyY' === code && this.props.isEditorActive) {
+    if (shiftKey && cmdOrCtrl && 'y' === key && this.props.isEditorActive) {
       // prefer focusing the edit field first
       if (!this.editFieldHasFocus() || this.props.isSearchActive) {
         this.focusNoteEditor?.();
