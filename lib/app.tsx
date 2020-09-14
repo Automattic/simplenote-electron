@@ -77,13 +77,13 @@ class AppComponent extends Component<Props> {
     if (!hotkeysEnabled) {
       return;
     }
-    const { code, ctrlKey, metaKey, shiftKey } = event;
+    const { key, ctrlKey, metaKey, shiftKey } = event;
 
     // Is either cmd or ctrl pressed? (But not both)
     const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
     // open tag list
-    if (cmdOrCtrl && shiftKey && 'KeyU' === code) {
+    if (cmdOrCtrl && shiftKey && 'u' === key) {
       this.props.toggleTagList();
 
       event.stopPropagation();
@@ -92,8 +92,8 @@ class AppComponent extends Component<Props> {
     }
 
     if (
-      (cmdOrCtrl && shiftKey && 'KeyS' === code) ||
-      (cmdOrCtrl && !shiftKey && 'KeyF' === code)
+      (cmdOrCtrl && shiftKey && 's' === key) ||
+      (cmdOrCtrl && !shiftKey && 'f' === key)
     ) {
       this.props.focusSearchField();
 
@@ -102,11 +102,11 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
-    if (('Escape' === code || 'Esc' === code) && this.props.isSearchActive) {
+    if (('Escape' === key || 'Esc' === key) && this.props.isSearchActive) {
       this.props.clearSearch();
     }
 
-    if (cmdOrCtrl && shiftKey && 'KeyF' === code) {
+    if (cmdOrCtrl && shiftKey && 'f' === key) {
       this.props.toggleFocusMode();
 
       event.stopPropagation();
@@ -114,7 +114,7 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
-    if (cmdOrCtrl && shiftKey && 'KeyI' === code) {
+    if (cmdOrCtrl && shiftKey && 'i' === key) {
       this.props.createNote();
 
       event.stopPropagation();
@@ -123,7 +123,7 @@ class AppComponent extends Component<Props> {
     }
 
     // prevent default browser behavior for search and find
-    if (cmdOrCtrl && ('KeyG' === code || 'KeyF' === code)) {
+    if (cmdOrCtrl && ('g' === key || 'f' === key)) {
       event.stopPropagation();
       event.preventDefault();
     }
