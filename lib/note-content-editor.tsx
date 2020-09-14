@@ -37,7 +37,10 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
     return 25;
   }
 
-  if (width <= 1400) {
+  // magic number alert: 328px is the width of the sidebar :/
+  // this logic matches "@media only screen and (max-width: 1400px)" in the CSS
+  // 1400 is the viewport width; width is the width of the container element
+  if (width <= 1400 - 328) {
     // should be 10% up to 1400px wide
     return width * 0.1;
   } else {
