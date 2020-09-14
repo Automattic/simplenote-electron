@@ -625,7 +625,6 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
-    editor.focus();
 
     editor.onDidChangeCursorSelection((e) => {
       if (
