@@ -6,6 +6,7 @@ import Monaco, {
   EditorWillMount,
 } from 'react-monaco-editor';
 import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
+import { search } from './state/ui/actions';
 
 import actions from './state/actions';
 import * as selectors from './state/selectors';
@@ -67,6 +68,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  clearSearch: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
   insertTask: () => any;
   storeEditorSelection: (
@@ -214,6 +216,10 @@ class NoteContentEditor extends Component<Props> {
       );
     }
 
+    if (this.props.searchQuery === '' && prevProps.searchQuery !== '') {
+      this.editor?.setSelection(new this.monaco.Range(0, 0, 0, 0));
+    }
+
     if (this.props.lineLength !== prevProps.lineLength) {
       // @TODO: This timeout is necessary for no apparent reason
       //        Figure out why and take it out!
@@ -332,6 +338,14 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
+  cancelSelectionOrSearch = (editor: Editor.IStandaloneCodeEditor) => {
+    if (this.props.searchQuery.length > 0 && this.matchesInNote.length > 0) {
+      this.props.clearSearch();
+      return;
+    }
+    editor.trigger('customAction', 'cancelSelection', null);
+  };
+
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
     const model = editor.getModel();
@@ -413,6 +427,7 @@ class NoteContentEditor extends Component<Props> {
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
+      'cancelSelection', // escape; we need to allow this to bubble up to clear search
       'cursorUndo', // meta+U
       'editor.action.commentLine', // meta+/
       'editor.action.jumpToBracket', // shift+meta+\
@@ -496,6 +511,13 @@ class NoteContentEditor extends Component<Props> {
           null
         );
       },
+    });
+
+    editor.addAction({
+      id: 'cancel_selection',
+      label: 'Cancel Selection',
+      keybindings: [monaco.KeyCode.Escape],
+      run: this.cancelSelectionOrSearch,
     });
 
     /* paste doesn't work in the browser due to security issues */
@@ -603,7 +625,6 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
-    editor.focus();
 
     editor.onDidChangeCursorSelection((e) => {
       if (
@@ -954,6 +975,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  clearSearch: () => dispatch(search('')),
   editNote: actions.data.editNote,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   storeEditorSelection: (noteId, start, end, direction) => ({
