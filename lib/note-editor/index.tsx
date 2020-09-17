@@ -58,7 +58,6 @@ export class NoteEditor extends Component<Props> {
 
     // toggle Markdown enabled
     if (note && cmdOrCtrl && shiftKey && 'm' === key) {
-      console.log('toggling markdown');
       toggleMarkdown(noteId, !this.markdownEnabled());
       event.stopPropagation();
       event.preventDefault();

@@ -1,6 +1,10 @@
+import debugFactory from 'debug';
+
 import actions from '../actions';
 
 import * as S from '../';
+
+const debug = debugFactory('electron-middleware');
 
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
   window.electron.receive('appCommand', (command) => {
@@ -82,7 +86,7 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         return;
 
       default:
-        console.log(command);
+        debug(`unknown AppCommand: ${command}`);
     }
   });
 
