@@ -123,8 +123,8 @@ module.exports = function main() {
       mainWindow.setMenuBarVisibility(!autoHideMenuBar);
     });
 
-    ipcMain.on('wpLogin', function (event, url) {
-      shell.openExternal(url);
+    ipcMain.on('wpLogin', function (event, wpLoginUrl) {
+      shell.openExternal(wpLoginUrl);
     });
 
     ipcMain.on('importNotes', function (event, filePath) {

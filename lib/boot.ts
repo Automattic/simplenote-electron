@@ -12,7 +12,7 @@ import { boot as bootLoggingOut } from './logging-out';
 const config = getConfig();
 
 const clearStorage = (): Promise<void> =>
-  new Promise((resolve) => {
+  new Promise((parentResolve) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('lastSyncedTime');
     localStorage.removeItem('localQueue:note');
@@ -57,9 +57,9 @@ const clearStorage = (): Promise<void> =>
     ])
       .then(() => {
         window.electron?.send('clearCookies');
-        resolve();
+        parentResolve();
       })
-      .catch(() => resolve());
+      .catch(() => parentResolve());
   });
 
 const forceReload = () => history.go();
