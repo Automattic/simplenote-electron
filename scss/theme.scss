@@ -39,6 +39,26 @@
   }
 }
 
+/* Monaco adds the dir='ltr' attribute to rtl languages.
+   This does the opposite of what you think it should do.
+*/
+span[dir='ltr'] {
+  float: right;
+  margin-right: calc(100% - 768px);
+}
+
+.is-line-length-full {
+  span[dir='ltr'] {
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (max-width: 1400px) {
+  span[dir='ltr'] {
+    margin-right: 14%;
+  }
+}
+
 .react-monaco-editor-container {
   .scrollbar.vertical {
     width: 10px !important;
@@ -98,13 +118,6 @@
 */
 .monaco-editor .suggest-widget {
   display: none !important;
-}
-
-/* Monaco adds the dir='ltr' attribute to rtl languages.
-   This does the opposite of what you think it should do.
-*/
-span[dir='ltr'] {
-  float: right;
 }
 
 /* Safari requires that it be displayed absolute so that it takes the full height
