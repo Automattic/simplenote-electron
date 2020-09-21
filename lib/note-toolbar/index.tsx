@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 import IconButton from '../icon-button';
 import BackIcon from '../icons/back';
@@ -68,14 +69,14 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<SidebarIcon />}
               onClick={this.props.toggleFocusMode}
-              title="Toggle Sidebar"
+              title={i18n.translate('Toggle Sidebar')}
             />
           </div>
           <div className="note-toolbar__button note-toolbar-back">
             <IconButton
               icon={<BackIcon />}
               onClick={this.props.toggleNoteList}
-              title="Back • Ctrl+Shift+L"
+              title={i18n.translate('Back')} //+ " • Ctrl+Shift+L"
             />
           </div>
         </div>
@@ -86,7 +87,7 @@ export class NoteToolbar extends Component<Props> {
               <IconButton
                 icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
                 onClick={this.props.toggleEditMode}
-                title="Preview • Ctrl+Shift+P"
+                title={i18n.translate('Preview')} // • Ctrl+Shift+P"
               />
             </div>
           )}
@@ -95,28 +96,32 @@ export class NoteToolbar extends Component<Props> {
               disabled={!hasRevisions}
               icon={<RevisionsIcon />}
               onClick={this.props.toggleRevisions}
-              title={hasRevisions ? 'History' : 'History (unavailable)'}
+              title={
+                hasRevisions
+                  ? i18n.translate('History')
+                  : i18n.translate('History (unavailable)')
+              }
             />
           </div>
           <div className="note-toolbar__button">
             <IconButton
               icon={<ShareIcon />}
               onClick={this.props.shareNote}
-              title="Share"
+              title={i18n.translate('Share')}
             />
           </div>
           <div className="note-toolbar__button">
             <IconButton
               icon={<TrashIcon />}
               onClick={this.props.trashNote}
-              title="Trash"
+              title={i18n.translate('Trash')}
             />
           </div>
           <div className="note-toolbar__button">
             <IconButton
               icon={<InfoIcon />}
               onClick={toggleNoteInfo}
-              title="Info"
+              title={i18n.translate('Info')}
             />
           </div>
         </div>
@@ -133,7 +138,7 @@ export class NoteToolbar extends Component<Props> {
           <IconButton
             icon={<BackIcon />}
             onClick={this.props.toggleNoteList}
-            title="Back • Ctrl+Shift+L"
+            title={i18n.translate('Back')} // • Ctrl+Shift+L"
           />
         </div>
         {isOffline && <div className="offline-badge">OFFLINE</div>}
@@ -144,7 +149,7 @@ export class NoteToolbar extends Component<Props> {
               className="button button-compact button-danger"
               onClick={this.props.deleteNoteForever}
             >
-              Delete Forever
+              {i18n.translate('Delete Forever')}
             </button>
           </div>
           <div className="note-toolbar__button">
@@ -153,7 +158,7 @@ export class NoteToolbar extends Component<Props> {
               className="button button-primary button-compact"
               onClick={this.props.restoreNote}
             >
-              Restore Note
+              {i18n.translate('Restore Note')}
             </button>
           </div>
         </div>

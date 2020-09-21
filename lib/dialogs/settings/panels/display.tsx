@@ -1,5 +1,6 @@
 import React, { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 import { isElectron, isMac } from '../../../utils/platform';
 import RadioGroup from '../../radio-settings-group';
@@ -35,84 +36,86 @@ type Props = StateProps & DispatchProps;
 const DisplayPanel: FunctionComponent<Props> = (props) => (
   <Fragment>
     <SettingsGroup
-      title="Note display"
+      title={i18n.translate('Note display')}
       slug="noteDisplay"
       activeSlug={props.noteDisplay}
       onChange={props.setNoteDisplay}
       renderer={RadioGroup}
     >
-      <Item title="Comfy" slug="comfy" />
-      <Item title="Condensed" slug="condensed" />
-      <Item title="Expanded" slug="expanded" />
+      <Item title={i18n.translate('Comfy')} slug="comfy" />
+      <Item title={i18n.translate('Condensed')} slug="condensed" />
+      <Item title={i18n.translate('Expanded')} slug="expanded" />
     </SettingsGroup>
 
     <SettingsGroup
-      title="Line length"
+      title={i18n.translate('Line length')}
       slug="lineLength"
       activeSlug={props.lineLength}
       onChange={props.setLineLength}
       renderer={RadioGroup}
     >
-      <Item title="Narrow" slug="narrow" />
-      <Item title="Full" slug="full" />
+      <Item title={i18n.translate('Narrow')} slug="narrow" />
+      <Item title={i18n.translate('Full')} slug="full" />
     </SettingsGroup>
 
     <SettingsGroup
-      title="Sort type"
+      title={i18n.translate('Sort type')}
       slug="sortType"
       activeSlug={props.sortType}
       onChange={props.setSortType}
       renderer={RadioGroup}
     >
-      <Item title="Date modified" slug="modificationDate" />
-      <Item title="Date created" slug="creationDate" />
-      <Item title="Alphabetical" slug="alphabetical" />
+      <Item title={i18n.translate('Date modified')} slug="modificationDate" />
+      <Item title={i18n.translate('Date created')} slug="creationDate" />
+      <Item title={i18n.translate('Alphabetical')} slug="alphabetical" />
     </SettingsGroup>
 
     <SettingsGroup
-      title="Sort order"
+      title={i18n.translate('Sort order')}
       slug="sortOrder"
       activeSlug={props.sortIsReversed ? 'reversed' : ''}
       onChange={props.toggleSortOrder}
       renderer={ToggleGroup}
     >
-      <Item title="Reversed" slug="reversed" />
+      <Item title={i18n.translate('Reversed')} slug="reversed" />
     </SettingsGroup>
 
     <SettingsGroup
-      title="Tags"
+      title={i18n.translate('Tags')}
       slug="sortTagsAlpha"
       activeSlug={props.sortTagsAlpha ? 'alpha' : ''}
       onChange={props.toggleSortTagsAlpha}
       renderer={ToggleGroup}
     >
-      <Item title="Sort Alphabetically" slug="alpha" />
+      <Item title={i18n.translate('Sort Alphabetically')} slug="alpha" />
     </SettingsGroup>
 
     <SettingsGroup
-      title="Theme"
+      title={i18n.translate('Theme')}
       slug="theme"
       activeSlug={props.activeTheme}
       onChange={props.setActiveTheme}
       renderer={RadioGroup}
     >
       {navigator.userAgent.toLowerCase().indexOf(' electron/') === -1 && (
-        <Item title="System" slug="system" />
+        <Item title={i18n.translate('System')} slug="system" />
       )}
-      <Item title="Light" slug="light" />
-      <Item title="Dark" slug="dark" />
+      <Item title={i18n.translate('Light')} slug="light" />
+      <Item title={i18n.translate('Dark')} slug="dark" />
     </SettingsGroup>
 
     {isElectron && !isMac && (
       <SettingsGroup
-        title="Menu Bar"
+        title={i18n.translate('Menu Bar')}
         slug="autoHideMenuBar"
         activeSlug={props.autoHideMenuBar ? 'autoHide' : ''}
-        description="When set to auto-hide, press the Alt key to toggle."
+        description={i18n.translate(
+          'When set to auto-hide, press the Alt key to toggle.'
+        )}
         onChange={props.toggleAutoHideMenuBar}
         renderer={ToggleGroup}
       >
-        <Item title="Hide Automatically" slug="autoHide" />
+        <Item title={i18n.translate('Hide Automatically')} slug="autoHide" />
       </SettingsGroup>
     )}
   </Fragment>

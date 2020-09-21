@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
+import i18n from 'i18n-calypso';
 
 import ConnectionStatus from '../connection-status';
 import NavigationBarItem from './item';
@@ -71,13 +72,13 @@ export class NavigationBar extends Component<Props> {
           <NavigationBarItem
             icon={<NotesIcon />}
             isSelected={this.isSelected({ isTrashRow: false })}
-            label="All Notes"
+            label={i18n.translate('All Notes')}
             onClick={onShowAllNotes}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
             isSelected={this.isSelected({ isTrashRow: true })}
-            label="Trash"
+            label={i18n.translate('Trash')}
             onClick={this.onSelectTrash}
           />
         </div>
@@ -93,7 +94,7 @@ export class NavigationBar extends Component<Props> {
         <div className="navigation-bar__tools theme-color-border">
           <NavigationBarItem
             icon={<SettingsIcon />}
-            label="Settings"
+            label={i18n.translate('Settings')}
             onClick={onSettings}
           />
         </div>
@@ -103,7 +104,7 @@ export class NavigationBar extends Component<Props> {
             className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={this.props.showKeyboardShortcuts}
           >
-            Keyboard Shortcuts
+            {i18n.translate('Keyboard Shortcuts')}
           </button>
         </div>
         <div className="navigation-bar__footer">
@@ -112,14 +113,14 @@ export class NavigationBar extends Component<Props> {
             className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={this.onHelpClicked}
           >
-            Help &amp; Support
+            {i18n.translate('Help & Support')}
           </button>
           <button
             type="button"
             className="navigation-bar__footer-item theme-color-fg-dim"
             onClick={onAbout}
           >
-            About
+            {i18n.translate('About')}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 import Dialog from '../../dialog';
 import { closeDialog } from '../../state/ui/actions';
 import { isElectron, isMac } from '../../utils/platform';
@@ -44,112 +45,131 @@ export class AboutDialog extends Component<DispatchProps> {
 
     return (
       <div className="keybindings">
-        <Dialog onDone={closeDialog} title="Keyboard Shortcuts">
+        <Dialog
+          onDone={closeDialog}
+          title={i18n.translate('Keyboard Shortcuts')}
+        >
           <div className="keybindings__sections">
             <section>
-              <h1>View</h1>
+              <h1>{i18n.translate('View')}</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, '/']}>Show keyboard shortcuts</Keys>
+                  <Keys keys={[CmdOrCtrl, '/']}>
+                    {i18n.translate('Show keyboard shortcuts')}
+                  </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
-                    Toggle focus mode
+                    {i18n.translate('Toggle focus mode')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'S']}>
-                    Focus search field
+                    {i18n.translate('Focus search field')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'G']}>
-                    Jump to next match in note
+                    {i18n.translate('Jump to next match in note')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'G']}>
-                    Jump to previous match in note
+                    {i18n.translate('Jump to previous match in note')}
                   </Keys>
                 </li>
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, '+']}>Increase font size</Keys>
+                    <Keys keys={[CmdOrCtrl, '+']}>
+                      {i18n.translate('Increase font size')}
+                    </Keys>
                   </li>
                 )}
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, '-']}>Decrease font size</Keys>
+                    <Keys keys={[CmdOrCtrl, '-']}>
+                      {i18n.translate('Decrease font size')}
+                    </Keys>
                   </li>
                 )}
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, '0']}>Reset font size</Keys>
+                    <Keys keys={[CmdOrCtrl, '0']}>
+                      {i18n.translate('Reset font size')}
+                    </Keys>
                   </li>
                 )}
               </ul>
             </section>
 
             <section>
-              <h1>Navigation</h1>
+              <h1>{i18n.translate('Navigation')}</h1>
               <ul>
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, ',']}>Open app preferences</Keys>
+                    <Keys keys={[CmdOrCtrl, ',']}>
+                      {i18n.translate('Open app preferences')}
+                    </Keys>
                   </li>
                 )}
                 {isElectron && (
                   <li>
                     <Keys keys={[CmdOrCtrl, 'Shift', 'E']}>
-                      Export all notes
+                      {i18n.translate('Export all notes')}
                     </Keys>
                   </li>
                 )}
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'U']}>Toggle tag list</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'U']}>
+                    {i18n.translate('Toggle tag list')}
+                  </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'K']}>
-                    Open note above current one
+                    {i18n.translate('Open note above current one')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'J']}>
-                    Open note below current one
+                    {i18n.translate('Open note below current one')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'Y']}>
-                    Toggle editing content/tags
+                    {i18n.translate('Toggle editing content/tags')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'L']}>
-                    Toggle note list (on narrow screens)
+                    {i18n.translate('Toggle note list (on narrow screens)')}
                   </Keys>
                 </li>
               </ul>
             </section>
 
             <section>
-              <h1>Note Editing</h1>
+              <h1>{i18n.translate('Note Editing')}</h1>
               <ul>
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'I']}>Create new note</Keys>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'I']}>
+                    {i18n.translate('Create new note')}
+                  </Keys>
                 </li>
                 {isElectron && (
                   <li>
-                    <Keys keys={[CmdOrCtrl, 'P']}>Print note</Keys>
+                    <Keys keys={[CmdOrCtrl, 'P']}>
+                      {i18n.translate('Print note')}
+                    </Keys>
                   </li>
                 )}
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'P']}>
-                    Toggle Markdown preview
+                    {i18n.translate('Toggle Markdown preview')}
                   </Keys>
                 </li>
                 <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'C']}>
-                    Insert checklist item
+                    {i18n.translate('Insert checklist item')}
                   </Keys>
                 </li>
               </ul>

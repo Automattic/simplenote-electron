@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
 import format from 'date-fns/format';
+import i18n from 'i18n-calypso';
 
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
@@ -84,7 +85,7 @@ export class NoteInfo extends Component<Props> {
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
         <div className="note-info-panel note-info-stats theme-color-border">
           <div className="note-info-header">
-            <PanelTitle headingLevel={2}>Info</PanelTitle>
+            <PanelTitle headingLevel={2}>{i18n.translate('Info')}</PanelTitle>
             <button
               type="button"
               className="about-done button button-borderless"
@@ -96,7 +97,9 @@ export class NoteInfo extends Component<Props> {
           {formattedDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
-                <span className="note-info-name">Modified</span>
+                <span className="note-info-name">
+                  {i18n.translate('Modified')}
+                </span>
                 <br />
                 <span className="note-info-detail">{formattedDate}</span>
               </span>
@@ -105,14 +108,14 @@ export class NoteInfo extends Component<Props> {
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {wordCount(note.content)} words
+                {wordCount(note.content)} {i18n.translate('words')}
               </span>
             </span>
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
               <span className="note-info-name">
-                {characterCount(note.content)} characters
+                {characterCount(note.content)} {i18n.translate('characters')}
               </span>
             </span>
           </p>
@@ -120,7 +123,9 @@ export class NoteInfo extends Component<Props> {
         <div className="note-info-panel note-info-pin theme-color-border">
           <label className="note-info-item" htmlFor="note-info-pin-checkbox">
             <span className="note-info-item-text">
-              <span className="note-info-name">Pin to top</span>
+              <span className="note-info-name">
+                {i18n.translate('Pin to top')}
+              </span>
             </span>
             <span className="note-info-item-control">
               <ToggleControl
@@ -140,7 +145,7 @@ export class NoteInfo extends Component<Props> {
               <span className="note-info-name">Markdown</span>
               <br />
               <span className="note-info-detail">
-                Enable markdown formatting on this note.{' '}
+                {i18n.translate('Enable markdown formatting on this note.')}{' '}
                 <a
                   target="_blank"
                   href="http://simplenote.com/help/#markdown"
@@ -161,7 +166,9 @@ export class NoteInfo extends Component<Props> {
         </div>
         <div className="note-info-panel note-info-internal-link theme-color-border">
           <span className="note-info-item-text">
-            <span className="note-info-name">Inter-Note link</span>
+            <span className="note-info-name">
+              {i18n.translate('Inter-Note link')}
+            </span>
             <div className="note-info-form">
               <input
                 className="note-info-detail note-info-link-text"
@@ -182,7 +189,9 @@ export class NoteInfo extends Component<Props> {
         {isPublished && (
           <div className="note-info-panel note-info-public-link theme-color-border">
             <span className="note-info-item-text">
-              <span className="note-info-name">Public link</span>
+              <span className="note-info-name">
+                {i18n.translate('Public link')}
+              </span>
               <div className="note-info-form">
                 <input
                   ref={(e) => (this.publishUrlElement = e)}
@@ -197,7 +206,7 @@ export class NoteInfo extends Component<Props> {
                   className="button button-borderless note-info-copy-button"
                   onClick={this.copyPublishURL}
                 >
-                  Copy
+                  {i18n.translate('Copy')}
                 </button>
               </div>
             </span>

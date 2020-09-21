@@ -12,6 +12,7 @@ import { makeStore } from './state';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { initSimperium } from './state/simperium/middleware';
+import i18n from 'i18n-calypso';
 
 import '../scss/style.scss';
 

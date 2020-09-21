@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 import AttentionIcon from '../../icons/attention';
 import Dialog from '../../dialog';
@@ -34,17 +35,22 @@ export class LogoutConfirmation extends Component<Props> {
 
     return (
       <div className="logoutConfirmation">
-        <Dialog onDone={closeDialog} title="Unsynchronized Notes">
+        <Dialog
+          onDone={closeDialog}
+          title={i18n.translate('Unsynchronized Notes')}
+        >
           <p className="explanation">
             {notes.size > 0
-              ? 'Logging out will delete any unsynchronized notes.'
-              : 'All notes have synchronized!'}
+              ? i18n.translate(
+                  'Logging out will delete any unsynchronized notes.'
+                )
+              : i18n.translate('All notes have synchronized!')}
           </p>
 
           {notes.size > 0 && (
             <Fragment>
               <p className="explanation-secondary">
-                Possibly unsynchronized notes
+                {i18n.translate('Possibly unsynchronized notes')}
               </p>
               <section className="change-list">
                 <ul>
@@ -67,13 +73,15 @@ export class LogoutConfirmation extends Component<Props> {
               className="export-unsynchronized"
               onClick={this.exportUnsyncedNotes}
             >
-              Export unsynchronized notes
+              {i18n.translate('Export unsynchronized notes')}
             </button>
           )}
 
           <section className="action-button">
             <button className="log-out" onClick={reallyLogout}>
-              {notes.size > 0 ? 'Log out' : 'Safely log out'}
+              {notes.size > 0
+                ? i18n.translate('Log out')
+                : i18n.translate('Safely log out')}
             </button>
           </section>
         </Dialog>

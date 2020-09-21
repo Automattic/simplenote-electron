@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
+import i18n from 'i18n-calypso';
 import ConnectionIcon from '../icons/connection';
 import NoConnectionIcon from '../icons/no-connection';
 
@@ -24,10 +25,14 @@ export const ConnectionStatus: FunctionComponent<Props> = ({
       classes={{ tooltip: 'icon-button__tooltip' }}
       title={
         connectionStatus === 'green'
-          ? 'Simplenote is communicating with the server.'
+          ? i18n.translate('Simplenote is communicating with the server.')
           : connectionStatus === 'offline'
-          ? "Simplenote is operating in offline mode and changes won't be synchronized with the server until it connects again."
-          : "Simplenote hasn't communicated with the server in a while; changes may not be synchronized with the server until the connection improves."
+          ? i18n.translate(
+              "Simplenote is operating in offline mode and changes won't be synchronized with the server until it connects again."
+            )
+          : i18n.translate(
+              "Simplenote hasn't communicated with the server in a while; changes may not be synchronized with the server until the connection improves."
+            )
       }
     >
       <p>
@@ -36,7 +41,9 @@ export const ConnectionStatus: FunctionComponent<Props> = ({
         ) : (
           <NoConnectionIcon />
         )}
-        <span className="server-connection__label">Server connection</span>
+        <span className="server-connection__label">
+          {i18n.translate('Server connection')}
+        </span>
       </p>
     </Tooltip>
   </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TagField from '../tag-field';
+import i18n from 'i18n-calypso';
 import NoteDetail from '../note-detail';
 import NotePreview from '../components/note-preview';
 import actions from '../state/actions';
@@ -131,7 +132,10 @@ export class NoteEditor extends Component<Props> {
       <div className="note-editor theme-color-bg theme-color-fg">
         <div className="last-sync">
           {lastUpdated && (
-            <span>Last synced: {new Date(lastUpdated).toLocaleString()}</span>
+            <span>
+              {i18n.translate('Last synced:')}{' '}
+              {new Date(lastUpdated).toLocaleString()}
+            </span>
           )}
         </div>
         {editMode || !note.systemTags.includes('markdown') ? (

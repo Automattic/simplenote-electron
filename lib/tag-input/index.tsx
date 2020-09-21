@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 import { get, identity, invoke, noop } from 'lodash';
+import i18n from 'i18n-calypso';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -237,11 +238,11 @@ export class TagInput extends Component<Props> {
       <div className="tag-input" onClick={this.focusInput}>
         {shouldShowPlaceholder && (
           <span aria-hidden className="tag-input__placeholder">
-            Add a tag…
+            {i18n.translate('Add a tag…')}
           </span>
         )}
         <div
-          aria-label="Add a tag…"
+          aria-label={i18n.translate('Add a tag…')}
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
