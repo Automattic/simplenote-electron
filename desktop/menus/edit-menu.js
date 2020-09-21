@@ -1,4 +1,4 @@
-const { appCommandSender } = require('./utils');
+const { appCommandSender, editorCommandSender } = require('./utils');
 
 const buildEditMenu = (settings, isAuthenticated) => {
   settings = settings || {};
@@ -9,11 +9,13 @@ const buildEditMenu = (settings, isAuthenticated) => {
     submenu: [
       {
         label: '&Undo',
-        role: 'undo',
+        click: editorCommandSender({ action: 'undo' }),
+        accelerator: 'CommandOrControl+Z',
       },
       {
         label: '&Redo',
-        role: 'redo',
+        click: editorCommandSender({ action: 'redo' }),
+        accelerator: 'CommandOrControl+Shift+Z',
       },
       {
         type: 'separator',
@@ -32,7 +34,8 @@ const buildEditMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Select All',
-        role: 'selectall',
+        click: editorCommandSender({ action: 'selectAll' }),
+        accelerator: 'CommandOrControl+A',
       },
       { type: 'separator' },
       {
@@ -45,6 +48,19 @@ const buildEditMenu = (settings, isAuthenticated) => {
         label: 'Search &Notes…',
         visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
+        accelerator: 'CommandOrControl+Shift+S',
+      },
+      {
+        label: '&Find in Note',
+        visible: isAuthenticated,
+        click: editorCommandSender({ action: 'find' }),
+        accelerator: 'CommandOrControl+F',
+      },
+      {
+        label: 'Find A&gain',
+        visible: isAuthenticated,
+        click: editorCommandSender({ action: 'findAgain' }),
+        accelerator: 'CommandOrControl+G',
       },
       { type: 'separator' },
       {

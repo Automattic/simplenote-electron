@@ -1,9 +1,16 @@
 import React from 'react';
 
-export default function TrashIcon() {
+type OwnProps = {
+  onClick: (event: React.MouseEvent<SVGSVGElement>) => any;
+};
+
+type Props = OwnProps;
+
+export default function TrashIcon({ onClick }: Props) {
   return (
     <svg
       className="icon-trash"
+      onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
       width="22"
       height="22"

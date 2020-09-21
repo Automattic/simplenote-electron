@@ -2,19 +2,17 @@ import { EventEmitter } from 'events';
 import CoreImporter from '../';
 import { endsWith, isEmpty } from 'lodash';
 
+import * as T from '../../../types';
+
 class SimplenoteImporter extends EventEmitter {
-  constructor({ noteBucket, tagBucket, options }) {
+  constructor(addNote: (note: T.Note) => any, options) {
     super();
-    this.noteBucket = noteBucket;
-    this.tagBucket = tagBucket;
+    this.addNote = addNote;
     this.options = options;
   }
 
   importNotes = (filesArray) => {
-    const coreImporter = new CoreImporter({
-      noteBucket: this.noteBucket,
-      tagBucket: this.tagBucket,
-    });
+    const coreImporter = new CoreImporter(this.addNote);
 
     if (isEmpty(filesArray)) {
       this.emit('status', 'error', 'No file to import.');

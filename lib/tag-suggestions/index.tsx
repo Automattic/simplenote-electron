@@ -1,15 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import analytics from '../analytics';
 import { search } from '../state/ui/actions';
-import filterAtMost from '../utils/filter-at-most';
+import { tagHashOf } from '../utils/tag-hash';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as S from '../state';
+import type * as T from '../types';
 
 type StateProps = {
-  filteredTags: T.TagEntity[];
+  filteredTags: T.TagHash[];
   searchQuery: string;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type DispatchProps = {
@@ -25,7 +25,7 @@ export class TagSuggestions extends Component<Props> {
     const { searchQuery, onSearch } = this.props;
 
     // replace last word in current searchQuery with requested tag match
-    let newQuery = searchQuery.trim().split(' ');
+    const newQuery = searchQuery.trim().split(' ');
     newQuery.splice(-1, 1, nextSearch);
     let querystring = newQuery.join(' ');
 
@@ -35,7 +35,7 @@ export class TagSuggestions extends Component<Props> {
   };
 
   render() {
-    const { filteredTags } = this.props;
+    const { filteredTags, tags } = this.props;
 
     return (
       <Fragment>
@@ -43,15 +43,17 @@ export class TagSuggestions extends Component<Props> {
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
             <ul className="tag-suggestions-list">
-              {filteredTags.map((tag) => (
+              {filteredTags.map((tagId) => (
                 <li
-                  key={tag.id}
-                  id={tag.id}
+                  key={tagId}
+                  id={tagId}
                   className="tag-suggestion-row"
-                  onClick={() => this.updateSearch(`tag:${tag.data.name}`)}
+                  onClick={() =>
+                    this.updateSearch(`tag:${tags.get(tagId)!.name}`)
+                  }
                 >
-                  <div className="tag-suggestion" title={tag.data.name}>
-                    tag:{tag.data.name}
+                  <div className="tag-suggestion" title={tags.get(tagId)!.name}>
+                    tag:{tags.get(tagId)!.name}
                   </div>
                 </li>
               ))}
@@ -63,41 +65,81 @@ export class TagSuggestions extends Component<Props> {
   }
 }
 
-export const filterTags = (tags: T.TagEntity[], query: string) => {
+export const filterTags = (
+  tags: Map<T.TagHash, T.Tag>,
+  noteTags: Map<T.TagHash, Set<T.EntityId>>,
+  query: string
+): T.TagHash[] => {
   // we'll only suggest matches for the last word
   // ...this is possibly naive if the user has moved back and is editing,
   // but without knowing where the cursor is it's maybe the best we can do
-  const tagTerm = query.trim().toLowerCase().split(' ').pop();
+  const tagTerm = query.trim().split(' ').pop();
 
   if (!tagTerm) {
-    return tags;
+    return [];
   }
 
   // with `tag:` we don't want to suggest tags which have already been added
   // to the search bar, so we make it an explicit prefix match, meaning we
   // don't match inside the tag and we don't match full-text matches
-  const isPrefixMatch = tagTerm.startsWith('tag:') && tagTerm.length > 4;
-  const term = isPrefixMatch ? tagTerm.slice(4) : tagTerm;
+  const term = tagHashOf(tagTerm as T.TagName);
+  const prefixTerm =
+    tagTerm.startsWith('tag:') && tagTerm.length > 4
+      ? tagHashOf(tagTerm.slice(4) as T.TagName)
+      : null;
 
-  const matcher: (tag: T.TagEntity) => boolean = isPrefixMatch
-    ? ({ data: { name } }) =>
-        name.toLowerCase() !== term && name.toLowerCase().startsWith(term)
-    : ({ data: { name } }) => name.toLowerCase().includes(term);
+  const matcher = (tagHash: T.TagHash): boolean => {
+    if (
+      prefixTerm &&
+      tagHash !== prefixTerm &&
+      tagHash.startsWith(prefixTerm)
+    ) {
+      return true;
+    }
 
-  return filterAtMost(tags, matcher, 5);
+    return tagHash.includes(term);
+  };
+
+  const filteredTags = [];
+  for (const tagHash of tags.keys()) {
+    if (matcher(tagHash)) {
+      filteredTags.push(tagHash);
+    }
+  }
+
+  return filteredTags
+    .sort((a, b) => {
+      const aStarts = a.startsWith(term);
+      const bStarts = b.startsWith(term);
+
+      if (aStarts !== bStarts) {
+        return aStarts ? -1 : 1;
+      }
+
+      const aCount = noteTags.get(a)?.size ?? 0;
+      const bCount = noteTags.get(b)?.size ?? 0;
+
+      if (aCount !== bCount) {
+        return bCount - aCount;
+      }
+
+      return a.localeCompare(b);
+    })
+    .slice(0, 5);
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
+  data,
   ui: { searchQuery, tagSuggestions },
 }) => ({
   filteredTags: tagSuggestions,
   searchQuery,
+  tags: data.tags,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query) => {
     dispatch(search(query));
-    analytics.tracks.recordEvent('list_notes_searched');
   },
 });
 

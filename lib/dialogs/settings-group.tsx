@@ -31,7 +31,7 @@ export const SettingsGroup = ({
 
   return (
     <div className="settings-group">
-      <PanelTitle headingLevel="3">{groupTitle}</PanelTitle>
+      <PanelTitle headingLevel={3}>{groupTitle}</PanelTitle>
       <div className="settings-items theme-color-border">
         {childElements.map(({ props: { slug, title } }) => (
           <label

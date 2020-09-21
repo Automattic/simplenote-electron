@@ -16,6 +16,14 @@ const checkForUpdates = {
   click: updater.pingAndShowProgress.bind(updater),
 };
 
+const emptyTrash = (isAuthenticated) => {
+  return {
+    label: '&Empty Trash',
+    visible: isAuthenticated,
+    click: appCommandSender({ action: 'emptyTrash' }),
+  };
+};
+
 const preferences = (isAuthenticated) => {
   return {
     label: 'P&references…',
@@ -28,8 +36,20 @@ const preferences = (isAuthenticated) => {
   };
 };
 
+const signout = (isAuthenticated) => {
+  return {
+    label: '&Sign Out',
+    visible: isAuthenticated,
+    click: appCommandSender({
+      action: 'logout',
+    }),
+  };
+};
+
 module.exports = {
   about,
   checkForUpdates,
+  emptyTrash,
   preferences,
+  signout,
 };

@@ -1,6 +1,5 @@
-$sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
-  'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
-$normal: 400;
+$sans: -apple-system, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell',
+  'Helvetica Neue', sans-serif;
 $bold: 600;
 $light: 300;
 
@@ -19,9 +18,6 @@ $navigation-bar-width: 216px;
 $note-info-width: 268px;
 $max-content-width: 625px;
 $toolbar-height: 56px;
-
-// z-index values
-$z-index-dialogs: 1000;
 
 // Viewport widths for media queries
 $single-column: 750px;

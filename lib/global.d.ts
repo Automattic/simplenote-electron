@@ -8,8 +8,10 @@ declare global {
   interface Window {
     analyticsEnabled: boolean;
     electron: {
+      confirmLogout(changes: string): 'logout' | 'reconsider' | 'export';
       isMac: boolean;
       receive(command: 'appCommand', callback: (event: any) => any);
+      receive(command: 'editorCommand', callback: (event: any) => any);
       receive(command: 'noteImportChannel', callback: (event: any) => any);
       receive(command: 'wpLogin', callback: (event: any) => any);
       removeListener(command: 'noteImportChannel');

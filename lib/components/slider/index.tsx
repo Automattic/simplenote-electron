@@ -1,6 +1,7 @@
 import React, { ChangeEventHandler, FunctionComponent } from 'react';
 
 type Props = {
+  disabled: boolean;
   onChange: ChangeEventHandler<HTMLInputElement>;
   min: number;
   max: number;
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export const Slider: FunctionComponent<Props> = ({
+  disabled,
   min,
   max,
   value,
@@ -15,6 +17,7 @@ export const Slider: FunctionComponent<Props> = ({
 }) => (
   <input
     className="slider"
+    disabled={disabled}
     type="range"
     min={min}
     max={max}

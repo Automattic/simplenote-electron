@@ -31,7 +31,7 @@ function buildTracks() {
   let userLogin: string | null | undefined;
   const localCache: { [key: string]: string } = {};
   let context = {};
-  let pixel = 'https://pixel.wp.com/t.gif';
+  const pixel = 'https://pixel.wp.com/t.gif';
   let cookieDomain: string | null = null;
   const cookiePrefix = 'tk_';
   const testCookie = 'tc';
@@ -129,6 +129,7 @@ function buildTracks() {
       }
     }
 
+    // eslint-disable-next-line
     return btoa(String.fromCharCode.apply(String, randomBytes as number[]));
   };
 
@@ -150,7 +151,7 @@ function buildTracks() {
   };
 
   const getQueries = function () {
-    var queries = get(queriesCookie);
+    const queries = get(queriesCookie);
     return queries ? queries.split(' ') : [];
   };
 
@@ -181,7 +182,7 @@ function buildTracks() {
 
   const saveQuery = function (query: string) {
     removeQuery(query);
-    let queries = getQueries();
+    const queries = getQueries();
     queries.push(query);
     saveQueries(queries);
   };
@@ -244,7 +245,7 @@ function buildTracks() {
     if (userLogin) {
       query._ul = userLogin;
     }
-    let date = new Date();
+    const date = new Date();
     query._ts = date.getTime();
     query._tz = date.getTimezoneOffset() / 60;
 
