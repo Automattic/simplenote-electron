@@ -42,7 +42,7 @@ const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
   isTrashed: !!note.deleted ?? false,
 });
 
-const tagsFromSearch = (query: string) => {
+export const tagsFromSearch = (query: string) => {
   const tagPattern = /(?:\btag:)([^\s,]+)/g;
   const searchTags = new Set<T.TagHash>();
   let match;
@@ -51,6 +51,11 @@ const tagsFromSearch = (query: string) => {
   }
   return searchTags;
 };
+
+export let searchNotes: (
+  args: Partial<SearchState>,
+  maxResults: number
+) => [T.EntityId, T.Note][] = () => [];
 
 export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
@@ -163,7 +168,10 @@ export const middleware: S.Middleware = (store) => {
     window.searchState = searchState;
   }
 
-  const runSearch = (): T.EntityId[] => {
+  const runSearch = (
+    args: Partial<SearchState> = {},
+    maxResults = Infinity
+  ): T.EntityId[] => {
     const {
       notes,
       openedTag,
@@ -172,7 +180,7 @@ export const middleware: S.Middleware = (store) => {
       sortReversed,
       sortType,
       showTrash,
-    } = searchState;
+    } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
     const pinnedMatches = new Set<T.EntityId>();
 
@@ -183,7 +191,11 @@ export const middleware: S.Middleware = (store) => {
         ? indexCreationDate
         : indexModification;
 
-    for (let i = 0; i < sortIndex.length; i++) {
+    for (
+      let i = 0;
+      i < sortIndex.length && pinnedMatches.size + matches.size <= maxResults;
+      i++
+    ) {
       const noteId = sortIndex[sortReversed ? sortIndex.length - i - 1 : i];
       const note = notes.get(noteId);
 
@@ -228,6 +240,11 @@ export const middleware: S.Middleware = (store) => {
 
     return [...pinnedMatches.values(), ...matches.values()];
   };
+
+  searchNotes = (args, maxResults) =>
+    runSearch(args, maxResults)
+      .map((noteId) => [noteId, store.getState().data.notes.get(noteId)])
+      .filter(([, a]) => 'undefined' !== typeof a) as [T.EntityId, T.Note][];
 
   const setFilteredNotes = (
     noteIds: T.EntityId[]
