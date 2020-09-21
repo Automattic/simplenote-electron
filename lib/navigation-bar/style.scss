@@ -4,6 +4,7 @@
   position: absolute;
   top: 0;
   left: -$navigation-bar-width;
+  padding-top: 55px;
   width: $navigation-bar-width;
   height: 100%;
   overflow: hidden;
@@ -12,8 +13,8 @@
 }
 
 .navigation-bar__folders {
-  flex: none;
-  padding: 10px 0;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .navigation-bar__tags {
@@ -24,15 +25,6 @@
   overflow: hidden;
   min-height: 9em;
   padding: 12px 0 0;
-  border-top: 1px solid $studio-gray-5;
-
-  .tag-list-title {
-    padding: 8px 20px 0;
-  }
-
-  .editable-list-item {
-    padding: 0 5px 0 20px;
-  }
 }
 
 .navigation-bar__tools {

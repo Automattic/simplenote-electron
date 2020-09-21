@@ -1,36 +1,40 @@
 .navigation-bar-item {
-  width: 100%;
-  padding: 4px 8px;
+  height: 44px;
+  padding-left: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
 
+  .button {
+    border-bottom: 1px solid $studio-gray-5;
+    border-radius: 0;
+    font-size: 16px;
+    font-weight: 400;
+    height: 44px;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+  }
+
   .button:active {
-    color: $studio-white;
+    background: none;
+  }
+
+  &.is-selected button {
+    border-bottom: none;
   }
 
   &.is-selected {
-    .button {
-      color: $studio-simplenote-blue-50;
-
-      svg[class^='icon-'] {
-        fill: $studio-simplenote-blue-50;
-      }
-
-      &:active {
-        color: $studio-white;
-        svg[class^='icon-'] {
-          fill: $studio-white;
-        }
-      }
-    }
+    background-color: $studio-blue-5;
   }
 }
 
 .navigation-bar-item__icon {
+  color: $studio-blue-50;
   display: inline-block;
-  margin-right: 0.5em;
+
+  margin-right: 18px;
   vertical-align: middle;
 
   svg {
@@ -38,4 +42,36 @@
     position: relative;
     top: -0.2em;
   }
+}
+
+.theme-dark {
+  .navigation-bar-item {
+    .button {
+      border-bottom: 1px solid $studio-gray-70;
+    }
+
+    &.is-selected button {
+      border-bottom: none;
+    }
+
+    button {
+      color: $studio-white;
+    }
+    svg {
+      fill: $studio-white;
+    }
+  }
+
+  .navigation-bar-item.is-selected {
+    button {
+      color: $studio-simplenote-blue-30;
+    }
+    svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-30;
+    }
+  }
+}
+
+.navigation-bar-item.is-selected + .navigation-bar-item .button {
+  border-bottom: none;
 }

@@ -10,9 +10,11 @@ import {
 import isEmailTag from '../utils/is-email-tag';
 import PanelTitle from '../components/panel-title';
 import ReorderIcon from '../icons/reorder';
-import TrashIcon from '../icons/trash';
+import CrossOutlineIcon from '../icons/cross-outline';
 import TagListInput from './input';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
+
+import * as selectors from './../state/selectors';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -21,6 +23,7 @@ type StateProps = {
   editingTags: boolean;
   openedTag: T.TagHash | null;
   sortTagsAlpha: boolean;
+  theme: 'light' | 'dark';
   tags: Map<T.TagHash, T.Tag>;
 };
 
@@ -43,6 +46,7 @@ const SortableTag = SortableElement(
     isSelected,
     renameTag,
     selectTag,
+    theme,
     trashTag,
     value: [tagHash, tag],
   }: {
@@ -51,11 +55,16 @@ const SortableTag = SortableElement(
     isSelected: boolean;
     renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
     selectTag: (tagName: T.TagName) => any;
+    theme: 'light' | 'dark';
     trashTag: (tagName: T.TagName) => any;
     value: [T.TagHash, T.Tag];
   }) => (
-    <li key={tagHash} className="tag-list-item" data-tag-name={tag.name}>
-      {editingActive && <TrashIcon onClick={() => trashTag(tag.name)} />}
+    <li
+      key={tagHash}
+      className={classNames(`tag-list-item`, `theme-${theme}`)}
+      data-tag-name={tag.name}
+    >
+      {editingActive && <CrossOutlineIcon onClick={() => trashTag(tag.name)} />}
       <TagListInput
         editable={editingActive}
         isSelected={isSelected}
@@ -82,6 +91,7 @@ const SortableTagList = SortableContainer(
     openTag,
     renameTheTag,
     sortTagsAlpha,
+    theme,
     trashTheTag,
   }: {
     editingTags: boolean;
@@ -90,6 +100,7 @@ const SortableTagList = SortableContainer(
     openTag: (tagName: T.TagName) => any;
     renameTheTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
     sortTagsAlpha: boolean;
+    theme: 'light' | 'dark';
     trashTheTag: (tagName: T.TagName) => any;
   }) => (
     <ul className="tag-list-items">
@@ -102,6 +113,7 @@ const SortableTagList = SortableContainer(
           isSelected={openedTag === value[0]}
           renameTag={renameTheTag}
           selectTag={openTag}
+          theme={theme}
           trashTag={trashTheTag}
           value={value}
         />
@@ -116,7 +128,7 @@ export class TagList extends Component<Props> {
   reorderTag: SortEndHandler = ({ newIndex, nodes, oldIndex }) => {
     const tagName = nodes[oldIndex].node.dataset.tagName;
 
-    this.props.reorderTag(tagName, newIndex);
+    this.props.reorderTag(tagName, newIndex + 1);
   };
 
   render() {
@@ -128,6 +140,7 @@ export class TagList extends Component<Props> {
       renameTag,
       sortTagsAlpha,
       tags,
+      theme,
       trashTag,
     } = this.props;
 
@@ -170,6 +183,7 @@ export class TagList extends Component<Props> {
           items={sortedTags}
           renameTheTag={renameTag}
           sortTagsAlpha={sortTagsAlpha}
+          theme={theme}
           onSortEnd={this.reorderTag}
           useDragHandle={true}
           trashTheTag={trashTag}
@@ -179,16 +193,20 @@ export class TagList extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  data,
-  settings: { sortTagsAlpha },
-  ui: { editingTags, openedTag },
-}) => ({
-  editingTags,
-  sortTagsAlpha,
-  tags: data.tags,
-  openedTag,
-});
+const mapStateToProps: S.MapState<StateProps> = (state) => {
+  const {
+    data,
+    settings: { sortTagsAlpha },
+    ui: { editingTags, openedTag },
+  } = state;
+  return {
+    editingTags,
+    sortTagsAlpha,
+    tags: data.tags,
+    openedTag,
+    theme: selectors.getTheme(state),
+  };
+};
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onEditTags: toggleTagEditing,

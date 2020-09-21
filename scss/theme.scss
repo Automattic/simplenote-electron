@@ -268,21 +268,17 @@ span[dir='ltr'] {
     button {
       color: $studio-white;
     }
-    svg {
-      fill: $studio-white;
-    }
-  }
-
-  .navigation-bar-item.is-selected {
-    button {
-      color: $studio-simplenote-blue-30;
-    }
     svg[class^='icon-'] {
       fill: $studio-simplenote-blue-30;
     }
   }
-  .tag-list .tag-list-input.is-selected {
-    color: $studio-simplenote-blue-30;
+
+  .navigation-bar-item.is-selected {
+    background-color: $studio-gray-80;
+
+    button {
+      color: $studio-white;
+    }
   }
 
   .tag-field {
@@ -300,22 +296,6 @@ span[dir='ltr'] {
 
   .settings-group p {
     color: $studio-gray-5;
-  }
-
-  .tab-panels__tab-list {
-    li {
-      color: $studio-gray-50;
-
-      &.is-active {
-        color: $studio-simplenote-blue-30;
-        border-bottom-color: $studio-simplenote-blue-30;
-      }
-    }
-
-    li.button:active {
-      background-color: $studio-simplenote-blue-30;
-      color: $studio-white;
-    }
   }
 
   .note-list-header {

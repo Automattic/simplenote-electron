@@ -69,16 +69,21 @@ export class NavigationBar extends Component<Props> {
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders">
           <NavigationBarItem
-            icon={<NotesIcon />}
-            isSelected={this.isSelected({ isTrashRow: false })}
-            label="All Notes"
-            onClick={onShowAllNotes}
+            icon={<SettingsIcon />}
+            label="Settings"
+            onClick={onSettings}
           />
           <NavigationBarItem
             icon={<TrashIcon />}
             isSelected={this.isSelected({ isTrashRow: true })}
             label="Trash"
             onClick={this.onSelectTrash}
+          />
+          <NavigationBarItem
+            icon={<NotesIcon />}
+            isSelected={this.isSelected({ isTrashRow: false })}
+            label="All Notes"
+            onClick={onShowAllNotes}
           />
         </div>
         <div className="navigation-bar__tags theme-color-border">
@@ -88,14 +93,6 @@ export class NavigationBar extends Component<Props> {
           <div className="navigation-bar__server-connection">
             <ConnectionStatus />
           </div>
-        </div>
-
-        <div className="navigation-bar__tools theme-color-border">
-          <NavigationBarItem
-            icon={<SettingsIcon />}
-            label="Settings"
-            onClick={onSettings}
-          />
         </div>
         <div className="navigation-bar__footer">
           <button
