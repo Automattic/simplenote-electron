@@ -11,7 +11,7 @@ import ImportProgress from '../progress';
 import type * as S from '../../../../state/';
 import type * as T from '../../../../types';
 
-type ImporterSource = 'evernote' | 'plaintext' | 'simplenote';
+type ImporterSource = 'evernote' | 'plaintext' | 'markdown' | 'simplenote';
 
 const getImporter = (importer: ImporterSource): Promise<object> => {
   switch (importer) {
@@ -19,7 +19,7 @@ const getImporter = (importer: ImporterSource): Promise<object> => {
       return import(
         /* webpackChunkName: 'utils-import-evernote' */ '../../../../utils/import/evernote'
       );
-
+    case 'markdown':
     case 'plaintext':
       return import(
         /* webpackChunkName: 'utils-import-text-files' */ '../../../../utils/import/text-files'

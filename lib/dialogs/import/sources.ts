@@ -23,6 +23,13 @@ const sources = [
     instructions: 'Choose one or more plain text files (.txt)',
     multiple: true,
   },
+  {
+    name: 'Markdown files',
+    slug: 'markdown',
+    acceptedTypes: '.md',
+    instructions: 'Choose one or more mardown files (.md)',
+    multiple: true,
+  },
 ];
 
 export default sources;

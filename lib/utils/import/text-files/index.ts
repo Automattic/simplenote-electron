@@ -17,12 +17,18 @@ class TextFileImporter extends EventEmitter {
     let lastFileName = '';
 
     if (!filesArray) {
-      this.emit('status', 'error', 'No text files to import.');
+      this.emit('status', 'error', 'No files to import.');
       return;
     }
 
     const importTextFile = (file) => {
-      if (!file || !endsWith(file.name.toLowerCase(), '.txt')) {
+      if (
+        !file ||
+        !(
+          endsWith(file.name.toLowerCase(), '.txt') ||
+          endsWith(file.name.toLowerCase(), '.md')
+        )
+      ) {
         return;
       }
 
