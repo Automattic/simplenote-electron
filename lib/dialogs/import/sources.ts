@@ -19,15 +19,8 @@ const sources = [
   {
     name: 'Plain text files',
     slug: 'plaintext',
-    acceptedTypes: '.txt',
-    instructions: 'Choose one or more plain text files (.txt)',
-    multiple: true,
-  },
-  {
-    name: 'Markdown files',
-    slug: 'markdown',
-    acceptedTypes: '.md',
-    instructions: 'Choose one or more mardown files (.md)',
+    acceptedTypes: '.txt,.md',
+    instructions: 'Choose one or more plain text files (.txt, .md)',
     multiple: true,
   },
 ];
