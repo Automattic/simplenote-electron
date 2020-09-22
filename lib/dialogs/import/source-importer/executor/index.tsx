@@ -19,6 +19,7 @@ const getImporter = (importer: ImporterSource): Promise<object> => {
       return import(
         /* webpackChunkName: 'utils-import-evernote' */ '../../../../utils/import/evernote'
       );
+
     case 'plaintext':
       return import(
         /* webpackChunkName: 'utils-import-text-files' */ '../../../../utils/import/text-files'
