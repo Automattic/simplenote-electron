@@ -165,4 +165,5 @@ format:
 
 .PHONY: lint
 lint:
+	@npx stylelint --ignore-path .gitignore "**/*.scss" --syntax scss
 	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"

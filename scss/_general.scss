@@ -1,6 +1,6 @@
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -8,11 +8,13 @@ a {
   @extend %smart-focus-outline;
 }
 
+/* stylelint-disable block-opening-brace-space-before */
 a[href^='http://'],
 a[href^='https://']
 {
   cursor: pointer; // Make all web links use pointer cursor
 }
+/* stylelint-enable block-opening-brace-space-before */
 
 html,
 body {
@@ -60,7 +62,7 @@ optgroup {
   position: relative;
   width: 100%;
   height: 100%;
-  transform: translateX(0px);
+  transform: translateX(0);
   transition: transform 200ms ease-in-out;
 
   &.note-info-open {
