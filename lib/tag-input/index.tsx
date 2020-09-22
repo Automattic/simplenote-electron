@@ -132,11 +132,18 @@ export class TagInput extends Component<Props> {
 
   interceptRightArrow = (event: KeyboardEvent) => {
     const { value } = this.props;
-
+    if (!window.getSelection) {
+      return;
+    }
     // if we aren't already at the right-most extreme
     // then don't complete the suggestion; we could
     // be moving the cursor around inside the input
-    const caretPosition = window.getSelection().getRangeAt(0).endOffset;
+    const origionalRange = window.getSelection().getRangeAt(0);
+    const range = origionalRange.cloneRange();
+    range.selectNodeContents(event.currentTarget);
+    range.setEnd(origionalRange.endContainer, origionalRange.endOffset);
+    const caretPosition = range.toString().length;
+
     if (caretPosition !== value.length) {
       return;
     }
