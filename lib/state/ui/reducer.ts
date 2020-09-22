@@ -202,7 +202,7 @@ const showNoteList: A.Reducer<boolean> = (state = true, action) => {
     case 'NOTE_LIST_TOGGLE':
       return !state;
 
-    case 'SEARCH':
+    case 'FOCUS_SEARCH_FIELD':
       return true;
 
     case 'OPEN_NOTE':
