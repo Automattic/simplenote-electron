@@ -20,7 +20,7 @@ const sources = [
     name: 'Plain text files',
     slug: 'plaintext',
     acceptedTypes: '.txt,.md',
-    instructions: 'Choose one or more plain text files (.txt, .md)',
+    instructions: 'Choose one or more text files (.txt, .md)',
     multiple: true,
   },
 ];
