@@ -1,22 +1,39 @@
 const { appCommandSender, editorCommandSender } = require('./utils');
 
-const buildEditMenu = (settings, isAuthenticated) => {
+const buildEditMenu = (settings, isAuthenticated, editMode) => {
   settings = settings || {};
   isAuthenticated = isAuthenticated || false;
+  editMode = editMode || false;
+
+  // menu items with roles don't respect visibility, so we have to do this the hard way
+  let undo = {
+    label: '&Undo',
+    click: editorCommandSender({ action: 'undo' }),
+    accelerator: 'CommandOrControl+Z',
+    visible: editMode,
+  };
+  let redo = {
+    label: '&Redo',
+    click: editorCommandSender({ action: 'redo' }),
+    accelerator: 'CommandOrControl+Shift+Z',
+    visible: editMode,
+  };
+  let selectAll = {
+    label: '&Select All',
+    click: editorCommandSender({ action: 'selectAll' }),
+    accelerator: 'CommandOrControl+A',
+  };
+  if (!editMode) {
+    undo['role'] = 'undo';
+    redo['role'] = 'redo';
+    selectAll['role'] = 'selectAll';
+  }
 
   return {
     label: '&Edit',
     submenu: [
-      {
-        label: '&Undo',
-        click: editorCommandSender({ action: 'undo' }),
-        accelerator: 'CommandOrControl+Z',
-      },
-      {
-        label: '&Redo',
-        click: editorCommandSender({ action: 'redo' }),
-        accelerator: 'CommandOrControl+Shift+Z',
-      },
+      undo,
+      redo,
       {
         type: 'separator',
       },
@@ -32,11 +49,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
         label: '&Paste',
         role: 'paste',
       },
-      {
-        label: '&Select All',
-        click: editorCommandSender({ action: 'selectAll' }),
-        accelerator: 'CommandOrControl+A',
-      },
+      selectAll,
       { type: 'separator' },
       {
         label: '&Trash Note',
