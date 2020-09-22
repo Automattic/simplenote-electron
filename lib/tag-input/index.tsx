@@ -138,10 +138,10 @@ export class TagInput extends Component<Props> {
     // if we aren't already at the right-most extreme
     // then don't complete the suggestion; we could
     // be moving the cursor around inside the input
-    const origionalRange = window.getSelection().getRangeAt(0);
-    const range = origionalRange.cloneRange();
+    const originalRange = window.getSelection().getRangeAt(0);
+    const range = originalRange.cloneRange();
     range.selectNodeContents(event.currentTarget);
-    range.setEnd(origionalRange.endContainer, origionalRange.endOffset);
+    range.setEnd(originalRange.endContainer, originalRange.endOffset);
     const caretPosition = range.toString().length;
 
     if (caretPosition !== value.length) {
