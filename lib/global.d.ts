@@ -18,7 +18,13 @@ declare global {
       send(command: 'clearCookies'): void;
       send(command: 'importNotes', filePath: string);
       send(command: 'setAutoHideMenuBar', newValue: boolean);
-      send(command: 'settingsUpdate', settings: S.State['settings']);
+      send(
+        command: 'settingsUpdate',
+        args: {
+          settings: S.State['settings'];
+          editMode: boolean;
+        }
+      );
       send(command: 'wpLogin', url: string);
     };
     location: Location;

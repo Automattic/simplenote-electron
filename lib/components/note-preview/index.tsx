@@ -130,23 +130,6 @@ export const NotePreview: FunctionComponent<Props> = ({
   }, []);
 
   useEffect(() => {
-    window.electron?.receive('editorCommand', (command) => {
-      switch (command.action) {
-        case 'redo':
-          document.execCommand('redo');
-          return;
-        case 'selectAll':
-          document.execCommand('selectAll');
-          return;
-        case 'undo':
-          document.execCommand('undo');
-          return;
-      }
-    });
-    return () => window.electron?.removeListener('editorCommand');
-  }, []);
-
-  useEffect(() => {
     if (!previewNode.current) {
       return;
     }

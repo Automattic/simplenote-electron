@@ -1,12 +1,14 @@
 const { editorCommandSender } = require('./utils');
 
-const buildFormatMenu = (isAuthenticated) => {
+const buildFormatMenu = (isAuthenticated, editMode) => {
   isAuthenticated = isAuthenticated || false;
+  editMode = editMode || false;
   const submenu = [
     {
       label: 'Insert &Checklist',
       accelerator: 'CommandOrControl+Shift+C',
       click: editorCommandSender({ action: 'insertChecklist' }),
+      enabled: editMode,
     },
   ];
 

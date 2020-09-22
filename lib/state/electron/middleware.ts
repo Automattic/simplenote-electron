@@ -90,7 +90,10 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
     }
   });
 
-  window.electron.send('settingsUpdate', getState().settings);
+  window.electron.send('settingsUpdate', {
+    settings: getState().settings,
+    editMode: getState().ui.editMode,
+  });
 
   return (next) => (action) => {
     const prevState = getState();
@@ -98,7 +101,16 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
     const nextState = getState();
 
     if (prevState.settings !== nextState.settings) {
-      window.electron.send('settingsUpdate', nextState.settings);
+      window.electron.send('settingsUpdate', {
+        settings: nextState.settings,
+        editMode: nextState.ui.editMode,
+      });
+    }
+    if (prevState.ui.editMode !== nextState.ui.editMode) {
+      window.electron.send('settingsUpdate', {
+        settings: nextState.settings,
+        editMode: nextState.ui.editMode,
+      });
     }
 
     return result;
