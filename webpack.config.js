@@ -1,4 +1,3 @@
-const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const getConfig = require('./get-config');
@@ -49,7 +48,6 @@ module.exports = () => {
             {
               loader: 'postcss-loader',
               options: {
-                plugins: [autoprefixer()],
                 sourceMap: isDevMode,
               },
             },

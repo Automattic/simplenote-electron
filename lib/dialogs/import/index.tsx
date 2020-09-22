@@ -10,8 +10,8 @@ import { closeDialog } from '../../state/ui/actions';
 
 import * as S from '../../state';
 
-const SourceImporter = React.lazy(() =>
-  import(/* webpackChunkName: 'source-importer' */ './source-importer')
+const SourceImporter = React.lazy(
+  () => import(/* webpackChunkName: 'source-importer' */ './source-importer')
 );
 
 type DispatchProps = {
