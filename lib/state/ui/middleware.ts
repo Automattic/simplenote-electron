@@ -69,7 +69,7 @@ export const middleware: S.Middleware = (store) => (
         ...action,
         meta: {
           ...action.meta,
-          nextNoteToOpen: action.meta?.searchResults?.noteIds[0],
+          nextNoteToOpen: action.meta?.searchResults?.noteIds[0] ?? null,
         },
       });
 
