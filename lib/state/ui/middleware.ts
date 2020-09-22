@@ -64,7 +64,7 @@ export const middleware: S.Middleware = (store) => (
       // this middleware runs after the search middleware which is important
       // because we're reading the new search results which came as a result
       // of changing the note filter from trash or a tag to "all notes" or
-      // from "all notes to trash"
+      // from "all notes" to trash
       return next({
         ...action,
         meta: {
