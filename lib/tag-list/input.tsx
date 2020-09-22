@@ -39,9 +39,9 @@ export class TagListInput extends Component<Props, OwnState> {
         spellCheck={false}
       />
     ) : (
-      <a className={classes} onClick={onClick}>
+      <button className={classes} onClick={onClick}>
         {value}
-      </a>
+      </button>
     );
   }
 }
