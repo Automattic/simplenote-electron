@@ -7,7 +7,7 @@ export type Action<
 > = { type: T } & Args & {
     meta?: {
       analytics?: [string, T.JSONSerializable | undefined][];
-      nextNoteToOpen?: T.EntityId;
+      nextNoteToOpen?: T.EntityId | null;
       searchResults?: {
         noteIds: T.EntityId[];
         tagHashes: T.TagHash[];
