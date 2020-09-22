@@ -42,7 +42,7 @@ export const bootWithToken = (
       },
     });
 
-    window.electron?.send('settingsUpdate', {
+    window.electron?.send('appStateUpdate', {
       settings: store.getState().settings,
       editMode: store.getState().ui.editMode,
     });
