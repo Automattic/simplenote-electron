@@ -37,13 +37,13 @@ const buildEditMenu = (settings, isAuthenticated) => {
         click: editorCommandSender({ action: 'selectAll' }),
         accelerator: 'CommandOrControl+A',
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: '&Trash Note',
         visible: isAuthenticated,
         click: appCommandSender({ action: 'trashNote' }),
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Search &Notes…',
         visible: isAuthenticated,
@@ -62,7 +62,7 @@ const buildEditMenu = (settings, isAuthenticated) => {
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'C&heck Spelling',
         visible: isAuthenticated,

@@ -12,7 +12,7 @@ const buildFileMenu = (isAuthenticated) => {
       accelerator: 'CommandOrControl+Shift+I',
       click: appCommandSender({ action: 'newNote' }),
     },
-    { type: 'separator' },
+    ...(isAuthenticated ? [{ type: 'separator' }] : []),
     {
       label: '&Import Notes…',
       visible: isAuthenticated,
@@ -29,7 +29,7 @@ const buildFileMenu = (isAuthenticated) => {
         action: 'exportNotes',
       }),
     },
-    { type: 'separator' },
+    ...(isAuthenticated ? [{ type: 'separator' }] : []),
     {
       label: '&Print…',
       visible: isAuthenticated,
@@ -41,7 +41,7 @@ const buildFileMenu = (isAuthenticated) => {
   const defaultSubmenuAdditions = [
     { type: 'separator' },
     menuItems.preferences(isAuthenticated),
-    { type: 'separator' },
+    ...(isAuthenticated ? [{ type: 'separator' }] : []),
     { role: 'quit' },
   ];
 

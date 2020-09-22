@@ -1,5 +1,28 @@
 # Changelog
 
+## [v1.21.1]
+
+### Fixes
+
+- Updated WordPress.com login flow to work on all platforms [#2285](https://github.com/Automattic/simplenote-electron/pull/2285)
+
+## [v1.21.0]
+
+### Enhancements
+
+- Added logging and ability to download logs [#2194](https://github.com/Automattic/simplenote-electron/pull/2194)
+- Added support for table alignment and strikethrough in Markdown [#2229](https://github.com/Automattic/simplenote-electron/pull/2229)
+
+### Fixes
+
+- Fixed Evernote import [#2201](https://github.com/Automattic/simplenote-electron/pull/2201)
+- Fixed unsynced note dialog on logout [#2230](https://github.com/Automattic/simplenote-electron/pull/2230)
+- Fixed a bug preventing login if capital letters were used in email address [#2226](https://github.com/Automattic/simplenote-electron/pull/2226)
+- Show pointer cursor on checkboxes [#2189](https://github.com/Automattic/simplenote-electron/pull/2189)
+- Disable menu items if user isn't logged in [#2228](https://github.com/Automattic/simplenote-electron/pull/2228), [#2232](https://github.com/Automattic/simplenote-electron/pull/2232)
+- Restore ability to view About dialog while logged out [#2231](https://github.com/Automattic/simplenote-electron/pull/2231)
+- Restore missing keyboard shortcut hint for Insert Checklist [#2233](https://github.com/Automattic/simplenote-electron/pull/2233)
+
 ## [v1.20.0]
 
 ### Enhancements
