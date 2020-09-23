@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import CoreImporter from '../';
-import { endsWith, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 import * as T from '../../../types';
 
@@ -17,12 +17,15 @@ class TextFileImporter extends EventEmitter {
     let lastFileName = '';
 
     if (!filesArray) {
-      this.emit('status', 'error', 'No text files to import.');
+      this.emit('status', 'error', 'No files to import.');
       return;
     }
 
     const importTextFile = (file) => {
-      if (!file || !endsWith(file.name.toLowerCase(), '.txt')) {
+      const hasAllowableName = /\.(txt|md)$/.test(
+        file?.name.toLowerCase() ?? ''
+      );
+      if (!hasAllowableName) {
         return;
       }
 
