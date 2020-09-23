@@ -1,4 +1,8 @@
 @media print {
+  html {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
   .theme-dark .theme-color-bg {
     background-color: #ffffff;
   }
