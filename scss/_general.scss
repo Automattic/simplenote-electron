@@ -6,6 +6,8 @@
 
 a {
   @extend %smart-focus-outline;
+
+  color: $studio-simplenote-blue-50;
 }
 
 /* stylelint-disable block-opening-brace-space-before */
@@ -32,10 +34,6 @@ body {
 img,
 svg {
   vertical-align: middle;
-}
-
-a {
-  color: $studio-simplenote-blue-50;
 }
 
 b,

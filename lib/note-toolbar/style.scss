@@ -43,6 +43,21 @@
 }
 
 .note-toolbar-trashed {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  justify-content: flex-end;
+  width: 100%;
+
+  .note-toolbar__button {
+    margin: 0 0 0 16px;
+  }
+
+  .basic-button,
+  .button-primary {
+    border-width: 2px;
+  }
+
   .note-toolbar__column-left {
     display: none;
 
@@ -87,23 +102,6 @@
 
   @media only screen and (max-width: $single-column) {
     display: flex;
-  }
-}
-
-.note-toolbar-trashed {
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  justify-content: flex-end;
-  width: 100%;
-
-  .note-toolbar__button {
-    margin: 0 0 0 16px;
-  }
-
-  .basic-button,
-  .button-primary {
-    border-width: 2px;
   }
 }
 
