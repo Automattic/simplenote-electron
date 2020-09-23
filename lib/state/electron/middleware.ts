@@ -100,13 +100,10 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
     const result = next(action);
     const nextState = getState();
 
-    if (prevState.settings !== nextState.settings) {
-      window.electron.send('appStateUpdate', {
-        settings: nextState.settings,
-        editMode: nextState.ui.editMode,
-      });
-    }
-    if (prevState.ui.editMode !== nextState.ui.editMode) {
+    if (
+      prevState.settings !== nextState.settings ||
+      prevState.ui.editMode !== nextState.ui.editMode
+    ) {
       window.electron.send('appStateUpdate', {
         settings: nextState.settings,
         editMode: nextState.ui.editMode,
