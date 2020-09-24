@@ -56,7 +56,7 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         visible: isAuthenticated,
         click: appCommandSender({ action: 'trashNote' }),
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Search &Notes…',
         visible: isAuthenticated,
@@ -75,7 +75,7 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
       },
-      { type: 'separator' },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'C&heck Spelling',
         visible: isAuthenticated,
