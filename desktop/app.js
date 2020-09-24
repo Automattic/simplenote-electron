@@ -167,7 +167,7 @@ module.exports = function main() {
 
   const gotTheLock = app.requestSingleInstanceLock();
 
-  app.on('second-instance', () => {
+  app.on('second-instance', (e, argv) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       if (mainWindow.isMinimized()) {
@@ -175,6 +175,16 @@ module.exports = function main() {
       }
       mainWindow.focus();
     }
+
+    if (process.platform === 'darwin') {
+      // macOS communicates deep-linking via the `open-url` event (see above)
+      // but we might still end up with this message so ignore it if we do
+      return;
+    }
+    // Protocol handler for platforms other than macOS
+    // argv: An array of the second instance’s (command line / deep linked) arguments
+    // The last index of argv is the full deeplink url (simplenote://SOME_URL)
+    mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
   });
 
   if (!gotTheLock) {

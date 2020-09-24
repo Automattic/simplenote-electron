@@ -23,6 +23,12 @@
     "backgroundColor": "transparent",
     "artifactName": "Simplenote-win-store-${version}-${arch}.${ext}"
   },
+  "protocols": [
+    {
+      "name": "simplenote",
+      "schemes": ["simplenote"]
+    }
+  ],
   "afterSign": "./after_sign_hook.js",
   "afterAllArtifactBuild": "./after_sign_hook.js"
 }
