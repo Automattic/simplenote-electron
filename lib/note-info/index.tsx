@@ -171,7 +171,7 @@ export class NoteInfo extends Component<Props> {
         </div>
         <div className="note-info-panel note-info-internal-link theme-color-border">
           <span className="note-info-item-text">
-            <span className="note-info-name">Inter-Note link</span>
+            <span className="note-info-name">Internal link</span>
             <div className="note-info-form">
               <input
                 className="note-info-detail note-info-link-text"
