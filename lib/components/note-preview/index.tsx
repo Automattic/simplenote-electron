@@ -81,7 +81,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
           const tag = node as HTMLAnchorElement;
 
-          // Intercept inter-note links
+          // Intercept internal links
           if (tag.href.startsWith('simplenote://note/')) {
             const match = /^simplenote:\/\/note\/(.+)$/.exec(tag.href);
             if (!match) {
