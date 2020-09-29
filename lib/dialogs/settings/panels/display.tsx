@@ -76,7 +76,14 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
       onChange={props.toggleSortOrder}
       renderer={ToggleGroup}
     >
-      <Item title="Reversed" slug="reversed" />
+      <Item
+        title={
+          props.sortType === 'alphabetical'
+            ? 'Reversed (Z-A)'
+            : 'Reversed (oldest first)'
+        }
+        slug="reversed"
+      />
     </SettingsGroup>
 
     <SettingsGroup
