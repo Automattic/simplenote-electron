@@ -444,7 +444,7 @@ class NoteContentEditor extends Component<Props> {
           links.push({
             range: match.range,
             href: match.matches[0],
-            // don't set URL because then Monaco skips resolveLink
+            // don't set URL here because then Monaco skips resolveLink
           });
         });
         return {
@@ -455,19 +455,16 @@ class NoteContentEditor extends Component<Props> {
         link: monaco.languages.ILink,
         token: monaco.CancellationToken
       ): monaco.languages.ProviderResult<monaco.languages.ILink> => {
-        if (link.href.startsWith('simplenote://note/')) {
-          const match = /^simplenote:\/\/note\/(.+)$/.exec(link.href);
-          if (!match) {
-            return;
-          }
-
-          const [fullMatch, linkedNoteId] = match;
-          this.props.openNote(linkedNoteId as T.EntityId);
+        const match = /^simplenote:\/\/note\/(.+)$/.exec(link.href);
+        if (!match) {
           return;
         }
 
-        return;
-        // return { target: 'https://www.google.com' };
+        const [fullMatch, linkedNoteId] = match;
+        this.props.openNote(linkedNoteId as T.EntityId);
+        return {
+          url: '#', // tell Monaco to do nothing and not complain about it
+        };
       },
     });
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
