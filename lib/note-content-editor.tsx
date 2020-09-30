@@ -429,7 +429,7 @@ class NoteContentEditor extends Component<Props> {
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
         const matches = model.findMatches(
-          'simplenote://note/[a-zA-Z0-9-]*',
+          'simplenote://note/[a-zA-Z0-9-]+',
           true, // searchOnlyEditableRange
           true, // isRegex
           false, // matchCase
