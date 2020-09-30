@@ -436,16 +436,10 @@ class NoteContentEditor extends Component<Props> {
           null, // wordSeparators
           false // captureMatches
         );
-        const links = [];
-        matches.forEach(function (match) {
-          links.push({
-            range: match.range,
-            // don't set URL here because then Monaco skips resolveLink
-            // @cite: https://github.com/Microsoft/vscode/blob/8f89095aa6097f6e0014f2d459ef37820983ae55/src/vs/editor/contrib/links/getLinks.ts#L43:L65
-          });
-        });
         return {
-          links: links,
+          // don't set a URL on these links, because then Monaco skips resolveLink
+          // @cite: https://github.com/Microsoft/vscode/blob/8f89095aa6097f6e0014f2d459ef37820983ae55/src/vs/editor/contrib/links/getLinks.ts#L43:L65
+          links: matches.map(({ range }) => ({ range })),
         };
       },
       resolveLink: (link) => {
@@ -460,10 +454,10 @@ class NoteContentEditor extends Component<Props> {
 
         const [fullMatch, linkedNoteId] = match;
         this.props.openNote(linkedNoteId as T.EntityId);
-        link.url = '#'; // tell Monaco to do nothing and not complain about it
-        return link;
+        return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
+
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
       'cancelSelection', // escape; we need to allow this to bubble up to clear search
