@@ -145,7 +145,11 @@ class NoteContentEditor extends Component<Props> {
     }, SPEED_DELAY);
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
-    this.toggleShortcuts(true);
+
+    // let Electron trigger these from the menus
+    if (!window.electron) {
+      this.toggleShortcuts(true);
+    }
   }
 
   componentWillUnmount() {
@@ -154,7 +158,9 @@ class NoteContentEditor extends Component<Props> {
     }
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
-    this.toggleShortcuts(false);
+    if (!window.electron) {
+      this.toggleShortcuts(false);
+    }
   }
 
   toggleShortcuts = (doEnable: boolean) => {

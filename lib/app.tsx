@@ -92,6 +92,27 @@ class AppComponent extends Component<Props> {
       return false;
     }
 
+    if (('Escape' === key || 'Esc' === key) && this.props.isSearchActive) {
+      this.props.clearSearch();
+    }
+
+    if (!window.electron) {
+      this.handleBrowserShortcut(event);
+    }
+
+    return true;
+  };
+
+  // handle all keyboard shortcuts that are duplicated in the Electron menus
+  // this listener is only called in browsers, as otherwise the
+  // menu will trigger them via the provided Accelerator, so we don't need a listener
+  handleBrowserShortcut = (event: KeyboardEvent) => {
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
+
+    // Is either cmd or ctrl pressed? (But not both)
+    const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
+
     if (
       (cmdOrCtrl && shiftKey && 's' === key) ||
       (cmdOrCtrl && !shiftKey && 'f' === key)
@@ -101,10 +122,6 @@ class AppComponent extends Component<Props> {
       event.stopPropagation();
       event.preventDefault();
       return false;
-    }
-
-    if (('Escape' === key || 'Esc' === key) && this.props.isSearchActive) {
-      this.props.clearSearch();
     }
 
     if (cmdOrCtrl && shiftKey && 'f' === key) {
@@ -128,8 +145,6 @@ class AppComponent extends Component<Props> {
       event.stopPropagation();
       event.preventDefault();
     }
-
-    return true;
   };
 
   toggleShortcuts = (doEnable: boolean) => {
