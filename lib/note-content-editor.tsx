@@ -605,7 +605,11 @@ class NoteContentEditor extends Component<Props> {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
     }
     shortcutsToDisable.forEach(function (action) {
-      editor._standaloneKeybindingService.addDynamicKeybinding('-' + action);
+      editor._standaloneKeybindingService.addDynamicKeybinding(
+        '-' + action, // commandID
+        null, // keybinding
+        () => {} // need to pass an empty handler
+      );
     });
 
     // disable editor keybindings for Electron since it is handled by editorCommand
