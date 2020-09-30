@@ -431,14 +431,13 @@ class NoteContentEditor extends Component<Props> {
         model: monaco.editor.ITextModel,
         token: monaco.CancellationToken
       ): monaco.languages.ProviderResult<monaco.languages.ILinksList> => {
-        // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html#findmatches
         const matches = model.findMatches(
-          'simplenote://note/[^)]*',
-          '',
-          true,
-          false,
-          null,
-          true
+          'simplenote://note/[a-zA-Z0-9-]*',
+          true, // searchOnlyEditableRange
+          true, // isRegex
+          false, // matchCase
+          null, // wordSeparators
+          true // captureMatches
         );
         const links = [];
         matches.forEach(function (match) {
