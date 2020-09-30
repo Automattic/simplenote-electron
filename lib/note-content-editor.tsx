@@ -458,7 +458,7 @@ class NoteContentEditor extends Component<Props> {
         if (this.props.notes.has(linkedNoteId as T.EntityId)) {
           this.props.openNote(linkedNoteId as T.EntityId);
         }
-        // if it's not a valid note ID, silently fail
+        // implicit else: if it's not a valid note ID, silently fail
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
