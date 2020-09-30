@@ -62,6 +62,7 @@ type StateProps = {
   lineLength: T.LineLength;
   noteId: T.EntityId;
   note: T.Note;
+  notes: Map<T.EntityId, T.Note>;
   searchQuery: string;
   spellCheckEnabled: boolean;
   theme: T.Theme;
@@ -453,7 +454,11 @@ class NoteContentEditor extends Component<Props> {
         }
 
         const [fullMatch, linkedNoteId] = match;
-        this.props.openNote(linkedNoteId as T.EntityId);
+
+        if (this.props.notes.has(linkedNoteId as T.EntityId)) {
+          this.props.openNote(linkedNoteId as T.EntityId);
+        }
+        // if it's not a valid note ID, silently fail
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
@@ -1002,6 +1007,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   lineLength: state.settings.lineLength,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
+  notes: state.data.notes,
   searchQuery: state.ui.searchQuery,
   spellCheckEnabled: state.settings.spellCheckEnabled,
   theme: selectors.getTheme(state),
