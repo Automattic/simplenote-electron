@@ -71,6 +71,7 @@ type DispatchProps = {
   clearSearch: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
   insertTask: () => any;
+  openNote: (noteId: T.EntityId) => any;
   storeEditorSelection: (
     noteId: T.EntityId,
     start: number,
@@ -425,6 +426,51 @@ class NoteContentEditor extends Component<Props> {
     this.editor = editor;
     this.monaco = monaco;
 
+    monaco.languages.registerLinkProvider('plaintext', {
+      provideLinks: (
+        model: monaco.editor.ITextModel,
+        token: monaco.CancellationToken
+      ): monaco.languages.ProviderResult<monaco.languages.ILinksList> => {
+        // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html#findmatches
+        const matches = model.findMatches(
+          'simplenote://note/[^)]*',
+          '',
+          true,
+          false,
+          null,
+          true
+        );
+        const links = [];
+        matches.forEach(function (match) {
+          links.push({
+            range: match.range,
+            href: match.matches[0],
+            // don't set URL because then Monaco skips resolveLink
+          });
+        });
+        return {
+          links: links,
+        };
+      },
+      resolveLink: (
+        link: monaco.languages.ILink,
+        token: monaco.CancellationToken
+      ): monaco.languages.ProviderResult<monaco.languages.ILink> => {
+        if (link.href.startsWith('simplenote://note/')) {
+          const match = /^simplenote:\/\/note\/(.+)$/.exec(link.href);
+          if (!match) {
+            return;
+          }
+
+          const [fullMatch, linkedNoteId] = match;
+          this.props.openNote(linkedNoteId as T.EntityId);
+          return;
+        }
+
+        return;
+        // return { target: 'https://www.google.com' };
+      },
+    });
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
       'cancelSelection', // escape; we need to allow this to bubble up to clear search
@@ -978,6 +1024,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   clearSearch: () => dispatch(search('')),
   editNote: actions.data.editNote,
   insertTask: () => ({ type: 'INSERT_TASK' }),
+  openNote: actions.ui.selectNote,
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
     noteId,
