@@ -178,7 +178,8 @@ class NoteContentEditor extends Component<Props> {
       return false;
     }
 
-    if (cmdOrCtrl && !shiftKey && key === 'g') {
+    // Electron can trigger this from the menu
+    if (!window.electron && cmdOrCtrl && !shiftKey && key === 'g') {
       this.setNextSearchSelection();
       event.stopPropagation();
       event.preventDefault();
