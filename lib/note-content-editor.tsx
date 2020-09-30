@@ -427,44 +427,41 @@ class NoteContentEditor extends Component<Props> {
     this.monaco = monaco;
 
     monaco.languages.registerLinkProvider('plaintext', {
-      provideLinks: (
-        model: monaco.editor.ITextModel,
-        token: monaco.CancellationToken
-      ): monaco.languages.ProviderResult<monaco.languages.ILinksList> => {
+      provideLinks: (model) => {
         const matches = model.findMatches(
           'simplenote://note/[a-zA-Z0-9-]*',
           true, // searchOnlyEditableRange
           true, // isRegex
           false, // matchCase
           null, // wordSeparators
-          true // captureMatches
+          false // captureMatches
         );
         const links = [];
         matches.forEach(function (match) {
           links.push({
             range: match.range,
-            href: match.matches[0],
             // don't set URL here because then Monaco skips resolveLink
+            // @cite: https://github.com/Microsoft/vscode/blob/8f89095aa6097f6e0014f2d459ef37820983ae55/src/vs/editor/contrib/links/getLinks.ts#L43:L65
           });
         });
         return {
           links: links,
         };
       },
-      resolveLink: (
-        link: monaco.languages.ILink,
-        token: monaco.CancellationToken
-      ): monaco.languages.ProviderResult<monaco.languages.ILink> => {
-        const match = /^simplenote:\/\/note\/(.+)$/.exec(link.href);
+      resolveLink: (link) => {
+        const href = editor.getModel()?.getValueInRange(link.range);
+        if (!href) {
+          return;
+        }
+        const match = /^simplenote:\/\/note\/(.+)$/.exec(href);
         if (!match) {
           return;
         }
 
         const [fullMatch, linkedNoteId] = match;
         this.props.openNote(linkedNoteId as T.EntityId);
-        return {
-          url: '#', // tell Monaco to do nothing and not complain about it
-        };
+        link.url = '#'; // tell Monaco to do nothing and not complain about it
+        return link;
       },
     });
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
