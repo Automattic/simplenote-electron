@@ -58,6 +58,7 @@ type OwnProps = {
 type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
   fontSize: number;
+  isFocusMode: boolean;
   keyboardShortcuts: boolean;
   lineLength: T.LineLength;
   noteId: T.EntityId;
@@ -220,7 +221,10 @@ class NoteContentEditor extends Component<Props> {
       this.editor?.setSelection(new this.monaco.Range(0, 0, 0, 0));
     }
 
-    if (this.props.lineLength !== prevProps.lineLength) {
+    if (
+      this.props.lineLength !== prevProps.lineLength ||
+      this.props.isFocusMode !== prevProps.isFocusMode
+    ) {
       // @TODO: This timeout is necessary for no apparent reason
       //        Figure out why and take it out!
       setTimeout(() => {
@@ -965,6 +969,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
     'LTR',
   ],
   fontSize: state.settings.fontSize,
+  isFocusMode: state.settings.focusModeEnabled,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   lineLength: state.settings.lineLength,
   noteId: state.ui.openedNote,
