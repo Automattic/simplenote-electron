@@ -455,10 +455,12 @@ class NoteContentEditor extends Component<Props> {
 
         const [fullMatch, linkedNoteId] = match;
 
+        // if we try to open a note that doesn't exist in local state,
+        // then we annoyingly close the open note without opening anything else
+        // implicit else: links that aren't openable will just do nothing
         if (this.props.notes.has(linkedNoteId as T.EntityId)) {
           this.props.openNote(linkedNoteId as T.EntityId);
         }
-        // implicit else: if it's not a valid note ID, silently fail
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
