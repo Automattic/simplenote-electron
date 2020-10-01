@@ -444,10 +444,7 @@ class NoteContentEditor extends Component<Props> {
         };
       },
       resolveLink: (link) => {
-        const href = editor.getModel()?.getValueInRange(link.range);
-        if (!href) {
-          return;
-        }
+        const href = editor.getModel()?.getValueInRange(link.range) ?? '';
         const match = /^simplenote:\/\/note\/(.+)$/.exec(href);
         if (!match) {
           return;
