@@ -3,9 +3,9 @@ const SpellChecker = require('spellchecker');
 const { ipcMain } = require('electron');
 
 const startSpellchecker = (mainWindow) => {
-  ipcMain.on('spellcheck', function (event, args) {
+  ipcMain.on('spellcheck', function (content) {
     mainWindow.webContents.send('spellcheckerChannel', {
-      result: SpellChecker.checkSpellingAsync(args.note),
+      result: SpellChecker.checkSpellingAsync(content),
     });
   });
 };

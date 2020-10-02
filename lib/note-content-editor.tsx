@@ -175,7 +175,9 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
-  completionProvider: languages.DocumentHighlightProvider = {};
+  // highlightProvider: languages.DocumentHighlightProvider = {
+
+  // };
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, metaKey, shiftKey } = event;
@@ -443,13 +445,13 @@ class NoteContentEditor extends Component<Props> {
     window.editor = editor;
     this.monaco = editor;
 
-    if (!hasDocumentHighlightProvider) {
-      hasDocumentHighlightProvider = true;
-      monaco.languages.registerDocumentHighlightProvider(
-        'plaintext',
-        this.documentHighlightProvider
-      );
-    }
+    // if (!hasDocumentHighlightProvider) {
+    //   hasDocumentHighlightProvider = true;
+    //   monaco.languages.registerDocumentHighlightProvider(
+    //     'plaintext',
+    //     this.documentHighlightProvider
+    //   );
+    // }
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -620,6 +622,12 @@ class NoteContentEditor extends Component<Props> {
       run: this.insertOrRemoveCheckboxes,
     });
 
+    window.electron?.receive('spellcheckerChannel', (promise) => {
+      promise.then((result) => {
+        console.log(result);
+      });
+    });
+
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
         case 'findAgain':
@@ -663,7 +671,7 @@ class NoteContentEditor extends Component<Props> {
     editor.onDidChangeModelContent(() => this.setDecorators());
 
     document.oncopy = (event) => {
-      // @TODO: This is selecting everything in the app but wdde should only
+      // @TODO: This is selecting everything in the app but we should only
       //        need to intercept copy events coming from the editor
       event.clipboardData.setData(
         'text/plain',
@@ -924,6 +932,8 @@ class NoteContentEditor extends Component<Props> {
     const { fontSize, lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
+
+    window.electron?.send('sepllcheck', content);
 
     const editorPadding = getEditorPadding(
       lineLength,

@@ -51,7 +51,7 @@ PUBLISH ?= onTag
 
 # Main targets
 .PHONY: start
-start:
+start: rebuild-deps
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect
 
 .PHONY: dev
@@ -85,6 +85,10 @@ endif
 
 
 # Build utils
+.PHONY: rebuild-deps
+rebuild-deps:
+	@npx electron-rebuild -v $(ELECTRON_VERSION)
+
 .PHONY: build-app
 build-app:
 	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
