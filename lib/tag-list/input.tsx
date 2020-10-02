@@ -4,7 +4,7 @@ import classNames from 'classnames';
 type OwnProps = {
   editable: boolean;
   isSelected: boolean;
-  onClick: (event: MouseEvent<HTMLInputElement>) => any;
+  onClick: (event: React.MouseEvent) => any;
   onDone: (event: FocusEvent<HTMLInputElement>) => any;
   value: string;
 };
@@ -28,7 +28,7 @@ export class TagListInput extends Component<Props, OwnState> {
       'is-selected': isSelected,
     });
 
-    return (
+    return editable ? (
       <input
         className={classes}
         readOnly={!editable}
@@ -38,6 +38,10 @@ export class TagListInput extends Component<Props, OwnState> {
         onBlur={onDone}
         spellCheck={false}
       />
+    ) : (
+      <button className={classes} onClick={onClick}>
+        {value}
+      </button>
     );
   }
 }

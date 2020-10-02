@@ -93,6 +93,11 @@
   }
 }
 
+button.tag-list-input {
+  overflow-x: hidden;
+  text-align: left;
+}
+
 .tag-list-editing {
   .tag-list-input {
     cursor: text;
