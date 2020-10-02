@@ -109,6 +109,7 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         window.electron.send('reallyCloseWindow');
         return result;
     }
+
     if (
       prevState.settings !== nextState.settings ||
       prevState.ui.editMode !== nextState.ui.editMode
