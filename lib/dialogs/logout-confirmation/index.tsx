@@ -22,7 +22,7 @@ const LogoutConfirmation = ({ action }: Props) => (
 );
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  action: actions.simperium.reallyLogOut,
+  action: actions.ui.reallyLogOut,
 };
 
 export default connect(null, mapDispatchToProps)(LogoutConfirmation);
