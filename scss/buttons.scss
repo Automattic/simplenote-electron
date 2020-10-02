@@ -1,6 +1,7 @@
 // Resets button styles
 button {
   @extend %smart-focus-outline;
+
   background: transparent;
   border: none;
   padding: 0;

@@ -164,5 +164,12 @@ format:
 	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass,ts,tsx}"
 
 .PHONY: lint
-lint:
+lint: lint-js lint-scss
+
+.PHONY: lint-scss
+lint-scss:
+	@npx stylelint --ignore-path .gitignore "**/*.scss" --syntax scss
+
+.PHONY: lint-js
+lint-js:
 	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"

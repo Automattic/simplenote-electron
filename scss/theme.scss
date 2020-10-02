@@ -48,6 +48,11 @@ span[dir='ltr'] {
 }
 
 .is-line-length-full {
+  .note-detail-preview,
+  .note-content-plaintext.visible {
+    padding: 0 25px;
+  }
+
   span[dir='ltr'] {
     margin-right: 20px;
   }
@@ -75,18 +80,10 @@ span[dir='ltr'] {
   right: -2px !important;
 }
 
-.is-line-length-full {
-  .note-detail-preview,
-  .note-content-plaintext.visible {
-    padding: 0 25px;
-  }
-}
-
 .note-content-editor-shell,
 .note-detail-markdown {
   height: 100%;
   width: 100%;
-
   font-family: 'Simplenote Tasks', sans-serif;
 
   .slider {
@@ -150,7 +147,7 @@ span[dir='ltr'] {
   .search-results-next,
   .search-results-prev {
     float: right;
-    padding: 0px 6px;
+    padding: 0 6px;
     width: 42px;
     height: 100%;
 

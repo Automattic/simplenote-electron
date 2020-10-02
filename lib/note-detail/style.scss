@@ -82,6 +82,8 @@
 }
 
 .note-detail-markdown {
+  @import '../node_modules/highlight.js/scss/solarized-light.scss';
+
   overflow: visible;
   -webkit-overflow-scrolling: touch;
 
@@ -95,6 +97,7 @@
   }
 
   a {
+    cursor: pointer;
     overflow-wrap: break-word;
     word-wrap: break-word;
   }
@@ -103,10 +106,6 @@
     max-width: 100%;
     height: auto;
   }
-}
-
-.note-detail-markdown {
-  @import '../node_modules/highlight.js/scss/solarized-light.scss';
 
   h1,
   h2,
@@ -129,10 +128,6 @@
   hr {
     border: 0;
     border-top: 1px solid $studio-gray-5;
-  }
-
-  a {
-    cursor: pointer;
   }
 
   blockquote {
