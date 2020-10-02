@@ -355,6 +355,24 @@ export const initSimperium = (
         return result;
       }
 
+      case 'CLOSE_WINDOW': {
+        const changes = getUnconfirmedChanges(nextState);
+        changes.notes.forEach((noteId) => noteQueue.add(noteId, Date.now()));
+
+        if (changes.notes.length > 0) {
+          store.dispatch({
+            type: 'SHOW_DIALOG',
+            dialog: 'CLOSE-WINDOW-CONFIRMATION',
+          });
+          return result;
+        }
+
+        store.dispatch({
+          type: 'REALLY_CLOSE_WINDOW',
+        });
+        return result;
+      }
+
       case 'LOGOUT': {
         const changes = getUnconfirmedChanges(nextState);
         changes.notes.forEach((noteId) => noteQueue.add(noteId, Date.now()));

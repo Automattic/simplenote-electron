@@ -11,16 +11,20 @@ import { noteTitleAndPreview } from '../../utils/note-utils';
 import type * as S from '../../state';
 import type * as T from '../../types';
 
+type OwnProps = {
+  action: 'REALLY_CLOSE_WINDOW' | 'REALLY_LOGOUT';
+};
+
 type StateProps = {
   notes: Map<T.EntityId, T.Note>;
 };
 
 type DispatchProps = {
   closeDialog: () => any;
-  reallyLogout: () => any;
+  continueAction: (action: 'REALLY_CLOSE_WINDOW' | 'REALLY_LOGOUT') => any;
 };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export class LogoutConfirmation extends Component<Props> {
   exportUnsyncedNotes = () => {
@@ -29,8 +33,13 @@ export class LogoutConfirmation extends Component<Props> {
     exportZipArchive(notes).then(closeDialog);
   };
 
+  triggerContinueAction = () => {
+    const { action, continueAction } = this.props;
+    continueAction(action);
+  };
+
   render() {
-    const { closeDialog, notes, reallyLogout } = this.props;
+    const { closeDialog, notes } = this.props;
 
     return (
       <div className="logoutConfirmation">
@@ -72,7 +81,7 @@ export class LogoutConfirmation extends Component<Props> {
           )}
 
           <section className="action-button">
-            <button className="log-out" onClick={reallyLogout}>
+            <button className="log-out" onClick={this.triggerContinueAction}>
               {notes.size > 0 ? 'Log out' : 'Safely log out'}
             </button>
           </section>
@@ -98,7 +107,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   closeDialog,
-  reallyLogout: () => ({ type: 'REALLY_LOGOUT' }),
+  continueAction: (action) => ({ type: action }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogoutConfirmation);

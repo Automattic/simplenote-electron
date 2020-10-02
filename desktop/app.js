@@ -153,6 +153,15 @@ module.exports = function main() {
       mainWindow.setFullScreen(false);
     }
 
+    mainWindow.on('close', (event) => {
+      event.preventDefault();
+      mainWindow.webContents.send('appCommand', { action: 'closeWindow' });
+    });
+
+    ipcMain.on('reallyCloseWindow', () => {
+      mainWindow.destroy();
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
       // Dereference the window object, usually you would store windows

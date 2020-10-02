@@ -54,6 +54,7 @@ export type ConnectionState = 'green' | 'red' | 'offline';
 export type DialogType =
   | 'ABOUT'
   | 'BETA-WARNING'
+  | 'CLOSE-WINDOW-CONFIRMATION'
   | 'IMPORT'
   | 'KEYBINDINGS'
   | 'LOGOUT-CONFIRMATION'

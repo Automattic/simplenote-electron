@@ -52,12 +52,20 @@ export class DialogRenderer extends Component<Props> {
               <AboutDialog key="about" closeDialog={closeDialog} />
             ) : 'BETA-WARNING' === dialog ? (
               <BetaWarning key="beta-warning" />
+            ) : 'CLOSE-WINDOW-CONFIRMATION' === dialog ? (
+              <LogoutConfirmation
+                key="close-window-confirmation"
+                action="REALLY_CLOSE_WINDOW"
+              />
             ) : 'IMPORT' === dialog ? (
               <ImportDialog key="import" />
             ) : 'KEYBINDINGS' === dialog ? (
               <KeybindingsDialog key="keybindings" />
             ) : 'LOGOUT-CONFIRMATION' === dialog ? (
-              <LogoutConfirmation key="logout-confirmation" />
+              <LogoutConfirmation
+                key="logout-confirmation"
+                action="REALLY_LOGOUT"
+              />
             ) : 'SETTINGS' === dialog ? (
               <SettingsDialog key="settings" />
             ) : 'SHARE' === dialog ? (

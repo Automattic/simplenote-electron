@@ -56,6 +56,7 @@ export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
 export type CloseDialog = Action<'CLOSE_DIALOG'>;
 export type CloseNote = Action<'CLOSE_NOTE'>;
 export type CloseRevision = Action<'CLOSE_REVISION'>;
+export type CloseWindow = Action<'CLOSE_WINDOW'>;
 export type CreateNote = Action<'CREATE_NOTE', { note?: Partial<T.Note> }>;
 export type CreateNoteWithId = Action<
   'CREATE_NOTE_WITH_ID',
@@ -77,6 +78,7 @@ export type OpenRevision = Action<
   { noteId: T.EntityId; version: number }
 >;
 export type OpenTag = Action<'OPEN_TAG', { tagName: T.TagName }>;
+export type ReallyCloseWindow = Action<'REALLY_CLOSE_WINDOW'>;
 export type ReallyLogout = Action<'REALLY_LOGOUT'>;
 export type RecordEvent = Action<
   'RECORD_EVENT',
@@ -310,6 +312,7 @@ export type ActionType =
   | CloseNote
   | CloseDialog
   | CloseRevision
+  | CloseWindow
   | CreateNote
   | CreateNoteWithId
   | DecreaseFontSize
@@ -340,6 +343,7 @@ export type ActionType =
   | PreferencesBucketRemove
   | PreferencesBucketUpdate
   | PublishNote
+  | ReallyCloseWindow
   | ReallyLogout
   | RecordEvent
   | RemoteAnalyticsUpdate

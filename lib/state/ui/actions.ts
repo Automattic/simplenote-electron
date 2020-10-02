@@ -9,6 +9,10 @@ export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
 });
 
+export const closeWindow: A.ActionCreator<A.CloseWindow> = () => ({
+  type: 'CLOSE_WINDOW',
+});
+
 export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
