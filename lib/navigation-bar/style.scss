@@ -12,6 +12,10 @@
   background: white;
 }
 
+.is-macos .navigation-bar {
+  padding-top: 70px;
+}
+
 .navigation-bar__folders {
   display: flex;
   flex-direction: column-reverse;
