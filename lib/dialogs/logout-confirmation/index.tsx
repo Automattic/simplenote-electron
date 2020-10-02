@@ -1,14 +1,28 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
+import actions from '../../state/actions';
 import UnsynchronizedConfirmation from '../unsynchronized';
 
-const LogoutConfirmation = () => (
+import type * as S from '../../state';
+
+type DispatchProps = {
+  continueAction: () => any;
+};
+
+type Props = DispatchProps;
+
+const LogoutConfirmation = ({ continueAction }: Props) => (
   <UnsynchronizedConfirmation
-    action="REALLY_LOGOUT"
     actionDescription="Logging out will delete any unsynchronized notes."
     actionName="Log out"
     actionSafeName="Safely log out"
+    continueAction={continueAction}
   />
 );
 
-export default LogoutConfirmation;
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  continueAction: actions.simperium.reallyLogOut,
+};
+
+export default connect(null, mapDispatchToProps)(LogoutConfirmation);

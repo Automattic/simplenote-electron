@@ -9,3 +9,7 @@ export const remoteNoteUpdate: A.ActionCreator<A.RemoteNoteUpdate> = (
   noteId,
   note,
 });
+
+export const reallyLogOut: A.ActionCreator<A.ReallyLogOut> = () => ({
+  type: 'REALLY_LOG_OUT',
+});

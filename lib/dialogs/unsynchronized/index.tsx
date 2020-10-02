@@ -12,10 +12,10 @@ import type * as S from '../../state';
 import type * as T from '../../types';
 
 type OwnProps = {
-  action: 'REALLY_CLOSE_WINDOW' | 'REALLY_LOGOUT';
   actionDescription: string;
   actionName: string;
   actionSafeName: string;
+  continueAction: () => any;
 };
 
 type StateProps = {
@@ -24,7 +24,6 @@ type StateProps = {
 
 type DispatchProps = {
   closeDialog: () => any;
-  continueAction: (action: 'REALLY_CLOSE_WINDOW' | 'REALLY_LOGOUT') => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -37,8 +36,8 @@ export class UnsynchronizedConfirmation extends Component<Props> {
   };
 
   triggerContinueAction = () => {
-    const { action, continueAction } = this.props;
-    continueAction(action);
+    const { continueAction } = this.props;
+    continueAction();
   };
 
   render() {
@@ -116,7 +115,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   closeDialog,
-  continueAction: (action) => ({ type: action }),
 };
 
 export default connect(
