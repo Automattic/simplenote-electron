@@ -16,6 +16,7 @@ const config = require('./config');
 const createMenuTemplate = require('./menus');
 const importNotes = require('./evernote-import');
 const platform = require('./detect/platform');
+const spellchecker = require('./spellchecker');
 const updater = require('./updater');
 const { isDev } = require('./env');
 const contextMenu = require('./context-menu');
@@ -76,7 +77,7 @@ module.exports = function main() {
     } else {
       mainWindow.loadUrl(url);
     }
-
+    spellchecker(mainWindow);
     contextMenu(mainWindow);
 
     if (

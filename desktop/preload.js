@@ -8,6 +8,8 @@ const validChannels = [
   'importNotes',
   'noteImportChannel',
   'setAutoHideMenuBar',
+  'spellcheck',
+  'spellcheckerChannel',
   'wpLogin',
 ];
 

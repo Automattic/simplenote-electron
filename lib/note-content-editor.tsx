@@ -5,7 +5,12 @@ import Monaco, {
   EditorDidMount,
   EditorWillMount,
 } from 'react-monaco-editor';
-import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
+import {
+  editor as Editor,
+  languages,
+  Selection,
+  SelectionDirection,
+} from 'monaco-editor';
 import { search } from './state/ui/actions';
 
 import actions from './state/actions';
@@ -93,6 +98,8 @@ type OwnState = {
   selectedSearchMatchIndex: number | null;
 };
 
+let hasDocumentHighlightProvider = false;
+
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
@@ -167,6 +174,8 @@ class NoteContentEditor extends Component<Props> {
       window.removeEventListener('keydown', this.handleShortcut, true);
     }
   };
+
+  completionProvider: languages.DocumentHighlightProvider = {};
 
   handleShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, metaKey, shiftKey } = event;
@@ -431,6 +440,16 @@ class NoteContentEditor extends Component<Props> {
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
     this.monaco = monaco;
+    window.editor = editor;
+    this.monaco = editor;
+
+    if (!hasDocumentHighlightProvider) {
+      hasDocumentHighlightProvider = true;
+      monaco.languages.registerDocumentHighlightProvider(
+        'plaintext',
+        this.documentHighlightProvider
+      );
+    }
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -644,7 +663,7 @@ class NoteContentEditor extends Component<Props> {
     editor.onDidChangeModelContent(() => this.setDecorators());
 
     document.oncopy = (event) => {
-      // @TODO: This is selecting everything in the app but we should only
+      // @TODO: This is selecting everything in the app but wdde should only
       //        need to intercept copy events coming from the editor
       event.clipboardData.setData(
         'text/plain',
