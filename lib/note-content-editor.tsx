@@ -63,6 +63,7 @@ type StateProps = {
   lineLength: T.LineLength;
   noteId: T.EntityId;
   note: T.Note;
+  notes: Map<T.EntityId, T.Note>;
   searchQuery: string;
   spellCheckEnabled: boolean;
   theme: T.Theme;
@@ -72,6 +73,7 @@ type DispatchProps = {
   clearSearch: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
   insertTask: () => any;
+  openNote: (noteId: T.EntityId) => any;
   storeEditorSelection: (
     noteId: T.EntityId,
     start: number,
@@ -429,6 +431,41 @@ class NoteContentEditor extends Component<Props> {
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
     this.monaco = monaco;
+
+    monaco.languages.registerLinkProvider('plaintext', {
+      provideLinks: (model) => {
+        const matches = model.findMatches(
+          'simplenote://note/[a-zA-Z0-9-]+',
+          true, // searchOnlyEditableRange
+          true, // isRegex
+          false, // matchCase
+          null, // wordSeparators
+          false // captureMatches
+        );
+        return {
+          // don't set a URL on these links, because then Monaco skips resolveLink
+          // @cite: https://github.com/Microsoft/vscode/blob/8f89095aa6097f6e0014f2d459ef37820983ae55/src/vs/editor/contrib/links/getLinks.ts#L43:L65
+          links: matches.map(({ range }) => ({ range })),
+        };
+      },
+      resolveLink: (link) => {
+        const href = editor.getModel()?.getValueInRange(link.range) ?? '';
+        const match = /^simplenote:\/\/note\/(.+)$/.exec(href);
+        if (!match) {
+          return;
+        }
+
+        const [fullMatch, linkedNoteId] = match as [string, T.EntityId];
+
+        // if we try to open a note that doesn't exist in local state,
+        // then we annoyingly close the open note without opening anything else
+        // implicit else: links that aren't openable will just do nothing
+        if (this.props.notes.has(linkedNoteId)) {
+          this.props.openNote(linkedNoteId);
+        }
+        return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
+      },
+    });
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
@@ -975,6 +1012,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   lineLength: state.settings.lineLength,
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
+  notes: state.data.notes,
   searchQuery: state.ui.searchQuery,
   spellCheckEnabled: state.settings.spellCheckEnabled,
   theme: selectors.getTheme(state),
@@ -984,6 +1022,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   clearSearch: () => dispatch(search('')),
   editNote: actions.data.editNote,
   insertTask: () => ({ type: 'INSERT_TASK' }),
+  openNote: actions.ui.selectNote,
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
     noteId,

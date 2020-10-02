@@ -20,6 +20,7 @@ type StateProps = {
   isFocused: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
+  notes: Map<T.EntityId, T.Note>;
   searchQuery: string;
   showRenderedView: boolean;
 };
@@ -37,6 +38,7 @@ export const NotePreview: FunctionComponent<Props> = ({
   isFocused,
   note,
   noteId,
+  notes,
   openNote,
   searchQuery,
   showRenderedView,
@@ -89,7 +91,12 @@ export const NotePreview: FunctionComponent<Props> = ({
             }
 
             const [fullMatch, linkedNoteId] = match;
-            openNote(linkedNoteId as T.EntityId);
+            // if we try to open a note that doesn't exist in local state,
+            // then we annoyingly close the open note without opening anything else
+            // implicit else: links that aren't openable will just do nothing
+            if (notes.has(linkedNoteId as T.EntityId)) {
+              openNote(linkedNoteId as T.EntityId);
+            }
             return;
           }
 
@@ -170,6 +177,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
     isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
     note,
     noteId,
+    notes: state.data.notes,
     searchQuery: state.ui.searchQuery,
     showRenderedView:
       !!note?.systemTags.includes('markdown') && !state.ui.editMode,
