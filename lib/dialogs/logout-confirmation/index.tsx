@@ -7,22 +7,22 @@ import UnsynchronizedConfirmation from '../unsynchronized';
 import type * as S from '../../state';
 
 type DispatchProps = {
-  continueAction: () => any;
+  action: () => any;
 };
 
 type Props = DispatchProps;
 
-const LogoutConfirmation = ({ continueAction }: Props) => (
+const LogoutConfirmation = ({ action }: Props) => (
   <UnsynchronizedConfirmation
-    actionDescription="Logging out will delete any unsynchronized notes."
-    actionName="Log out"
-    actionSafeName="Safely log out"
-    continueAction={continueAction}
+    description="Logging out will delete any unsynchronized notes."
+    unsafeAction="Log out"
+    safeAction="Safely log out"
+    action={action}
   />
 );
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  continueAction: actions.simperium.reallyLogOut,
+  action: actions.simperium.reallyLogOut,
 };
 
 export default connect(null, mapDispatchToProps)(LogoutConfirmation);

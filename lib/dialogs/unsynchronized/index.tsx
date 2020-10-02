@@ -12,10 +12,10 @@ import type * as S from '../../state';
 import type * as T from '../../types';
 
 type OwnProps = {
-  actionDescription: string;
-  actionName: string;
-  actionSafeName: string;
-  continueAction: () => any;
+  description: string;
+  unsafeAction: string;
+  safeAction: string;
+  action: () => any;
 };
 
 type StateProps = {
@@ -37,11 +37,11 @@ export class UnsynchronizedConfirmation extends Component<Props> {
 
   render() {
     const {
-      actionDescription,
-      actionName,
-      actionSafeName,
+      description,
+      unsafeAction,
+      safeAction,
       closeDialog,
-      continueAction,
+      action,
       notes,
     } = this.props;
 
@@ -49,9 +49,7 @@ export class UnsynchronizedConfirmation extends Component<Props> {
       <div className="logoutConfirmation">
         <Dialog onDone={closeDialog} title="Unsynchronized Notes">
           <p className="explanation">
-            {notes.size > 0
-              ? actionDescription
-              : 'All notes have synchronized!'}
+            {notes.size > 0 ? description : 'All notes have synchronized!'}
           </p>
 
           {notes.size > 0 && (
@@ -85,8 +83,8 @@ export class UnsynchronizedConfirmation extends Component<Props> {
           )}
 
           <section className="action-button">
-            <button className="log-out" onClick={continueAction}>
-              {notes.size > 0 ? actionName : actionSafeName}
+            <button className="log-out" onClick={action}>
+              {notes.size > 0 ? unsafeAction : safeAction}
             </button>
           </section>
         </Dialog>

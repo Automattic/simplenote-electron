@@ -106,7 +106,6 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
 
     switch (action.type) {
       case 'REALLY_CLOSE_WINDOW':
-        console.log('REALLY_CLOSE_WINDOW');
         window.electron.send('reallyCloseWindow');
         return result;
     }
