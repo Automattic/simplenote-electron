@@ -159,7 +159,10 @@ module.exports = function main() {
     });
 
     ipcMain.on('reallyCloseWindow', () => {
-      mainWindow.destroy();
+      mainWindow && mainWindow.destroy();
+      if (!platform.isOSX()) {
+        app.exit(0);
+      }
     });
 
     // Emitted when the window is closed.

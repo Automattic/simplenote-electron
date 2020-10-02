@@ -39,14 +39,22 @@ export class LogoutConfirmation extends Component<Props> {
   };
 
   render() {
-    const { closeDialog, notes } = this.props;
+    const { action, closeDialog, notes } = this.props;
+
+    const actionDescription =
+      action === 'REALLY_LOGOUT'
+        ? 'Logging out will delete any unsynchronized notes.'
+        : 'Closing the app with unsynchronized notes could cause data loss.';
+    const actionName = action === 'REALLY_LOGOUT' ? 'Log out' : 'Close window';
+    const actionSafeName =
+      action === 'REALLY_LOGOUT' ? 'Safely log out' : 'Safely close window';
 
     return (
       <div className="logoutConfirmation">
         <Dialog onDone={closeDialog} title="Unsynchronized Notes">
           <p className="explanation">
             {notes.size > 0
-              ? 'Logging out will delete any unsynchronized notes.'
+              ? actionDescription
               : 'All notes have synchronized!'}
           </p>
 
@@ -82,7 +90,7 @@ export class LogoutConfirmation extends Component<Props> {
 
           <section className="action-button">
             <button className="log-out" onClick={this.triggerContinueAction}>
-              {notes.size > 0 ? 'Log out' : 'Safely log out'}
+              {notes.size > 0 ? actionName : actionSafeName}
             </button>
           </section>
         </Dialog>
