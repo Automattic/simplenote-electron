@@ -35,17 +35,13 @@ export class UnsynchronizedConfirmation extends Component<Props> {
     exportZipArchive(notes).then(closeDialog);
   };
 
-  triggerContinueAction = () => {
-    const { continueAction } = this.props;
-    continueAction();
-  };
-
   render() {
     const {
       actionDescription,
       actionName,
       actionSafeName,
       closeDialog,
+      continueAction,
       notes,
     } = this.props;
 
@@ -89,7 +85,7 @@ export class UnsynchronizedConfirmation extends Component<Props> {
           )}
 
           <section className="action-button">
-            <button className="log-out" onClick={this.triggerContinueAction}>
+            <button className="log-out" onClick={continueAction}>
               {notes.size > 0 ? actionName : actionSafeName}
             </button>
           </section>
