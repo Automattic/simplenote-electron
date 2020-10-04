@@ -4,9 +4,11 @@ const validChannels = [
   'appCommand',
   'appStateUpdate',
   'clearCookies',
+  'closeWindow',
   'editorCommand',
   'importNotes',
   'noteImportChannel',
+  'reallyCloseWindow',
   'setAutoHideMenuBar',
   'wpLogin',
 ];

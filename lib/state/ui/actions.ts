@@ -9,6 +9,10 @@ export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
 });
 
+export const closeWindow: A.ActionCreator<A.CloseWindow> = () => ({
+  type: 'CLOSE_WINDOW',
+});
+
 export const createNote: A.ActionCreator<A.CreateNote> = () => ({
   type: 'CREATE_NOTE',
 });
@@ -46,6 +50,10 @@ export const openNote: A.ActionCreator<A.OpenNote> = (noteId?: T.EntityId) => ({
 export const openTag: A.ActionCreator<A.OpenTag> = (tagName: T.TagName) => ({
   type: 'OPEN_TAG',
   tagName,
+});
+
+export const reallyLogOut: A.ActionCreator<A.ReallyLogOut> = () => ({
+  type: 'REALLY_LOG_OUT',
 });
 
 export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({

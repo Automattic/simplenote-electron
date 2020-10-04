@@ -9,6 +9,10 @@ const debug = debugFactory('electron-middleware');
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
   window.electron.receive('appCommand', (command) => {
     switch (command.action) {
+      case 'closeWindow':
+        dispatch(actions.ui.closeWindow());
+        return;
+
       case 'emptyTrash':
         dispatch(actions.ui.emptyTrash());
         return;
@@ -99,6 +103,12 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
     const prevState = getState();
     const result = next(action);
     const nextState = getState();
+
+    switch (action.type) {
+      case 'REALLY_CLOSE_WINDOW':
+        window.electron.send('reallyCloseWindow');
+        return result;
+    }
 
     if (
       prevState.settings !== nextState.settings ||
