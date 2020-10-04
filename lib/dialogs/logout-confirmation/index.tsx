@@ -7,22 +7,22 @@ import UnsynchronizedConfirmation from '../unsynchronized';
 import type * as S from '../../state';
 
 type DispatchProps = {
-  action: () => any;
+  reallyLogOut: () => any;
 };
 
 type Props = DispatchProps;
 
-const LogoutConfirmation = ({ action }: Props) => (
+const LogoutConfirmation = ({ reallyLogOut }: Props) => (
   <UnsynchronizedConfirmation
     description="Logging out will delete any unsynchronized notes."
     unsafeAction="Log out"
     safeAction="Safely log out"
-    action={action}
+    action={reallyLogOut}
   />
 );
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  action: actions.ui.reallyLogOut,
+  reallyLogOut: actions.ui.reallyLogOut,
 };
 
 export default connect(null, mapDispatchToProps)(LogoutConfirmation);

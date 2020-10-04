@@ -7,22 +7,22 @@ import UnsynchronizedConfirmation from '../unsynchronized';
 import type * as S from '../../state';
 
 type DispatchProps = {
-  action: () => any;
+  reallyCloseWindow: () => any;
 };
 
 type Props = DispatchProps;
 
-const CloseWindowConfirmation = ({ action }: Props) => (
+const CloseWindowConfirmation = ({ reallyCloseWindow }: Props) => (
   <UnsynchronizedConfirmation
     description="Closing the app with unsynchronized notes could cause data loss."
     unsafeAction="Close window"
     safeAction="Safely close window"
-    action={action}
+    action={reallyCloseWindow}
   />
 );
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  action: actions.electron.reallyCloseWindow,
+  reallyCloseWindow: actions.electron.reallyCloseWindow,
 };
 
 export default connect(null, mapDispatchToProps)(CloseWindowConfirmation);
