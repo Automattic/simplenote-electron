@@ -13,7 +13,7 @@
   - Custom context menu [#2280](https://github.com/Automattic/simplenote-electron/pull/2280)
   - Make keyboard shortcuts aware of keyboard layout [#2334](https://github.com/Automattic/simplenote-electron/pull/2334)
   - Notifications when a note has changed on the server-side
-  - A full log of changes in this long-running feature branch can be found [here](https://github.com/Automattic/simplenote-electron/pulls?q=is%3Apr+is%3Aclosed+milestone%3ARewrite%2Fbeta)
+  - A full log of changes in this long-running feature branch can be found at [https://github.com/Automattic/simplenote-electron/pulls?q=is%3Apr+is%3Aclosed+milestone%3ARewrite%2Fbeta](https://github.com/Automattic/simplenote-electron/pulls?q=is%3Apr+is%3Aclosed+milestone%3ARewrite%2Fbeta)
 - Add support for importing .md files [#2351](https://github.com/Automattic/simplenote-electron/pull/2351)
 - Linkify internal links in the editor [#2376](https://github.com/Automattic/simplenote-electron/pull/2376)
 
