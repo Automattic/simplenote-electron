@@ -1,5 +1,43 @@
 # Changelog
 
+## [v2.0.0]
+
+### Enhancements
+
+- Rewrite data flow in app to remove races and sync bugs. This is a major update that involved a rewrite from the ground up of some key parts of the app, as well as replacing the editor component and adding support for internal links. [#2148](https://github.com/Automattic/simplenote-electron/pull/2148)
+  Notable changes include:
+  - Server connection indicator in sidebar
+  - Last synced time in note details
+  - Support for internal (inter-note) links
+  - Better performance on long notes
+  - Custom search interface [#2313](https://github.com/Automattic/simplenote-electron/pull/2313), [#2292](https://github.com/Automattic/simplenote-electron/pull/2292)
+  - Custom context menu [#2280](https://github.com/Automattic/simplenote-electron/pull/2280)
+  - Make keyboard shortcuts aware of keyboard layout [#2334](https://github.com/Automattic/simplenote-electron/pull/2334)
+  - Notifications when a note has changed on the server-side
+  - A full log of changes in this long-running feature branch can be found [here](https://github.com/Automattic/simplenote-electron/pulls?q=is%3Apr+is%3Aclosed+milestone%3ARewrite%2Fbeta)
+- Add support for importing .md files [#2351](https://github.com/Automattic/simplenote-electron/pull/2351)
+- Linkify internal links in the editor [#2376](https://github.com/Automattic/simplenote-electron/pull/2376)
+
+### Fixes
+
+- Allow RTL formatting in Markdown mode [#2339](https://github.com/Automattic/simplenote-electron/pull/2339)
+- Hide the search results banner when printing [#2348](https://github.com/Automattic/simplenote-electron/pull/2348)
+- Display first note in Trash when opening Trash [#2349](https://github.com/Automattic/simplenote-electron/pull/2349)
+- Fix a few bugs with undo/redo/selection [#2293](https://github.com/Automattic/simplenote-electron/pull/2293), [#2345](https://github.com/Automattic/simplenote-electron/pull/2345), [#2357](https://github.com/Automattic/simplenote-electron/pull/2357)
+- Open note list when triggering search in narrow mode [#2340](https://github.com/Automattic/simplenote-electron/pull/2340)
+- Fixed tag autocomplete not working with right arrow [#2350](https://github.com/Automattic/simplenote-electron/pull/2350)
+- Hide scrollbars when printing on Legacy Edge [#2347](https://github.com/Automattic/simplenote-electron/pull/2347)
+- Re-layout editor after focus mode change [#2371](https://github.com/Automattic/simplenote-electron/pull/2371)
+- Allow Electron to handle keyboard shortcuts from the menu [#2370](https://github.com/Automattic/simplenote-electron/pull/2370)
+- Make tags in list links until they are being edited [#2352](https://github.com/Automattic/simplenote-electron/pull/2352)
+- Prompt when closing Electron if there are unsynchronized notes [#2277](https://github.com/Automattic/simplenote-electron/pull/2277)
+- Terminology: Change "inter-note link" to "internal link" [#2360](https://github.com/Automattic/simplenote-electron/pull/2360)
+
+### Other changes
+
+- Security: Disabled Electron remote module [#2256](https://github.com/Automattic/simplenote-electron/pull/2256)
+- Add Stylelint for sass linting [#2346](https://github.com/Automattic/simplenote-electron/pull/2346)
+
 ## [v1.21.1]
 
 ### Fixes
