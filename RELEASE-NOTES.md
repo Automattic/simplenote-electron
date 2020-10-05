@@ -5,7 +5,6 @@
 ### Enhancements
 
 - Rewrite data flow in app to remove races and sync bugs. This is a major update that involved a rewrite from the ground up of some key parts of the app, as well as replacing the editor component and adding support for internal links. [#2148](https://github.com/Automattic/simplenote-electron/pull/2148)
-  Notable changes include:
   - Server connection indicator in sidebar
   - Last synced time in note details
   - Support for internal (inter-note) links
