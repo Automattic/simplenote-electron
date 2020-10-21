@@ -57,7 +57,6 @@ type OwnProps = {
 
 type StateProps = {
   editorSelection: [number, number, 'RTL' | 'LTR'];
-  fontSize: number;
   isFocusMode: boolean;
   keyboardShortcuts: boolean;
   lineLength: T.LineLength;
@@ -903,7 +902,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { fontSize, lineLength, noteId, searchQuery, theme } = this.props;
+    const { lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
@@ -944,10 +943,11 @@ class NoteContentEditor extends Component<Props> {
               folding: false,
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
-              fontSize,
               hideCursorInOverviewRuler: true,
               lineDecorationsWidth: editorPadding,
-              lineHeight: fontSize > 20 ? 42 : 24,
+              fontSize: 16,
+              lineHeight: 24,
+              // lineHeight: fontSize > 20 ? 42 : 24,
               lineNumbers: 'off',
               links: true,
               matchBrackets: 'never',
@@ -1007,7 +1007,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
     0,
     'LTR',
   ],
-  fontSize: state.settings.fontSize,
   isFocusMode: state.settings.focusModeEnabled,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   lineLength: state.settings.lineLength,

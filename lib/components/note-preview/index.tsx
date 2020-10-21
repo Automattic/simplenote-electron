@@ -16,7 +16,6 @@ type OwnProps = {
 };
 
 type StateProps = {
-  fontSize: number;
   isFocused: boolean;
   note: T.Note | null;
   noteId: T.EntityId | null;
@@ -34,7 +33,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export const NotePreview: FunctionComponent<Props> = ({
   editNote,
-  fontSize,
   isFocused,
   note,
   noteId,
@@ -157,7 +155,6 @@ export const NotePreview: FunctionComponent<Props> = ({
           ref={previewNode}
           className="note-detail-markdown theme-color-bg theme-color-fg"
           data-markdown-root
-          style={{ fontSize: `${fontSize}px` }}
         >
           <div style={{ whiteSpace: 'pre' }}>
             {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
@@ -173,7 +170,6 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const note = props.note ?? state.data.notes.get(noteId);
 
   return {
-    fontSize: state.settings.fontSize,
     isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
     note,
     noteId,

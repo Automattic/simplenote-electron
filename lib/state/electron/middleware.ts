@@ -49,18 +49,6 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         dispatch(actions.ui.createNote());
         return;
 
-      case 'increaseFontSize':
-        dispatch(actions.settings.increaseFontSize());
-        return;
-
-      case 'decreaseFontSize':
-        dispatch(actions.settings.decreaseFontSize());
-        return;
-
-      case 'resetFontSize':
-        dispatch(actions.settings.resetFontSize());
-        return;
-
       case 'setLineLength':
         dispatch(actions.settings.setLineLength(command.lineLength));
         return;

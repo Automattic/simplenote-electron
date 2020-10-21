@@ -1,18 +1,6 @@
 import * as A from '../action-types';
 import * as T from '../../types';
 
-export const increaseFontSize: A.ActionCreator<A.IncreaseFontSize> = () => ({
-  type: 'INCREASE_FONT_SIZE',
-});
-
-export const decreaseFontSize: A.ActionCreator<A.DecreaseFontSize> = () => ({
-  type: 'DECREASE_FONT_SIZE',
-});
-
-export const resetFontSize: A.ActionCreator<A.ResetFontSize> = () => ({
-  type: 'RESET_FONT_SIZE',
-});
-
 export const activateTheme: A.ActionCreator<A.SetTheme> = (theme: T.Theme) => ({
   type: 'setTheme',
   theme,
