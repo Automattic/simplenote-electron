@@ -476,6 +476,7 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.transposeLetters', // ctrl+T
       'editor.action.triggerSuggest', // ctrl+space
       'expandLineSelection', // meta+L
+      'editor.action.gotoLine', // ctrl+G
       // search shortcuts
       'actions.find',
       'actions.findWithSelection',
