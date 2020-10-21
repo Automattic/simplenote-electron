@@ -142,6 +142,31 @@ const buildViewMenu = (settings, isAuthenticated) => {
       {
         role: 'ResetZoom',
       },
+
+      // workarounds for numeric keypad zoom in / zoom out,
+      // see https://github.com/electron/electron/issues/5256#issuecomment-692068367
+      {
+        label: 'Zoom &In',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+numadd',
+        click: appCommandSender({ action: 'increaseFontSize' }),
+      },
+      {
+        label: 'Zoom &Out',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+numsub',
+        click: appCommandSender({ action: 'decreaseFontSize' }),
+      },
+      {
+        label: '&Actual Size',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+num0',
+        click: appCommandSender({ action: 'resetFontSize' }),
+      },
+
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Focus Mode',
