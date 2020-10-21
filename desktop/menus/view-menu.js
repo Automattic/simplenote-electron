@@ -127,21 +127,26 @@ const buildViewMenu = (settings, isAuthenticated) => {
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Zoom &In',
+        role: 'ZoomIn',
         visible: isAuthenticated,
         accelerator: 'CommandOrControl+=',
-        click: appCommandSender({ action: 'increaseFontSize' }),
+      },
+      {
+        label: 'Zoom &In',
+        role: 'ZoomIn',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+Plus',
       },
       {
         label: 'Zoom &Out',
+        role: 'ZoomOut',
         visible: isAuthenticated,
-        accelerator: 'CommandOrControl+-',
-        click: appCommandSender({ action: 'decreaseFontSize' }),
       },
       {
         label: '&Actual Size',
         visible: isAuthenticated,
-        accelerator: 'CommandOrControl+0',
-        click: appCommandSender({ action: 'resetFontSize' }),
+        role: 'ResetZoom',
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
