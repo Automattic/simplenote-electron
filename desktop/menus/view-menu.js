@@ -143,7 +143,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
         role: 'ResetZoom',
       },
 
-      // workarounds for numeric keypad zoom in / zoom out,
+      // backup shortcuts for numeric keypad,
       // see https://github.com/electron/electron/issues/5256#issuecomment-692068367
       {
         label: 'Zoom &In',
