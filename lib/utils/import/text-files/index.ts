@@ -38,8 +38,8 @@ class TextFileImporter extends EventEmitter {
       fileReader.onload = (event) => {
         let noteContent = event.target.result;
 
-        // Trim the .txt extension from the file name
-        const fileTitle = file.name.slice(0, -4);
+        // Trim the extension from the file name
+        const fileTitle = file.name.substring(0, file.name.lastIndexOf('.'));
         if (!startsWith(noteContent, fileTitle)) {
           // Add the file title to the top of the note content
           noteContent = fileTitle + '\n\n' + noteContent;
