@@ -134,7 +134,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
       {
         label: 'Zoom &In',
         role: 'ZoomIn',
-        visible: false,
+        visible: false, // enable shortcut to work both with and without Shift
         acceleratorWorksWhenHidden: true,
         accelerator: 'CommandOrControl+Plus',
       },
@@ -145,8 +145,8 @@ const buildViewMenu = (settings, isAuthenticated) => {
       },
       {
         label: '&Actual Size',
-        visible: isAuthenticated,
         role: 'ResetZoom',
+        visible: isAuthenticated,
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
