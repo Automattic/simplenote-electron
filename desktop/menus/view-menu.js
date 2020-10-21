@@ -126,27 +126,19 @@ const buildViewMenu = (settings, isAuthenticated) => {
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
-        label: 'Zoom &In',
         role: 'ZoomIn',
-        visible: isAuthenticated,
-        accelerator: 'CommandOrControl+=',
       },
       {
-        label: 'Zoom &In',
         role: 'ZoomIn',
-        visible: false, // enable shortcut to work both with and without Shift
+        visible: false, // enable ZoomIn shortcut to work both with and without Shift on OSX
         acceleratorWorksWhenHidden: true,
-        accelerator: 'CommandOrControl+Plus',
+        accelerator: platform.isOSX() ? 'CommandOrControl+=' : '',
       },
       {
-        label: 'Zoom &Out',
         role: 'ZoomOut',
-        visible: isAuthenticated,
       },
       {
-        label: '&Actual Size',
         role: 'ResetZoom',
-        visible: isAuthenticated,
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {

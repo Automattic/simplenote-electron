@@ -947,7 +947,6 @@ class NoteContentEditor extends Component<Props> {
               lineDecorationsWidth: editorPadding,
               fontSize: 16,
               lineHeight: 24,
-              // lineHeight: fontSize > 20 ? 42 : 24,
               lineNumbers: 'off',
               links: true,
               matchBrackets: 'never',
