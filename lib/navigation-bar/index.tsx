@@ -15,7 +15,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  autoHideMenuBar: boolean;
+  fontSize: number;
   isDialogOpen: boolean;
   openedTag: T.TagEntity | null;
   showNavigation: boolean;
@@ -64,9 +64,12 @@ export class NavigationBar extends Component<Props> {
   };
 
   render() {
-    const { autoHideMenuBar, onAbout, onSettings, onShowAllNotes } = this.props;
+    const { fontSize, onAbout, onSettings, onShowAllNotes } = this.props;
     return (
-      <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
+      <div
+        className="navigation-bar theme-color-bg theme-color-fg theme-color-border"
+        style={{ fontSize: `${fontSize}px` }}
+      >
         <div className="navigation-bar__folders">
           <NavigationBarItem
             icon={<NotesIcon />}
@@ -131,7 +134,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   settings,
   ui: { dialogs, openedTag, showNavigation, showTrash },
 }) => ({
-  autoHideMenuBar: settings.autoHideMenuBar,
+  fontSize: settings.fontSize,
   isDialogOpen: dialogs.length > 0,
   openedTag,
   showNavigation,

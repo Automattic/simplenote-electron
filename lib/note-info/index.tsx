@@ -16,6 +16,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
+  fontSize: number;
   isMarkdown: boolean;
   isPinned: boolean;
   noteId: T.EntityId;
@@ -75,14 +76,17 @@ export class NoteInfo extends Component<Props> {
   };
 
   render() {
-    const { isMarkdown, isPinned, noteId, note } = this.props;
+    const { fontSize, isMarkdown, isPinned, noteId, note } = this.props;
     const formattedDate =
       note.modificationDate && formatTimestamp(note.modificationDate);
     const isPublished = includes(note.systemTags, 'published');
     const publishURL = this.getPublishURL(note.publishURL);
 
     return (
-      <div className="note-info theme-color-bg theme-color-fg theme-color-border">
+      <div
+        className="note-info theme-color-bg theme-color-fg theme-color-border"
+        style={{ fontSize: `${fontSize}px` }}
+      >
         <div className="note-info-panel note-info-stats theme-color-border">
           <div className="note-info-header">
             <PanelTitle headingLevel={2}>Info</PanelTitle>
@@ -250,13 +254,14 @@ function characterCount(content: string) {
   );
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
   data,
   ui: { openedNote },
 }) => {
   const note = data.notes.get(openedNote);
 
   return {
+    fontSize: state.settings.fontSize,
     noteId: openedNote,
     note: note,
     isMarkdown: note?.systemTags.includes('markdown'),

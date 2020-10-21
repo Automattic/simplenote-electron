@@ -19,6 +19,7 @@ import * as T from '../types';
 
 type StateProps = {
   filteredNotes: T.EntityId[];
+  fontSize: number;
   hasLoaded: boolean;
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
@@ -158,7 +159,12 @@ export class NoteList extends Component<Props> {
       defaultHeight: 21 + 18 + 24 * 4,
       fixedWidth: true,
       keyMapper: (rowIndex) => {
-        const { filteredNotes, searchQuery, tagResultsFound } = this.props;
+        const {
+          filteredNotes,
+          fontSize,
+          searchQuery,
+          tagResultsFound,
+        } = this.props;
 
         if (tagResultsFound === 0 && filteredNotes.length === 0) {
           return 'no-notes';
@@ -267,6 +273,7 @@ export class NoteList extends Component<Props> {
   render() {
     const {
       filteredNotes,
+      fontSize,
       hasLoaded,
       noteDisplay,
       onEmptyTrash,
@@ -303,7 +310,10 @@ export class NoteList extends Component<Props> {
     );
 
     return (
-      <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
+      <div
+        className={classNames('note-list', { 'is-empty': isEmptyList })}
+        style={{ fontSize: `${fontSize}px` }}
+      >
         {isEmptyList ? (
           <span className="note-list-placeholder">
             {hasLoaded ? 'No Notes' : 'Loading Notes'}
@@ -343,6 +353,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
+    fontSize: state.settings.fontSize,
     openedNote: state.ui.openedNote,
     openedTag: state.ui.openedTag,
     searchQuery: state.ui.searchQuery,
