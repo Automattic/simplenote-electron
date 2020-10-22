@@ -77,4 +77,33 @@
       flex: 1 0 auto;
     }
   }
+
+  .reference-link {
+    display: block;
+    padding: 5px;
+    text-align: left;
+    text-decoration: none;
+
+    span {
+      color: $studio-gray-50;
+      display: block;
+      margin: 0;
+    }
+
+    .reference-title {
+      color: $studio-gray-80;
+      font-style: italic;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.theme-dark {
+  .reference-link {
+    .reference-title {
+      color: $studio-white;
+    }
+  }
 }

@@ -10,6 +10,7 @@ import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
 import CrossIcon from '../icons/cross';
 import getNoteTitleAndPreview from '../utils/note-utils';
+import References from './references';
 
 import actions from '../state/actions';
 
@@ -163,6 +164,7 @@ export class NoteInfo extends Component<Props> {
             </span>
           </div>
         )}
+        <References></References>
       </div>
     );
   }
