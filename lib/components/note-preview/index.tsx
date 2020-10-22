@@ -118,12 +118,17 @@ export const NotePreview: FunctionComponent<Props> = ({
           const taskIndex = Array.prototype.indexOf.call(allTasks, node);
 
           let matchCount = 0;
-          const content = note.content.replace(/[\ue000|\ue001]/g, (match) =>
-            matchCount++ === taskIndex
-              ? match === '\ue000'
-                ? '\ue001'
-                : '\ue000'
-              : match
+
+          const content = note.content.replace(
+            /(- \[x\]|- \[ \])/g,
+            (match) => {
+              debugger;
+              return matchCount++ === taskIndex
+                ? match === '- [ ]'
+                  ? '- [x]'
+                  : '- [ ]'
+                : match;
+            }
           );
 
           editNote(noteId, { content });
