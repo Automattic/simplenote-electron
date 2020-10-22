@@ -61,23 +61,20 @@
     color: $studio-gray-50;
   }
 
-  .note-info-link-text {
-    width: 100%;
-    border: none;
-    padding: 0 8px 0 0;
-    text-overflow: ellipsis;
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  .note-info-form {
+  .note-info-copy {
     display: flex;
-  }
+    flex-direction: row;
 
-  .note-info-copy-button {
-    padding: 0;
-    flex: 1 0 auto;
+    .note-info-link-text {
+      border: none;
+      overflow: hidden;
+      padding: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    button {
+      flex: 1 0 auto;
+    }
   }
 }
