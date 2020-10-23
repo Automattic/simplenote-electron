@@ -158,11 +158,10 @@ const buildViewMenu = (settings, isAuthenticated) => {
         accelerator: 'CommandOrControl+numsub',
       },
       {
-        label: '&Actual Size',
+        role: 'ResetZoom',
         visible: false,
         acceleratorWorksWhenHidden: true,
         accelerator: 'CommandOrControl+num0',
-        click: appCommandSender({ action: 'resetFontSize' }),
       },
 
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
