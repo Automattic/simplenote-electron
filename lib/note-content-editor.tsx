@@ -361,7 +361,6 @@ class NoteContentEditor extends Component<Props> {
 
     // try to get any selected text first
     const selection = editor.getSelection();
-    let lineNumber = null;
     if (selection) {
       for (
         let i = selection.startLineNumber;
@@ -375,8 +374,7 @@ class NoteContentEditor extends Component<Props> {
       if (!position) {
         return;
       }
-      lineNumber = position.lineNumber;
-      this.toggleChecklistForLine(editor, lineNumber);
+      this.toggleChecklistForLine(editor, position.lineNumber);
     }
   };
 
