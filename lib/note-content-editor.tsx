@@ -354,11 +354,6 @@ class NoteContentEditor extends Component<Props> {
 
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
-    const model = editor.getModel();
-    if (!model) {
-      return;
-    }
-
     // try to get any selected text first
     const selection = editor.getSelection();
     if (selection) {
