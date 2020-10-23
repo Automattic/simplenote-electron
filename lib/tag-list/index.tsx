@@ -127,8 +127,7 @@ export class TagList extends Component<Props> {
 
   reorderTag: SortEndHandler = ({ newIndex, nodes, oldIndex }) => {
     const tagName = nodes[oldIndex].node.dataset.tagName;
-
-    this.props.reorderTag(tagName, newIndex + 1);
+    this.props.reorderTag(tagName, newIndex);
   };
 
   render() {
