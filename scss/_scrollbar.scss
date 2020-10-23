@@ -12,6 +12,7 @@
   background: $studio-gray-10;
   border-radius: 100px;
   border: 4px solid $studio-white;
+  min-height: 24px;
 }
 // hover effect for scrollbar 'thumb'
 ::-webkit-scrollbar-thumb:hover {
