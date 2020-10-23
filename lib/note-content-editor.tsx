@@ -659,6 +659,7 @@ class NoteContentEditor extends Component<Props> {
       id: 'cancel_selection',
       label: 'Cancel Selection',
       keybindings: [monaco.KeyCode.Escape],
+      keybindingContext: '!suggestWidgetVisible',
       run: this.cancelSelectionOrSearch,
     });
 
