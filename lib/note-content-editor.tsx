@@ -359,11 +359,35 @@ class NoteContentEditor extends Component<Props> {
       return;
     }
 
-    const position = editor.getPosition();
-    if (!position) {
+    // try to get any selected text first
+    const selection = editor.getSelection();
+    let lineNumber = null;
+    if (selection) {
+      for (
+        let i = selection.startLineNumber;
+        i <= selection.endLineNumber;
+        i++
+      ) {
+        this.toggleChecklistForLine(editor, i);
+      }
+    } else {
+      const position = editor.getPosition();
+      if (!position) {
+        return;
+      }
+      lineNumber = position.lineNumber;
+      this.toggleChecklistForLine(editor, lineNumber);
+    }
+  };
+
+  toggleChecklistForLine = (
+    editor: Editor.IStandaloneCodeEditor,
+    lineNumber: number
+  ) => {
+    const model = editor.getModel();
+    if (!model) {
       return;
     }
-    const lineNumber = position.lineNumber;
     const thisLine = model.getLineContent(lineNumber);
 
     // "(1)A line without leading space"
