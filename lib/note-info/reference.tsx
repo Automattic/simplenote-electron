@@ -46,7 +46,7 @@ export const Reference: FunctionComponent<Props> = ({
     <button className="reference-link" onClick={openNote}>
       <span className="reference-title note-info-name">{reference.title}</span>
       <span>
-        {reference.count} Reference{reference.count > 1 ? 's' : ''}, Last
+        {reference.count} Reference{reference.count > 1 ? 's' : ''}, last
         modified {formattedDate}
       </span>
     </button>
