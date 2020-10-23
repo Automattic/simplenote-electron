@@ -142,6 +142,28 @@ const buildViewMenu = (settings, isAuthenticated) => {
       {
         role: 'ResetZoom',
       },
+
+      // backup shortcuts for numeric keypad,
+      // see https://github.com/electron/electron/issues/5256#issuecomment-692068367
+      {
+        role: 'ZoomIn',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+numadd',
+      },
+      {
+        role: 'ZoomOut',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+numsub',
+      },
+      {
+        role: 'ResetZoom',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
+        accelerator: 'CommandOrControl+num0',
+      },
+
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Focus Mode',
