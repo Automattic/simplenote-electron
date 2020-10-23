@@ -142,15 +142,6 @@ export class NoteInfo extends Component<Props> {
             </span>
           </label>
         </div>
-        <div className="note-info-panel note-info-internal-link theme-color-border">
-          <span className="note-info-item-text">
-            <span className="note-info-name">Internal link</span>
-            <div className="note-info-copy">
-              <p className="note-info-detail note-info-link-text">{`simplenote://note/${noteId}`}</p>
-              <ClipboardButton text={noteLink} />
-            </div>
-          </span>
-        </div>
         {isPublished && (
           <div className="note-info-panel note-info-public-link theme-color-border">
             <span className="note-info-item-text">
@@ -164,6 +155,15 @@ export class NoteInfo extends Component<Props> {
             </span>
           </div>
         )}
+        <div className="note-info-panel note-info-internal-link theme-color-border">
+          <span className="note-info-item-text">
+            <span className="note-info-name">Internal link</span>
+            <div className="note-info-copy">
+              <p className="note-info-detail note-info-link-text">{`simplenote://note/${noteId}`}</p>
+              <ClipboardButton text={noteLink} />
+            </div>
+          </span>
+        </div>
         <References></References>
       </div>
     );
