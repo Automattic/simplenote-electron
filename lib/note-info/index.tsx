@@ -4,6 +4,7 @@ import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
 import format from 'date-fns/format';
 
+import ClipboardButton from '../components/clipboard-button';
 import LastSyncTime from '../components/last-sync-time';
 import PanelTitle from '../components/panel-title';
 import ToggleControl from '../controls/toggle';
@@ -35,42 +36,12 @@ export class NoteInfo extends Component<Props> {
 
   handleClickOutside = this.props.onOutsideClick;
 
-  copyNoteLink = (event: React.MouseEvent) => {
-    const copyButton = event.currentTarget;
-    const previousSibling = copyButton.previousSibling;
-    if (null === previousSibling) {
-      // @TODO: Handle the failure case - this should never happen
-      return;
-    }
-
-    const linkArea = previousSibling as HTMLInputElement;
-
-    const { title } = getNoteTitleAndPreview(this.props.note);
-    linkArea.value = `[${title}](simplenote://note/${this.props.noteId})`;
-    linkArea.select();
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      // @TODO: Make sure we don't fail - add missing browser compatability?
-    }
-
-    linkArea.value = `simplenote://note/${this.props.noteId}`;
-    copyButton.focus();
+  getNoteLink = (note: T.Note, noteId: T.EntityId) => {
+    const { title } = getNoteTitleAndPreview(note);
+    return `[${title}](simplenote://note/${noteId})`;
   };
 
-  copyPublishURL = () => {
-    this.publishUrlElement.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      return;
-    }
-
-    this.copyUrlElement.focus();
-  };
-
-  getPublishURL = (url) => {
+  getPublishURL = (url: string | undefined) => {
     return isEmpty(url) ? null : `http://simp.ly/p/${url}`;
   };
 
@@ -80,6 +51,7 @@ export class NoteInfo extends Component<Props> {
       note.modificationDate && formatTimestamp(note.modificationDate);
     const isPublished = includes(note.systemTags, 'published');
     const publishURL = this.getPublishURL(note.publishURL);
+    const noteLink = this.getNoteLink(note, noteId);
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
@@ -172,20 +144,9 @@ export class NoteInfo extends Component<Props> {
         <div className="note-info-panel note-info-internal-link theme-color-border">
           <span className="note-info-item-text">
             <span className="note-info-name">Internal link</span>
-            <div className="note-info-form">
-              <input
-                className="note-info-detail note-info-link-text"
-                value={`simplenote://note/${noteId}`}
-                readOnly={true}
-                spellCheck={false}
-              />
-              <button
-                type="button"
-                className="button button-borderless note-info-copy-button"
-                onClick={this.copyNoteLink}
-              >
-                Copy
-              </button>
+            <div className="note-info-copy">
+              <p className="note-info-detail note-info-link-text">{`simplenote://note/${noteId}`}</p>
+              <ClipboardButton text={noteLink} />
             </div>
           </span>
         </div>
@@ -193,22 +154,11 @@ export class NoteInfo extends Component<Props> {
           <div className="note-info-panel note-info-public-link theme-color-border">
             <span className="note-info-item-text">
               <span className="note-info-name">Public link</span>
-              <div className="note-info-form">
-                <input
-                  ref={(e) => (this.publishUrlElement = e)}
-                  className="note-info-detail note-info-link-text"
-                  value={publishURL}
-                  readOnly={true}
-                  spellCheck={false}
-                />
-                <button
-                  ref={(e) => (this.copyUrlElement = e)}
-                  type="button"
-                  className="button button-borderless note-info-copy-button"
-                  onClick={this.copyPublishURL}
-                >
-                  Copy
-                </button>
+              <div className="note-info-copy">
+                <p className="note-info-detail note-info-link-text">
+                  {publishURL}
+                </p>
+                <ClipboardButton text={publishURL} />
               </div>
             </span>
           </div>
