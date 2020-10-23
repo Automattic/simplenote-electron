@@ -146,18 +146,16 @@ const buildViewMenu = (settings, isAuthenticated) => {
       // backup shortcuts for numeric keypad,
       // see https://github.com/electron/electron/issues/5256#issuecomment-692068367
       {
-        label: 'Zoom &In',
+        role: 'ZoomIn',
         visible: false,
         acceleratorWorksWhenHidden: true,
         accelerator: 'CommandOrControl+numadd',
-        click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
-        label: 'Zoom &Out',
+        role: 'ZoomOut',
         visible: false,
         acceleratorWorksWhenHidden: true,
         accelerator: 'CommandOrControl+numsub',
-        click: appCommandSender({ action: 'decreaseFontSize' }),
       },
       {
         label: '&Actual Size',
