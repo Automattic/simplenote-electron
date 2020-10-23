@@ -34,22 +34,6 @@ const focusModeEnabled: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const fontSizes = [10, 14, 16, 20, 24, 34];
-const fontSize: A.Reducer<number> = (state = 16, action) => {
-  switch (action.type) {
-    case 'DECREASE_FONT_SIZE':
-      return fontSizes[Math.max(0, fontSizes.indexOf(state) - 1)];
-    case 'INCREASE_FONT_SIZE':
-      return fontSizes[
-        Math.min(fontSizes.length - 1, fontSizes.indexOf(state) + 1)
-      ];
-    case 'RESET_FONT_SIZE':
-      return 16;
-    default:
-      return state;
-  }
-};
-
 const keyboardShortcuts: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'KEYBOARD_SHORTCUTS_TOGGLE':
@@ -159,7 +143,6 @@ export default combineReducers({
   accountName,
   autoHideMenuBar,
   focusModeEnabled,
-  fontSize,
   keyboardShortcuts,
   lineLength,
   markdownEnabled,

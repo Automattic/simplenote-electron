@@ -62,7 +62,6 @@ export type CreateNoteWithId = Action<
   'CREATE_NOTE_WITH_ID',
   { noteId: T.EntityId; note?: Partial<T.Note> }
 >;
-export type DecreaseFontSize = Action<'DECREASE_FONT_SIZE'>;
 export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
 export type ExportNotes = Action<'EXPORT_NOTES'>;
 export type FilterNotes = Action<
@@ -70,7 +69,6 @@ export type FilterNotes = Action<
   { noteIds: T.EntityId[]; tagHashes: T.TagHash[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
-export type IncreaseFontSize = Action<'INCREASE_FONT_SIZE'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId?: T.EntityId }>;
 export type OpenRevision = Action<
@@ -88,7 +86,6 @@ export type RequestNotifications = Action<
   'REQUEST_NOTIFICATIONS',
   { sendNotifications: boolean }
 >;
-export type ResetFontSize = Action<'RESET_FONT_SIZE'>;
 export type RestoreOpenNote = Action<'RESTORE_OPEN_NOTE'>;
 export type Search = Action<'SEARCH', { searchQuery: string }>;
 export type SelectNote = Action<'SELECT_NOTE', { noteId: T.EntityId }>;
@@ -315,7 +312,6 @@ export type ActionType =
   | CloseWindow
   | CreateNote
   | CreateNoteWithId
-  | DecreaseFontSize
   | DeleteOpenNoteForever
   | DeleteNoteForever
   | EditNote
@@ -328,7 +324,6 @@ export type ActionType =
   | GhostSetEntity
   | ImportNote
   | ImportNoteWithId
-  | IncreaseFontSize
   | InsertTask
   | InsertTaskIntoNote
   | LoadRevisions
@@ -356,7 +351,6 @@ export type ActionType =
   | RenameTag
   | ReorderTag
   | RequestNotifications
-  | ResetFontSize
   | RestoreOpenNote
   | RestoreNote
   | RestoreNoteRevision

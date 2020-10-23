@@ -12,7 +12,6 @@ type OwnProps = {
 };
 
 type StateProps = {
-  fontSize: number;
   isDialogOpen: boolean;
   keyboardShortcuts: boolean;
   openedNote: T.EntityId | null;
@@ -57,7 +56,6 @@ export class NoteDetail extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  fontSize: state.settings.fontSize,
   isDialogOpen: state.ui.dialogs.length > 0,
   keyboardShortcuts: state.settings.keyboardShortcuts,
   openedNote: state.ui.openedNote,

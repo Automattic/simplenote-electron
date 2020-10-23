@@ -126,22 +126,21 @@ const buildViewMenu = (settings, isAuthenticated) => {
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
-        label: 'Zoom &In',
-        visible: isAuthenticated,
+        role: 'ZoomIn',
+      },
+      {
+        // enable ZoomIn shortcut to work both with and without Shift
+        // the default accelerator added by Electron is CommandOrControl+Shift+=
+        role: 'ZoomIn',
+        visible: false,
+        acceleratorWorksWhenHidden: true,
         accelerator: 'CommandOrControl+=',
-        click: appCommandSender({ action: 'increaseFontSize' }),
       },
       {
-        label: 'Zoom &Out',
-        visible: isAuthenticated,
-        accelerator: 'CommandOrControl+-',
-        click: appCommandSender({ action: 'decreaseFontSize' }),
+        role: 'ZoomOut',
       },
       {
-        label: '&Actual Size',
-        visible: isAuthenticated,
-        accelerator: 'CommandOrControl+0',
-        click: appCommandSender({ action: 'resetFontSize' }),
+        role: 'ResetZoom',
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
