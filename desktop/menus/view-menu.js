@@ -129,10 +129,12 @@ const buildViewMenu = (settings, isAuthenticated) => {
         role: 'ZoomIn',
       },
       {
+        // enable ZoomIn shortcut to work both with and without Shift
+        // the default accelerator added by Electron is CommandOrControl+Shift+=
         role: 'ZoomIn',
-        visible: false, // enable ZoomIn shortcut to work both with and without Shift on OSX
+        visible: false,
         acceleratorWorksWhenHidden: true,
-        accelerator: platform.isOSX() ? 'CommandOrControl+=' : '',
+        accelerator: 'CommandOrControl+=',
       },
       {
         role: 'ZoomOut',
