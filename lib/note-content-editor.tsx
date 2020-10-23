@@ -98,8 +98,6 @@ type OwnState = {
   selectedSearchMatchIndex: number | null;
 };
 
-let hasCompletionProvider = false;
-
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
@@ -176,6 +174,8 @@ class NoteContentEditor extends Component<Props> {
   };
 
   completionProvider: languages.CompletionItemProvider = {
+    triggerCharacters: ['['],
+
     provideCompletionItems(model, position, context, token) {
       const line = model.getLineContent(position.lineNumber);
       if (!line.includes('[')) {
@@ -521,6 +521,10 @@ class NoteContentEditor extends Component<Props> {
         'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
       },
     });
+    monaco.languages.registerCompletionItemProvider(
+      'plaintext',
+      this.completionProvider
+    );
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
@@ -561,13 +565,6 @@ class NoteContentEditor extends Component<Props> {
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
-    if (!hasCompletionProvider) {
-      hasCompletionProvider = true;
-      monaco.languages.registerCompletionItemProvider(
-        'plaintext',
-        this.completionProvider
-      );
-    }
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
