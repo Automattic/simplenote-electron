@@ -240,6 +240,7 @@ const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
       return !state;
 
     case 'NAVIGATION_TOGGLE':
+    case 'SELECT_NOTE':
       return false;
 
     default:
