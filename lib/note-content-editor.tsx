@@ -1054,7 +1054,7 @@ class NoteContentEditor extends Component<Props> {
               minimap: { enabled: false },
               occurrencesHighlight: false,
               overviewRulerBorder: false,
-              quickSuggestions: true,
+              quickSuggestions: false,
               renderIndentGuides: false,
               renderLineHighlight: 'none',
               scrollbar: {
@@ -1064,6 +1064,7 @@ class NoteContentEditor extends Component<Props> {
               },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
+              suggestOnTriggerCharacters: true,
               wordWrap: 'bounded',
               wrappingStrategy: isSafari ? 'simple' : 'advanced',
               wordWrapColumn: 400,
