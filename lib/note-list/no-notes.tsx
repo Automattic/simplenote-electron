@@ -10,31 +10,34 @@ const NoNotes = () => {
   const searchQuery = useSelector((state: S.State) => state.ui.searchQuery);
   const dispatch = useDispatch();
 
-  if (!hasLoaded) {
-    return <div className="note-list-placeholder">Loading Notes</div>;
-  }
+  const getMessage = () => {
+    return hasLoaded
+      ? searchQuery.length
+        ? 'No Results'
+        : 'No Notes'
+      : 'Loading Notes';
+  };
 
-  if (searchQuery.length) {
-    return (
-      <div className="note-list-placeholder">
-        No Results{' '}
-        <button
-          onClick={() =>
-            dispatch(actions.ui.createNote({ content: searchQuery }))
-          }
-        >
-          Create a new note titled &quot;{searchQuery}&quot;
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="note-list-placeholder">
-      No Notes{' '}
+  const getButton = () => {
+    return searchQuery.length ? (
+      <button
+        onClick={() =>
+          dispatch(actions.ui.createNote({ content: searchQuery }))
+        }
+      >
+        Create a new note titled &quot;{searchQuery}&quot;
+      </button>
+    ) : (
       <button onClick={() => dispatch(actions.ui.createNote())}>
         Create a new note
       </button>
+    );
+  };
+
+  return (
+    <div className="note-list-placeholder">
+      {getMessage()}
+      {getButton()}
     </div>
   );
 };
