@@ -8,6 +8,8 @@ import {
 } from 'react-virtualized';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+
+import NoNotes from './no-notes';
 import NoteCell from './note-cell';
 import TagSuggestions from '../tag-suggestions';
 
@@ -19,7 +21,6 @@ import * as T from '../types';
 
 type StateProps = {
   filteredNotes: T.EntityId[];
-  hasLoaded: boolean;
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
@@ -267,7 +268,6 @@ export class NoteList extends Component<Props> {
   render() {
     const {
       filteredNotes,
-      hasLoaded,
       noteDisplay,
       onEmptyTrash,
       openedNote,
@@ -305,9 +305,7 @@ export class NoteList extends Component<Props> {
     return (
       <div className={classNames('note-list', { 'is-empty': isEmptyList })}>
         {isEmptyList ? (
-          <span className="note-list-placeholder">
-            {hasLoaded ? 'No Notes' : 'Loading Notes'}
-          </span>
+          <NoNotes></NoNotes>
         ) : (
           <Fragment>
             <div className={`note-list-items ${noteDisplay}`}>
@@ -338,7 +336,6 @@ export class NoteList extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = (state) => {
   return {
-    hasLoaded: state.ui.hasLoadedNotes,
     isSmallScreen: selectors.isSmallScreen(state),
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,
