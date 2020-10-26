@@ -42,7 +42,6 @@ export const NotePreview: FunctionComponent<Props> = ({
   showRenderedView,
 }) => {
   const previewNode = useRef<HTMLDivElement>();
-
   useEffect(() => {
     const copyRenderedNote = (event: ClipboardEvent) => {
       if (!isFocused) {
@@ -116,12 +115,16 @@ export const NotePreview: FunctionComponent<Props> = ({
           const taskIndex = Array.prototype.indexOf.call(allTasks, node);
 
           let matchCount = 0;
-          const content = note.content.replace(/[\ue000|\ue001]/g, (match) =>
-            matchCount++ === taskIndex
-              ? match === '\ue000'
-                ? '\ue001'
-                : '\ue000'
-              : match
+
+          const content = note.content.replace(
+            /(- \[x\]|- \[ \])/g,
+            (match) => {
+              return matchCount++ === taskIndex
+                ? match === '- [ ]'
+                  ? '- [x]'
+                  : '- [ ]'
+                : match;
+            }
           );
 
           editNote(noteId, { content });
@@ -132,7 +135,7 @@ export const NotePreview: FunctionComponent<Props> = ({
     previewNode.current?.addEventListener('click', handleClick, true);
     return () =>
       previewNode.current?.removeEventListener('click', handleClick, true);
-  }, []);
+  }, [note]);
 
   useEffect(() => {
     if (!previewNode.current) {
