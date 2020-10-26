@@ -29,7 +29,7 @@ const NoNotes = () => {
     <div className="note-list-placeholder">
       No Notes{' '}
       <button onClick={() => dispatch(actions.ui.createNote())}>
-        Create a new note titled &quot;{searchQuery}&quot;
+        Create a new note
       </button>
     </div>
   );
