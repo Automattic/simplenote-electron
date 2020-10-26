@@ -13,8 +13,11 @@ export const closeWindow: A.ActionCreator<A.CloseWindow> = () => ({
   type: 'CLOSE_WINDOW',
 });
 
-export const createNote: A.ActionCreator<A.CreateNote> = () => ({
+export const createNote: A.ActionCreator<A.CreateNote> = (
+  note?: Partial<T.Note>
+) => ({
   type: 'CREATE_NOTE',
+  note: note,
 });
 
 export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = () => ({

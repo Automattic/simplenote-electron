@@ -18,7 +18,11 @@ const NoNotes = () => {
     return (
       <div className="note-list-placeholder">
         No Results{' '}
-        <button onClick={() => dispatch(actions.ui.createNote())}>
+        <button
+          onClick={() =>
+            dispatch(actions.ui.createNote({ content: searchQuery }))
+          }
+        >
           Create a new note titled &quot;{searchQuery}&quot;
         </button>
       </div>
