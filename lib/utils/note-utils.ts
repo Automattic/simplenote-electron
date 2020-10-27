@@ -42,9 +42,29 @@ export const getTitle = (content) => {
  *
  * @param content
  */
-const getPreview = (content: string) => {
+const getPreview = (content: string, searchQuery: string) => {
   let preview = '';
   let lines = 0;
+
+  // contextual note previews
+  if (searchQuery && searchQuery.trim()) {
+    // use only the first word of a multiword query
+    const firstTerm = searchQuery.trim().split(' ')[0];
+    const searchRegex = new RegExp(firstTerm, 'ims');
+    if (searchRegex.test(content)) {
+      const regExp = new RegExp('.{0,10}' + firstTerm + '.{0,200}', 'ims');
+      const matches = regExp.exec(content);
+      if (matches && matches.length > 0) {
+        preview = matches[0];
+        preview = preview.replace(/ +/g, ' ').replaceAll('\n', '').trim();
+
+        // @todo: add '...' before/after to indication truncation
+        return preview;
+      }
+    }
+  }
+  // implicit else: if the query didn't match, fall back to first N lines
+
   let index = content.indexOf('\n');
 
   if (index === -1) {
@@ -80,19 +100,25 @@ const previewCache = new Map<string, [boolean, TitleAndPreview]>();
  * @param note generate the previews for this note
  * @returns title and excerpt (if available)
  */
-export const noteTitleAndPreview = (note: T.Note): TitleAndPreview => {
+export const noteTitleAndPreview = (
+  note: T.Note,
+  searchQuery?: String
+): TitleAndPreview => {
   const stripMarkdown = isMarkdown(note);
-  const cached = previewCache.get(note.content);
-  if (cached) {
-    const [wasMarkdown, value] = cached;
-    if (wasMarkdown === stripMarkdown) {
-      return value;
-    }
-  }
+  // const cached = previewCache.get(note.content);
+  // if (cached) {
+  //   const [wasMarkdown, value] = cached;
+  //   if (wasMarkdown === stripMarkdown) {
+  //     return value;
+  //   }
+  // }
 
   const content = note.content || '';
   const title = formatPreview(stripMarkdown, getTitle(content));
-  const preview = formatPreview(stripMarkdown, getPreview(content));
+  const preview = formatPreview(
+    stripMarkdown,
+    getPreview(content, searchQuery)
+  );
   const result = { title, preview };
 
   previewCache.set(note.content, [stripMarkdown, result]);
