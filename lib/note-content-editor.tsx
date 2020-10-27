@@ -354,16 +354,33 @@ class NoteContentEditor extends Component<Props> {
 
   insertOrRemoveCheckboxes = (editor: Editor.IStandaloneCodeEditor) => {
     // todo: we're not disabling this if !this.props.keyboardShortcuts, do we want to?
+    // try to get any selected text first
+    const selection = editor.getSelection();
+    if (selection) {
+      for (
+        let i = selection.startLineNumber;
+        i <= selection.endLineNumber;
+        i++
+      ) {
+        this.toggleChecklistForLine(editor, i);
+      }
+    } else {
+      const position = editor.getPosition();
+      if (!position) {
+        return;
+      }
+      this.toggleChecklistForLine(editor, position.lineNumber);
+    }
+  };
+
+  toggleChecklistForLine = (
+    editor: Editor.IStandaloneCodeEditor,
+    lineNumber: number
+  ) => {
     const model = editor.getModel();
     if (!model) {
       return;
     }
-
-    const position = editor.getPosition();
-    if (!position) {
-      return;
-    }
-    const lineNumber = position.lineNumber;
     const thisLine = model.getLineContent(lineNumber);
 
     // "(1)A line without leading space"
