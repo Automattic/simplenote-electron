@@ -493,6 +493,8 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.triggerSuggest', // ctrl+space
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
+      'editor.action.insertCursorAbove', // alt+meta+UpArrow
+      'editor.action.insertCursorBelow', // alt+meta+DownArrow
       // search shortcuts
       'actions.find',
       'actions.findWithSelection',
