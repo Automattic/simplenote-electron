@@ -37,7 +37,7 @@ const NoNotes = () => {
   return (
     <div className="note-list-placeholder">
       {getMessage()}
-      {getButton()}
+      {hasLoaded && getButton()}
     </div>
   );
 };
