@@ -92,11 +92,14 @@ type Props = OwnProps & StateProps & DispatchProps;
 type OwnState = {
   content: string;
   editor: 'fast' | 'full';
+  hasCompletionProvider: boolean;
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
   selectedSearchMatchIndex: number | null;
 };
+
+let hasCompletionProvider = false;
 
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
@@ -521,10 +524,14 @@ class NoteContentEditor extends Component<Props> {
         'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
       },
     });
-    monaco.languages.registerCompletionItemProvider(
-      'plaintext',
-      this.completionProvider
-    );
+
+    if (!hasCompletionProvider) {
+      hasCompletionProvider = true;
+      monaco.languages.registerCompletionItemProvider(
+        'plaintext',
+        this.completionProvider
+      );
+    }
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
