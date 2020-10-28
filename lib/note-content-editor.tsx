@@ -518,6 +518,31 @@ class NoteContentEditor extends Component<Props> {
     );
 
     editor.addAction({
+      id: 'insertCursorAboveNoMulticursor',
+      label: 'Add Cursor Above',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
+      ],
+      run: () => {
+        if (!editor.getSelection()?.isEmpty()) {
+          editor.trigger('shortcuts', 'editor.action.insertCursorAbove', null);
+        }
+      },
+    });
+    editor.addAction({
+      id: 'insertCursorBelowNoMulticursor',
+      label: 'Add Cursor Below',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
+      ],
+      run: () => {
+        if (!editor.getSelection()?.isEmpty()) {
+          editor.trigger('shortcuts', 'editor.action.insertCursorBelow', null);
+        }
+      },
+    });
+
+    editor.addAction({
       id: 'context_undo',
       label: 'Undo',
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
