@@ -623,7 +623,7 @@ class NoteContentEditor extends Component<Props> {
     });
 
     editor.addAction({
-      id: 'insertCursorAboveNoMulticursor',
+      id: 'selectUpWithoutMulticursor',
       label: 'Select Up',
       keybindings: [
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
@@ -633,7 +633,7 @@ class NoteContentEditor extends Component<Props> {
       },
     });
     editor.addAction({
-      id: 'insertCursorBelowNoMulticursor',
+      id: 'selectDownWithoutMulticursor',
       label: 'Select Down',
       keybindings: [
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
