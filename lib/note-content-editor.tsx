@@ -92,7 +92,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 type OwnState = {
   content: string;
   editor: 'fast' | 'full';
-  hasCompletionProvider: boolean;
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
