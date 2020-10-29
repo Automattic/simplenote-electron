@@ -145,6 +145,7 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
+    this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
     this.toggleShortcuts(true);
