@@ -227,6 +227,7 @@ class NoteContentEditor extends Component<Props> {
           : [];
 
       return {
+        incomplete: true,
         suggestions: notes.map((note, index) => ({
           additionalTextEdits,
           kind: note.isPinned
