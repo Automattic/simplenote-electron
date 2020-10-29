@@ -1,10 +1,12 @@
 import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 
+import type * as T from '../../types';
+
 type OwnProps = {
   onSelect?: (event: React.MouseEvent<HTMLDivElement>) => any;
   selected: boolean;
-  tagName: string;
+  tagName: T.TagName | undefined;
 };
 
 const TagChip: FunctionComponent<OwnProps> = ({
