@@ -917,6 +917,7 @@ class NoteContentEditor extends Component<Props> {
         className={`note-content-editor-shell${
           overTodo ? ' cursor-pointer' : ''
         }`}
+        onClick={this.focusEditor}
       >
         <div
           className={`note-content-plaintext${
