@@ -283,6 +283,7 @@ export const middleware: S.Middleware = (store) => {
 
     searchTimer = setTimeout(() => {
       const searchResults = setFilteredNotes(runSearch());
+
       store.dispatch({
         type: 'FILTER_NOTES',
         ...searchResults,

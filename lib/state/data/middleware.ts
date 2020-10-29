@@ -27,6 +27,7 @@ export const middleware: S.Middleware = (store) => (
       } else if (!useMarkdown && markdownInNote >= 0) {
         systemTags.splice(markdownInNote, 1);
       }
+
       return next({
         type: 'CREATE_NOTE_WITH_ID',
         noteId,
