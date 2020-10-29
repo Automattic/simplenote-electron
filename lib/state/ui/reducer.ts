@@ -104,7 +104,7 @@ const editMode: A.Reducer<boolean> = (state = true, action) => {
     case 'TOGGLE_EDIT_MODE': {
       return !state;
     }
-    case 'CREATE_NOTE':
+    case 'CREATE_NOTE_WITH_ID':
       return true;
     default:
       return state;
@@ -220,7 +220,7 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
 
 const searchQuery: A.Reducer<string> = (state = '', action) => {
   switch (action.type) {
-    case 'CREATE_NOTE':
+    case 'CREATE_NOTE_WITH_ID':
       return '';
     case 'SEARCH':
       return action.searchQuery;
@@ -274,7 +274,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
     case 'CLOSE_REVISION':
     case 'OPEN_NOTE':
     case 'SELECT_NOTE':
-    case 'CREATE_NOTE':
+    case 'CREATE_NOTE_WITH_ID':
     case 'RESTORE_NOTE_REVISION':
       return false;
     default:
@@ -286,7 +286,7 @@ const showTrash: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'SELECT_TRASH':
       return true;
-    case 'CREATE_NOTE':
+    case 'CREATE_NOTE_WITH_ID':
     case 'OPEN_TAG':
     case 'SHOW_ALL_NOTES': {
       return false;
