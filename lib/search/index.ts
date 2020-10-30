@@ -58,7 +58,7 @@ export const tagsFromSearch = (query: string) => {
 export let searchNotes: (
   args: Partial<SearchState>,
   maxResults: number
-) => [T.EntityId, T.Note][] = () => [];
+) => [T.EntityId, T.Note | undefined][] = () => [];
 
 export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
