@@ -192,20 +192,28 @@ class NoteContentEditor extends Component<Props> {
   };
 
   completionProvider: (
-    selectedNoteId: T.EntityId | null
-  ) => languages.CompletionItemProvider = (selectedNoteId) => {
+    selectedNoteId: T.EntityId | null,
+    editor: Editor.IStandaloneCodeEditor
+  ) => languages.CompletionItemProvider = (selectedNoteId, editor) => {
     return {
       triggerCharacters: ['['],
 
       provideCompletionItems(model, position, context, token) {
         const line = model.getLineContent(position.lineNumber);
-        const { soFar, precedingBracket } = getTextAfterBracket(
-          line,
-          position.column
-        );
-        if (null === soFar) {
+        const precedingOpener = line.lastIndexOf('[', position.column);
+        if (-1 === precedingOpener) {
+          editor.trigger('completions', 'hideSuggestWidget', null);
           return null;
         }
+        const precedingCloser = line.lastIndexOf(']', position.column);
+        const precedingBracket =
+          precedingOpener >= 0 && precedingCloser < precedingOpener
+            ? precedingOpener
+            : -1;
+        const soFar =
+          precedingBracket >= 0
+            ? line.slice(precedingBracket + 1, position.column)
+            : '';
 
         const notes = searchNotes(
           {
@@ -223,6 +231,12 @@ class NoteContentEditor extends Component<Props> {
           isPinned: note.systemTags.includes('pinned'),
           ...noteTitleAndPreview(note),
         }));
+
+        if (0 === notes.length) {
+          // dismiss the widget if we don't have anything to suggest
+          editor.trigger('completions', 'hideSuggestWidget', null);
+          return null;
+        }
 
         const additionalTextEdits =
           precedingBracket >= 0
@@ -586,7 +600,6 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.commentLine', // meta+/
       'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
-      'editor.action.triggerSuggest', // ctrl+space
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
       // search shortcuts
@@ -609,26 +622,6 @@ class NoteContentEditor extends Component<Props> {
     editor.createContextKey(
       'allowBrowserKeybinding',
       window.electron ? false : true
-    );
-
-    editor.addCommand(
-      monaco.KeyMod.WinCtrl | monaco.KeyCode.Space,
-      function () {
-        // only show suggestions if we have an open bracket
-        const model = editor.getModel();
-        if (!model) {
-          return;
-        }
-        const position = editor.getPosition();
-        const line = model.getLineContent(position.lineNumber);
-        const { soFar, precedingBracket } = getTextAfterBracket(
-          line,
-          position.column
-        );
-        if (null !== soFar) {
-          editor.trigger('suggestions', 'editor.action.triggerSuggest', null);
-        }
-      }
     );
 
     editor.addAction({
@@ -780,7 +773,7 @@ class NoteContentEditor extends Component<Props> {
     // register completion provider for internal links
     const completionProviderHandle = monaco.languages.registerCompletionItemProvider(
       'plaintext',
-      this.completionProvider(this.state.noteId)
+      this.completionProvider(this.state.noteId, editor)
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
 
