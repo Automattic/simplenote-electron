@@ -86,7 +86,6 @@ class ManualUpdater extends Updater {
   }
 
   onConfirm() {
-    console.log(this.downloadUrl);
     shell.openExternal(this.downloadUrl);
   }
 }

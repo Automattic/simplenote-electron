@@ -12,8 +12,7 @@
     "artifactName": "Simplenote-macOS-${version}.${ext}",
     "entitlements": "./resources/macos/entitlements.mac.plist",
     "entitlementsInherit": "./resources/macos/entitlements.mac.inherit.plist",
-    "hardenedRuntime": true,
-    "target": ["dmg", "zip"]
+    "hardenedRuntime": true
   },
   "dmg": {
     "title": "Simplenote Installer",
