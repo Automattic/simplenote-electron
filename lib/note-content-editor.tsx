@@ -164,8 +164,6 @@ class NoteContentEditor extends Component<Props> {
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
     this.toggleShortcuts(false);
-
-    this.completionProviderHandle?.dispose();
   }
 
   toggleShortcuts = (doEnable: boolean) => {
@@ -530,11 +528,6 @@ class NoteContentEditor extends Component<Props> {
         'textLink.foreground': '#ced9f2', // studio-simplenote-blue-5
       },
     });
-
-    this.completionProviderHandle = monaco.languages.registerCompletionItemProvider(
-      'plaintext',
-      this.completionProvider()
-    );
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
@@ -753,6 +746,13 @@ class NoteContentEditor extends Component<Props> {
     // make component rerender after the decorators are set.
     this.setState({});
     editor.onDidChangeModelContent(() => this.setDecorators());
+
+    // register completion provider for internal links
+    this.completionProviderHandle = monaco.languages.registerCompletionItemProvider(
+      'plaintext',
+      this.completionProvider()
+    );
+    editor.onDidDispose(() => this.completionProviderHandle?.dispose());
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
