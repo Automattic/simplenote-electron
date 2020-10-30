@@ -100,7 +100,6 @@ type OwnState = {
 
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
-  completionProviderHandle: ReturnType<typeof IDisposable> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
@@ -175,7 +174,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   completionProvider: (
-    selectedNoteId: T.EntityId
+    selectedNoteId: T.EntityId | null
   ) => languages.CompletionItemProvider = (selectedNoteId) => {
     return {
       triggerCharacters: ['['],
@@ -781,11 +780,11 @@ class NoteContentEditor extends Component<Props> {
     editor.onDidChangeModelContent(() => this.setDecorators());
 
     // register completion provider for internal links
-    this.completionProviderHandle = monaco.languages.registerCompletionItemProvider(
+    const completionProviderHandle = monaco.languages.registerCompletionItemProvider(
       'plaintext',
       this.completionProvider(this.state.noteId)
     );
-    editor.onDidDispose(() => this.completionProviderHandle?.dispose());
+    editor.onDidDispose(() => completionProviderHandle?.dispose());
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
