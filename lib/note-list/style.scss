@@ -55,7 +55,15 @@
 
 .note-list-placeholder {
   color: $studio-gray-50;
-  font-size: 1.3em;
+  font-size: 1.5em;
+  text-align: center;
+
+  button {
+    color: $studio-simplenote-blue-50;
+    display: block;
+    font-size: 14px;
+    margin-top: 7px;
+  }
 }
 
 .note-list-items {

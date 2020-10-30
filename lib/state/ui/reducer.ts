@@ -141,7 +141,7 @@ const filteredNotes: A.Reducer<T.EntityId[]> = (
 const hasLoadedNotes: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'FILTER_NOTES':
-      return action.noteIds.length > 0 ? true : state;
+      return true;
 
     default:
       return state;
