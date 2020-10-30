@@ -174,8 +174,9 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
-  completionProvider: () => languages.CompletionItemProvider = () => {
-    const selectedNoteId = this.state.noteId;
+  completionProvider: (
+    selectedNoteId: T.EntityId
+  ) => languages.CompletionItemProvider = (selectedNoteId) => {
     return {
       triggerCharacters: ['['],
 
@@ -750,7 +751,7 @@ class NoteContentEditor extends Component<Props> {
     // register completion provider for internal links
     this.completionProviderHandle = monaco.languages.registerCompletionItemProvider(
       'plaintext',
-      this.completionProvider()
+      this.completionProvider(this.state.noteId)
     );
     editor.onDidDispose(() => this.completionProviderHandle?.dispose());
 
