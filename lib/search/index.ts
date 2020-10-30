@@ -30,6 +30,7 @@ type SearchState = {
   showTrash: boolean;
   sortType: T.SortType;
   sortReversed: boolean;
+  titleOnly: boolean;
 };
 
 const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
@@ -180,6 +181,7 @@ export const middleware: S.Middleware = (store) => {
       sortReversed,
       sortType,
       showTrash,
+      titleOnly,
     } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
     const pinnedMatches = new Set<T.EntityId>();
@@ -223,6 +225,13 @@ export const middleware: S.Middleware = (store) => {
       }
 
       if (
+        titleOnly &&
+        !searchTerms.every((term) =>
+          note.content.split('\n', 1)[0].includes(term.toLocaleLowerCase())
+        )
+      ) {
+        continue;
+      } else if (
         searchTerms.length > 0 &&
         !searchTerms.every((term) =>
           note.content.includes(term.toLocaleLowerCase())

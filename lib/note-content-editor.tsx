@@ -202,6 +202,7 @@ class NoteContentEditor extends Component<Props> {
           openedTag: null,
           showTrash: false,
           searchTags: tagsFromSearch(soFar),
+          titleOnly: true,
         },
         5
       ).map(([noteId, note]) => ({
