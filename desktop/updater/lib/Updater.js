@@ -59,15 +59,25 @@ class Updater extends EventEmitter {
       message: this.expandMacros(this.dialogTitle),
       detail: this.expandMacros(this.dialogMessage),
     };
-
+    console.log('------');
+    console.log('notify 1');
+    console.log('------');
     if (!this._hasPrompted) {
+      console.log('------');
+      console.log('notify 2');
+      console.log('------');
       this._hasPrompted = true;
 
       dialog.showMessageBox(updateDialogOptions, (button) => {
         this._hasPrompted = false;
-
+        console.log('------');
+        console.log('notify 4');
+        console.log('------');
         if (button === 0) {
           // Confirm
+          console.log('------');
+          console.log('notify 5');
+          console.log('------');
           this.onConfirm();
         } else if (button === 2) {
           // Open changelog
