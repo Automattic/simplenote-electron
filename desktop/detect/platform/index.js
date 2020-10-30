@@ -14,6 +14,9 @@ Platform.prototype.isOSX = function () {
 };
 
 Platform.prototype.isWindows = function () {
+  console.log('------');
+  console.log(process.platform);
+  console.log('------');
   return process.platform === 'win32';
 };
 

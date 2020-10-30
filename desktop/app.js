@@ -156,6 +156,9 @@ module.exports = function main() {
     // When we receive a close event prevent the window from closing and
     // tell the app to check for unsynchronized notes.
     mainWindow.on('close', (event) => {
+      console.log('------');
+      console.log('mainWindow.on(close, (event)');
+      console.log('------');
       event.preventDefault();
       mainWindow.webContents.send('appCommand', { action: 'closeWindow' });
     });

@@ -15,7 +15,9 @@ const setupProgressUpdates = require('../lib/setup-progress-updates');
 class AutoUpdater extends Updater {
   constructor({ changelogUrl, options = {} }) {
     super(changelogUrl, options);
-
+    console.log('------');
+    console.log(changelogUrl);
+    console.log('------');
     autoUpdater.on('error', this.onError.bind(this));
     autoUpdater.on('update-not-available', this.onNotAvailable.bind(this));
     autoUpdater.on('update-downloaded', this.onDownloaded.bind(this));
