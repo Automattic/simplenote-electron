@@ -190,6 +190,7 @@ export const middleware: S.Middleware = (store) => {
     } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
     const pinnedMatches = new Set<T.EntityId>();
+    const storeNotes = store.getState().data.notes;
 
     const sortIndex =
       sortType === 'alphabetical'
@@ -209,7 +210,7 @@ export const middleware: S.Middleware = (store) => {
       }
 
       const note = notes.get(noteId);
-      if (!note) {
+      if (!note || !storeNotes.has(noteId)) {
         continue;
       }
 
@@ -254,9 +255,10 @@ export const middleware: S.Middleware = (store) => {
   };
 
   searchNotes = (args, maxResults) =>
-    runSearch(args, maxResults)
-      .map((noteId) => [noteId, store.getState().data.notes.get(noteId)])
-      .filter(([, a]) => 'undefined' !== typeof a) as [T.EntityId, T.Note][];
+    runSearch(args, maxResults).map((noteId) => [
+      noteId,
+      store.getState().data.notes.get(noteId),
+    ]);
 
   const setFilteredNotes = (
     noteIds: T.EntityId[]
