@@ -1,5 +1,5 @@
 const EventEmitter = require('events').EventEmitter;
-const { app, dialog, shell } = require('electron');
+const { app, BrowserWindow, dialog, shell } = require('electron');
 const platform = require('../../detect/platform');
 const log = require('../../logger')('desktop:updater');
 
@@ -48,7 +48,7 @@ class Updater extends EventEmitter {
     shell.openExternal(this.changelogUrl);
   }
 
-  notify() {
+  async notify() {
     const updateDialogOptions = {
       buttons: [
         this.sanitizeButtonLabel(this.confirmLabel),
@@ -60,24 +60,26 @@ class Updater extends EventEmitter {
       detail: this.expandMacros(this.dialogMessage),
     };
 
+    const mainWindow = BrowserWindow.getFocusedWindow();
+
     if (!this._hasPrompted) {
       this._hasPrompted = true;
 
-      dialog.showMessageBox(updateDialogOptions, (button) => {
-        this._hasPrompted = false;
+      const selected = await dialog.showMessageBox(
+        mainWindow,
+        updateDialogOptions
+      );
+      const button = selected.response;
 
-        if (button === 0) {
-          // Confirm
-          this.onConfirm();
-        } else if (button === 2) {
-          // Open changelog
-          this.onChangelog();
-        } else {
-          this.onCancel();
-        }
+      if (button === 0) {
+        // Confirm
+        this.onConfirm();
+      } else {
+        this.onCancel();
+      }
 
-        this.emit('end');
-      });
+      this._hasPrompted = false;
+      this.emit('end');
     }
   }
 

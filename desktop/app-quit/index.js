@@ -10,12 +10,12 @@ function AppQuit() {
 }
 
 AppQuit.prototype.shouldQuitToBackground = function () {
-  if (this.canQuit === false) {
-    return true;
+  if (this.canQuit) {
+    this.canQuit = false;
+    return false;
   }
 
-  this.canQuit = false;
-  return false;
+  return true;
 };
 
 AppQuit.prototype.allowQuit = function () {
