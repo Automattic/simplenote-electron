@@ -22,7 +22,7 @@ class AutoUpdater extends Updater {
     autoUpdater.on('update-not-available', this.onNotAvailable.bind(this));
     autoUpdater.on('update-downloaded', this.onDownloaded.bind(this));
 
-    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.autoInstallOnAppQuit = false;
   }
 
   // For non-user-initiated checks.
