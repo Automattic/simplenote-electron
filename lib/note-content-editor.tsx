@@ -201,10 +201,6 @@ class NoteContentEditor extends Component<Props> {
       provideCompletionItems(model, position, context, token) {
         const line = model.getLineContent(position.lineNumber);
         const precedingOpener = line.lastIndexOf('[', position.column);
-        if (-1 === precedingOpener) {
-          editor.trigger('completions', 'hideSuggestWidget', null);
-          return null;
-        }
         const precedingCloser = line.lastIndexOf(']', position.column);
         const precedingBracket =
           precedingOpener >= 0 && precedingCloser < precedingOpener
@@ -231,12 +227,6 @@ class NoteContentEditor extends Component<Props> {
           isPinned: note.systemTags.includes('pinned'),
           ...noteTitleAndPreview(note),
         }));
-
-        if (0 === notes.length) {
-          // dismiss the widget if we don't have anything to suggest
-          editor.trigger('completions', 'hideSuggestWidget', null);
-          return null;
-        }
 
         const additionalTextEdits =
           precedingBracket >= 0
@@ -776,6 +766,11 @@ class NoteContentEditor extends Component<Props> {
       this.completionProvider(this.state.noteId, editor)
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
+    monaco.languages.setLanguageConfiguration('plaintext', {
+      // Allow any non-whitespace character to be part of a "word"
+      // This prevents the dictionary suggestions from taking over our autosuggest
+      wordPattern: /[^\s]+/g,
+    });
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
