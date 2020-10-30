@@ -1,5 +1,5 @@
 const EventEmitter = require('events').EventEmitter;
-const { app, dialog, shell } = require('electron');
+const { app, BrowserWindow, dialog, shell } = require('electron');
 const platform = require('../../detect/platform');
 const log = require('../../logger')('desktop:updater');
 
@@ -48,7 +48,7 @@ class Updater extends EventEmitter {
     shell.openExternal(this.changelogUrl);
   }
 
-  notify() {
+  async notify() {
     const updateDialogOptions = {
       buttons: [
         this.sanitizeButtonLabel(this.confirmLabel),
@@ -59,35 +59,27 @@ class Updater extends EventEmitter {
       message: this.expandMacros(this.dialogTitle),
       detail: this.expandMacros(this.dialogMessage),
     };
-    console.log('------');
-    console.log('notify 1');
-    console.log('------');
+
+    const mainWindow = BrowserWindow.getFocusedWindow();
+
     if (!this._hasPrompted) {
-      console.log('------');
-      console.log('notify 2');
-      console.log('------');
       this._hasPrompted = true;
 
-      dialog.showMessageBox(updateDialogOptions, (button) => {
-        this._hasPrompted = false;
-        console.log('------');
-        console.log('notify 4');
-        console.log('------');
-        if (button === 0) {
-          // Confirm
-          console.log('------');
-          console.log('notify 5');
-          console.log('------');
-          this.onConfirm();
-        } else if (button === 2) {
-          // Open changelog
-          this.onChangelog();
-        } else {
-          this.onCancel();
-        }
+      const selected = await dialog.showMessageBox(
+        mainWindow,
+        updateDialogOptions
+      );
+      const button = selected.response;
 
-        this.emit('end');
-      });
+      if (button === 0) {
+        // Confirm
+        this.onConfirm();
+      } else {
+        this.onCancel();
+      }
+
+      this._hasPrompted = false;
+      this.emit('end');
     }
   }
 
