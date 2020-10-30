@@ -22,6 +22,7 @@ type SearchNote = {
 
 type SearchState = {
   hasSelectedFirstNote: boolean;
+  excludeIDs: Array<T.EntityId> | null;
   notes: Map<T.EntityId, SearchNote>;
   openedTag: T.TagHash | null;
   searchQuery: string;
@@ -30,7 +31,7 @@ type SearchState = {
   showTrash: boolean;
   sortType: T.SortType;
   sortReversed: boolean;
-  titleOnly: boolean;
+  titleOnly: boolean | null;
 };
 
 const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
@@ -60,6 +61,7 @@ export let searchNotes: (
 
 export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
+    excludeIDs: [],
     hasSelectedFirstNote: false,
     notes: new Map(),
     openedTag: null,
@@ -69,6 +71,7 @@ export const middleware: S.Middleware = (store) => {
     showTrash: false,
     sortType: store.getState().settings.sortType,
     sortReversed: store.getState().settings.sortReversed,
+    titleOnly: false,
   };
 
   const indexAlphabetical: T.EntityId[] = [];
@@ -174,6 +177,7 @@ export const middleware: S.Middleware = (store) => {
     maxResults = Infinity
   ): T.EntityId[] => {
     const {
+      excludeIDs,
       notes,
       openedTag,
       searchTags,
@@ -199,8 +203,11 @@ export const middleware: S.Middleware = (store) => {
       i++
     ) {
       const noteId = sortIndex[sortReversed ? sortIndex.length - i - 1 : i];
-      const note = notes.get(noteId);
+      if (excludeIDs?.includes(noteId)) {
+        continue;
+      }
 
+      const note = notes.get(noteId);
       if (!note) {
         continue;
       }

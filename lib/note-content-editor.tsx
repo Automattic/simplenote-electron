@@ -98,10 +98,9 @@ type OwnState = {
   selectedSearchMatchIndex: number | null;
 };
 
-let hasCompletionProvider = false;
-
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
+  completionProviderHandle: ReturnType<typeof IDisposable> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
@@ -165,6 +164,8 @@ class NoteContentEditor extends Component<Props> {
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
     this.toggleShortcuts(false);
+
+    this.completionProviderHandle?.dispose();
   }
 
   toggleShortcuts = (doEnable: boolean) => {
@@ -175,79 +176,83 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
-  completionProvider: languages.CompletionItemProvider = {
-    triggerCharacters: ['['],
+  completionProvider: () => languages.CompletionItemProvider = () => {
+    const selectedNoteId = this.state.noteId;
+    return {
+      triggerCharacters: ['['],
 
-    provideCompletionItems(model, position, context, token) {
-      const line = model.getLineContent(position.lineNumber);
-      if (!line.includes('[')) {
-        return null;
-      }
+      provideCompletionItems(model, position, context, token) {
+        const line = model.getLineContent(position.lineNumber);
+        if (!line.includes('[')) {
+          return null;
+        }
 
-      const precedingOpener = line.lastIndexOf('[', position.column);
-      const precedingCloser = line.lastIndexOf(']', position.column);
-      const precedingBracket =
-        precedingOpener >= 0 && precedingCloser < precedingOpener
-          ? precedingOpener
-          : -1;
+        const precedingOpener = line.lastIndexOf('[', position.column);
+        const precedingCloser = line.lastIndexOf(']', position.column);
+        const precedingBracket =
+          precedingOpener >= 0 && precedingCloser < precedingOpener
+            ? precedingOpener
+            : -1;
 
-      const soFar =
-        precedingBracket >= 0
-          ? line.slice(precedingBracket + 1, position.column)
-          : '';
+        const soFar =
+          precedingBracket >= 0
+            ? line.slice(precedingBracket + 1, position.column)
+            : '';
 
-      const notes = searchNotes(
-        {
-          searchTerms: getTerms(soFar),
-          openedTag: null,
-          showTrash: false,
-          searchTags: tagsFromSearch(soFar),
-          titleOnly: true,
-        },
-        5
-      ).map(([noteId, note]) => ({
-        noteId,
-        content: note.content,
-        isPinned: note.systemTags.includes('pinned'),
-        ...noteTitleAndPreview(note),
-      }));
-
-      const additionalTextEdits =
-        precedingBracket >= 0
-          ? [
-              {
-                text: '',
-                range: {
-                  startLineNumber: position.lineNumber,
-                  startColumn: precedingBracket,
-                  endLineNumber: position.lineNumber,
-                  endColumn: position.column,
-                },
-              },
-            ]
-          : [];
-
-      return {
-        incomplete: true,
-        suggestions: notes.map((note, index) => ({
-          additionalTextEdits,
-          kind: note.isPinned
-            ? languages.CompletionItemKind.Snippet
-            : languages.CompletionItemKind.File,
-          label: note.title,
-          // detail: note.preview,
-          documentation: note.content,
-          insertText: `[${note.title}](simplenote://note/${note.noteId})`,
-          sortText: index.toString(),
-          range: {
-            startLineNumber: position.lineNumber,
-            startColumn: position.column,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column,
+        const notes = searchNotes(
+          {
+            searchTerms: getTerms(soFar),
+            excludeIDs: selectedNoteId ? [selectedNoteId] : [],
+            openedTag: null,
+            showTrash: false,
+            searchTags: tagsFromSearch(soFar),
+            titleOnly: true,
           },
-        })),
-      };
-    },
+          5
+        ).map(([noteId, note]) => ({
+          noteId,
+          content: note.content,
+          isPinned: note.systemTags.includes('pinned'),
+          ...noteTitleAndPreview(note),
+        }));
+
+        const additionalTextEdits =
+          precedingBracket >= 0
+            ? [
+                {
+                  text: '',
+                  range: {
+                    startLineNumber: position.lineNumber,
+                    startColumn: precedingBracket,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column,
+                  },
+                },
+              ]
+            : [];
+
+        return {
+          incomplete: true,
+          suggestions: notes.map((note, index) => ({
+            additionalTextEdits,
+            kind: note.isPinned
+              ? languages.CompletionItemKind.Snippet
+              : languages.CompletionItemKind.File,
+            label: note.title,
+            // detail: note.preview,
+            documentation: note.content,
+            insertText: `[${note.title}](simplenote://note/${note.noteId})`,
+            sortText: index.toString(),
+            range: {
+              startLineNumber: position.lineNumber,
+              startColumn: position.column,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            },
+          })),
+        };
+      },
+    };
   };
 
   handleShortcut = (event: KeyboardEvent) => {
@@ -526,13 +531,10 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    if (!hasCompletionProvider) {
-      hasCompletionProvider = true;
-      monaco.languages.registerCompletionItemProvider(
-        'plaintext',
-        this.completionProvider
-      );
-    }
+    this.completionProviderHandle = monaco.languages.registerCompletionItemProvider(
+      'plaintext',
+      this.completionProvider()
+    );
   };
 
   editorReady: EditorDidMount = (editor, monaco) => {
