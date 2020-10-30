@@ -26,6 +26,7 @@ module.exports = function main() {
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is GCed.
   let mainWindow = null;
+  let isAuthenticated;
 
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
@@ -92,6 +93,8 @@ module.exports = function main() {
     Menu.setApplicationMenu(appMenu);
 
     ipcMain.on('appStateUpdate', function (event, args) {
+      const settings = args['settings'] || {};
+      isAuthenticated = settings && 'accountName' in settings;
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );
@@ -156,8 +159,10 @@ module.exports = function main() {
     // When we receive a close event prevent the window from closing and
     // tell the app to check for unsynchronized notes.
     mainWindow.on('close', (event) => {
-      event.preventDefault();
-      mainWindow.webContents.send('appCommand', { action: 'closeWindow' });
+      if (isAuthenticated) {
+        event.preventDefault();
+        mainWindow.webContents.send('appCommand', { action: 'closeWindow' });
+      }
     });
 
     // Once the app has dealt with unsynchronized notes close the window.
