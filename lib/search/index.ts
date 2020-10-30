@@ -1,6 +1,7 @@
 import { filterTags } from '../tag-suggestions';
 import { getTerms } from '../utils/filter-notes';
 import { tagHashOf as t } from '../utils/tag-hash';
+import { getTitle } from '../utils/note-utils';
 
 import type * as A from '../state/action-types';
 import type * as S from '../state';
@@ -231,17 +232,12 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      const searchText = titleOnly ? getTitle(note.content) : note.content;
+
       if (
-        titleOnly &&
-        !searchTerms.every((term) =>
-          note.content.split('\n', 1)[0].includes(term.toLocaleLowerCase())
-        )
-      ) {
-        continue;
-      } else if (
         searchTerms.length > 0 &&
         !searchTerms.every((term) =>
-          note.content.includes(term.toLocaleLowerCase())
+          searchText.includes(term.toLocaleLowerCase())
         )
       ) {
         continue;
