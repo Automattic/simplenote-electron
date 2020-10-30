@@ -40,10 +40,11 @@ class AutoUpdater extends Updater {
   }
 
   onConfirm() {
-    AppQuit.allowQuit();
     console.log('------');
     console.log('onConfirm');
     console.log('------');
+    AppQuit.allowQuit();
+
     autoUpdater.quitAndInstall();
     console.log('------');
     console.log('after quitAndInstall');
