@@ -198,8 +198,10 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
     case 'RENAME_TAG': {
       const oldHash = t(action.oldTagName);
       const newHash = t(action.newTagName);
-
       const next = new Map(state);
+      if (oldHash === newHash) {
+        return next;
+      }
       next.forEach((note, noteId) => {
         const newTags: T.TagName[] = [];
         const hashes = new Set<T.TagHash>();

@@ -223,6 +223,10 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
+  getTagName = (tag: T.TagName) => {
+    return this.props.allTags.get(tagHashOf(tag))?.name;
+  };
+
   render() {
     const { note } = this.props;
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
@@ -244,7 +248,7 @@ export class TagField extends Component<Props, OwnState> {
           {note?.tags.filter(negate(isEmailTag)).map((tag) => (
             <TagChip
               key={tag}
-              tagName={tag}
+              tagName={this.getTagName(tag)}
               selected={tag === selectedTag}
               onSelect={this.selectTag}
             />
