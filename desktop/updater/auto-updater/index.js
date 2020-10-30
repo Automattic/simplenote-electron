@@ -22,7 +22,7 @@ class AutoUpdater extends Updater {
     autoUpdater.on('update-not-available', this.onNotAvailable.bind(this));
     autoUpdater.on('update-downloaded', this.onDownloaded.bind(this));
 
-    autoUpdater.autoInstallOnAppQuit = false;
+    autoUpdater.autoInstallOnAppQuit = true;
   }
 
   // For non-user-initiated checks.
@@ -41,7 +41,13 @@ class AutoUpdater extends Updater {
 
   onConfirm() {
     AppQuit.allowQuit();
+    console.log('------');
+    console.log('onConfirm');
+    console.log('------');
     autoUpdater.quitAndInstall();
+    console.log('------');
+    console.log('after quitAndInstall');
+    console.log('------');
   }
 }
 
