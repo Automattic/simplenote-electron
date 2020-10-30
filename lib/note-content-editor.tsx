@@ -56,6 +56,24 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
   }
 };
 
+const getTextAfterBracket = (line: string, column: number) => {
+  const precedingOpener = line.lastIndexOf('[', column);
+  if (-1 === precedingOpener) {
+    return { soFar: null, precedingBracket: null };
+  }
+
+  const precedingCloser = line.lastIndexOf(']', column);
+  const precedingBracket =
+    precedingOpener >= 0 && precedingCloser < precedingOpener
+      ? precedingOpener
+      : -1;
+
+  const soFar =
+    precedingBracket >= 0 ? line.slice(precedingBracket + 1, column) : '';
+
+  return { soFar: soFar, precedingBracket: precedingBracket };
+};
+
 type OwnProps = {
   storeFocusEditor: (focusSetter: () => any) => any;
   storeHasFocus: (focusGetter: () => boolean) => any;
@@ -181,21 +199,13 @@ class NoteContentEditor extends Component<Props> {
 
       provideCompletionItems(model, position, context, token) {
         const line = model.getLineContent(position.lineNumber);
-        if (!line.includes('[')) {
+        const { soFar, precedingBracket } = getTextAfterBracket(
+          line,
+          position.column
+        );
+        if (null === soFar) {
           return null;
         }
-
-        const precedingOpener = line.lastIndexOf('[', position.column);
-        const precedingCloser = line.lastIndexOf(']', position.column);
-        const precedingBracket =
-          precedingOpener >= 0 && precedingCloser < precedingOpener
-            ? precedingOpener
-            : -1;
-
-        const soFar =
-          precedingBracket >= 0
-            ? line.slice(precedingBracket + 1, position.column)
-            : '';
 
         const notes = searchNotes(
           {
@@ -609,25 +619,13 @@ class NoteContentEditor extends Component<Props> {
         if (!model) {
           return;
         }
-        // @todo DRY - code duplicated from the completion handler
         const position = editor.getPosition();
         const line = model.getLineContent(position.lineNumber);
-        if (!line.includes('[')) {
-          return;
-        }
-        const precedingOpener = line.lastIndexOf('[', position.column);
-        const precedingCloser = line.lastIndexOf(']', position.column);
-        const precedingBracket =
-          precedingOpener >= 0 && precedingCloser < precedingOpener
-            ? precedingOpener
-            : -1;
-
-        const soFar =
-          precedingBracket >= 0
-            ? line.slice(precedingBracket + 1, position.column)
-            : '';
-
-        if (soFar) {
+        const { soFar, precedingBracket } = getTextAfterBracket(
+          line,
+          position.column
+        );
+        if (null !== soFar) {
           editor.trigger('suggestions', 'editor.action.triggerSuggest', null);
         }
       }
