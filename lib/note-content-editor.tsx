@@ -602,6 +602,38 @@ class NoteContentEditor extends Component<Props> {
       window.electron ? false : true
     );
 
+    editor.addCommand(
+      monaco.KeyMod.WinCtrl | monaco.KeyCode.Space,
+      function () {
+        // only show suggestions if we have an open bracket
+        const model = editor.getModel();
+        if (!model) {
+          return;
+        }
+        // @todo DRY - code duplicated from the completion handler
+        const position = editor.getPosition();
+        const line = model.getLineContent(position.lineNumber);
+        if (!line.includes('[')) {
+          return;
+        }
+        const precedingOpener = line.lastIndexOf('[', position.column);
+        const precedingCloser = line.lastIndexOf(']', position.column);
+        const precedingBracket =
+          precedingOpener >= 0 && precedingCloser < precedingOpener
+            ? precedingOpener
+            : -1;
+
+        const soFar =
+          precedingBracket >= 0
+            ? line.slice(precedingBracket + 1, position.column)
+            : '';
+
+        if (soFar) {
+          editor.trigger('suggestions', 'editor.action.triggerSuggest', null);
+        }
+      }
+    );
+
     editor.addAction({
       id: 'context_undo',
       label: 'Undo',
