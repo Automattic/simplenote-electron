@@ -74,6 +74,9 @@ class Updater extends EventEmitter {
       if (button === 0) {
         // Confirm
         this.onConfirm();
+      } else if (button === 2) {
+        // Open changelog
+        this.onChangelog();
       } else {
         this.onCancel();
       }
