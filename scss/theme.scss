@@ -110,13 +110,6 @@ span[dir='ltr'] {
   display: none !important;
 }
 
-/* Hide the suggestion popup
-  See: https://github.com/microsoft/monaco-editor/issues/1681#issuecomment-580751164
-*/
-.monaco-editor .suggest-widget {
-  display: none !important;
-}
-
 /* Safari requires that it be displayed absolute so that it takes the full height
 */
 .note-content-editor-shell {

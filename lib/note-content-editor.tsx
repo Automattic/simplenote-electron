@@ -5,12 +5,18 @@ import Monaco, {
   EditorDidMount,
   EditorWillMount,
 } from 'react-monaco-editor';
-import { editor as Editor, Selection, SelectionDirection } from 'monaco-editor';
-import { search } from './state/ui/actions';
+import {
+  editor as Editor,
+  languages,
+  Selection,
+  SelectionDirection,
+} from 'monaco-editor';
 
+import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
+import { noteTitleAndPreview } from './utils/note-utils';
 import { isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -48,6 +54,24 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
     // after 1400, calc((100% - 768px) / 2);
     return (width - 768) / 2;
   }
+};
+
+const getTextAfterBracket = (line: string, column: number) => {
+  const precedingOpener = line.lastIndexOf('[', column);
+  if (-1 === precedingOpener) {
+    return { soFar: null, precedingBracket: null };
+  }
+
+  const precedingCloser = line.lastIndexOf(']', column);
+  const precedingBracket =
+    precedingOpener >= 0 && precedingCloser < precedingOpener
+      ? precedingOpener
+      : -1;
+
+  const soFar =
+    precedingBracket >= 0 ? line.slice(precedingBracket + 1, column) : '';
+
+  return { soFar: soFar, precedingBracket: precedingBracket };
 };
 
 type OwnProps = {
@@ -166,6 +190,82 @@ class NoteContentEditor extends Component<Props> {
     } else {
       window.removeEventListener('keydown', this.handleShortcut, true);
     }
+  };
+
+  completionProvider: (
+    selectedNoteId: T.EntityId | null,
+    editor: Editor.IStandaloneCodeEditor
+  ) => languages.CompletionItemProvider = (selectedNoteId, editor) => {
+    return {
+      triggerCharacters: ['['],
+
+      provideCompletionItems(model, position, context, token) {
+        const line = model.getLineContent(position.lineNumber);
+        const precedingOpener = line.lastIndexOf('[', position.column);
+        const precedingCloser = line.lastIndexOf(']', position.column);
+        const precedingBracket =
+          precedingOpener >= 0 && precedingCloser < precedingOpener
+            ? precedingOpener
+            : -1;
+        const soFar =
+          precedingBracket >= 0
+            ? line.slice(precedingBracket + 1, position.column)
+            : '';
+
+        const notes = searchNotes(
+          {
+            searchTerms: getTerms(soFar),
+            excludeIDs: selectedNoteId ? [selectedNoteId] : [],
+            openedTag: null,
+            showTrash: false,
+            searchTags: tagsFromSearch(soFar),
+            titleOnly: true,
+          },
+          5
+        ).map(([noteId, note]) => ({
+          noteId,
+          content: note.content,
+          isPinned: note.systemTags.includes('pinned'),
+          ...noteTitleAndPreview(note),
+        }));
+
+        const additionalTextEdits =
+          precedingBracket >= 0
+            ? [
+                {
+                  text: '',
+                  range: {
+                    startLineNumber: position.lineNumber,
+                    startColumn: precedingBracket,
+                    endLineNumber: position.lineNumber,
+                    endColumn: position.column,
+                  },
+                },
+              ]
+            : [];
+
+        return {
+          incomplete: true,
+          suggestions: notes.map((note, index) => ({
+            additionalTextEdits,
+            kind: note.isPinned
+              ? languages.CompletionItemKind.Snippet
+              : languages.CompletionItemKind.File,
+            label: note.title,
+            // detail: note.preview,
+            documentation: note.content,
+            insertText: `[${note.title}](simplenote://note/${note.noteId})`,
+            sortText: index.toString(),
+            range: {
+              startLineNumber: position.lineNumber,
+              startColumn: position.column,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            },
+          })),
+        };
+      },
+    };
   };
 
   handleShortcut = (event: KeyboardEvent) => {
@@ -491,7 +591,6 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.commentLine', // meta+/
       'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
-      'editor.action.triggerSuggest', // ctrl+space
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
       // search shortcuts
@@ -577,6 +676,7 @@ class NoteContentEditor extends Component<Props> {
       id: 'cancel_selection',
       label: 'Cancel Selection',
       keybindings: [monaco.KeyCode.Escape],
+      keybindingContext: '!suggestWidgetVisible',
       run: this.cancelSelectionOrSearch,
     });
 
@@ -660,6 +760,18 @@ class NoteContentEditor extends Component<Props> {
     // make component rerender after the decorators are set.
     this.setState({});
     editor.onDidChangeModelContent(() => this.setDecorators());
+
+    // register completion provider for internal links
+    const completionProviderHandle = monaco.languages.registerCompletionItemProvider(
+      'plaintext',
+      this.completionProvider(this.state.noteId, editor)
+    );
+    editor.onDidDispose(() => completionProviderHandle?.dispose());
+    monaco.languages.setLanguageConfiguration('plaintext', {
+      // Allow any non-whitespace character to be part of a "word"
+      // This prevents the dictionary suggestions from taking over our autosuggest
+      wordPattern: /[^\s]+/g,
+    });
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
@@ -982,6 +1094,7 @@ class NoteContentEditor extends Component<Props> {
               },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
+              suggestOnTriggerCharacters: true,
               wordWrap: 'bounded',
               wrappingStrategy: isSafari ? 'simple' : 'advanced',
               wordWrapColumn: 400,
@@ -1037,7 +1150,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  clearSearch: () => dispatch(search('')),
+  clearSearch: () => actions.ui.search(''),
   editNote: actions.data.editNote,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   openNote: actions.ui.selectNote,

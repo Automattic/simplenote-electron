@@ -24,7 +24,7 @@ const removeMarkdownWithFix = (inputString) => {
   });
 };
 
-const getTitle = (content) => {
+export const getTitle = (content) => {
   const titlePattern = new RegExp(`\\s*([^\n]{1,${maxTitleChars}})`, 'g');
   const titleMatch = titlePattern.exec(content);
   if (!titleMatch) {

@@ -1,6 +1,7 @@
 import { filterTags } from '../tag-suggestions';
 import { getTerms } from '../utils/filter-notes';
 import { tagHashOf as t } from '../utils/tag-hash';
+import { getTitle } from '../utils/note-utils';
 
 import type * as A from '../state/action-types';
 import type * as S from '../state';
@@ -22,6 +23,7 @@ type SearchNote = {
 
 type SearchState = {
   hasSelectedFirstNote: boolean;
+  excludeIDs: Array<T.EntityId> | null;
   notes: Map<T.EntityId, SearchNote>;
   openedTag: T.TagHash | null;
   searchQuery: string;
@@ -30,6 +32,7 @@ type SearchState = {
   showTrash: boolean;
   sortType: T.SortType;
   sortReversed: boolean;
+  titleOnly: boolean | null;
 };
 
 const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
@@ -42,7 +45,7 @@ const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
   isTrashed: !!note.deleted ?? false,
 });
 
-const tagsFromSearch = (query: string) => {
+export const tagsFromSearch = (query: string) => {
   const tagPattern = /(?:\btag:)([^\s,]+)/g;
   const searchTags = new Set<T.TagHash>();
   let match;
@@ -52,8 +55,14 @@ const tagsFromSearch = (query: string) => {
   return searchTags;
 };
 
+export let searchNotes: (
+  args: Partial<SearchState>,
+  maxResults: number
+) => [T.EntityId, T.Note | undefined][] = () => [];
+
 export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
+    excludeIDs: [],
     hasSelectedFirstNote: false,
     notes: new Map(),
     openedTag: null,
@@ -63,6 +72,7 @@ export const middleware: S.Middleware = (store) => {
     showTrash: false,
     sortType: store.getState().settings.sortType,
     sortReversed: store.getState().settings.sortReversed,
+    titleOnly: false,
   };
 
   const indexAlphabetical: T.EntityId[] = [];
@@ -163,8 +173,12 @@ export const middleware: S.Middleware = (store) => {
     window.searchState = searchState;
   }
 
-  const runSearch = (): T.EntityId[] => {
+  const runSearch = (
+    args: Partial<SearchState> = {},
+    maxResults = Infinity
+  ): T.EntityId[] => {
     const {
+      excludeIDs,
       notes,
       openedTag,
       searchTags,
@@ -172,9 +186,11 @@ export const middleware: S.Middleware = (store) => {
       sortReversed,
       sortType,
       showTrash,
-    } = searchState;
+      titleOnly,
+    } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
     const pinnedMatches = new Set<T.EntityId>();
+    const storeNotes = store.getState().data.notes;
 
     const sortIndex =
       sortType === 'alphabetical'
@@ -183,11 +199,18 @@ export const middleware: S.Middleware = (store) => {
         ? indexCreationDate
         : indexModification;
 
-    for (let i = 0; i < sortIndex.length; i++) {
+    for (
+      let i = 0;
+      i < sortIndex.length && pinnedMatches.size + matches.size <= maxResults;
+      i++
+    ) {
       const noteId = sortIndex[sortReversed ? sortIndex.length - i - 1 : i];
-      const note = notes.get(noteId);
+      if (excludeIDs?.includes(noteId)) {
+        continue;
+      }
 
-      if (!note) {
+      const note = notes.get(noteId);
+      if (!note || !storeNotes.has(noteId)) {
         continue;
       }
 
@@ -210,10 +233,12 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      const searchText = titleOnly ? getTitle(note.content) : note.content;
+
       if (
         searchTerms.length > 0 &&
         !searchTerms.every((term) =>
-          note.content.includes(term.toLocaleLowerCase())
+          searchText.includes(term.toLocaleLowerCase())
         )
       ) {
         continue;
@@ -228,6 +253,12 @@ export const middleware: S.Middleware = (store) => {
 
     return [...pinnedMatches.values(), ...matches.values()];
   };
+
+  searchNotes = (args, maxResults) =>
+    runSearch(args, maxResults).map((noteId) => [
+      noteId,
+      store.getState().data.notes.get(noteId),
+    ]);
 
   const setFilteredNotes = (
     noteIds: T.EntityId[]
