@@ -1,5 +1,31 @@
 # Changelog
 
+## [v2.1.0]
+
+### Enhancements
+
+- Added internal link references to the note info panel [#2412](https://github.com/Automattic/simplenote-electron/pull/2412)
+- Display the canonical lexical version ensuring one capitalization or lexical version of a tag is displayed [#2435](https://github.com/Automattic/simplenote-electron/pull/2435)
+- Suggest creating a new note when none exists or notes match search query [#2422](https://github.com/Automattic/simplenote-electron/pull/2422)
+- Added autocompletion / inline search for internal note links [#2286](https://github.com/Automattic/simplenote-electron/pull/2286)
+
+### Fixes
+
+- Fixed a bug where Ctrl+G would not go to the next search result [#2402](https://github.com/Automattic/simplenote-electron/pull/2402)
+- Fixed a bug preventing zoom shortcuts from being triggered by keys on the numeric keypad [#2404](https://github.com/Automattic/simplenote-electron/pull/2404)
+- Fixed a bug causing zoom in / zoom out to only apply to the editor contents [#2406](https://github.com/Automattic/simplenote-electron/pull/2406)
+- Fixed bug in note info panel where links did not copy in Firefox [#2414](https://github.com/Automattic/simplenote-electron/pull/2414)
+- Prevent the scrollbar slider from becoming tiny when there are many notes in the note list [#2418](https://github.com/Automattic/simplenote-electron/pull/2418)
+- Fixed checkboxes so that they can be checked in markdown mode [#2415](https://github.com/Automattic/simplenote-electron/pull/2415)
+- Restored ability to toggle multiple checkboxes at once [#2419](https://github.com/Automattic/simplenote-electron/pull/2419)
+- Made margin in editor clickable to focus editor [#2433](https://github.com/Automattic/simplenote-electron/pull/2433)
+- Allow window to be closed when the user is logged out [#2439](https://github.com/Automattic/simplenote-electron/pull/2439)
+- Clear search and close revision panel when creating a new note [#2434](https://github.com/Automattic/simplenote-electron/pull/2434)
+
+### Other changes
+
+- Updated the Simperium API token [#2387](https://github.com/Automattic/simplenote-electron/pull/2387)
+
 ## [v2.0.0]
 
 ### Enhancements
