@@ -1,4 +1,5 @@
 import { getTerms } from '../utils/filter-notes';
+import removeAccents from '../utils/remove-accents';
 import { renderNoteToHtml } from '../utils/render-note-to-html';
 
 const markMatches = (sourceNode: Text, terms: string[]): void => {
@@ -8,23 +9,20 @@ const markMatches = (sourceNode: Text, terms: string[]): void => {
     // we only want to mark TEXT_NODE matches
     // it wouldn't work well to match "pan" inside of "<span>"
     parent.childNodes.forEach((node) => {
-      if (
-        node.nodeType !== Node.TEXT_NODE ||
-        !node.textContent?.toLocaleLowerCase().includes(term)
-      ) {
+      const normalizedText = removeAccents(
+        node.textContent?.toLocaleLowerCase() || ''
+      );
+
+      if (node.nodeType !== Node.TEXT_NODE || !normalizedText.includes(term)) {
         return;
       }
 
       // split text node into | BEFORE | MATCH | AFTER
-      const start = node.textContent
-        ?.toLocaleLowerCase()
-        .indexOf(term) as number;
-
+      const start = normalizedText.indexOf(term) as number;
       // we have to remember the MATCH because we'll replace it
       const match = (node as Text).splitText(start);
 
       const after = match.splitText(term.length);
-
       const marked = document.createElement('span');
       marked.setAttribute('class', 'search-match');
       match.parentNode?.replaceChild(marked, match);
@@ -61,7 +59,9 @@ export const renderToNode = (
         {
           acceptNode: function (textNode: Text) {
             return terms.some((term) =>
-              textNode.textContent?.toLocaleLowerCase().includes(term)
+              removeAccents(textNode.textContent?.toLocaleLowerCase()).includes(
+                term
+              )
             )
               ? NodeFilter.FILTER_ACCEPT
               : NodeFilter.FILTER_REJECT;
@@ -72,7 +72,6 @@ export const renderToNode = (
 
       const nodes: Text[] = [];
       let currentNode: Node | null = treeWalker.currentNode;
-
       while (currentNode) {
         nodes.push(currentNode as Text);
         currentNode = treeWalker.nextNode();
