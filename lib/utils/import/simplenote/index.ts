@@ -42,7 +42,14 @@ class SimplenoteImporter extends EventEmitter {
         return;
       }
 
-      const dataObj = JSON.parse(fileContent);
+      let dataObj;
+      try {
+        dataObj = JSON.parse(fileContent);
+      } catch (error) {
+        this.emit('status', 'error', 'Invalid json file.');
+        return;
+      }
+
       const noteCount =
         dataObj.activeNotes.length + dataObj.trashedNotes.length;
       const processedNotes = {
