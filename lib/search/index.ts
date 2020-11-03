@@ -2,6 +2,7 @@ import { filterTags } from '../tag-suggestions';
 import { getTerms } from '../utils/filter-notes';
 import { tagHashOf as t } from '../utils/tag-hash';
 import { getTitle } from '../utils/note-utils';
+import removeAccents from '../utils/remove-accents';
 
 import type * as A from '../state/action-types';
 import type * as S from '../state';
@@ -234,11 +235,11 @@ export const middleware: S.Middleware = (store) => {
       }
 
       const searchText = titleOnly ? getTitle(note.content) : note.content;
-
+      const normalizedSearchText = removeAccents(searchText);
       if (
         searchTerms.length > 0 &&
         !searchTerms.every((term) =>
-          searchText.includes(term.toLocaleLowerCase())
+          normalizedSearchText.includes(term.toLocaleLowerCase())
         )
       ) {
         continue;
@@ -250,7 +251,6 @@ export const middleware: S.Middleware = (store) => {
         matches.add(noteId);
       }
     }
-
     return [...pinnedMatches.values(), ...matches.values()];
   };
 

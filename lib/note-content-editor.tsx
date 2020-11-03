@@ -24,6 +24,7 @@ import {
 } from './utils/task-transform';
 import IconButton from './icon-button';
 import ChevronRightIcon from './icons/chevron-right';
+import removeAccents from './utils/remove-accents';
 
 import * as S from './state';
 import * as T from './types';
@@ -384,7 +385,9 @@ class NoteContentEditor extends Component<Props> {
       return [];
     }
 
-    const content = model.getValue().normalize().toLowerCase();
+    const content = removeAccents(
+      model?.getValue().normalize().toLowerCase() || ''
+    );
 
     const highlights = terms.reduce(
       (matches: monaco.languages.DocumentHighlight, term) => {

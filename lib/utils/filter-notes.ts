@@ -1,3 +1,5 @@
+import removeAccents from './remove-accents';
+
 const tagPattern = () => /(?:\btag:)([^\s,]+)/g;
 
 export const withoutTags = (s: string) => s.replace(tagPattern(), '').trim();
@@ -13,7 +15,7 @@ export const getTerms = (filterText: string): string[] => {
   let match;
   let withoutLiterals = '';
 
-  const filter = withoutTags(filterText);
+  const filter = removeAccents(withoutTags(filterText));
 
   const literals = [];
   while ((match = literalsPattern.exec(filter)) !== null) {
