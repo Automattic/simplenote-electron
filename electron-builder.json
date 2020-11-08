@@ -71,7 +71,7 @@
       },
       {
         "target": "tar.gz",
-        "arch": ["x64", "ia32"]
+        "arch": ["x64", "ia32", "arm64", "armv7l"]
       }
     ],
     "synopsis": "The simplest way to keep notes",
