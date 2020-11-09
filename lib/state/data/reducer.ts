@@ -416,7 +416,7 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
         .forEach(([tagId, tag], index) => {
           next.set(tagId, {
             ...tag,
-            index: index <= action.newIndex ? index : index + 1,
+            index: index < action.newIndex ? index : index + 1,
           });
         });
       next.set(actionTagHash, { ...actionTag, index: action.newIndex });
