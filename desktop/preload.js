@@ -41,7 +41,7 @@ contextBridge.exposeInMainWorld('electron', {
     }
   },
   send: (channel, data) => {
-    // whitelist channels
+    // allowed channels
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
