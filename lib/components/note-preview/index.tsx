@@ -117,7 +117,7 @@ export const NotePreview: FunctionComponent<Props> = ({
           let matchCount = 0;
 
           const content = note.content.replace(
-            /(- \[x\]|- \[ \])/g,
+            /^(- \[x\])|(- \[ \])/gm,
             (match) => {
               return matchCount++ === taskIndex
                 ? match === '- [ ]'
@@ -135,7 +135,7 @@ export const NotePreview: FunctionComponent<Props> = ({
     previewNode.current?.addEventListener('click', handleClick, true);
     return () =>
       previewNode.current?.removeEventListener('click', handleClick, true);
-  }, [note]);
+  }, [note.content]);
 
   useEffect(() => {
     if (!previewNode.current) {
