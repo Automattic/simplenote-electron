@@ -1,5 +1,9 @@
 .tag-list-item {
+  color: $studio-gray-80;
+  border-bottom: 1px solid $studio-gray-5;
   display: flex;
+  font-size: 16px;
+  height: 44px;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
@@ -16,67 +20,65 @@
     flex: none;
     justify-content: space-between;
     align-items: center;
-    line-height: 1.25em;
-    margin-bottom: 0.25em;
+    padding: 5px 17px 2px;
 
     h2 {
+      font-size: 14px;
+      font-weight: 500;
       margin-bottom: 0;
+      text-transform: capitalize;
+    }
+
+    button {
+      font-size: 14px;
+      font-weight: 400;
+      padding: 7px 2px 0;
+    }
+
+    button:active {
+      background: none;
     }
 
     .tag-list-edit-toggle {
-      opacity: 0;
-
-      .touch-enabled & {
-        opacity: 1;
-      }
       &:active {
         color: $studio-white;
       }
     }
   }
 
-  &:hover,
-  &.tag-list-editing {
-    .tag-list-title .tag-list-edit-toggle {
-      opacity: 1;
-    }
-  }
-
-  &.tag-list-editing .tag-list-items {
-    padding-inline-start: 6px;
+  .editable-list-item {
+    padding: 0 5px 0 20px;
   }
 }
 
 .tag-list-items {
   flex: 1 1 auto;
   list-style: none;
-  padding-inline-start: 20px;
-  padding-inline-end: 16px;
+  overflow-y: auto;
+  padding-inline-start: 18px;
+  padding-inline-end: 0;
   padding-top: 0;
   padding-bottom: 0;
-  overflow-y: auto;
   margin: 0;
 
   svg {
     cursor: pointer;
   }
 
-  .icon-trash {
+  .icon-cross-outline {
     margin-right: 5px;
-    &:hover {
-      color: red;
-    }
+    color: $studio-red-50;
   }
 }
 
 .tag-list-input {
-  cursor: pointer;
+  cursor: text;
   flex: 1 1 auto;
   display: block;
   width: 50px;
   height: 2em;
   line-height: 2em;
-  margin: 8px 0;
+  margin: 8px 13px;
   padding: 0;
   border: none;
   text-overflow: ellipsis;
@@ -94,6 +96,7 @@
 }
 
 button.tag-list-input {
+  margin: 8px 0;
   overflow-x: hidden;
   text-align: left;
 }
@@ -102,6 +105,10 @@ button.tag-list-input {
   .tag-list-input {
     cursor: text;
   }
+}
+
+.icon-reorder {
+  margin-right: 25px;
 }
 
 .editable-list {
@@ -220,5 +227,19 @@ button.tag-list-input {
       pointer-events: auto;
       transform: translateX(0);
     }
+  }
+}
+
+.theme-dark {
+  .tag-list .tag-list-input {
+    color: $studio-white;
+  }
+}
+
+.tag-list-item.theme-dark {
+  border-bottom: 1px solid $studio-gray-70;
+
+  svg.icon-reorder {
+    fill: $studio-gray-30;
   }
 }

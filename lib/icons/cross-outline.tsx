@@ -1,9 +1,16 @@
 import React from 'react';
 
-export default function CrossOutlineIcon() {
+type OwnProps = {
+  onClick: (event: React.MouseEvent<SVGSVGElement>) => any;
+};
+
+type Props = OwnProps;
+
+export default function CrossOutlineIcon({ onClick }: Props) {
   return (
     <svg
       className="icon-cross-outline"
+      onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
       width="22"
       height="22"
