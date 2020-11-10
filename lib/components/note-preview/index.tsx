@@ -117,7 +117,7 @@ export const NotePreview: FunctionComponent<Props> = ({
           let matchCount = 0;
 
           const content = note.content.replace(
-            /^(- \[x\])|(- \[ \])/gm,
+            /^(- \[x\])|(- \[ \])/gim,
             (match) => {
               return matchCount++ === taskIndex
                 ? match === '- [ ]'
