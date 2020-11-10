@@ -33,7 +33,6 @@
 .navigation-bar-item__icon {
   color: $studio-blue-50;
   display: inline-block;
-
   margin-right: 18px;
   vertical-align: middle;
 
@@ -50,8 +49,13 @@
       border-bottom: 1px solid $studio-gray-70;
     }
 
+    &.is-selected svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-30;
+    }
+
     &.is-selected button {
       border-bottom: none;
+      color: $studio-simplenote-blue-30;
     }
 
     button {
@@ -59,15 +63,6 @@
     }
     svg {
       fill: $studio-white;
-    }
-  }
-
-  .navigation-bar-item.is-selected {
-    button {
-      color: $studio-simplenote-blue-30;
-    }
-    svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-30;
     }
   }
 }

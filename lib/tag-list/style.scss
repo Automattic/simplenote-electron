@@ -40,11 +40,6 @@
     }
 
     .tag-list-edit-toggle {
-      opacity: 0;
-
-      .touch-enabled & {
-        opacity: 1;
-      }
       &:active {
         color: $studio-white;
       }
@@ -53,10 +48,6 @@
 
   .editable-list-item {
     padding: 0 5px 0 20px;
-  }
-
-  .tag-list-title .tag-list-edit-toggle {
-    opacity: 1;
   }
 }
 
