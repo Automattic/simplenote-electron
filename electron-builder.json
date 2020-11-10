@@ -67,7 +67,7 @@
       },
       {
         "target": "rpm",
-        "arch": ["x64", "ia32", "arm64", "armv7l"]
+        "arch": ["x64", "ia32", "armv7l"]
       },
       {
         "target": "tar.gz",
