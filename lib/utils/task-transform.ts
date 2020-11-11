@@ -1,6 +1,6 @@
 export const withCheckboxCharacters = (s: string): string =>
   s.replace(
-    /^(\s*(?:[-+*\u2022]\s)?)- \[( |x|X)\](\s)/gm,
+    /^(\s*)- \[( |x|X)\](\s)/gm,
     (match, prespace, inside, postspace) =>
       prespace + (inside === ' ' ? '\ue000' : '\ue001') + postspace
   );

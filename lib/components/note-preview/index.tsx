@@ -115,15 +115,18 @@ export const NotePreview: FunctionComponent<Props> = ({
           const taskIndex = Array.prototype.indexOf.call(allTasks, node);
 
           let matchCount = 0;
-
           const content = note.content.replace(
-            /^(- \[x\])|(- \[ \])/gim,
-            (match) => {
-              return matchCount++ === taskIndex
-                ? match === '- [ ]'
-                  ? '- [x]'
-                  : '- [ ]'
-                : match;
+            /^(\s*)- \[( |x|X)\](\s)/gm,
+            (match, prespace, inside, postspace) => {
+              const newCheckbox =
+                matchCount++ === taskIndex
+                  ? inside === ' '
+                    ? '- [x]'
+                    : '- [ ]'
+                  : inside === ' '
+                  ? '- [ ]'
+                  : '- [x]';
+              return prespace + newCheckbox + postspace;
             }
           );
 
@@ -141,7 +144,6 @@ export const NotePreview: FunctionComponent<Props> = ({
     if (!previewNode.current) {
       return;
     }
-
     if (note?.content && showRenderedView) {
       renderToNode(previewNode.current, note!.content, searchQuery);
     } else {
