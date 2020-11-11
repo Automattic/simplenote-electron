@@ -1,6 +1,8 @@
+export const checkboxRegex: RegExp = /^(\s*)- \[( |x|X)\](\s)/gm;
+
 export const withCheckboxCharacters = (s: string): string =>
   s.replace(
-    /^(\s*)- \[( |x|X)\](\s)/gm,
+    checkboxRegex,
     (match, prespace, inside, postspace) =>
       prespace + (inside === ' ' ? '\ue000' : '\ue001') + postspace
   );
