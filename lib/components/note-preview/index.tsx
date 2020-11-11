@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
+import checkboxRegex from '../../utils/task-transform';
 import renderToNode from '../../note-detail/render-to-node';
 import { viewExternalUrl } from '../../utils/url-utils';
 import { withCheckboxCharacters } from '../../utils/task-transform';
@@ -116,7 +117,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
           let matchCount = 0;
           const content = note.content.replace(
-            /^(\s*)- \[( |x|X)\](\s)/gm,
+            checkboxRegex,
             (match, prespace, inside, postspace) => {
               const newCheckbox =
                 matchCount++ === taskIndex
