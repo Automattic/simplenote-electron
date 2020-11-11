@@ -21,6 +21,7 @@
 - Made margin in editor clickable to focus editor [#2433](https://github.com/Automattic/simplenote-electron/pull/2433)
 - Allow window to be closed when the user is logged out [#2439](https://github.com/Automattic/simplenote-electron/pull/2439)
 - Clear search and close revision panel when creating a new note [#2434](https://github.com/Automattic/simplenote-electron/pull/2434)
+- Fixed the Windows updater [#2440](https://github.com/Automattic/simplenote-electron/pull/2440)
 
 ### Other changes
 
