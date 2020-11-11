@@ -352,6 +352,11 @@ export const initSimperium = (
 
       case 'TRASH_TAG': {
         tagBucket.remove(t(action.tagName));
+        nextState.data.notes.forEach((note, noteId) => {
+          if (prevState.data.notes.get(noteId) !== note) {
+            queueNoteUpdate(noteId);
+          }
+        });
         return result;
       }
 
