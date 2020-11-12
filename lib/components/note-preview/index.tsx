@@ -105,35 +105,42 @@ export const NotePreview: FunctionComponent<Props> = ({
 
           return;
         }
+      }
 
-        if (node.className === 'task-list-item') {
-          event.preventDefault();
-          event.stopPropagation();
+      // There are times when showdown will put lists inside of the same
+      // UL as a tasklist. This causes those lists to look like they are
+      // checkboxes. This insures that we are only getting true checkboxes.
+      const element =
+        event?.target?.tagName === 'INPUT'
+          ? event.target.parentElement
+          : event.target;
+      if (element?.children[0]?.tagName === 'INPUT') {
+        event.preventDefault();
+        event.stopPropagation();
 
-          const allTasks = previewNode!.current.querySelectorAll(
-            '[data-markdown-root] .task-list-item'
-          );
-          const taskIndex = Array.prototype.indexOf.call(allTasks, node);
+        const allTasks = previewNode!.current.querySelectorAll(
+          '[data-markdown-root] .task-list-item'
+        );
+        const taskIndex = Array.prototype.indexOf.call(allTasks, element);
 
-          let matchCount = 0;
-          const content = note.content.replace(
-            checkboxRegex,
-            (match, prespace, inside, postspace) => {
-              const newCheckbox =
-                matchCount++ === taskIndex
-                  ? inside === ' '
-                    ? '- [x]'
-                    : '- [ ]'
-                  : inside === ' '
-                  ? '- [ ]'
-                  : '- [x]';
-              return prespace + newCheckbox + postspace;
-            }
-          );
+        let matchCount = 0;
+        const content = note.content.replace(
+          checkboxRegex,
+          (match, prespace, inside, postspace) => {
+            const newCheckbox =
+              matchCount++ === taskIndex
+                ? inside === ' '
+                  ? '- [x]'
+                  : '- [ ]'
+                : inside === ' '
+                ? '- [ ]'
+                : '- [x]';
+            return prespace + newCheckbox + postspace;
+          }
+        );
 
-          editNote(noteId, { content });
-          return;
-        }
+        editNote(noteId, { content });
+        return;
       }
     };
     previewNode.current?.addEventListener('click', handleClick, true);
