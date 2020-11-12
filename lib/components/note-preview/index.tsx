@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
-import checkboxRegex from '../../utils/task-transform';
+import { checkboxRegex } from '../../utils/task-transform';
 import renderToNode from '../../note-detail/render-to-node';
 import { viewExternalUrl } from '../../utils/url-utils';
 import { withCheckboxCharacters } from '../../utils/task-transform';
