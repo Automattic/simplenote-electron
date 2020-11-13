@@ -22,6 +22,7 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
+import { viewExternalUrl } from './utils/url-utils';
 import IconButton from './icon-button';
 import ChevronRightIcon from './icons/chevron-right';
 
@@ -583,6 +584,42 @@ class NoteContentEditor extends Component<Props> {
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
+
+    /* Hack to get external URLs working in Electron */
+    if (window.electron) {
+      monaco.languages.registerLinkProvider(
+        { language: 'plaintext', exclusive: true },
+        {
+          provideLinks: (model) => {
+            const matches = model.findMatches(
+              'https?://(www.[-a-zA-Z0-9@:%._+~#=]{1,256}.[a-zA-Z0-9()]{1,6}\b)?([-a-zA-Z0-9()@:%_+.~#?&//=]*)',
+              true, // searchOnlyEditableRange
+              true, // isRegex
+              false, // matchCase
+              null, // wordSeparators
+              false // captureMatches
+            );
+            return {
+              // don't set a URL on these links, because then Monaco skips resolveLink
+              // @cite: https://github.com/Microsoft/vscode/blob/8f89095aa6097f6e0014f2d459ef37820983ae55/src/vs/editor/contrib/links/getLinks.ts#L43:L65
+              links: matches.map(({ range }) => ({
+                range: range,
+                hover: 'test',
+              })),
+            };
+          },
+          resolveLink: (link) => {
+            const href = editor.getModel()?.getValueInRange(link.range) ?? '';
+            // const match = /^simplenote:\/\/note\/(.+)$/.exec(href);
+            // if (!match) {
+            //   return;
+            // }
+            viewExternalUrl(href);
+            return { ...link, url: href }; // tell Monaco to do nothing and not complain about it
+          },
+        }
+      );
+    }
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
