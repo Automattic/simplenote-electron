@@ -803,9 +803,10 @@ class NoteContentEditor extends Component<Props> {
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
     monaco.languages.setLanguageConfiguration('plaintext', {
-      // Allow any non-whitespace character to be part of a "word"
+      // Allow any non-whitespace, non parenthetical character to be part of a "word"
       // This prevents the dictionary suggestions from taking over our autosuggest
-      wordPattern: /[^\s]+/g,
+      // We're allowing parentheses so URLs are detected as "words" in Markdown links
+      wordPattern: /[^\s()]+/g,
     });
 
     document.oncopy = (event) => {
