@@ -589,6 +589,8 @@ class NoteContentEditor extends Component<Props> {
     if (window.electron) {
       editor.onMouseUp((e) => {
         e.event.browserEvent.preventDefault();
+        e.event.browserEvent.stopPropagation();
+        e.event.browserEvent.stopImmediatePropagation();
         // Clicked "Follow Link" popup
         if (
           e.target.detail === 'editor.contrib.modesContentHoverWidget' &&
@@ -596,6 +598,7 @@ class NoteContentEditor extends Component<Props> {
           e.target.element.hasAttribute('data-href')
         ) {
           viewExternalUrl(e.target.element.getAttribute('data-href'));
+          return;
         }
         // Ctrl or Cmd click on the link
         else if (e.target.element?.classList.contains('detected-link-active')) {
@@ -608,6 +611,7 @@ class NoteContentEditor extends Component<Props> {
             links?.forEach((link) => {
               if (link.options.inlineClassName === 'detected-link-active') {
                 viewExternalUrl(editor.getModel()?.getValueInRange(link.range));
+                return;
               }
             });
           }
