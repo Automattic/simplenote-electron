@@ -593,6 +593,10 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.transposeLetters', // ctrl+T
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
+      // multicursor shortcuts
+      'editor.action.insertCursorAbove', // alt+meta+UpArrow
+      'editor.action.insertCursorBelow', // alt+meta+DownArrow
+      'editor.action.insertCursorAtEndOfEachLineSelected', // shift+alt+I
       // search shortcuts
       'actions.find',
       'actions.findWithSelection',
@@ -717,6 +721,27 @@ class NoteContentEditor extends Component<Props> {
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
+    });
+
+    editor.addAction({
+      id: 'selectUpWithoutMulticursor',
+      label: 'Select Up',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
+      ],
+      run: () => {
+        editor.trigger('shortcuts', 'cursorUpSelect', null);
+      },
+    });
+    editor.addAction({
+      id: 'selectDownWithoutMulticursor',
+      label: 'Select Down',
+      keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
+      ],
+      run: () => {
+        editor.trigger('shortcuts', 'cursorDownSelect', null);
+      },
     });
 
     window.electron?.receive('editorCommand', (command) => {
