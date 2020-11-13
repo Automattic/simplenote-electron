@@ -585,19 +585,35 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    /* Hack to get external URLs working in Electron */
+    // Hack to get external URLs working in Electron
     if (window.electron) {
       editor.onMouseDown((e) => {
+        e.event.preventDefault();
         // Clicked "Follow Link" popup
         if (
           e.target.detail === 'editor.contrib.modesContentHoverWidget' &&
-          e.target.element.tagName.toLowerCase() === 'a'
+          e.target.element?.tagName.toLowerCase() === 'a' &&
+          e.target.element.hasAttribute('data-href')
         ) {
           viewExternalUrl(e.target.element.getAttribute('data-href'));
+          return;
         }
         // Ctrl or Cmd click on the link
-        else if (e.target.element.classList.contains('detected-link-active')) {
-          // todo: Search back for the previous http://, it could be on the previous line
+        if (e.target.element?.classList.contains('detected-link-active')) {
+          // Get the full "word", in case the line was wrapped
+          const range = e.target.range;
+          if (range) {
+            const word = editor.getModel()?.getWordAtPosition({
+              lineNumber: range.startLineNumber,
+              column: range.startColumn,
+            });
+            if (word) {
+              viewExternalUrl(word.word);
+              return;
+            }
+          }
+
+          // if all else has failed, try using the contents of the span
           viewExternalUrl(e.target.element.innerText);
         }
       });
