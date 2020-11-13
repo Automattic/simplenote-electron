@@ -587,8 +587,8 @@ class NoteContentEditor extends Component<Props> {
 
     // Hack to get external URLs working in Electron
     if (window.electron) {
-      editor.onMouseDown((e) => {
-        e.event.preventDefault();
+      editor.onMouseUp((e) => {
+        e.event.browserEvent.preventDefault();
         // Clicked "Follow Link" popup
         if (
           e.target.detail === 'editor.contrib.modesContentHoverWidget' &&
@@ -596,25 +596,21 @@ class NoteContentEditor extends Component<Props> {
           e.target.element.hasAttribute('data-href')
         ) {
           viewExternalUrl(e.target.element.getAttribute('data-href'));
-          return;
         }
         // Ctrl or Cmd click on the link
-        if (e.target.element?.classList.contains('detected-link-active')) {
-          // Get the full "word", in case the line was wrapped
+        else if (e.target.element?.classList.contains('detected-link-active')) {
+          // Get the full link, in case the line was wrapped
           const range = e.target.range;
           if (range) {
-            const word = editor.getModel()?.getWordAtPosition({
-              lineNumber: range.startLineNumber,
-              column: range.startColumn,
+            const links = editor
+              .getModel()
+              ?.getDecorationsInRange(range, undefined, true);
+            links?.forEach((link) => {
+              if (link.options.inlineClassName === 'detected-link-active') {
+                viewExternalUrl(editor.getModel()?.getValueInRange(link.range));
+              }
             });
-            if (word) {
-              viewExternalUrl(word.word);
-              return;
-            }
           }
-
-          // if all else has failed, try using the contents of the span
-          viewExternalUrl(e.target.element.innerText);
         }
       });
     }
@@ -803,10 +799,9 @@ class NoteContentEditor extends Component<Props> {
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
     monaco.languages.setLanguageConfiguration('plaintext', {
-      // Allow any non-whitespace, non parenthetical character to be part of a "word"
+      // Allow any non-whitespace character to be part of a "word"
       // This prevents the dictionary suggestions from taking over our autosuggest
-      // We're allowing parentheses so URLs are detected as "words" in Markdown links
-      wordPattern: /[^\s()]+/g,
+      wordPattern: /[^\s]+/g,
     });
 
     document.oncopy = (event) => {
