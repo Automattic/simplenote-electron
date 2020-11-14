@@ -22,7 +22,6 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
-import { viewExternalUrl } from './utils/url-utils';
 import IconButton from './icon-button';
 import ChevronRightIcon from './icons/chevron-right';
 
@@ -584,40 +583,6 @@ class NoteContentEditor extends Component<Props> {
         return { ...link, url: '#' }; // tell Monaco to do nothing and not complain about it
       },
     });
-
-    // Hack to get external URLs working in Electron
-    if (window.electron) {
-      editor.onMouseUp((e) => {
-        e.event.browserEvent.preventDefault();
-        e.event.browserEvent.stopPropagation();
-        e.event.browserEvent.stopImmediatePropagation();
-        // Clicked "Follow Link" popup
-        if (
-          e.target.detail === 'editor.contrib.modesContentHoverWidget' &&
-          e.target.element?.tagName.toLowerCase() === 'a' &&
-          e.target.element.hasAttribute('data-href')
-        ) {
-          viewExternalUrl(e.target.element.getAttribute('data-href'));
-          return;
-        }
-        // Ctrl or Cmd click on the link
-        else if (e.target.element?.classList.contains('detected-link-active')) {
-          // Get the full link, in case the line was wrapped
-          const range = e.target.range;
-          if (range) {
-            const links = editor
-              .getModel()
-              ?.getDecorationsInRange(range, undefined, true);
-            links?.forEach((link) => {
-              if (link.options.inlineClassName === 'detected-link-active') {
-                viewExternalUrl(editor.getModel()?.getValueInRange(link.range));
-                return;
-              }
-            });
-          }
-        }
-      });
-    }
 
     // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
     const shortcutsToDisable = [
