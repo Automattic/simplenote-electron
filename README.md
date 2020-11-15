@@ -11,7 +11,8 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 3. `npm install`
 4. `npm run dev`
 5. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
-6. Sign up for a new account within the app. Use the account for **testing purposes only** as all note data will be periodically cleared out on the server.
+6. For all logging from Electron to be printed to the terminal (e.g. `console.log` statements within `app.js`), you might need to set `env ELECTRON_ENABLE_LOGGING=1`.
+7. Sign up for a new account within the app. Use the account for **testing purposes only** as all note data will be periodically cleared out on the server.
 
 _Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces._
 
@@ -27,7 +28,7 @@ Unit tests are run with `npm test`.
 
 End-to-end tests are run with `npm run test-e2e`.
 Note that the `Spectron` version corresponds with the version of `Electron` we are using and so at the time of writing this is pinned at version 6.
-Use the corresponding API docs for `webdriver-io` which correspond to the `Specron` version.
+Use the corresponding API docs for `webdriver-io` which correspond to the `Spectron` version.
 At the time of writing you will want to refer to the [webdriver-io v4.13 API docs](http://v4.webdriver.io/v4.13/api.html).
 
 ## Coding Guidelines
