@@ -48,9 +48,10 @@ export class NoteInfo extends Component<Props> {
 
   render() {
     const { isMarkdown, isPinned, noteId, note } = this.props;
-    const formattedDate =
-      note.modificationDate && formatTimestamp(note.modificationDate);
     const isPublished = includes(note.systemTags, 'published');
+    const modificationDate = note.modificationDate
+      ? note.modificationDate * 1000
+      : null;
     const publishURL = this.getPublishURL(note.publishURL);
     const noteLink = this.getNoteLink(note, noteId);
 
@@ -67,12 +68,22 @@ export class NoteInfo extends Component<Props> {
               <CrossIcon />
             </button>
           </div>
-          {formattedDate && (
+          {modificationDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
                 <span className="note-info-name">Modified</span>
                 <br />
-                <span className="note-info-detail">{formattedDate}</span>
+                <span className="note-info-detail">
+                  <time dateTime={new Date(modificationDate).toISOString()}>
+                    {new Date(modificationDate).toLocaleString([], {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    })}
+                  </time>
+                </span>
               </span>
             </p>
           )}
@@ -174,10 +185,6 @@ export class NoteInfo extends Component<Props> {
 
   markdownNote = (shouldEnableMarkdown: boolean) =>
     this.props.markdownNote(this.props.noteId, shouldEnableMarkdown);
-}
-
-function formatTimestamp(unixTime: number) {
-  return format(unixTime * 1000, 'MMM d, yyyy h:mm a');
 }
 
 // https://github.com/RadLikeWhoa/Countable
