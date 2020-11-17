@@ -17,7 +17,13 @@ type Props = StateProps;
 export const LastSyncTime: FunctionComponent<Props> = ({ lastUpdated }) =>
   'undefined' !== typeof lastUpdated ? (
     <time dateTime={new Date(lastUpdated).toISOString()}>
-      {new Date(lastUpdated).toLocaleString()}
+      {new Date(lastUpdated).toLocaleString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      })}
     </time>
   ) : (
     <span />
