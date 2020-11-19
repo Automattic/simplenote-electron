@@ -28,7 +28,7 @@ module.exports = function main() {
   let mainWindow = null;
   let isAuthenticated;
 
-  app.setAppUserModelId(process.execPath);
+  app.on('ready', () => app.setAppUserModelId('com.automattic.simplenote'));
 
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
