@@ -29,10 +29,6 @@ type DispatchProps = {
 
 type Props = StateProps & DispatchProps;
 
-function formatTimestamp(unixTime: number) {
-  return format(unixTime * 1000, 'MM/dd/yyyy');
-}
-
 export const Reference: FunctionComponent<Props> = ({
   openNote,
   reference,
@@ -40,14 +36,24 @@ export const Reference: FunctionComponent<Props> = ({
   if (!reference) {
     return null;
   }
-  const formattedDate =
-    reference.modificationDate && formatTimestamp(reference.modificationDate);
+
   return (
     <button className="reference-link" onClick={openNote}>
       <span className="reference-title note-info-name">{reference.title}</span>
       <span>
-        {reference.count} Reference{reference.count > 1 ? 's' : ''}, last
-        modified {formattedDate}
+        {reference.count} Reference{reference.count > 1 ? 's' : ''}
+        {reference.modificationDate && ', last modified '}
+        {reference.modificationDate && (
+          <time
+            dateTime={new Date(reference.modificationDate * 1000).toISOString()}
+          >
+            {new Date(reference.modificationDate * 1000).toLocaleString([], {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })}
+          </time>
+        )}
       </span>
     </button>
   );
