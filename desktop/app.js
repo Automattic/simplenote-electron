@@ -28,8 +28,6 @@ module.exports = function main() {
   let mainWindow = null;
   let isAuthenticated;
 
-  app.on('ready', () => app.setAppUserModelId('com.automattic.simplenote'));
-
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
     app.on('open-url', function (event, url) {
@@ -249,5 +247,6 @@ module.exports = function main() {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   app.on('ready', activateWindow);
+  app.on('ready', () => app.setAppUserModelId('com.automattic.simplenote'));
   app.on('activate', activateWindow);
 };
