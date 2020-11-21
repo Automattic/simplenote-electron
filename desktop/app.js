@@ -247,5 +247,6 @@ module.exports = function main() {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   app.on('ready', activateWindow);
+  app.on('ready', () => app.setAppUserModelId('com.automattic.simplenote'));
   app.on('activate', activateWindow);
 };
