@@ -56,7 +56,7 @@ const getPreview = (content: string, searchQuery: string) => {
       const matches = regExp.exec(content);
       if (matches && matches.length > 0) {
         preview = matches[0];
-        preview = preview.replace(/ +/g, ' ').replaceAll('\n', '').trim();
+        preview = preview.replace(/ +/g, ' ').replace(/\n/g, '').trim();
 
         // @todo: add '...' before/after to indication truncation
         return preview;
