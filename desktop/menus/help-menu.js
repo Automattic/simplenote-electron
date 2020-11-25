@@ -30,7 +30,7 @@ const buildHelpMenu = (mainWindow, isAuthenticated) => {
       submenu: [
         {
           label: 'Debugging Console',
-          role: 'toggleDevTools',
+          click: (item, focusedWindow) => focusedWindow?.toggleDevTools(),
         },
       ],
     },
