@@ -5,7 +5,6 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
   isAuthenticated = isAuthenticated || false;
   editMode = editMode || false;
 
-  // menu items with roles don't respect visibility, so we have to do this the hard way
   let undo = {
     label: '&Undo',
     click: editorCommandSender({ action: 'undo' }),
@@ -23,9 +22,9 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     click: editorCommandSender({ action: 'selectAll' }),
     accelerator: 'CommandOrControl+A',
   };
+
+  // menu items with roles don't respect visibility, so we have to do this the hard way
   if (!editMode) {
-    undo['role'] = 'undo';
-    redo['role'] = 'redo';
     selectAll['role'] = 'selectAll';
   }
 
