@@ -12,6 +12,7 @@
 - Fixed Ctrl+Alt+Up/Down arrow selection shortcuts on Win/Linux [#2428](https://github.com/Automattic/simplenote-electron/pull/2428)
 - Fixed a bug that prevented Follow Link / cmd+click from working on external links within the note editor [#2470](https://github.com/Automattic/simplenote-electron/pull/2470)
 - Fixed inconsistent datetime formatting in the note info panel [#2473](https://github.com/Automattic/simplenote-electron/pull/2473)
+- Fixed keyboard shortcuts sometimes not working on Win/Linux [#2490](https://github.com/Automattic/simplenote-electron/pull/2490)
 
 ### Other Changes
 
