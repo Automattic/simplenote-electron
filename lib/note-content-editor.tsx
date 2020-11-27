@@ -17,7 +17,7 @@ import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
-import { isSafari } from './utils/platform';
+import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
   withCheckboxSyntax,
@@ -604,8 +604,9 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.nextMatchFindAction',
       'editor.action.selectHighlights',
     ];
-    // let Electron menus trigger these
-    if (window.electron) {
+    // let Electron menus trigger these on the Mac
+    // this breaks the shortcuts on Win/Linux -- not sure why
+    if (window.electron && isMac) {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
     }
     shortcutsToDisable.forEach(function (action) {
