@@ -81,12 +81,10 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
     case 'a':
       switch (attrName) {
         case 'href':
-          // No javascript Uris allowed
-          if (value.toLowerCase().trim().startsWith('javascript')) {
-            return false;
-          }
-
-          return true;
+          // disallow any protocol except for http://, https://, and simplenote://
+          return ['http', 'https', 'simplenote'].includes(
+            value.toLowerCase().trim().split('://')[0]
+          );
         case 'alt':
         case 'rel':
         case 'title':
