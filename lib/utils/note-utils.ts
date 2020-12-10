@@ -42,7 +42,7 @@ export const getTitle = (content) => {
  *
  * @param content
  */
-const getPreview = (content: string, searchQuery: string) => {
+const getPreview = (content: string, searchQuery?: string) => {
   let preview = '';
   let lines = 0;
 
@@ -58,7 +58,7 @@ const getPreview = (content: string, searchQuery: string) => {
         preview = matches[0];
         preview = preview.replace(/ +/g, ' ').replace(/\n/g, '').trim();
 
-        // @todo: add '...' before/after to indication truncation
+        // @todo: add '...' before/after to indicate truncation
         return preview;
       }
     }
@@ -92,7 +92,7 @@ const getPreview = (content: string, searchQuery: string) => {
 const formatPreview = (stripMarkdown: boolean, s: string): string =>
   stripMarkdown ? removeMarkdownWithFix(s) || s : s;
 
-const previewCache = new Map<string, [boolean, TitleAndPreview]>();
+const previewCache = new Map<string, [TitleAndPreview, boolean, string?]>();
 
 /**
  * Returns the title and excerpt for a given note
@@ -102,16 +102,16 @@ const previewCache = new Map<string, [boolean, TitleAndPreview]>();
  */
 export const noteTitleAndPreview = (
   note: T.Note,
-  searchQuery?: String
+  searchQuery?: string
 ): TitleAndPreview => {
   const stripMarkdown = isMarkdown(note);
-  // const cached = previewCache.get(note.content);
-  // if (cached) {
-  //   const [wasMarkdown, value] = cached;
-  //   if (wasMarkdown === stripMarkdown) {
-  //     return value;
-  //   }
-  // }
+  const cached = previewCache.get(note.content);
+  if (cached) {
+    const [value, wasMarkdown, savedQuery] = cached;
+    if (wasMarkdown === stripMarkdown && savedQuery === searchQuery) {
+      return value;
+    }
+  }
 
   const content = note.content || '';
   const title = formatPreview(stripMarkdown, getTitle(content));
@@ -121,7 +121,7 @@ export const noteTitleAndPreview = (
   );
   const result = { title, preview };
 
-  previewCache.set(note.content, [stripMarkdown, result]);
+  previewCache.set(note.content, [result, stripMarkdown, searchQuery]);
 
   return result;
 };
