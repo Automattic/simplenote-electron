@@ -1,4 +1,6 @@
 import removeMarkdown from 'remove-markdown';
+import { escapeRegExp } from 'lodash';
+import { getTerms } from './filter-notes';
 
 import * as T from '../types';
 
@@ -47,12 +49,18 @@ const getPreview = (content: string, searchQuery?: string) => {
   let lines = 0;
 
   // contextual note previews
-  if (searchQuery && searchQuery.trim()) {
-    // use only the first word of a multiword query
-    const firstTerm = searchQuery.trim().split(' ')[0];
-    const searchRegex = new RegExp(firstTerm, 'ims');
+  if (searchQuery?.trim()) {
+    const terms = getTerms(searchQuery);
+
+    // use only the first term of a multi-term query
+    const firstTerm = terms[0].toLocaleLowerCase();
+
+    const searchRegex = new RegExp(escapeRegExp(firstTerm), 'ims');
     if (searchRegex.test(content)) {
-      const regExp = new RegExp('.{0,10}' + firstTerm + '.{0,200}', 'ims');
+      const regExp = new RegExp(
+        '.{0,10}' + escapeRegExp(firstTerm) + '.{0,200}',
+        'ims'
+      );
       const matches = regExp.exec(content);
       if (matches && matches.length > 0) {
         preview = matches[0];
@@ -64,7 +72,6 @@ const getPreview = (content: string, searchQuery?: string) => {
     }
   }
   // implicit else: if the query didn't match, fall back to first N lines
-
   let index = content.indexOf('\n');
 
   if (index === -1) {
