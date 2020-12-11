@@ -752,13 +752,12 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
       const thisLine = editor.getModel()?.getLineContent(lineNumber);
-      if (!thisLine) {
-        return;
-      }
-
-      const isList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.test(thisLine);
-      if (isList) {
+      const isList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/;
+      if (thisLine && isList.test(thisLine)) {
         editor.trigger('commands', 'editor.action.indentLines', null);
+      } else {
+        // default tab key behavior
+        editor.trigger('commands', 'tab', null);
       }
     });
 
