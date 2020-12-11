@@ -5,7 +5,7 @@ import replaceToArray from 'string-replace-to-array';
 import { withoutTags } from '../utils/filter-notes';
 
 export const decorateWith = (decorators, text) =>
-  decorators.length > 0
+  decorators.length > 0 && text.length > 0
     ? decorators
         .reduce((output, { filter, replacer }) => {
           const searchText = 'string' === typeof filter && withoutTags(filter);
