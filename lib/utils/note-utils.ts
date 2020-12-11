@@ -1,4 +1,6 @@
 import removeMarkdown from 'remove-markdown';
+import { escapeRegExp } from 'lodash';
+import { getTerms } from './filter-notes';
 
 import * as T from '../types';
 
@@ -9,6 +11,8 @@ export interface TitleAndPreview {
 
 export const maxTitleChars = 64;
 export const maxPreviewChars = 200;
+
+const isLowSurrogate = (c: number) => 0xdc00 <= c && c <= 0xdfff;
 
 /**
  * Returns a string with markdown stripped
@@ -42,9 +46,36 @@ export const getTitle = (content) => {
  *
  * @param content
  */
-const getPreview = (content: string) => {
+const getPreview = (content: string, searchQuery?: string) => {
   let preview = '';
   let lines = 0;
+
+  // contextual note previews
+  if (searchQuery?.trim()) {
+    const terms = getTerms(searchQuery);
+
+    // use only the first term of a multi-term query
+    const firstTerm = terms[0].toLocaleLowerCase();
+    const leadingChars = 30 - firstTerm.length;
+
+    // prettier-ignore
+    const regExp = new RegExp(
+      '(?<=\\s|^)[^\n]' + // split at a word boundary (pattern must be preceded by whitespace or beginning of string)
+        '{0,' + leadingChars + '}' + // up to leadingChars of text before the match
+        escapeRegExp(firstTerm) +
+        '.{0,200}(?=\\s|$)', // up to 200 characters of text after the match, splitting at a word boundary
+      'ims'
+    );
+    const matches = regExp.exec(content);
+    if (matches && matches.length > 0) {
+      preview = matches[0];
+
+      // don't return half of a surrogate pair
+      return isLowSurrogate(preview.charCodeAt(0)) ? preview.slice(1) : preview;
+    }
+  }
+
+  // implicit else: if the query didn't match, fall back to first four lines
   let index = content.indexOf('\n');
 
   if (index === -1) {
@@ -72,7 +103,7 @@ const getPreview = (content: string) => {
 const formatPreview = (stripMarkdown: boolean, s: string): string =>
   stripMarkdown ? removeMarkdownWithFix(s) || s : s;
 
-const previewCache = new Map<string, [boolean, TitleAndPreview]>();
+const previewCache = new Map<string, [TitleAndPreview, boolean, string?]>();
 
 /**
  * Returns the title and excerpt for a given note
@@ -80,22 +111,28 @@ const previewCache = new Map<string, [boolean, TitleAndPreview]>();
  * @param note generate the previews for this note
  * @returns title and excerpt (if available)
  */
-export const noteTitleAndPreview = (note: T.Note): TitleAndPreview => {
+export const noteTitleAndPreview = (
+  note: T.Note,
+  searchQuery?: string
+): TitleAndPreview => {
   const stripMarkdown = isMarkdown(note);
   const cached = previewCache.get(note.content);
   if (cached) {
-    const [wasMarkdown, value] = cached;
-    if (wasMarkdown === stripMarkdown) {
+    const [value, wasMarkdown, savedQuery] = cached;
+    if (wasMarkdown === stripMarkdown && savedQuery === searchQuery) {
       return value;
     }
   }
 
   const content = note.content || '';
   const title = formatPreview(stripMarkdown, getTitle(content));
-  const preview = formatPreview(stripMarkdown, getPreview(content));
+  const preview = formatPreview(
+    stripMarkdown,
+    getPreview(content, searchQuery)
+  );
   const result = { title, preview };
 
-  previewCache.set(note.content, [stripMarkdown, result]);
+  previewCache.set(note.content, [result, stripMarkdown, searchQuery]);
 
   return result;
 };

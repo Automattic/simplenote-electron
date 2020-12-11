@@ -85,7 +85,7 @@ export class NoteCell extends Component<Props> {
       return <div>{"Couldn't find note"}</div>;
     }
 
-    const { title, preview } = noteTitleAndPreview(note);
+    const { title, preview } = noteTitleAndPreview(note, searchQuery);
     const isPinned = note.systemTags.includes('pinned');
     const isPublished = !!note.publishURL;
     const recentlyUpdated =
