@@ -12,6 +12,8 @@ export interface TitleAndPreview {
 export const maxTitleChars = 64;
 export const maxPreviewChars = 200;
 
+const isLowSurrogate = (c: number) => 0xdc00 <= c && c <= 0xdfff;
+
 /**
  * Returns a string with markdown stripped
  *
@@ -69,7 +71,6 @@ const getPreview = (content: string, searchQuery?: string) => {
       preview = matches[0];
 
       // don't return half of a surrogate pair
-      const isLowSurrogate = (c: number) => 0xdc00 <= c && c <= 0xdfff;
       return isLowSurrogate(preview.charCodeAt(0)) ? preview.slice(1) : preview;
     }
   }
