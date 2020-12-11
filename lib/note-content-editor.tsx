@@ -745,6 +745,23 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
+    // Tab to indent lists and tasks
+    editor.addCommand(monaco.KeyCode.Tab, () => {
+      const lineNumber = editor.getPosition()?.lineNumber;
+      if (!lineNumber) {
+        return;
+      }
+      const thisLine = editor.getModel()?.getLineContent(lineNumber);
+      if (!thisLine) {
+        return;
+      }
+
+      const isList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.test(thisLine);
+      if (isList) {
+        editor.trigger('commands', 'editor.action.indentLines', null);
+      }
+    });
+
     window.electron?.receive('editorCommand', (command) => {
       switch (command.action) {
         case 'findAgain':
