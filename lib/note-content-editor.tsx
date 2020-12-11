@@ -1001,19 +1001,16 @@ class NoteContentEditor extends Component<Props> {
         );
         const identifier = { major: 1, minor: 1 };
         const op = { identifier, range, text: null, forceMoveMarkers: true };
-        this.editor.executeEdits('autolist', [op]);
 
-        Promise.resolve().then(() =>
+        Promise.resolve().then(() => {
+          this.editor.executeEdits('autolist', [op]);
           this.editor.setPosition({
             column: 0,
             lineNumber: lineNumber,
-          })
-        );
+          });
+        });
 
-        return (
-          value.slice(0, Math.max(0, prevLineStart)) +
-          value.slice(thisLineStart + thisLine.length) // thisLine.length will also remove any indentation
-        );
+        return;
       }
 
       const lineStart = model.getOffsetAt({
