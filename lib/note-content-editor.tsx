@@ -993,10 +993,15 @@ class NoteContentEditor extends Component<Props> {
           lineNumber: lineNumber + 1,
         });
 
-        // const range = new this.monaco.Range(lineNumber, 0, lineNumber + 1, 0);
-        // const identifier = { major: 1, minor: 1 };
-        // const op = { identifier, range, text: null, forceMoveMarkers: true };
-        // this.editor.executeEdits('autolist', [op]);
+        const range = new this.monaco.Range(
+          lineNumber,
+          0,
+          lineNumber + 1,
+          thisLine.length + 1
+        );
+        const identifier = { major: 1, minor: 1 };
+        const op = { identifier, range, text: null, forceMoveMarkers: true };
+        this.editor.executeEdits('autolist', [op]);
 
         Promise.resolve().then(() =>
           this.editor.setPosition({
