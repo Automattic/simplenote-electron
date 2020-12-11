@@ -74,7 +74,7 @@ const getPreview = (content: string, searchQuery?: string) => {
     }
   }
 
-  // implicit else: if the query didn't match, fall back to first N lines
+  // implicit else: if the query didn't match, fall back to first four lines
   let index = content.indexOf('\n');
 
   if (index === -1) {
