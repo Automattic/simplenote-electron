@@ -70,7 +70,10 @@ const getPreview = (content: string, searchQuery?: string) => {
     const matches = regExp.exec(content);
     if (matches && matches.length > 0) {
       preview = matches[0];
-      return preview;
+
+      // don't return half of a surrogate pair
+      const isLowSurrogate = (c: number) => 0xdc00 <= c && c <= 0xdfff;
+      return isLowSurrogate(preview.charCodeAt(0)) ? preview.slice(1) : preview;
     }
   }
 
