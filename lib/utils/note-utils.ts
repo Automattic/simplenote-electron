@@ -54,23 +54,23 @@ const getPreview = (content: string, searchQuery?: string) => {
 
     // use only the first term of a multi-term query
     const firstTerm = terms[0].toLocaleLowerCase();
+    const leadingChars = 30 - firstTerm.length;
 
-    const searchRegex = new RegExp(escapeRegExp(firstTerm), 'ims');
-    if (searchRegex.test(content)) {
-      const regExp = new RegExp(
-        '.{0,10}' + escapeRegExp(firstTerm) + '.{0,200}',
-        'ims'
-      );
-      const matches = regExp.exec(content);
-      if (matches && matches.length > 0) {
-        preview = matches[0];
-        preview = preview.replace(/ +/g, ' ').replace(/\n/g, '').trim();
-
-        // @todo: add '...' before/after to indicate truncation
-        return preview;
-      }
+    const regExp = new RegExp(
+      '(?<=\\s|^)[^\n]{0,' +
+        leadingChars +
+        '}' +
+        escapeRegExp(firstTerm) +
+        '.{0,200}(?=\\s|$)',
+      'ims'
+    );
+    const matches = regExp.exec(content);
+    if (matches && matches.length > 0) {
+      preview = matches[0];
+      return preview;
     }
   }
+
   // implicit else: if the query didn't match, fall back to first N lines
   let index = content.indexOf('\n');
 
