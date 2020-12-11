@@ -14,6 +14,9 @@ export const decorateWith = (decorators, text) =>
               ? new RegExp(escapeRegExp(searchText), 'gi')
               : filter;
 
+          if (output?.length === 0) {
+            return [];
+          }
           return replaceToArray(output, pattern, replacer);
         }, text)
         .map((chunk, key) =>
