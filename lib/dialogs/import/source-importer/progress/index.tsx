@@ -1,10 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
 
 import ImportProgressBar from './bar';
 import ImportProgressText from './text';
 
-const ImportProgress = ({ currentValue, endValue, isDone }) => {
+type OwnProps = {
+  currentValue?: number;
+  endValue?: number;
+  isDone: boolean;
+};
+
+const ImportProgress: FunctionComponent<OwnProps> = ({
+  currentValue = 0,
+  endValue = 0,
+  isDone,
+}) => {
   return (
     <section>
       <ImportProgressBar
@@ -15,12 +24,6 @@ const ImportProgress = ({ currentValue, endValue, isDone }) => {
       <ImportProgressText currentValue={currentValue} isDone={isDone} />
     </section>
   );
-};
-
-ImportProgress.propTypes = {
-  currentValue: PropTypes.number.isRequired,
-  endValue: PropTypes.number,
-  isDone: PropTypes.bool.isRequired,
 };
 
 export default ImportProgress;
