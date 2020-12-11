@@ -993,14 +993,21 @@ class NoteContentEditor extends Component<Props> {
           lineNumber: lineNumber + 1,
         });
 
-        const range = new this.monaco.Range(lineNumber, 0, lineNumber + 1, 0);
-        const identifier = { major: 1, minor: 1 };
-        const op = { identifier, range, text: '', forceMoveMarkers: true };
-        this.editor.executeEdits('autolist', [op]);
+        // const range = new this.monaco.Range(lineNumber, 0, lineNumber + 1, 0);
+        // const identifier = { major: 1, minor: 1 };
+        // const op = { identifier, range, text: null, forceMoveMarkers: true };
+        // this.editor.executeEdits('autolist', [op]);
+
+        Promise.resolve().then(() =>
+          this.editor.setPosition({
+            column: 0,
+            lineNumber: lineNumber,
+          })
+        );
 
         return (
-          value.slice(0, Math.max(0, prevLineStart - 1)) +
-          value.slice(thisLineStart)
+          value.slice(0, Math.max(0, prevLineStart)) +
+          value.slice(thisLineStart + thisLine.length) // thisLine.length will also remove any indentation
         );
       }
 
