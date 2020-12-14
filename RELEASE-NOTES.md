@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.3.0]
+
+### Fixes
+
+- Fixed a bug causing the app to be missing from Windows 10 notification settings [#2483](https://github.com/Automattic/simplenote-electron/pull/2483)
+
 ## [v2.2.0]
 
 ### Enhancements
