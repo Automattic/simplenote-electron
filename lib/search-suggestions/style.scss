@@ -11,7 +11,7 @@
   border-radius: 4px;
   overflow: scroll;
   max-height: 226px;
-  box-shadow: 0 3px 6px 0 rgba(0,0,0,0.15);
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
   text-align: left;
 
   .search-suggestions-list {
@@ -42,7 +42,6 @@
     margin-right: 16px;
     padding: 0;
   }
-
 }
 
 .theme-light {
@@ -60,7 +59,7 @@
   }
 
   .search-suggestion-row-selected {
-    background-color: $studio-blue-5;
+    background-color: $studio-simplenote-blue-5;
   }
 }
 
@@ -75,7 +74,7 @@
       fill: $studio-gray-30;
     }
     &:hover {
-      background: $studio-blue-70;
+      background: $studio-simplenote-blue-70;
     }
   }
 
