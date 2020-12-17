@@ -55,23 +55,27 @@ const getPreview = (content: string, searchQuery?: string) => {
     const terms = getTerms(searchQuery);
 
     // use only the first term of a multi-term query
-    const firstTerm = terms[0].toLocaleLowerCase();
-    const leadingChars = 30 - firstTerm.length;
+    if (terms.length > 0) {
+      const firstTerm = terms[0].toLocaleLowerCase();
+      const leadingChars = 30 - firstTerm.length;
 
-    // prettier-ignore
-    const regExp = new RegExp(
-      '(?<=\\s|^)[^\n]' + // split at a word boundary (pattern must be preceded by whitespace or beginning of string)
-        '{0,' + leadingChars + '}' + // up to leadingChars of text before the match
-        escapeRegExp(firstTerm) +
-        '.{0,200}(?=\\s|$)', // up to 200 characters of text after the match, splitting at a word boundary
-      'ims'
-    );
-    const matches = regExp.exec(content);
-    if (matches && matches.length > 0) {
-      preview = matches[0];
+      // prettier-ignore
+      const regExp = new RegExp(
+        '(?<=\\s|^)[^\n]' + // split at a word boundary (pattern must be preceded by whitespace or beginning of string)
+          '{0,' + leadingChars + '}' + // up to leadingChars of text before the match
+          escapeRegExp(firstTerm) +
+          '.{0,200}(?=\\s|$)', // up to 200 characters of text after the match, splitting at a word boundary
+        'ims'
+      );
+      const matches = regExp.exec(content);
+      if (matches && matches.length > 0) {
+        preview = matches[0];
 
-      // don't return half of a surrogate pair
-      return isLowSurrogate(preview.charCodeAt(0)) ? preview.slice(1) : preview;
+        // don't return half of a surrogate pair
+        return isLowSurrogate(preview.charCodeAt(0))
+          ? preview.slice(1)
+          : preview;
+      }
     }
   }
 
