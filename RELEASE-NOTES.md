@@ -1,5 +1,24 @@
 # Changelog
 
+## [v2.4.0]
+
+### Enhancements
+
+- Added search context to the note list [#2424](https://github.com/Automattic/simplenote-electron/pull/2424)
+- Use the Tab key to indent nested list items from anywhere within the line [#2515](https://github.com/Automattic/simplenote-electron/pull/2515), [#2518](https://github.com/Automattic/simplenote-electron/pull/2518)
+
+### Fixes
+
+- Fixed a crash when entering a multi-word search term in Expanded display mode [#2516](https://github.com/Automattic/simplenote-electron/pull/2516)
+- Show error message when trying to import invalid JSON [#2446](https://github.com/Automattic/simplenote-electron/pull/2446)
+- Fixed buggy cursor when hitting enter on an empty list item [#2519](https://github.com/Automattic/simplenote-electron/pull/2519)
+- Made sidebar icons the correct shade of blue [#2513](https://github.com/Automattic/simplenote-electron/pull/2513)
+
+### Other Changes
+
+- Only linkify HTTP and simplenote protocols in note preview [#2505](https://github.com/Automattic/simplenote-electron/pull/2505)
+- Tab panels: Add some TypeScript declarations (props to @ubaidisaev) [#2489](https://github.com/Automattic/simplenote-electron/pull/2489)
+
 ## [v2.3.0]
 
 ### Fixes
