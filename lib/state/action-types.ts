@@ -63,6 +63,7 @@ export type CreateNoteWithId = Action<
   { noteId: T.EntityId; note?: Partial<T.Note> }
 >;
 export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
+export type DismissSearchSuggestions = Action<'DISMISS_SEARCH_SUGGESTIONS'>;
 export type ExportNotes = Action<'EXPORT_NOTES'>;
 export type FilterNotes = Action<
   'FILTER_NOTES',
@@ -314,6 +315,7 @@ export type ActionType =
   | CreateNoteWithId
   | DeleteOpenNoteForever
   | DeleteNoteForever
+  | DismissSearchSuggestions
   | EditNote
   | EmptyTrash
   | ExportNotes

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { State } from '../state';
-import { search } from '../state/ui/actions';
+import { dismissSearchSuggestions, search } from '../state/ui/actions';
 import SmallSearchIcon from '../icons/search-small';
 
 import type * as S from '../state';
@@ -10,7 +10,8 @@ import type * as S from '../state';
 
 type StateProps = {
   searchQuery: string;
-  searchHistory: [string];
+  searchHistory: string[];
+  showSearchHistory: boolean;
   // storeKeyHandler: () => any;
 };
 
@@ -18,14 +19,18 @@ type DispatchProps = {
   onSearch: (query: string) => any;
 };
 
+type OwnState = {
+  selectedItem: number;
+};
+
 type Props = StateProps & DispatchProps;
 
-export class SearchSuggestions extends Component<Props> {
+export class SearchSuggestions extends Component<Props, OwnState> {
   static displayName = 'SearchSuggestions';
 
-  // state = {
-  //   selectedItem: 0,
-  // };
+  state = {
+    selectedItem: 0,
+  };
 
   // componentDidMount() {
   //   this.props.storeKeyHandler({
@@ -36,20 +41,20 @@ export class SearchSuggestions extends Component<Props> {
   // }
 
   // componentDidUpdate() {
-    // scroll selected item into view
-    // const selectedItem = this.refs.selectedItem;
-    // const domNode = null;
-    // todo scroll only when needed (i.e. item is not visible)
-    // if (selectedItem) {
-      // domNode = ReactDOM.findDOMNode(selectedItem);
-      // domNode?.scrollIntoView(false);
-    // }
+  // scroll selected item into view
+  // const selectedItem = this.refs.selectedItem;
+  // const domNode = null;
+  // todo scroll only when needed (i.e. item is not visible)
+  // if (selectedItem) {
+  // domNode = ReactDOM.findDOMNode(selectedItem);
+  // domNode?.scrollIntoView(false);
+  // }
 
-    // this.props.storeKeyHandler({
-    //   next: this.nextItem,
-    //   prev: this.prevItem,
-    //   select: this.selectItem,
-    // });
+  // this.props.storeKeyHandler({
+  //   next: this.nextItem,
+  //   prev: this.prevItem,
+  //   select: this.selectItem,
+  // });
   // }
 
   // nextItem = () => {
@@ -76,61 +81,72 @@ export class SearchSuggestions extends Component<Props> {
   // };
 
   render() {
-    const { onSearch, searchQuery, searchHistory } = this.props;
+    const {
+      onSearch,
+      searchQuery,
+      searchHistory,
+      showSearchHistory,
+    } = this.props;
     // const { selectedItem } = this.state;
     const screenReaderLabel = 'Search suggestions';
 
     return (
-      <div className="search-suggestions" aria-label={screenReaderLabel}>
-        <ul className="search-suggestions-list">
-          <li
-            id="query"
-            className={'search-suggestion-row'
-              // selectedItem === 0
+      showSearchHistory && (
+        <div className="search-suggestions" aria-label={screenReaderLabel}>
+          <ul className="search-suggestions-list">
+            <li
+              id="query"
+              className={
+                'search-suggestion-row'
+                // selectedItem === 0
                 // ? 'search-suggestion-row search-suggestion-row-selected'
                 // : 'search-suggestion-row'
-            }
-            onClick={() => onSearch(searchQuery)}
-          >
-            <SmallSearchIcon />
-            <span className="search-suggestion">
-              {decodeURIComponent(searchQuery)}
-            </span>
-          </li>
-          {searchHistory.length > 0 &&
-            searchHistory.map((query, index) => (
-              <li
-                key={query}
-                id={query}
-                className={'search-suggestion-row'
-                  // selectedItem === index + 1
+              }
+              onClick={() => onSearch(searchQuery)}
+            >
+              <SmallSearchIcon />
+              <span className="search-suggestion">
+                {decodeURIComponent(searchQuery)}
+              </span>
+            </li>
+            {searchHistory.length > 0 &&
+              searchHistory.map((query, index) => (
+                <li
+                  key={query}
+                  id={query}
+                  className={
+                    'search-suggestion-row'
+                    // selectedItem === index + 1
                     // ? 'search-suggestion-row search-suggestion-row-selected'
                     // : 'search-suggestion-row'
-                }
-                onClick={() => onSearch(query)}
-                // ref={selectedItem === index + 1 ? 'selectedItem' : ''}
-              >
-                <span className="search-suggestion">
-                  {decodeURIComponent(query)}
-                </span>
-              </li>
-            ))}
-        </ul>
-      </div>
+                  }
+                  onClick={() => onSearch(query)}
+                  // ref={selectedItem === index + 1 ? 'selectedItem' : ''}
+                >
+                  <span className="search-suggestion">
+                    {decodeURIComponent(query)}
+                  </span>
+                </li>
+              ))}
+          </ul>
+        </div>
+      )
     );
   }
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery },
+  ui: { searchQuery, showSearchHistory },
 }: State) => ({
   searchQuery,
-  searchHistory: ["test","meow"]
+  searchHistory: ['test', 'meow'],
+  showSearchHistory,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   onSearch: (query: string) => {
     dispatch(search(query));
+    dispatch(dismissSearchSuggestions());
   },
 });
 

@@ -1,8 +1,18 @@
-import React, { Component, createRef, Fragment, FormEvent, KeyboardEvent } from 'react';
+import React, {
+  Component,
+  createRef,
+  Fragment,
+  FormEvent,
+  KeyboardEvent,
+} from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
 import { State } from '../state';
-import { search } from '../state/ui/actions';
+import {
+  dismissSearchSuggestions,
+  focusSearchField,
+  search,
+} from '../state/ui/actions';
 import SearchSuggestions from '../search-suggestions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
@@ -18,11 +28,12 @@ const KEY_ARROW_DOWN = 40;
 type StateProps = {
   openedTag: T.Tag | null;
   searchQuery: string;
-  searchSelected: false;
   showTrash: boolean;
 };
 
 type DispatchProps = {
+  dismissSearchSuggestions: () => any;
+  focusSearchField: () => any;
   onSearch: (query: string) => any;
 };
 
@@ -57,43 +68,42 @@ export class SearchField extends Component<Props> {
   };
 
   doSearch = (query: string) => {
-    this.setState({ query, searchSelected: true });
-    this.onSearch(query);
+    this.setState({ query });
+    this.props.onSearch(query);
   };
 
-  // interceptKeys = event => {
-  //   switch (event.keyCode) {
-  //     case KEY_ESC:
-  //       if (this.state.query === '') {
-  //         this.inputField.blur();
-  //       }
-  //       return this.clearQuery();
+  interceptKeys = (event: KeyboardEvent) => {
+    switch (event.keyCode) {
+      case KEY_ESC:
+        if (this.state.query === '') {
+          this.inputField.blur();
+        }
+        return this.clearQuery();
 
-  //     case KEY_ENTER:
-  //       return this.keyHandler.select();
+      // case KEY_ENTER:
+      //   return this.keyHandler.select();
 
-  //     case KEY_ARROW_DOWN:
-  //       return this.keyHandler.next();
+      // case KEY_ARROW_DOWN:
+      //   return this.keyHandler.next();
 
-  //     case KEY_ARROW_UP:
-  //       return this.keyHandler.prev();
-  //   }
-  // };
+      // case KEY_ARROW_UP:
+      //   return this.keyHandler.prev();
+    }
+  };
 
   update = ({
     currentTarget: { value: query },
   }: FormEvent<HTMLInputElement>) => {
     this.props.onSearch(query);
-    this.setState({ query: encodeURIComponent(query), searchSelected: false });
+    this.setState({ query: encodeURIComponent(query) });
   };
 
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { openedTag, searchQuery, searchSelected, showTrash } = this.props;
+    const { openedTag, searchQuery, showTrash } = this.props;
     const hasQuery = searchQuery.length > 0;
     const placeholder = showTrash ? 'Trash' : openedTag?.name ?? 'All Notes';
-    const shouldShowSuggestions = hasQuery && !searchSelected;
 
     const screenReaderLabel =
       'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
@@ -106,8 +116,10 @@ export class SearchField extends Component<Props> {
             ref={this.inputField}
             type="search"
             placeholder={placeholder}
+            // onBlur={this.props.dismissSearchSuggestions}
+            // onFocus={this.update}
             onChange={this.update}
-            onKeyUp={this.interceptEsc}
+            onKeyUp={this.interceptKeys}
             value={searchQuery}
             spellCheck={false}
           />
@@ -119,13 +131,9 @@ export class SearchField extends Component<Props> {
             <SmallCrossIcon />
           </button>
         </div>
-        {shouldShowSuggestions && (
-          <SearchSuggestions
-            query={searchQuery}
-            onSearch={this.doSearch}
-            // storeKeyHandler={this.storeKeyHandler}
-          />
-        )}
+        <SearchSuggestions
+        // storeKeyHandler={this.storeKeyHandler}
+        />
       </Fragment>
     );
   }
@@ -141,9 +149,9 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  onSearch: (query: string) => {
-    dispatch(search(query));
-  },
+  dismissSearchSuggestions: () => dispatch(dismissSearchSuggestions()),
+  focusSearchField: () => dispatch(focusSearchField()),
+  onSearch: (query: string) => dispatch(search(query)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchField);

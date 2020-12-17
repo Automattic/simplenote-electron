@@ -24,6 +24,10 @@ export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = (
   type: 'DELETE_OPEN_NOTE_FOREVER',
 });
 
+export const dismissSearchSuggestions: A.ActionCreator<A.DismissSearchSuggestions> = () => ({
+  type: 'DISMISS_SEARCH_SUGGESTIONS',
+});
+
 export const emptyTrash: A.ActionCreator<A.EmptyTrash> = () => ({
   type: 'EMPTY_TRASH',
 });

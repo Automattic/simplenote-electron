@@ -282,6 +282,17 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const showSearchHistory: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'DISMISS_SEARCH_SUGGESTIONS':
+      return false;
+    case 'SEARCH':
+      return action.searchQuery !== '';
+    default:
+      return state;
+  }
+};
+
 const showTrash: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'SELECT_TRASH':
@@ -322,6 +333,7 @@ export default combineReducers({
   showNoteInfo,
   showNoteList,
   showRevisions,
+  showSearchHistory,
   showTrash,
   simperiumConnected,
   tagSuggestions,
