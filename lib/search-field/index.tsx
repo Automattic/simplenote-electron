@@ -6,6 +6,7 @@ import React, {
   KeyboardEvent,
 } from 'react';
 import { connect } from 'react-redux';
+import onClickOutside from 'react-onclickoutside';
 import SmallCrossIcon from '../icons/cross-small';
 import { State } from '../state';
 import {
@@ -34,6 +35,7 @@ type StateProps = {
 type DispatchProps = {
   dismissSearchSuggestions: () => any;
   focusSearchField: () => any;
+  onOutsideClick: () => any;
   onSearch: (query: string) => any;
 };
 
@@ -43,6 +45,7 @@ export class SearchField extends Component<Props> {
   static displayName = 'SearchField';
 
   inputField = createRef<HTMLInputElement>();
+  handleClickOutside = () => this.props.onOutsideClick();
 
   componentDidMount() {
     registerSearchField(this.focus);
@@ -116,8 +119,7 @@ export class SearchField extends Component<Props> {
             ref={this.inputField}
             type="search"
             placeholder={placeholder}
-            // onBlur={this.props.dismissSearchSuggestions}
-            // onFocus={this.update}
+            onClick={this.update}
             onChange={this.update}
             onKeyUp={this.interceptKeys}
             value={searchQuery}
@@ -130,10 +132,10 @@ export class SearchField extends Component<Props> {
           >
             <SmallCrossIcon />
           </button>
+          <SearchSuggestions
+          // storeKeyHandler={this.storeKeyHandler}
+          />
         </div>
-        <SearchSuggestions
-        // storeKeyHandler={this.storeKeyHandler}
-        />
       </Fragment>
     );
   }
@@ -151,7 +153,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
   dismissSearchSuggestions: () => dispatch(dismissSearchSuggestions()),
   focusSearchField: () => dispatch(focusSearchField()),
+  onOutsideClick: () => dispatch(dismissSearchSuggestions()),
   onSearch: (query: string) => dispatch(search(query)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchField);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(onClickOutside(SearchField));

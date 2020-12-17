@@ -87,7 +87,7 @@ export class SearchSuggestions extends Component<Props, OwnState> {
       searchHistory,
       showSearchHistory,
     } = this.props;
-    // const { selectedItem } = this.state;
+    const { selectedItem } = this.state;
     const screenReaderLabel = 'Search suggestions';
 
     return (
@@ -97,10 +97,9 @@ export class SearchSuggestions extends Component<Props, OwnState> {
             <li
               id="query"
               className={
-                'search-suggestion-row'
-                // selectedItem === 0
-                // ? 'search-suggestion-row search-suggestion-row-selected'
-                // : 'search-suggestion-row'
+                selectedItem === 0
+                  ? 'search-suggestion-row search-suggestion-row-selected'
+                  : 'search-suggestion-row'
               }
               onClick={() => onSearch(searchQuery)}
             >
@@ -115,10 +114,9 @@ export class SearchSuggestions extends Component<Props, OwnState> {
                   key={query}
                   id={query}
                   className={
-                    'search-suggestion-row'
-                    // selectedItem === index + 1
-                    // ? 'search-suggestion-row search-suggestion-row-selected'
-                    // : 'search-suggestion-row'
+                    selectedItem === index + 1
+                      ? 'search-suggestion-row search-suggestion-row-selected'
+                      : 'search-suggestion-row'
                   }
                   onClick={() => onSearch(query)}
                   // ref={selectedItem === index + 1 ? 'selectedItem' : ''}
