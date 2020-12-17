@@ -13,6 +13,7 @@
 - Show error message when trying to import invalid JSON [#2446](https://github.com/Automattic/simplenote-electron/pull/2446)
 - Fixed buggy cursor when hitting enter on an empty list item [#2519](https://github.com/Automattic/simplenote-electron/pull/2519)
 - Made sidebar icons the correct shade of blue [#2513](https://github.com/Automattic/simplenote-electron/pull/2513)
+- Fixed a crash when clicking on a tag suggestion from search [#2529](https://github.com/Automattic/simplenote-electron/pull/2529)
 
 ### Other Changes
 
