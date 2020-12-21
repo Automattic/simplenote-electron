@@ -61,7 +61,7 @@ const getPreview = (content: string, searchQuery?: string) => {
 
       // prettier-ignore
       const regExp = new RegExp(
-        '(?<=\\s|^)[^\n]' + // split at a word boundary (pattern must be preceded by whitespace or beginning of string)
+        '(?:\\s|^)[^\n]' + // split at a word boundary (pattern must be preceded by whitespace or beginning of string)
           '{0,' + leadingChars + '}' + // up to leadingChars of text before the match
           escapeRegExp(firstTerm) +
           '.{0,200}(?=\\s|$)', // up to 200 characters of text after the match, splitting at a word boundary
