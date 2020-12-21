@@ -2,6 +2,7 @@ import { default as createClient } from 'simperium';
 
 import debugFactory from 'debug';
 import actions from '../actions';
+import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
@@ -36,7 +37,7 @@ export const initSimperium = (
 ): S.Middleware => (store) => {
   const { dispatch, getState } = store;
 
-  const client = createClient<Buckets>('chalk-bump-f49', token, {
+  const client = createClient<Buckets>(getConfig().app_id, token, {
     objectStoreProvider: (bucket) => {
       switch (bucket.name) {
         case 'note':
