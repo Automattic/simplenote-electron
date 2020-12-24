@@ -7,6 +7,7 @@ import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
+import SortOrderSelector from '../sort-order-selector';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
@@ -119,6 +120,7 @@ export class AppLayout extends Component<Props> {
             <MenuBar />
             <SearchField />
             <NoteList />
+            <SortOrderSelector />
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">

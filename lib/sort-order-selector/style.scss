@@ -1,0 +1,59 @@
+.sort-order-selector {
+  position: relative;
+  width: 328px;
+  height: 44px;
+  box-shadow: 0 -1px 0 0 $studio-gray-5;
+  margin: 0;
+  padding: 0 24px 0 16px;
+  font-size: 14px;
+  line-height: 44px;
+
+  .sort-order-reverse {
+    position: absolute;
+    width: 24px;
+    height: 44px;
+    right: 10px;
+    top: 0;
+
+    svg {
+      cursor: pointer;
+    }
+  }
+
+  .is-reversed .icon-arrow-down {
+    transform: rotate(180deg);
+  }
+
+  select {
+    /* remove default dropdown styling */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    padding: 0 5px;
+
+    margin: 0;
+
+    color: $studio-simplenote-blue-50;
+    background: transparent;
+
+    cursor: pointer;
+  }
+
+  option {
+    /* fix for Firefox, which allows <options> to inherit styles from parents */
+    color: $studio-gray-80;
+  }
+}
+
+.theme-dark {
+  .sort-order-selector {
+    background-color: $studio-gray-90;
+    color: $studio-gray-20;
+    box-shadow: 0 -1px 0 0 $studio-gray-80;
+
+    select {
+      color: $studio-simplenote-blue-30;
+    }
+  }
+}
