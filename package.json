@@ -111,7 +111,7 @@
     "react-test-renderer": "16.13.1",
     "rimraf": "3.0.2",
     "sass-loader": "9.0.1",
-    "spectron": "11.0.0",
+    "spectron": "11.1.0",
     "style-loader": "1.2.1",
     "stylelint": "13.7.1",
     "stylelint-config-prettier": "^8.0.2",
