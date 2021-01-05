@@ -71,9 +71,11 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
-  setSearchSelection: (index: number) => {
-    dispatch({ type: 'STORE_SEARCH_SELECTION', index: index });
-  },
+  setSearchSelection: (index: number) =>
+    dispatch({
+      type: 'STORE_SEARCH_SELECTION',
+      index,
+    }),
 });
 
 SearchResultsBar.displayName = 'SearchResultsBar';
