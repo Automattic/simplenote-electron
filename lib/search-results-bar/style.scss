@@ -1,0 +1,39 @@
+.search-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45px;
+  line-height: 45px;
+  z-index: 100;
+  border-top: 1px solid $studio-gray-5;
+  background-color: $studio-white;
+  text-align: center;
+  user-select: none;
+
+  div {
+    display: inline-block;
+  }
+
+  .search-results-next,
+  .search-results-prev {
+    float: right;
+    padding: 0 6px;
+    width: 42px;
+    height: 100%;
+
+    svg {
+      fill: $studio-simplenote-blue-50;
+    }
+  }
+  .search-results-next {
+    margin-right: 6px;
+  }
+  .search-results-prev svg {
+    transform: scaleX(-1);
+  }
+
+  @media only screen and (max-width: $single-column) {
+    left: 0;
+  }
+}

@@ -148,6 +148,15 @@ const hasLoadedNotes: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const numberOfMatchesInNote: A.Reducer<number> = (state = null, action) => {
+  switch (action.type) {
+    case 'STORE_NUMBER_OF_MATCHES_IN_NOTE':
+      return action.matches;
+    default:
+      return state;
+  }
+};
+
 const openedNote: A.Reducer<T.EntityId | null> = (state = null, action) => {
   switch (action.type) {
     case 'CLOSE_NOTE':
@@ -224,6 +233,15 @@ const searchQuery: A.Reducer<string> = (state = '', action) => {
       return '';
     case 'SEARCH':
       return action.searchQuery;
+    default:
+      return state;
+  }
+};
+
+const selectedSearchMatchIndex: A.Reducer<number> = (state = null, action) => {
+  switch (action.type) {
+    case 'STORE_SEARCH_SELECTION':
+      return action.index;
     default:
       return state;
   }
@@ -314,10 +332,12 @@ export default combineReducers({
   editingTags,
   filteredNotes,
   hasLoadedNotes,
+  numberOfMatchesInNote,
   openedNote,
   openedRevision,
   openedTag,
   searchQuery,
+  selectedSearchMatchIndex,
   showNavigation,
   showNoteInfo,
   showNoteList,
