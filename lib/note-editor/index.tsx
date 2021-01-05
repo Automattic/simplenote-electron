@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import SearchResultsBar from '../search-results-bar';
 import TagField from '../tag-field';
 import NoteDetail from '../note-detail';
 import NotePreview from '../components/note-preview';
@@ -16,6 +17,8 @@ type StateProps = {
   isEditorActive: boolean;
   isSearchActive: boolean;
   isSmallScreen: boolean;
+  hasSearchMatchesInNote: boolean;
+  hasSearchQuery: boolean;
   keyboardShortcuts: boolean;
   noteId: T.EntityId;
   note: T.Note;
@@ -111,7 +114,13 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const { editMode, note, noteId } = this.props;
+    const {
+      editMode,
+      hasSearchQuery,
+      hasSearchMatchesInNote,
+      note,
+      noteId,
+    } = this.props;
 
     if (!note) {
       return (
@@ -139,6 +148,7 @@ export class NoteEditor extends Component<Props> {
             storeHasFocus={this.storeTagFieldHasFocus}
           />
         )}
+        {hasSearchQuery && hasSearchMatchesInNote && <SearchResultsBar />}
       </div>
     );
   }
@@ -152,6 +162,9 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   noteId: state.ui.openedNote,
   note: state.data.notes.get(state.ui.openedNote),
   revision: state.ui.selectedRevision,
+  hasSearchQuery: state.ui.searchQuery !== '',
+  hasSearchMatchesInNote:
+    !!state.ui.numberOfMatchesInNote && state.ui.numberOfMatchesInNote > 0,
   isSearchActive: !!state.ui.searchQuery.length,
   isSmallScreen: selectors.isSmallScreen(state),
 });

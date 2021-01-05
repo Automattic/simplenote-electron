@@ -22,7 +22,6 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
-import SearchResultsBar from './search-results-bar';
 
 import * as S from './state';
 import * as T from './types';
@@ -1168,7 +1167,6 @@ class NoteContentEditor extends Component<Props> {
             value={content}
           />
         )}
-        {searchQuery.length > 0 && searchMatches && <SearchResultsBar />}
       </div>
     );
   }
