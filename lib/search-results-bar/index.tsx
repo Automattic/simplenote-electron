@@ -28,44 +28,34 @@ const SearchResultsBar: FunctionComponent<Props> = ({
   numberOfMatchesInNote: total,
   setSearchSelection,
 }) => {
-  const nextButtonRef = useRef<HTMLButtonElement>();
-  const prevButtonRef = useRef<HTMLButtonElement>();
+  const setPrev = (event: MouseEvent) => {
+    const newIndex = (total + (index ?? -1) - 1) % total;
+    setSearchSelection(newIndex);
+  };
 
-  useEffect(() => {
-    const setPrev = (event: MouseEvent) => {
-      const newIndex = (total + (index ?? -1) - 1) % total;
-      setSearchSelection(newIndex);
-    };
-
-    const setNext = (event: MouseEvent) => {
-      const newIndex = (total + (index ?? -1) + 1) % total;
-      setSearchSelection(newIndex);
-    };
-    prevButtonRef.current?.addEventListener('click', setPrev, true);
-    nextButtonRef.current?.addEventListener('click', setNext, true);
-
-    return () => {
-      prevButtonRef.current?.removeEventListener('click', setPrev, true);
-      nextButtonRef.current?.removeEventListener('click', setNext, true);
-    };
-  }, [index, total]);
+  const setNext = (event: MouseEvent) => {
+    const newIndex = (total + (index ?? -1) + 1) % total;
+    setSearchSelection(newIndex);
+  };
 
   return (
     <div className="search-results">
       <div>
         {index === null ? `${total} Results` : `${index + 1} of ${total}`}
       </div>
-      <span className="search-results-next" ref={nextButtonRef}>
+      <span className="search-results-next">
         <IconButton
           disabled={total <= 1}
           icon={<ChevronRightIcon />}
+          onClick={setNext}
           title="Next"
         />
       </span>
-      <span className="search-results-prev" ref={prevButtonRef}>
+      <span className="search-results-prev">
         <IconButton
           disabled={total <= 1}
           icon={<ChevronRightIcon />}
+          onClick={setPrev}
           title="Prev"
         />
       </span>
