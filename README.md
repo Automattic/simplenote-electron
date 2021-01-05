@@ -27,7 +27,7 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 Unit tests are run with `npm test`.
 
 End-to-end tests are run with `npm run test-e2e`.
-Note that the `Spectron` version corresponds with the version of `Electron` we are using and so at the time of writing this is pinned at version 6.
+Note that the `Spectron` version [corresponds with the version](https://www.npmjs.com/package/spectron#version-map) of `Electron` we are using.
 Use the corresponding API docs for `webdriver-io` which correspond to the `Spectron` version.
 At the time of writing you will want to refer to the [webdriver-io v4.13 API docs](http://v4.webdriver.io/v4.13/api.html).
 
