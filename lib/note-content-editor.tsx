@@ -346,6 +346,7 @@ class NoteContentEditor extends Component<Props> {
       this.state.editor === 'full' &&
       prevProps.searchQuery !== this.props.searchQuery
     ) {
+      this.editor?.layout();
       this.setDecorators();
     }
 
