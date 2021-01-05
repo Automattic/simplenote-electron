@@ -33,7 +33,7 @@ const SearchResultsBar: FunctionComponent<Props> = ({
 
   useEffect(() => {
     const setPrev = (event: MouseEvent) => {
-      const newIndex = (total + (index ?? -1) + 1) % total;
+      const newIndex = (total + (index ?? -1) - 1) % total;
       setSearchSelection(newIndex);
     };
 
