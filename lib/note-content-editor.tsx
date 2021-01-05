@@ -145,15 +145,11 @@ class NoteContentEditor extends Component<Props> {
 
     const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
 
-    // @todo what was this doing and now what should it do instead?
-    // const searchChanged = props.searchQuery !== state.searchQuery;
-    // const selectedSearchMatchIndex =
-    //   noteChanged || searchChanged ? null : props.selectedSearchMatchIndex;
-
-    // maybe something like this to invalidate the pre-existing selection?
-    // if(noteChanged || searchChanged) {
-    // props.storeSearchSelection(null);
-    // }
+    // reset search selection if the search or note has changed
+    const searchChanged = props.searchQuery !== state.searchQuery;
+    if (noteChanged || searchChanged) {
+      props.storeSearchSelection(0);
+    }
 
     return {
       content,
