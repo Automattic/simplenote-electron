@@ -948,7 +948,8 @@ class NoteContentEditor extends Component<Props> {
       }
 
       const change = event.changes.find(
-        ({ text }) => text[0] === '\n' && text.trim() === ''
+        ({ text }) =>
+          (text[0] === '\r' || text[0] === '\n') && text.trim() === ''
       );
 
       if (!change) {
