@@ -25,10 +25,12 @@ export const getTerms = (filterText: string): string[] => {
     withoutLiterals += filter.slice(storedLastIndex, match.index);
 
     // lastIndex is the end of the current match
-    // (i.e., where in the string to start scanning for the next match)
+    // -- where in the string to start scanning for the next match on the next loop iteration
     storedLastIndex = literalsPattern.lastIndex;
   }
 
+  // save any search terms that occur after the last matched literal
+  // i.e. between our last saved index and the end of the string
   if (
     (storedLastIndex > 0 || literals.length === 0) &&
     storedLastIndex < filter.length
