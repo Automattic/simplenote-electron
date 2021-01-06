@@ -103,6 +103,14 @@ export type StoreEditorSelection = Action<
   'STORE_EDITOR_SELECTION',
   { noteId: T.EntityId; start: number; end: number; direction: 'RTL' | 'LTR' }
 >;
+export type StoreNumberOfMatchesInNote = Action<
+  'STORE_NUMBER_OF_MATCHES_IN_NOTE',
+  { matches: number }
+>;
+export type StoreSearchSelection = Action<
+  'STORE_SEARCH_SELECTION',
+  { index: number }
+>;
 export type SystemThemeUpdate = Action<
   'SYSTEM_THEME_UPDATE',
   { prefers: 'light' | 'dark' }
@@ -376,6 +384,8 @@ export type ActionType =
   | ShowAllNotes
   | ShowDialog
   | StoreEditorSelection
+  | StoreNumberOfMatchesInNote
+  | StoreSearchSelection
   | SubmitPendingChange
   | SystemThemeUpdate
   | TagBucketRemove

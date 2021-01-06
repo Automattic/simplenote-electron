@@ -22,8 +22,6 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
-import IconButton from './icon-button';
-import ChevronRightIcon from './icons/chevron-right';
 
 import * as S from './state';
 import * as T from './types';
@@ -88,6 +86,7 @@ type StateProps = {
   note: T.Note;
   notes: Map<T.EntityId, T.Note>;
   searchQuery: string;
+  selectedSearchMatchIndex: number | null;
   spellCheckEnabled: boolean;
   theme: T.Theme;
 };
@@ -103,6 +102,8 @@ type DispatchProps = {
     end: number,
     direction: 'LTR' | 'RTL'
   ) => any;
+  storeNumberOfMatchesInNote: (matches: number) => any;
+  storeSearchSelection: (index: number) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -113,7 +114,6 @@ type OwnState = {
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
-  selectedSearchMatchIndex: number | null;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -130,7 +130,6 @@ class NoteContentEditor extends Component<Props> {
     noteId: null,
     overTodo: false,
     searchQuery: '',
-    selectedSearchMatchIndex: null,
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
@@ -146,16 +145,18 @@ class NoteContentEditor extends Component<Props> {
 
     const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
 
+    // reset search selection when either the note or the search changes
+    // to avoid, for example, opening a note and having the fourth match selected (or "4 of 1")
     const searchChanged = props.searchQuery !== state.searchQuery;
-    const selectedSearchMatchIndex =
-      noteChanged || searchChanged ? null : state.selectedSearchMatchIndex;
+    if (noteChanged || searchChanged) {
+      props.storeSearchSelection(0);
+    }
 
     return {
       content,
       editor,
       noteId: props.noteId,
       searchQuery: props.searchQuery,
-      selectedSearchMatchIndex,
     };
   }
 
@@ -342,12 +343,22 @@ class NoteContentEditor extends Component<Props> {
       this.state.editor === 'full' &&
       prevProps.searchQuery !== this.props.searchQuery
     ) {
+      this.editor?.layout();
       this.setDecorators();
+    }
+
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      prevProps.selectedSearchMatchIndex !== this.props.selectedSearchMatchIndex
+    ) {
+      this.setSearchSelection(this.props.selectedSearchMatchIndex);
     }
   }
 
   setDecorators = () => {
     this.matchesInNote = this.searchMatches() ?? [];
+    this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
     const titleDecoration = this.getTitleDecoration() ?? [];
 
     this.decorations = this.editor.deltaDecorations(this.decorations, [
@@ -1063,16 +1074,18 @@ class NoteContentEditor extends Component<Props> {
   };
 
   setNextSearchSelection = () => {
-    const { selectedSearchMatchIndex: index } = this.state;
+    const { selectedSearchMatchIndex: index } = this.props;
     const total = this.matchesInNote.length;
     const newIndex = (total + (index ?? -1) + 1) % total;
+    this.props.storeSearchSelection(newIndex);
     this.setSearchSelection(newIndex);
   };
 
   setPrevSearchSelection = () => {
-    const { selectedSearchMatchIndex: index } = this.state;
+    const { selectedSearchMatchIndex: index } = this.props;
     const total = this.matchesInNote.length;
     const newIndex = (total + (index ?? total) - 1) % total;
+    this.props.storeSearchSelection(newIndex);
     this.setSearchSelection(newIndex);
   };
 
@@ -1081,7 +1094,6 @@ class NoteContentEditor extends Component<Props> {
       return;
     }
     const range = this.matchesInNote[index].range;
-    this.setState({ selectedSearchMatchIndex: index });
     this.editor.setSelection(range);
     this.editor.revealLineInCenter(range.startLineNumber);
     this.focusEditor();
@@ -1089,7 +1101,7 @@ class NoteContentEditor extends Component<Props> {
 
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
-    const { content, editor, overTodo, selectedSearchMatchIndex } = this.state;
+    const { content, editor, overTodo } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
     const editorPadding = getEditorPadding(
@@ -1158,31 +1170,6 @@ class NoteContentEditor extends Component<Props> {
             value={content}
           />
         )}
-        {searchQuery.length > 0 && searchMatches && (
-          <div className="search-results">
-            <div>
-              {selectedSearchMatchIndex === null
-                ? `${searchMatches.length} Results`
-                : `${selectedSearchMatchIndex + 1} of ${searchMatches.length}`}
-            </div>
-            <span className="search-results-next">
-              <IconButton
-                disabled={searchMatches.length <= 1}
-                icon={<ChevronRightIcon />}
-                onClick={this.setNextSearchSelection}
-                title="Next"
-              />
-            </span>
-            <span className="search-results-prev">
-              <IconButton
-                disabled={searchMatches.length <= 1}
-                icon={<ChevronRightIcon />}
-                onClick={this.setPrevSearchSelection}
-                title="Prev"
-              />
-            </span>
-          </div>
-        )}
       </div>
     );
   }
@@ -1201,6 +1188,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   note: state.data.notes.get(state.ui.openedNote),
   notes: state.data.notes,
   searchQuery: state.ui.searchQuery,
+  selectedSearchMatchIndex: state.ui.selectedSearchMatchIndex,
   spellCheckEnabled: state.settings.spellCheckEnabled,
   theme: selectors.getTheme(state),
 });
@@ -1216,6 +1204,14 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     start,
     end,
     direction,
+  }),
+  storeNumberOfMatchesInNote: (matches) => ({
+    type: 'STORE_NUMBER_OF_MATCHES_IN_NOTE',
+    matches,
+  }),
+  storeSearchSelection: (index) => ({
+    type: 'STORE_SEARCH_SELECTION',
+    index,
   }),
 };
 
