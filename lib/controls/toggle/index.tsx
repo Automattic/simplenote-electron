@@ -7,7 +7,7 @@ type OwnProps = Partial<HTMLInputElement> & {
 type Props = OwnProps;
 
 export const ToggleControl: FunctionComponent<Props> = ({
-  className,
+  className = "",
   onChange,
   ...props
 }) => {
