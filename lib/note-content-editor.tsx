@@ -145,7 +145,8 @@ class NoteContentEditor extends Component<Props> {
 
     const editor = noteChanged ? (goFast ? 'fast' : 'full') : state.editor;
 
-    // reset search selection if the search or note has changed
+    // reset search selection when either the note or the search changes
+    // to avoid, for example, opening a note and having the fourth match selected (or "4 of 1")
     const searchChanged = props.searchQuery !== state.searchQuery;
     if (noteChanged || searchChanged) {
       props.storeSearchSelection(0);
