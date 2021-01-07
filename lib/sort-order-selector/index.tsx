@@ -11,8 +11,6 @@ type StateProps = {
   shouldDisplay: boolean;
   sortReversed: boolean;
   sortType: T.SortType;
-  // searchSortReversed: boolean,
-  // searchSortType: T.SortType,
 };
 
 type DispatchProps = {
@@ -24,21 +22,6 @@ type Props = StateProps & DispatchProps;
 
 export class SortOrderSelector extends Component<Props> {
   static displayName = 'SortOrderSelector';
-
-  //   componentDidUpdate(prevProps) {
-  //     const { sortType, sortReversed, searchSortReversed, query } = this.props;
-  //     /* If there's a query and there wasn't before
-  //        (i.e., the search sort component is being newly displayed),
-  //        set the search sort to match the global setting.
-  // 	       This means whenever a user starts a new search, the notes will be filtered
-  //        in place, rather than being reordered to match the last selected search order. */
-  //     if (!prevProps.query && prevProps.query !== query) {
-  //       this.props.setSortType(sortType);
-  //       if (sortReversed !== searchSortReversed) {
-  //         this.props.toggleSortOrder();
-  //       }
-  //     }
-  //   }
 
   changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
     this.props.setSortType(event.currentTarget?.value);
@@ -90,8 +73,7 @@ export class SortOrderSelector extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  shouldDisplay:
-    state.ui.searchQuery.length > 0 && state.ui.filteredNotes.length > 0,
+  shouldDisplay: state.ui.filteredNotes.length > 0,
   sortReversed: state.settings.sortReversed,
   sortType: state.settings.sortType,
 });
