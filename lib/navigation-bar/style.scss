@@ -18,6 +18,7 @@
 
 .navigation-bar__folders {
   display: flex;
+  flex: none;
   flex-direction: column-reverse;
   border-bottom: 1px solid $studio-gray-5;
 }
