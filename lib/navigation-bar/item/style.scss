@@ -1,5 +1,5 @@
 .navigation-bar-item {
-  height: 44px;
+  min-height: 44px;
   padding-left: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -28,6 +28,10 @@
   &.is-selected {
     background-color: $studio-simplenote-blue-5;
   }
+}
+
+.navigation-bar-item:first-child .button {
+  border-bottom: none;
 }
 
 .navigation-bar-item__icon {
