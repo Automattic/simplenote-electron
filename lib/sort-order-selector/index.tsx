@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { toggleSortOrder, setSortType } from '../state/settings/actions';
 import classNames from 'classnames';
+import IconButton from '../icon-button';
 import SortOrderIcon from '../icons/sort-order';
 
 import * as S from '../state';
@@ -30,6 +31,11 @@ export class SortOrderSelector extends Component<Props> {
   render() {
     const { shouldDisplay, sortReversed, sortType } = this.props;
 
+    let sortLabel = sortReversed ? 'Oldest' : 'Newest';
+    if (sortType === 'alphabetical') {
+      sortLabel = sortReversed ? 'Z-A' : 'A-Z';
+    }
+
     const sortTypes = [
       {
         label: 'Date modified',
@@ -57,14 +63,14 @@ export class SortOrderSelector extends Component<Props> {
                 </option>
               ))}
             </select>
-            <div
-              className={classNames('sort-order-reverse', {
-                'is-reversed': sortReversed,
-              })}
-              onClick={this.props.toggleSortOrder}
-            >
-              <SortOrderIcon />
-            </div>
+            <span className="sort-label">{sortLabel}</span>
+            <span className="sort-button">
+              <IconButton
+                icon={<SortOrderIcon />}
+                onClick={this.props.toggleSortOrder}
+                title="Change Sort Order"
+              />
+            </span>
           </div>
         )}
       </Fragment>

@@ -8,22 +8,6 @@
   font-size: 14px;
   line-height: 44px;
 
-  .sort-order-reverse {
-    position: absolute;
-    width: 24px;
-    height: 44px;
-    right: 10px;
-    top: 0;
-
-    svg {
-      cursor: pointer;
-    }
-  }
-
-  .is-reversed .icon-arrow-down {
-    transform: rotate(180deg);
-  }
-
   select {
     /* remove default dropdown styling */
     appearance: none;
@@ -43,6 +27,22 @@
   option {
     /* fix for Firefox, which allows <options> to inherit styles from parents */
     color: $studio-gray-80;
+  }
+
+  .sort-label {
+    font-size: smaller;
+  }
+
+  .sort-button {
+    position: absolute;
+    width: 24px;
+    height: 44px;
+    right: 10px;
+    top: 0;
+
+    svg {
+      cursor: pointer;
+    }
   }
 }
 
