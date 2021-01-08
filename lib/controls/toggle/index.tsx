@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler, FunctionComponent } from 'react';
+import classNames from 'classnames';
 
 type OwnProps = Partial<HTMLInputElement> & {
   onChange: (isNowToggled: boolean) => any;
@@ -7,7 +8,7 @@ type OwnProps = Partial<HTMLInputElement> & {
 type Props = OwnProps;
 
 export const ToggleControl: FunctionComponent<Props> = ({
-  className = "",
+  className,
   onChange,
   ...props
 }) => {
@@ -16,7 +17,7 @@ export const ToggleControl: FunctionComponent<Props> = ({
   }) => onChange(checked);
 
   return (
-    <span className={`toggle-control ${className}`}>
+    <span className={classNames('toggle-control', [className])}>
       <input type="checkbox" onChange={onToggle} {...props} />
       <span className="toggle-control-layers">
         <span className="toggle-control-unchecked-color" />
