@@ -172,7 +172,7 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
-    if (this.state.searchQuery === '') {
+    if (document?.activeElement?.id !== 'search-field') {
       this.focusEditor();
     }
     this.props.storeFocusEditor(this.focusEditor);
