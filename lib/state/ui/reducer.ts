@@ -229,8 +229,6 @@ const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
 
 const searchQuery: A.Reducer<string> = (state = '', action) => {
   switch (action.type) {
-    case 'CREATE_NOTE_WITH_ID':
-      return '';
     case 'SEARCH':
       return action.searchQuery;
     default:

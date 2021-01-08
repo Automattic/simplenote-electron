@@ -21,10 +21,9 @@ const NoNotes = () => {
   const getButton = () => {
     return searchQuery.length ? (
       <button
-        onClick={() => {
-          dispatch(actions.ui.createNote({ content: searchQuery }));
-          dispatch(actions.ui.search(searchQuery));
-        }}
+        onClick={() =>
+          dispatch(actions.ui.createNote({ content: searchQuery }))
+        }
       >
         Create a new note titled &quot;{searchQuery}&quot;
       </button>
