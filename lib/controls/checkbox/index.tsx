@@ -6,9 +6,9 @@ type OwnProps = React.HTMLProps<HTMLInputElement> & {
   onChange: () => any;
 };
 
-function CheckboxControl({ className = '', ...props }: OwnProps) {
+function CheckboxControl({ className, ...props }: OwnProps) {
   return (
-    <span className={classNames('checkbox-control', className)}>
+    <span className={classNames('checkbox-control', [className])}>
       <input type="checkbox" {...props} />
       <span className="checkbox-control-base">
         <span className="checkbox-control-checked" />
