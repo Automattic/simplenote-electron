@@ -8,7 +8,7 @@
 - Fixed layout bugs causing the search results bar to overlap note contents and tag input field [#2545](https://github.com/Automattic/simplenote-electron/pull/2545)
 - Fixed a bug where some search terms could be dropped when searching for quoted strings [#2550](https://github.com/Automattic/simplenote-electron/pull/2550)
 - Fixed navigation list styles on Safari [#2552](https://github.com/Automattic/simplenote-electron/pull/2552)
-  NOT YET MERGED - Fixed a bug causing notes to still be filtered after creating a new note from search results [#2557](https://github.com/Automattic/simplenote-electron/pull/2557)
+- Fixed a bug causing notes to still be filtered after creating a new note from search results [#2557](https://github.com/Automattic/simplenote-electron/pull/2557)
 
 ### Other Changes
 
