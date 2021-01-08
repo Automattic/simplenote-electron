@@ -30,6 +30,10 @@
   }
 }
 
+.navigation-bar-item:first-child .button {
+  border-bottom: none;
+}
+
 .navigation-bar-item__icon {
   color: $studio-simplenote-blue-50;
   display: inline-block;
