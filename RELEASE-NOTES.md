@@ -2,16 +2,12 @@
 
 ## [v2.5.0]
 
-### Enhancements
-
-NOT YET MERGED- Added sort bar to the notes list [#1625](https://github.com/Automattic/simplenote-electron/issues/1625)
-
 ### Fixes
 
 - Fixed a bug that sometimes prevented checklists and bulleted lists from automatically continuing on the next line [#2548](https://github.com/Automattic/simplenote-electron/pull/2548)
 - Fixed layout bugs causing the search results bar to overlap note contents and tag input field [#2545](https://github.com/Automattic/simplenote-electron/pull/2545)
-  NOT YET MERGED- Fixed a bug where some search terms could be dropped when searching for quoted strings [#2550](https://github.com/Automattic/simplenote-electron/pull/2550)
-  NOT YET MERGED- Fixed navigation list styles on Safari [#2552](https://github.com/Automattic/simplenote-electron/pull/2552)
+- Fixed a bug where some search terms could be dropped when searching for quoted strings [#2550](https://github.com/Automattic/simplenote-electron/pull/2550)
+- Fixed navigation list styles on Safari [#2552](https://github.com/Automattic/simplenote-electron/pull/2552)
 
 ### Other Changes
 
