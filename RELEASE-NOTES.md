@@ -14,6 +14,7 @@
 
 - Updated dependencies [#2547](https://github.com/Automattic/simplenote-electron/pull/2547)
 - Updated arguments to addDynamicKeybinding function [#2546](https://github.com/Automattic/simplenote-electron/pull/2546)
+- Prevent adding undefined as a className when no value provided (props to @ubaidisaev) [#2551](https://github.com/Automattic/simplenote-electron/pull/2551)
 
 ## [v2.4.0]
 
