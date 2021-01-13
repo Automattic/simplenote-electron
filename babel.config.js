@@ -7,6 +7,9 @@ module.exports = function (api) {
       {
         corejs: '3',
         useBuiltIns: 'entry',
+        targets: {
+          esmodules: true,
+        },
       },
     ],
     '@babel/preset-react',
@@ -17,6 +20,7 @@ module.exports = function (api) {
     '@babel/plugin-proposal-object-rest-spread',
     '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-transform-runtime',
   ];
   const env = {
     development: {
