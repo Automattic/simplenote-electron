@@ -2,9 +2,9 @@ import React, { Component, Suspense } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
+import MenuBar from '../menu-bar';
 import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
-import SearchBar from '../search-bar';
 import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
@@ -116,7 +116,7 @@ export class AppLayout extends Component<Props> {
       <div className={mainClasses}>
         <Suspense fallback={placeholder}>
           <div className="app-layout__source-column theme-color-bg theme-color-fg">
-            <SearchBar />
+            <MenuBar />
             <SearchField />
             <NoteList />
           </div>

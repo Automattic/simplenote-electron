@@ -36,7 +36,7 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-export const SearchBar: FunctionComponent<Props> = ({
+export const MenuBar: FunctionComponent<Props> = ({
   onNewNote,
   searchQuery,
   showTrash,
@@ -80,6 +80,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   },
 });
 
-SearchBar.displayName = 'SearchBar';
+MenuBar.displayName = 'MenuBar';
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);
