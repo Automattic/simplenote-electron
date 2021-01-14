@@ -73,7 +73,7 @@ export class NoteInfo extends Component<Props> {
               <span className="note-info-item-text">
                 <span className="note-info-name">Modified</span>
                 <br />
-                <span className="note-info-detail">
+                <span className="note-info-detail theme-color-fg-dim">
                   <time dateTime={new Date(modificationDate).toISOString()}>
                     {new Date(modificationDate).toLocaleString([], {
                       year: 'numeric',
@@ -91,7 +91,7 @@ export class NoteInfo extends Component<Props> {
             <span className="note-info-item-text">
               <span className="note-info-name">Last sync</span>
               <br />
-              <span className="note-info-detail">
+              <span className="note-info-detail theme-color-fg-dim">
                 <LastSyncTime noteId={noteId} />
               </span>
             </span>
@@ -133,7 +133,7 @@ export class NoteInfo extends Component<Props> {
             <span className="note-info-item-text">
               <span className="note-info-name">Markdown</span>
               <br />
-              <span className="note-info-detail">
+              <span className="note-info-detail theme-color-fg-dim">
                 Enable markdown formatting on this note.{' '}
                 <a
                   target="_blank"
@@ -158,7 +158,7 @@ export class NoteInfo extends Component<Props> {
             <span className="note-info-item-text">
               <span className="note-info-name">Public link</span>
               <div className="note-info-copy">
-                <p className="note-info-detail note-info-link-text">
+                <p className="note-info-detail note-info-link-text theme-color-fg-dim">
                   {publishURL}
                 </p>
                 <ClipboardButton text={publishURL} />
@@ -170,7 +170,7 @@ export class NoteInfo extends Component<Props> {
           <span className="note-info-item-text">
             <span className="note-info-name">Internal link</span>
             <div className="note-info-copy">
-              <p className="note-info-detail note-info-link-text">{`simplenote://note/${noteId}`}</p>
+              <p className="note-info-detail note-info-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p>
               <ClipboardButton text={noteLink} />
             </div>
           </span>

@@ -59,7 +59,9 @@
   }
 
   .note-info-detail {
-    color: $studio-gray-50;
+    a {
+      color: $studio-simplenote-blue-50;
+    }
   }
 
   .note-info-copy {
@@ -87,13 +89,11 @@
     width: 100%;
 
     span {
-      color: $studio-gray-50;
       display: block;
       margin: 0;
     }
 
     .reference-title {
-      color: $studio-gray-80;
       font-style: italic;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -102,10 +102,6 @@
   }
 }
 
-.theme-dark {
-  .reference-link {
-    .reference-title {
-      color: $studio-white;
-    }
-  }
+.theme-dark .note-info-detail a {
+  color: $studio-simplenote-blue-30;
 }
