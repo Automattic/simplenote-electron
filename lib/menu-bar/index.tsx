@@ -42,18 +42,11 @@ export const MenuBar: FunctionComponent<Props> = ({
   showTrash,
   toggleNavigation,
 }) => {
-  // let placeholder = showTrash ? 'Trash' : openedTag?.name ?? 'All Notes';
   const placeholder = showTrash
     ? 'Trash'
     : openedTag
     ? 'Notes With Selected Tag'
     : 'All Notes';
-  // let placeholder = showTrash ? 'Trash' : 'All Notes';
-  // if(openedTag) {
-  //   placeholder = 'Notes with Selected Tag';
-  // }
-  // placeholder = (openedTag ? 'Notes with tag ' : '') + placeholder;
-  // placeholder = (openedTag ? 'Notes with selected tag' )
 
   return (
     <div className="menu-bar theme-color-border">
