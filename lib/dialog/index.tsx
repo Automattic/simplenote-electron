@@ -40,7 +40,7 @@ export class Dialog extends Component {
                 <button
                   type="button"
                   aria-label="Close dialog"
-                  className="button button-borderless"
+                  className="button"
                   onClick={onDone}
                 >
                   <CrossIcon />

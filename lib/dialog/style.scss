@@ -11,6 +11,10 @@
 .dialog-title-bar {
   display: flex;
   border-bottom: 1px solid $studio-gray-5;
+
+  .button {
+    border: 0;
+  }
 }
 
 .dialog-title-side {
