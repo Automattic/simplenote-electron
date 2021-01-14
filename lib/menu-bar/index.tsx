@@ -43,7 +43,7 @@ export const MenuBar: FunctionComponent<Props> = ({
   toggleNavigation,
   placeholder,
 }) => (
-  <div className="search-bar theme-color-border">
+  <div className="menu-bar theme-color-border">
     <IconButton
       icon={<MenuIcon />}
       onClick={toggleNavigation}
