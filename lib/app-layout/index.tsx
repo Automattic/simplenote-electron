@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchBar from '../search-bar';
+import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 import actions from '../state/actions';
@@ -116,6 +117,7 @@ export class AppLayout extends Component<Props> {
         <Suspense fallback={placeholder}>
           <div className="app-layout__source-column theme-color-bg theme-color-fg">
             <SearchBar />
+            <SearchField />
             <NoteList />
           </div>
           {editorVisible && (

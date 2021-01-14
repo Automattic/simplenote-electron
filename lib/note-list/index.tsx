@@ -73,7 +73,7 @@ const renderNote = (
         rowIndex={index}
       >
         <div className="note-list is-empty" style={{ ...style, height: 200 }}>
-          <span className="note-list-placeholder">No Notes</span>
+          <span className="note-list-placeholder theme-color-fg">No Notes</span>
         </div>
       </CellMeasurer>
     );

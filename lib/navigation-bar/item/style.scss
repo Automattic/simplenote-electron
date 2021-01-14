@@ -23,6 +23,10 @@
 
   &.is-selected button {
     border-bottom: none;
+
+    svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-50;
+    }
   }
 
   &.is-selected {
@@ -31,11 +35,11 @@
 }
 
 .navigation-bar-item:first-child .button {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .navigation-bar-item__icon {
-  color: $studio-simplenote-blue-50;
+  color: $studio-gray-50;
   display: inline-block;
   margin-right: 18px;
   vertical-align: middle;
@@ -50,7 +54,7 @@
 .theme-dark {
   .navigation-bar-item {
     .button {
-      border-bottom: 1px solid $studio-gray-70;
+      border-color: $studio-gray-80;
     }
 
     &.is-selected svg[class^='icon-'] {

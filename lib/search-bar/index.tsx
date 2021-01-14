@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
  */
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
-import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
 import { createNote, toggleNavigation } from '../state/ui/actions';
 
 import * as S from '../state';
+import type * as T from '../types';
 
 type OwnProps = {
   onNewNote: Function;
@@ -23,6 +23,8 @@ type OwnProps = {
 };
 
 type StateProps = {
+  openedTag: T.Tag | null;
+  placeholder: string;
   searchQuery: string;
   showTrash: boolean;
 };
@@ -39,6 +41,7 @@ export const SearchBar: FunctionComponent<Props> = ({
   searchQuery,
   showTrash,
   toggleNavigation,
+  placeholder,
 }) => (
   <div className="search-bar theme-color-border">
     <IconButton
@@ -46,7 +49,7 @@ export const SearchBar: FunctionComponent<Props> = ({
       onClick={toggleNavigation}
       title="Menu • Ctrl+Shift+U"
     />
-    <SearchField />
+    {placeholder}
     <IconButton
       disabled={showTrash}
       icon={<NewNoteIcon />}
@@ -57,8 +60,11 @@ export const SearchBar: FunctionComponent<Props> = ({
 );
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, showTrash },
+  data,
+  ui: { openedTag, searchQuery, showTrash },
 }) => ({
+  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
+  placeholder: showTrash ? 'Trash' : openedTag?.name ?? 'All Notes',
   searchQuery,
   showTrash,
 });
