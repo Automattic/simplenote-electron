@@ -1,5 +1,23 @@
 # Changelog
 
+## [v2.5.0]
+
+### Fixes
+
+- Fixed a bug that sometimes prevented checklists and bulleted lists from automatically continuing on the next line [#2548](https://github.com/Automattic/simplenote-electron/pull/2548)
+- Fixed layout bugs causing the search results bar to overlap note contents and tag input field [#2545](https://github.com/Automattic/simplenote-electron/pull/2545)
+- Fixed a bug where some search terms could be dropped when searching for quoted strings [#2550](https://github.com/Automattic/simplenote-electron/pull/2550)
+- Fixed navigation list styles on Safari [#2552](https://github.com/Automattic/simplenote-electron/pull/2552)
+- Fixed a bug causing notes to still be filtered after creating a new note from search results [#2557](https://github.com/Automattic/simplenote-electron/pull/2557)
+- Load the correct configuration file in local development [#2536](https://github.com/Automattic/simplenote-electron/pull/2536)
+- Fixed a crash on note search in Safari [#2538](https://github.com/Automattic/simplenote-electron/pull/2538)
+
+### Other Changes
+
+- Updated dependencies [#2547](https://github.com/Automattic/simplenote-electron/pull/2547)
+- Updated arguments to addDynamicKeybinding function [#2546](https://github.com/Automattic/simplenote-electron/pull/2546)
+- Prevent adding undefined as a className when no value provided (props to @ubaidisaev) [#2551](https://github.com/Automattic/simplenote-electron/pull/2551)
+
 ## [v2.4.0]
 
 ### Enhancements
