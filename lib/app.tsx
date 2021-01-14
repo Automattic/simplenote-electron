@@ -6,6 +6,7 @@ import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
+import EmailVerification from './email-verification';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
 import {
@@ -179,6 +180,7 @@ class AppComponent extends Component<Props> {
 
     return (
       <div className={appClasses}>
+        <EmailVerification />
         {isDevConfig && <DevBadge />}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}

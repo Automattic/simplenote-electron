@@ -62,6 +62,7 @@ export type CreateNoteWithId = Action<
   'CREATE_NOTE_WITH_ID',
   { noteId: T.EntityId; note?: Partial<T.Note> }
 >;
+export type DismissEmailVerifyDialog = Action<'DISMISS_EMAIL_VERIFY_DIALOG'>;
 export type DeleteOpenNoteForever = Action<'DELETE_OPEN_NOTE_FOREVER'>;
 export type ExportNotes = Action<'EXPORT_NOTES'>;
 export type FilterNotes = Action<
@@ -308,6 +309,10 @@ export type TagRefresh = Action<
   'TAG_REFRESH',
   { noteTags: Map<T.TagHash, Set<T.EntityId>> }
 >;
+export type UpdateAccountVerification = Action<
+  'UPDATE_ACCOUNT_VERIFICATION',
+  { state: T.VerificationState }
+>;
 
 export type ActionType =
   | AcknowledgePendingChange
@@ -320,6 +325,7 @@ export type ActionType =
   | CloseWindow
   | CreateNote
   | CreateNoteWithId
+  | DismissEmailVerifyDialog
   | DeleteOpenNoteForever
   | DeleteNoteForever
   | EditNote
@@ -409,6 +415,7 @@ export type ActionType =
   | TrashNote
   | TrashTag
   | TrashOpenNote
+  | UpdateAccountVerification
   | WindowResize;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;

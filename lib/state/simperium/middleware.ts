@@ -4,6 +4,7 @@ import debugFactory from 'debug';
 import actions from '../actions';
 import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
+import { InMemoryBucket } from './functions/in-memory-bucket';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
 import { PreferencesBucket } from './functions/preferences-bucket';
@@ -20,10 +21,19 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
+import { update } from 'lodash';
 
 const debug = debugFactory('simperium-middleware');
 
+export type Account = {
+  token?: T.JSONValue;
+  token_signature?: string;
+  sent_to?: string;
+  sent_at?: T.SecondsEpoch;
+};
+
 type Buckets = {
+  account: Account;
   note: T.Note;
   preferences: T.Preferences;
   tag: T.Tag;
@@ -40,6 +50,8 @@ export const initSimperium = (
   const client = createClient<Buckets>(getConfig().app_id, token, {
     objectStoreProvider: (bucket) => {
       switch (bucket.name) {
+        case 'account':
+          return new InMemoryBucket(store);
         case 'note':
           return new NoteBucket(store);
 
@@ -150,12 +162,49 @@ export const initSimperium = (
     })
   );
 
+  const parseVerificationToken = (token: string | undefined) => {
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const { username, verified_at: verifiedAt } = JSON.parse(token);
+      return { username, verifiedAt };
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const updateVerificationState = ({ token, sent_to }: Account) => {
+    const parsedToken = parseVerificationToken(token);
+    const hasValidToken = parsedToken && parsedToken.username === username;
+    const hasPendingEmail = sent_to === username;
+
+    const state = hasValidToken
+      ? 'verified'
+      : hasPendingEmail
+      ? 'pending'
+      : 'unknown';
+
+    return dispatch({
+      type: 'UPDATE_ACCOUNT_VERIFICATION',
+      state,
+    });
+  };
+
+  const accountBucket = client.bucket('account');
+  accountBucket.channel.on('update', (entityId, entity) => {
+    console.log(entity);
+    if ('email-verification' == entityId) {
+      updateVerificationState(entity);
+    }
+  });
+
   const preferencesBucket = client.bucket('preferences');
   preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
     if ('preferences-key' !== entityId) {
       return;
     }
-
     if (
       !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
     ) {
@@ -199,6 +248,7 @@ export const initSimperium = (
     preferencesQueue.add(entityId, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
+    window.account = accountBucket;
     // window.preferencesBucket = preferencesBucket;
     window.noteBucket = noteBucket;
     window.tagBucket = tagBucket;

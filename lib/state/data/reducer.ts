@@ -24,6 +24,11 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
   }
 };
 
+const accountVerification: A.Reducer<T.VerificationState> = (
+  state = 'unknown',
+  action
+) => (action.type === 'UPDATE_ACCOUNT_VERIFICATION' ? action.state : state);
+
 const modified = <Entity extends { modificationDate: number }>(
   entity: Entity
 ): Entity => ({
@@ -531,6 +536,7 @@ export const noteTags: A.Reducer<Map<T.TagHash, Set<T.EntityId>>> = (
 };
 
 export default combineReducers({
+  accountVerification,
   analyticsAllowed,
   notes,
   noteRevisions,
