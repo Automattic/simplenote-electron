@@ -11,11 +11,7 @@ export const NavigationBarItem = ({
   const classes = classNames('navigation-bar-item', {
     'is-selected': isSelected,
   });
-  const buttonClasses = classNames(
-    'button',
-    'button-borderless',
-    'theme-color-fg'
-  );
+  const buttonClasses = classNames('button', 'theme-color-fg');
 
   return (
     <div className={classes}>

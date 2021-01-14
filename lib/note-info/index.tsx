@@ -62,7 +62,7 @@ export class NoteInfo extends Component<Props> {
             <PanelTitle headingLevel={2}>Info</PanelTitle>
             <button
               type="button"
-              className="about-done button button-borderless"
+              className="about-done button icon-button"
               onClick={this.handleClickOutside}
             >
               <CrossIcon />

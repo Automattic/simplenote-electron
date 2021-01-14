@@ -150,8 +150,12 @@ span[dir='ltr'] {
   .theme-color-fg-dim {
     color: $studio-gray-50;
   }
-  .theme-color-border {
+  .theme-color-border,
+  .button {
     border-color: $studio-gray-5;
+  }
+  .button-borderless {
+    color: $studio-simplenote-blue-50;
   }
 }
 
@@ -171,7 +175,8 @@ span[dir='ltr'] {
   .theme-color-fg-dim {
     color: $studio-gray-30;
   }
-  .theme-color-border {
+  .theme-color-border,
+  .button {
     border-color: $studio-gray-80;
   }
 
@@ -187,7 +192,7 @@ span[dir='ltr'] {
   }
 
   .button-borderless {
-    color: $studio-gray-30;
+    color: $studio-simplenote-blue-30;
 
     &[disabled],
     &:disabled {

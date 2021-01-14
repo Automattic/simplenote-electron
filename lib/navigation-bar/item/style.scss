@@ -7,7 +7,8 @@
   text-align: left;
 
   .button {
-    border-bottom: 1px solid $studio-gray-5;
+    border: 0;
+    border-bottom: 1px solid;
     border-radius: 0;
     font-size: 16px;
     font-weight: 400;
@@ -15,6 +16,10 @@
     padding: 0;
     text-align: left;
     width: 100%;
+  }
+
+  &:hover {
+    background: $studio-gray-5;
   }
 
   .button:active {
@@ -53,24 +58,20 @@
 
 .theme-dark {
   .navigation-bar-item {
-    .button {
-      border-color: $studio-gray-80;
-    }
-
     &.is-selected svg[class^='icon-'] {
       fill: $studio-simplenote-blue-30;
     }
 
     &.is-selected button {
-      border-bottom: none;
       color: $studio-simplenote-blue-30;
+    }
+
+    &:hover {
+      background: $studio-gray-80;
     }
 
     button {
       color: $studio-white;
-    }
-    svg {
-      fill: $studio-white;
     }
   }
 }
