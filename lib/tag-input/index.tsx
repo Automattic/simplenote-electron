@@ -243,7 +243,10 @@ export class TagInput extends Component<Props> {
     return (
       <div className="tag-input" onClick={this.focusInput}>
         {shouldShowPlaceholder && (
-          <span aria-hidden className="tag-input__placeholder">
+          <span
+            aria-hidden
+            className="tag-input__placeholder theme-color-fg-dim"
+          >
             Add a tag…
           </span>
         )}
