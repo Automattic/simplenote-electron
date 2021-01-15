@@ -79,7 +79,7 @@ export class SearchField extends Component<Props> {
       'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
 
     return (
-      <div className="search-field theme-color-fg-dim theme-color-border">
+      <div className="search-field theme-color-fg theme-color-border">
         <button onClick={this.props.focusSearchField}>
           <SmallSearchIcon />
         </button>

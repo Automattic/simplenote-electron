@@ -269,42 +269,34 @@ span[dir='ltr'] {
   }
 
   .note-list-item {
-    &.note-list-item-selected {
+    &.note-list-item-selected,
+    &.note-list-item-selected:hover {
       background: $studio-simplenote-blue-50;
-      color: $studio-white;
 
       .note-list-item-excerpt {
         color: $studio-white;
-      }
-
-      svg[class^='icon-'] {
-        fill: $studio-white;
-      }
-
-      &:hover {
-        background: $studio-simplenote-blue-50;
-
-        svg[class^='icon-'] {
-          fill: $studio-white;
-        }
       }
     }
 
     &:hover {
       background: $studio-gray-80;
+    }
 
+    &.note-list-item-pinned:hover {
       svg[class^='icon-'] {
         fill: $studio-gray-30;
       }
-    }
-
-    .note-list-item-excerpt {
-      color: $studio-gray-30;
     }
   }
 
   .note-list-item-pinner.note-list-item-pinned {
     color: $studio-simplenote-blue-30;
+  }
+
+  .note-list-item-pinner:hover {
+    svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-30 !important;
+    }
   }
 
   .note-detail-markdown {

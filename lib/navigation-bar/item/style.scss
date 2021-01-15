@@ -19,7 +19,11 @@
   }
 
   &:hover {
-    background: $studio-gray-5;
+    background: $studio-gray-0;
+
+    button svg[class^='icon-'] {
+      fill: $studio-gray-50 !important;
+    }
   }
 
   .button:active {
