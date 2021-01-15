@@ -276,6 +276,15 @@ span[dir='ltr'] {
       .note-list-item-excerpt {
         color: $studio-white;
       }
+      svg[class^='icon-'] {
+        fill: $studio-white;
+      }
+    }
+
+    &.note-list-item-pinned.note-list-item-selected:hover {
+      svg[class^='icon-'] {
+        fill: $studio-white;
+      }
     }
 
     &:hover {
