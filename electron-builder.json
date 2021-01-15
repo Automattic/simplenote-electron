@@ -50,7 +50,6 @@
     ]
   },
   "nsis": {
-    "perMachine": true,
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "deleteAppDataOnUninstall": true
   },
