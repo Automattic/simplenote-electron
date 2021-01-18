@@ -49,6 +49,7 @@ export class NoteInfo extends Component<Props> {
   render() {
     const { isMarkdown, isPinned, noteId, note } = this.props;
     const isPublished = includes(note.systemTags, 'published');
+    const creationDate = note.creationDate * 1000;
     const modificationDate = note.modificationDate
       ? note.modificationDate * 1000
       : null;
@@ -68,6 +69,23 @@ export class NoteInfo extends Component<Props> {
               <CrossIcon />
             </button>
           </div>
+          <p className="note-info-item">
+            <span className="note-info-item-text">
+              <span className="note-info-name">Created</span>
+              <br />
+              <span className="note-info-detail">
+                <time dateTime={new Date(creationDate).toISOString()}>
+                  {new Date(creationDate).toLocaleString([], {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
+                </time>
+              </span>
+            </span>
+          </p>
           {modificationDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
