@@ -6,6 +6,7 @@ type Props = {
   min: number;
   max: number;
   value: number;
+  list: string;
 };
 
 export const Slider: FunctionComponent<Props> = ({
@@ -13,6 +14,7 @@ export const Slider: FunctionComponent<Props> = ({
   min,
   max,
   value,
+  list,
   onChange,
 }) => (
   <input

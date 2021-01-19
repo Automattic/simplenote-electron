@@ -1,13 +1,16 @@
 .revision-selector {
-  background: $studio-simplenote-blue-50;
+  background: $studio-white;
+  border-top: 1px solid $studio-gray-30;
+  color: $studio-gray-80;
+  height: 144px;
   padding: 10px 20px 20px;
-  color: $studio-white;
-  z-index: 1000;
-  height: 114px;
+  position: absolute;
   transition: all 0.3s ease-in-out;
+  width: 100%;
+  z-index: 1000;
 
   &.is-visible {
-    top: 0;
+    bottom: 0;
   }
 
   @media only screen and (max-width: $single-column) {
@@ -16,17 +19,19 @@
 
   .revision-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    max-width: 625px;
+    margin: 0 auto;
 
     button {
       @extend %smart-focus-outline;
+      font-weight: 400;
     }
   }
 
   .button-primary {
-    background: $studio-white;
-    color: $studio-simplenote-blue-50;
-    border-color: $studio-white;
+    background: $studio-simplenote-blue-50;
+    color: $studio-white;
 
     &:active {
       background: $studio-simplenote-blue-5;
@@ -35,9 +40,10 @@
   }
 
   .button-secondary {
-    border-color: $studio-white;
+    background: $studio-gray-30;
     color: $studio-white;
     margin-right: 10px;
+    border: 0;
 
     &:active {
       background: $studio-white;
@@ -53,9 +59,26 @@
 
   .revision-date {
     width: 100%;
-    color: $studio-white;
+    color: $studio-gray-80;
     text-align: center;
     margin-bottom: 10px;
+  }
+
+  .revision-slider-title {
+    margin: 0 auto;
+    max-width: 625px;
+    font-weight: 700;
+  }
+}
+
+.theme-dark {
+  .revision-selector {
+    background-color: $studio-gray-80;
+    color: $studio-white;
+  }
+
+  .revision-date {
+    color: $studio-white;
   }
 }
 

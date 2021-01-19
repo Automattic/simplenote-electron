@@ -73,7 +73,7 @@ export class RevisionSelector extends Component<Props> {
       (openedRevision
         ? revisions.get(openedRevision).modificationDate
         : note.modificationDate) * 1000,
-      'MMM d, yyyy h:mm a'
+      'MMM d, yyyy'
     );
 
     const mainClasses = classNames('revision-selector', {
@@ -82,7 +82,8 @@ export class RevisionSelector extends Component<Props> {
 
     return (
       <div className={mainClasses}>
-        <div className="revision-date">{`Originally created: ${revisionDate}`}</div>
+        <div className="revision-slider-title">History</div>
+        <div className="revision-date">{revisionDate}</div>
         <div className="revision-slider">
           <Slider
             disabled={!revisions || revisions.size === 0}
@@ -91,6 +92,7 @@ export class RevisionSelector extends Component<Props> {
             }
             max={revisions?.size - 1}
             value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
+            list="revisionpoints"
             onChange={this.onSelectRevision}
           />
         </div>
