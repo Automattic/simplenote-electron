@@ -80,7 +80,7 @@ export class SearchField extends Component<Props> {
 
     return (
       <div className="search-field theme-color-fg theme-color-border">
-        <button onClick={this.props.focusSearchField}>
+        <button onClick={this.props.focusSearchField} className="icon-button">
           <SmallSearchIcon />
         </button>
         <input
@@ -95,6 +95,7 @@ export class SearchField extends Component<Props> {
         />
         <button
           aria-label="Clear search"
+          className="icon-button"
           hidden={!hasQuery}
           onClick={this.clearQuery}
         >
