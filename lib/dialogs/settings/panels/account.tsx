@@ -28,7 +28,7 @@ const AccountPanel: FunctionComponent<Props> = ({
   toggleAnalytics,
 }) => {
   const onEditAccount = () => {
-    viewExternalUrl(`https://app.simplenote.com/settings/?from=react`);
+    viewExternalUrl(`https://app.simplenote.com/settings/`);
   };
 
   return (
