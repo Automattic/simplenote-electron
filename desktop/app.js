@@ -3,6 +3,7 @@
 const {
   app,
   BrowserWindow,
+  BrowserView,
   ipcMain,
   shell,
   Menu,
@@ -67,36 +68,46 @@ module.exports = function main() {
         contextIsolation: true,
         enableRemoteModule: false,
         nodeIntegration: false,
-        preload: path.join(__dirname, './preload.js'),
       },
     });
 
-    // and load the index of the app.
-    if (typeof mainWindow.loadURL === 'function') {
-      mainWindow.loadURL(url);
-    } else {
-      mainWindow.loadUrl(url);
-    }
+    const view = new BrowserView({
+      webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
+        nodeIntegration: false,
+        preload: path.join(__dirname, './preload.js'),
+      },
+    });
+    mainWindow.setBrowserView(view);
+    view.setBounds({
+      x: 0,
+      y: 0,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
+    });
+    view.setAutoResize({ width: true, height: true });
+    view.webContents.loadURL('https://app.simplenote.com');
 
-    contextMenu(mainWindow);
+    contextMenu(view);
 
     if (
       'test' !== process.env.NODE_ENV &&
       (isDev || process.argv.includes('--devtools'))
     ) {
-      mainWindow.openDevTools({ mode: 'detach' });
+      view.webContents.openDevTools({ mode: 'detach' });
     }
 
     // Configure and set the application menu
     const menuTemplate = createMenuTemplate();
-    const appMenu = Menu.buildFromTemplate(menuTemplate, mainWindow);
+    const appMenu = Menu.buildFromTemplate(menuTemplate, view);
     Menu.setApplicationMenu(appMenu);
 
-    ipcMain.on('appStateUpdate', function (event, args) {
+    ipcMain.on('appStateUpdate', function (_, args) {
       const settings = args['settings'] || {};
       isAuthenticated = settings && 'accountName' in settings;
       Menu.setApplicationMenu(
-        Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
+        Menu.buildFromTemplate(createMenuTemplate(args), view)
       );
     });
 
@@ -190,6 +201,7 @@ module.exports = function main() {
 
     // wait until window is presentable
     mainWindow.once('ready-to-show', mainWindow.show);
+    mainWindow.show();
   };
 
   const gotTheLock = app.requestSingleInstanceLock();
