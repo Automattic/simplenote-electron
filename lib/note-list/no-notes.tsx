@@ -35,7 +35,7 @@ const NoNotes = () => {
   };
 
   return (
-    <div className="note-list-placeholder">
+    <div className="note-list-placeholder theme-color-fg">
       {getMessage()}
       {hasLoaded && getButton()}
     </div>

@@ -9,12 +9,12 @@ import { connect } from 'react-redux';
  */
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
-import SearchField from '../search-field';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
 import { createNote, toggleNavigation } from '../state/ui/actions';
 
 import * as S from '../state';
+import type * as T from '../types';
 
 type OwnProps = {
   onNewNote: Function;
@@ -23,6 +23,7 @@ type OwnProps = {
 };
 
 type StateProps = {
+  openedTag: T.Tag | null;
   searchQuery: string;
   showTrash: boolean;
 };
@@ -34,31 +35,42 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-export const SearchBar: FunctionComponent<Props> = ({
+export const MenuBar: FunctionComponent<Props> = ({
   onNewNote,
+  openedTag,
   searchQuery,
   showTrash,
   toggleNavigation,
-}) => (
-  <div className="search-bar theme-color-border">
-    <IconButton
-      icon={<MenuIcon />}
-      onClick={toggleNavigation}
-      title="Menu • Ctrl+Shift+U"
-    />
-    <SearchField />
-    <IconButton
-      disabled={showTrash}
-      icon={<NewNoteIcon />}
-      onClick={() => onNewNote(withoutTags(searchQuery))}
-      title="New Note • Ctrl+Shift+I"
-    />
-  </div>
-);
+}) => {
+  const placeholder = showTrash
+    ? 'Trash'
+    : openedTag
+    ? 'Notes With Selected Tag'
+    : 'All Notes';
+
+  return (
+    <div className="menu-bar theme-color-border">
+      <IconButton
+        icon={<MenuIcon />}
+        onClick={toggleNavigation}
+        title="Menu • Ctrl+Shift+U"
+      />
+      {placeholder}
+      <IconButton
+        disabled={showTrash}
+        icon={<NewNoteIcon />}
+        onClick={() => onNewNote(withoutTags(searchQuery))}
+        title="New Note • Ctrl+Shift+I"
+      />
+    </div>
+  );
+};
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, showTrash },
+  data,
+  ui: { openedTag, searchQuery, showTrash },
 }) => ({
+  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
   searchQuery,
   showTrash,
 });
@@ -74,6 +86,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
   },
 });
 
-SearchBar.displayName = 'SearchBar';
+MenuBar.displayName = 'MenuBar';
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(MenuBar);

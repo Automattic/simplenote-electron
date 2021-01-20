@@ -12,6 +12,7 @@ input {
 
   &::placeholder {
     color: $studio-gray-50;
+    opacity: 1;
   }
 
   &::-ms-clear {

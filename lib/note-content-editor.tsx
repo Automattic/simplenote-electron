@@ -529,7 +529,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
-      rules: [{ background: 'FFFFFF' }],
+      rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
       colors: {
         'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
         'editor.background': '#ffffff',
@@ -543,7 +543,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote-dark', {
       base: 'vs-dark',
       inherit: true,
-      rules: [{ background: '1d2327' }],
+      rules: [{ background: '1d2327', foreground: 'ffffff' }],
       colors: {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90

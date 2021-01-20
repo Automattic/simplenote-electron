@@ -54,7 +54,6 @@
 }
 
 .note-list-placeholder {
-  color: $studio-gray-50;
   font-size: 1.5em;
   text-align: center;
 
@@ -64,6 +63,10 @@
     font-size: 14px;
     margin-top: 7px;
   }
+}
+
+.theme-dark .note-list-placeholder button {
+  color: $studio-simplenote-blue-30;
 }
 
 .note-list-items {
@@ -121,7 +124,7 @@
     flex: 1 1 auto;
     overflow: hidden;
     padding: 9px 0;
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid;
 
     &:focus {
       outline: none;
@@ -135,8 +138,13 @@
     overflow: hidden;
   }
 
-  &.note-list-item-selected {
+  &.note-list-item-selected,
+  &.note-list-item-selected:hover {
     background: $studio-simplenote-blue-5;
+  }
+
+  &:hover {
+    background: $studio-gray-0;
   }
 
   &.note-recently-updated {

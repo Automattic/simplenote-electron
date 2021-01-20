@@ -1,8 +1,9 @@
 import React, { Component, createRef, FormEvent, KeyboardEvent } from 'react';
 import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
+import SmallSearchIcon from '../icons/search-small';
 import { State } from '../state';
-import { search } from '../state/ui/actions';
+import { focusSearchField, search } from '../state/ui/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
@@ -18,6 +19,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
+  focusSearchField: () => any;
   onSearch: (query: string) => any;
 };
 
@@ -69,15 +71,18 @@ export class SearchField extends Component<Props> {
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { openedTag, searchQuery, showTrash } = this.props;
+    const { openedTag, searchQuery } = this.props;
     const hasQuery = searchQuery.length > 0;
-    const placeholder = showTrash ? 'Trash' : openedTag?.name ?? 'All Notes';
+    const placeholder = openedTag?.name ?? 'Search notes and tags';
 
     const screenReaderLabel =
       'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
 
     return (
-      <div className="search-field">
+      <div className="search-field theme-color-fg theme-color-border">
+        <button onClick={this.props.focusSearchField} className="icon-button">
+          <SmallSearchIcon />
+        </button>
         <input
           aria-label={screenReaderLabel}
           ref={this.inputField}
@@ -90,6 +95,7 @@ export class SearchField extends Component<Props> {
         />
         <button
           aria-label="Clear search"
+          className="icon-button"
           hidden={!hasQuery}
           onClick={this.clearQuery}
         >
@@ -110,6 +116,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({
+  focusSearchField: () => dispatch(focusSearchField()),
   onSearch: (query: string) => {
     dispatch(search(query));
   },

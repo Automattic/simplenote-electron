@@ -4,17 +4,20 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid;
   list-style: none;
 
   li {
     margin: 0 0.5em;
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
+    border-bottom: 2px solid;
     padding: 0.75em;
     color: $studio-gray-80;
     text-transform: capitalize;
     border-radius: 0;
+
+    &.button {
+      border-bottom-color: transparent;
+    }
 
     &.is-active {
       color: $studio-simplenote-blue-50;
@@ -24,6 +27,11 @@
       color: $studio-white;
     }
   }
+}
+
+.theme-dark .tab-panels__tab-list li.is-active {
+  color: $studio-simplenote-blue-30;
+  border-bottom-color: $studio-simplenote-blue-30;
 }
 
 .tab-panels__panel {

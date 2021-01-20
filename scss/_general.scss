@@ -79,7 +79,7 @@ optgroup {
     padding: 40px 0 30px;
   }
 
-  .search-bar {
+  .menu-bar {
     padding: 40px 15px 30px;
     box-sizing: border-box;
     -webkit-app-region: drag;
@@ -122,4 +122,7 @@ optgroup {
   &[data-current-match='true'] {
     background-color: $studio-yellow-60;
   }
+}
+.theme-dark .note-list-item-selected .search-match {
+  background-color: $studio-simplenote-blue-20;
 }

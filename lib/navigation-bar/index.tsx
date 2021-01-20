@@ -67,7 +67,7 @@ export class NavigationBar extends Component<Props> {
     const { autoHideMenuBar, onAbout, onSettings, onShowAllNotes } = this.props;
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
-        <div className="navigation-bar__folders">
+        <div className="navigation-bar__folders theme-color-border">
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"

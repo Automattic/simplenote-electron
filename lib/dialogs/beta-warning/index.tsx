@@ -43,7 +43,7 @@ export class BetaWarning extends Component<Props> {
           <button
             type="button"
             aria-label="Close dialog"
-            className="about-done button button-borderless"
+            className="about-done button"
             onClick={closeDialog}
           >
             <CrossIcon />

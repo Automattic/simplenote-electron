@@ -7,7 +7,8 @@
   text-align: left;
 
   .button {
-    border-bottom: 1px solid $studio-gray-5;
+    border: 0;
+    border-bottom: 1px solid;
     border-radius: 0;
     font-size: 16px;
     font-weight: 400;
@@ -17,12 +18,24 @@
     width: 100%;
   }
 
+  &:hover {
+    background: $studio-gray-0;
+
+    button svg[class^='icon-'] {
+      fill: $studio-gray-50 !important;
+    }
+  }
+
   .button:active {
     background: none;
   }
 
   &.is-selected button {
     border-bottom: none;
+
+    svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-50;
+    }
   }
 
   &.is-selected {
@@ -31,11 +44,11 @@
 }
 
 .navigation-bar-item:first-child .button {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .navigation-bar-item__icon {
-  color: $studio-simplenote-blue-50;
+  color: $studio-gray-50;
   display: inline-block;
   margin-right: 18px;
   vertical-align: middle;
@@ -49,24 +62,20 @@
 
 .theme-dark {
   .navigation-bar-item {
-    .button {
-      border-bottom: 1px solid $studio-gray-70;
-    }
-
     &.is-selected svg[class^='icon-'] {
       fill: $studio-simplenote-blue-30;
     }
 
     &.is-selected button {
-      border-bottom: none;
       color: $studio-simplenote-blue-30;
+    }
+
+    &:hover {
+      background: $studio-gray-80;
     }
 
     button {
       color: $studio-white;
-    }
-    svg {
-      fill: $studio-white;
     }
   }
 }

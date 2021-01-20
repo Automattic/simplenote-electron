@@ -126,7 +126,7 @@ export class NoteCell extends Component<Props> {
             </span>
           </div>
           {'expanded' === displayMode && preview.length > 0 && (
-            <div className="note-list-item-excerpt">
+            <div className="note-list-item-excerpt theme-color-fg-dim">
               {withCheckboxCharacters(preview)
                 .split('\n')
                 .map((line, index) => (
@@ -138,7 +138,7 @@ export class NoteCell extends Component<Props> {
             </div>
           )}
           {'comfy' === displayMode && preview.length > 0 && (
-            <div className="note-list-item-excerpt">
+            <div className="note-list-item-excerpt theme-color-fg-dim">
               {decorateWith(
                 decorators,
                 withCheckboxCharacters(preview).slice(0, 200)

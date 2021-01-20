@@ -150,11 +150,12 @@ span[dir='ltr'] {
   .theme-color-fg-dim {
     color: $studio-gray-50;
   }
-  .theme-color-border {
+  .theme-color-border,
+  .button {
     border-color: $studio-gray-5;
   }
-  .search-field {
-    border-color: $studio-gray-10;
+  .button-borderless {
+    color: $studio-simplenote-blue-50;
   }
 }
 
@@ -174,7 +175,8 @@ span[dir='ltr'] {
   .theme-color-fg-dim {
     color: $studio-gray-30;
   }
-  .theme-color-border {
+  .theme-color-border,
+  .button {
     border-color: $studio-gray-80;
   }
 
@@ -202,7 +204,7 @@ span[dir='ltr'] {
 
   .icon-button,
   a {
-    color: $studio-simplenote-blue-30;
+    color: $studio-gray-30;
   }
 
   input {
@@ -217,7 +219,7 @@ span[dir='ltr'] {
 
   .transparent-input::placeholder,
   input::placeholder {
-    color: $studio-gray-20;
+    color: $studio-gray-30;
   }
 
   .checkbox-control-base {
@@ -229,13 +231,16 @@ span[dir='ltr'] {
       color: $studio-white;
     }
     svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-30;
+      fill: $studio-gray-30;
     }
   }
 
   .navigation-bar-item.is-selected {
-    background-color: $studio-gray-80;
+    background-color: $studio-simplenote-blue-50;
 
+    svg[class^='icon-'] {
+      fill: $studio-white;
+    }
     button {
       color: $studio-white;
     }
@@ -264,18 +269,43 @@ span[dir='ltr'] {
   }
 
   .note-list-item {
-    &.note-list-item-selected {
+    &.note-list-item-selected,
+    &.note-list-item-selected:hover {
+      background: $studio-simplenote-blue-50;
+
+      .note-list-item-excerpt {
+        color: $studio-white;
+      }
+      svg[class^='icon-'] {
+        fill: $studio-white;
+      }
+    }
+
+    &.note-list-item-pinned.note-list-item-selected:hover {
+      svg[class^='icon-'] {
+        fill: $studio-white;
+      }
+    }
+
+    &:hover {
       background: $studio-gray-80;
     }
 
-    .note-list-item-excerpt {
-      color: $studio-gray-20;
+    &.note-list-item-pinned:hover {
+      svg[class^='icon-'] {
+        fill: $studio-gray-30;
+      }
     }
   }
 
-  .note-list-item-pinner:hover,
   .note-list-item-pinner.note-list-item-pinned {
-    color: $studio-simplenote-blue-20;
+    color: $studio-simplenote-blue-30;
+  }
+
+  .note-list-item-pinner:hover {
+    svg[class^='icon-'] {
+      fill: $studio-simplenote-blue-30 !important;
+    }
   }
 
   .note-detail-markdown {
