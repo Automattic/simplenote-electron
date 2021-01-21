@@ -92,7 +92,7 @@ export class NoteInfo extends Component<Props> {
             <span className="note-info-item-text">
               <span className="note-info-name">Created</span>
               <br />
-              <span className="note-info-detail">
+              <span className="note-info-detail theme-color-fg-dim">
                 <time dateTime={new Date(creationDate).toISOString()}>
                   {new Date(creationDate).toLocaleString([], {
                     year: 'numeric',
