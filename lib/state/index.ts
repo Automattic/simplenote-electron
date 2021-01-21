@@ -23,8 +23,6 @@ import electronMiddleware from './electron/middleware';
 import { middleware as searchMiddleware } from '../search';
 import uiMiddleware from './ui/middleware';
 import searchFieldMiddleware from './ui/search-field-middleware';
-
-import account from './account/reducer';
 import { reducer as browser, middleware as browserMiddleware } from './browser';
 import data from './data/reducer';
 import settings from './settings/reducer';
@@ -34,7 +32,6 @@ import ui from './ui/reducer';
 import * as A from './action-types';
 
 const reducers = combineReducers<State, A.ActionType>({
-  account,
   browser,
   data,
   settings,
@@ -43,7 +40,6 @@ const reducers = combineReducers<State, A.ActionType>({
 });
 
 export type State = {
-  account: ReturnType<typeof account>;
   browser: ReturnType<typeof browser>;
   data: ReturnType<typeof data>;
   settings: ReturnType<typeof settings>;

@@ -43,11 +43,7 @@ export type AnalyticsRecord = [string, JSONSerializable | undefined];
 
 export type PreferencesEntity = Entity<Preferences>;
 
-export type VerificationState =
-  | 'verified'
-  | 'pending'
-  | 'unverified'
-  | 'unknown';
+export type VerificationState = 'verified' | 'pending' | 'unknown';
 
 ///////////////////////////////////////
 // Simperium Types

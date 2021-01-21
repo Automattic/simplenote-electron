@@ -21,7 +21,6 @@ import { stopSyncing } from '../persistence';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
-import { update } from 'lodash';
 
 const debug = debugFactory('simperium-middleware');
 
@@ -194,7 +193,6 @@ export const initSimperium = (
 
   const accountBucket = client.bucket('account');
   accountBucket.channel.on('update', (entityId, entity) => {
-    console.log(entity);
     if ('email-verification' == entityId) {
       updateVerificationState(entity);
     }
@@ -205,6 +203,7 @@ export const initSimperium = (
     if ('preferences-key' !== entityId) {
       return;
     }
+
     if (
       !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
     ) {
