@@ -193,7 +193,7 @@ export const initSimperium = (
 
   const accountBucket = client.bucket('account');
   accountBucket.channel.on('update', (entityId, entity) => {
-    if ('email-verification' == entityId) {
+    if ('email-verification' === entityId) {
       updateVerificationState(entity);
     }
   });
