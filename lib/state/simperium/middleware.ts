@@ -5,6 +5,7 @@ import actions from '../actions';
 import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
+import { InMemoryGhost } from './functions/in-memory-ghost';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
 import { PreferencesBucket } from './functions/preferences-bucket';
@@ -24,15 +25,8 @@ import type * as T from '../../types';
 
 const debug = debugFactory('simperium-middleware');
 
-export type Account = {
-  token?: T.JSONValue;
-  token_signature?: string;
-  sent_to?: string;
-  sent_at?: T.SecondsEpoch;
-};
-
 type Buckets = {
-  account: Account;
+  account: T.JSONSerializable;
   note: T.Note;
   preferences: T.Preferences;
   tag: T.Tag;
@@ -50,7 +44,8 @@ export const initSimperium = (
     objectStoreProvider: (bucket) => {
       switch (bucket.name) {
         case 'account':
-          return new InMemoryBucket(store);
+          return new InMemoryBucket();
+
         case 'note':
           return new NoteBucket(store);
 
@@ -61,7 +56,16 @@ export const initSimperium = (
           return new TagBucket(store);
       }
     },
-    ghostStoreProvider: (bucket) => new ReduxGhost(bucket.name, store),
+
+    ghostStoreProvider: (bucket) => {
+      switch (bucket.name) {
+        case 'account':
+          return new InMemoryGhost();
+
+        default:
+          return new ReduxGhost(bucket.name, store);
+      }
+    },
   });
   client.on('unauthorized', () => logout());
 
@@ -161,11 +165,7 @@ export const initSimperium = (
     })
   );
 
-  const parseVerificationToken = (token: string | undefined) => {
-    if (!token) {
-      return null;
-    }
-
+  const parseVerificationToken = (token: string) => {
     try {
       const { username, verified_at: verifiedAt } = JSON.parse(token);
       return { username, verifiedAt };
@@ -174,7 +174,13 @@ export const initSimperium = (
     }
   };
 
-  const updateVerificationState = ({ token, sent_to }: Account) => {
+  const updateVerificationState = (entity: T.JSONSerializable) => {
+    if (!('string' === typeof entity?.token && entity?.sent_to)) {
+      return;
+    }
+
+    const { token, sent_to } = entity;
+
     const parsedToken = parseVerificationToken(token);
     const hasValidToken = parsedToken && parsedToken.username === username;
     const hasPendingEmail = sent_to === username;
