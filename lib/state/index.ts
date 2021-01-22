@@ -23,6 +23,7 @@ import electronMiddleware from './electron/middleware';
 import { middleware as searchMiddleware } from '../search';
 import uiMiddleware from './ui/middleware';
 import searchFieldMiddleware from './ui/search-field-middleware';
+
 import { reducer as browser, middleware as browserMiddleware } from './browser';
 import data from './data/reducer';
 import settings from './settings/reducer';
