@@ -219,16 +219,18 @@ export const initSimperium = (
       /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
     ).then(({ content }) => {
       const now = Date.now() / 1000;
-      noteBucket.add({
-        content,
-        deleted: false,
-        systemTags: [],
-        creationDate: now,
-        modificationDate: now,
-        shareURL: '',
-        publishURL: '',
-        tags: [],
-      });
+      store.dispatch(
+        actions.ui.createNote({
+          content,
+          deleted: false,
+          systemTags: [],
+          creationDate: now,
+          modificationDate: now,
+          shareURL: '',
+          publishURL: '',
+          tags: [],
+        })
+      );
     });
   }
 
