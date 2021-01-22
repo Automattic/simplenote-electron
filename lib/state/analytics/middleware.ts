@@ -91,6 +91,9 @@ export const middleware: S.Middleware = (store) => {
       case 'CREATE_NOTE':
         record('list_note_created');
         break;
+      case 'DISMISS_EMAIL_VERIFY_DIALOG':
+        record('verification_dismissed');
+        break;
       case 'EDIT_NOTE':
         recordNoteEdit();
         break;

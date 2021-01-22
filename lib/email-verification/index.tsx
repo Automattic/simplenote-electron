@@ -9,6 +9,7 @@ import WarningIcon from '../icons/warning';
 
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
+import { recordEvent } from '../state/analytics/middleware';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -33,6 +34,12 @@ const EmailVerification: FunctionComponent<Props> = ({
 }) => {
   const base64EncodedEmail = btoa(email || '');
   const sendVerifyUrl: string = `https://app.simplenote.com/account/verify-email/${base64EncodedEmail}`;
+
+  if (accountVerification === 'pending') {
+    recordEvent('verification_verify_screen_viewed');
+  } else {
+    recordEvent('verification_review_screen_viewed');
+  }
 
   const displayClose = (
     <div className="email-verification__dismiss">
@@ -67,10 +74,16 @@ const EmailVerification: FunctionComponent<Props> = ({
           target="_blank"
           rel="noreferrer"
           href="https://app.simplenote.com/settings"
+          onClick={() => recordEvent('verification_change_email_button_tapped')}
         >
           <button className="button button-borderless">Change Email</button>
         </a>
-        <a target="_blank" rel="noreferrer" href={sendVerifyUrl}>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href={sendVerifyUrl}
+          onClick={() => recordEvent('verification_confirm_button_tapped')}
+        >
           <button className="button button-primary">Confirm</button>
         </a>
       </div>
@@ -90,7 +103,12 @@ const EmailVerification: FunctionComponent<Props> = ({
       <p>Please check your inbox and follow the instructions.</p>
 
       <div className="email-verification__button-row">
-        <a target="_blank" rel="noreferrer" href={sendVerifyUrl}>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href={sendVerifyUrl}
+          onClick={() => recordEvent('verification_resend_email_button_tapped')}
+        >
           <button className="button button-borderless">Resend Email</button>
         </a>
       </div>
