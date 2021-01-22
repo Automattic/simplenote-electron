@@ -27,7 +27,10 @@ export const analyticsAllowed: A.Reducer<boolean | null> = (
 const accountVerification: A.Reducer<T.VerificationState> = (
   state = 'unknown',
   action
-) => (action.type === 'UPDATE_ACCOUNT_VERIFICATION' ? action.state : state);
+) =>
+  action.type === 'UPDATE_ACCOUNT_VERIFICATION' && 'dismissed' !== state
+    ? action.state
+    : state;
 
 const modified = <Entity extends { modificationDate: number }>(
   entity: Entity

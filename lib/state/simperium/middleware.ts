@@ -165,9 +165,9 @@ export const initSimperium = (
     })
   );
 
-  const parseVerificationToken = (token: string) => {
+  const parseVerificationToken = (token: unknown) => {
     try {
-      const { username, verified_at: verifiedAt } = JSON.parse(token);
+      const { username, verified_at: verifiedAt } = JSON.parse(token as string);
       return { username, verifiedAt };
     } catch (e) {
       return null;
@@ -175,10 +175,6 @@ export const initSimperium = (
   };
 
   const updateVerificationState = (entity: T.JSONSerializable) => {
-    if (!('string' === typeof entity?.token && entity?.sent_to)) {
-      return;
-    }
-
     const { token, sent_to } = entity;
 
     const parsedToken = parseVerificationToken(token);
@@ -189,7 +185,7 @@ export const initSimperium = (
       ? 'verified'
       : hasPendingEmail
       ? 'pending'
-      : 'unknown';
+      : 'unverified';
 
     return dispatch({
       type: 'UPDATE_ACCOUNT_VERIFICATION',
@@ -198,9 +194,17 @@ export const initSimperium = (
   };
 
   const accountBucket = client.bucket('account');
-  accountBucket.channel.on('update', (entityId, entity) => {
+  accountBucket.on('update', (entityId, entity) => {
     if ('email-verification' === entityId) {
       updateVerificationState(entity);
+    }
+  });
+  accountBucket.channel.on('ready', () => {
+    if ('unknown' === getState().data.accountVerification) {
+      dispatch({
+        type: 'UPDATE_ACCOUNT_VERIFICATION',
+        state: 'unverified',
+      });
     }
   });
 

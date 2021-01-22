@@ -8,51 +8,38 @@ import MailIcon from '../icons/mail';
 import WarningIcon from '../icons/warning';
 
 import actions from '../state/actions';
+import * as selectors from '../state/selectors';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
   accountVerification: T.VerificationState;
-  dismissed: boolean;
   email: string | null;
   theme: string;
 };
 
 type DispatchProps = {
-  dismissEmailVerifyDialog: () => any;
+  dismiss: () => any;
 };
 
 type Props = StateProps & DispatchProps;
 
 const EmailVerification: FunctionComponent<Props> = ({
   accountVerification,
-  dismissed,
-  dismissEmailVerifyDialog,
+  dismiss,
   email,
   theme,
 }) => {
-  const [isShown, setIsShown] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsShown(true);
-    }, 2000);
-  }, []);
-
-  if (accountVerification === 'verified' || !isShown || dismissed) {
-    return null;
-  }
-
   const base64EncodedEmail = btoa(email || '');
-  const sendVerifyUrl: string = `https://pr-357-dot-simple-note-hrd.appspot.com/account/verify-email/${base64EncodedEmail}`;
+  const sendVerifyUrl: string = `https://app.simplenote.com/account/verify-email/${base64EncodedEmail}`;
 
   const displayClose = (
     <div className="email-verification__dismiss">
       <button
         className="icon-button"
         aria-label="Close dialog"
-        onClick={dismissEmailVerifyDialog}
+        onClick={dismiss}
       >
         <CrossIcon />
       </button>
@@ -114,7 +101,7 @@ const EmailVerification: FunctionComponent<Props> = ({
       key="email-verification"
       className="email-verification__modal theme-color-fg theme-color-bg"
       isOpen
-      onRequestClose={dismissEmailVerifyDialog}
+      onRequestClose={dismiss}
       contentLabel="Confirm your email"
       overlayClassName="email-verification__overlay"
       portalClassName={classNames(
@@ -130,17 +117,13 @@ const EmailVerification: FunctionComponent<Props> = ({
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  dismissEmailVerifyDialog: () => actions.ui.dismissEmailVerifyDialog(),
+  dismiss: () => actions.ui.dismissEmailVerifyDialog(),
 };
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   accountVerification: state.data.accountVerification,
-  dismissed: state.ui.emailVerifyDialogDismissed,
   email: state.settings.accountName,
-  theme:
-    state.settings.theme === 'system'
-      ? state.browser.systemTheme
-      : state.settings.theme,
+  theme: selectors.getTheme(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EmailVerification);

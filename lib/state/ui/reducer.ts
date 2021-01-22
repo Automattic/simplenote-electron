@@ -99,18 +99,6 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   }
 };
 
-const emailVerifyDialogDismissed: A.Reducer<boolean> = (
-  state = false,
-  action
-) => {
-  switch (action.type) {
-    case 'DISMISS_EMAIL_VERIFY_DIALOG':
-      return true;
-    default:
-      return state;
-  }
-};
-
 const editMode: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'TOGGLE_EDIT_MODE': {
@@ -340,7 +328,6 @@ export default combineReducers({
   editMode,
   editorSelection,
   editingTags,
-  emailVerifyDialogDismissed,
   filteredNotes,
   hasLoadedNotes,
   numberOfMatchesInNote,

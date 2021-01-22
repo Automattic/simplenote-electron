@@ -34,6 +34,7 @@ type StateProps = {
   isSmallScreen: boolean;
   lineLength: T.LineLength;
   isSearchActive: boolean;
+  showEmailVerification: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
   theme: 'light' | 'dark';
@@ -161,6 +162,7 @@ class AppComponent extends Component<Props> {
     const {
       isDevConfig,
       lineLength,
+      showEmailVerification,
       showNavigation,
       showNoteInfo,
       theme,
@@ -180,7 +182,7 @@ class AppComponent extends Component<Props> {
 
     return (
       <div className={appClasses}>
-        <EmailVerification />
+        {showEmailVerification && <EmailVerification />}
         {isDevConfig && <DevBadge />}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
@@ -199,6 +201,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isSearchActive: !!state.ui.searchQuery.length,
   isSmallScreen: selectors.isSmallScreen(state),
   lineLength: state.settings.lineLength,
+  showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
   showNoteInfo: state.ui.showNoteInfo,
   theme: selectors.getTheme(state),

@@ -20,8 +20,9 @@ export const createNote: A.ActionCreator<A.CreateNote> = (
   note: note,
 });
 
-export const dismissEmailVerifyDialog: A.ActionCreator<A.DismissEmailVerifyDialog> = () => ({
-  type: 'DISMISS_EMAIL_VERIFY_DIALOG',
+export const dismissEmailVerifyDialog: A.ActionCreator<A.UpdateAccountVerification> = () => ({
+  type: 'UPDATE_ACCOUNT_VERIFICATION',
+  state: 'dismissed',
 });
 
 export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = () => ({

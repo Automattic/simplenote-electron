@@ -41,3 +41,7 @@ export const noteHasPendingChanges: S.Selector<boolean> = (
     state.data.notes.get(noteId),
     state.simperium.ghosts[1].get('note')?.get(noteId)?.data
   );
+
+export const shouldShowEmailVerification: S.Selector<boolean> = ({
+  data: { accountVerification: status },
+}) => status === 'unverified' || status === 'pending';
