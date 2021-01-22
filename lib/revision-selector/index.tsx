@@ -73,12 +73,15 @@ export class RevisionSelector extends Component<Props> {
       (openedRevision
         ? revisions.get(openedRevision).modificationDate
         : note.modificationDate) * 1000,
-      'MMM d, yyyy'
+      'MMM d, yyyy h:mm a'
     );
 
-    const mainClasses = classNames('revision-selector', {
-      'is-visible': isViewingRevisions,
-    });
+    const mainClasses = classNames(
+      'revision-selector theme-color-border theme-color-fg',
+      {
+        'is-visible': isViewingRevisions,
+      }
+    );
 
     return (
       <div className={mainClasses}>

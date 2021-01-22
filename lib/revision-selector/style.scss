@@ -1,9 +1,7 @@
 .revision-selector {
-  background: $studio-white;
-  border-top: 1px solid $studio-gray-30;
-  color: $studio-gray-80;
-  height: 144px;
-  padding: 10px 20px 20px;
+  border-top: 1px solid;
+  height: 178px;
+  padding: 19px 20px 20px;
   position: absolute;
   transition: all 0.3s ease-in-out;
   width: 100%;
@@ -20,19 +18,17 @@
   .revision-buttons {
     display: flex;
     justify-content: flex-end;
-    max-width: 625px;
+    max-width: $max-content-width;
     margin: 0 auto;
 
     button {
       @extend %smart-focus-outline;
       font-weight: 400;
+      border: 0;
     }
   }
 
   .button-primary {
-    background: $studio-simplenote-blue-50;
-    color: $studio-white;
-
     &:active {
       background: $studio-simplenote-blue-5;
       border-color: $studio-simplenote-blue-5;
@@ -40,10 +36,9 @@
   }
 
   .button-secondary {
-    background: $studio-gray-30;
+    background: $studio-gray-50;
     color: $studio-white;
     margin-right: 10px;
-    border: 0;
 
     &:active {
       background: $studio-white;
@@ -59,22 +54,22 @@
 
   .revision-date {
     width: 100%;
-    color: $studio-gray-80;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    font-size: 12px;
   }
 
   .revision-slider-title {
-    margin: 0 auto;
-    max-width: 625px;
-    font-weight: 700;
+    margin: 0 auto 26px auto;
+    max-width: $max-content-width;
+    font-weight: 600;
+    font-size: 16px;
   }
 }
 
 .theme-dark {
   .revision-selector {
     background-color: $studio-gray-80;
-    color: $studio-white;
   }
 
   .revision-date {

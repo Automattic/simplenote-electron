@@ -48,8 +48,10 @@
     }
   }
   &::-moz-range-thumb {
+    height: 15px;
+    width: 15px;
     border-radius: 50%;
-    border: 2px solid $studio-gray-30;
+    border: 1px solid $studio-gray-30;
     appearance: none;
     background: $studio-white;
     transition: 0.15s ease-in-out;
