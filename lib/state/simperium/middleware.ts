@@ -4,6 +4,8 @@ import debugFactory from 'debug';
 import actions from '../actions';
 import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
+import { InMemoryBucket } from './functions/in-memory-bucket';
+import { InMemoryGhost } from './functions/in-memory-ghost';
 import { NoteBucket } from './functions/note-bucket';
 // import { NoteDoctor } from './functions/note-doctor';
 import { PreferencesBucket } from './functions/preferences-bucket';
@@ -24,6 +26,7 @@ import type * as T from '../../types';
 const debug = debugFactory('simperium-middleware');
 
 type Buckets = {
+  account: T.JSONSerializable;
   note: T.Note;
   preferences: T.Preferences;
   tag: T.Tag;
@@ -40,6 +43,9 @@ export const initSimperium = (
   const client = createClient<Buckets>(getConfig().app_id, token, {
     objectStoreProvider: (bucket) => {
       switch (bucket.name) {
+        case 'account':
+          return new InMemoryBucket();
+
         case 'note':
           return new NoteBucket(store);
 
@@ -50,7 +56,16 @@ export const initSimperium = (
           return new TagBucket(store);
       }
     },
-    ghostStoreProvider: (bucket) => new ReduxGhost(bucket.name, store),
+
+    ghostStoreProvider: (bucket) => {
+      switch (bucket.name) {
+        case 'account':
+          return new InMemoryGhost();
+
+        default:
+          return new ReduxGhost(bucket.name, store);
+      }
+    },
   });
   client.on('unauthorized', () => logout());
 
@@ -150,6 +165,49 @@ export const initSimperium = (
     })
   );
 
+  const parseVerificationToken = (token: unknown) => {
+    try {
+      const { username, verified_at: verifiedAt } = JSON.parse(token as string);
+      return { username, verifiedAt };
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const updateVerificationState = (entity: T.JSONSerializable) => {
+    const { token, sent_to } = entity;
+
+    const parsedToken = parseVerificationToken(token);
+    const hasValidToken = parsedToken && parsedToken.username === username;
+    const hasPendingEmail = sent_to === username;
+
+    const state = hasValidToken
+      ? 'verified'
+      : hasPendingEmail
+      ? 'pending'
+      : 'unverified';
+
+    return dispatch({
+      type: 'UPDATE_ACCOUNT_VERIFICATION',
+      state,
+    });
+  };
+
+  const accountBucket = client.bucket('account');
+  accountBucket.on('update', (entityId, entity) => {
+    if ('email-verification' === entityId) {
+      updateVerificationState(entity);
+    }
+  });
+  accountBucket.channel.on('ready', () => {
+    if ('unknown' === getState().data.accountVerification) {
+      dispatch({
+        type: 'UPDATE_ACCOUNT_VERIFICATION',
+        state: 'unverified',
+      });
+    }
+  });
+
   const preferencesBucket = client.bucket('preferences');
   preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
     if ('preferences-key' !== entityId) {
@@ -171,16 +229,18 @@ export const initSimperium = (
       /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
     ).then(({ content }) => {
       const now = Date.now() / 1000;
-      noteBucket.add({
-        content,
-        deleted: false,
-        systemTags: [],
-        creationDate: now,
-        modificationDate: now,
-        shareURL: '',
-        publishURL: '',
-        tags: [],
-      });
+      store.dispatch(
+        actions.ui.createNote({
+          content,
+          deleted: false,
+          systemTags: [],
+          creationDate: now,
+          modificationDate: now,
+          shareURL: '',
+          publishURL: '',
+          tags: [],
+        })
+      );
     });
   }
 
@@ -199,6 +259,7 @@ export const initSimperium = (
     preferencesQueue.add(entityId, Date.now() + delay);
 
   if ('production' !== process.env.NODE_ENV) {
+    window.account = accountBucket;
     // window.preferencesBucket = preferencesBucket;
     window.noteBucket = noteBucket;
     window.tagBucket = tagBucket;

@@ -308,6 +308,10 @@ export type TagRefresh = Action<
   'TAG_REFRESH',
   { noteTags: Map<T.TagHash, Set<T.EntityId>> }
 >;
+export type UpdateAccountVerification = Action<
+  'UPDATE_ACCOUNT_VERIFICATION',
+  { state: T.VerificationState }
+>;
 
 export type ActionType =
   | AcknowledgePendingChange
@@ -409,6 +413,7 @@ export type ActionType =
   | TrashNote
   | TrashTag
   | TrashOpenNote
+  | UpdateAccountVerification
   | WindowResize;
 
 export type ActionCreator<A extends ActionType> = (...args: any[]) => A;

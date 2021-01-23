@@ -91,6 +91,11 @@ export const middleware: S.Middleware = (store) => {
       case 'CREATE_NOTE':
         record('list_note_created');
         break;
+      case 'UPDATE_ACCOUNT_VERIFICATION':
+        if (action.state === 'dismissed') {
+          record('verification_dismissed');
+        }
+        break;
       case 'EDIT_NOTE':
         recordNoteEdit();
         break;
