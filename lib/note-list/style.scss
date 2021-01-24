@@ -30,15 +30,16 @@
     white-space: nowrap;
   }
 
-  .condensed .note-list-item {
-    min-height: 43px;
-  }
-  .condensed .note-list-item-text {
-    padding-bottom: 0;
-  }
-
-  .condensed .note-list-item-excerpt {
-    display: none;
+  .condensed {
+    .note-list-item {
+      min-height: 43px;
+    }
+    .note-list-item-text {
+      padding-bottom: 0;
+    }
+    .note-list-item-excerpt {
+      display: none;
+    }
   }
 
   .expanded .note-list-item-excerpt {
@@ -82,7 +83,7 @@
 .note-list-empty-trash {
   flex: none;
   padding: 10px 20px;
-  border-top: 1px solid $studio-gray-5;
+  border-top: 1px solid;
   text-align: center;
 }
 
@@ -115,11 +116,6 @@
     width: 16px;
   }
 
-  .note-list-item-pinner:hover,
-  .note-list-item-pinner.note-list-item-pinned {
-    color: $studio-simplenote-blue-50;
-  }
-
   .note-list-item-text {
     flex: 1 1 auto;
     overflow: hidden;
@@ -138,13 +134,23 @@
     overflow: hidden;
   }
 
-  &.note-list-item-selected,
-  &.note-list-item-selected:hover {
+  &.note-list-item-selected {
     background: $studio-simplenote-blue-5;
   }
 
-  &:hover {
-    background: $studio-gray-0;
+  &.note-list-item-pinned:not(.note-list-item-selected) {
+    .note-list-item-pinner {
+      color: $studio-gray-50;
+    }
+    .note-list-item-pinner:hover {
+      color: $studio-simplenote-blue-50;
+    }
+  }
+
+  &:not(.note-list-item-selected) {
+    &:hover {
+      background: $studio-gray-0;
+    }
   }
 
   &.note-recently-updated {
@@ -155,15 +161,15 @@
   .note-list-item-status-right {
     display: flex;
     padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid;
   }
 
   .note-list-item-pending-changes,
   .note-list-item-published-icon {
     padding: 0 4px;
+    color: $studio-gray-50;
 
     & svg {
-      fill: $studio-gray-50;
       height: 16px;
       width: 16px;
     }
@@ -193,9 +199,5 @@
       text-overflow: ellipsis;
       overflow: hidden;
     }
-  }
-
-  .note-list-item-excerpt {
-    color: $studio-gray-80;
   }
 }
