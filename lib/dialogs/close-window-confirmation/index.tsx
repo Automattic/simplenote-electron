@@ -15,8 +15,8 @@ type Props = DispatchProps;
 const CloseWindowConfirmation = ({ reallyCloseWindow }: Props) => (
   <UnsynchronizedConfirmation
     description="Closing the app with unsynchronized notes could cause data loss."
-    unsafeAction="Close window"
-    safeAction="Safely close window"
+    unsafeAction="Close anyway"
+    safeAction="Safely close app"
     action={reallyCloseWindow}
   />
 );
