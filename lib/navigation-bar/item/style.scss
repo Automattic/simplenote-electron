@@ -16,70 +16,59 @@
     padding: 0;
     text-align: left;
     width: 100%;
+
+    &:active {
+      background: none;
+    }
   }
 
-  &:hover {
+  &:hover:not(.is-selected) {
     background: $studio-gray-0;
-
-    button svg[class^='icon-'] {
-      fill: $studio-gray-50 !important;
-    }
-  }
-
-  .button:active {
-    background: none;
-  }
-
-  &.is-selected button {
-    border-bottom: none;
-
-    svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-50;
-    }
   }
 
   &.is-selected {
     background-color: $studio-simplenote-blue-5;
+
+    button {
+      border-bottom: none;
+
+      svg[class^='icon-'] {
+        fill: $studio-simplenote-blue-50;
+      }
+    }
+  }
+
+  .navigation-bar-item__icon {
+    color: $studio-gray-50;
+    display: inline-block;
+    margin-right: 18px;
+    vertical-align: middle;
+
+    svg {
+      vertical-align: middle;
+      position: relative;
+      top: -0.2em;
+    }
   }
 }
 
+/* this is the last child (Settings) and prevents a double border on the bottom */
 .navigation-bar-item:first-child .button {
   border-bottom: none !important;
 }
 
-.navigation-bar-item__icon {
-  color: $studio-gray-50;
-  display: inline-block;
-  margin-right: 18px;
-  vertical-align: middle;
-
-  svg {
-    vertical-align: middle;
-    position: relative;
-    top: -0.2em;
-  }
+.navigation-bar-item.is-selected + .navigation-bar-item .button {
+  border-bottom: none;
 }
 
 .theme-dark {
   .navigation-bar-item {
-    &.is-selected svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-30;
-    }
-
     &.is-selected button {
-      color: $studio-simplenote-blue-30;
-    }
-
-    &:hover {
-      background: $studio-gray-80;
-    }
-
-    button {
       color: $studio-white;
     }
-  }
-}
 
-.navigation-bar-item.is-selected + .navigation-bar-item .button {
-  border-bottom: none;
+    &:hover:not(.is-selected) {
+      background: $studio-gray-80;
+    }
+  }
 }
