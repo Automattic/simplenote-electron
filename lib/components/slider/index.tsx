@@ -6,7 +6,6 @@ type Props = {
   min: number;
   max: number;
   value: number;
-  list: string;
 };
 
 export const Slider: FunctionComponent<Props> = ({
