@@ -15,10 +15,16 @@
     width: 100%;
   }
 
+  .revision-selector-inner {
+    max-width: $max-content-width;
+    width: 85%;
+    position: relative;
+    margin: 0 auto;
+  }
+
   .revision-buttons {
     display: flex;
     justify-content: flex-end;
-    max-width: $max-content-width;
     margin: 0 auto;
 
     button {
@@ -54,15 +60,16 @@
   }
 
   .revision-date {
-    width: 100%;
     text-align: center;
-    margin-bottom: 8px;
     font-size: 12px;
+    position: absolute;
+    top: 28px;
+    transform: translateX(-50%);
+    white-space: nowrap;
   }
 
   .revision-slider-title {
     margin: 0 auto 26px auto;
-    max-width: $max-content-width;
     font-weight: 600;
     font-size: 16px;
   }
@@ -70,7 +77,8 @@
 
 .theme-dark {
   .revision-selector {
-    background-color: $studio-gray-80;
+    //background-color: $studio-gray-80;
+    background-color: #323436;
   }
 
   .revision-date {
