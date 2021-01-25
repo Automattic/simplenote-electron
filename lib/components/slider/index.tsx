@@ -25,6 +25,7 @@ export const Slider: FunctionComponent<Props> = ({
     min={min}
     max={max}
     value={value}
+    list={list}
     onChange={onChange}
   />
 );
