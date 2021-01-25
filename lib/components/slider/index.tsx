@@ -16,6 +16,7 @@ export const Slider: FunctionComponent<Props> = ({
   onChange,
 }) => (
   <input
+    aria-label="Select revision"
     className="slider"
     disabled={disabled}
     type="range"
