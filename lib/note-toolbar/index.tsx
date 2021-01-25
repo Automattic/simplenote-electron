@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { isMac } from '../utils/platform';
 
 import BackIcon from '../icons/back';
+<<<<<<< HEAD
 import ChecklistIcon from '../icons/check-list';
+=======
+>>>>>>> Add new note icon to top toolbar when in focus mode
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
+import NewNoteIcon from '../icons/new-note';
 import PreviewIcon from '../icons/preview';
 import PreviewStopIcon from '../icons/preview-stop';
 import RevisionsIcon from '../icons/revisions';
@@ -13,11 +17,13 @@ import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 import TrashIcon from '../icons/trash';
 import actions from '../state/actions';
+import { createNote } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
+  onNewNote: Function;
   editMode: boolean;
   hasRevisions: boolean;
   isOffline: boolean;
@@ -27,6 +33,7 @@ type StateProps = {
 
 type DispatchProps = {
   deleteNoteForever: () => any;
+  onNewNote: () => any;
   restoreNote: () => any;
   shareNote: () => any;
   toggleEditMode: () => any;
@@ -44,7 +51,6 @@ export class NoteToolbar extends Component<Props> {
 
   render() {
     const { note } = this.props;
-
     return (
       <div className="note-toolbar-wrapper theme-color-border">
         {note?.deleted ? this.renderTrashed() : this.renderNormal()}
@@ -55,6 +61,7 @@ export class NoteToolbar extends Component<Props> {
   renderNormal = () => {
     const {
       editMode,
+      onNewNote,
       hasRevisions,
       isOffline,
       markdownEnabled,
@@ -67,6 +74,13 @@ export class NoteToolbar extends Component<Props> {
     ) : (
       <div className="note-toolbar">
         <div className="note-toolbar__column-left">
+          <div className="note-toolbar__button new-note-toolbar__button-sidebar theme-color-border">
+            <IconButton
+              icon={<NewNoteIcon />}
+              onClick={() => onNewNote()}
+              title="New Note • Ctrl+Shift+I"
+            />
+          </div>
           <div className="note-toolbar__button note-toolbar__button-sidebar">
             <IconButton
               icon={<SidebarIcon />}
@@ -190,6 +204,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
+  onNewNote: () => createNote(),
   restoreNote: actions.ui.restoreOpenNote,
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
