@@ -104,7 +104,6 @@ export class RevisionSelector extends Component<Props> {
               }
               max={revisions?.size - 1}
               value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
-              list="revisionpoints"
               onChange={this.onSelectRevision}
             />
           </div>

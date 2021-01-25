@@ -14,7 +14,6 @@ export const Slider: FunctionComponent<Props> = ({
   min,
   max,
   value,
-  list,
   onChange,
 }) => (
   <input
@@ -25,7 +24,6 @@ export const Slider: FunctionComponent<Props> = ({
     min={min}
     max={max}
     value={value}
-    list={list}
     onChange={onChange}
   />
 );
