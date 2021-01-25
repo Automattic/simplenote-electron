@@ -83,7 +83,7 @@ export class RevisionSelector extends Component<Props> {
     );
 
     const mainClasses = classNames(
-      'revision-selector theme-color-border theme-color-fg',
+      'revision-selector theme-color-border theme-color-fg theme-color-bg',
       {
         'is-visible': isViewingRevisions,
       }

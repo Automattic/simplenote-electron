@@ -76,13 +76,8 @@
 }
 
 .theme-dark {
-  .revision-selector {
-    //background-color: $studio-gray-80;
+  .revision-selector.theme-color-bg {
     background-color: #323436;
-  }
-
-  .revision-date {
-    color: $studio-white;
   }
 }
 
