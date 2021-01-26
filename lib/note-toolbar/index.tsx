@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { isMac } from '../utils/platform';
 
-import IconButton from '../icon-button';
 import BackIcon from '../icons/back';
+import ChecklistIcon from '../icons/check-list';
+import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
 import PreviewIcon from '../icons/preview';
 import PreviewStopIcon from '../icons/preview-stop';
 import RevisionsIcon from '../icons/revisions';
-import TrashIcon from '../icons/trash';
 import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
+import TrashIcon from '../icons/trash';
 import actions from '../state/actions';
 
 import * as S from '../state';
@@ -59,6 +61,7 @@ export class NoteToolbar extends Component<Props> {
       note,
       toggleNoteInfo,
     } = this.props;
+    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -81,6 +84,12 @@ export class NoteToolbar extends Component<Props> {
         </div>
         {isOffline && <div className="offline-badge">OFFLINE</div>}
         <div className="note-toolbar__column-right">
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<ChecklistIcon />}
+              title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
+            />
+          </div>
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
