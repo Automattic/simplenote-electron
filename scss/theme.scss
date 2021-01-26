@@ -157,6 +157,13 @@ span[dir='ltr'] {
   .button-borderless {
     color: $studio-simplenote-blue-50;
   }
+
+  .note-list-item-pinner {
+    &:hover,
+    &.note-list-item-pinned {
+      color: $studio-simplenote-blue-50;
+    }
+  }
 }
 
 .theme-dark {
@@ -271,43 +278,58 @@ span[dir='ltr'] {
     background-color: rgba(50, 52, 54, 0.5);
   }
 
-  .note-list-item {
-    &.note-list-item-selected,
-    &.note-list-item-selected:hover {
-      background: $studio-simplenote-blue-50;
+  .note-list {
+    .note-list-item .note-list-item-pinner:hover {
+      color: $studio-simplenote-blue-30;
+    }
 
-      .note-list-item-excerpt {
+    .note-list-item-selected {
+      background: $studio-simplenote-blue-50;
+      .note-list-item-excerpt,
+      .note-list-item-published-icon,
+      .note-list-item-pending-changes {
         color: $studio-white;
       }
-      svg[class^='icon-'] {
-        fill: $studio-white;
+      .note-list-item-pending-changes {
+        &.is-offline svg {
+          fill: $studio-gray-30;
+        }
+      }
+      .note-list-item-pinner:hover {
+        color: $studio-white;
+      }
+      &.note-list-item-pinned .note-list-item-pinner {
+        color: $studio-white;
+        &:hover {
+          color: $studio-simplenote-blue-30;
+        }
       }
     }
 
-    &.note-list-item-pinned.note-list-item-selected:hover {
-      svg[class^='icon-'] {
-        fill: $studio-white;
+    .note-list-item-pinned:not(.note-list-item-selected) {
+      .note-list-item-pinner {
+        color: $studio-simplenote-blue-30;
+      }
+      &:hover .note-list-item-pinner {
+        color: $studio-gray-80;
       }
     }
 
-    &:hover {
-      background: $studio-gray-80;
-    }
-
-    &.note-list-item-pinned:hover {
-      svg[class^='icon-'] {
-        fill: $studio-gray-30;
+    .note-list-item:not(.note-list-item-selected) {
+      &:hover {
+        background: $studio-gray-80;
       }
-    }
-  }
 
-  .note-list-item-pinner.note-list-item-pinned {
-    color: $studio-simplenote-blue-30;
-  }
+      &.note-list-item-pinned:hover .note-list-item-pinner {
+        color: $studio-gray-30;
+        &:hover {
+          color: $studio-simplenote-blue-30;
+        }
+      }
 
-  .note-list-item-pinner:hover {
-    svg[class^='icon-'] {
-      fill: $studio-simplenote-blue-30 !important;
+      .note-list-item-pinner:hover {
+        color: $studio-simplenote-blue-30;
+      }
     }
   }
 
