@@ -306,8 +306,11 @@ span[dir='ltr'] {
       }
     }
 
-    &.note-list-item-pinned:not(.note-list-item-selected) {
+    .note-list-item-pinned:not(.note-list-item-selected) {
       .note-list-item-pinner {
+        color: $studio-simplenote-blue-30;
+      }
+      &:hover .note-list-item-pinner {
         color: $studio-gray-80;
       }
     }
@@ -315,6 +318,17 @@ span[dir='ltr'] {
     .note-list-item:not(.note-list-item-selected) {
       &:hover {
         background: $studio-gray-80;
+      }
+
+      &.note-list-item-pinned:hover .note-list-item-pinner {
+        color: $studio-gray-30;
+        &:hover {
+          color: $studio-simplenote-blue-30;
+        }
+      }
+
+      .note-list-item-pinner:hover {
+        color: $studio-simplenote-blue-30;
       }
     }
   }
