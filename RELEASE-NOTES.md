@@ -1,5 +1,24 @@
 # Changelog
 
+## [v2.6.0]
+
+### Enhancements
+
+- Added email verification UI [#2587](https://github.com/Automattic/simplenote-electron/pull/2587)
+- Moved search field into notes list and updated styles [#2580](https://github.com/Automattic/simplenote-electron/pull/2580), [#2595](https://github.com/Automattic/simplenote-electron/pull/2595)
+- Added creation date to the note info panel [#2585](https://github.com/Automattic/simplenote-electron/pull/2585)
+- Clarified the wording of the unsynchronized notes warning [#2594](https://github.com/Automattic/simplenote-electron/pull/2594)
+
+### Fixes
+
+- Added a missing aria-label to the revision slider (props to @tbourrely) [#2583](https://github.com/Automattic/simplenote-electron/pull/2583)
+
+### Other Changes
+
+- Allow installation without administrator privileges on Windows [#2581](https://github.com/Automattic/simplenote-electron/pull/2581)
+- Upgraded Monaco dependencies [#2575](https://github.com/Automattic/simplenote-electron/pull/2575)
+- Updated the external Settings URL [#2591](https://github.com/Automattic/simplenote-electron/pull/2591)
+
 ## [v2.5.0]
 
 ### Fixes
