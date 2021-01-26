@@ -17,7 +17,6 @@ import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
 import TrashIcon from '../icons/trash';
 import actions from '../state/actions';
-import { createNote } from '../state/ui/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -204,7 +203,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
-  newNote: createNote,
+  newNote: actions.ui.createNote,
   restoreNote: actions.ui.restoreOpenNote,
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
