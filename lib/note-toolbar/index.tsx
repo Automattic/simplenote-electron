@@ -23,7 +23,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  onNewNote: Function;
+  newNote: Function;
   editMode: boolean;
   hasRevisions: boolean;
   isOffline: boolean;
@@ -33,7 +33,7 @@ type StateProps = {
 
 type DispatchProps = {
   deleteNoteForever: () => any;
-  onNewNote: () => any;
+  newNote: () => any;
   restoreNote: () => any;
   shareNote: () => any;
   toggleEditMode: () => any;
@@ -61,7 +61,7 @@ export class NoteToolbar extends Component<Props> {
   renderNormal = () => {
     const {
       editMode,
-      onNewNote,
+      newNote,
       hasRevisions,
       isOffline,
       markdownEnabled,
@@ -77,7 +77,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button new-note-toolbar__button-sidebar theme-color-border">
             <IconButton
               icon={<NewNoteIcon />}
-              onClick={() => onNewNote()}
+              onClick={() => newNote()}
               title="New Note • Ctrl+Shift+I"
             />
           </div>
@@ -204,7 +204,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
-  onNewNote: () => createNote(),
+  newNote: createNote,
   restoreNote: actions.ui.restoreOpenNote,
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
