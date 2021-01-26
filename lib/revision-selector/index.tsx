@@ -119,7 +119,7 @@ export class RevisionSelector extends Component<Props> {
               className="button button-primary button-compact"
               onClick={this.onAcceptRevision}
             >
-              Restore Note
+              Restore
             </button>
           </div>
         </div>
