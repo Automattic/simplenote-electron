@@ -143,7 +143,7 @@ export class AboutDialog extends Component<DispatchProps> {
                   </li>
                 )}
                 <li>
-                  <Keys keys={[CmdOrCtrl, 'Shift', 'P']}>
+                  <Keys keys={['Ctrl', 'Shift', 'P']}>
                     Toggle Markdown preview
                   </Keys>
                 </li>
