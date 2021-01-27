@@ -38,7 +38,7 @@ export const TagListInput: FunctionComponent<Props> = ({
 }) => {
   const [value, setValue] = useState(tagName);
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value.replace(/\s/g, ''));
+    setValue(event.target.value.replace(/[\s,]/g, ''));
   };
   const onDone = (event: FocusEvent<HTMLInputElement>) => {
     const newTagName = event.target?.value.trim() as T.TagName;
