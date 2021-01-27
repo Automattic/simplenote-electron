@@ -1,49 +1,78 @@
-import React, { Component, FocusEvent, MouseEvent } from 'react';
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  FunctionComponent,
+  useState,
+} from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
+
+import actions from '../state/actions';
+
+import type * as S from '../state';
+import type * as T from '../types';
 
 type OwnProps = {
   editable: boolean;
   isSelected: boolean;
   onClick: (event: React.MouseEvent) => any;
-  onDone: (event: FocusEvent<HTMLInputElement>) => any;
-  value: string;
+  tagName: T.TagName;
 };
 
 type OwnState = {
   value: string;
 };
 
-type Props = OwnProps;
+type DispatchProps = {
+  renameTag: (oldTagName: T.TagName, newTagName: T.TagName) => any;
+};
 
-export class TagListInput extends Component<Props, OwnState> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { value: props.value };
-  }
+type Props = OwnProps & DispatchProps;
 
-  render() {
-    const { editable, isSelected, onClick, onDone } = this.props;
-    const { value } = this.state;
-    const classes = classNames('tag-list-input', 'theme-color-fg', {
-      'is-selected': isSelected,
-    });
+export const TagListInput: FunctionComponent<Props> = ({
+  editable,
+  isSelected,
+  onClick,
+  renameTag,
+  tagName,
+}) => {
+  const [value, setValue] = useState(tagName);
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value.replace(/\s/g, ''));
+  };
+  const onDone = (event: FocusEvent<HTMLInputElement>) => {
+    const newTagName = event.target?.value.trim() as T.TagName;
 
-    return editable ? (
-      <input
-        className={classes}
-        readOnly={!editable}
-        onClick={onClick}
-        value={value}
-        onChange={(e) => this.setState({ value: e.target.value })}
-        onBlur={onDone}
-        spellCheck={false}
-      />
-    ) : (
-      <button className={classes} onClick={onClick}>
-        {value}
-      </button>
-    );
-  }
-}
+    if (newTagName && newTagName !== tagName) {
+      renameTag(tagName, newTagName);
+    } else {
+      setValue(tagName);
+    }
+  };
+  const classes = classNames('tag-list-input', 'theme-color-fg', {
+    'is-selected': isSelected,
+  });
 
-export default TagListInput;
+  return editable ? (
+    <input
+      className={classes}
+      readOnly={!editable}
+      onClick={onClick}
+      value={value}
+      onChange={onChange}
+      onBlur={onDone}
+      spellCheck={false}
+    />
+  ) : (
+    <button className={classes} onClick={onClick}>
+      {value}
+    </button>
+  );
+};
+
+const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  renameTag: (oldTagName, newTagName) =>
+    actions.data.renameTag(oldTagName, newTagName),
+};
+
+export default connect(null, mapDispatchToProps)(TagListInput);

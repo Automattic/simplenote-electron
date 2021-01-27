@@ -64,6 +64,15 @@ export const removeCollaborator: A.ActionCreator<A.RemoveCollaborator> = (
   collaboratorAccount,
 });
 
+export const renameTag: A.ActionCreator<A.RenameTag> = (
+  oldTagName: T.TagName,
+  newTagName: T.TagName
+) => ({
+  type: 'RENAME_TAG',
+  oldTagName,
+  newTagName,
+});
+
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });
