@@ -177,7 +177,7 @@ class AppComponent extends Component<Props> {
       'note-info-open': showNoteInfo,
       'navigation-open': showNavigation,
       'is-electron': isElectron,
-      'is-macos': isMac,
+      'is-macos': isElectron && isMac,
     });
 
     return (
