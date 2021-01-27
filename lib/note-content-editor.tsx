@@ -173,6 +173,7 @@ class NoteContentEditor extends Component<Props> {
     this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
+    window.addEventListener('insertChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
   }
 
@@ -181,7 +182,7 @@ class NoteContentEditor extends Component<Props> {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
-    window.removeEventListener('input', this.handleUndoRedo, true);
+    window.removeEventListener('insertChecklist', this.handleChecklist, true);
     this.toggleShortcuts(false);
   }
 
@@ -440,6 +441,10 @@ class NoteContentEditor extends Component<Props> {
   focusEditor = () => this.editor?.focus();
 
   hasFocus = () => this.editor?.hasTextFocus();
+
+  handleChecklist = (event: InputEvent) => {
+    this.editor?.trigger('editorCommand', 'insertChecklist', null);
+  };
 
   handleUndoRedo = (event: InputEvent) => {
     switch (event.inputType) {

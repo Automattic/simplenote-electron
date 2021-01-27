@@ -59,7 +59,7 @@ export const MenuBar: FunctionComponent<Props> = ({
       <IconButton
         disabled={showTrash}
         icon={<NewNoteIcon />}
-        onClick={() => onNewNote(withoutTags(searchQuery))}
+        onClick={() => window.dispatchEvent(new Event('insertChecklist'))}
         title="New Note • Ctrl+Shift+I"
       />
     </div>
