@@ -87,6 +87,7 @@ export class NoteToolbar extends Component<Props> {
           <div className="note-toolbar__button">
             <IconButton
               icon={<ChecklistIcon />}
+              onClick={() => window.dispatchEvent(new Event('toggleChecklist'))}
               title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
             />
           </div>
