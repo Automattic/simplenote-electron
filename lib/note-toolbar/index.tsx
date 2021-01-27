@@ -22,7 +22,6 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  newNote: Function;
   editMode: boolean;
   hasRevisions: boolean;
   isOffline: boolean;
