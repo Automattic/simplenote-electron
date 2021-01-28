@@ -12,12 +12,11 @@
 ### Fixes
 
 - Added a missing aria-label to the revision slider (props to @tbourrely) [#2583](https://github.com/Automattic/simplenote-electron/pull/2583)
-- Fixed a bug causing text edit actions (undo, redo, etc.) to stop working [#2604](https://github.com/Automattic/simplenote-electron/pull/2604)
 
 ### Other Changes
 
 - Allow installation without administrator privileges on Windows [#2581](https://github.com/Automattic/simplenote-electron/pull/2581)
-- Upgraded Monaco dependencies [#2575](https://github.com/Automattic/simplenote-electron/pull/2575)
+- Upgraded some dependencies [#2575](https://github.com/Automattic/simplenote-electron/pull/2575) but partially-reverted this PR due to some text edit actions not working [#2604](https://github.com/Automattic/simplenote-electron/pull/2604)
 - Updated the external Settings URL [#2591](https://github.com/Automattic/simplenote-electron/pull/2591)
 
 ## [v2.5.0]
