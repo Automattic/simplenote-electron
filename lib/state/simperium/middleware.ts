@@ -223,10 +223,11 @@ export const initSimperium = (
       });
     }
   });
-  preferencesBucket.channel.once('ready', () => {
+  preferencesBucket.channel.once('ready', async () => {
+    const preferences = await preferencesBucket.get('preferences-key');
     dispatch({
       type: 'REMOTE_ANALYTICS_UPDATE',
-      allowAnalytics: getState().data.analyticsAllowed,
+      allowAnalytics: !!preferences?.data?.analytics_enabled,
     });
   });
 
