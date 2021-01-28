@@ -13,7 +13,6 @@ import type * as T from '../types';
 
 const KEY_TAB = 9;
 const KEY_ENTER = 13;
-const KEY_SPACE = 32;
 const KEY_RIGHT = 39;
 const KEY_COMMA = 188;
 
@@ -124,7 +123,6 @@ export class TagInput extends Component<Props> {
       {
         [KEY_ENTER]: this.submitTag,
         [KEY_COMMA]: this.submitTag,
-        [KEY_SPACE]: this.submitTag,
         [KEY_TAB]: this.interceptTabPress,
         [KEY_RIGHT]: this.interceptRightArrow,
       },
