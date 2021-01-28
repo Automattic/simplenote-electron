@@ -12,6 +12,7 @@
 ### Fixes
 
 - Added a missing aria-label to the revision slider (props to @tbourrely) [#2583](https://github.com/Automattic/simplenote-electron/pull/2583)
+- Fixed a bug causing text edit actions (undo, redo, etc.) to stop working [#2604](https://github.com/Automattic/simplenote-electron/pull/2604)
 
 ### Other Changes
 
