@@ -213,6 +213,7 @@ export const initSimperium = (
     if ('preferences-key' !== entityId) {
       return;
     }
+
     if (
       !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
     ) {
