@@ -60,7 +60,6 @@ export const initSimperium = (
     ghostStoreProvider: (bucket) => {
       switch (bucket.name) {
         case 'account':
-        case 'preferences':
           return new InMemoryGhost();
 
         default:
@@ -210,13 +209,23 @@ export const initSimperium = (
   });
 
   const preferencesBucket = client.bucket('preferences');
-  preferencesBucket.on('update', (entityId, updatedEntity) => {
+  preferencesBucket.channel.on('update', (entityId, updatedEntity) => {
     if ('preferences-key' !== entityId) {
       return;
     }
+    if (
+      !!updatedEntity.analytics_enabled !== getState().data.analyticsAllowed
+    ) {
+      dispatch({
+        type: 'REMOTE_ANALYTICS_UPDATE',
+        allowAnalytics: !!updatedEntity.analytics_enabled,
+      });
+    }
+  });
+  preferencesBucket.channel.once('ready', () => {
     dispatch({
       type: 'REMOTE_ANALYTICS_UPDATE',
-      allowAnalytics: updatedEntity.analytics_enabled,
+      allowAnalytics: getState().data.analyticsAllowed,
     });
   });
 
