@@ -1,9 +1,4 @@
-import React, {
-  ChangeEvent,
-  FocusEvent,
-  FunctionComponent,
-  useState,
-} from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -20,7 +15,7 @@ type OwnProps = {
 };
 
 type OwnState = {
-  value: string;
+  enteredTagName: string;
 };
 
 type DispatchProps = {
@@ -36,17 +31,17 @@ export const TagListInput: FunctionComponent<Props> = ({
   renameTag,
   tagName,
 }) => {
-  const [value, setValue] = useState(tagName);
-  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value.replace(/[\s,]/g, ''));
+  const [enteredTagName, setTagName] = useState(tagName);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTagName(event.target.value.replace(/[\s,]/g, ''));
   };
-  const onDone = (event: FocusEvent<HTMLInputElement>) => {
+  const onDone = (event: React.FocusEvent<HTMLInputElement>) => {
     const newTagName = event.target?.value.trim() as T.TagName;
 
     if (newTagName && newTagName !== tagName) {
       renameTag(tagName, newTagName);
     } else {
-      setValue(tagName);
+      setTagName(tagName);
     }
   };
   const classes = classNames('tag-list-input', 'theme-color-fg', {
@@ -58,21 +53,20 @@ export const TagListInput: FunctionComponent<Props> = ({
       className={classes}
       readOnly={!editable}
       onClick={onClick}
-      value={value}
+      value={enteredTagName}
       onChange={onChange}
       onBlur={onDone}
       spellCheck={false}
     />
   ) : (
     <button className={classes} onClick={onClick}>
-      {value}
+      {enteredTagName}
     </button>
   );
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  renameTag: (oldTagName, newTagName) =>
-    actions.data.renameTag(oldTagName, newTagName),
+  renameTag: actions.data.renameTag,
 };
 
 export default connect(null, mapDispatchToProps)(TagListInput);
