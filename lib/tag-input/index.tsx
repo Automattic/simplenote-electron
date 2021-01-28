@@ -249,11 +249,11 @@ export class TagInput extends Component<Props> {
             aria-hidden
             className="tag-input__placeholder theme-color-fg-dim"
           >
-            Add a tag…
+            Add tag…
           </span>
         )}
         <div
-          aria-label="Add a tag…"
+          aria-label="Add tag…"
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
