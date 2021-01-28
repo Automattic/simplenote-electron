@@ -257,6 +257,7 @@ export class TagInput extends Component<Props> {
           ref={this.storeInput}
           className="tag-input__entry"
           contentEditable="true"
+          onBlur={this.submitTag}
           onCompositionStart={() => this.setState({ isComposing: true })}
           onCompositionEnd={this.onCompositionEnd}
           onKeyDown={this.interceptKeys}
