@@ -49,8 +49,7 @@
 - [ ] Search field updates with results of `tag:test` format search string
 - [ ] Can toggle sidebar
 - [ ] Syncs when introducing sequential surrogate pairs sharing the same high surrogate, e.g. `🅰🅱` to `🅰🅰🅱`
-- [ ] When disabling network connectivity, changes start counting in unsync'ed changes counter
-- [ ] When going back online changes sync and counter resets to `All changes synced`
+- [ ] When disabling network connectivity, the app will warn user of any unsynced changes if they attempt to close the application
 - [ ] Can change analytics sharing setting
 - [ ] Changing `Note Display` mode immediately updates and reflects in note list
 - [ ] With sidebar disabled, toggling `Line Length` between `Narrow` and `Full` removes and adds border around note content appropriately and immediately.
