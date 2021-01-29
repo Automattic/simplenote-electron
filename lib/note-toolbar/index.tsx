@@ -3,10 +3,7 @@ import { connect } from 'react-redux';
 import { isMac } from '../utils/platform';
 
 import BackIcon from '../icons/back';
-<<<<<<< HEAD
 import ChecklistIcon from '../icons/check-list';
-=======
->>>>>>> Add new note icon to top toolbar when in focus mode
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
 import NewNoteIcon from '../icons/new-note';
