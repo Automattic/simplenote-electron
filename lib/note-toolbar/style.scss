@@ -106,7 +106,19 @@
 }
 
 .note-toolbar-placeholder {
+  border-bottom: 1px solid $studio-gray-5;
   display: block;
   height: $toolbar-height;
-  border-bottom: 1px solid $studio-gray-5;
+}
+
+.new-note-toolbar__button-sidebar {
+  border-right: 1px solid;
+  display: none;
+  height: $toolbar-height;
+  line-height: $toolbar-height;
+  padding-right: 13px;
+}
+
+.is-focus-mode .new-note-toolbar__button-sidebar {
+  display: block;
 }

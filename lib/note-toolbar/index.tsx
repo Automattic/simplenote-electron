@@ -6,6 +6,7 @@ import BackIcon from '../icons/back';
 import ChecklistIcon from '../icons/check-list';
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
+import NewNoteIcon from '../icons/new-note';
 import PreviewIcon from '../icons/preview';
 import PreviewStopIcon from '../icons/preview-stop';
 import RevisionsIcon from '../icons/revisions';
@@ -27,6 +28,7 @@ type StateProps = {
 
 type DispatchProps = {
   deleteNoteForever: () => any;
+  newNote: () => any;
   restoreNote: () => any;
   shareNote: () => any;
   toggleEditMode: () => any;
@@ -44,7 +46,6 @@ export class NoteToolbar extends Component<Props> {
 
   render() {
     const { note } = this.props;
-
     return (
       <div className="note-toolbar-wrapper theme-color-border">
         {note?.deleted ? this.renderTrashed() : this.renderNormal()}
@@ -55,6 +56,7 @@ export class NoteToolbar extends Component<Props> {
   renderNormal = () => {
     const {
       editMode,
+      newNote,
       hasRevisions,
       isOffline,
       markdownEnabled,
@@ -67,6 +69,13 @@ export class NoteToolbar extends Component<Props> {
     ) : (
       <div className="note-toolbar">
         <div className="note-toolbar__column-left">
+          <div className="note-toolbar__button new-note-toolbar__button-sidebar theme-color-border">
+            <IconButton
+              icon={<NewNoteIcon />}
+              onClick={() => newNote()}
+              title="New Note • Ctrl+Shift+I"
+            />
+          </div>
           <div className="note-toolbar__button note-toolbar__button-sidebar">
             <IconButton
               icon={<SidebarIcon />}
@@ -190,6 +199,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
+  newNote: actions.ui.createNote,
   restoreNote: actions.ui.restoreOpenNote,
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
