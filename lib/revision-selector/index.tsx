@@ -70,6 +70,7 @@ export class RevisionSelector extends Component<Props> {
       (openedRevision && selectedIndex === revisions?.size - 1);
 
     const leftPos = Number(
+      // Based on ((selected - min) * 100) / (max - min);
       (((selectedIndex === -1 ? revisions?.size : selectedIndex) - 1) * 100) /
         (revisions?.size - 2)
     );
