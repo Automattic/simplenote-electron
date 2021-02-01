@@ -738,6 +738,7 @@ class NoteContentEditor extends Component<Props> {
       label: 'Insert Checklist',
       keybindings: [
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+        monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
       ],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '10_checklist',
