@@ -1,7 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { toggleSortOrder, setSortType } from '../state/settings/actions';
-import classNames from 'classnames';
 import IconButton from '../icon-button';
 import SortOrderIcon from '../icons/sort-order';
 
@@ -15,68 +14,68 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  toggleSortOrder: () => any;
   setSortType: (sortType: T.SortType) => any;
+  toggleSortOrder: () => any;
 };
 
 type Props = StateProps & DispatchProps;
 
-export class SortOrderSelector extends Component<Props> {
-  static displayName = 'SortOrderSelector';
-
-  changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    this.props.setSortType(event.currentTarget?.value);
+export const SortOrderSelector: FunctionComponent<Props> = ({
+  shouldDisplay,
+  setSortType,
+  sortReversed,
+  sortType,
+  toggleSortOrder,
+}) => {
+  const changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortType(event.currentTarget?.value);
   };
 
-  render() {
-    const { shouldDisplay, sortReversed, sortType } = this.props;
-
-    let sortLabel = sortReversed ? 'Oldest' : 'Newest';
-    if (sortType === 'alphabetical') {
-      sortLabel = sortReversed ? 'Z-A' : 'A-Z';
-    }
-
-    const sortTypes = [
-      {
-        label: 'Date modified',
-        id: 'modificationDate',
-      },
-      {
-        label: 'Date created',
-        id: 'creationDate',
-      },
-      {
-        label: 'Alphabetical',
-        id: 'alphabetical',
-      },
-    ];
-
-    return (
-      <Fragment>
-        {shouldDisplay && (
-          <div className="sort-order-selector">
-            Sort:
-            <select value={sortType} onChange={this.changeSort}>
-              {sortTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-            <span className="sort-label">{sortLabel}</span>
-            <span className="sort-button">
-              <IconButton
-                icon={<SortOrderIcon />}
-                onClick={this.props.toggleSortOrder}
-                title="Change Sort Order"
-              />
-            </span>
-          </div>
-        )}
-      </Fragment>
-    );
+  let sortLabel = sortReversed ? 'Oldest' : 'Newest';
+  if (sortType === 'alphabetical') {
+    sortLabel = sortReversed ? 'Z-A' : 'A-Z';
   }
-}
+
+  const sortTypes = [
+    {
+      label: 'Date modified',
+      id: 'modificationDate',
+    },
+    {
+      label: 'Date created',
+      id: 'creationDate',
+    },
+    {
+      label: 'Alphabetical',
+      id: 'alphabetical',
+    },
+  ];
+
+  return (
+    <Fragment>
+      {shouldDisplay && (
+        <div className="sort-order-selector">
+          <label htmlFor="sort-selection">Sort:</label>
+          <select id="sort-selection" value={sortType} onChange={changeSort}>
+            {sortTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          <span className="sort-label">{sortLabel}</span>
+          <span className="sort-button">
+            <IconButton
+              icon={<SortOrderIcon />}
+              onClick={toggleSortOrder}
+              title="Change Sort Order"
+            />
+          </span>
+        </div>
+      )}
+    </Fragment>
+  );
+};
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   shouldDisplay: state.ui.filteredNotes.length > 0,
