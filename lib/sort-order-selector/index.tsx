@@ -28,49 +28,59 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
   toggleSortOrder,
 }) => {
   const changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortType(event.currentTarget?.value);
+    const [
+      selectedSortType,
+      selectedSortReversed,
+    ] = event.currentTarget.value.split(' ');
+    setSortType(selectedSortType);
+    if ((selectedSortReversed === 'false') === sortReversed) {
+      toggleSortOrder();
+    }
   };
-
-  let sortLabel = sortReversed ? 'Oldest' : 'Newest';
-  if (sortType === 'alphabetical') {
-    sortLabel = sortReversed ? 'Z-A' : 'A-Z';
-  }
 
   const sortTypes = [
     {
-      label: 'Date modified',
-      id: 'modificationDate',
+      label: 'Name: A-Z',
+      id: 'alphabetical false',
     },
     {
-      label: 'Date created',
-      id: 'creationDate',
+      label: 'Name: Z-A',
+      id: 'alphabetical true',
     },
     {
-      label: 'Alphabetical',
-      id: 'alphabetical',
+      label: 'Created: Newest',
+      id: 'creationDate false',
+    },
+    {
+      label: 'Created: Oldest',
+      id: 'creationDate true',
+    },
+    {
+      label: 'Modified: Newest',
+      id: 'modificationDate false',
+    },
+    {
+      label: 'Modified: Oldest',
+      id: 'modificationDate true',
     },
   ];
 
   return (
     <Fragment>
       {shouldDisplay && (
-        <div className="sort-order-selector">
-          <label htmlFor="sort-selection">Sort:</label>
-          <select id="sort-selection" value={sortType} onChange={changeSort}>
+        <div className="sort-order-selector theme-color-fg-dim">
+          <label htmlFor="sort-selection">Sort by</label>
+          <select
+            id="sort-selection"
+            value={sortType + ' ' + sortReversed.toString()}
+            onChange={changeSort}
+          >
             {sortTypes.map((type) => (
               <option key={type.id} value={type.id}>
                 {type.label}
               </option>
             ))}
           </select>
-          <span className="sort-label">{sortLabel}</span>
-          <span className="sort-button">
-            <IconButton
-              icon={<SortOrderIcon />}
-              onClick={toggleSortOrder}
-              title="Change Sort Order"
-            />
-          </span>
         </div>
       )}
     </Fragment>

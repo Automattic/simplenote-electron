@@ -24,41 +24,30 @@
     border: none;
     padding: 0 5px;
     margin: 0;
-    color: $studio-simplenote-blue-50;
-    background: transparent;
+    font-weight: 500;
+    background-color: $studio-white;
     cursor: pointer;
   }
 
   option {
     /* fix for Firefox, which allows <options> to inherit styles from parents */
-    color: $studio-gray-80;
-  }
-
-  .sort-label {
-    font-size: smaller;
-  }
-
-  .sort-button {
-    position: absolute;
-    width: 24px;
-    height: 44px;
-    right: 10px;
-    top: 0;
-
-    svg {
-      cursor: pointer;
-    }
+    font-weight: normal;
+    color: $studio-black;
   }
 }
 
 .theme-dark {
   .sort-order-selector {
-    background-color: $studio-gray-90;
-    color: $studio-gray-20;
     box-shadow: 0 -1px 0 0 $studio-gray-80;
 
     select {
-      color: $studio-simplenote-blue-30;
+      background: $studio-gray-90;
+    }
+
+    option {
+      /* only applies to Firefox */
+      background-color: $studio-gray-90;
+      color: $studio-white;
     }
   }
 }
