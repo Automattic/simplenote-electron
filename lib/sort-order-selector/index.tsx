@@ -1,8 +1,6 @@
 import React, { Fragment, FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { toggleSortOrder, setSortType } from '../state/settings/actions';
-import IconButton from '../icon-button';
-import SortOrderIcon from '../icons/sort-order';
 
 import * as S from '../state';
 import * as T from '../types';
