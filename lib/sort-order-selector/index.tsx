@@ -37,7 +37,7 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
     if ((selectedSortReversed === 'false') === sortReversed) {
       toggleSortOrder();
     }
-    recordEvent('settings_search_sort_mode', {
+    recordEvent('list_sortbar_mode_changed', {
       description: event.currentTarget.selectedOptions[0].text,
     });
   };
