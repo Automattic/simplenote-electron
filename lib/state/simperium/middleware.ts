@@ -178,7 +178,8 @@ export const initSimperium = (
     const { token, sent_to } = entity;
 
     const parsedToken = parseVerificationToken(token);
-    const hasValidToken = parsedToken && parsedToken.username === username;
+    const hasValidToken =
+      parsedToken && parsedToken.username.toLowerCase() === username;
     const hasPendingEmail = sent_to === username;
 
     const state = hasValidToken
