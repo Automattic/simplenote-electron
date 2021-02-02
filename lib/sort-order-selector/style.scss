@@ -1,12 +1,12 @@
 .sort-order-selector {
   position: relative;
   width: 328px;
-  height: 44px;
-  box-shadow: 0 -1px 0 0 $studio-gray-5;
+  height: $toolbar-height;
+  line-height: $toolbar-height;
+  border-top: 1px solid;
   margin: 0;
   padding: 0 24px 0 16px;
   font-size: 14px;
-  line-height: 44px;
 
   @media only screen and (max-width: $medium) {
     width: 300px;
@@ -25,7 +25,7 @@
     padding: 0 5px;
     margin: 0;
     font-weight: 500;
-    background-color: $studio-white;
+    background-color: transparent;
     cursor: pointer;
   }
 
@@ -38,10 +38,8 @@
 
 .theme-dark {
   .sort-order-selector {
-    box-shadow: 0 -1px 0 0 $studio-gray-80;
-
     select {
-      background: $studio-gray-90;
+      background-color: $studio-gray-90;
     }
 
     option {

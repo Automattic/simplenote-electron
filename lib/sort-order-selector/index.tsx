@@ -72,7 +72,7 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
   return (
     <Fragment>
       {shouldDisplay && (
-        <div className="sort-order-selector theme-color-fg-dim">
+        <div className="sort-order-selector theme-color-fg-dim theme-color-border">
           <label htmlFor="sort-selection">Sort by</label>
           <select
             id="sort-selection"
