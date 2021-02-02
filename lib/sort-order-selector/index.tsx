@@ -1,6 +1,7 @@
 import React, { Fragment, FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { toggleSortOrder, setSortType } from '../state/settings/actions';
+import { recordEvent } from '../state/analytics/middleware';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -30,10 +31,15 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
       selectedSortType,
       selectedSortReversed,
     ] = event.currentTarget.value.split(' ');
-    setSortType(selectedSortType);
+    if (selectedSortType !== sortType) {
+      setSortType(selectedSortType);
+    }
     if ((selectedSortReversed === 'false') === sortReversed) {
       toggleSortOrder();
     }
+    recordEvent('settings_search_sort_mode', {
+      description: event.currentTarget.selectedOptions[0].text,
+    });
   };
 
   const sortTypes = [
