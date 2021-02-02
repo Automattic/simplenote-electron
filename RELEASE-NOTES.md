@@ -13,6 +13,7 @@
 
 - Fixed loading of the analytics preference so it will send events if user has opted in [#2605](https://github.com/Automattic/simplenote-electron/pull/2605)
 - Added a missing aria-label to the revision slider (props to @tbourrely) [#2583](https://github.com/Automattic/simplenote-electron/pull/2583)
+- Updated email verification logic to handle a mixed-case email address [#2619](https://github.com/Automattic/simplenote-electron/pull/2619)
 
 ### Other Changes
 
