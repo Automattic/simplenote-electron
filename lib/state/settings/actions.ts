@@ -29,10 +29,12 @@ export const toggleSortOrder: A.ActionCreator<A.ToggleSortOrder> = () => ({
 });
 
 export const setSortType: A.ActionCreator<A.SetSortType> = (
-  sortType: T.SortType
+  sortType: T.SortType,
+  sortReversed?: boolean
 ) => ({
   type: 'setSortType',
   sortType,
+  sortReversed,
 });
 
 export const toggleSortTagsAlpha: A.ActionCreator<A.ToggleSortTagsAlpha> = () => ({

@@ -43,7 +43,10 @@ export type SetSortTagsAlpha = Action<
   'setSortTagsAlpha',
   { sortTagsAlpha: boolean }
 >;
-export type SetSortType = Action<'setSortType', { sortType: T.SortType }>;
+export type SetSortType = Action<
+  'setSortType',
+  { sortType: T.SortType; sortReversed?: boolean }
+>;
 export type SetSpellCheck = Action<
   'setSpellCheck',
   { spellCheckEnabled: boolean }

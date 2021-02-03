@@ -492,6 +492,9 @@ export const middleware: S.Middleware = (store) => {
 
       case 'setSortType':
         searchState.sortType = action.sortType;
+        if (typeof action.sortReversed !== 'undefined') {
+          searchState.sortReversed = action.sortReversed;
+        }
         return next(withSearch(action));
 
       case 'TOGGLE_SORT_ORDER':

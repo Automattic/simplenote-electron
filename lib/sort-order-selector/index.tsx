@@ -1,6 +1,6 @@
 import React, { Fragment, FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { toggleSortOrder, setSortType } from '../state/settings/actions';
+import { setSortType } from '../state/settings/actions';
 import { recordEvent } from '../state/analytics/middleware';
 
 import * as S from '../state';
@@ -52,8 +52,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  setSortType: (sortType: T.SortType) => any;
-  toggleSortOrder: () => any;
+  setSortType: (sortType: T.SortType, sortReversed: boolean) => any;
 };
 
 type Props = StateProps & DispatchProps;
@@ -63,7 +62,6 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
   setSortType,
   sortReversed,
   sortType,
-  toggleSortOrder,
 }) => {
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedIndex = event.currentTarget.selectedIndex;
@@ -71,12 +69,7 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
       return;
     }
     const sort = sortTypes[selectedIndex];
-    if (sort.type !== sortType) {
-      setSortType(sort.type as T.SortType);
-    }
-    if (sort.isReversed !== sortReversed) {
-      toggleSortOrder();
-    }
+    setSortType(sort.type as T.SortType, sort.isReversed);
     recordEvent('list_sortbar_mode_changed', {
       description: event.currentTarget.options[selectedIndex].text,
     });
@@ -117,7 +110,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   setSortType,
-  toggleSortOrder,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SortOrderSelector);
