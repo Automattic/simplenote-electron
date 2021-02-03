@@ -6,6 +6,45 @@ import { recordEvent } from '../state/analytics/middleware';
 import * as S from '../state';
 import * as T from '../types';
 
+type SortOption = {
+  label: string;
+  type: T.SortType;
+  isReversed: boolean;
+};
+
+const sortTypes: SortOption[] = [
+  {
+    label: 'Name: A-Z',
+    type: 'alphabetical',
+    isReversed: false,
+  },
+  {
+    label: 'Name: Z-A',
+    type: 'alphabetical',
+    isReversed: true,
+  },
+  {
+    label: 'Created: Newest',
+    type: 'creationDate',
+    isReversed: false,
+  },
+  {
+    label: 'Created: Oldest',
+    type: 'creationDate',
+    isReversed: true,
+  },
+  {
+    label: 'Modified: Newest',
+    type: 'modificationDate',
+    isReversed: false,
+  },
+  {
+    label: 'Modified: Oldest',
+    type: 'modificationDate',
+    isReversed: true,
+  },
+];
+
 type StateProps = {
   shouldDisplay: boolean;
   sortReversed: boolean;
@@ -26,60 +65,27 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
   sortType,
   toggleSortOrder,
 }) => {
-  const changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = event.currentTarget.selectedOptions[0];
-    const selectedSortType = selectedOption.dataset.order;
-    const selectedSortReversed = selectedOption.dataset.reversed;
-
-    if (selectedSortType !== sortType) {
-      setSortType(selectedSortType as T.SortType);
+  const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedIndex = event.currentTarget.selectedIndex;
+    if (-1 === selectedIndex) {
+      return;
     }
-    if ((selectedSortReversed === 'false') === sortReversed) {
+    const sort = sortTypes[selectedIndex];
+    if (sort.type !== sortType) {
+      setSortType(sort.type as T.SortType);
+    }
+    if (sort.isReversed !== sortReversed) {
       toggleSortOrder();
     }
     recordEvent('list_sortbar_mode_changed', {
-      description: selectedOption.text,
+      description: event.currentTarget.options[selectedIndex].text,
     });
   };
 
-  const sortTypes = [
-    {
-      label: 'Name: A-Z',
-      id: 'alphabetical',
-      order: 'alphabetical',
-      reversed: false,
-    },
-    {
-      label: 'Name: Z-A',
-      id: 'alphabetical-reversed',
-      order: 'alphabetical',
-      reversed: true,
-    },
-    {
-      label: 'Created: Newest',
-      id: 'creationDate',
-      order: 'creationDate',
-      reversed: false,
-    },
-    {
-      label: 'Created: Oldest',
-      id: 'creationDate-reversed',
-      order: 'creationDate',
-      reversed: true,
-    },
-    {
-      label: 'Modified: Newest',
-      id: 'modificationDate',
-      order: 'modificationDate',
-      reversed: false,
-    },
-    {
-      label: 'Modified: Oldest',
-      id: 'modificationDate-reversed',
-      order: 'modificationDate',
-      reversed: true,
-    },
-  ];
+  const sortTypesIndex = (type: T.SortType, reversed: boolean) =>
+    sortTypes.findIndex(
+      (input) => input.type === type && input.isReversed === reversed
+    );
 
   return (
     <Fragment>
@@ -88,16 +94,11 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
           <label htmlFor="sort-selection">Sort by</label>
           <select
             id="sort-selection"
-            value={sortType + ' ' + sortReversed.toString()}
-            onChange={changeSort}
+            value={sortTypesIndex(sortType, sortReversed)}
+            onChange={onChange}
           >
-            {sortTypes.map((type) => (
-              <option
-                key={type.id}
-                value={type.id}
-                data-order={type.order}
-                data-reversed={type.reversed}
-              >
+            {sortTypes.map((type, index) => (
+              <option key={type.label} value={index}>
                 {type.label}
               </option>
             ))}
