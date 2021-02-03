@@ -96,7 +96,7 @@
   ],
   "deb": {
     "depends": ["gconf2"],
-    "compression": "xz",
+    "compression": "gz",
     "fpm": ["--deb-no-default-config-files"]
   },
   "afterSign": "./after_sign_hook.js",
