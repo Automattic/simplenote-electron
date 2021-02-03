@@ -29,6 +29,7 @@ const NotePreview = React.lazy(() =>
 
 type StateProps = {
   hasRevisions: boolean;
+  hasNotesInList: boolean;
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -86,6 +87,7 @@ export class AppLayout extends Component<Props> {
     const {
       showNoteList,
       hasRevisions,
+      hasNotesInList,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
@@ -120,7 +122,7 @@ export class AppLayout extends Component<Props> {
             <MenuBar />
             <SearchField />
             <NoteList />
-            <SortOrderSelector />
+            {hasNotesInList && <SortOrderSelector />}
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
@@ -144,6 +146,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
     state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
   keyboardShortcutsAreOpen: state.ui.dialogs.includes('KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
+  hasNotesInList: state.ui.filteredNotes.length > 0,
   isFocusMode: state.settings.focusModeEnabled,
   isNavigationOpen: state.ui.showNavigation,
   isNoteInfoOpen: state.ui.showNoteInfo,

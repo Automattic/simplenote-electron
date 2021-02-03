@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent, useEffect, useRef } from 'react';
+import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { setSortType } from '../state/settings/actions';
 import { recordEvent } from '../state/analytics/middleware';
@@ -46,7 +46,6 @@ const sortTypes: SortOption[] = [
 ];
 
 type StateProps = {
-  shouldDisplay: boolean;
   sortReversed: boolean;
   sortType: T.SortType;
 };
@@ -58,7 +57,6 @@ type DispatchProps = {
 type Props = StateProps & DispatchProps;
 
 export const SortOrderSelector: FunctionComponent<Props> = ({
-  shouldDisplay,
   setSortType,
   sortReversed,
   sortType,
@@ -81,29 +79,24 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
     );
 
   return (
-    <Fragment>
-      {shouldDisplay && (
-        <div className="sort-order-selector theme-color-fg-dim theme-color-border">
-          <label htmlFor="sort-selection">Sort by</label>
-          <select
-            id="sort-selection"
-            value={sortTypesIndex(sortType, sortReversed)}
-            onChange={onChange}
-          >
-            {sortTypes.map((type, index) => (
-              <option key={type.label} value={index}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-    </Fragment>
+    <div className="sort-order-selector theme-color-fg-dim theme-color-border">
+      <label htmlFor="sort-selection">Sort by</label>
+      <select
+        id="sort-selection"
+        value={sortTypesIndex(sortType, sortReversed)}
+        onChange={onChange}
+      >
+        {sortTypes.map((type, index) => (
+          <option key={type.label} value={index}>
+            {type.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  shouldDisplay: state.ui.filteredNotes.length > 0,
   sortReversed: state.settings.sortReversed,
   sortType: state.settings.sortType,
 });
