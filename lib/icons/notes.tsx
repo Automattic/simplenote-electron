@@ -5,11 +5,10 @@ export default function NotesIcon() {
     <svg
       className="icon-notes"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M18 4v10H8V4h10m0-2H8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM4 18V6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2H4zM16 6h-6v2h6V6zm0 4h-6v2h6v-2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M19 5V15H9V5H19m0-2H9A2 2 0 0 0 7 5V15a2 2 0 0 0 2 2H19a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2ZM5 19V7A2 2 0 0 0 3 9V19a2 2 0 0 0 2 2H15a2 2 0 0 0 2-2ZM17 7H11V9h6Zm0 4H11v2h6Z" />
     </svg>
   );
 }

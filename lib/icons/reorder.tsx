@@ -5,11 +5,10 @@ export default function ReorderIcon() {
     <svg
       className="icon-reorder"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M18 7H4V5h14v2zm2 3H2v2h18v-2zm-2 5H4v2h14v-2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M19,8H5V6H19Zm2,3H3v2H21Zm-2,5H5v2H19Z" />
     </svg>
   );
 }

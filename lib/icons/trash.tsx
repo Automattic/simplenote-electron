@@ -12,11 +12,10 @@ export default function TrashIcon({ onClick }: Props) {
       className="icon-trash"
       onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M18 8.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8.5h2V18h10V8.5h2zM15 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H3v2h16V5h-4zM9 4h4v1H9V4zm1 12V8.5H8V16h2zm4 0V8.5h-2V16h2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M18 21H6c-1.105 0-2-0.895-2-2V9h2v10h12V9h2v10C20 20.105 19.105 21 18 21zM9 9h2v8H9V9zM13 9h2v8h-2V9zM16 5V4c0-1.105-0.895-2-2-2h-4C8.895 2 8 2.895 8 4v1H3v2h18V5H16zM10 4h4v1h-4V4z" />
     </svg>
   );
 }

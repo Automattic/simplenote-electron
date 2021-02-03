@@ -5,11 +5,10 @@ export default function SmallCrossIcon() {
     <svg
       className="icon-cross-small"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 16 16"
     >
-      <path d="M16.707 6.707l-1.414-1.414L11 9.586 6.707 5.293 5.293 6.707 9.586 11l-4.293 4.293 1.414 1.414L11 12.414l4.293 4.293 1.414-1.414L12.414 11z" />
+      <rect x="0" fill="none" width="16" height="16" />
+      <path d="M13.66 3.76l-1.42-1.42L8 6.59 3.76 2.34 2.34 3.76 6.59 8l-4.25 4.24 1.42 1.42L8 9.41l4.24 4.25 1.42-1.42L9.41 8 13.66 3.76z" />
     </svg>
   );
 }
