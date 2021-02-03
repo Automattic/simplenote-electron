@@ -29,7 +29,6 @@ const NotePreview = React.lazy(() =>
 
 type StateProps = {
   hasRevisions: boolean;
-  hasNotesInList: boolean;
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -41,6 +40,7 @@ type StateProps = {
   openedRevision: number | null;
   showNoteList: boolean;
   showRevisions: boolean;
+  showSortBar: boolean;
 };
 
 type DispatchProps = {
@@ -87,7 +87,6 @@ export class AppLayout extends Component<Props> {
     const {
       showNoteList,
       hasRevisions,
-      hasNotesInList,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
@@ -96,6 +95,7 @@ export class AppLayout extends Component<Props> {
       openedNote,
       openedRevision,
       showRevisions,
+      showSortBar,
     } = this.props;
 
     const mainClasses = classNames('app-layout', {
@@ -122,7 +122,7 @@ export class AppLayout extends Component<Props> {
             <MenuBar />
             <SearchField />
             <NoteList />
-            {hasNotesInList && <SortOrderSelector />}
+            {showSortBar && <SortOrderSelector />}
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
@@ -146,7 +146,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
     state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
   keyboardShortcutsAreOpen: state.ui.dialogs.includes('KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
-  hasNotesInList: state.ui.filteredNotes.length > 0,
   isFocusMode: state.settings.focusModeEnabled,
   isNavigationOpen: state.ui.showNavigation,
   isNoteInfoOpen: state.ui.showNoteInfo,
@@ -161,6 +160,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   openedNote: state.ui.openedNote,
   showNoteList: state.ui.showNoteList,
   showRevisions: state.ui.showRevisions,
+  showSortBar: state.ui.filteredNotes.length > 0,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
