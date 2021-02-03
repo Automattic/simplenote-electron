@@ -64,7 +64,7 @@ optgroup {
   transition: transform 200ms ease-in-out;
 
   &.note-info-open {
-    transform: translateX(-$note-info-width);
+    // transform: translateX(-$note-info-width);
   }
 }
 

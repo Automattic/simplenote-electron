@@ -250,12 +250,31 @@ const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
     ? action.simperiumConnected
     : state;
 
+const showNoteActions: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'NOTE_ACTIONS_TOGGLE':
+      return !state;
+
+    case 'NAVIGATION_TOGGLE':
+    case 'NOTE_INFO_TOGGLE':
+    case 'REVISIONS_TOGGLE':
+    case 'SELECT_NOTE':
+    case 'SHOW_DIALOG':
+    case 'TRASH_NOTE':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const showNoteInfo: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'NOTE_INFO_TOGGLE':
       return !state;
 
     case 'NAVIGATION_TOGGLE':
+    case 'NOTE_ACTIONS_TOGGLE':
     case 'SELECT_NOTE':
       return false;
 
@@ -337,6 +356,7 @@ export default combineReducers({
   searchQuery,
   selectedSearchMatchIndex,
   showNavigation,
+  showNoteActions,
   showNoteInfo,
   showNoteList,
   showRevisions,

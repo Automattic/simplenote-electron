@@ -125,6 +125,7 @@ export type ToggleFocusMode = Action<'TOGGLE_FOCUS_MODE'>;
 export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
 export type ToggleNavigation = Action<'NAVIGATION_TOGGLE'>;
 export type ToggleNoteList = Action<'NOTE_LIST_TOGGLE'>;
+export type ToggleNoteActions = Action<'NOTE_ACTIONS_TOGGLE'>;
 export type ToggleNoteInfo = Action<'NOTE_INFO_TOGGLE'>;
 export type ToggleRevisions = Action<'REVISIONS_TOGGLE'>;
 export type ToggleSimperiumConnectionStatus = Action<
@@ -405,6 +406,7 @@ export type ActionType =
   | ToggleKeyboardShortcuts
   | ToggleNavigation
   | ToggleNoteList
+  | ToggleNoteActions
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus

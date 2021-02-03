@@ -55,15 +55,15 @@
 
   // Fade content when toolbars are visible
   &.is-showing-note-info {
-    opacity: $fade-alpha;
-    transition: $anim;
-    pointer-events: none;
+    // opacity: $fade-alpha;
+    // transition: $anim;
+    // pointer-events: none;
 
-    @media only screen and (max-width: $single-column) {
-      .app-layout__note-column {
-        opacity: $fade-alpha;
-      }
-    }
+    // @media only screen and (max-width: $single-column) {
+    //   .app-layout__note-column {
+    //     opacity: $fade-alpha;
+    //   }
+    // }
   }
 
   &.is-note-open {

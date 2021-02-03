@@ -1,21 +1,19 @@
 .note-info {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 100%;
   width: $note-info-width;
-  height: 100%;
-  border-left: 1px solid;
-  overflow: auto;
-  overflow-x: hidden;
+  // height: 500px;
+  border: 1px solid;
+  border-radius: 5px;
+  // overflow: auto;
+  // overflow-x: hidden;
+
   -webkit-overflow-scrolling: touch;
-  background: white;
 
   .note-info-panel {
-    flex: none;
-    padding: 20px;
+    flex: 0 0 auto;
     border-bottom: 1px solid;
+    margin-bottom: 10px;
 
     &:last-child {
       border: none;
@@ -24,12 +22,18 @@
 
   .note-info-header {
     display: flex;
+    border-bottom: 1px solid;
+    line-height: 12px;
+    padding: 12px 18px;
+    margin-bottom: 10px;
     flex-direction: row;
     align-items: center;
 
     h2 {
       flex-grow: 1;
       margin-bottom: 0;
+      text-transform: none;
+      font-size: 1em;
     }
 
     button {
@@ -39,12 +43,16 @@
   }
 
   .note-info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2.25em;
+    height: 28px;
+    margin: 0;
+    padding: 8px 18px;
+
+    .note-info-detail {
+      float: right;
+    }
 
     &:last-child {
-      margin: 0;
+      margin-bottom: 16px;
     }
   }
 
@@ -52,33 +60,10 @@
     flex: 1 1 auto;
   }
 
-  .note-info-item-control {
-    flex: none;
-    width: 44px;
-    text-align: right;
-  }
-
-  .note-info-detail {
-    a {
-      color: $studio-simplenote-blue-50;
-    }
-  }
-
-  .note-info-copy {
-    display: flex;
-    flex-direction: row;
-
-    .note-info-link-text {
-      border: none;
-      overflow: hidden;
-      padding: 0;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    button {
-      flex: 1 0 auto;
-    }
+  .note-references {
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: scroll;
   }
 
   .reference-link {
@@ -100,8 +85,4 @@
       white-space: nowrap;
     }
   }
-}
-
-.theme-dark .note-info-detail a {
-  color: $studio-simplenote-blue-30;
 }

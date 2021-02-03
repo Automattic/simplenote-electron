@@ -34,6 +34,12 @@
   justify-content: space-between;
   width: 100%;
   padding: 0 15px;
+
+  // @todo make icons all the right size so this isn't necessary
+  svg.icon-ellipsis-outline {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .note-toolbar__column-left,

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import NoteInfo from './note-info';
+import NoteActions from './note-actions';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
@@ -36,6 +37,7 @@ type StateProps = {
   isSearchActive: boolean;
   showEmailVerification: boolean;
   showNavigation: boolean;
+  showNoteActions: boolean;
   showNoteInfo: boolean;
   theme: 'light' | 'dark';
 };
@@ -179,6 +181,7 @@ class AppComponent extends Component<Props> {
       lineLength,
       showEmailVerification,
       showNavigation,
+      showNoteActions,
       showNoteInfo,
       theme,
     } = this.props;
@@ -203,6 +206,7 @@ class AppComponent extends Component<Props> {
           {showNavigation && <NavigationBar />}
           <AppLayout />
           {showNoteInfo && <NoteInfo />}
+          {showNoteActions && <NoteActions />}
         </div>
         <DialogRenderer appProps={this.props} />
       </div>
@@ -218,6 +222,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   lineLength: state.settings.lineLength,
   showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
+  showNoteActions: state.ui.showNoteActions,
   showNoteInfo: state.ui.showNoteInfo,
   theme: selectors.getTheme(state),
 });

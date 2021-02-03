@@ -1,0 +1,75 @@
+.note-actions {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  border-radius: 5px;
+  top: 56px;
+  right: 20px;
+  width: $note-info-width;
+  height: 100%;
+  border: 1px solid;
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  .note-info-panel {
+    flex: none;
+    padding: 20px;
+    border-bottom: 1px solid;
+
+    &:last-child {
+      border: none;
+    }
+  }
+
+  .note-info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+
+    &:last-child {
+      margin: 0;
+    }
+
+    &:hover {
+      background-color: $studio-simplenote-blue-5;
+    }
+  }
+
+  .note-info-item-text {
+    flex: 1 1 auto;
+  }
+
+  .note-info-item-control {
+    flex: none;
+    width: 44px;
+    text-align: right;
+  }
+
+  .note-info-detail {
+    a {
+      color: $studio-simplenote-blue-50;
+    }
+  }
+
+  .note-info-copy {
+    display: flex;
+    flex-direction: row;
+
+    .note-info-link-text {
+      border: none;
+      overflow: hidden;
+      padding: 0;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    button {
+      flex: 1 0 auto;
+    }
+  }
+}
+
+.theme-dark .note-info-detail a {
+  color: $studio-simplenote-blue-30;
+}

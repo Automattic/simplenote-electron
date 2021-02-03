@@ -4,6 +4,7 @@ import { CmdOrCtrl } from '../utils/platform';
 
 import BackIcon from '../icons/back';
 import ChecklistIcon from '../icons/check-list';
+import EllipsisOutlineIcon from '../icons/ellipsis-outline';
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
 import NewNoteIcon from '../icons/new-note';
@@ -33,6 +34,7 @@ type DispatchProps = {
   shareNote: () => any;
   toggleEditMode: () => any;
   toggleFocusMode: () => any;
+  toggleNoteActions: () => any;
   toggleNoteInfo: () => any;
   toggleNoteList: () => any;
   toggleRevisions: () => any;
@@ -61,6 +63,7 @@ export class NoteToolbar extends Component<Props> {
       isOffline,
       markdownEnabled,
       note,
+      toggleNoteActions,
       toggleNoteInfo,
     } = this.props;
 
@@ -138,6 +141,13 @@ export class NoteToolbar extends Component<Props> {
               title="Info"
             />
           </div>
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<EllipsisOutlineIcon />}
+              onClick={toggleNoteActions}
+              title="Actions"
+            />
+          </div>
         </div>
       </div>
     );
@@ -204,6 +214,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
   toggleFocusMode: actions.settings.toggleFocusMode,
+  toggleNoteActions: actions.ui.toggleNoteActions,
   toggleNoteInfo: actions.ui.toggleNoteInfo,
   toggleNoteList: actions.ui.toggleNoteList,
   toggleRevisions: actions.ui.toggleRevisions,

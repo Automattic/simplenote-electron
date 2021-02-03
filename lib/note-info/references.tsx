@@ -20,13 +20,17 @@ export const References: FunctionComponent<Props> = ({ references }) => {
   }
 
   return (
-    <div className="note-info-panel note-info-internal-link theme-color-border">
-      <span className="note-info-item-text">
-        <span className="note-info-name">References</span>
-        {references.map((noteId) => (
-          <Reference noteId={noteId} key={noteId} />
-        ))}
-      </span>
+    <div className="note-references note-info-panel note-info-internal-link theme-color-border">
+      <div className="note-info-item">
+        <span className="note-info-item-text">
+          <span className="note-info-name theme-color-fg-dim">
+            Referenced In
+          </span>
+          {references.map((noteId) => (
+            <Reference noteId={noteId} key={noteId} />
+          ))}
+        </span>
+      </div>
     </div>
   );
 };
