@@ -1,20 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { includes, isEmpty } from 'lodash';
 import MD5 from 'md5.js';
 
-import ClipboardButton from '../../components/clipboard-button';
 import isEmailTag from '../../utils/is-email-tag';
 import Dialog from '../../dialog';
 import TabPanels from '../../components/tab-panels';
 import PanelTitle from '../../components/panel-title';
-import ToggleControl from '../../controls/toggle';
 import actions from '../../state/actions';
 
 import * as S from '../../state';
 import * as T from '../../types';
-
-const shareTabs = ['collaborate', 'publish'];
 
 type StateProps = {
   settings: S.State['settings'];
@@ -26,20 +21,12 @@ type DispatchProps = {
   addCollaborator: (noteId: T.EntityId, collaborator: T.TagName) => any;
   closeDialog: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
-  publishNote: (noteId: T.EntityId, shouldPublish: boolean) => any;
   removeCollaborator: (noteId: T.EntityId, collaborator: T.TagName) => any;
 };
 
 type Props = StateProps & DispatchProps;
 
 export class ShareDialog extends Component<Props> {
-  onTogglePublished = (shouldPublish: boolean) => {
-    this.props.publishNote(this.props.noteId, shouldPublish);
-  };
-
-  getPublishURL = (url) =>
-    isEmpty(url) ? undefined : `http://simp.ly/p/${url}`;
-
   onAddCollaborator = (event) => {
     const { noteId } = this.props;
     const collaborator = this.collaboratorElement.value.trim();
@@ -80,15 +67,12 @@ export class ShareDialog extends Component<Props> {
   };
 
   render() {
-    const { closeDialog, note } = this.props;
-    const data = note || {};
-    const isPublished = includes(data.systemTags, 'published');
-    const publishURL = this.getPublishURL(data.publishURL);
+    const { closeDialog } = this.props;
 
     return (
-      <Dialog className="settings" title="Share" onDone={closeDialog}>
-        <TabPanels tabNames={shareTabs}>
-          <div>
+      <Dialog className="settings" title="Collaborate" onDone={closeDialog}>
+        <div className="tab-panels__panel">
+          <div className="tab-panels__column">
             <div className="settings-group">
               <p>
                 Add an email address of another Simplenote user to share a note.
@@ -147,54 +131,7 @@ export class ShareDialog extends Component<Props> {
               </ul>
             </div>
           </div>
-
-          <div>
-            <div className="settings-group">
-              <div className="settings-items theme-color-border">
-                <label
-                  htmlFor="settings-field-public"
-                  className="settings-item theme-color-border"
-                >
-                  <div className="settings-item-label">Make public link</div>
-                  <div className="settings-item-control">
-                    <ToggleControl
-                      id="settings-field-public"
-                      onChange={this.onTogglePublished}
-                      checked={isPublished}
-                    />
-                  </div>
-                </label>
-              </div>
-              <p>
-                Ready to share your note with the world? Anyone with the public
-                link will be able to view the latest version.
-              </p>
-            </div>
-            {isPublished && (
-              <div className="settings-group">
-                <PanelTitle headingLevel={3}>Public link</PanelTitle>
-                <div className="settings-items theme-color-border">
-                  <div className="settings-item theme-color-border">
-                    <input
-                      ref={(e) => (this.publishUrlElement = e)}
-                      className="settings-item-text-input transparent-input"
-                      placeholder={
-                        isPublished ? 'Publishing note…' : 'Note not published'
-                      }
-                      value={publishURL}
-                      readOnly={true}
-                      spellCheck={false}
-                    />
-                    <div className="settings-item-control">
-                      {publishURL && <ClipboardButton text={publishURL} />}
-                    </div>
-                  </div>
-                </div>
-                {publishURL && <p>Note published!</p>}
-              </div>
-            )}
-          </div>
-        </TabPanels>
+        </div>
       </Dialog>
     );
   }

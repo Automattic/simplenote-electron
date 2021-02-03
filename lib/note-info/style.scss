@@ -1,21 +1,16 @@
 .note-info {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 100%;
-  width: $note-info-width;
-  height: 100%;
-  border-left: 1px solid;
-  overflow: auto;
-  overflow-x: hidden;
+  width: 360px;
+  border: 1px solid;
+  border-radius: 5px;
+  user-select: text;
   -webkit-overflow-scrolling: touch;
-  background: white;
 
   .note-info-panel {
-    flex: none;
-    padding: 20px;
+    flex: 0 0 auto;
     border-bottom: 1px solid;
+    padding-bottom: 8px;
 
     &:last-child {
       border: none;
@@ -24,12 +19,18 @@
 
   .note-info-header {
     display: flex;
+    border-bottom: 1px solid;
+    padding: 12px 8px 12px 16px;
+    margin-bottom: 8px;
     flex-direction: row;
     align-items: center;
+    height: 56px;
 
     h2 {
       flex-grow: 1;
       margin-bottom: 0;
+      text-transform: none;
+      font-size: 16px;
     }
 
     button {
@@ -39,69 +40,75 @@
   }
 
   .note-info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2.25em;
+    margin: 0;
+    padding: 4px 0;
+    height: 28px;
 
-    &:last-child {
-      margin: 0;
+    .note-info-detail {
+      float: right;
+      padding-right: 16px;
     }
   }
 
   .note-info-item-text {
     flex: 1 1 auto;
+    padding-left: 16px;
   }
 
-  .note-info-item-control {
-    flex: none;
-    width: 44px;
-    text-align: right;
-  }
+  .note-references {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 35px;
+    padding-bottom: 0;
 
-  .note-info-detail {
-    a {
-      color: $studio-simplenote-blue-50;
-    }
-  }
-
-  .note-info-copy {
-    display: flex;
-    flex-direction: row;
-
-    .note-info-link-text {
-      border: none;
-      overflow: hidden;
-      padding: 0;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    div.note-info-name {
+      height: 28px;
+      padding-left: 16px;
+      line-height: 28px;
+      margin-top: 8px;
     }
 
-    button {
-      flex: 1 0 auto;
+    .note-info-item {
+      height: auto;
+      padding-bottom: 0;
     }
   }
 
   .reference-link {
     display: block;
-    padding: 5px;
     text-align: left;
     text-decoration: none;
     width: 100%;
+    height: 48px;
+    padding-left: 16px;
+    padding-right: 16px;
 
     span {
       display: block;
       margin: 0;
+      font-size: 13px;
+    }
+
+    &:hover {
+      background-color: $studio-gray-0;
     }
 
     .reference-title {
-      font-style: italic;
+      font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-size: 14px;
     }
   }
 }
 
-.theme-dark .note-info-detail a {
-  color: $studio-simplenote-blue-30;
+.theme-dark {
+  .note-info {
+    .reference-link {
+      &:hover {
+        background-color: $studio-gray-80;
+      }
+    }
+  }
 }

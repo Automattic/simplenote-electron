@@ -147,6 +147,10 @@ export const toggleNoteList: A.ActionCreator<A.ToggleNoteList> = () => ({
   type: 'NOTE_LIST_TOGGLE',
 });
 
+export const toggleNoteActions: A.ActionCreator<A.ToggleNoteActions> = () => ({
+  type: 'NOTE_ACTIONS_TOGGLE',
+});
+
 export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({
   type: 'NOTE_INFO_TOGGLE',
 });
