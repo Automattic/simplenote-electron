@@ -27,45 +27,57 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
   toggleSortOrder,
 }) => {
   const changeSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const [
-      selectedSortType,
-      selectedSortReversed,
-    ] = event.currentTarget.value.split(' ');
+    const selectedOption = event.currentTarget.selectedOptions[0];
+    const selectedSortType = selectedOption.dataset.order;
+    const selectedSortReversed = selectedOption.dataset.reversed;
+
     if (selectedSortType !== sortType) {
-      setSortType(selectedSortType);
+      setSortType(selectedSortType as T.SortType);
     }
     if ((selectedSortReversed === 'false') === sortReversed) {
       toggleSortOrder();
     }
     recordEvent('list_sortbar_mode_changed', {
-      description: event.currentTarget.selectedOptions[0].text,
+      description: selectedOption.text,
     });
   };
 
   const sortTypes = [
     {
       label: 'Name: A-Z',
-      id: 'alphabetical false',
+      id: 'alphabetical',
+      order: 'alphabetical',
+      reversed: false,
     },
     {
       label: 'Name: Z-A',
-      id: 'alphabetical true',
+      id: 'alphabetical-reversed',
+      order: 'alphabetical',
+      reversed: true,
     },
     {
       label: 'Created: Newest',
-      id: 'creationDate false',
+      id: 'creationDate',
+      order: 'creationDate',
+      reversed: false,
     },
     {
       label: 'Created: Oldest',
-      id: 'creationDate true',
+      id: 'creationDate-reversed',
+      order: 'creationDate',
+      reversed: true,
     },
     {
       label: 'Modified: Newest',
-      id: 'modificationDate false',
+      id: 'modificationDate',
+      order: 'modificationDate',
+      reversed: false,
     },
     {
       label: 'Modified: Oldest',
-      id: 'modificationDate true',
+      id: 'modificationDate-reversed',
+      order: 'modificationDate',
+      reversed: true,
     },
   ];
 
@@ -80,7 +92,12 @@ export const SortOrderSelector: FunctionComponent<Props> = ({
             onChange={changeSort}
           >
             {sortTypes.map((type) => (
-              <option key={type.id} value={type.id}>
+              <option
+                key={type.id}
+                value={type.id}
+                data-order={type.order}
+                data-reversed={type.reversed}
+              >
                 {type.label}
               </option>
             ))}
