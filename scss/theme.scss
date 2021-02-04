@@ -158,11 +158,8 @@ span[dir='ltr'] {
     color: $studio-simplenote-blue-50;
   }
 
-  .note-list-item-pinner {
-    &:hover,
-    &.note-list-item-pinned {
-      color: $studio-simplenote-blue-50;
-    }
+  .note-list-item-pinned .note-list-item-pinner {
+    color: $studio-simplenote-blue-50;
   }
 }
 
@@ -279,10 +276,6 @@ span[dir='ltr'] {
   }
 
   .note-list {
-    .note-list-item .note-list-item-pinner:hover {
-      color: $studio-simplenote-blue-30;
-    }
-
     .note-list-item-selected {
       background: $studio-simplenote-blue-50;
       .note-list-item-excerpt,
@@ -295,14 +288,8 @@ span[dir='ltr'] {
           fill: $studio-gray-30;
         }
       }
-      .note-list-item-pinner:hover {
-        color: $studio-white;
-      }
       &.note-list-item-pinned .note-list-item-pinner {
         color: $studio-white;
-        &:hover {
-          color: $studio-simplenote-blue-30;
-        }
       }
     }
 
@@ -322,13 +309,6 @@ span[dir='ltr'] {
 
       &.note-list-item-pinned:hover .note-list-item-pinner {
         color: $studio-gray-30;
-        &:hover {
-          color: $studio-simplenote-blue-30;
-        }
-      }
-
-      .note-list-item-pinner:hover {
-        color: $studio-simplenote-blue-30;
       }
     }
   }

@@ -136,14 +136,8 @@
 
   &.note-list-item-selected {
     background: $studio-simplenote-blue-5;
-    &.note-list-item-pinned {
+    &:not(.note-list-item-pinned):hover {
       .note-list-item-pinner {
-        color: $studio-simplenote-blue-50;
-      }
-      &:hover .note-list-item-pinner {
-        color: $studio-simplenote-blue-50;
-      }
-      .note-list-item-pinner:hover {
         color: $studio-gray-50;
       }
     }
@@ -152,15 +146,13 @@
   &:not(.note-list-item-selected) {
     &:hover {
       background: $studio-gray-0;
-    }
-    .note-list-item-pinner:hover {
-      color: $studio-simplenote-blue-50;
+
+      .note-list-item-pinner {
+        color: $studio-gray-50;
+      }
     }
     &.note-list-item-pinned:hover .note-list-item-pinner {
       color: $studio-gray-50;
-      &:hover {
-        color: $studio-simplenote-blue-50;
-      }
     }
   }
 
