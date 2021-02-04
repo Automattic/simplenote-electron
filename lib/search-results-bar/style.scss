@@ -1,6 +1,6 @@
 .search-results {
-  height: 56px;
-  line-height: 56px;
+  height: $toolbar-height;
+  line-height: $toolbar-height;
   z-index: 100;
   border-top: 1px solid $studio-gray-5;
   background-color: $studio-white;

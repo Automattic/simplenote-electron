@@ -92,12 +92,17 @@ const sortReversed: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setSortReversed':
       return action.sortReversed;
+    case 'setSortType':
+      return typeof action.sortReversed !== 'undefined'
+        ? action.sortReversed
+        : state;
     case 'TOGGLE_SORT_ORDER':
       return !state;
     default:
       return state;
   }
 };
+
 const sortTagsAlpha: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'setSortTagsAlpha':

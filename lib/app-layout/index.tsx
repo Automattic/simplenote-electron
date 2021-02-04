@@ -7,6 +7,7 @@ import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
+import SortOrderSelector from '../sort-order-selector';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
@@ -39,6 +40,7 @@ type StateProps = {
   openedRevision: number | null;
   showNoteList: boolean;
   showRevisions: boolean;
+  showSortBar: boolean;
 };
 
 type DispatchProps = {
@@ -93,6 +95,7 @@ export class AppLayout extends Component<Props> {
       openedNote,
       openedRevision,
       showRevisions,
+      showSortBar,
     } = this.props;
 
     const mainClasses = classNames('app-layout', {
@@ -119,6 +122,7 @@ export class AppLayout extends Component<Props> {
             <MenuBar />
             <SearchField />
             <NoteList />
+            {showSortBar && <SortOrderSelector />}
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
@@ -156,6 +160,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   openedNote: state.ui.openedNote,
   showNoteList: state.ui.showNoteList,
   showRevisions: state.ui.showRevisions,
+  showSortBar: state.ui.filteredNotes.length > 0,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
