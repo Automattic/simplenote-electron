@@ -297,18 +297,11 @@ span[dir='ltr'] {
       .note-list-item-pinner {
         color: $studio-simplenote-blue-30;
       }
-      &:hover .note-list-item-pinner {
-        color: $studio-gray-80;
-      }
     }
 
     .note-list-item:not(.note-list-item-selected) {
       &:hover {
         background: $studio-gray-80;
-      }
-
-      &.note-list-item-pinned:hover .note-list-item-pinner {
-        color: $studio-gray-30;
       }
     }
   }
