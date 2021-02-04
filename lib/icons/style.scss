@@ -4,6 +4,11 @@ svg[class^='icon-'] {
   width: 24px;
 }
 
+svg[class^='icon-'][class$='-small'] {
+  height: 16px;
+  width: 16px;
+}
+
 // Color for the Simplenote logo
 .logo path {
   fill: $studio-simplenote-blue-50;
