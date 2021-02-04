@@ -21,10 +21,6 @@ const openDB = (): Promise<IDBDatabase> =>
       if (!db.objectStoreNames.contains('state')) {
         db.createObjectStore('state');
       }
-
-      if (!db.objectStoreNames.contains('revisions')) {
-        db.createObjectStore('revisions');
-      }
     };
     r.onblocked = () => reject();
   });
@@ -38,7 +34,7 @@ export const loadState = (
         new Promise((resolve) => {
           let stillGood = true;
 
-          const tx = db.transaction(['state', 'revisions'], 'readonly');
+          const tx = db.transaction(['state'], 'readonly');
 
           db.onversionchange = () => {
             stillGood = false;
@@ -95,33 +91,7 @@ export const loadState = (
               } else {
                 data.data.preferences = new Map(state.preferences);
               }
-
-              const revisionsRequest = tx.objectStore('revisions').openCursor();
-              const noteRevisions = new Map<T.EntityId, Map<number, T.Note>>();
-              revisionsRequest.onsuccess = () => {
-                if (!stillGood) {
-                  resolve([data, middleware]);
-                  return;
-                }
-
-                const cursor = revisionsRequest.result;
-                if (cursor) {
-                  noteRevisions.set(cursor.key, new Map(cursor.value));
-                  cursor.continue();
-                } else {
-                  resolve([
-                    {
-                      ...data,
-                      data: {
-                        ...data.data,
-                        noteRevisions,
-                      },
-                    },
-                    middleware,
-                  ]);
-                }
-              };
-              revisionsRequest.onerror = () => resolve([data, middleware]);
+              resolve([data, middleware]);
             } catch (e) {
               resolve([{}, middleware]);
             }
@@ -131,37 +101,6 @@ export const loadState = (
         })
     )
     .catch(() => [{}, null]);
-
-const persistRevisions = async (
-  noteId: T.EntityId,
-  revisions: [number, T.Note][]
-) => {
-  const tx = (await openDB()).transaction('revisions', 'readwrite');
-
-  const readRequest = tx.objectStore('revisions').get(noteId);
-  readRequest.onsuccess = () => {
-    // we might have some stored revisions
-    const savedRevisions = readRequest.result;
-
-    // so merge them to store as many as we can
-    const merged: [number, T.Note][] = savedRevisions?.slice() ?? [];
-    const seen = new Set<number>(merged.map(([version]) => version));
-
-    revisions.forEach(([version, note]) => {
-      if (!seen.has(version)) {
-        merged.push([version, note]);
-        seen.add(version);
-      }
-    });
-    merged.sort((a, b) => a[0] - b[0]);
-
-    tx.objectStore('revisions').put(merged, noteId);
-  };
-  readRequest.onerror = () => {
-    // it's fine if we have no saved revisions
-    tx.objectStore('revisions').put(revisions, noteId);
-  };
-};
 
 export const saveState = (state: S.State) => {
   const notes = Array.from(state.data.notes);
@@ -206,10 +145,6 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => (next) => {
     }
     if (keepSyncing) {
       worker = setTimeout(() => keepSyncing && saveState(getState()), 1000);
-    }
-
-    if (action.type === 'LOAD_REVISIONS' && action.revisions.length > 0) {
-      persistRevisions(action.noteId, action.revisions);
     }
 
     return result;

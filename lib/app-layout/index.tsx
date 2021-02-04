@@ -27,7 +27,6 @@ const NotePreview = React.lazy(() =>
 );
 
 type StateProps = {
-  hasRevisions: boolean;
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -84,7 +83,6 @@ export class AppLayout extends Component<Props> {
   render = () => {
     const {
       showNoteList,
-      hasRevisions,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
@@ -122,7 +120,7 @@ export class AppLayout extends Component<Props> {
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-              {hasRevisions && <RevisionSelector />}
+              {showRevisions && <RevisionSelector />}
               <NoteToolbar />
               {showRevisions ? (
                 <NotePreview noteId={openedNote} note={openedRevision} />
@@ -138,8 +136,6 @@ export class AppLayout extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  hasRevisions:
-    state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
   keyboardShortcutsAreOpen: state.ui.dialogs.includes('KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
   isFocusMode: state.settings.focusModeEnabled,
