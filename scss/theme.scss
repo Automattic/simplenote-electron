@@ -299,6 +299,12 @@ span[dir='ltr'] {
       }
     }
 
+    .note-list-item:not(.note-list-item-pinned):hover {
+      .note-list-item-pinner {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
     .note-list-item:not(.note-list-item-selected) {
       &:hover {
         background: $studio-gray-80;
