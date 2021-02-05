@@ -31,7 +31,7 @@
 - [ ] Selects note below recently-deleted-forever note in trash view
 - [ ] Can preview markdown with 👁 button
 - [ ] Can flip to edit mode with 👁 button
-- [ ] Markdown rendered in note list when markdown enabled
+- [ ] When Markdown enabled, formatting is hidden in notes list for note. i.e. `### Part 1` is presented as `Part 1` to save up space. 
 - [ ] Markdown syntax unrendered in note list when markdown disabled
 - [ ] Can filter by tag when clicking on tag in tag drawer
 - [ ] Can add tag to note and have it appear in filtered tag view when previously not in filter
