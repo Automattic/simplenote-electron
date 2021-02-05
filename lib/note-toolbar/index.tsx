@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isMac } from '../utils/platform';
+import { CmdOrCtrl } from '../utils/platform';
 
 import BackIcon from '../icons/back';
 import ChecklistIcon from '../icons/check-list';
@@ -63,7 +63,7 @@ export class NoteToolbar extends Component<Props> {
       note,
       toggleNoteInfo,
     } = this.props;
-    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
+
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
@@ -73,7 +73,7 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<NewNoteIcon />}
               onClick={() => newNote()}
-              title="New Note • Ctrl+Shift+I"
+              title={`New Note • ${CmdOrCtrl}+Shift+I`}
             />
           </div>
           <div className="note-toolbar__button note-toolbar__button-sidebar">
@@ -87,7 +87,7 @@ export class NoteToolbar extends Component<Props> {
             <IconButton
               icon={<BackIcon />}
               onClick={this.props.toggleNoteList}
-              title="Back • Ctrl+Shift+L"
+              title={`Back • ${CmdOrCtrl}+Shift+L`}
             />
           </div>
         </div>
@@ -105,7 +105,7 @@ export class NoteToolbar extends Component<Props> {
               <IconButton
                 icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
                 onClick={this.props.toggleEditMode}
-                title="Preview • Ctrl+Shift+P"
+                title={`Preview • ${CmdOrCtrl}+Shift+P`}
               />
             </div>
           )}
@@ -152,7 +152,7 @@ export class NoteToolbar extends Component<Props> {
           <IconButton
             icon={<BackIcon />}
             onClick={this.props.toggleNoteList}
-            title="Back • Ctrl+Shift+L"
+            title={`Back • ${CmdOrCtrl}+Shift+L`}
           />
         </div>
         {isOffline && <div className="offline-badge">OFFLINE</div>}

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Dialog from '../../dialog';
 import { closeDialog } from '../../state/ui/actions';
-import { isElectron, isMac } from '../../utils/platform';
+import { CmdOrCtrl, isElectron } from '../../utils/platform';
 
 import * as S from '../../state';
 
@@ -40,7 +40,6 @@ const Keys = ({
 export class AboutDialog extends Component<DispatchProps> {
   render() {
     const { closeDialog } = this.props;
-    const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
     return (
       <div className="keybindings">
@@ -143,7 +142,7 @@ export class AboutDialog extends Component<DispatchProps> {
                   </li>
                 )}
                 <li>
-                  <Keys keys={['Ctrl', 'Shift', 'P']}>
+                  <Keys keys={[CmdOrCtrl, 'Shift', 'P']}>
                     Toggle Markdown preview
                   </Keys>
                 </li>
