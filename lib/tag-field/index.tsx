@@ -129,12 +129,12 @@ export class TagField extends Component<Props, OwnState> {
 
   interceptKeys: React.KeyboardEventHandler = (e) => {
     if (KEY_BACKSPACE === e.which) {
-      if (this.hasSelection()) {
-        this.deleteSelection();
-      }
-
       if ('' !== this.state.tagInput) {
         return;
+      }
+
+      if (this.hasSelection()) {
+        this.deleteSelection();
       }
 
       this.selectLastTag();
@@ -149,6 +149,9 @@ export class TagField extends Component<Props, OwnState> {
     if (KEY_TAB === e.which && this.hasSelection()) {
       this.unselect(e);
       return;
+    }
+    if (this.hasSelection()) {
+      this.unselect(e);
     }
   };
 
@@ -218,7 +221,10 @@ export class TagField extends Component<Props, OwnState> {
       return;
     }
 
-    if (this.hiddenTag?.current !== event.relatedTarget) {
+    if (
+      this.hiddenTag?.current !== event.relatedTarget ||
+      this.hiddenTag?.current === undefined
+    ) {
       this.setState({ selectedTag: '' as T.TagName });
     }
   };
