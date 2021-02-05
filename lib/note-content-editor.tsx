@@ -8,6 +8,7 @@ import Monaco, {
 import {
   editor as Editor,
   languages,
+  Range,
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
@@ -29,7 +30,7 @@ import * as T from './types';
 const SPEED_DELAY = 120;
 
 const titleDecorationForLine = (line: number) => ({
-  range: new monaco.Range(line, 1, line, 1),
+  range: new Range(line, 1, line, 1),
   options: {
     isWholeLine: true,
     inlineClassName: 'note-title',
