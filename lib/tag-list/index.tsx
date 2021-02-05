@@ -8,10 +8,9 @@ import {
   SortEndHandler,
 } from 'react-sortable-hoc';
 import isEmailTag from '../utils/is-email-tag';
-import PanelTitle from '../components/panel-title';
 import ReorderIcon from '../icons/reorder';
-import CrossOutlineIcon from '../icons/cross-outline';
 import TagListInput from './input';
+import TrashIcon from '../icons/trash';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
 
 import * as selectors from './../state/selectors';
@@ -58,17 +57,30 @@ const SortableTag = SortableElement(
   }) => (
     <li
       key={tagHash}
-      className={classNames(`tag-list-item`, `theme-${theme}`)}
+      className={classNames(
+        `tag-list-item`,
+        `theme-color-border`,
+        `theme-color-fg`,
+        `theme-${theme}`
+      )}
       data-tag-name={tag.name}
     >
-      {editingActive && <CrossOutlineIcon onClick={() => trashTag(tag.name)} />}
       <TagListInput
         editable={editingActive}
         isSelected={isSelected}
         onClick={() => !editingActive && selectTag(tag.name)}
         tagName={tag.name}
       />
-      {editingActive && allowReordering && <TagHandle />}
+      {editingActive && (
+        <button className="icon-button button-trash">
+          <TrashIcon onClick={() => trashTag(tag.name)} />
+        </button>
+      )}
+      {editingActive && allowReordering && (
+        <button className="icon-button button-reorder theme-color-fg-dim">
+          <TagHandle />
+        </button>
+      )}
     </li>
   )
 );
@@ -148,8 +160,8 @@ export class TagList extends Component<Props> {
 
     return (
       <div className={classes}>
-        <div className="tag-list-title">
-          <PanelTitle headingLevel={2}>Tags</PanelTitle>
+        <div className="tag-list-title theme-color-border">
+          <h2 className="theme-color-fg">Tags</h2>
           {sortedTags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"

@@ -151,6 +151,7 @@ span[dir='ltr'] {
     color: $studio-gray-50;
   }
   .theme-color-border,
+  &.theme-color-border,
   .button {
     border-color: $studio-gray-5;
   }
@@ -161,6 +162,10 @@ span[dir='ltr'] {
   .note-list-item-pinned .note-list-item-pinner {
     color: $studio-simplenote-blue-50;
   }
+}
+
+.theme-light.theme-color-border {
+  border-color: $studio-gray-5;
 }
 
 .theme-dark {
@@ -180,6 +185,7 @@ span[dir='ltr'] {
     color: $studio-gray-30;
   }
   .theme-color-border,
+  &.theme-color-border,
   .button {
     border-color: $studio-gray-80;
   }
