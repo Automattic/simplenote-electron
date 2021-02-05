@@ -5,15 +5,17 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
-    line-height: 40px;
 
     .tag-suggestion-row {
+      height: 36px;
+      line-height: 36px;
       cursor: pointer;
       position: relative;
       padding: 0;
     }
 
     .tag-suggestion {
+      font-size: 16px;
       margin-left: 30px;
       border-bottom-style: solid;
       border-bottom-width: 1px;

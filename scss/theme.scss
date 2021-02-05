@@ -84,7 +84,7 @@ span[dir='ltr'] {
 .note-detail-markdown {
   height: 100%;
   width: 100%;
-  font-family: 'Simplenote Tasks', sans-serif;
+  font-family: 'Simplenote Tasks', $sans, sans-serif;
 
   .slider {
     border-radius: 10px;
@@ -283,7 +283,7 @@ span[dir='ltr'] {
 
   .note-list {
     .note-list-item-selected {
-      background: $studio-simplenote-blue-50;
+      background: rgba($studio-simplenote-blue-50, 0.4);
       .note-list-item-excerpt,
       .note-list-item-published-icon,
       .note-list-item-pending-changes {

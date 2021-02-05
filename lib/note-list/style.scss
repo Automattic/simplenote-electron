@@ -103,7 +103,7 @@
   display: flex;
   padding-left: 8px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'Simplenote Tasks', sans-serif;
+  font-family: 'Simplenote Tasks', $sans, sans-serif;
   min-height: 64px;
 
   .note-list-item-status {
@@ -189,6 +189,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 16px;
+    font-weight: 500;
 
     & span {
       text-overflow: ellipsis;

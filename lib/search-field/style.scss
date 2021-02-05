@@ -5,13 +5,14 @@
   width: 100%;
   padding: 6px 5px 5px 20px;
   border-bottom: 1px solid;
+  height: $toolbar-height;
 
   input {
     width: 100%;
     min-width: 0; // Firefox
     border: 0;
-    padding-left: 5px;
     appearance: none;
+    font-size: 16px;
 
     &:focus {
       outline: none;
@@ -20,6 +21,10 @@
 
   .icon-button {
     flex: 0 0 auto;
+  }
+
+  .icon-button:first-child() {
+    text-align: left;
   }
 
   .icon-cross-small {
