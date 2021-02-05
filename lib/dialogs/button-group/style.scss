@@ -23,13 +23,5 @@
     padding: 0 18px;
     text-align: left;
     font-size: 115%;
-
-    &::after {
-      content: '→';
-      display: block;
-      width: 1em;
-      height: 1em;
-      line-height: 1;
-    }
   }
 }

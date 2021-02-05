@@ -5,11 +5,10 @@ export default function ShareIcon() {
     <svg
       className="icon-share"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M7.707 7.707L6.293 6.293 11 1.586l4.707 4.707-1.414 1.414L12 5.414V13h-2V5.414L7.707 7.707zM17 9v9H5V9H3v11h16V9h-2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M8.71 9.12L7.29 7.71 12 3l4.71 4.71 -1.42 1.41L13 6.83V17h-2V6.83L8.71 9.12zM18 21H6c-1.105 0-2-0.895-2-2v-7h2v7h12v-7h2v7C20 20.105 19.105 21 18 21z" />
     </svg>
   );
 }

@@ -8,9 +8,7 @@ export default function MenuIcon() {
       viewBox="0 0 24 24"
     >
       <rect x="0" fill="none" width="24" height="24" />
-      <g>
-        <path d="M21,11H3v2H21Zm0-5H3V8H21Zm0,10H3v2H21Z" />
-      </g>
+      <path d="M21 11H3v2H21Zm0-5H3V8H21Zm0 10H3v2H21Z" />
     </svg>
   );
 }

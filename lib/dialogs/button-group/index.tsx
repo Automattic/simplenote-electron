@@ -1,4 +1,5 @@
 import React from 'react';
+import SmallChevronRightIcon from '../../icons/chevron-right-small';
 import PropTypes from 'prop-types';
 
 const ButtonGroup = (props) => {
@@ -10,6 +11,7 @@ const ButtonGroup = (props) => {
         <li key={item.slug} className="button-group__item theme-color-border">
           <button type="button" onClick={() => onClickItem(item)}>
             {item.name}
+            <SmallChevronRightIcon />
           </button>
         </li>
       ))}

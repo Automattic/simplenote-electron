@@ -5,11 +5,10 @@ export default function TopRightArrowIcon() {
     <svg
       className="icon-arrow-top-right"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M6.075 17.364L15 8.464V16h2V5H6v2h7.536L4.65 15.925z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M7.22 5.28v2h8.08L5.28 17.3l1.42 1.42L16.72 8.7v8.08h2V5.28H7.22z" />
     </svg>
   );
 }

@@ -1,5 +1,12 @@
 svg[class^='icon-'] {
   fill: currentColor;
+  height: 24px;
+  width: 24px;
+}
+
+svg[class^='icon-'][class$='-small'] {
+  height: 16px;
+  width: 16px;
 }
 
 // Color for the Simplenote logo

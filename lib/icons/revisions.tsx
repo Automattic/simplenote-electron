@@ -5,11 +5,10 @@ export default function RevisionsIcon() {
     <svg
       className="icon-revisions"
       xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      viewBox="0 0 24 24"
     >
-      <path d="M8.7,14.7l3.3-3.3V6h-2v4.6l-2.7,2.7L8.7,14.7z M11,2c5,0,9,4,9,9h-2c0-3.9-3.1-7-7-7s-7,3.1-7,7s3.1,7,7,7c2.4,0,4.5-1.2,5.7-3H13v-2h7v7h-2v-3.3c-1.6,2-4.2,3.3-7,3.3c-5,0-9-4-9-9S6,2,11,2z" />
+      <rect x="0" fill="none" width="24" height="24" />
+      <path d="M9.48 15.94 13 12.4V7H11v4.6L8.06 14.52ZM12 3a9 9 0 0 1 9 9H19a7 7 0 1 0-7 7 6.83 6.83 0 0 0 5.7-3H14V14h7v7H19V17.7A9 9 0 1 1 12 3Z" />
     </svg>
   );
 }
