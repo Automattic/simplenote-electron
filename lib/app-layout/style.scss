@@ -105,7 +105,7 @@
 }
 
 .app-layout__source-column {
-  width: 380px;
+  width: $note-list-width;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
