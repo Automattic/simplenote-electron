@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { CmdOrCtrl } from '../utils/platform';
 import IconButton from '../icon-button';
 import NewNoteIcon from '../icons/new-note';
 import MenuIcon from '../icons/menu';
@@ -53,14 +54,14 @@ export const MenuBar: FunctionComponent<Props> = ({
       <IconButton
         icon={<MenuIcon />}
         onClick={toggleNavigation}
-        title="Menu • Ctrl+Shift+U"
+        title={`Menu • ${CmdOrCtrl}+Shift+U`}
       />
       {placeholder}
       <IconButton
         disabled={showTrash}
         icon={<NewNoteIcon />}
         onClick={() => onNewNote(withoutTags(searchQuery))}
-        title="New Note • Ctrl+Shift+I"
+        title={`New Note • ${CmdOrCtrl}+Shift+I`}
       />
     </div>
   );

@@ -70,7 +70,7 @@ export class Auth extends Component<Props> {
 
     return (
       <div className={mainClasses}>
-        {isMac && <div className="login__draggable-area" />}
+        {isElectron && isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onSubmit}>
           <h1>{buttonLabel}</h1>
