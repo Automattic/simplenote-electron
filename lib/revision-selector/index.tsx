@@ -69,6 +69,13 @@ export class RevisionSelector extends Component<Props> {
       !openedRevision ||
       (openedRevision && selectedIndex === revisions?.size - 1);
 
+    const leftPos = Number(
+      // Based on ((selected - min) * 100) / (max - min);
+      (((selectedIndex === -1 ? revisions?.size : selectedIndex) - 1) * 100) /
+        (revisions?.size - 2)
+    );
+    const datePos = `calc(${leftPos}% + (${8 - leftPos * 0.15}px))`;
+
     const revisionDate = format(
       (openedRevision
         ? revisions.get(openedRevision).modificationDate
@@ -76,38 +83,46 @@ export class RevisionSelector extends Component<Props> {
       'MMM d, yyyy h:mm a'
     );
 
-    const mainClasses = classNames('revision-selector', {
-      'is-visible': isViewingRevisions,
-    });
+    const mainClasses = classNames(
+      'revision-selector theme-color-border theme-color-fg theme-color-bg',
+      {
+        'is-visible': isViewingRevisions,
+      }
+    );
 
     return (
       <div className={mainClasses}>
-        <div className="revision-date">{`Originally created: ${revisionDate}`}</div>
-        <div className="revision-slider">
-          <Slider
-            disabled={!revisions || revisions.size === 0}
-            min={
-              1 /* don't allow reverting to the very first version because that's a blank note */
-            }
-            max={revisions?.size - 1}
-            value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
-            onChange={this.onSelectRevision}
-          />
-        </div>
-        <div className="revision-buttons">
-          <button
-            className="button button-secondary button-compact"
-            onClick={this.onCancelRevision}
-          >
-            Cancel
-          </button>
-          <button
-            disabled={isNewest}
-            className="button button-primary button-compact"
-            onClick={this.onAcceptRevision}
-          >
-            Restore Note
-          </button>
+        <div className="revision-selector-inner">
+          <div className="revision-slider-title">History</div>
+          <div className="revision-date" style={{ left: datePos }}>
+            {revisionDate}
+          </div>
+          <div className="revision-slider">
+            <Slider
+              disabled={!revisions || revisions.size === 0}
+              min={
+                1 /* don't allow reverting to the very first version because that's a blank note */
+              }
+              max={revisions?.size - 1}
+              value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
+              onChange={this.onSelectRevision}
+            />
+          </div>
+          <div className="revision-buttons">
+            <button
+              className="button button-secondary button-compact"
+              onClick={this.onCancelRevision}
+            >
+              Cancel
+            </button>
+            <button
+              disabled={isNewest}
+              className="button button-primary button-compact"
+              onClick={this.onAcceptRevision}
+            >
+              Restore
+            </button>
+          </div>
         </div>
       </div>
     );
