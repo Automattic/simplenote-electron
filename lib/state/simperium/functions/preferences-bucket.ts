@@ -14,7 +14,7 @@ export class PreferencesBucket implements BucketStore<T.Preferences> {
     this.store = store;
   }
 
-  get(id: T.EntityId, callback: EntityCallback<BucketObject<T.Note>>) {
+  get(id: T.EntityId, callback: EntityCallback<BucketObject<T.Preferences>>) {
     const data = this.store.getState().data.preferences.get(id);
 
     callback(null, { id, data });
