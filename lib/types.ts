@@ -66,7 +66,8 @@ export type DialogType =
   | 'KEYBINDINGS'
   | 'LOGOUT-CONFIRMATION'
   | 'SETTINGS'
-  | 'SHARE';
+  | 'SHARE'
+  | 'TRASH-TAG-CONFIRMATION';
 export type LineLength = 'full' | 'narrow';
 export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
