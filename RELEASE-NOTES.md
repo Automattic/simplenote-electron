@@ -1,5 +1,25 @@
 # Changelog
 
+## [v2.7.0]
+
+### Enhancements
+
+- Added a sort order bar to the note list [#2542](https://github.com/Automattic/simplenote-electron/pull/2542)
+- Added a checklist icon to the note toolbar [#2603](https://github.com/Automattic/simplenote-electron/pull/2603)
+- Updated tag renaming to be more consistent in the app and across platforms [#2602](https://github.com/Automattic/simplenote-electron/pull/2602)
+- Moved the note revision slider to the bottom of the note [#2586](https://github.com/Automattic/simplenote-electron/pull/2586)
+- Added the new note icon to the toolbar when in focus mode [#2596](https://github.com/Automattic/simplenote-electron/pull/2596)
+- Updated the icon set [#2623](https://github.com/Automattic/simplenote-electron/pull/2623)
+- Updated tag editing styles [#2584](https://github.com/Automattic/simplenote-electron/pull/2584)
+- Adjusted note list width and font weights [#2631](https://github.com/Automattic/simplenote-electron/pull/2631)
+- Updated pinner styles in the note list [#2624](https://github.com/Automattic/simplenote-electron/pull/2624)
+
+### Fixes
+
+- Tag input now inserts tags when a space is used or when clicking outside of the input area [#2607](https://github.com/Automattic/simplenote-electron/pull/2607)
+- Updated Monaco editor to 0.22.0 to fix duplicate character inputs on Firefox [#2611](https://github.com/Automattic/simplenote-electron/pull/2611)
+- Updated keyboard shortcut keys to display correctly based on platform [#2601](https://github.com/Automattic/simplenote-electron/pull/2601)
+
 ## [v2.6.0]
 
 ### Enhancements
