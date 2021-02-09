@@ -1,5 +1,6 @@
+import actions from 'lib/state/actions';
 import React, { FunctionComponent } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { closeDialog } from '../../../lib/state/ui/actions';
 import Dialog from '../../dialog';
@@ -8,15 +9,15 @@ import type * as S from '../../state';
 import type * as T from '../../types';
 
 type DispatchProps = {
-  trashTag: (tagName: T.TagName) => any;
   closeDialog: () => any;
+  trashTag: (tagName: T.TagName) => any;
 };
 
 type Props = DispatchProps;
 
 const TrashTagConfirmation: FunctionComponent<Props> = ({
-  trashTag,
   closeDialog,
+  trashTag,
 }) => (
   <Dialog
     className="trash-tag-confirmation"
@@ -27,7 +28,8 @@ const TrashTagConfirmation: FunctionComponent<Props> = ({
     <button
       className="button-primary delete-tag"
       onClick={() => {
-        return;
+        //trashTag(tagName);
+        console.log('delete');
       }}
     >
       Delete
