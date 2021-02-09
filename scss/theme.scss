@@ -249,7 +249,7 @@ span[dir='ltr'] {
   }
 
   .navigation-bar-item.is-selected {
-    background-color: $studio-simplenote-blue-50;
+    background-color: rgba($studio-simplenote-blue-50, 0.4);
 
     svg[class^='icon-'] {
       fill: $studio-white;
