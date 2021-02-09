@@ -114,28 +114,6 @@ export class NoteToolbar extends Component<Props> {
           )}
           <div className="note-toolbar__button">
             <IconButton
-              disabled={!hasRevisions}
-              icon={<RevisionsIcon />}
-              onClick={this.props.toggleRevisions}
-              title={hasRevisions ? 'History' : 'History (unavailable)'}
-            />
-          </div>
-          <div className="note-toolbar__button">
-            <IconButton
-              icon={<ShareIcon />}
-              onClick={this.props.shareNote}
-              title="Share"
-            />
-          </div>
-          <div className="note-toolbar__button">
-            <IconButton
-              icon={<TrashIcon />}
-              onClick={this.props.trashNote}
-              title="Trash"
-            />
-          </div>
-          <div className="note-toolbar__button">
-            <IconButton
               icon={<InfoIcon />}
               onClick={toggleNoteInfo}
               title="Info"

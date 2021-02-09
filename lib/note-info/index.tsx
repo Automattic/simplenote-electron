@@ -9,6 +9,7 @@ import CrossIcon from '../icons/cross';
 import References from './references';
 
 import actions from '../state/actions';
+import { getTheme } from '../state/selectors';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -16,6 +17,7 @@ import * as T from '../types';
 type StateProps = {
   noteId: T.EntityId;
   note: T.Note;
+  theme: string;
 };
 
 type DispatchProps = {
@@ -30,13 +32,11 @@ export class NoteInfo extends Component<Props> {
   handleClickOutside = this.props.onOutsideClick;
 
   render() {
-    const { noteId, note } = this.props;
+    const { noteId, note, theme } = this.props;
     const creationDate = note.creationDate * 1000;
     const modificationDate = note.modificationDate
       ? note.modificationDate * 1000
       : null;
-
-    const theme = 'light'; // @todo use a selector for this
 
     return (
       <Modal
@@ -147,15 +147,13 @@ function characterCount(content: string) {
   );
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  data,
-  ui: { openedNote },
-}) => {
-  const note = data.notes.get(openedNote);
+const mapStateToProps: S.MapState<StateProps> = (state) => {
+  const note = state.data.notes.get(state.ui.openedNote);
 
   return {
-    noteId: openedNote,
+    noteId: state.ui.openedNote,
     note: note,
+    theme: getTheme(state),
   };
 };
 
