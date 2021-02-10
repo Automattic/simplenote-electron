@@ -4,7 +4,7 @@ import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
 
 import ClipboardButton from '../components/clipboard-button';
-import ToggleControl from '../controls/toggle';
+import CheckboxControl from '../controls/checkbox';
 import getNoteTitleAndPreview from '../utils/note-utils';
 
 import actions from '../state/actions';
@@ -13,6 +13,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
+  hasRevisions: boolean;
   isMarkdown: boolean;
   isPinned: boolean;
   noteId: T.EntityId;
@@ -23,6 +24,7 @@ type DispatchProps = {
   markdownNote: (noteId: T.EntityId, shouldEnableMarkdown: boolean) => any;
   onOutsideClick: () => any;
   pinNote: (noteId: T.EntityId, shouldPin: boolean) => any;
+  publishNote: () => any;
   shareNote: () => any;
   toggleRevisions: () => any;
   trashNote: () => any;
@@ -45,80 +47,114 @@ export class NoteActions extends Component<Props> {
   };
 
   render() {
-    const { isMarkdown, isPinned, noteId, note } = this.props;
+    const { hasRevisions, isMarkdown, isPinned, noteId, note } = this.props;
     const isPublished = includes(note.systemTags, 'published');
     const publishURL = this.getPublishURL(note.publishURL);
     const noteLink = this.getNoteLink(note, noteId);
 
     return (
-      <div className="note-actions theme-color-bg theme-color-fg theme-color-border">
-        <div className="note-info-panel note-info-pin theme-color-border">
-          <label className="note-info-item" htmlFor="note-info-pin-checkbox">
-            <span className="note-info-item-text">
-              <span className="note-info-name">Pin to top</span>
+      <div className="note-actions theme-color-bg theme-color-fg-dim theme-color-border">
+        <div className="note-actions-panel theme-color-border">
+          <label
+            className="note-actions-item"
+            htmlFor="note-actions-pin-checkbox"
+          >
+            <span className="note-actions-item-text">
+              <span className="note-actions-name">Pin to top</span>
             </span>
-            <span className="note-info-item-control">
-              <ToggleControl
-                id="note-info-pin-checkbox"
+            <span className="note-actions-item-control">
+              <input
+                type="checkbox"
+                id="note-actions-pin-checkbox"
                 checked={isPinned}
-                onChange={this.pinNote}
+                onChange={() => {
+                  this.pinNote(!isPinned);
+                }}
               />
             </span>
           </label>
 
           <label
-            className="note-info-item"
-            htmlFor="note-info-markdown-checkbox"
+            className="note-actions-item"
+            htmlFor="note-actions-markdown-checkbox"
           >
-            <span className="note-info-item-text">
-              <span className="note-info-name">Markdown</span>
+            <span className="note-actions-item-text">
+              <span className="note-actions-name">Markdown</span>
             </span>
-            <span className="note-info-item-control">
-              <ToggleControl
-                id="note-info-markdown-checkbox"
+            <span className="note-actions-item-control">
+              <input
+                type="checkbox"
+                id="note-actions-markdown-checkbox"
                 checked={isMarkdown}
-                onChange={this.markdownNote}
+                onChange={() => {
+                  this.markdownNote(!isMarkdown);
+                }}
               />
             </span>
           </label>
 
-          <div className="note-info-item">
-            <a onClick={this.props.shareNote}>Share</a>
+          <div className="note-actions-item" onClick={this.props.shareNote}>
+            Share
           </div>
 
-          {/* todo probably verify it has revisions */}
-          <div className="note-info-item">
-            <a onClick={this.props.toggleRevisions}>History...</a>
-          </div>
+          {hasRevisions && (
+            <div
+              className="note-actions-item"
+              onClick={this.props.toggleRevisions}
+            >
+              History…
+            </div>
+          )}
+          {hasRevisions || (
+            <div className="note-actions-item">History (unavailable)</div>
+          )}
 
-          {/* todo what if already in trash? */}
-          <div className="note-info-item">
-            <a onClick={this.props.trashNote}>
-              <span className="note-info-name">Trash</span>
-            </a>
+          <div className="note-actions-item" onClick={this.props.trashNote}>
+            Trash
           </div>
         </div>
-        {isPublished && (
-          <div className="note-info-panel note-info-public-link theme-color-border">
-            <span className="note-info-item-text">
-              <span className="note-info-name">Public link</span>
-              <div className="note-info-copy">
-                <p className="note-info-detail note-info-link-text theme-color-fg-dim">
-                  {publishURL}
-                </p>
-                <ClipboardButton text={publishURL} />
-              </div>
+        <div className="note-actions-panel note-actions-public-link theme-color-border">
+          <label
+            className="note-actions-item"
+            htmlFor="note-actions-publish-checkbox"
+          >
+            <span className="note-actions-item-text">
+              <span className="note-actions-name">Publish</span>
             </span>
+            <span className="note-actions-item-control">
+              <input
+                type="checkbox"
+                id="note-actions-publish-checkbox"
+                checked={isPublished}
+                onChange={this.props.publishNote}
+              />
+            </span>
+          </label>
+          <div className="note-actions-copy">
+            {isPublished && (
+              /* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">
+                {publishURL}
+              </p> */
+              <ClipboardButton text={publishURL} />
+            )}
+            {isPublished || (
+              <span className="note-actions-disabled">Copy Link</span>
+            )}
           </div>
-        )}
-        <div className="note-info-panel note-info-internal-link theme-color-border">
-          <span className="note-info-item-text">
-            <span className="note-info-name">Internal link</span>
-            <div className="note-info-copy">
-              <p className="note-info-detail note-info-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p>
+        </div>
+        <div className="note-actions-panel note-actions-internal-link theme-color-border">
+          <span className="note-actions-item-text">
+            <span className="note-actions-name">Internal link</span>
+            <div className="note-actions-copy">
+              {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
               <ClipboardButton text={noteLink} />
             </div>
           </span>
+        </div>
+        <div className="note-actions-panel theme-color-border">
+          <div className="note-actions-item" onClick={this.props.shareNote}>
+            Collaborate…
+          </div>
         </div>
       </div>
     );
@@ -140,6 +176,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   return {
     noteId: openedNote,
     note: note,
+    hasRevisions: !!data.noteRevisions.get(openedNote)?.size,
     isMarkdown: note?.systemTags.includes('markdown'),
     isPinned: note?.systemTags.includes('pinned'),
   };
@@ -149,6 +186,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   markdownNote: actions.data.markdownNote,
   onOutsideClick: actions.ui.toggleNoteActions,
   pinNote: actions.data.pinNote,
+  publishNote: actions.data.publishNote,
   shareNote: () => actions.ui.showDialog('SHARE'),
   toggleRevisions: actions.ui.toggleRevisions,
   trashNote: actions.ui.trashOpenNote,

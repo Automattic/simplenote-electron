@@ -60,12 +60,8 @@ optgroup {
   position: relative;
   width: 100%;
   height: 100%;
-  transform: translateX(0);
-  transition: transform 200ms ease-in-out;
-
-  &.note-info-open {
-    // transform: translateX(-$note-info-width);
-  }
+  // transform: translateX(0);
+  // transition: transform 200ms ease-in-out;
 }
 
 .is-macos {

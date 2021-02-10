@@ -1,12 +1,13 @@
 .note-info {
   display: flex;
   flex-direction: column;
-  width: $note-info-width;
+  width: 360px;
   // height: 500px;
   border: 1px solid;
   border-radius: 5px;
   // overflow: auto;
   // overflow-x: hidden;
+  user-select: text;
 
   -webkit-overflow-scrolling: touch;
 
@@ -33,7 +34,7 @@
       flex-grow: 1;
       margin-bottom: 0;
       text-transform: none;
-      font-size: 1em;
+      font-size: 16px;
     }
 
     button {
@@ -43,16 +44,11 @@
   }
 
   .note-info-item {
-    height: 28px;
     margin: 0;
-    padding: 8px 18px;
+    padding: 4px 16px;
 
     .note-info-detail {
       float: right;
-    }
-
-    &:last-child {
-      margin-bottom: 16px;
     }
   }
 
@@ -61,8 +57,9 @@
   }
 
   .note-references {
-    flex-grow: 1;
-    height: 100%;
+    // flex-grow: 1;
+    // height: 100%;
+    max-height: 200px;
     overflow-y: scroll;
   }
 

@@ -42,14 +42,13 @@ export class NoteInfo extends Component<Props> {
       <Modal
         key="note-info-modal"
         className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg"
-        // className="note-info-modal-newclass"
         contentLabel="Document"
         isOpen
         onRequestClose={this.handleClickOutside}
         overlayClassName="dialog-renderer__overlay"
         portalClassName={`dialog-renderer__portal theme-${theme}`}
       >
-        <div className="note-info-panel note-info-stats theme-color-border">
+        <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
           <div className="note-info-header theme-color-border theme-color-fg">
             <PanelTitle headingLevel={2}>Document</PanelTitle>
             <button

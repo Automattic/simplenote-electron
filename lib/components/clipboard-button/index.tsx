@@ -39,13 +39,13 @@ function ClipboardButton({ text }) {
 
   return (
     <button ref={buttonRef} type="button" className="button button-borderless">
-      {isCopied ? 'Copied!' : 'Copy'}
+      {isCopied ? 'Copied!' : 'Copy Link'}
     </button>
   );
 }
 
 ClipboardButton.propTypes = {
-  disbaled: PropTypes.bool,
+  disabled: PropTypes.bool,
   text: PropTypes.string,
 };
 

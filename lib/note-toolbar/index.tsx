@@ -171,6 +171,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   return {
     editMode,
     isOffline: connectionStatus === 'offline',
+    markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
   };
 };
