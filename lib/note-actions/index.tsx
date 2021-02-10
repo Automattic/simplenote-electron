@@ -24,7 +24,7 @@ type DispatchProps = {
   markdownNote: (noteId: T.EntityId, shouldEnableMarkdown: boolean) => any;
   onOutsideClick: () => any;
   pinNote: (noteId: T.EntityId, shouldPin: boolean) => any;
-  publishNote: () => any;
+  publishNote: (noteId: T.EntityId, shouldPublish: boolean) => any;
   shareNote: () => any;
   toggleRevisions: () => any;
   trashNote: () => any;
@@ -126,7 +126,9 @@ export class NoteActions extends Component<Props> {
                 type="checkbox"
                 id="note-actions-publish-checkbox"
                 checked={isPublished}
-                onChange={this.props.publishNote}
+                onChange={() => {
+                  this.publishNote(!isPublished);
+                }}
               />
             </span>
           </label>
@@ -162,6 +164,9 @@ export class NoteActions extends Component<Props> {
 
   pinNote = (shouldPin: boolean) =>
     this.props.pinNote(this.props.noteId, shouldPin);
+
+  publishNote = (shouldPublish: boolean) =>
+    this.props.publishNote(this.props.noteId, shouldPublish);
 
   markdownNote = (shouldEnableMarkdown: boolean) =>
     this.props.markdownNote(this.props.noteId, shouldEnableMarkdown);

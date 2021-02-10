@@ -10,7 +10,6 @@
   top: $toolbar-height + 25px;
   border: 1px solid;
   border-radius: 5px;
-  // padding: 10px;
 
   display: flex;
   flex-direction: column;
@@ -57,6 +56,11 @@
     }
   }
 
+  .note-actions-internal-link .note-actions-name {
+    display: inline-block;
+    padding: 5px 10px;
+  }
+
   .note-actions-copy {
     padding: 5px 10px;
 
@@ -70,7 +74,6 @@
 
     button {
       padding: 0;
-      //   flex: 1 0 auto;
     }
   }
 }
