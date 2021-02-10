@@ -61,7 +61,10 @@ const SortableTag = SortableElement(
         `tag-list-item`,
         `theme-color-border`,
         `theme-color-fg`,
-        `theme-${theme}`
+        `theme-${theme}`,
+        {
+          'is-selected': isSelected,
+        }
       )}
       data-tag-name={tag.name}
     >
