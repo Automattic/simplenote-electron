@@ -6,7 +6,11 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin-left: 13px;
+  padding-left: 13px;
+
+  &:hover {
+    background-color: $studio-gray-0;
+  }
 }
 
 .tag-list {
@@ -112,6 +116,12 @@ input.tag-list-input {
     }
     &.button-trash {
       color: $studio-simplenote-blue-30;
+    }
+  }
+
+  .tag-list-item {
+    &:hover {
+      background-color: $studio-gray-60;
     }
   }
 }
