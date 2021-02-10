@@ -63,7 +63,6 @@
 }
 
 .tag-list-input {
-  cursor: text;
   flex: 1 1 auto;
   display: block;
   width: 50px;
@@ -90,6 +89,10 @@ button.tag-list-input {
   margin: 8px 0;
   overflow-x: hidden;
   text-align: left;
+}
+
+input.tag-list-input {
+  cursor: text;
 }
 
 .tag-list-editing {

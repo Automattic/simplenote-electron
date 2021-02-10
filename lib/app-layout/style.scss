@@ -28,8 +28,6 @@
   }
 
   &.is-navigation-open {
-    opacity: $fade-alpha;
-    transition: $anim;
     pointer-events: none;
 
     @media only screen and (max-width: $single-column) {

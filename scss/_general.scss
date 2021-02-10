@@ -66,10 +66,6 @@ optgroup {
   &.note-info-open {
     transform: translateX(-$note-info-width);
   }
-
-  &.navigation-open {
-    transform: translateX($navigation-bar-width);
-  }
 }
 
 .is-macos {
