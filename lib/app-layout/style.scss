@@ -30,7 +30,7 @@
   &.is-navigation-open {
     pointer-events: none;
 
-    &:before {
+    &::before {
       content: '';
       background-color: rgba($studio-black, 0.2);
       display: block;
@@ -47,7 +47,7 @@
         opacity: 0;
       }
 
-      &:before {
+      &::before {
         display: none;
       }
     }
