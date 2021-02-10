@@ -10,10 +10,7 @@ import InfoIcon from '../icons/info';
 import NewNoteIcon from '../icons/new-note';
 import PreviewIcon from '../icons/preview';
 import PreviewStopIcon from '../icons/preview-stop';
-import RevisionsIcon from '../icons/revisions';
-import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-import TrashIcon from '../icons/trash';
 import actions from '../state/actions';
 
 import * as S from '../state';
@@ -21,7 +18,6 @@ import * as T from '../types';
 
 type StateProps = {
   editMode: boolean;
-  hasRevisions: boolean;
   isOffline: boolean;
   markdownEnabled: boolean;
   note: T.Note | null;
@@ -31,14 +27,11 @@ type DispatchProps = {
   deleteNoteForever: () => any;
   newNote: () => any;
   restoreNote: () => any;
-  shareNote: () => any;
   toggleEditMode: () => any;
   toggleFocusMode: () => any;
   toggleNoteActions: () => any;
   toggleNoteInfo: () => any;
   toggleNoteList: () => any;
-  toggleRevisions: () => any;
-  trashNote: () => any;
 };
 
 type Props = DispatchProps & StateProps;
@@ -59,7 +52,6 @@ export class NoteToolbar extends Component<Props> {
     const {
       editMode,
       newNote,
-      hasRevisions,
       isOffline,
       markdownEnabled,
       note,
@@ -119,7 +111,7 @@ export class NoteToolbar extends Component<Props> {
               title="Info"
             />
           </div>
-          <div className="note-toolbar__button">
+          <div className="note-toolbar__button ignore-react-onclickoutside">
             <IconButton
               icon={<EllipsisOutlineIcon />}
               onClick={toggleNoteActions}
@@ -178,9 +170,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
   return {
     editMode,
-    hasRevisions: !!data.noteRevisions.get(openedNote)?.size,
     isOffline: connectionStatus === 'offline',
-    markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
   };
 };
@@ -189,14 +179,11 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
   newNote: actions.ui.createNote,
   restoreNote: actions.ui.restoreOpenNote,
-  shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
   toggleFocusMode: actions.settings.toggleFocusMode,
   toggleNoteActions: actions.ui.toggleNoteActions,
   toggleNoteInfo: actions.ui.toggleNoteInfo,
   toggleNoteList: actions.ui.toggleNoteList,
-  toggleRevisions: actions.ui.toggleRevisions,
-  trashNote: actions.ui.trashOpenNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);
