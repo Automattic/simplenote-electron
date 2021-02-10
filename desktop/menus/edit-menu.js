@@ -74,14 +74,6 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
       },
-      ...(isAuthenticated ? [{ type: 'separator' }] : []),
-      {
-        label: 'C&heck Spelling',
-        visible: isAuthenticated,
-        type: 'checkbox',
-        checked: settings.spellCheckEnabled,
-        click: appCommandSender({ action: 'toggleSpellCheck' }),
-      },
     ],
   };
 };
