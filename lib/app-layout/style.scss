@@ -28,13 +28,27 @@
   }
 
   &.is-navigation-open {
-    opacity: $fade-alpha;
-    transition: $anim;
     pointer-events: none;
+
+    &::before {
+      content: '';
+      background-color: rgba($studio-black, 0.2);
+      display: block;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 1;
+    }
 
     @media only screen and (max-width: $single-column) {
       .app-layout__note-column {
         opacity: 0;
+      }
+
+      &::before {
+        display: none;
       }
     }
   }

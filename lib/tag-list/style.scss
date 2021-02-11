@@ -6,7 +6,15 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin-left: 13px;
+  padding-left: 13px;
+
+  &:hover {
+    background-color: $studio-gray-0;
+  }
+
+  &.is-selected {
+    background-color: $studio-simplenote-blue-5;
+  }
 }
 
 .tag-list {
@@ -63,7 +71,6 @@
 }
 
 .tag-list-input {
-  cursor: text;
   flex: 1 1 auto;
   display: block;
   width: 50px;
@@ -92,6 +99,10 @@ button.tag-list-input {
   text-align: left;
 }
 
+input.tag-list-input {
+  cursor: text;
+}
+
 .tag-list-editing {
   .tag-list-input {
     cursor: text;
@@ -109,6 +120,12 @@ button.tag-list-input {
     }
     &.button-trash {
       color: $studio-simplenote-blue-30;
+    }
+  }
+
+  .tag-list-item {
+    &:hover {
+      background-color: $studio-gray-60;
     }
   }
 }

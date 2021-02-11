@@ -3,12 +3,14 @@
   flex-direction: column;
   position: absolute;
   top: 0;
-  left: -$navigation-bar-width;
+  left: 0;
   padding-top: $toolbar-height;
   width: $navigation-bar-width;
   height: 100%;
   overflow: hidden;
   border-right: 1px solid;
+  z-index: 2;
+  transition: transform 200ms ease-in-out;
 }
 
 .is-macos .navigation-bar {

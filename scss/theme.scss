@@ -248,7 +248,8 @@ span[dir='ltr'] {
     }
   }
 
-  .navigation-bar-item.is-selected {
+  .navigation-bar-item.is-selected,
+  .tag-list-item.is-selected {
     background-color: rgba($studio-simplenote-blue-50, 0.4);
 
     svg[class^='icon-'] {
