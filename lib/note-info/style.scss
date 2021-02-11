@@ -7,8 +7,8 @@
   border-radius: 5px;
   // overflow: auto;
   // overflow-x: hidden;
-  user-select: text;
 
+  user-select: text;
   -webkit-overflow-scrolling: touch;
 
   .note-info-panel {
@@ -57,10 +57,10 @@
   }
 
   .note-references {
-    // flex-grow: 1;
-    // height: 100%;
     max-height: 200px;
     overflow-y: scroll;
+    // flex-grow: 1;
+    // height: 100%;
   }
 
   .reference-link {

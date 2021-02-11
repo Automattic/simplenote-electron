@@ -10,7 +10,6 @@
   top: $toolbar-height + 25px;
   border: 1px solid;
   border-radius: 5px;
-
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -48,9 +47,6 @@
 
   .note-actions-public-link,
   .note-actions-internal-link {
-    button {
-    }
-
     .note-actions-disabled {
       color: $studio-gray-5;
     }
