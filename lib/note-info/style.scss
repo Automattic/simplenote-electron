@@ -25,7 +25,7 @@
     display: flex;
     border-bottom: 1px solid;
     line-height: 12px;
-    padding: 12px 18px;
+    padding: 12px 8px 12px 16px;
     margin-bottom: 10px;
     flex-direction: row;
     align-items: center;
@@ -59,13 +59,11 @@
   .note-references {
     max-height: 200px;
     overflow-y: scroll;
-    // flex-grow: 1;
-    // height: 100%;
   }
 
   .reference-link {
     display: block;
-    padding: 5px;
+    padding: 5px 0;
     text-align: left;
     text-decoration: none;
     width: 100%;
@@ -76,7 +74,7 @@
     }
 
     .reference-title {
-      font-style: italic;
+      font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

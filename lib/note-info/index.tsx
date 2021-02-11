@@ -5,7 +5,7 @@ import onClickOutside from 'react-onclickoutside';
 
 import LastSyncTime from '../components/last-sync-time';
 import PanelTitle from '../components/panel-title';
-import CrossIcon from '../icons/cross';
+import SmallCrossIcon from '../icons/cross-small';
 import References from './references';
 
 import actions from '../state/actions';
@@ -49,20 +49,20 @@ export class NoteInfo extends Component<Props> {
         portalClassName={`dialog-renderer__portal theme-${theme}`}
       >
         <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
-          <div className="note-info-header theme-color-border theme-color-fg">
-            <PanelTitle headingLevel={2}>Document</PanelTitle>
+          <div className="note-info-header theme-color-border">
+            <h2 className="panel-title theme-color-fg">Document</h2>
             <button
               type="button"
               className="about-done button icon-button"
               onClick={this.handleClickOutside}
             >
-              <CrossIcon />
+              <SmallCrossIcon />
             </button>
           </div>
           {modificationDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
-                <span className="note-info-name">Modified</span>
+                <span className="note-info-name theme-color-fg">Modified</span>
                 <span className="note-info-detail theme-color-fg-dim">
                   <time dateTime={new Date(modificationDate).toISOString()}>
                     {new Date(modificationDate).toLocaleString([], {
@@ -79,7 +79,7 @@ export class NoteInfo extends Component<Props> {
           )}
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name">Created</span>
+              <span className="note-info-name theme-color-fg">Created</span>
               <span className="note-info-detail theme-color-fg-dim">
                 <time dateTime={new Date(creationDate).toISOString()}>
                   {new Date(creationDate).toLocaleString([], {
@@ -95,7 +95,7 @@ export class NoteInfo extends Component<Props> {
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name">Last sync</span>
+              <span className="note-info-name theme-color-fg">Last sync</span>
               <span className="note-info-detail theme-color-fg-dim">
                 <LastSyncTime noteId={noteId} />
               </span>
@@ -103,7 +103,7 @@ export class NoteInfo extends Component<Props> {
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name">Words</span>
+              <span className="note-info-name theme-color-fg">Words</span>
               <span className="note-info-detail theme-color-fg-dim">
                 {wordCount(note.content)}
               </span>
@@ -111,7 +111,7 @@ export class NoteInfo extends Component<Props> {
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name">Characters</span>
+              <span className="note-info-name theme-color-fg">Characters</span>
               <span className="note-info-detail theme-color-fg-dim">
                 {characterCount(note.content)}
               </span>
