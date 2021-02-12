@@ -19,6 +19,7 @@
 - Tag input now inserts tags when a space is used or when clicking outside of the input area [#2607](https://github.com/Automattic/simplenote-electron/pull/2607)
 - Updated Monaco editor to 0.22.0 to fix duplicate character inputs on Firefox [#2611](https://github.com/Automattic/simplenote-electron/pull/2611)
 - Updated keyboard shortcut keys to display correctly based on platform [#2601](https://github.com/Automattic/simplenote-electron/pull/2601)
+- Fixed a bug causing duplicate and unwanted items to appear in the context menu [#2669](https://github.com/Automattic/simplenote-electron/pull/2669)
 
 ## [v2.6.0]
 
