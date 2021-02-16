@@ -51,7 +51,8 @@
   },
   "nsis": {
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
-    "deleteAppDataOnUninstall": true
+    "deleteAppDataOnUninstall": true,
+    "oneClick": false
   },
   "linux": {
     "artifactName": "Simplenote-linux-${version}-${arch}.${ext}",
