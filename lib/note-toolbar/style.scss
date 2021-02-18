@@ -118,8 +118,12 @@
   line-height: $toolbar-height;
   padding-right: 13px;
 
+  .icon-button {
+    margin-top: 6px;
+  }
+
   svg {
-    margin-bottom: 2px;
+    vertical-align: baseline;
   }
 }
 

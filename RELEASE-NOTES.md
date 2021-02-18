@@ -8,7 +8,7 @@
 - Added a checklist icon to the note toolbar [#2603](https://github.com/Automattic/simplenote-electron/pull/2603)
 - Updated tag renaming to be more consistent in the app and across platforms [#2602](https://github.com/Automattic/simplenote-electron/pull/2602)
 - Moved the note revision slider to the bottom of the note [#2586](https://github.com/Automattic/simplenote-electron/pull/2586), [#2662](https://github.com/Automattic/simplenote-electron/pull/2662)
-- Added the new note icon to the toolbar when in focus mode [#2596](https://github.com/Automattic/simplenote-electron/pull/2596)
+- Added the new note icon to the toolbar when in focus mode [#2596](https://github.com/Automattic/simplenote-electron/pull/2596), [#2671](https://github.com/Automattic/simplenote-electron/pull/2671)
 - Updated the icon set [#2623](https://github.com/Automattic/simplenote-electron/pull/2623)
 - Updated tag editing styles [#2584](https://github.com/Automattic/simplenote-electron/pull/2584)
 - Adjusted note list width and font weights [#2631](https://github.com/Automattic/simplenote-electron/pull/2631)
