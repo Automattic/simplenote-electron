@@ -71,9 +71,13 @@ export class RevisionSelector extends Component<Props> {
 
     const leftPos = Number(
       // Based on ((selected - min) * 100) / (max - min);
-      (((selectedIndex === -1 ? revisions?.size : selectedIndex) - 1) * 100) /
+      // min is equal to 1
+      // max is the number of size of revisions -1.
+      (((selectedIndex === -1 ? revisions?.size - 1 : selectedIndex) - 1) *
+        100) /
         (revisions?.size - 2)
     );
+
     const datePos = `calc(${leftPos}% + (${8 - leftPos * 0.15}px))`;
 
     const revisionDate = format(
