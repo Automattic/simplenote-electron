@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import PanelTitle from '../../../components/panel-title';
 import ImporterDropzone from '../dropzone';
 import TransitionFadeInOut from '../../../components/transition-fade-in-out';
 import ImportExecutor from './executor';
@@ -32,7 +31,9 @@ class SourceImporter extends React.Component {
 
     return (
       <div className="source-importer">
-        <PanelTitle headingLevel="3">Import file{multiple && 's'}</PanelTitle>
+        {!hasAcceptedFile && (
+          <p className="theme-color-fg-dim">{instructions}</p>
+        )}
         <ImporterDropzone
           acceptedTypes={acceptedTypes}
           locked={locked}
@@ -40,9 +41,14 @@ class SourceImporter extends React.Component {
           onAccept={(files) => this.setState({ acceptedFiles: files })}
           onReset={() => this.setState({ acceptedFiles: undefined })}
         />
-        {!hasAcceptedFile && (
-          <p className="theme-color-fg-dim">{instructions}</p>
-        )}
+        <button
+          className="button disabled button-primary"
+          type="button"
+          disabled={true}
+        >
+          Import
+        </button>
+
         <TransitionFadeInOut
           wrapperClassName="source-importer__executor-wrapper"
           shouldMount={hasAcceptedFile}

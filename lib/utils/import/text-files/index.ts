@@ -5,10 +5,15 @@ import { startsWith } from 'lodash';
 import * as T from '../../../types';
 
 class TextFileImporter extends EventEmitter {
-  constructor(addNote: (note: T.Note) => any, options) {
+  constructor(
+    addNote: (note: T.Note) => any,
+    options,
+    recordEvent: (eventName: string, eventProperties: T.JSONSerializable) => any
+  ) {
     super();
     this.addNote = addNote;
     this.options = options;
+    this.recordEvent = recordEvent;
   }
 
   importNotes = (filesArray) => {
@@ -63,6 +68,10 @@ class TextFileImporter extends EventEmitter {
         importedNoteCount++;
         if (file.name === lastFileName) {
           this.emit('status', 'complete', importedNoteCount);
+          this.recordEvent('importer_import_completed', {
+            source: 'plaintext',
+            note_count: importedNoteCount,
+          });
         } else {
           this.emit('status', 'progress', importedNoteCount);
         }

@@ -6,10 +6,15 @@ import CoreImporter from '../';
 import * as T from '../../../types';
 
 class EvernoteImporter extends EventEmitter {
-  constructor(addNote: (note: T.Note) => any, options) {
+  constructor(
+    addNote: (note: T.Note) => any,
+    options,
+    recordEvent: (eventName: string, eventProperties: T.JSONSerializable) => any
+  ) {
     super();
     this.addNote = addNote;
     this.options = options;
+    this.recordEvent = recordEvent;
   }
 
   importNotes = (filesArray) => {
@@ -52,6 +57,10 @@ class EvernoteImporter extends EventEmitter {
           return;
         }
         this.emit('status', 'complete', importedNoteCount);
+        this.recordEvent('importer_import_completed', {
+          source: 'evernote',
+          note_count: importedNoteCount,
+        });
         window.electron?.removeListener('noteImportChannel');
       }
     };

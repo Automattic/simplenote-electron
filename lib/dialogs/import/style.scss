@@ -1,6 +1,14 @@
 .import {
-  max-width: 24em;
-  height: 30rem;
+  max-width: 360px;
+
+  .dialog-title-text {
+    text-align: left;
+    margin-left: 24px;
+  }
+
+  .dialog-title-side:first-child {
+    display: none;
+  }
 }
 
 .import__inner,
@@ -11,7 +19,7 @@
 }
 
 .import__inner {
-  padding: 28px;
+  width: 100%;
 }
 
 .import__placeholder {

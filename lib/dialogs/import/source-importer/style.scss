@@ -4,3 +4,63 @@
   flex-direction: column;
   flex: 1 0 auto;
 }
+
+.source-importer {
+  button.disabled {
+    margin: 24px 24px 24px auto;
+    border-radius: 4px;
+    padding: 4px 12px;
+  }
+
+  .importer-dropzone {
+    margin-left: 24px;
+    margin-right: 24px;
+
+    .accepted-files-header {
+      height: 28px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    &.is-accepted + button {
+      display: none;
+    }
+
+    &.is-accepted {
+      margin-left: 0;
+      margin-right: 0;
+
+      .accepted-files-header,
+      .accepted-files {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+    }
+  }
+  p.theme-color-fg-dim {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .source-importer-executor {
+    h3,
+    label {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+  .source-importer-executor__button button {
+    margin: 24px 24px 24px auto;
+  }
+}
+
+.theme-dark {
+  .source-importer {
+    p.theme-color-fg-dim {
+      color: $studio-white;
+    }
+    button.disabled {
+      background-color: $studio-gray-50;
+    }
+  }
+}
