@@ -95,21 +95,6 @@ span[dir='ltr'] {
   }
 }
 
-/* Hide unwanted items in the context menu.
-   This removes the first item (Change All Occurrences) and the last (Command Palette).
-   The nth-child's remove Cut(7) and Copy(9) so we can add keybindings to them.
-   We may need to adjust these rules if a Monaco update adds more default items,
-   OR if we add/remove/reorder menu items sometime in the future :(
-   See: https://github.com/microsoft/monaco-editor/issues/1280
-*/
-.monaco-menu .monaco-action-bar.vertical .action-item:first-child,
-.monaco-menu .monaco-action-bar.vertical .action-item:nth-child(7),
-.monaco-menu .monaco-action-bar.vertical .action-item:nth-child(9),
-.monaco-menu .monaco-action-bar.vertical .action-item:nth-last-child(2),
-.monaco-menu .monaco-action-bar.vertical .action-item:last-child {
-  display: none !important;
-}
-
 /* Safari requires that it be displayed absolute so that it takes the full height
 */
 .note-content-editor-shell {

@@ -12,6 +12,7 @@ import {
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
+import * as monacoactions from 'monaco-editor/esm/vs/platform/actions/common/actions';
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
@@ -176,6 +177,30 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
+
+    /* remove unwanted context menu items */
+    const menus = monacoactions.MenuRegistry._menuItems;
+    const contextMenuEntry = [...menus].find(
+      (entry) => entry[0]._debugName === 'EditorContext'
+    );
+    const contextMenuLinks = contextMenuEntry[1];
+    const removableIds = [
+      'editor.action.changeAll',
+      'editor.action.clipboardCutAction',
+      'editor.action.clipboardCopyAction',
+      'editor.action.clipboardPasteAction',
+      'editor.action.quickCommand',
+    ];
+    const removeById = (list, ids) => {
+      let node = list._first;
+      do {
+        const shouldRemove = ids.includes(node.element?.command?.id);
+        if (shouldRemove) {
+          list._remove(node);
+        }
+      } while ((node = node.next));
+    };
+    removeById(contextMenuLinks, removableIds);
   }
 
   componentWillUnmount() {

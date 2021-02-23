@@ -117,6 +117,14 @@
   height: $toolbar-height;
   line-height: $toolbar-height;
   padding-right: 13px;
+
+  .icon-button {
+    margin-top: 6px;
+  }
+
+  svg {
+    vertical-align: baseline;
+  }
 }
 
 .is-focus-mode .new-note-toolbar__button-sidebar {
