@@ -84,6 +84,10 @@ export const showAllNotes: A.ActionCreator<A.ShowAllNotes> = () => ({
   type: 'SHOW_ALL_NOTES',
 });
 
+export const showUntaggedNotes: A.ActionCreator<A.ShowUntaggedNotes> = () => ({
+  type: 'SHOW_UNTAGGED_NOTES',
+});
+
 export const showDialog: A.ActionCreator<A.ShowDialog> = (
   dialog: T.DialogType
 ) => ({

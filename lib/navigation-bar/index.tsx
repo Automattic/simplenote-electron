@@ -26,6 +26,7 @@ type DispatchProps = {
   onOutsideClick: () => any;
   onSettings: () => any;
   onShowAllNotes: () => any;
+  onShowUntaggedNotes: () => any;
   selectTrash: () => any;
   showKeyboardShortcuts: () => any;
 };
@@ -64,10 +65,22 @@ export class NavigationBar extends Component<Props> {
   };
 
   render() {
-    const { autoHideMenuBar, onAbout, onSettings, onShowAllNotes } = this.props;
+    const {
+      autoHideMenuBar,
+      onAbout,
+      onSettings,
+      onShowAllNotes,
+      onShowUntaggedNotes,
+    } = this.props;
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders theme-color-border">
+          <NavigationBarItem
+            icon={<NotesIcon />}
+            isSelected={this.isSelected({ row: 'untagged' })}
+            label="Untagged Notes"
+            onClick={onShowUntaggedNotes}
+          />
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"
@@ -138,6 +151,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   onAbout: () => actions.ui.showDialog('ABOUT'),
   onOutsideClick: actions.ui.toggleNavigation,
   onShowAllNotes: actions.ui.showAllNotes,
+  onShowUntaggedNotes: actions.ui.showUntaggedNotes,
   onSettings: () => actions.ui.showDialog('SETTINGS'),
   selectTrash: actions.ui.selectTrash,
   showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),

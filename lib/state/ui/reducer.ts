@@ -138,6 +138,7 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
+    case 'SHOW_UNTAGGED_NOTES':
     case 'NAVIGATION_TOGGLE':
       return false;
     default:
@@ -276,6 +277,7 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
+    case 'SHOW_UNTAGGED_NOTES':
       return false;
     case 'SHOW_DIALOG':
       if (action.dialog === 'SETTINGS') {

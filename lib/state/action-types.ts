@@ -101,6 +101,7 @@ export type SetUnsyncedNoteIds = Action<
   { noteIds: T.EntityId[] }
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
+export type ShowUntaggedNotes = Action<'SHOW_UNTAGGED_NOTES'>;
 export type ShowDialog = Action<'SHOW_DIALOG', { dialog: T.DialogType }>;
 export type StoreEditorSelection = Action<
   'STORE_EDITOR_SELECTION',
@@ -389,6 +390,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | ShowAllNotes
+  | ShowUntaggedNotes
   | ShowDialog
   | StoreEditorSelection
   | StoreNumberOfMatchesInNote

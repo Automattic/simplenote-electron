@@ -60,6 +60,7 @@ export const middleware: S.Middleware = (store) => (
     }
 
     case 'SHOW_ALL_NOTES':
+    case 'SHOW_UNTAGGED_NOTES':
     case 'SELECT_TRASH':
       // this middleware runs after the search middleware which is important
       // because we're reading the new search results which came as a result

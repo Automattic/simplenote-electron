@@ -349,6 +349,7 @@ export const middleware: S.Middleware = (store) => {
       return rawNext(action);
     };
 
+    searchState.showUntagged = false;
     switch (action.type) {
       case 'ADD_NOTE_TAG': {
         const note = searchState.notes.get(action.noteId);
@@ -490,6 +491,12 @@ export const middleware: S.Middleware = (store) => {
 
       case 'SHOW_ALL_NOTES':
         searchState.collection = { type: 'all' };
+        return next(withSearch(action));
+
+      case 'SHOW_UNTAGGED_NOTES':
+        searchState.openedTag = null;
+        searchState.showTrash = false;
+        searchState.showUntagged = true;
         return next(withSearch(action));
 
       case 'SEARCH':
