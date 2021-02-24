@@ -53,7 +53,7 @@ export class NoteActions extends Component<Props> {
     const noteLink = this.getNoteLink(note, noteId);
 
     return (
-      <div className="note-actions theme-color-bg theme-color-fg-dim theme-color-border">
+      <div className="note-actions theme-color-bg theme-color-fg theme-color-border">
         <div className="note-actions-panel theme-color-border">
           <label
             className="note-actions-item"
@@ -92,8 +92,11 @@ export class NoteActions extends Component<Props> {
             </span>
           </label>
 
-          <div className="note-actions-item" onClick={this.props.shareNote}>
-            Share
+          <div className="note-actions-item note-actions-internal-link">
+            <div className="note-actions-copy">
+              {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
+              <ClipboardButton text={noteLink} linkText="Copy Internal Link" />
+            </div>
           </div>
 
           {hasRevisions && (
@@ -107,10 +110,6 @@ export class NoteActions extends Component<Props> {
           {hasRevisions || (
             <div className="note-actions-item">History (unavailable)</div>
           )}
-
-          <div className="note-actions-item" onClick={this.props.trashNote}>
-            Trash
-          </div>
         </div>
         <div className="note-actions-panel note-actions-public-link theme-color-border">
           <label
@@ -135,25 +134,24 @@ export class NoteActions extends Component<Props> {
               /* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">
                 {publishURL}
               </p> */
-              <ClipboardButton text={publishURL} />
+              <ClipboardButton text={publishURL} linkText="Copy Link" />
             )}
             {isPublished || (
               <span className="note-actions-disabled">Copy Link</span>
             )}
           </div>
         </div>
-        <div className="note-actions-panel note-actions-internal-link theme-color-border">
-          <span className="note-actions-item-text">
-            <span className="note-actions-name">Internal link</span>
-            <div className="note-actions-copy">
-              {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
-              <ClipboardButton text={noteLink} />
-            </div>
-          </span>
-        </div>
         <div className="note-actions-panel theme-color-border">
           <div className="note-actions-item" onClick={this.props.shareNote}>
             Collaborate…
+          </div>
+        </div>
+        <div className="note-actions-panel theme-color-border">
+          <div
+            className="note-actions-item note-actions-trash"
+            onClick={this.props.trashNote}
+          >
+            Move to Trash
           </div>
         </div>
       </div>

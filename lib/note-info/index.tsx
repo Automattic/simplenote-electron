@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 
 import LastSyncTime from '../components/last-sync-time';
-import PanelTitle from '../components/panel-title';
 import SmallCrossIcon from '../icons/cross-small';
 import References from './references';
 

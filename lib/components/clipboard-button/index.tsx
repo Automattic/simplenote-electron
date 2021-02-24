@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Clipboard from 'clipboard';
 
-function ClipboardButton({ text }) {
+function ClipboardButton({ linkText, text }) {
   const buttonRef = useRef();
   const textCallback = useRef();
   const successCallback = useRef();
@@ -39,13 +39,14 @@ function ClipboardButton({ text }) {
 
   return (
     <button ref={buttonRef} type="button" className="button button-borderless">
-      {isCopied ? 'Copied!' : 'Copy Link'}
+      {isCopied ? 'Copied!' : linkText}
     </button>
   );
 }
 
 ClipboardButton.propTypes = {
   disabled: PropTypes.bool,
+  linkText: PropTypes.string,
   text: PropTypes.string,
 };
 

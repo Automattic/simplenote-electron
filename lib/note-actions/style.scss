@@ -58,19 +58,19 @@
   }
 
   .note-actions-copy {
-    padding: 5px 10px;
-
-    // .note-actions-link-text {
-    //   border: none;
-    //   overflow: hidden;
-    //   padding: 0;
-    //   text-overflow: ellipsis;
-    //   white-space: nowrap;
-    // }
-
     button {
       padding: 0;
+      font-weight: normal;
+      color: inherit;
     }
+  }
+
+  .note-actions-public-link .note-actions-copy {
+    padding: 5px 10px;
+  }
+
+  .note-actions-trash {
+    color: $studio-red-50;
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-base,
@@ -93,6 +93,10 @@
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
     border-color: $studio-gray-30;
+  }
+
+  .note-actions-trash {
+    color: $studio-red-30;
   }
 
   .checkbox-control-checked {
