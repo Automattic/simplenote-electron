@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import SmallCrossIcon from '../../icons/cross-small';
 import classNames from 'classnames';
 
 import type * as T from '../../types';
@@ -20,6 +21,9 @@ const TagChip: FunctionComponent<OwnProps> = ({
     onClick={onSelect}
   >
     {tagName}
+    <span className="remove-tag-icon">
+      <SmallCrossIcon />
+    </span>
   </div>
 );
 

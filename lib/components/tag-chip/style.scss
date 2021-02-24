@@ -3,29 +3,50 @@
   flex: none;
   margin: 2px 8px 6px 0;
   padding: 1px 14px 3px;
-  border-radius: 14px;
+  border-radius: 16px;
   line-height: 1.25em;
   white-space: nowrap;
   background: $studio-gray-5;
   text-decoration: none;
   font-size: 14px;
+  position: relative;
   -webkit-tap-highlight-color: transparent;
 
   &.selected,
   &:hover {
-    background: $studio-simplenote-blue-5;
+    .remove-tag-icon {
+      display: inline-block;
+    }
+  }
+
+  .remove-tag-icon {
+    display: none;
+    position: absolute;
+    background-color: $studio-gray-50;
+    color: $studio-white;
+    border-radius: 50%;
+    top: -8px;
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    font-size: 14px;
+    text-align: center;
+
+    .icon-cross-small {
+      height: 14px;
+      width: 14px;
+    }
   }
 }
 
 .theme-dark {
   .tag-chip {
     background: $studio-gray-70;
-    color: $studio-gray-20;
+    color: $studio-white;
+  }
 
-    &.selected,
-    &:hover {
-      background: $studio-gray-70;
-      color: $studio-white;
-    }
+  .remove-tag-icon {
+    background-color: $studio-gray-30;
+    color: $studio-black;
   }
 }
