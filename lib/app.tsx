@@ -76,6 +76,13 @@ class AppComponent extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { hotkeysEnabled } = this.props;
+    const shouldHandleBrowserShortcuts = !window.electron || !isMac;
+
+    // Handle search shortcuts even if keyboard shortcuts are disabled.
+    if (shouldHandleBrowserShortcuts) {
+      this.handleBrowserSearchShortcut(event);
+    }
+
     if (!hotkeysEnabled) {
       return;
     }
@@ -98,7 +105,7 @@ class AppComponent extends Component<Props> {
       this.props.clearSearch();
     }
 
-    if (!window.electron || !isMac) {
+    if (shouldHandleBrowserShortcuts) {
       this.handleBrowserShortcut(event);
     }
 
@@ -116,11 +123,8 @@ class AppComponent extends Component<Props> {
     // Is either cmd or ctrl pressed? (But not both)
     const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
 
-    if (
-      (cmdOrCtrl && shiftKey && 's' === key) ||
-      (cmdOrCtrl && !shiftKey && 'f' === key)
-    ) {
-      this.props.focusSearchField();
+    if (cmdOrCtrl && shiftKey && 'i' === key) {
+      this.props.createNote();
 
       event.stopPropagation();
       event.preventDefault();
@@ -134,9 +138,20 @@ class AppComponent extends Component<Props> {
       event.preventDefault();
       return false;
     }
+  };
 
-    if (cmdOrCtrl && shiftKey && 'i' === key) {
-      this.props.createNote();
+  handleBrowserSearchShortcut = (event: KeyboardEvent) => {
+    const { ctrlKey, metaKey, shiftKey } = event;
+    const key = event.key.toLowerCase();
+
+    // Is either cmd or ctrl pressed? (But not both)
+    const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
+
+    if (
+      (cmdOrCtrl && shiftKey && 's' === key) ||
+      (cmdOrCtrl && !shiftKey && 'f' === key)
+    ) {
+      this.props.focusSearchField();
 
       event.stopPropagation();
       event.preventDefault();
