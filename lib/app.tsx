@@ -76,9 +76,10 @@ class AppComponent extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { hotkeysEnabled } = this.props;
+    const shouldHandleBrowserShortcuts = !window.electron || !isMac;
 
     // Handle search shortcuts even if keyboard shortcuts are disabled.
-    if (!window.electron || !isMac) {
+    if (shouldHandleBrowserShortcuts) {
       this.handleBrowserSearchShortcut(event);
     }
 
@@ -104,7 +105,7 @@ class AppComponent extends Component<Props> {
       this.props.clearSearch();
     }
 
-    if (!window.electron || !isMac) {
+    if (shouldHandleBrowserShortcuts) {
       this.handleBrowserShortcut(event);
     }
 
