@@ -13,6 +13,7 @@ declare global {
       receive(command: 'appCommand', callback: (event: any) => any);
       receive(command: 'editorCommand', callback: (event: any) => any);
       receive(command: 'noteImportChannel', callback: (event: any) => any);
+      receive(command: 'tokenLogin', callback: (event: any) => any);
       receive(command: 'wpLogin', callback: (event: any) => any);
       removeListener(command: 'noteImportChannel');
       send(

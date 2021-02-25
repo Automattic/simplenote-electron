@@ -43,6 +43,13 @@ class AppWithoutAuth extends Component<Props, State> {
 
   componentDidMount() {
     window.electron?.receive('appCommand', this.onAppCommand);
+
+    window.electron?.receive('tokenLogin', (url) => {
+      const { searchParams } = new URL(url);
+      const simpToken = searchParams.get('token');
+      const email = searchParams.get('email');
+      this.tokenLogin(email, simpToken);
+    });
   }
 
   login(token: string, username: string, createWelcomeNote: boolean) {
