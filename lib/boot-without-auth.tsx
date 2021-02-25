@@ -18,6 +18,7 @@ type Props = {
 
 type State = {
   authStatus:
+    | 'account-creation-requested'
     | 'unsubmitted'
     | 'submitting'
     | 'insecure-password'
@@ -98,20 +99,21 @@ class AppWithoutAuth extends Component<Props, State> {
       return;
     }
 
-    this.setState({ authStatus: 'submitting' }, () => {
-      auth
-        .create(username, password, appProvider)
-        .then((user: User) => {
-          if (!user.access_token) {
-            throw new Error('missing access token');
-          }
+    this.setState({ authStatus: 'submitting' }, async () => {
+      const response = await fetch(
+        'https://app.simplenote.com/request-signup',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: username, password }),
+        }
+      );
 
-          recordEvent('user_account_created');
-          this.login(user.access_token, username, true);
-        })
-        .catch(() => {
-          this.setState({ authStatus: 'unknown-error' });
-        });
+      if (response.ok) {
+        recordEvent('user_account_creation_requested');
+      } else {
+        this.setState({ authStatus: 'unknown-error' });
+      }
     });
   };
 
@@ -128,6 +130,9 @@ class AppWithoutAuth extends Component<Props, State> {
     return (
       <div className={`app theme-${systemTheme}`}>
         <AuthApp
+          accountCreationRequested={
+            this.state.authStatus === 'account-creation-requested'
+          }
           authPending={this.state.authStatus === 'submitting'}
           hasInsecurePassword={this.state.authStatus === 'insecure-password'}
           hasInvalidCredentials={
