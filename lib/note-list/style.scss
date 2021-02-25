@@ -58,16 +58,37 @@
   font-size: 1.5em;
   text-align: center;
 
+  .no-notes-icon svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    color: $studio-gray-10;
+  }
+
+  .no-notes-message {
+    font-size: 16px;
+    color: $studio-gray-50;
+  }
+
   button {
     color: $studio-simplenote-blue-50;
     display: block;
     font-size: 14px;
-    margin-top: 7px;
+    margin-top: 8px;
   }
 }
 
-.theme-dark .note-list-placeholder button {
-  color: $studio-simplenote-blue-30;
+.theme-dark {
+  .note-list-placeholder {
+    .no-notes-icon,
+    .no-notes-message {
+      color: $studio-gray-30;
+    }
+
+    button {
+      color: $studio-simplenote-blue-30;
+    }
+  }
 }
 
 .note-list-items {
