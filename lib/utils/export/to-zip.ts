@@ -25,8 +25,7 @@ const addFilename = (note) => ({
     .filter(identity) // remove blank lines
     .concat('untitled') // use this as a default if there are no non-blank lines
     .shift() // take the first remaining line
-    .slice(0, FILENAME_LENGTH) // and truncate to some reasonable number of characters
-    .replace(/[.,:() [\]]/g, '-'), // Still some characters which can cause issues in our way of checking for duplicate file names. Removing more here.
+    .slice(0, FILENAME_LENGTH), // and truncate to some reasonable number of characters
 });
 
 /**
@@ -87,11 +86,11 @@ const appendTags = (note) => {
  * @returns {[Array, Object]} final note list and accumulating filename counts
  */
 const toUniqueNames = ([notes, nameCounts], note) => {
-  const newNameCounts = update(nameCounts, note.fileName, (n) =>
+  const encodedFileName = btoa(note.fileName);
+  const newNameCounts = update(nameCounts, encodedFileName, (n) =>
     n || 0 === n ? n + 1 : 0
   );
-
-  const count = newNameCounts[note.fileName];
+  const count = newNameCounts[encodedFileName];
   const fileName = count > 0 ? `${note.fileName} (${count})` : note.fileName;
 
   return [[...notes, { ...note, fileName }], newNameCounts];
