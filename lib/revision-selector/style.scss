@@ -2,10 +2,9 @@
   border-top: 1px solid;
   height: 178px;
   padding: 19px 20px 20px;
-  position: absolute;
+  position: relative;
   transition: all 0.3s ease-in-out;
   width: 100%;
-  z-index: 1000;
 
   &.is-visible {
     bottom: 0;

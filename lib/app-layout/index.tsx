@@ -126,13 +126,13 @@ export class AppLayout extends Component<Props> {
           </div>
           {editorVisible && (
             <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
-              {hasRevisions && <RevisionSelector />}
               <NoteToolbar />
               {showRevisions ? (
                 <NotePreview noteId={openedNote} note={openedRevision} />
               ) : (
                 <NoteEditor />
               )}
+              {hasRevisions && <RevisionSelector />}
             </div>
           )}
         </Suspense>
