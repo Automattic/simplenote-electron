@@ -25,7 +25,8 @@ const addFilename = (note) => ({
     .filter(identity) // remove blank lines
     .concat('untitled') // use this as a default if there are no non-blank lines
     .shift() // take the first remaining line
-    .slice(0, FILENAME_LENGTH), // and truncate to some reasonable number of characters
+    .slice(0, FILENAME_LENGTH) // and truncate to some reasonable number of characters
+    .replace(/[.,:() [\]]/g, '-'), // Still some characters which can cause issues in our way of checking for duplicate file names. Removing more here.
 });
 
 /**
@@ -89,6 +90,7 @@ const toUniqueNames = ([notes, nameCounts], note) => {
   const newNameCounts = update(nameCounts, note.fileName, (n) =>
     n || 0 === n ? n + 1 : 0
   );
+
   const count = newNameCounts[note.fileName];
   const fileName = count > 0 ? `${note.fileName} (${count})` : note.fileName;
 
