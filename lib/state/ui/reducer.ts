@@ -250,6 +250,19 @@ const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   }
 };
 
+const showTokenLoginLogout: A.Reducer<boolean> = (state = false, action) => {
+  switch (action.type) {
+    case 'SHOW_TOKEN_LOGIN_LOGOUT':
+      return !state;
+
+    case 'HIDE_TOKEN_LOGIN_LOGOUT':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const unsyncedNoteIds: A.Reducer<T.EntityId[]> = (
   state = emptyList as T.EntityId[],
   action

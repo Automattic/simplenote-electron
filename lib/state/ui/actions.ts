@@ -99,6 +99,20 @@ export const showDialog: A.ActionCreator<A.ShowDialog> = <
   ...data,
 });
 
+export const showTokenLoginLogout: A.ActionCreator<A.ShowTokenLoginLogout> = (
+  email: string
+) => ({
+  type: 'SHOW_TOKEN_LOGIN_LOGOUT',
+  email,
+});
+
+export const hideTokenLoginLogout: A.ActionCreator<A.HideTokenLoginLogout> = (
+  email: string
+) => ({
+  type: 'HIDE_TOKEN_LOGIN_LOGOUT',
+  email,
+});
+
 export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (
   noteId: T.EntityId,
   revisions: T.NoteEntity[]

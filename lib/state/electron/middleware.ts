@@ -7,6 +7,11 @@ import * as S from '../';
 const debug = debugFactory('electron-middleware');
 
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
+  window.electron.receive('tokenLogin', (url) => {
+    const { searchParams } = new URL(url);
+    const email = searchParams.get('email');
+    dispatch(actions.ui.showTokenLoginLogout(email));
+  });
   window.electron.receive('appCommand', (command) => {
     switch (command.action) {
       case 'closeWindow':

@@ -7,6 +7,7 @@ import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import EmailVerification from './email-verification';
+import TokenLoginLogout from './token-login-logout';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
 import {
@@ -198,6 +199,7 @@ class AppComponent extends Component<Props> {
     return (
       <div className={appClasses}>
         {showEmailVerification && <EmailVerification />}
+        {showTokenLoginLogout && <TokenLoginLogout />}
         {isDevConfig && <DevBadge />}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
@@ -217,6 +219,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isSmallScreen: selectors.isSmallScreen(state),
   lineLength: state.settings.lineLength,
   showEmailVerification: selectors.shouldShowEmailVerification(state),
+  showTokenLoginLogout: state.ui.showTokenLoginLogout,
   showNavigation: state.ui.showNavigation,
   showNoteInfo: state.ui.showNoteInfo,
   theme: selectors.getTheme(state),
