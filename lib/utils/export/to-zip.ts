@@ -1,5 +1,5 @@
 import sanitize from 'sanitize-filename';
-import { identity, update } from 'lodash';
+import { identity } from 'lodash';
 
 import { LF_ONLY_NEWLINES } from './export-notes';
 
@@ -81,19 +81,17 @@ const appendTags = (note) => {
  * // when given `Yummy Recipe` and `Yummy Recipe` as duplicates
  * // will return `Yummy Recipe` and `Yummy Recipe (1)`
  *
- * @param {[Array, Object]} accumulator list of note objects for export and filename counts
+ * @param {[Array, Map]} accumulator list of note objects for export and filename counts
  * @param {Object} note note object
  * @returns {[Array, Object]} final note list and accumulating filename counts
  */
 const toUniqueNames = ([notes, nameCounts], note) => {
-  const encodedFileName = btoa(note.fileName);
-  const newNameCounts = update(nameCounts, encodedFileName, (n) =>
-    n || 0 === n ? n + 1 : 0
-  );
-  const count = newNameCounts[encodedFileName];
+  nameCounts.set(note.fileName, (nameCounts.get(note.fileName) ?? -1) + 1);
+  const count = nameCounts.get(note.fileName);
+
   const fileName = count > 0 ? `${note.fileName} (${count})` : note.fileName;
 
-  return [[...notes, { ...note, fileName }], newNameCounts];
+  return [[...notes, { ...note, fileName }], nameCounts];
 };
 
 export const noteExportToZip = (notes) => {
@@ -109,7 +107,7 @@ export const noteExportToZip = (notes) => {
       notes.activeNotes
         .map(appendTags) // add tags to end of content
         .map(addFilename) // generate filename from content
-        .reduce(toUniqueNames, [[], {}]) // add `(n)` if there are duplicates
+        .reduce(toUniqueNames, [[], new Map()]) // add `(n)` if there are duplicates
         .shift() // the list of notes is the first item in the pair returned from above
         .forEach(({ content, fileName, lastModified }) => {
           zip.file(`${fileName}.txt`, content, {
@@ -120,7 +118,7 @@ export const noteExportToZip = (notes) => {
       notes.trashedNotes
         .map(appendTags) // add tags to end of content
         .map(addFilename) // generate filename from content
-        .reduce(toUniqueNames, [[], {}]) // add `(n)` if there are duplicates
+        .reduce(toUniqueNames, [[], new Map()]) // add `(n)` if there are duplicates
         .shift() // the list of notes is the first item in the pair returned from above
         .forEach(({ content, fileName, lastModified }) => {
           zip.file(`trash/${fileName}.txt`, content, {
