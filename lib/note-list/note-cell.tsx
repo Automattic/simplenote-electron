@@ -25,10 +25,12 @@ type OwnProps = {
 type StateProps = {
   displayMode: T.ListDisplayMode;
   hasPendingChanges: boolean;
+  hiddenTags: T.HiddenTags;
   isOffline: boolean;
   isOpened: boolean;
   lastUpdated: number;
   note?: T.Note;
+  openedTag: T.Brand<string, 'EntityId'> | T.Brand<string, 'TagHash'> | null;
   searchQuery: string;
 };
 
@@ -70,12 +72,14 @@ export class NoteCell extends Component<Props> {
     const {
       displayMode,
       hasPendingChanges,
+      hiddenTags,
       isOffline,
       isOpened,
       lastUpdated,
       noteId,
       note,
       openNote,
+      openedTag,
       pinNote,
       searchQuery,
       style,
@@ -83,6 +87,12 @@ export class NoteCell extends Component<Props> {
 
     if (!note) {
       return <div>{"Couldn't find note"}</div>;
+    }
+
+    const isAllNotes = openedTag === null;
+    const isHidden = note.tags.some((tag) => hiddenTags.includes(tag));
+    if (isAllNotes && isHidden) {
+      return null;
     }
 
     const { title, preview } = noteTitleAndPreview(note, searchQuery);
@@ -173,10 +183,12 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
 ) => ({
   displayMode: state.settings.noteDisplay,
   hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
+  hiddenTags: state.settings.hiddenTags,
   isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
+  openedTag: state.ui.openedTag,
   searchQuery: state.ui.searchQuery,
 });
 

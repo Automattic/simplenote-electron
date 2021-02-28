@@ -49,6 +49,10 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         dispatch(actions.ui.createNote());
         return;
 
+      case 'setHiddenTags':
+        dispatch(actions.settings.setHiddenTags(command.hiddenTags));
+        return;
+
       case 'setLineLength':
         dispatch(actions.settings.setLineLength(command.lineLength));
         return;

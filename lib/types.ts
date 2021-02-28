@@ -72,6 +72,7 @@ export type ListDisplayMode = 'expanded' | 'comfy' | 'condensed';
 export type SortType = 'alphabetical' | 'creationDate' | 'modificationDate';
 export type Theme = 'system' | 'light' | 'dark';
 export type TranslatableString = Brand<string, 'TranslatableString'>;
+export type HiddenTags = string[];
 
 ///////////////////////////////////////
 // Language and Platform

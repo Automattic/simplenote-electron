@@ -20,6 +20,13 @@ export const setLineLength: A.ActionCreator<A.SetLineLength> = (
   lineLength,
 });
 
+export const setHiddenTags: A.ActionCreator<A.SetHiddenTags> = (
+  hiddenTags: T.HiddenTags
+) => ({
+  type: 'setHiddenTags',
+  hiddenTags,
+});
+
 export const toggleKeyboardShortcuts: A.ActionCreator<A.ToggleKeyboardShortcuts> = () => ({
   type: 'KEYBOARD_SHORTCUTS_TOGGLE',
 });

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { isElectron, isMac } from '../../../utils/platform';
 import RadioGroup from '../../radio-settings-group';
 import SettingsGroup, { Item } from '../../settings-group';
+import ListSettingsGroup from '../../list-settings-group';
 import ToggleGroup from '../../toggle-settings-group';
 import actions from '../../../state/actions';
 
@@ -13,6 +14,7 @@ import * as T from '../../../types';
 type StateProps = {
   activeTheme: T.Theme;
   autoHideMenuBar: boolean;
+  hiddenTags: T.HiddenTags;
   lineLength: T.LineLength;
   noteDisplay: T.ListDisplayMode;
   sortIsReversed: boolean;
@@ -22,6 +24,7 @@ type StateProps = {
 
 type DispatchProps = {
   setActiveTheme: (theme: T.Theme) => any;
+  setHiddenTags: (hiddenTags: T.HiddenTags) => any;
   setLineLength: (lineLength: T.LineLength) => any;
   setNoteDisplay: (displayMode: T.ListDisplayMode) => any;
   setSortType: (sortType: T.SortType) => any;
@@ -89,6 +92,15 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
       <Item title="Sort Alphabetically" slug="alpha" />
     </SettingsGroup>
 
+    <ListSettingsGroup
+      title="Excluded tags"
+      description="These tags will not be shown in All Notes"
+      items={props.hiddenTags}
+      onChange={props.setHiddenTags}
+      pattern="[^ ,]"
+      placeholder="Please enter a tag name"
+    />
+
     <SettingsGroup
       title="Theme"
       slug="theme"
@@ -121,6 +133,7 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
 const mapStateToProps: S.MapState<StateProps> = ({ settings }) => ({
   activeTheme: settings.theme,
   autoHideMenuBar: settings.autoHideMenuBar,
+  hiddenTags: settings.hiddenTags,
   lineLength: settings.lineLength,
   noteDisplay: settings.noteDisplay,
   sortIsReversed: settings.sortReversed,
@@ -130,6 +143,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ settings }) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   setActiveTheme: actions.settings.activateTheme,
+  setHiddenTags: actions.settings.setHiddenTags,
   setLineLength: actions.settings.setLineLength,
   setNoteDisplay: actions.settings.setNoteDisplay,
   setSortType: actions.settings.setSortType,

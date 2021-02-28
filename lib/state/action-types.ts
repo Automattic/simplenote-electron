@@ -52,6 +52,10 @@ export type SetSpellCheck = Action<
   { spellCheckEnabled: boolean }
 >;
 export type SetTheme = Action<'setTheme', { theme: T.Theme }>;
+export type SetHiddenTags = Action<
+  'setHiddenTags',
+  { hiddenTags: T.HiddenTags }
+>;
 
 /*
  * Normal action types
@@ -379,6 +383,7 @@ export type ActionType =
   | SetAutoHideMenuBar
   | SetChangeVersion
   | SetFocusMode
+  | SetHiddenTags
   | SetLineLength
   | SetNoteDisplay
   | SetSortReversed

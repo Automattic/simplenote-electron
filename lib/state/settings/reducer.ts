@@ -52,6 +52,15 @@ const lineLength: A.Reducer<T.LineLength> = (state = 'narrow', action) => {
   }
 };
 
+const hiddenTags: A.Reducer<T.HiddenTags> = (state = [], action) => {
+  switch (action.type) {
+    case 'setHiddenTags':
+      return action.hiddenTags;
+    default:
+      return state;
+  }
+};
+
 const markdownEnabled: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'SET_SYSTEM_TAG':
@@ -148,6 +157,7 @@ export default combineReducers({
   accountName,
   autoHideMenuBar,
   focusModeEnabled,
+  hiddenTags,
   keyboardShortcuts,
   lineLength,
   markdownEnabled,
