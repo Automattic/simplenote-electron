@@ -86,9 +86,8 @@ const appendTags = (note) => {
  * @returns {[Array, Object]} final note list and accumulating filename counts
  */
 const toUniqueNames = ([notes, nameCounts], note) => {
-  nameCounts.set(note.fileName, (nameCounts.get(note.fileName) ?? -1) + 1);
-  const count = nameCounts.get(note.fileName);
-
+  const count = nameCounts.get(note.fileName) ?? 0;
+  nameCounts.set(note.fileName, count + 1);
   const fileName = count > 0 ? `${note.fileName} (${count})` : note.fileName;
 
   return [[...notes, { ...note, fileName }], nameCounts];
