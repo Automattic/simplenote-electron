@@ -21,6 +21,7 @@ import * as T from '../types';
 
 type StateProps = {
   filteredNotes: T.EntityId[];
+  hiddenTags: T.HiddenTags; // Needed to re-render when hiddenTags changes.
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
@@ -340,6 +341,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
+    hiddenTags: state.settings.hiddenTags,
     openedNote: state.ui.openedNote,
     openedTag: state.ui.openedTag,
     searchQuery: state.ui.searchQuery,

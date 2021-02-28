@@ -1,6 +1,7 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import PropTypes from 'prop-types';
 import PanelTitle from '../components/panel-title';
+import TrashIcon from '../icons/trash';
 
 type ItemsType = string[];
 
@@ -23,18 +24,16 @@ const ListSettingsGroup: FunctionComponent<Props> = ({
 }) => {
   const [value, setValue] = useState('');
 
-  useEffect(() => {
-    console.log(`Items = ${items.join(',')}`);
-  }, [items]);
-
   const onTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
   const onDone = () => {
-    const newItems = items.concat(value).sort();
-    onChange(newItems);
-    setValue('');
+    if (value.length > 0) {
+      const newItems = items.concat(value).sort();
+      onChange(newItems);
+      setValue('');
+    }
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -43,17 +42,27 @@ const ListSettingsGroup: FunctionComponent<Props> = ({
     }
   };
 
+  const onClick = (name: string) => {
+    const newItems = items
+      .filter((str) => name.length > 0 && name !== str)
+      .sort();
+    onChange(newItems);
+  };
+
   return (
     <div className="settings-group">
       <PanelTitle headingLevel={3}>{title}</PanelTitle>
       {description && <p>{description}</p>}
       <div className="settings-items theme-color-border">
-        {items.map((item: string, i: number) => (
-          <div
-            className="settings-item theme-color-border"
-            key={`${item}-${i}`}
-          >
+        {items.map((item: string) => (
+          <div className="settings-item theme-color-border" key={item}>
             <div className="settings-item-label">{item}</div>
+            <div
+              style={{ cursor: 'pointer' }}
+              className="settings-item-control"
+            >
+              <TrashIcon onClick={() => onClick(item)} />
+            </div>
           </div>
         ))}
         <div className="settings-item theme-color-border">
