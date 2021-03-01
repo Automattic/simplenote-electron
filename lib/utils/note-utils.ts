@@ -15,6 +15,14 @@ export const maxPreviewChars = 200;
 const isLowSurrogate = (c: number) => 0xdc00 <= c && c <= 0xdfff;
 
 /**
+ * Removes diacritics from a string by first normalizing it and then removing the unicode.
+ * @param content String on which to perform removal
+ * @returns Content with diacritic symbols transformed to their non-diacritic equivalent.
+ */
+export const removeDiacritics = (content: string) =>
+  content.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+/**
  * Returns a string with markdown stripped
  *
  * @param {String} inputString string for which to remove markdown

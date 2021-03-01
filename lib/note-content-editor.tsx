@@ -17,7 +17,7 @@ import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
-import { noteTitleAndPreview } from './utils/note-utils';
+import { noteTitleAndPreview, removeDiacritics } from './utils/note-utils';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -399,6 +399,7 @@ class NoteContentEditor extends Component<Props> {
     }
 
     const content = model.getValue().normalize().toLowerCase();
+    const normalizedContent = removeDiacritics(content);
 
     const highlights = terms.reduce(
       (matches: monaco.languages.DocumentHighlight, term) => {
@@ -406,7 +407,7 @@ class NoteContentEditor extends Component<Props> {
         let startAt = 0;
 
         while (termAt !== -1) {
-          termAt = content.indexOf(term, startAt);
+          termAt = normalizedContent.indexOf(term, startAt);
           if (termAt === -1) {
             break;
           }

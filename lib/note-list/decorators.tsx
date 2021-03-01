@@ -3,6 +3,7 @@ import { escapeRegExp } from 'lodash';
 import replaceToArray from 'string-replace-to-array';
 
 import { withoutTags } from '../utils/filter-notes';
+import { removeDiacritics } from '../utils/note-utils';
 
 export const decorateWith = (decorators, text) =>
   decorators.length > 0 && text.length > 0
@@ -14,7 +15,15 @@ export const decorateWith = (decorators, text) =>
               ? new RegExp(escapeRegExp(searchText), 'gi')
               : filter;
 
-          return replaceToArray(output, pattern, replacer);
+          const res = replaceToArray(output, pattern, replacer);
+          const test = replaceToArray(
+            removeDiacritics(output),
+            pattern,
+            replacer
+          );
+          console.log(res, output, pattern, replacer);
+          console.log(test.join(''));
+          return res;
         }, text)
         .map((chunk, key) =>
           chunk && 'string' !== typeof chunk
