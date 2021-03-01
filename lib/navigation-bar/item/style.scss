@@ -1,14 +1,12 @@
 .navigation-bar-item {
-  height: 44px;
   padding-left: 16px;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
 
   .button {
     border: 0;
-    border-bottom: 1px solid;
+    border-top: 1px solid;
     border-radius: 0;
     font-size: 16px;
     font-weight: 400;
@@ -30,7 +28,7 @@
     background-color: $studio-simplenote-blue-5;
 
     button {
-      border-bottom: none;
+      border-top: none;
 
       svg[class^='icon-'] {
         fill: $studio-simplenote-blue-50;
@@ -54,11 +52,11 @@
 
 /* this is the last child (Settings) and prevents a double border on the bottom */
 .navigation-bar-item:first-child .button {
-  border-bottom: none !important;
+  border-top: none !important;
 }
 
 .navigation-bar-item.is-selected + .navigation-bar-item .button {
-  border-bottom: none;
+  border-top: none;
 }
 
 .theme-dark {

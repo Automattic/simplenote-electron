@@ -1,6 +1,6 @@
 import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
 import { connect } from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
+import FocusTrap from 'focus-trap-react';
 import format from 'date-fns/format';
 import classNames from 'classnames';
 import Slider from '../components/slider';
@@ -32,8 +32,6 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props> {
-  handleClickOutside = () => this.onCancelRevision();
-
   onAcceptRevision = () => {
     const { noteId, openedRevision, restoreRevision } = this.props;
     restoreRevision(noteId, openedRevision);
@@ -95,40 +93,62 @@ export class RevisionSelector extends Component<Props> {
     );
 
     return (
-      <div className={mainClasses}>
-        <div className="revision-selector-inner">
-          <div className="revision-slider-title">History</div>
-          <div className="revision-date" style={{ left: datePos }}>
-            {revisionDate}
-          </div>
-          <div className="revision-slider">
-            <Slider
-              disabled={!revisions || revisions.size === 0}
-              min={
-                1 /* don't allow reverting to the very first version because that's a blank note */
-              }
-              max={revisions?.size - 1}
-              value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
-              onChange={this.onSelectRevision}
-            />
-          </div>
-          <div className="revision-buttons">
-            <button
-              className="button button-secondary button-compact"
-              onClick={this.onCancelRevision}
+      <FocusTrap
+        focusTrapOptions={{
+          clickOutsideDeactivates: true,
+          // Fallback required due to RevisionSelect's placement within
+          // Suspsense, which hides elements preventing focus. https://git.io/Jqep9
+          fallbackFocus: 'body',
+          onDeactivate: this.onCancelRevision,
+        }}
+      >
+        <div
+          className={mainClasses}
+          role="dialog"
+          aria-labelledby="revision-slider-title"
+        >
+          <div className="revision-selector-inner">
+            <div id="revision-slider-title" className="revision-slider-title">
+              History
+            </div>
+            <div
+              aria-hidden
+              className="revision-date"
+              style={{ left: datePos }}
             >
-              Cancel
-            </button>
-            <button
-              disabled={isNewest}
-              className="button button-primary button-compact"
-              onClick={this.onAcceptRevision}
-            >
-              Restore
-            </button>
+              {revisionDate}
+            </div>
+            <div className="revision-slider">
+              <Slider
+                aria-valuetext={`Revision from ${revisionDate}`}
+                disabled={!revisions || revisions.size === 0}
+                min={
+                  1 /* don't allow reverting to the very first version because that's a blank note */
+                }
+                max={revisions?.size - 1}
+                value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
+                onChange={this.onSelectRevision}
+              />
+            </div>
+            <div className="revision-buttons">
+              <button
+                className="button button-secondary button-compact"
+                onClick={this.onCancelRevision}
+              >
+                Cancel
+              </button>
+              <button
+                aria-label={`Restore revision from ${revisionDate}`}
+                disabled={isNewest}
+                className="button button-primary button-compact"
+                onClick={this.onAcceptRevision}
+              >
+                Restore
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </FocusTrap>
     );
   }
 }
@@ -160,7 +180,4 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(onClickOutside(RevisionSelector));
+export default connect(mapStateToProps, mapDispatchToProps)(RevisionSelector);
