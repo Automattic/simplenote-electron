@@ -24,7 +24,7 @@ const editorCommandSender = (arg) => {
 
 const commandSender = (commandName, arg) => {
   return (item, focusedWindow) => {
-    if (focusedWindow) {
+    if (typeof focusedWindow !== 'undefined') {
       focusedWindow.webContents.send(commandName, arg);
     }
   };

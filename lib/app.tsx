@@ -77,7 +77,7 @@ class AppComponent extends Component<Props> {
 
   handleShortcut = (event: KeyboardEvent) => {
     const { hotkeysEnabled } = this.props;
-    const shouldHandleBrowserShortcuts = !window.electron || !isMac;
+    const shouldHandleBrowserShortcuts = !window.electron;
 
     // Handle search shortcuts even if keyboard shortcuts are disabled.
     if (shouldHandleBrowserShortcuts) {
@@ -116,7 +116,6 @@ class AppComponent extends Component<Props> {
   // handle all keyboard shortcuts that are duplicated in the Electron menus
   // this listener is only called in browsers, as otherwise the
   // menu will trigger them via the provided Accelerator, so we don't need a listener
-  // n.b. we're also running this on Win/Linux builds as they seem to be broken otherwise
   handleBrowserShortcut = (event: KeyboardEvent) => {
     const { ctrlKey, metaKey, shiftKey } = event;
     const key = event.key.toLowerCase();
