@@ -341,10 +341,13 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
     openedNote: state.ui.openedNote,
-    openedTag: state.ui.openedTag,
+    openedTag:
+      state.ui.showCollection.type === 'tag' && state.ui.showCollection.tagHash
+        ? state.ui.showCollection.tagHash
+        : null,
     searchQuery: state.ui.searchQuery,
     showNoteList: state.ui.showNoteList,
-    showTrash: state.ui.showTrash,
+    showTrash: state.ui.showCollection.type === 'trash',
     tagResultsFound: state.ui.tagSuggestions.length,
     windowWidth: state.browser.windowWidth,
   };

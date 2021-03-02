@@ -25,11 +25,10 @@ type SearchState = {
   hasSelectedFirstNote: boolean;
   excludeIDs: Array<T.EntityId> | null;
   notes: Map<T.EntityId, SearchNote>;
-  openedTag: T.TagHash | null;
   searchQuery: string;
   searchTags: Set<T.TagHash>;
   searchTerms: string[];
-  showTrash: boolean;
+  showCollection: T.Collection;
   sortType: T.SortType;
   sortReversed: boolean;
   titleOnly: boolean | null;
@@ -65,11 +64,10 @@ export const middleware: S.Middleware = (store) => {
     excludeIDs: [],
     hasSelectedFirstNote: false,
     notes: new Map(),
-    openedTag: null,
     searchQuery: '',
     searchTags: new Set(),
     searchTerms: [],
-    showTrash: false,
+    showCollection: { type: 'all' },
     sortType: store.getState().settings.sortType,
     sortReversed: store.getState().settings.sortReversed,
     titleOnly: false,
@@ -180,12 +178,11 @@ export const middleware: S.Middleware = (store) => {
     const {
       excludeIDs,
       notes,
-      openedTag,
       searchTags,
       searchTerms,
       sortReversed,
       sortType,
-      showTrash,
+      showCollection,
       titleOnly,
     } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
@@ -214,6 +211,7 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      const showTrash = showCollection.type === 'trash';
       if (showTrash !== note.isTrashed) {
         continue;
       }
@@ -229,6 +227,7 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      const openedTag = showCollection.type === 'tag' && showCollection.tagHash;
       if (openedTag && !note.tags.has(openedTag)) {
         continue;
       }
@@ -364,7 +363,7 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'CREATE_NOTE_WITH_ID':
-        searchState.showTrash = false;
+        searchState.showCollection = { type: 'all' };
         searchState.notes.set(action.noteId, toSearchNote(action.note ?? {}));
         indexNote(action.noteId);
         queueSearch();
@@ -412,7 +411,10 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'OPEN_TAG':
-        searchState.openedTag = t(action.tagName);
+        searchState.showCollection = {
+          type: 'tag',
+          tagHash: t(action.tagName),
+        };
         return next(withSearch(action));
 
       case 'PIN_NOTE': {
@@ -445,8 +447,11 @@ export const middleware: S.Middleware = (store) => {
         const oldHash = t(action.oldTagName);
         const newHash = t(action.newTagName);
 
-        if (searchState.openedTag === oldHash) {
-          searchState.openedTag = newHash;
+        if (
+          searchState.showCollection.type === 'tag' &&
+          searchState.showCollection.tagHash === oldHash
+        ) {
+          searchState.showCollection = { type: 'tag', tagHash: newHash };
         }
 
         searchState.notes.forEach((note, noteId) => {
@@ -477,13 +482,11 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'SELECT_TRASH':
-        searchState.openedTag = null;
-        searchState.showTrash = true;
+        searchState.showCollection = { type: 'trash' };
         return next(withSearch(action));
 
       case 'SHOW_ALL_NOTES':
-        searchState.openedTag = null;
-        searchState.showTrash = false;
+        searchState.showCollection = { type: 'all' };
         return next(withSearch(action));
 
       case 'SEARCH':
@@ -536,11 +539,14 @@ export const middleware: S.Middleware = (store) => {
         // only update the search if we have a trashed tag open
         // it's okay to leave tag search terms in because we
         // can always search for non-existent tags
-        if (searchState.openedTag !== tagHash) {
+        if (
+          searchState.showCollection.type === 'tag' &&
+          searchState.showCollection.tagHash !== tagHash
+        ) {
           return next(action);
         }
 
-        searchState.openedTag = null;
+        searchState.showCollection = { type: 'all' };
         return next(withSearch(action));
       }
     }

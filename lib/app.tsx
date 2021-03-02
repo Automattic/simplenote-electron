@@ -220,7 +220,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
   showNoteInfo: state.ui.showNoteInfo,
-  showTrash: state.ui.showTrash,
+  showTrash: state.ui.showCollection.type === 'trash',
   theme: selectors.getTheme(state),
 });
 

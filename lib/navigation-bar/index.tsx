@@ -17,7 +17,7 @@ import * as T from '../types';
 type StateProps = {
   autoHideMenuBar: boolean;
   isDialogOpen: boolean;
-  openedTag: T.TagEntity | null;
+  openedTag: T.TagHash | null;
   showNavigation: boolean;
   showTrash: boolean;
 };
@@ -126,13 +126,16 @@ export class NavigationBar extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   settings,
-  ui: { dialogs, openedTag, showNavigation, showTrash },
+  ui: { dialogs, showNavigation, showCollection },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
   isDialogOpen: dialogs.length > 0,
-  openedTag,
+  openedTag:
+    showCollection.type === 'tag' && showCollection.tagHash
+      ? showCollection.tagHash
+      : null,
   showNavigation,
-  showTrash,
+  showTrash: showCollection.type === 'trash',
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {

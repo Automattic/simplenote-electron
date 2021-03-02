@@ -196,13 +196,16 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   const {
     data,
     settings: { sortTagsAlpha },
-    ui: { editingTags, openedTag },
+    ui: { editingTags, showCollection },
   } = state;
   return {
     editingTags,
     sortTagsAlpha,
     tags: data.tags,
-    openedTag,
+    openedTag:
+      showCollection.type === 'tag' && showCollection.tagHash
+        ? showCollection.tagHash
+        : null,
     theme: selectors.getTheme(state),
   };
 };

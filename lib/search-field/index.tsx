@@ -108,11 +108,14 @@ export class SearchField extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   data,
-  ui: { openedTag, searchQuery, showTrash },
+  ui: { searchQuery, showCollection },
 }: State) => ({
-  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
+  openedTag:
+    showCollection.type === 'tag' && showCollection.tagHash
+      ? data.tags.get(showCollection.tagHash) ?? null
+      : null,
   searchQuery,
-  showTrash,
+  showTrash: showCollection.type === 'trash',
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

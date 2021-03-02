@@ -18,8 +18,12 @@ type EmptyNoteListPlaceholder = {
 const NoNotes = () => {
   const hasLoaded = useSelector((state: S.State) => state.ui.hasLoadedNotes);
   const searchQuery = useSelector((state: S.State) => state.ui.searchQuery);
-  const showTrash = useSelector((state: S.State) => state.ui.showTrash);
-  const openedTag = useSelector((state: S.State) => state.ui.openedTag);
+  const showTrash = useSelector(
+    (state: S.State) => state.ui.showCollection.type === 'trash'
+  );
+  const openedTag = useSelector(
+    (state: S.State) => state.ui.showCollection.tagHash
+  );
   const dispatch = useDispatch();
 
   const getButton = () => {

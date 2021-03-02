@@ -192,15 +192,21 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
-const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
+const showCollection: A.Reducer<T.Collection> = (
+  state = { type: 'all' },
+  action
+) => {
   switch (action.type) {
     case 'SELECT_TRASH':
+      return { type: 'trash' };
     case 'SHOW_ALL_NOTES':
-      return null;
+      return { type: 'all' };
     case 'OPEN_TAG':
-      return tagHashOf(action.tagName);
+      return { type: 'tag', tagHash: tagHashOf(action.tagName) };
     case 'TRASH_TAG':
-      return tagHashOf(action.tagName) === state ? null : state;
+      return tagHashOf(action.tagName) === state.tagHash
+        ? { type: 'all' }
+        : state;
     default:
       return state;
   }
@@ -298,20 +304,6 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const showTrash: A.Reducer<boolean> = (state = false, action) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-      return true;
-    case 'CREATE_NOTE_WITH_ID':
-    case 'OPEN_TAG':
-    case 'SHOW_ALL_NOTES': {
-      return false;
-    }
-    default:
-      return state;
-  }
-};
-
 const tagSuggestions: A.Reducer<T.TagHash[]> = (
   state = emptyList as T.TagHash[],
   action
@@ -333,14 +325,13 @@ export default combineReducers({
   numberOfMatchesInNote,
   openedNote,
   openedRevision,
-  openedTag,
   searchQuery,
   selectedSearchMatchIndex,
   showNavigation,
   showNoteInfo,
   showNoteList,
   showRevisions,
-  showTrash,
+  showCollection,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,
