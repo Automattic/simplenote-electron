@@ -45,6 +45,7 @@
   p {
     margin: 0 26px;
     margin-block-start: 0;
+    word-break: break-all;
   }
 
   p:not(:last-of-type) {
