@@ -377,7 +377,7 @@ export class Auth extends Component<Props> {
         : false;
       const authState = searchParams.get('state');
       const userEmail = searchParams.get('user');
-      const simpToken = searchParams.get('token');
+      const simperiumToken = searchParams.get('token');
       const wpccToken = searchParams.get('wp_token');
 
       // Display an error message if authorization failed.
@@ -399,7 +399,7 @@ export class Auth extends Component<Props> {
       if (authState !== this.authState) {
         return;
       }
-      this.props.tokenLogin(userEmail, simpToken);
+      this.props.tokenLogin(userEmail, simperiumToken);
     });
   };
 

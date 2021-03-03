@@ -46,9 +46,9 @@ class AppWithoutAuth extends Component<Props, State> {
 
     window.electron?.receive('tokenLogin', (url) => {
       const { searchParams } = new URL(url);
-      const simpToken = searchParams.get('token');
+      const simperiumToken = searchParams.get('token');
       const email = searchParams.get('email');
-      this.tokenLogin(email, simpToken);
+      this.tokenLogin(email, simperiumToken);
     });
   }
 
