@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
+import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
 import { validatePassword } from '../utils/validate-password';
@@ -69,6 +70,27 @@ export class Auth extends Component<Props> {
       'is-electron': isElectron,
     });
 
+    if (this.props.accountCreationRequested) {
+      return (
+        <div className={mainClasses}>
+          {isElectron && isMac && <div className="login__draggable-area" />}
+          <div className="accountRequested">
+            <MailIcon />
+            <p className="accountRequested__message theme-color-fg">
+              We&apos;ve sent an email to <strong>example@email.com</strong>.
+              Please check your inbox and follow the instructions.
+            </p>
+            <p className="accountRequested__footer theme-color-fg-dim">
+              Didn&apos;t get an email? Please contact{' '}
+              <a href="mailto:support@simplenote.com">support@simplenote.com</a>
+              .
+            </p>
+            <button className="button-borderless">Go Back</button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={mainClasses}>
         {isElectron && isMac && <div className="login__draggable-area" />}
@@ -77,17 +99,6 @@ export class Auth extends Component<Props> {
           <h1>{buttonLabel}</h1>
           {!this.state.onLine && (
             <p className="login__auth-message is-error">Offline</p>
-          )}
-          {this.props.accountCreationRequested && (
-            <p
-              className="login__auth-message"
-              data-error-name="account-creation-requested"
-            >
-              Please check your email to continue the account creation process.
-              If you do not receieve an email you may already have an account
-              with the email submitted. If you are still having issues please
-              contact support at support@simplenote.com
-            </p>
           )}
           {this.props.hasInsecurePassword && (
             <p
@@ -125,107 +136,103 @@ export class Auth extends Component<Props> {
               {passwordErrorMessage}
             </p>
           )}
-
-          {!this.props.accountCreationRequested && (
-            <>
-              <label
-                className="login__field theme-color-border"
-                htmlFor="login__field-username"
-              >
-                Email
-              </label>
-              <input
-                id="login__field-username"
-                onInput={this.onInput}
-                onInvalid={this.onInput}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-                placeholder="Email"
-                ref={(ref) => (this.usernameInput = ref)}
-                spellCheck={false}
-                type="email"
-                required
-                autoFocus
-              />
-              {!isCreatingAccount && (
-                <label
-                  className="login__field theme-color-border"
-                  htmlFor="login__field-password"
-                >
-                  Password
-                </label>
-              )}
-              {!isCreatingAccount && (
-                <input
-                  id="login__field-password"
-                  onInput={this.onInput}
-                  onInvalid={this.onInput}
-                  onFocus={this.onFocus}
-                  onBlur={this.onBlur}
-                  placeholder="Password"
-                  ref={(ref) => (this.passwordInput = ref)}
-                  spellCheck={false}
-                  type="password"
-                  required
-                  minLength="4"
-                />
-              )}
-              <button
-                id="login__login-button"
-                className={submitClasses}
-                disabled={!this.state.onLine}
-                onClick={this.onSubmit}
-                type="submit"
-              >
-                {this.props.authPending ? (
-                  <Spinner isWhite={true} size={20} thickness={5} />
-                ) : (
-                  buttonLabel
-                )}
-              </button>
-              {!isCreatingAccount && (
-                <a
-                  className="login__forgot"
-                  href="https://app.simplenote.com/forgot/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={this.onForgot}
-                >
-                  Forgot your password?
-                </a>
-              )}
-              {isElectron && !isCreatingAccount && (
-                <Fragment>
-                  <span className="or">Or</span>
-                  <span className="or-line"></span>
-                  <button className="wpcc-button" onClick={this.onWPLogin}>
-                    {buttonLabel} with WordPress.com
-                  </button>
-                </Fragment>
-              )}
-              {isCreatingAccount && (
-                <div className="terms">
-                  By creating an account you agree to our
-                  <a
-                    href="https://simplenote.com/terms/"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      viewExternalUrl('https://simplenote.com/terms/');
-                    }}
-                  >
-                    Terms of Service
-                  </a>
-                  .
-                </div>
-              )}
-              <p className="login__signup">
-                {helpMessage}{' '}
-                <a href="#" onClick={this.toggleSignUp}>
-                  {helpLinkLabel}
-                </a>
-              </p>
-            </>
+          <label
+            className="login__field theme-color-border"
+            htmlFor="login__field-username"
+          >
+            Email
+          </label>
+          <input
+            id="login__field-username"
+            onInput={this.onInput}
+            onInvalid={this.onInput}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            placeholder="Email"
+            ref={(ref) => (this.usernameInput = ref)}
+            spellCheck={false}
+            type="email"
+            required
+            autoFocus
+          />
+          {!isCreatingAccount && (
+            <label
+              className="login__field theme-color-border"
+              htmlFor="login__field-password"
+            >
+              Password
+            </label>
           )}
+          {!isCreatingAccount && (
+            <input
+              id="login__field-password"
+              onInput={this.onInput}
+              onInvalid={this.onInput}
+              onFocus={this.onFocus}
+              onBlur={this.onBlur}
+              placeholder="Password"
+              ref={(ref) => (this.passwordInput = ref)}
+              spellCheck={false}
+              type="password"
+              required
+              minLength="4"
+            />
+          )}
+          <button
+            id="login__login-button"
+            className={submitClasses}
+            disabled={!this.state.onLine}
+            onClick={this.onSubmit}
+            type="submit"
+          >
+            {this.props.authPending ? (
+              <Spinner isWhite={true} size={20} thickness={5} />
+            ) : (
+              buttonLabel
+            )}
+          </button>
+
+          {!isCreatingAccount && (
+            <a
+              className="login__forgot"
+              href="https://app.simplenote.com/forgot/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={this.onForgot}
+            >
+              Forgot your password?
+            </a>
+          )}
+          {isElectron && !isCreatingAccount && (
+            <Fragment>
+              <span className="or">Or</span>
+              <span className="or-line"></span>
+              <button className="wpcc-button" onClick={this.onWPLogin}>
+                {buttonLabel} with WordPress.com
+              </button>
+            </Fragment>
+          )}
+          {isCreatingAccount && (
+            <div className="terms">
+              By creating an account you agree to our
+              <a
+                href="https://simplenote.com/terms/"
+                onClick={(event) => {
+                  event.preventDefault();
+                  viewExternalUrl('https://simplenote.com/terms/');
+                }}
+              >
+                Terms of Service
+              </a>
+              .
+            </div>
+          )}
+          <p className="login__signup">
+            {helpMessage}{' '}
+            <a href="#" onClick={this.toggleSignUp}>
+              {helpLinkLabel}
+            </a>
+          </p>
         </form>
       </div>
     );

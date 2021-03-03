@@ -135,6 +135,25 @@
   }
 }
 
+.accountRequested {
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  width: 320px;
+
+  svg.icon-mail {
+    color: $studio-gray-50;
+    width: 60px;
+    height: 60px;
+  }
+  .accountRequested__message {
+  }
+  .accountRequested__footer {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
 .theme-dark .login {
   h1 {
     color: $studio-white;
@@ -164,5 +183,9 @@
   }
   .or-line {
     border-color: $studio-gray-80;
+  }
+
+  svg.icon-mail {
+    color: $studio-gray-30;
   }
 }
