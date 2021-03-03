@@ -2,6 +2,7 @@ import React, { Component, FunctionComponent } from 'react';
 import * as Sentry from '@sentry/react';
 import WarningIcon from '../icons/warning';
 import { viewExternalUrl } from '../utils/url-utils';
+import { isElectron } from '../utils/platform';
 
 const helpEmail = 'mailto:support@simplenote.com?subject=Simplenote%20Support';
 
@@ -20,7 +21,13 @@ const ErrorMessage: FunctionComponent = () => (
       <div className="error-message__action">
         <button
           className="button button-primary"
-          onClick={() => window.history.go()}
+          onClick={() => {
+            if (isElectron) {
+              window.electron?.send('reload');
+            } else {
+              window.history.go();
+            }
+          }}
         >
           Reload application
         </button>

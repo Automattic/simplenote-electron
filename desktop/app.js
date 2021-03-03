@@ -139,6 +139,10 @@ module.exports = function main() {
       importNotes(filePath, mainWindow);
     });
 
+    ipcMain.on('reload', function () {
+      mainWindow.reload();
+    });
+
     mainWindowState.manage(mainWindow);
 
     // this TERRIBLE HACK forces vscode to call window.open(url) rather than window.open()
