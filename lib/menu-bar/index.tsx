@@ -26,7 +26,7 @@ type OwnProps = {
 
 type StateProps = {
   searchQuery: string;
-  showCollection: T.Collection;
+  collection: T.Collection;
 };
 
 type DispatchProps = {
@@ -39,11 +39,11 @@ type Props = OwnProps & StateProps & DispatchProps;
 export const MenuBar: FunctionComponent<Props> = ({
   onNewNote,
   searchQuery,
-  showCollection,
+  collection,
   toggleNavigation,
 }) => {
   let placeholder;
-  switch (showCollection.type) {
+  switch (collection.type) {
     case 'tag':
       placeholder = 'Notes With Selected Tag';
       break;
@@ -66,7 +66,7 @@ export const MenuBar: FunctionComponent<Props> = ({
       />
       <div className="notes-title">{placeholder}</div>
       <IconButton
-        disabled={showCollection.type === 'trash'}
+        disabled={collection.type === 'trash'}
         icon={<NewNoteIcon />}
         onClick={() => onNewNote(withoutTags(searchQuery))}
         title={`New Note • ${CmdOrCtrl}+Shift+I`}
@@ -76,10 +76,10 @@ export const MenuBar: FunctionComponent<Props> = ({
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, showCollection },
+  ui: { searchQuery, collection },
 }) => ({
   searchQuery,
-  showCollection,
+  collection,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (

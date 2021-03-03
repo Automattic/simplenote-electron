@@ -48,13 +48,13 @@ export const shouldShowEmailVerification: S.Selector<boolean> = ({
 }) => status === 'unverified' || status === 'pending';
 
 export const openedTag: S.Selector<T.TagName | undefined> = ({
-  ui: { showCollection },
-}) => (showCollection.type === 'tag' && showCollection.tagName) || undefined;
+  ui: { collection },
+}) => (collection.type === 'tag' && collection.tagName) || undefined;
 
 export const openedTagHash: S.Selector<T.TagHash | undefined> = (state) => {
   const ot = openedTag(state);
   return (ot && tagHashOf(ot)) || undefined;
 };
 
-export const showTrash: S.Selector<boolean> = ({ ui: { showCollection } }) =>
-  showCollection.type === 'trash';
+export const showTrash: S.Selector<boolean> = ({ ui: { collection } }) =>
+  collection.type === 'trash';

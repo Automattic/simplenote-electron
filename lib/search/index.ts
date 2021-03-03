@@ -28,7 +28,7 @@ type SearchState = {
   searchQuery: string;
   searchTags: Set<T.TagHash>;
   searchTerms: string[];
-  showCollection: T.Collection;
+  collection: T.Collection;
   sortType: T.SortType;
   sortReversed: boolean;
   titleOnly: boolean | null;
@@ -67,7 +67,7 @@ export const middleware: S.Middleware = (store) => {
     searchQuery: '',
     searchTags: new Set(),
     searchTerms: [],
-    showCollection: { type: 'all' },
+    collection: { type: 'all' },
     sortType: store.getState().settings.sortType,
     sortReversed: store.getState().settings.sortReversed,
     titleOnly: false,
@@ -182,7 +182,7 @@ export const middleware: S.Middleware = (store) => {
       searchTerms,
       sortReversed,
       sortType,
-      showCollection,
+      collection,
       titleOnly,
     } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();
@@ -211,7 +211,7 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
-      const showTrash = showCollection.type === 'trash';
+      const showTrash = collection.type === 'trash';
       if (showTrash !== note.isTrashed) {
         continue;
       }
@@ -227,8 +227,7 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
-      const openedTagHash =
-        showCollection.type === 'tag' && t(showCollection.tagName);
+      const openedTagHash = collection.type === 'tag' && t(collection.tagName);
       if (openedTagHash && !note.tags.has(openedTagHash)) {
         continue;
       }
@@ -364,7 +363,7 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'CREATE_NOTE_WITH_ID':
-        searchState.showCollection = { type: 'all' };
+        searchState.collection = { type: 'all' };
         searchState.notes.set(action.noteId, toSearchNote(action.note ?? {}));
         indexNote(action.noteId);
         queueSearch();
@@ -412,7 +411,7 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'OPEN_TAG':
-        searchState.showCollection = {
+        searchState.collection = {
           type: 'tag',
           tagName: action.tagName,
         };
@@ -449,10 +448,10 @@ export const middleware: S.Middleware = (store) => {
         const newHash = t(action.newTagName);
 
         if (
-          searchState.showCollection.type === 'tag' &&
-          searchState.showCollection.tagName === action.oldTagName
+          searchState.collection.type === 'tag' &&
+          searchState.collection.tagName === action.oldTagName
         ) {
-          searchState.showCollection = {
+          searchState.collection = {
             type: 'tag',
             tagName: action.newTagName,
           };
@@ -486,11 +485,11 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'SELECT_TRASH':
-        searchState.showCollection = { type: 'trash' };
+        searchState.collection = { type: 'trash' };
         return next(withSearch(action));
 
       case 'SHOW_ALL_NOTES':
-        searchState.showCollection = { type: 'all' };
+        searchState.collection = { type: 'all' };
         return next(withSearch(action));
 
       case 'SEARCH':
@@ -544,13 +543,13 @@ export const middleware: S.Middleware = (store) => {
         // it's okay to leave tag search terms in because we
         // can always search for non-existent tags
         if (
-          searchState.showCollection.type === 'tag' &&
-          searchState.showCollection.tagName !== action.tagName
+          searchState.collection.type === 'tag' &&
+          searchState.collection.tagName !== action.tagName
         ) {
           return next(action);
         }
 
-        searchState.showCollection = { type: 'all' };
+        searchState.collection = { type: 'all' };
         return next(withSearch(action));
       }
     }

@@ -18,9 +18,7 @@ type EmptyNoteListPlaceholder = {
 const NoNotes = () => {
   const hasLoaded = useSelector((state: S.State) => state.ui.hasLoadedNotes);
   const searchQuery = useSelector((state: S.State) => state.ui.searchQuery);
-  const showCollection = useSelector(
-    (state: S.State) => state.ui.showCollection
-  );
+  const collection = useSelector((state: S.State) => state.ui.collection);
   const dispatch = useDispatch();
 
   const getButton = () => {
@@ -41,16 +39,16 @@ const NoNotes = () => {
 
   const placeholderInfo = ({
     searchQuery,
-    showCollection,
+    collection,
   }): EmptyNoteListPlaceholder => {
     if (searchQuery.length > 0) {
       return { message: 'No Results', icon: null, button: getButton() };
     }
 
-    switch (showCollection.type) {
+    switch (collection.type) {
       case 'tag':
         return {
-          message: `No notes tagged "${showCollection.tagName}"`,
+          message: `No notes tagged "${collection.tagName}"`,
           icon: <TagIcon />,
           button: null,
         };
@@ -71,7 +69,7 @@ const NoNotes = () => {
 
   const { message, icon, button } = placeholderInfo({
     searchQuery,
-    showCollection,
+    collection,
   });
 
   return (

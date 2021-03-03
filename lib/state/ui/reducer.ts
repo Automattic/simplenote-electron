@@ -192,7 +192,7 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
-const showCollection: A.Reducer<T.Collection> = (
+const collection: A.Reducer<T.Collection> = (
   state = { type: 'all' },
   action
 ) => {
@@ -329,7 +329,7 @@ export default combineReducers({
   showNoteInfo,
   showNoteList,
   showRevisions,
-  showCollection,
+  collection,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,
