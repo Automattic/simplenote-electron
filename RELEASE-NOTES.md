@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.8.0]
+
+### Fixes
+
+- Added `unusualLineTerminators: auto` to Monaco Editor options to auto remove line terminators like line separators (LS) or paragraph separator (PS) [#2698](https://github.com/Automattic/simplenote-electron/issues/2698)
+
 ## [v2.7.0]
 
 ### Enhancements
