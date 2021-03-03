@@ -1,0 +1,32 @@
+.error-message {
+  align-items: center;
+  flex-direction: column;
+  display: flex;
+  height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.error-message__content {
+  align-items: center;
+  max-width: 30em;
+  font-size: 16px;
+}
+
+.error-message__heading {
+  text-align: center;
+}
+
+.error-message__icon {
+  height: 48px;
+  margin: 0 auto;
+  width: 48px;
+
+  .icon-warning {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.error-message__action {
+  text-align: center;
+}

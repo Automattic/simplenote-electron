@@ -7,8 +7,10 @@ import { validatePassword } from './utils/validate-password';
 import Modal from 'react-modal';
 import classNames from 'classnames';
 import AboutDialog from './dialogs/about';
+import ErrorBoundary from './error-boundary';
 
 import getConfig from '../get-config';
+import isDevConfig from './utils/is-dev-config';
 
 import '../scss/style.scss';
 
@@ -142,42 +144,44 @@ class AppWithoutAuth extends Component<Props, State> {
       : 'light';
 
     return (
-      <div className={`app theme-${systemTheme}`}>
-        <AuthApp
-          accountCreationRequested={
-            this.state.authStatus === 'account-creation-requested'
-          }
-          authPending={this.state.authStatus === 'submitting'}
-          emailSentTo={this.state.emailSentTo}
-          hasInsecurePassword={this.state.authStatus === 'insecure-password'}
-          hasInvalidCredentials={
-            this.state.authStatus === 'invalid-credentials'
-          }
-          hasLoginError={this.state.authStatus === 'unknown-error'}
-          login={this.authenticate}
-          tokenLogin={this.tokenLogin}
-          resetErrors={() =>
-            this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
-          }
-          requestSignup={this.requestSignup}
-        />
-        {this.state.showAbout && (
-          <Modal
-            key="aboutDialogModal"
-            className="dialog-renderer__content"
-            contentLabel=""
-            isOpen
-            onRequestClose={this.onDismissDialog}
-            overlayClassName="dialog-renderer__overlay"
-            portalClassName={classNames(
-              'dialog-renderer__portal',
-              'theme-' + systemTheme
-            )}
-          >
-            <AboutDialog key="about" closeDialog={this.onDismissDialog} />
-          </Modal>
-        )}
-      </div>
+      <ErrorBoundary isDevConfig={isDevConfig(config?.development)}>
+        <div className={`app theme-${systemTheme}`}>
+          <AuthApp
+            accountCreationRequested={
+              this.state.authStatus === 'account-creation-requested'
+            }
+            authPending={this.state.authStatus === 'submitting'}
+            emailSentTo={this.state.emailSentTo}
+            hasInsecurePassword={this.state.authStatus === 'insecure-password'}
+            hasInvalidCredentials={
+              this.state.authStatus === 'invalid-credentials'
+            }
+            hasLoginError={this.state.authStatus === 'unknown-error'}
+            login={this.authenticate}
+            tokenLogin={this.tokenLogin}
+            resetErrors={() =>
+              this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
+            }
+            requestSignup={this.requestSignup}
+          />
+          {this.state.showAbout && (
+            <Modal
+              key="aboutDialogModal"
+              className="dialog-renderer__content"
+              contentLabel=""
+              isOpen
+              onRequestClose={this.onDismissDialog}
+              overlayClassName="dialog-renderer__overlay"
+              portalClassName={classNames(
+                'dialog-renderer__portal',
+                'theme-' + systemTheme
+              )}
+            >
+              <AboutDialog key="about" closeDialog={this.onDismissDialog} />
+            </Modal>
+          )}
+        </div>
+      </ErrorBoundary>
     );
   }
 }
