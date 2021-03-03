@@ -13,10 +13,12 @@ import { viewExternalUrl } from '../utils/url-utils';
 type OwnProps = {
   accountCreationRequested: boolean;
   authPending: boolean;
+  emailSentTo: string;
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
   login: (username: string, password: string) => any;
+  requestSignup: (username: string) => any;
   signup: (username: string, password: string) => any;
   tokenLogin: (username: string, token: string) => any;
   resetErrors: () => any;
@@ -27,6 +29,8 @@ type Props = OwnProps;
 export class Auth extends Component<Props> {
   state = {
     isCreatingAccount: false,
+    isLoggingIn: true,
+    isRequestingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
   };
@@ -50,21 +54,21 @@ export class Auth extends Component<Props> {
       return null;
     }
 
-    const { isCreatingAccount, passwordErrorMessage } = this.state;
+    const { isLoggingIn, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
     });
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isCreatingAccount ? signUpText : logInText;
-    const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
-    const helpMessage = isCreatingAccount
-      ? 'Already have an account?'
-      : "Don't have an account?";
-    const errorMessage = isCreatingAccount
-      ? 'Could not create account. Please try again.'
-      : 'Could not log in with the provided email address and password.';
+    const buttonLabel = isLoggingIn ? logInText : signUpText;
+    const helpLinkLabel = isLoggingIn ? signUpText : logInText;
+    const helpMessage = isLoggingIn
+      ? "Don't have an account?"
+      : 'Already have an account?';
+    const errorMessage = isLoggingIn
+      ? 'Could not log in with the provided email address and password.'
+      : 'Could not create account. Please try again.';
 
     const mainClasses = classNames('login', {
       'is-electron': isElectron,
@@ -77,15 +81,21 @@ export class Auth extends Component<Props> {
           <div className="accountRequested">
             <MailIcon />
             <p className="accountRequested__message theme-color-fg">
-              We&apos;ve sent an email to <strong>example@email.com</strong>.
-              Please check your inbox and follow the instructions.
+              We&apos;ve sent an email to{' '}
+              <strong>{this.props.emailSentTo}</strong>. Please check your inbox
+              and follow the instructions.
             </p>
             <p className="accountRequested__footer theme-color-fg-dim">
               Didn&apos;t get an email? Please contact{' '}
               <a href="mailto:support@simplenote.com">support@simplenote.com</a>
               .
             </p>
-            <button className="button-borderless">Go Back</button>
+            <button
+              onClick={this.clearRequestedAccount}
+              className="button-borderless"
+            >
+              Go Back
+            </button>
           </div>
         </div>
       );
@@ -155,7 +165,7 @@ export class Auth extends Component<Props> {
             required
             autoFocus
           />
-          {!isCreatingAccount && (
+          {isLoggingIn && (
             <label
               className="login__field theme-color-border"
               htmlFor="login__field-password"
@@ -163,7 +173,7 @@ export class Auth extends Component<Props> {
               Password
             </label>
           )}
-          {!isCreatingAccount && (
+          {isLoggingIn && (
             <input
               id="login__field-password"
               onInput={this.onInput}
@@ -192,7 +202,7 @@ export class Auth extends Component<Props> {
             )}
           </button>
 
-          {!isCreatingAccount && (
+          {isLoggingIn && (
             <a
               className="login__forgot"
               href="https://app.simplenote.com/forgot/"
@@ -203,7 +213,7 @@ export class Auth extends Component<Props> {
               Forgot your password?
             </a>
           )}
-          {isElectron && !isCreatingAccount && (
+          {isElectron && isLoggingIn && (
             <Fragment>
               <span className="or">Or</span>
               <span className="or-line"></span>
@@ -212,7 +222,7 @@ export class Auth extends Component<Props> {
               </button>
             </Fragment>
           )}
-          {isCreatingAccount && (
+          {!isLoggingIn && (
             <div className="terms">
               By creating an account you agree to our
               <a
@@ -300,6 +310,10 @@ export class Auth extends Component<Props> {
     }
   };
 
+  clearRequestedAccount = () => {
+    this.props.resetErrors();
+  };
+
   onSubmit = (event) => {
     event.preventDefault();
 
@@ -309,7 +323,15 @@ export class Auth extends Component<Props> {
       passwordErrorMessage: '',
     });
 
-    if (
+    // make sure all existing form fields are filled out
+    if (!this.passwordInput) {
+      if (this.usernameInput.validity.valueMissing) {
+        this.setState({
+          passwordErrorMessage: 'Please fill out email.',
+        });
+        return;
+      }
+    } else if (
       this.usernameInput.validity.valueMissing ||
       this.passwordInput.validity.valueMissing
     ) {
@@ -344,6 +366,8 @@ export class Auth extends Component<Props> {
 
       this.passwordInput.setCustomValidity('');
       this.props.signup(username, password, true);
+    } else if (this.state.isRequestingAccount) {
+      this.props.requestSignup(username);
     }
 
     // login - slightly more relaxed password rules
@@ -424,6 +448,7 @@ export class Auth extends Component<Props> {
     this.setState({
       passwordErrorMessage: '',
     });
-    this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
+    this.setState({ isRequestingAccount: !this.state.isRequestingAccount });
+    this.setState({ isLoggingIn: !this.state.isLoggingIn });
   };
 }

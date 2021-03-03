@@ -24,6 +24,7 @@ type State = {
     | 'insecure-password'
     | 'invalid-credentials'
     | 'unknown-error';
+  emailSentTo: string;
   showAbout: boolean;
 };
 
@@ -38,6 +39,7 @@ const auth = new SimperiumAuth(config.app_id, config.app_key);
 class AppWithoutAuth extends Component<Props, State> {
   state: State = {
     authStatus: 'unsubmitted',
+    emailSentTo: '', // TODO this needs to be stored in app state
     showAbout: false,
   };
 
@@ -100,6 +102,12 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   };
 
+  requestSignup = (email: string) => {
+    // TODO invoke /request-signup endpoint
+    this.setState({ authStatus: 'account-creation-requested' });
+    this.setState({ emailSentTo: email });
+  };
+
   createUser = (usernameArg: string, password: string) => {
     const username = usernameArg.trim().toLowerCase();
     if (!(username && password)) {
@@ -141,6 +149,7 @@ class AppWithoutAuth extends Component<Props, State> {
             this.state.authStatus === 'account-creation-requested'
           }
           authPending={this.state.authStatus === 'submitting'}
+          emailSentTo={this.state.emailSentTo}
           hasInsecurePassword={this.state.authStatus === 'insecure-password'}
           hasInvalidCredentials={
             this.state.authStatus === 'invalid-credentials'
@@ -149,7 +158,11 @@ class AppWithoutAuth extends Component<Props, State> {
           login={this.authenticate}
           signup={this.createUser}
           tokenLogin={this.tokenLogin}
-          resetErrors={() => this.setState({ authStatus: 'unsubmitted' })}
+          resetErrors={() => {
+            this.setState({ authStatus: 'unsubmitted' });
+            this.setState({ emailSentTo: '' });
+          }}
+          requestSignup={this.requestSignup}
         />
         {this.state.showAbout && (
           <Modal
