@@ -54,7 +54,12 @@ export class Auth extends Component<Props> {
       return null;
     }
 
-    const { isLoggingIn, passwordErrorMessage } = this.state;
+    const {
+      isCreatingAccount,
+      isLoggingIn,
+      isRequestingAccount,
+      passwordErrorMessage,
+    } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
     });
@@ -146,26 +151,50 @@ export class Auth extends Component<Props> {
               {passwordErrorMessage}
             </p>
           )}
+          {isCreatingAccount && (
+            <p className="login__auth-message theme-color-fg">
+              Finish setting up your Simplenote account.
+            </p>
+          )}
           <label
             className="login__field theme-color-border"
             htmlFor="login__field-username"
           >
             Email
           </label>
-          <input
-            id="login__field-username"
-            onInput={this.onInput}
-            onInvalid={this.onInput}
-            onFocus={this.onFocus}
-            onBlur={this.onBlur}
-            placeholder="Email"
-            ref={(ref) => (this.usernameInput = ref)}
-            spellCheck={false}
-            type="email"
-            required
-            autoFocus
-          />
-          {isLoggingIn && (
+          {isCreatingAccount && (
+            <input
+              id="login__field-username"
+              onInput={this.onInput}
+              onInvalid={this.onInput}
+              onFocus={this.onFocus}
+              onBlur={this.onBlur}
+              placeholder="Email"
+              ref={(ref) => (this.usernameInput = ref)}
+              spellCheck={false}
+              type="email"
+              required
+              autoFocus
+              value={this.props.emailSentTo}
+              disabled
+            />
+          )}
+          {!isCreatingAccount && (
+            <input
+              id="login__field-username"
+              onInput={this.onInput}
+              onInvalid={this.onInput}
+              onFocus={this.onFocus}
+              onBlur={this.onBlur}
+              placeholder="Email"
+              ref={(ref) => (this.usernameInput = ref)}
+              spellCheck={false}
+              type="email"
+              required
+              autoFocus
+            />
+          )}
+          {!isRequestingAccount && (
             <label
               className="login__field theme-color-border"
               htmlFor="login__field-password"
@@ -173,7 +202,7 @@ export class Auth extends Component<Props> {
               Password
             </label>
           )}
-          {isLoggingIn && (
+          {!isRequestingAccount && (
             <input
               id="login__field-password"
               onInput={this.onInput}

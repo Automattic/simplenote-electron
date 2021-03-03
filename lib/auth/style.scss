@@ -32,13 +32,15 @@
     text-align: center;
   }
 
-  .login__auth-message.is-error {
-    color: $studio-red-60;
+  .login__auth-message {
     font-size: 16px;
     margin: 0 auto 16px;
     max-width: 347px;
     text-align: center;
     width: 90%;
+    .is-error {
+      color: $studio-red-60;
+    }
   }
 
   label {

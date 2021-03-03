@@ -109,6 +109,8 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   createUser = (usernameArg: string, password: string) => {
+    // todo we need to verify somewhere if the username matches the email we sent the token to
+    // (because it's very easy to enable a disabled form field)
     const username = usernameArg.trim().toLowerCase();
     if (!(username && password)) {
       return;
