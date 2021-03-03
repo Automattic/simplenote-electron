@@ -147,25 +147,29 @@ export class Auth extends Component<Props> {
                 required
                 autoFocus
               />
-              <label
-                className="login__field theme-color-border"
-                htmlFor="login__field-password"
-              >
-                Password
-              </label>
-              <input
-                id="login__field-password"
-                onInput={this.onInput}
-                onInvalid={this.onInput}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-                placeholder="Password"
-                ref={(ref) => (this.passwordInput = ref)}
-                spellCheck={false}
-                type="password"
-                required
-                minLength="4"
-              />
+              {!isCreatingAccount && (
+                <label
+                  className="login__field theme-color-border"
+                  htmlFor="login__field-password"
+                >
+                  Password
+                </label>
+              )}
+              {!isCreatingAccount && (
+                <input
+                  id="login__field-password"
+                  onInput={this.onInput}
+                  onInvalid={this.onInput}
+                  onFocus={this.onFocus}
+                  onBlur={this.onBlur}
+                  placeholder="Password"
+                  ref={(ref) => (this.passwordInput = ref)}
+                  spellCheck={false}
+                  type="password"
+                  required
+                  minLength="4"
+                />
+              )}
               <button
                 id="login__login-button"
                 className={submitClasses}

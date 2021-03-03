@@ -368,6 +368,7 @@ export default combineReducers({
   showNoteInfo,
   showNoteList,
   showRevisions,
+  showTokenLoginLogout,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,

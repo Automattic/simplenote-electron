@@ -38,6 +38,7 @@ type StateProps = {
   showEmailVerification: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
+  showTokenLoginLogout: boolean;
   theme: 'light' | 'dark';
 };
 
@@ -181,6 +182,7 @@ class AppComponent extends Component<Props> {
       showEmailVerification,
       showNavigation,
       showNoteInfo,
+      showTokenLoginLogout,
       theme,
     } = this.props;
 
