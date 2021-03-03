@@ -16,5 +16,5 @@
 
 ### Release
 
-<!-- **_(Required)_** Add a concise statement to `RELEASE-NOTES.md` if the changes should be included in release notes. Include details about updating the notes in this section. For example:
-`RELEASE-NOTES.md` was updated with: -->
+<!-- **_(Required)_** If the changes should be included in release notes, add a concise statement below describing the change. For example:
+Fixed crash that occurred when opening the navigation sidebar. -->
