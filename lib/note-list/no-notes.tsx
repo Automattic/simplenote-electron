@@ -18,11 +18,8 @@ type EmptyNoteListPlaceholder = {
 const NoNotes = () => {
   const hasLoaded = useSelector((state: S.State) => state.ui.hasLoadedNotes);
   const searchQuery = useSelector((state: S.State) => state.ui.searchQuery);
-  const showTrash = useSelector(
-    (state: S.State) => state.ui.showCollection.type === 'trash'
-  );
-  const openedTag = useSelector(
-    (state: S.State) => state.ui.showCollection.tagHash
+  const showCollection = useSelector(
+    (state: S.State) => state.ui.showCollection
   );
   const dispatch = useDispatch();
 
@@ -44,40 +41,37 @@ const NoNotes = () => {
 
   const placeholderInfo = ({
     searchQuery,
-    openedTag,
-    showTrash,
+    showCollection,
   }): EmptyNoteListPlaceholder => {
     if (searchQuery.length > 0) {
       return { message: 'No Results', icon: null, button: getButton() };
     }
 
-    if (openedTag !== null) {
-      return {
-        message: `No notes tagged "${openedTag}"`,
-        icon: <TagIcon />,
-        button: null,
-      };
+    switch (showCollection.type) {
+      case 'tag':
+        return {
+          message: `No notes tagged "${showCollection.tagName}"`,
+          icon: <TagIcon />,
+          button: null,
+        };
+      case 'trash':
+        return {
+          message: 'Your trash is empty',
+          icon: <TrashIcon />,
+          button: null,
+        };
+      default:
+        return {
+          message: '',
+          icon: <NotesIcon />,
+          button: getButton(),
+        };
     }
-
-    if (showTrash) {
-      return {
-        message: 'Your trash is empty',
-        icon: <TrashIcon />,
-        button: null,
-      };
-    }
-
-    return {
-      message: '',
-      icon: <NotesIcon />,
-      button: getButton(),
-    };
   };
 
   const { message, icon, button } = placeholderInfo({
     searchQuery,
-    openedTag,
-    showTrash,
+    showCollection,
   });
 
   return (

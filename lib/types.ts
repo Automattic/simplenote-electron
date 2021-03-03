@@ -53,7 +53,7 @@ export type VerificationState =
 export type Collection =
   | { type: 'all' }
   | { type: 'trash' }
-  | { type: 'tag'; tagHash: TagHash | null }
+  | { type: 'tag'; tagName: TagName }
   | { type: 'untagged' };
 
 ///////////////////////////////////////

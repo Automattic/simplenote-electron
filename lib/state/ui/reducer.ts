@@ -202,11 +202,9 @@ const showCollection: A.Reducer<T.Collection> = (
     case 'SHOW_ALL_NOTES':
       return { type: 'all' };
     case 'OPEN_TAG':
-      return { type: 'tag', tagHash: tagHashOf(action.tagName) };
+      return { type: 'tag', tagName: action.tagName };
     case 'TRASH_TAG':
-      return tagHashOf(action.tagName) === state.tagHash
-        ? { type: 'all' }
-        : state;
+      return action.tagName === state.tagName ? { type: 'all' } : state;
     default:
       return state;
   }

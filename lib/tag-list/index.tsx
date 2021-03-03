@@ -20,7 +20,7 @@ import type * as T from '../types';
 
 type StateProps = {
   editingTags: boolean;
-  openedTag: T.TagHash | null;
+  openedTagHash: T.TagHash | undefined;
   sortTagsAlpha: boolean;
   theme: 'light' | 'dark';
   tags: Map<T.TagHash, T.Tag>;
@@ -92,7 +92,7 @@ const SortableTagList = SortableContainer(
   ({
     editingTags,
     items,
-    openedTag,
+    openedTagHash,
     openTag,
     sortTagsAlpha,
     theme,
@@ -100,7 +100,7 @@ const SortableTagList = SortableContainer(
   }: {
     editingTags: boolean;
     items: [T.TagHash, T.Tag][];
-    openedTag: T.TagHash | null;
+    openedTagHash: T.TagHash | undefined;
     openTag: (tagName: T.TagName) => any;
     sortTagsAlpha: boolean;
     theme: 'light' | 'dark';
@@ -113,7 +113,7 @@ const SortableTagList = SortableContainer(
           allowReordering={!sortTagsAlpha}
           editingActive={editingTags}
           index={index}
-          isSelected={openedTag === value[0]}
+          isSelected={openedTagHash === value[0]}
           selectTag={openTag}
           theme={theme}
           trashTag={trashTheTag}
@@ -137,7 +137,7 @@ export class TagList extends Component<Props> {
       editingTags,
       onEditTags,
       openTag,
-      openedTag,
+      openedTagHash,
       sortTagsAlpha,
       tags,
       theme,
@@ -178,7 +178,7 @@ export class TagList extends Component<Props> {
         <SortableTagList
           editingTags={editingTags}
           lockAxis="y"
-          openedTag={openedTag}
+          openedTagHash={openedTagHash}
           openTag={openTag}
           items={sortedTags}
           sortTagsAlpha={sortTagsAlpha}
@@ -196,16 +196,13 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   const {
     data,
     settings: { sortTagsAlpha },
-    ui: { editingTags, showCollection },
+    ui: { editingTags },
   } = state;
   return {
     editingTags,
     sortTagsAlpha,
     tags: data.tags,
-    openedTag:
-      showCollection.type === 'tag' && showCollection.tagHash
-        ? showCollection.tagHash
-        : null,
+    openedTagHash: selectors.openedTagHash(state),
     theme: selectors.getTheme(state),
   };
 };

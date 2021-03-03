@@ -227,8 +227,9 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
-      const openedTag = showCollection.type === 'tag' && showCollection.tagHash;
-      if (openedTag && !note.tags.has(openedTag)) {
+      const openedTagHash =
+        showCollection.type === 'tag' && t(showCollection.tagName);
+      if (openedTagHash && !note.tags.has(openedTagHash)) {
         continue;
       }
 
@@ -413,7 +414,7 @@ export const middleware: S.Middleware = (store) => {
       case 'OPEN_TAG':
         searchState.showCollection = {
           type: 'tag',
-          tagHash: t(action.tagName),
+          tagName: action.tagName,
         };
         return next(withSearch(action));
 
@@ -449,9 +450,12 @@ export const middleware: S.Middleware = (store) => {
 
         if (
           searchState.showCollection.type === 'tag' &&
-          searchState.showCollection.tagHash === oldHash
+          searchState.showCollection.tagName === action.oldTagName
         ) {
-          searchState.showCollection = { type: 'tag', tagHash: newHash };
+          searchState.showCollection = {
+            type: 'tag',
+            tagName: action.newTagName,
+          };
         }
 
         searchState.notes.forEach((note, noteId) => {
@@ -541,7 +545,7 @@ export const middleware: S.Middleware = (store) => {
         // can always search for non-existent tags
         if (
           searchState.showCollection.type === 'tag' &&
-          searchState.showCollection.tagHash !== tagHash
+          searchState.showCollection.tagName !== action.tagName
         ) {
           return next(action);
         }
