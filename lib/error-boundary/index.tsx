@@ -29,7 +29,7 @@ const ErrorMessage: FunctionComponent = () => (
             }
           }}
         >
-          Reload application
+          Reload Application
         </button>
       </div>
       <p>
