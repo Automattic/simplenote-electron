@@ -1,8 +1,12 @@
 import { EventEmitter } from 'events';
 import CoreImporter from '../';
 import { endsWith, isEmpty } from 'lodash';
+import Ajv, { JSONSchemaType } from 'ajv';
+
+const ajv = new Ajv();
 
 import * as T from '../../../types';
+import { GroupedExportNotes } from '../../export/types';
 
 class SimplenoteImporter extends EventEmitter {
   constructor(addNote: (note: T.Note) => any, options) {
@@ -42,9 +46,39 @@ class SimplenoteImporter extends EventEmitter {
         return;
       }
 
+      const exportNoteElements = {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          content: { type: 'string' },
+          creationDate: { type: 'timestamp' },
+          lastModified: { type: 'timestamp' },
+
+          pinned: { type: 'boolean' },
+          markdown: { type: 'boolean' },
+          tags: { type: 'array', items: { type: 'string' } },
+          publicURL: { type: 'string' },
+          collaboratorEmails: { type: 'array', items: { type: 'string' } },
+        },
+        required: ['id', 'content', 'creationDate', 'lastModified'],
+      };
+      const schema: JSONSchemaType<GroupedExportNotes> = {
+        type: 'object',
+        properties: {
+          activeNotes: { type: 'array', items: exportNoteElements },
+          trashedNotes: { type: 'array', items: exportNoteElements },
+        },
+        required: ['activeNotes', 'trashedNotes'],
+      };
+      const validate = ajv.compile(schema);
+
       let dataObj;
       try {
         dataObj = JSON.parse(fileContent);
+        if (!validate(dataObj)) {
+          this.emit('status', 'error', 'Invalid json file schema.');
+          return;
+        }
       } catch (error) {
         this.emit('status', 'error', 'Invalid json file.');
         return;
