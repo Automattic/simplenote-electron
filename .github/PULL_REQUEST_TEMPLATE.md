@@ -1,6 +1,9 @@
 ### Fix
-
-<!-- **_(Required)_** Add a concise description of what you fixed. If this is related to an issue, add a link to it. If applicable, add screenshots, animations, or videos to help illustrate the fix. -->
+<!--
+**_(Required)_** Add a concise description of what you fixed. If this is related 
+to an issue, add a link to it. If applicable, add screenshots, animations, or
+videos to help illustrate the fix.
+-->
 
 ### Test
 <!--
@@ -16,5 +19,8 @@
 
 ### Release
 
-<!-- **_(Required)_** Add a concise statement to `RELEASE-NOTES.md` if the changes should be included in release notes. Include details about updating the notes in this section. For example:
-`RELEASE-NOTES.md` was updated with: -->
+<!--
+**_(Required)_** If the changes should be included in release notes, add a
+concise statement below describing the change. For example:
+Fixed crash that occurred when opening the navigation sidebar.
+-->
