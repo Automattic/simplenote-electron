@@ -73,6 +73,10 @@
   }
 }
 
+.email-verification__email {
+  word-break: break-all;
+}
+
 .theme-dark {
   .email-verification__overlay {
     background: rgba($studio-gray-100, 0.75);

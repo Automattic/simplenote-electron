@@ -60,9 +60,9 @@ const EmailVerification: FunctionComponent<Props> = ({
         <WarningIcon />
       </span>
       <h2>Review Your Account</h2>
-      <p>
-        You are registered with Simplenote using the email{' '}
-        <strong>{email}</strong>.
+      <p>You are registered with Simplenote using the email:</p>
+      <p className="email-verification__email">
+        <strong>{email}</strong>
       </p>
       <p>
         Improvements to account security may result in account loss if you no
