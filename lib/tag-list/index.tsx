@@ -12,6 +12,7 @@ import ReorderIcon from '../icons/reorder';
 import TagListInput from './input';
 import TrashIcon from '../icons/trash';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
+import { tagHashOf } from '../utils/tag-hash';
 
 import * as selectors from './../state/selectors';
 
@@ -20,7 +21,7 @@ import type * as T from '../types';
 
 type StateProps = {
   editingTags: boolean;
-  openedTagHash: T.TagHash | undefined;
+  openedTag: T.TagName | null;
   sortTagsAlpha: boolean;
   theme: 'light' | 'dark';
   tags: Map<T.TagHash, T.Tag>;
@@ -100,7 +101,7 @@ const SortableTagList = SortableContainer(
   }: {
     editingTags: boolean;
     items: [T.TagHash, T.Tag][];
-    openedTagHash: T.TagHash | undefined;
+    openedTagHash: T.TagHash | null;
     openTag: (tagName: T.TagName) => any;
     sortTagsAlpha: boolean;
     theme: 'light' | 'dark';
@@ -136,7 +137,7 @@ export class TagList extends Component<Props> {
     const {
       editingTags,
       onEditTags,
-      openedTagHash,
+      openedTag,
       openTag,
       sortTagsAlpha,
       tags,
@@ -178,7 +179,7 @@ export class TagList extends Component<Props> {
         <SortableTagList
           editingTags={editingTags}
           lockAxis="y"
-          openedTagHash={openedTagHash}
+          openedTagHash={(openedTag && tagHashOf(openedTag)) || null}
           openTag={openTag}
           items={sortedTags}
           sortTagsAlpha={sortTagsAlpha}
@@ -200,7 +201,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   } = state;
   return {
     editingTags,
-    openedTagHash: selectors.openedTagHash(state),
+    openedTag: selectors.openedTag(state),
     sortTagsAlpha,
     tags: data.tags,
     theme: selectors.getTheme(state),

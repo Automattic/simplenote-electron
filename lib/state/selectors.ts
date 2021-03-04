@@ -1,6 +1,5 @@
 import * as S from './';
 import * as T from '../types';
-import { tagHashOf } from '../utils/tag-hash';
 
 /**
  * "Narrow" views hide the note editor
@@ -47,14 +46,9 @@ export const shouldShowEmailVerification: S.Selector<boolean> = ({
   data: { accountVerification: status },
 }) => status === 'unverified' || status === 'pending';
 
-export const openedTag: S.Selector<T.TagName | undefined> = ({
+export const openedTag: S.Selector<T.TagName | null> = ({
   ui: { collection },
-}) => (collection.type === 'tag' && collection.tagName) || undefined;
-
-export const openedTagHash: S.Selector<T.TagHash | undefined> = (state) => {
-  const ot = openedTag(state);
-  return (ot && tagHashOf(ot)) || undefined;
-};
+}) => (collection.type === 'tag' && collection.tagName) || null;
 
 export const showTrash: S.Selector<boolean> = ({ ui: { collection } }) =>
   collection.type === 'trash';

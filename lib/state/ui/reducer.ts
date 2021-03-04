@@ -314,6 +314,7 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 };
 
 export default combineReducers({
+  collection,
   dialogs,
   editMode,
   editorSelection,
@@ -329,7 +330,6 @@ export default combineReducers({
   showNoteInfo,
   showNoteList,
   showRevisions,
-  collection,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,

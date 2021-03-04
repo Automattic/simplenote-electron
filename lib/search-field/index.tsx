@@ -14,7 +14,7 @@ import type * as T from '../types';
 const KEY_ESC = 27;
 
 type StateProps = {
-  openedTag: T.TagName | undefined;
+  openedTag: T.TagName | null;
   searchQuery: string;
 };
 
