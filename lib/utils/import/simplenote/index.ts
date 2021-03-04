@@ -15,6 +15,35 @@ class SimplenoteImporter extends EventEmitter {
     this.options = options;
   }
 
+  validator = () => {
+    const exportNoteElements = {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        content: { type: 'string' },
+        creationDate: { type: 'timestamp' },
+        lastModified: { type: 'timestamp' },
+
+        pinned: { type: 'boolean' },
+        markdown: { type: 'boolean' },
+        tags: { type: 'array', items: { type: 'string' } },
+        publicURL: { type: 'string' },
+        collaboratorEmails: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['id', 'content', 'creationDate', 'lastModified'],
+    };
+    const schema: JSONSchemaType<GroupedExportNotes> = {
+      type: 'object',
+      properties: {
+        activeNotes: { type: 'array', items: exportNoteElements },
+        trashedNotes: { type: 'array', items: exportNoteElements },
+      },
+      required: ['activeNotes', 'trashedNotes'],
+    };
+
+    return ajv.compile(schema);
+  };
+
   importNotes = (filesArray) => {
     const coreImporter = new CoreImporter(this.addNote);
 
@@ -46,35 +75,11 @@ class SimplenoteImporter extends EventEmitter {
         return;
       }
 
-      const exportNoteElements = {
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          content: { type: 'string' },
-          creationDate: { type: 'timestamp' },
-          lastModified: { type: 'timestamp' },
-
-          pinned: { type: 'boolean' },
-          markdown: { type: 'boolean' },
-          tags: { type: 'array', items: { type: 'string' } },
-          publicURL: { type: 'string' },
-          collaboratorEmails: { type: 'array', items: { type: 'string' } },
-        },
-        required: ['id', 'content', 'creationDate', 'lastModified'],
-      };
-      const schema: JSONSchemaType<GroupedExportNotes> = {
-        type: 'object',
-        properties: {
-          activeNotes: { type: 'array', items: exportNoteElements },
-          trashedNotes: { type: 'array', items: exportNoteElements },
-        },
-        required: ['activeNotes', 'trashedNotes'],
-      };
-      const validate = ajv.compile(schema);
-
       let dataObj;
       try {
         dataObj = JSON.parse(fileContent);
+
+        const validate = this.validator();
         if (!validate(dataObj)) {
           this.emit('status', 'error', 'Invalid json file schema.');
           return;
