@@ -45,7 +45,6 @@
   p {
     margin: 0 26px;
     margin-block-start: 0;
-    word-break: break-all;
   }
 
   p:not(:last-of-type) {
@@ -72,6 +71,10 @@
   &:focus {
     outline: 0;
   }
+}
+
+.email-verification__email {
+  word-break: break-all;
 }
 
 .theme-dark {
