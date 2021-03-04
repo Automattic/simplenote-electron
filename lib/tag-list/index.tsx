@@ -136,8 +136,8 @@ export class TagList extends Component<Props> {
     const {
       editingTags,
       onEditTags,
-      openTag,
       openedTagHash,
+      openTag,
       sortTagsAlpha,
       tags,
       theme,
@@ -200,9 +200,9 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   } = state;
   return {
     editingTags,
+    openedTagHash: selectors.openedTagHash(state),
     sortTagsAlpha,
     tags: data.tags,
-    openedTagHash: selectors.openedTagHash(state),
     theme: selectors.getTheme(state),
   };
 };

@@ -16,8 +16,8 @@ import * as T from '../types';
 
 type StateProps = {
   autoHideMenuBar: boolean;
-  isDialogOpen: boolean;
   collection: T.Collection;
+  isDialogOpen: boolean;
   showNavigation: boolean;
 };
 
@@ -126,11 +126,11 @@ export class NavigationBar extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   settings,
-  ui: { dialogs, showNavigation, collection },
+  ui: { collection, dialogs, showNavigation },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
-  isDialogOpen: dialogs.length > 0,
   collection,
+  isDialogOpen: dialogs.length > 0,
   showNavigation,
 });
 

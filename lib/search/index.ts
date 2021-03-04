@@ -22,13 +22,13 @@ type SearchNote = {
 };
 
 type SearchState = {
+  collection: T.Collection;
   hasSelectedFirstNote: boolean;
   excludeIDs: Array<T.EntityId> | null;
   notes: Map<T.EntityId, SearchNote>;
   searchQuery: string;
   searchTags: Set<T.TagHash>;
   searchTerms: string[];
-  collection: T.Collection;
   sortType: T.SortType;
   sortReversed: boolean;
   titleOnly: boolean | null;
@@ -61,13 +61,13 @@ export let searchNotes: (
 
 export const middleware: S.Middleware = (store) => {
   const searchState: SearchState = {
+    collection: { type: 'all' },
     excludeIDs: [],
     hasSelectedFirstNote: false,
     notes: new Map(),
     searchQuery: '',
     searchTags: new Set(),
     searchTerms: [],
-    collection: { type: 'all' },
     sortType: store.getState().settings.sortType,
     sortReversed: store.getState().settings.sortReversed,
     titleOnly: false,
@@ -176,13 +176,13 @@ export const middleware: S.Middleware = (store) => {
     maxResults = Infinity
   ): T.EntityId[] => {
     const {
+      collection,
       excludeIDs,
       notes,
       searchTags,
       searchTerms,
       sortReversed,
       sortType,
-      collection,
       titleOnly,
     } = { ...searchState, ...args };
     const matches = new Set<T.EntityId>();

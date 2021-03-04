@@ -342,9 +342,9 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     openedNote: state.ui.openedNote,
     searchQuery: state.ui.searchQuery,
     showNoteList: state.ui.showNoteList,
+    showTrash: selectors.showTrash(state),
     tagResultsFound: state.ui.tagSuggestions.length,
     windowWidth: state.browser.windowWidth,
-    showTrash: selectors.showTrash(state),
   };
 };
 

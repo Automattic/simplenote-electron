@@ -25,8 +25,8 @@ type OwnProps = {
 };
 
 type StateProps = {
-  searchQuery: string;
   collection: T.Collection;
+  searchQuery: string;
 };
 
 type DispatchProps = {
@@ -37,9 +37,9 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export const MenuBar: FunctionComponent<Props> = ({
+  collection,
   onNewNote,
   searchQuery,
-  collection,
   toggleNavigation,
 }) => {
   let placeholder;
@@ -76,10 +76,10 @@ export const MenuBar: FunctionComponent<Props> = ({
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { searchQuery, collection },
+  ui: { collection, searchQuery },
 }) => ({
-  searchQuery,
   collection,
+  searchQuery,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (

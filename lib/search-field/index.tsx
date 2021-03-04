@@ -9,7 +9,7 @@ import { focusSearchField, search } from '../state/ui/actions';
 import { registerSearchField } from '../state/ui/search-field-middleware';
 
 import type * as S from '../state';
-import * as T from '../types';
+import type * as T from '../types';
 
 const KEY_ESC = 27;
 
@@ -71,7 +71,7 @@ export class SearchField extends Component<Props> {
   clearQuery = () => this.props.onSearch('');
 
   render() {
-    const { searchQuery, openedTag } = this.props;
+    const { openedTag, searchQuery } = this.props;
     const hasQuery = searchQuery.length > 0;
     const placeholder = openedTag ?? 'Search notes and tags';
 
@@ -107,8 +107,8 @@ export class SearchField extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state: State) => ({
-  searchQuery: state.ui.searchQuery,
   openedTag: selectors.openedTag(state),
+  searchQuery: state.ui.searchQuery,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

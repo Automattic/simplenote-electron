@@ -86,6 +86,24 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
+const collection: A.Reducer<T.Collection> = (
+  state = { type: 'all' },
+  action
+) => {
+  switch (action.type) {
+    case 'OPEN_TAG':
+      return { type: 'tag', tagName: action.tagName };
+    case 'SELECT_TRASH':
+      return { type: 'trash' };
+    case 'SHOW_ALL_NOTES':
+      return { type: 'all' };
+    case 'TRASH_TAG':
+      return action.tagName === state.tagName ? { type: 'all' } : state;
+    default:
+      return state;
+  }
+};
+
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
@@ -187,24 +205,6 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
     case 'OPEN_REVISION':
       return [action.noteId, action.version];
 
-    default:
-      return state;
-  }
-};
-
-const collection: A.Reducer<T.Collection> = (
-  state = { type: 'all' },
-  action
-) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-      return { type: 'trash' };
-    case 'SHOW_ALL_NOTES':
-      return { type: 'all' };
-    case 'OPEN_TAG':
-      return { type: 'tag', tagName: action.tagName };
-    case 'TRASH_TAG':
-      return action.tagName === state.tagName ? { type: 'all' } : state;
     default:
       return state;
   }
