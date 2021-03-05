@@ -77,7 +77,7 @@ export class NavigationBar extends Component<Props> {
         <div className="navigation-bar__folders theme-color-border">
           <NavigationBarItem
             icon={<NotesIcon />}
-            isSelected={this.isSelected({ row: 'untagged' })}
+            isSelected={this.isSelected({ selectedRow: 'untagged' })}
             label="Untagged Notes"
             onClick={onShowUntaggedNotes}
           />

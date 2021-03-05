@@ -227,6 +227,10 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      if (collection.type === 'untagged' && note.tags.size) {
+        continue;
+      }
+
       const openedTagHash = collection.type === 'tag' && t(collection.tagName);
       if (openedTagHash && !note.tags.has(openedTagHash)) {
         continue;
@@ -349,7 +353,6 @@ export const middleware: S.Middleware = (store) => {
       return rawNext(action);
     };
 
-    searchState.showUntagged = false;
     switch (action.type) {
       case 'ADD_NOTE_TAG': {
         const note = searchState.notes.get(action.noteId);
@@ -494,9 +497,7 @@ export const middleware: S.Middleware = (store) => {
         return next(withSearch(action));
 
       case 'SHOW_UNTAGGED_NOTES':
-        searchState.openedTag = null;
-        searchState.showTrash = false;
-        searchState.showUntagged = true;
+        searchState.collection = { type: 'untagged' };
         return next(withSearch(action));
 
       case 'SEARCH':

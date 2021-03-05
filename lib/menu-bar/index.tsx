@@ -50,6 +50,9 @@ export const MenuBar: FunctionComponent<Props> = ({
     case 'trash':
       placeholder = 'Trash';
       break;
+    case 'untagged':
+      placeholder = 'Untagged Notes';
+      break;
     default:
       placeholder = 'All Notes';
       break;
