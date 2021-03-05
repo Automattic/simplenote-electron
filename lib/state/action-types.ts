@@ -102,7 +102,7 @@ export type SetUnsyncedNoteIds = Action<
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
 export type ShowUntaggedNotes = Action<'SHOW_UNTAGGED_NOTES'>;
-  
+
 export type ShowDialog = Action<
   'SHOW_DIALOG',
   {
