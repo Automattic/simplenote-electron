@@ -39,7 +39,7 @@ const auth = new SimperiumAuth(config.app_id, config.app_key);
 class AppWithoutAuth extends Component<Props, State> {
   state: State = {
     authStatus: 'unsubmitted',
-    emailSentTo: '', // TODO this needs to be stored in app state
+    emailSentTo: '',
     showAbout: false,
   };
 

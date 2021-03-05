@@ -86,6 +86,7 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
+<<<<<<< HEAD
 const collection: A.Reducer<T.Collection> = (
   state = { type: 'all' },
   action
@@ -108,11 +109,25 @@ const collection: A.Reducer<T.Collection> = (
 
       return openedTagIsGone || lastTagDisappeared ? { type: 'all' } : state;
     }
+=======
+const alternateLoginEmail: A.Reducer<string | null> = (
+  state = null,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return action.email;
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return null;
+>>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
     default:
       return state;
   }
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
@@ -234,6 +249,40 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
+<<<<<<< HEAD
+const showNoteList: A.Reducer<boolean> = (state = true, action) => {
+=======
+const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
+  switch (action.type) {
+    case 'SELECT_TRASH':
+    case 'SHOW_ALL_NOTES':
+      return null;
+    case 'OPEN_TAG':
+      return tagHashOf(action.tagName);
+    case 'TRASH_TAG':
+      return tagHashOf(action.tagName) === state ? null : state;
+    default:
+      return state;
+  }
+};
+
+const showAlternateLoginPrompt: A.Reducer<boolean> = (
+  state = false,
+  action
+) => {
+>>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return !state;
+
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'NOTE_LIST_TOGGLE':
@@ -243,19 +292,6 @@ const showNoteList: A.Reducer<boolean> = (state = true, action) => {
       return true;
 
     case 'OPEN_NOTE':
-      return false;
-
-    default:
-      return state;
-  }
-};
-
-const showTokenLoginLogout: A.Reducer<boolean> = (state = false, action) => {
-  switch (action.type) {
-    case 'SHOW_TOKEN_LOGIN_LOGOUT':
-      return !state;
-
-    case 'HIDE_TOKEN_LOGIN_LOGOUT':
       return false;
 
     default:
@@ -353,6 +389,7 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 
 export default combineReducers({
   collection,
+  alternateLoginEmail,
   dialogs,
   editMode,
   editorSelection,
@@ -364,11 +401,11 @@ export default combineReducers({
   openedRevision,
   searchQuery,
   selectedSearchMatchIndex,
+  showAlternateLoginPrompt,
   showNavigation,
   showNoteInfo,
   showNoteList,
   showRevisions,
-  showTokenLoginLogout,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,

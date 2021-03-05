@@ -8,23 +8,28 @@ import WarningIcon from '../icons/warning';
 
 import actions from '../state/actions';
 
+import * as selectors from '../state/selectors';
 import * as S from '../state';
 
 type StateProps = {
-  showLogout: string;
+  alternateLoginEmail: string | null;
   email: string | null;
+  theme: 'light' | 'dark';
 };
 
 type DispatchProps = {
+  logout: () => any;
   dismiss: () => any;
 };
 
 type Props = StateProps & DispatchProps;
 
-const TokenLoginLogout: FunctionComponent<Props> = ({
-  showLogout,
+const AlternateLoginPrompt: FunctionComponent<Props> = ({
+  alternateLoginEmail,
   dismiss,
   email,
+  logout,
+  theme,
 }) => {
   const displayClose = (
     <div className="email-verification__dismiss">
@@ -38,7 +43,7 @@ const TokenLoginLogout: FunctionComponent<Props> = ({
     </div>
   );
 
-  const displayEmailConfirm = (
+  const displayAlternateLoginPrompt = (
     <Fragment>
       {displayClose}
       <span className="theme-color-fg-dim">
@@ -46,15 +51,18 @@ const TokenLoginLogout: FunctionComponent<Props> = ({
       </span>
       <h2>Logout?</h2>
       <p>
-        You are logged in with <strong>{email}</strong>.
+        You are already logged in as <strong>{email}</strong>.
       </p>
-      <p>You tried logging in with {showLogout}. Would you like to logout?</p>
+      <p>
+        You tried logging in with <strong>{alternateLoginEmail}</strong>. Would
+        you like to log out?
+      </p>
 
       <div className="email-verification__button-row button-borderless">
-        <a target="_blank" rel="noreferrer">
+        <a target="_blank" rel="noreferrer" onClick={dismiss}>
           <button className="button button-borderless">Cancel</button>
         </a>
-        <a target="_blank" rel="noreferrer">
+        <a target="_blank" rel="noreferrer" onClick={logout}>
           <button className="button button-primary">Logout</button>
         </a>
       </div>
@@ -74,18 +82,23 @@ const TokenLoginLogout: FunctionComponent<Props> = ({
         'theme-' + theme
       )}
     >
-      {displayEmailConfirm}
+      {displayAlternateLoginPrompt}
     </Modal>
   );
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  dismiss: () => actions.ui.hideTokenLoginLogout(),
+  dismiss: () => actions.ui.showAlternateLoginPrompt(false),
+  logout: actions.ui.logout,
 };
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  showLogout: state.ui.showTokenLoginLogout,
+  alternateLoginEmail: state.ui.alternateLoginEmail,
   email: state.settings.accountName,
+  theme: selectors.getTheme(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TokenLoginLogout);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AlternateLoginPrompt);

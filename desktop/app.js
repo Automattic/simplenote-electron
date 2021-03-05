@@ -32,6 +32,7 @@ module.exports = function main() {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
     app.on('open-url', function (event, url) {
       event.preventDefault();
+      // TODO look at parameters to figure out which of these to call
       mainWindow.webContents.send('tokenLogin', url);
       mainWindow.webContents.send('wpLogin', url);
     });
@@ -212,7 +213,7 @@ module.exports = function main() {
     // Protocol handler for platforms other than macOS
     // argv: An array of the second instance’s (command line / deep linked) arguments
     // The last index of argv is the full deeplink url (simplenote://SOME_URL)
-    throw 'blah';
+    // TODO look at parameters to figure out which of these to call
     mainWindow.webContents.send('tokenLogin', argv[argv.length - 1]);
     mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
   });
@@ -221,9 +222,9 @@ module.exports = function main() {
     return app.quit();
   }
 
-  if (!app.isDefaultProtocolClient('simplenotelocal')) {
+  if (!app.isDefaultProtocolClient('simplenote')) {
     // Define custom protocol handler. This allows for deeplinking into the app from simplenote://
-    app.setAsDefaultProtocolClient('simplenotelocal');
+    app.setAsDefaultProtocolClient('simplenote');
   }
 
   // Quit when all windows are closed.
