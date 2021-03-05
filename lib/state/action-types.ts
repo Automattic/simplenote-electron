@@ -218,7 +218,10 @@ export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
 >;
-export type TrashTag = Action<'TRASH_TAG', { tagName: T.TagName }>;
+export type TrashTag = Action<
+  'TRASH_TAG',
+  { tagName: T.TagName; remainingTags?: number }
+>;
 
 /*
  * Simperium operations
