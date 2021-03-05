@@ -100,7 +100,7 @@ function ImporterDropzone({
     return (
       <Fragment>
         <div className="accepted-files-header">
-          Import File{acceptedFile.length > 1 ? 's' : ''}
+          {acceptedFile.length > 1 ? 'Import Files' : 'Import File'}
         </div>
         <ul className="accepted-files">{fileList}</ul>
         {errorMessage.length > 0 && (
