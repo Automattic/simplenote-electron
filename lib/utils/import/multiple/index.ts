@@ -68,30 +68,16 @@ class MultipleImporter extends EventEmitter {
           this.recordEvent
         );
 
-        // If the importer supports multiple files send them all at once,
-        // if not send them one at a time.
-        if (importers.getImporter(name).multiple) {
-          totalImporters++;
+        for (let x = 0; x < files.length; x++) {
           await new Promise((resolve) => {
+            totalImporters++;
             const listener = importerListener(() => {
               importer.off('status', listener);
               resolve(true);
             });
             importer.on('status', listener);
-            importer.importNotes(files);
+            importer.importNotes([files[x]]);
           });
-        } else {
-          for (let x = 0; x < files.length; x++) {
-            await new Promise((resolve) => {
-              totalImporters++;
-              const listener = importerListener(() => {
-                importer.off('status', listener);
-                resolve(true);
-              });
-              importer.on('status', listener);
-              importer.importNotes([files[x]]);
-            });
-          }
         }
       }
     });

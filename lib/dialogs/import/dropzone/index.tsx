@@ -20,7 +20,6 @@ function ImporterDropzone({
 
   const handleAccept = (acceptedFiles) => {
     const filteredFiles = [];
-    // const seenImporters = new Set();
     for (let i = 0; i < acceptedFiles.length; i++) {
       const file = acceptedFiles[i];
 
@@ -33,15 +32,6 @@ function ImporterDropzone({
         continue;
       }
 
-      // if (!importer.multiple && seenImporters.has(importer.name)) {
-      //   setErrorMessage((errorMessage) => [
-      //     ...errorMessage,
-      //     `${importer.errorMessage} "${file.name}" will not be imported.`,
-      //   ]);
-      //   continue;
-      // }
-
-      // seenImporters.add(importer.name);
       filteredFiles.push(file);
     }
     setAcceptedFile(filteredFiles);

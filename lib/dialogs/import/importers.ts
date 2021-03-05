@@ -2,30 +2,22 @@ type ImporterName = 'simplenote' | 'evernote' | 'text-files';
 
 type Importer = {
   name: ImporterName;
-  errorMessage: String;
   fileTypes: Array<String>;
-  multiple: boolean;
 };
 
 const simplenoteImporter: Importer = {
   name: 'simplenote',
-  errorMessage: 'Only one Simplenote file (.json) can be imported at a time.',
   fileTypes: ['json'],
-  multiple: false,
 };
 
 const evernoteImporter: Importer = {
   name: 'evernote',
-  errorMessage: 'Only one Evernote file (.enex) can be imported at a time.',
   fileTypes: ['enex'],
-  multiple: false,
 };
 
 const textImporter: Importer = {
   name: 'text-files',
-  errorMessage: '',
   fileTypes: ['txt', 'md'],
-  multiple: true,
 };
 
 export const importers: Array<Importer> = [
