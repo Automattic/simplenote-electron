@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import CrossIcon from '../icons/cross';
+import CrossIconSmall from '../icons/cross-small';
 
 export class Dialog extends Component {
   static propTypes = {
@@ -33,7 +33,6 @@ export class Dialog extends Component {
       >
         {!hideTitleBar && (
           <div className="dialog-title-bar theme-color-border">
-            <div className="dialog-title-side" />
             <h2 className="dialog-title-text">{title}</h2>
             <div className="dialog-title-side">
               {!!onDone && (
@@ -43,7 +42,7 @@ export class Dialog extends Component {
                   className="button"
                   onClick={onDone}
                 >
-                  <CrossIcon />
+                  <CrossIconSmall />
                 </button>
               )}
             </div>
