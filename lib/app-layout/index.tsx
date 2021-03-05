@@ -144,7 +144,7 @@ export class AppLayout extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   hasRevisions:
     state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
-  keyboardShortcutsAreOpen: state.ui.dialogs.includes('KEYBINDINGS'),
+  keyboardShortcutsAreOpen: selectors.isDialogOpen(state, 'KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
   isFocusMode: state.settings.focusModeEnabled,
   isNavigationOpen: state.ui.showNavigation,
