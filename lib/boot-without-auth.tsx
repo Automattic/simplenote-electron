@@ -143,8 +143,8 @@ class AppWithoutAuth extends Component<Props, State> {
       : 'light';
 
     return (
-      <ErrorBoundary>
-        <div className={`app theme-${systemTheme}`}>
+      <div className={`app theme-${systemTheme}`}>
+        <ErrorBoundary>
           <AuthApp
             accountCreationRequested={
               this.state.authStatus === 'account-creation-requested'
@@ -179,8 +179,8 @@ class AppWithoutAuth extends Component<Props, State> {
               <AboutDialog key="about" closeDialog={this.onDismissDialog} />
             </Modal>
           )}
-        </div>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </div>
     );
   }
 }

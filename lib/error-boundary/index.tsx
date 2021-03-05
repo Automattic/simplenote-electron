@@ -6,6 +6,8 @@ import { isElectron } from '../utils/platform';
 import { connect } from 'react-redux';
 
 import * as S from '../state';
+import * as T from '../types';
+import * as selectors from '../state/selectors';
 
 const helpEmail = 'mailto:support@simplenote.com?subject=Simplenote%20Support';
 
@@ -16,9 +18,9 @@ type ErrorMessageProps = {
 const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
   allowAnalytics,
 }) => (
-  <div className="error-message">
-    <div className="error-message__content">
-      <div className="error-message__icon">
+  <div className="error-message theme-color-bg">
+    <div className="error-message__content theme-color-fg">
+      <div className="error-message__icon theme-color-fg-dim">
         <WarningIcon />
       </div>
       <h1 className="error-message__heading">Oops!</h1>
@@ -85,6 +87,7 @@ type ErrorBoundaryWithSentryOwnProps = {
 
 type ErrorBoundaryWithSentryStateProps = {
   allowAnalytics: boolean;
+  theme: T.Theme;
 };
 
 type ErrorBoundaryWithSentryProps = ErrorBoundaryWithSentryOwnProps &
@@ -94,15 +97,20 @@ const ErrorBoundaryWithSentry: FunctionComponent<ErrorBoundaryWithSentryProps> =
   allowAnalytics,
   children,
   isDevConfig,
+  theme,
 }) => {
-  return isDevConfig || !allowAnalytics ? (
-    <ErrorBoundary>{children}</ErrorBoundary>
-  ) : (
-    <Sentry.ErrorBoundary
-      fallback={() => <ErrorMessage allowAnalytics={allowAnalytics} />}
-    >
-      {children}
-    </Sentry.ErrorBoundary>
+  return (
+    <div className={`theme-${theme}`}>
+      {isDevConfig || !allowAnalytics ? (
+        <ErrorBoundary>{children}</ErrorBoundary>
+      ) : (
+        <Sentry.ErrorBoundary
+          fallback={() => <ErrorMessage allowAnalytics={allowAnalytics} />}
+        >
+          {children}
+        </Sentry.ErrorBoundary>
+      )}
+    </div>
   );
 };
 
@@ -110,6 +118,7 @@ const mapStateToProps: S.MapState<ErrorBoundaryWithSentryStateProps> = (
   state
 ) => ({
   allowAnalytics: !!state.data.analyticsAllowed,
+  theme: selectors.getTheme(state),
 });
 
 export const ErrorBoundaryWithAnalytics = connect(mapStateToProps)(
