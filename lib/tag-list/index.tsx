@@ -12,6 +12,7 @@ import ReorderIcon from '../icons/reorder';
 import TagListInput from './input';
 import TrashIcon from '../icons/trash';
 import { openTag, toggleTagEditing } from '../state/ui/actions';
+import { tagHashOf } from '../utils/tag-hash';
 
 import * as selectors from './../state/selectors';
 
@@ -20,7 +21,7 @@ import type * as T from '../types';
 
 type StateProps = {
   editingTags: boolean;
-  openedTag: T.TagHash | null;
+  openedTag: T.TagName | null;
   sortTagsAlpha: boolean;
   theme: 'light' | 'dark';
   tags: Map<T.TagHash, T.Tag>;
@@ -92,7 +93,7 @@ const SortableTagList = SortableContainer(
   ({
     editingTags,
     items,
-    openedTag,
+    openedTagHash,
     openTag,
     sortTagsAlpha,
     theme,
@@ -100,7 +101,7 @@ const SortableTagList = SortableContainer(
   }: {
     editingTags: boolean;
     items: [T.TagHash, T.Tag][];
-    openedTag: T.TagHash | null;
+    openedTagHash: T.TagHash | null;
     openTag: (tagName: T.TagName) => any;
     sortTagsAlpha: boolean;
     theme: 'light' | 'dark';
@@ -113,7 +114,7 @@ const SortableTagList = SortableContainer(
           allowReordering={!sortTagsAlpha}
           editingActive={editingTags}
           index={index}
-          isSelected={openedTag === value[0]}
+          isSelected={openedTagHash === value[0]}
           selectTag={openTag}
           theme={theme}
           trashTag={trashTheTag}
@@ -136,8 +137,8 @@ export class TagList extends Component<Props> {
     const {
       editingTags,
       onEditTags,
-      openTag,
       openedTag,
+      openTag,
       sortTagsAlpha,
       tags,
       theme,
@@ -178,7 +179,7 @@ export class TagList extends Component<Props> {
         <SortableTagList
           editingTags={editingTags}
           lockAxis="y"
-          openedTag={openedTag}
+          openedTagHash={(openedTag && tagHashOf(openedTag)) || null}
           openTag={openTag}
           items={sortedTags}
           sortTagsAlpha={sortTagsAlpha}
@@ -196,13 +197,13 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   const {
     data,
     settings: { sortTagsAlpha },
-    ui: { editingTags, openedTag },
+    ui: { editingTags },
   } = state;
   return {
     editingTags,
+    openedTag: selectors.openedTag(state),
     sortTagsAlpha,
     tags: data.tags,
-    openedTag,
     theme: selectors.getTheme(state),
   };
 };

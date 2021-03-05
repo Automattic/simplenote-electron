@@ -50,6 +50,12 @@ export type VerificationState =
   | 'unverified'
   | 'verified';
 
+export type Collection =
+  | { type: 'all' }
+  | { type: 'tag'; tagName: TagName }
+  | { type: 'trash' }
+  | { type: 'untagged' };
+
 ///////////////////////////////////////
 // Simperium Types
 ///////////////////////////////////////

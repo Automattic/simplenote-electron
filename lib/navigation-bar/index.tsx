@@ -16,10 +16,9 @@ import * as T from '../types';
 
 type StateProps = {
   autoHideMenuBar: boolean;
+  collection: T.Collection;
   isDialogOpen: boolean;
-  openedTag: T.TagEntity | null;
   showNavigation: boolean;
-  showTrash: boolean;
 };
 
 type DispatchProps = {
@@ -56,11 +55,12 @@ export class NavigationBar extends Component<Props> {
   };
 
   // Determine if the selected class should be applied for the 'all notes' or 'trash' rows
-  isSelected = ({ isTrashRow }: { isTrashRow: boolean }) => {
-    const { showTrash, openedTag } = this.props;
-    const isItemSelected = isTrashRow === showTrash;
-
-    return isItemSelected && !openedTag;
+  isSelected = ({
+    selectedRow,
+  }: {
+    selectedRow: 'all' | 'trash' | 'untagged';
+  }) => {
+    return this.props.collection.type === selectedRow;
   };
 
   render() {
@@ -75,13 +75,13 @@ export class NavigationBar extends Component<Props> {
           />
           <NavigationBarItem
             icon={<TrashIcon />}
-            isSelected={this.isSelected({ isTrashRow: true })}
+            isSelected={this.isSelected({ selectedRow: 'trash' })}
             label="Trash"
             onClick={this.onSelectTrash}
           />
           <NavigationBarItem
             icon={<NotesIcon />}
-            isSelected={this.isSelected({ isTrashRow: false })}
+            isSelected={this.isSelected({ selectedRow: 'all' })}
             label="All Notes"
             onClick={onShowAllNotes}
           />
@@ -126,13 +126,12 @@ export class NavigationBar extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   settings,
-  ui: { dialogs, openedTag, showNavigation, showTrash },
+  ui: { collection, dialogs, showNavigation },
 }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
+  collection,
   isDialogOpen: dialogs.length > 0,
-  openedTag,
   showNavigation,
-  showTrash,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {

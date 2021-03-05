@@ -86,6 +86,24 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
+const collection: A.Reducer<T.Collection> = (
+  state = { type: 'all' },
+  action
+) => {
+  switch (action.type) {
+    case 'OPEN_TAG':
+      return { type: 'tag', tagName: action.tagName };
+    case 'SELECT_TRASH':
+      return { type: 'trash' };
+    case 'SHOW_ALL_NOTES':
+      return { type: 'all' };
+    case 'TRASH_TAG':
+      return action.tagName === state.tagName ? { type: 'all' } : state;
+    default:
+      return state;
+  }
+};
+
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
@@ -192,20 +210,6 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
-const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
-      return null;
-    case 'OPEN_TAG':
-      return tagHashOf(action.tagName);
-    case 'TRASH_TAG':
-      return tagHashOf(action.tagName) === state ? null : state;
-    default:
-      return state;
-  }
-};
-
 const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'NOTE_LIST_TOGGLE':
@@ -298,20 +302,6 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
-const showTrash: A.Reducer<boolean> = (state = false, action) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-      return true;
-    case 'CREATE_NOTE_WITH_ID':
-    case 'OPEN_TAG':
-    case 'SHOW_ALL_NOTES': {
-      return false;
-    }
-    default:
-      return state;
-  }
-};
-
 const tagSuggestions: A.Reducer<T.TagHash[]> = (
   state = emptyList as T.TagHash[],
   action
@@ -324,6 +314,7 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 };
 
 export default combineReducers({
+  collection,
   dialogs,
   editMode,
   editorSelection,
@@ -333,14 +324,12 @@ export default combineReducers({
   numberOfMatchesInNote,
   openedNote,
   openedRevision,
-  openedTag,
   searchQuery,
   selectedSearchMatchIndex,
   showNavigation,
   showNoteInfo,
   showNoteList,
   showRevisions,
-  showTrash,
   simperiumConnected,
   tagSuggestions,
   unsyncedNoteIds,

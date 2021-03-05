@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import SmallCrossIcon from '../icons/cross-small';
 import SmallSearchIcon from '../icons/search-small';
 import { State } from '../state';
+import * as selectors from '../state/selectors';
 import { focusSearchField, search } from '../state/ui/actions';
 
 import { registerSearchField } from '../state/ui/search-field-middleware';
@@ -13,9 +14,8 @@ import type * as T from '../types';
 const KEY_ESC = 27;
 
 type StateProps = {
-  openedTag: T.Tag | null;
+  openedTag: T.TagName | null;
   searchQuery: string;
-  showTrash: boolean;
 };
 
 type DispatchProps = {
@@ -73,7 +73,7 @@ export class SearchField extends Component<Props> {
   render() {
     const { openedTag, searchQuery } = this.props;
     const hasQuery = searchQuery.length > 0;
-    const placeholder = openedTag?.name ?? 'Search notes and tags';
+    const placeholder = openedTag ?? 'Search notes and tags';
 
     const screenReaderLabel =
       'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
@@ -106,13 +106,9 @@ export class SearchField extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  data,
-  ui: { openedTag, searchQuery, showTrash },
-}: State) => ({
-  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
-  searchQuery,
-  showTrash,
+const mapStateToProps: S.MapState<StateProps> = (state: State) => ({
+  openedTag: selectors.openedTag(state),
+  searchQuery: state.ui.searchQuery,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = (dispatch) => ({

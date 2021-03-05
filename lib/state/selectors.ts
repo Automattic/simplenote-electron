@@ -45,3 +45,10 @@ export const noteHasPendingChanges: S.Selector<boolean> = (
 export const shouldShowEmailVerification: S.Selector<boolean> = ({
   data: { accountVerification: status },
 }) => status === 'unverified' || status === 'pending';
+
+export const openedTag: S.Selector<T.TagName | null> = ({
+  ui: { collection },
+}) => (collection.type === 'tag' && collection.tagName) || null;
+
+export const showTrash: S.Selector<boolean> = ({ ui: { collection } }) =>
+  collection.type === 'trash';

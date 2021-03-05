@@ -25,9 +25,8 @@ type OwnProps = {
 };
 
 type StateProps = {
-  openedTag: T.Tag | null;
+  collection: T.Collection;
   searchQuery: string;
-  showTrash: boolean;
 };
 
 type DispatchProps = {
@@ -38,17 +37,23 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export const MenuBar: FunctionComponent<Props> = ({
+  collection,
   onNewNote,
-  openedTag,
   searchQuery,
-  showTrash,
   toggleNavigation,
 }) => {
-  const placeholder = showTrash
-    ? 'Trash'
-    : openedTag
-    ? 'Notes With Selected Tag'
-    : 'All Notes';
+  let placeholder;
+  switch (collection.type) {
+    case 'tag':
+      placeholder = 'Notes With Selected Tag';
+      break;
+    case 'trash':
+      placeholder = 'Trash';
+      break;
+    default:
+      placeholder = 'All Notes';
+      break;
+  }
 
   const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
@@ -61,7 +66,7 @@ export const MenuBar: FunctionComponent<Props> = ({
       />
       <div className="notes-title">{placeholder}</div>
       <IconButton
-        disabled={showTrash}
+        disabled={collection.type === 'trash'}
         icon={<NewNoteIcon />}
         onClick={() => onNewNote(withoutTags(searchQuery))}
         title={`New Note • ${CmdOrCtrl}+Shift+I`}
@@ -71,12 +76,10 @@ export const MenuBar: FunctionComponent<Props> = ({
 };
 
 const mapStateToProps: S.MapState<StateProps> = ({
-  data,
-  ui: { openedTag, searchQuery, showTrash },
+  ui: { collection, searchQuery },
 }) => ({
-  openedTag: openedTag ? data.tags.get(openedTag) ?? null : null,
+  collection,
   searchQuery,
-  showTrash,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (

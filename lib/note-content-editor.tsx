@@ -243,11 +243,10 @@ class NoteContentEditor extends Component<Props> {
 
         const notes = searchNotes(
           {
-            searchTerms: getTerms(soFar),
+            collection: { type: 'all' },
             excludeIDs: selectedNoteId ? [selectedNoteId] : [],
-            openedTag: null,
-            showTrash: false,
             searchTags: tagsFromSearch(soFar),
+            searchTerms: getTerms(soFar),
             titleOnly: true,
           },
           5
