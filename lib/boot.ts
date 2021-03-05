@@ -171,11 +171,7 @@ if (!Array.prototype.findIndex) {
 }
 /* eslint-enable */
 
-const run = (
-  token: string | null,
-  username: string | null,
-  createWelcomeNote: boolean
-) => {
+const run = (token: string | null, username: string | null) => {
   if (token) {
     Promise.all([
       ensureNormalization(),
@@ -193,8 +189,7 @@ const run = (
           });
         },
         token,
-        username,
-        createWelcomeNote
+        username
       );
     });
   } else {
@@ -203,12 +198,10 @@ const run = (
         forceReload();
       }
     });
-    bootWithoutAuth(
-      (token: string, username: string, createWelcomeNote: boolean) => {
-        saveAccount(token, username);
-        run(token, username, createWelcomeNote);
-      }
-    );
+    bootWithoutAuth((token: string, username: string) => {
+      saveAccount(token, username);
+      run(token, username);
+    });
   }
 };
 

@@ -13,7 +13,7 @@ import getConfig from '../get-config';
 import '../scss/style.scss';
 
 type Props = {
-  onAuth: (token: string, username: string, createWelcomeNote: boolean) => any;
+  onAuth: (token: string, username: string) => any;
 };
 
 type State = {
@@ -54,9 +54,9 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   }
 
-  login(token: string, username: string, createWelcomeNote: boolean) {
+  login(token: string, username: string) {
     window.electron?.removeListener('appCommand');
-    this.props.onAuth(token, username, createWelcomeNote);
+    this.props.onAuth(token, username);
   }
 
   onAppCommand = (event) => {
@@ -187,9 +187,7 @@ class AppWithoutAuth extends Component<Props, State> {
   }
 }
 
-export const boot = (
-  onAuth: (token: string, username: string, createWelcomeNote: boolean) => any
-) => {
+export const boot = (onAuth: (token: string, username: string) => any) => {
   Modal.setAppElement('#root');
   render(<AppWithoutAuth onAuth={onAuth} />, document.getElementById('root'));
 };
