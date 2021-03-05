@@ -62,9 +62,26 @@ export class Auth extends Component<Props> {
     const helpMessage = isCreatingAccount
       ? 'Already have an account?'
       : "Don't have an account?";
-    const errorMessage = isCreatingAccount
-      ? 'Could not create account. Please try again.'
-      : 'Could not log in with the provided email address and password.';
+
+    const errorMessage = isCreatingAccount ? (
+      <>
+        Could not request account creation. Please try again or
+        <a
+          href="mailto:support@simplenote.com?subject=Simplenote%20Support"
+          onClick={(event) => {
+            event.preventDefault();
+            viewExternalUrl(
+              'mailto:support@simplenote.com?subject=Simplenote%20Support'
+            );
+          }}
+        >
+          contact us
+        </a>
+        .
+      </>
+    ) : (
+      'Could not log in with the provided email address and password.'
+    );
 
     const mainClasses = classNames('login', {
       'is-electron': isElectron,

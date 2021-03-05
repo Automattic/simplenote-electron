@@ -109,20 +109,23 @@ class AppWithoutAuth extends Component<Props, State> {
     }
 
     this.setState({ authStatus: 'submitting' }, async () => {
-      const response = await fetch(
-        'https://app.simplenote.com/request-signup',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: username }),
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/request-signup',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username }),
+          }
+        );
+        if (response.ok) {
+          recordEvent('user_account_creation_requested');
+          this.setState({ authStatus: 'account-creation-requested' });
+          this.setState({ emailSentTo: username });
+        } else {
+          this.setState({ authStatus: 'unknown-error' });
         }
-      );
-
-      if (response.ok) {
-        recordEvent('user_account_creation_requested');
-        this.setState({ authStatus: 'account-creation-requested' });
-        this.setState({ emailSentTo: username });
-      } else {
+      } catch {
         this.setState({ authStatus: 'unknown-error' });
       }
     });
