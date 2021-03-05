@@ -3,14 +3,13 @@
   flex-direction: column;
   width: calc(100vw - 2rem);
   background: white;
-  border-radius: $border-radius;
-  border: 1px solid $studio-gray-5;
-  box-shadow: 0 2px 4px 2px rgba($studio-gray-90, 0.15);
+  border-radius: 8px;
 }
 
 .dialog-title-bar {
   display: flex;
   border-bottom: 1px solid $studio-gray-5;
+  height: 56px;
 
   .button {
     border: 0;
@@ -30,9 +29,10 @@
 
 .dialog-title-text {
   flex: 1 1 auto;
-  margin: 15px 0;
-  text-align: center;
-  font-size: 1em;
+  margin: 15px 0 0 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .dialog-content {

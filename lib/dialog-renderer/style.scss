@@ -7,13 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba($studio-white, 0.75);
-}
-
-.theme-dark {
-  .dialog-renderer__overlay {
-    background: rgba($studio-gray-100, 0.75);
-  }
+  background: rgba($studio-black, 0.2);
 }
 
 .dialog-renderer__content {

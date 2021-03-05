@@ -1195,6 +1195,7 @@ class NoteContentEditor extends Component<Props> {
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               suggestOnTriggerCharacters: true,
+              unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
               wrappingStrategy: isSafari ? 'simple' : 'advanced',
               wordWrapColumn: 400,
