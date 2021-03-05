@@ -45,6 +45,9 @@
       width: 100%;
       color: $studio-gray-80;
       font-size: 16px;
+      overflow-x: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     svg {

@@ -34,6 +34,21 @@ export const importers: Array<Importer> = [
   textImporter,
 ];
 
+export const getImporter = (name: String): Importer => {
+  switch (name) {
+    case 'simplenote':
+      return simplenoteImporter;
+
+    case 'evernote':
+      return evernoteImporter;
+
+    case 'text-files':
+      return textImporter;
+  }
+
+  throw new Error(`No importer found named ${name}`);
+};
+
 export const forFilename = (file: String): Importer => {
   const fileExtension =
     file.substring(file.lastIndexOf('.') + 1, file.length) || file;

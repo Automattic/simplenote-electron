@@ -45,10 +45,9 @@ class MultipleImporter extends EventEmitter {
     let importersCompleted = 0;
     let totalImporters = 0;
 
-    // Loop through each of the files to import and process them with the appropriate importer
+    // Loop through each of the set of files to import and process them with the appropriate importer
     this.importFiles.forEach(async (files, name) => {
       if (files.length > 0) {
-        totalImporters++;
         const { default: Importer } = await importers.load(name);
         const importer = new Importer(
           this.addNote,
@@ -66,7 +65,17 @@ class MultipleImporter extends EventEmitter {
             this.emit('status', type, arg);
           }
         });
-        importer.importNotes(this.importFiles.get(name));
+        // If the importer supports multiple files send them all at once,
+        // if not send them one at a time.
+        if (importers.getImporter(name).multiple) {
+          totalImporters++;
+          importer.importNotes(files);
+        } else {
+          for (let x = 0; x < files.length; x++) {
+            totalImporters++;
+            importer.importNotes([files[x]]);
+          }
+        }
       }
     });
   };

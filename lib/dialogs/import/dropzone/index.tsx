@@ -20,7 +20,7 @@ function ImporterDropzone({
 
   const handleAccept = (acceptedFiles) => {
     const filteredFiles = [];
-    const seenImporters = new Set();
+    // const seenImporters = new Set();
     for (let i = 0; i < acceptedFiles.length; i++) {
       const file = acceptedFiles[i];
 
@@ -33,15 +33,15 @@ function ImporterDropzone({
         continue;
       }
 
-      if (!importer.multiple && seenImporters.has(importer.name)) {
-        setErrorMessage((errorMessage) => [
-          ...errorMessage,
-          `${importer.errorMessage} "${file.name}" will not be imported.`,
-        ]);
-        continue;
-      }
+      // if (!importer.multiple && seenImporters.has(importer.name)) {
+      //   setErrorMessage((errorMessage) => [
+      //     ...errorMessage,
+      //     `${importer.errorMessage} "${file.name}" will not be imported.`,
+      //   ]);
+      //   continue;
+      // }
 
-      seenImporters.add(importer.name);
+      // seenImporters.add(importer.name);
       filteredFiles.push(file);
     }
     setAcceptedFile(filteredFiles);
@@ -84,7 +84,7 @@ function ImporterDropzone({
 
   const FilesWithIcon = () => {
     const fileList = acceptedFile.map((file: File) => (
-      <li key={file.name}>
+      <li key={file.name} title={file.name}>
         <FileIcon />
         {file.name}
       </li>
