@@ -8,6 +8,7 @@ import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
 import TrashIcon from '../icons/trash';
 import SettingsIcon from '../icons/settings';
+import UntaggedNotesIcon from '../icons/untagged-notes';
 import { viewExternalUrl } from '../utils/url-utils';
 import actions from '../state/actions';
 
@@ -19,6 +20,7 @@ type StateProps = {
   collection: T.Collection;
   isDialogOpen: boolean;
   showNavigation: boolean;
+  tagCount: number;
 };
 
 type DispatchProps = {
@@ -71,16 +73,12 @@ export class NavigationBar extends Component<Props> {
       onSettings,
       onShowAllNotes,
       onShowUntaggedNotes,
+      tagCount,
     } = this.props;
+
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
         <div className="navigation-bar__folders theme-color-border">
-          <NavigationBarItem
-            icon={<NotesIcon />}
-            isSelected={this.isSelected({ selectedRow: 'untagged' })}
-            label="Untagged Notes"
-            onClick={onShowUntaggedNotes}
-          />
           <NavigationBarItem
             icon={<SettingsIcon />}
             label="Settings"
@@ -101,7 +99,19 @@ export class NavigationBar extends Component<Props> {
         </div>
         <div className="navigation-bar__tags theme-color-border">
           <TagList />
+          {(tagCount && (
+            <div className="navigation-bar__folders navigation-bar__untagged theme-color-border">
+              <NavigationBarItem
+                icon={<UntaggedNotesIcon />}
+                isSelected={this.isSelected({ selectedRow: 'untagged' })}
+                label="Untagged Notes"
+                onClick={onShowUntaggedNotes}
+              />
+            </div>
+          )) ||
+            null}
         </div>
+
         <div className="navigation-bar__tools theme-color-border">
           <div className="navigation-bar__server-connection">
             <ConnectionStatus />
@@ -138,6 +148,7 @@ export class NavigationBar extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = ({
+  data,
   settings,
   ui: { collection, dialogs, showNavigation },
 }) => ({
@@ -145,6 +156,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   collection,
   isDialogOpen: dialogs.length > 0,
   showNavigation,
+  tagCount: data.tags.size,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
