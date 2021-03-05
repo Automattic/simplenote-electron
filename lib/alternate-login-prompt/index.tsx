@@ -75,7 +75,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
       className="alternate-login__modal theme-color-fg theme-color-bg"
       isOpen
       onRequestClose={dismiss}
-      contentLabel="Confirm your email"
+      contentLabel="Log out?"
       overlayClassName="alternate-login__overlay"
       portalClassName={classNames('alternate-login__portal', 'theme-' + theme)}
     >
