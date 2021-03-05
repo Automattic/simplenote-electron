@@ -3,10 +3,19 @@ import * as Sentry from '@sentry/react';
 import WarningIcon from '../icons/warning';
 import { viewExternalUrl } from '../utils/url-utils';
 import { isElectron } from '../utils/platform';
+import { connect } from 'react-redux';
+
+import * as S from '../state';
 
 const helpEmail = 'mailto:support@simplenote.com?subject=Simplenote%20Support';
 
-const ErrorMessage: FunctionComponent = () => (
+type ErrorMessageProps = {
+  allowAnalytics?: boolean;
+};
+
+const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
+  allowAnalytics,
+}) => (
   <div className="error-message">
     <div className="error-message__content">
       <div className="error-message__icon">
@@ -14,8 +23,11 @@ const ErrorMessage: FunctionComponent = () => (
       </div>
       <h1 className="error-message__heading">Oops!</h1>
       <p>
-        We’re sorry — something went wrong. Our team has been notified so that
-        we can work to fix the issue. Please refresh or try again later.
+        We’re sorry — something went wrong.{' '}
+        {allowAnalytics
+          ? 'Our team has been notified so that we can work to fix the issue. '
+          : ''}
+        Please refresh or try again later.{' '}
       </p>
       <div className="error-message__action">
         <button
@@ -48,21 +60,60 @@ const ErrorMessage: FunctionComponent = () => (
   </div>
 );
 
-type ErrorBoundaryProps = {
+class ErrorBoundary extends Component {
+  state = {
+    hasError: false,
+  };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorMessage />;
+    }
+
+    return this.props.children;
+  }
+}
+
+type ErrorBoundaryWithSentryOwnProps = {
+  children: React.ReactNode;
   isDevConfig: boolean;
 };
 
-const ErrorBoundary: FunctionComponent<ErrorBoundaryProps> = ({
+type ErrorBoundaryWithSentryStateProps = {
+  allowAnalytics: boolean;
+};
+
+type ErrorBoundaryWithSentryProps = ErrorBoundaryWithSentryOwnProps &
+  ErrorBoundaryWithSentryStateProps;
+
+const ErrorBoundaryWithSentry: FunctionComponent<ErrorBoundaryWithSentryProps> = ({
+  allowAnalytics,
   children,
   isDevConfig,
 }) => {
-  return isDevConfig ? (
-    <>{children}</>
+  return isDevConfig || !allowAnalytics ? (
+    <ErrorBoundary>{children}</ErrorBoundary>
   ) : (
-    <Sentry.ErrorBoundary fallback={ErrorMessage}>
+    <Sentry.ErrorBoundary
+      fallback={() => <ErrorMessage allowAnalytics={allowAnalytics} />}
+    >
       {children}
     </Sentry.ErrorBoundary>
   );
 };
+
+const mapStateToProps: S.MapState<ErrorBoundaryWithSentryStateProps> = (
+  state
+) => ({
+  allowAnalytics: !!state.data.analyticsAllowed,
+});
+
+export const ErrorBoundaryWithAnalytics = connect(mapStateToProps)(
+  ErrorBoundaryWithSentry
+);
 
 export default ErrorBoundary;

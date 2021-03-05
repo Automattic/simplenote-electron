@@ -10,7 +10,6 @@ import AboutDialog from './dialogs/about';
 import ErrorBoundary from './error-boundary';
 
 import getConfig from '../get-config';
-import isDevConfig from './utils/is-dev-config';
 
 import '../scss/style.scss';
 
@@ -144,7 +143,7 @@ class AppWithoutAuth extends Component<Props, State> {
       : 'light';
 
     return (
-      <ErrorBoundary isDevConfig={isDevConfig(config?.development)}>
+      <ErrorBoundary>
         <div className={`app theme-${systemTheme}`}>
           <AuthApp
             accountCreationRequested={

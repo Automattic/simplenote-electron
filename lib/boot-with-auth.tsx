@@ -4,7 +4,7 @@ if (__TEST__) {
 
 import React from 'react';
 import App from './app';
-import ErrorBoundary from './error-boundary';
+import { ErrorBoundaryWithAnalytics } from './error-boundary';
 import Modal from 'react-modal';
 import getConfig from '../get-config';
 import { makeStore } from './state';
@@ -45,11 +45,13 @@ export const bootWithToken = (
     });
 
     render(
-      <ErrorBoundary isDevConfig={isDevConfig(config?.development)}>
-        <Provider store={store}>
+      <Provider store={store}>
+        <ErrorBoundaryWithAnalytics
+          isDevConfig={isDevConfig(config?.development)}
+        >
           <App isDevConfig={isDevConfig(config?.development)} />
-        </Provider>
-      </ErrorBoundary>,
+        </ErrorBoundaryWithAnalytics>
+      </Provider>,
       document.getElementById('root')
     );
   });
