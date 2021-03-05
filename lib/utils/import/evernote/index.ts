@@ -45,8 +45,6 @@ class EvernoteImporter extends EventEmitter {
         return;
       }
       if (response.note) {
-        console.log('Note received');
-        console.log(response.note);
         importedNoteCount++;
         this.emit('status', 'progress', importedNoteCount);
         coreImporter.importNote(response.note, this.options);

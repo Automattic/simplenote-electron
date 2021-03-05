@@ -75,7 +75,6 @@ const importNotes = (filePath, mainWindow) => {
   saxStream.on('closetag', (node) => {
     // Add the currentNote to the array
     if (node === 'note') {
-      console.log('Note sent on noteImportChannel');
       mainWindow.webContents.send('noteImportChannel', { note: currentNote });
     }
   });

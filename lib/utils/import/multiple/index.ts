@@ -45,6 +45,19 @@ class MultipleImporter extends EventEmitter {
     let importersCompleted = 0;
     let totalImporters = 0;
 
+    const importerListener = (done) => (type, arg) => {
+      if (type === 'complete') {
+        importersCompleted++;
+        importedNoteCount += arg;
+        if (totalImporters === importersCompleted) {
+          this.emit('status', 'complete', importedNoteCount);
+        }
+        done();
+      } else {
+        this.emit('status', type, arg);
+      }
+    };
+
     // Loop through each of the set of files to import and process them with the appropriate importer
     this.importFiles.forEach(async (files, name) => {
       if (files.length > 0) {
@@ -54,26 +67,30 @@ class MultipleImporter extends EventEmitter {
           this.options,
           this.recordEvent
         );
-        importer.on('status', (type, arg) => {
-          if (type === 'complete') {
-            importersCompleted++;
-            importedNoteCount += arg;
-            if (totalImporters === importersCompleted) {
-              this.emit('status', 'complete', importedNoteCount);
-            }
-          } else {
-            this.emit('status', type, arg);
-          }
-        });
+
         // If the importer supports multiple files send them all at once,
         // if not send them one at a time.
         if (importers.getImporter(name).multiple) {
           totalImporters++;
-          importer.importNotes(files);
+          await new Promise((resolve) => {
+            const listener = importerListener(() => {
+              importer.off('status', listener);
+              resolve(true);
+            });
+            importer.on('status', listener);
+            importer.importNotes(files);
+          });
         } else {
           for (let x = 0; x < files.length; x++) {
-            totalImporters++;
-            importer.importNotes([files[x]]);
+            await new Promise((resolve) => {
+              totalImporters++;
+              const listener = importerListener(() => {
+                importer.off('status', listener);
+                resolve(true);
+              });
+              importer.on('status', listener);
+              importer.importNotes([files[x]]);
+            });
           }
         }
       }
