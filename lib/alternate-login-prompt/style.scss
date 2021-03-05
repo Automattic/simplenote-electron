@@ -1,4 +1,4 @@
-.email-verification__overlay {
+.alternate-login__overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,7 +10,7 @@
   background: rgba($studio-gray-20, 0.75);
 }
 
-.email-verification__dismiss {
+.alternate-login__dismiss {
   display: flex;
   height: 60px;
   justify-content: flex-end;
@@ -25,7 +25,7 @@
   }
 }
 
-.email-verification__modal {
+.alternate-login__modal {
   align-items: center;
   border-radius: 8px;
   display: flex;
@@ -51,7 +51,7 @@
     padding-bottom: 20px;
   }
 
-  .email-verification__button-row {
+  .alternate-login__button-row {
     padding-top: 10px;
     padding-bottom: 10px;
     display: flex;
@@ -74,10 +74,10 @@
 }
 
 .theme-dark {
-  .email-verification__overlay {
+  .alternate-login__overlay {
     background: rgba($studio-gray-100, 0.75);
   }
-  .email-verification__button-row .button-borderless {
+  .alternate-login__button-row .button-borderless {
     color: $studio-simplenote-blue-30;
   }
 }

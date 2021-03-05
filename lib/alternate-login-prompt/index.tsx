@@ -32,7 +32,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
   theme,
 }) => {
   const displayClose = (
-    <div className="email-verification__dismiss">
+    <div className="alternate-login__dismiss">
       <button
         className="icon-button"
         aria-label="Close dialog"
@@ -58,7 +58,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
         you like to log out?
       </p>
 
-      <div className="email-verification__button-row button-borderless">
+      <div className="alternate-login__button-row button-borderless">
         <a target="_blank" rel="noreferrer" onClick={dismiss}>
           <button className="button button-borderless">Cancel</button>
         </a>
@@ -71,16 +71,13 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
 
   return (
     <Modal
-      key="email-verification"
-      className="email-verification__modal theme-color-fg theme-color-bg"
+      key="alternate-login"
+      className="alternate-login__modal theme-color-fg theme-color-bg"
       isOpen
       onRequestClose={dismiss}
       contentLabel="Confirm your email"
-      overlayClassName="email-verification__overlay"
-      portalClassName={classNames(
-        'email-verification__portal',
-        'theme-' + theme
-      )}
+      overlayClassName="alternate-login__overlay"
+      portalClassName={classNames('alternate-login__portal', 'theme-' + theme)}
     >
       {displayAlternateLoginPrompt}
     </Modal>
