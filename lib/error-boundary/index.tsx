@@ -9,14 +9,13 @@ const helpEmail = 'mailto:support@simplenote.com?subject=Simplenote%20Support';
 const ErrorMessage: FunctionComponent = () => (
   <div className="error-message">
     <div className="error-message__content">
-      <div className="error-message__icon theme-color-fg-dim">
+      <div className="error-message__icon">
         <WarningIcon />
       </div>
-      <h1 className="error-message__heading">An Error Occurred</h1>
+      <h1 className="error-message__heading">Oops!</h1>
       <p>
-        Sorry, something appears to have gone wrong. Rest assured that our
-        systems have captured the details of the error so that we may work to
-        fix the issue. Please reload the application.
+        We’re sorry — something went wrong. Our team has been notified so that
+        we can work to fix the issue. Please refresh or try again later.
       </p>
       <div className="error-message__action">
         <button
@@ -29,11 +28,11 @@ const ErrorMessage: FunctionComponent = () => (
             }
           }}
         >
-          Reload Application
+          Refresh application
         </button>
       </div>
-      <p>
-        If you continue to encounter issues, please email us at{' '}
+      <p className="error-message__footnote">
+        If the problem persists, please email us at{' '}
         <a
           href={helpEmail}
           onClick={(e) => {
@@ -42,8 +41,8 @@ const ErrorMessage: FunctionComponent = () => (
           }}
         >
           support@simplenote.com
-        </a>{' '}
-        and one of our Happiness Engineers will be in touch.
+        </a>
+        .
       </p>
     </div>
   </div>
