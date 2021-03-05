@@ -10,6 +10,7 @@ import KeybindingsDialog from '../dialogs/keybindings';
 import LogoutConfirmation from '../dialogs/logout-confirmation';
 import SettingsDialog from '../dialogs/settings';
 import ShareDialog from '../dialogs/share';
+import TrashTagConfirmation from '../dialogs/trash-tag-confirmation';
 import { closeDialog } from '../state/ui/actions';
 
 import * as S from '../state';
@@ -35,36 +36,40 @@ export class DialogRenderer extends Component<Props> {
   static displayName = 'DialogRenderer';
 
   render() {
-    const { theme, closeDialog } = this.props;
-
+    const { theme, closeDialog, dialogs } = this.props;
     return (
       <Fragment>
-        {this.props.dialogs.map((dialog) => (
+        {dialogs.map((dialog) => (
           <Modal
-            key={dialog}
+            key={dialog.type}
             className="dialog-renderer__content"
-            contentLabel={dialog}
+            contentLabel={dialog.type}
             isOpen
             onRequestClose={closeDialog}
             overlayClassName="dialog-renderer__overlay"
             portalClassName={`dialog-renderer__portal theme-${theme}`}
           >
-            {'ABOUT' === dialog ? (
+            {'ABOUT' === dialog.type ? (
               <AboutDialog key="about" closeDialog={closeDialog} />
-            ) : 'BETA-WARNING' === dialog ? (
+            ) : 'BETA-WARNING' === dialog.type ? (
               <BetaWarning key="beta-warning" />
-            ) : 'CLOSE-WINDOW-CONFIRMATION' === dialog ? (
+            ) : 'CLOSE-WINDOW-CONFIRMATION' === dialog.type ? (
               <CloseWindowConfirmation key="close-window-confirmation" />
-            ) : 'IMPORT' === dialog ? (
+            ) : 'IMPORT' === dialog.type ? (
               <ImportDialog key="import" />
-            ) : 'KEYBINDINGS' === dialog ? (
+            ) : 'KEYBINDINGS' === dialog.type ? (
               <KeybindingsDialog key="keybindings" />
-            ) : 'LOGOUT-CONFIRMATION' === dialog ? (
+            ) : 'LOGOUT-CONFIRMATION' === dialog.type ? (
               <LogoutConfirmation key="logout-confirmation" />
-            ) : 'SETTINGS' === dialog ? (
+            ) : 'SETTINGS' === dialog.type ? (
               <SettingsDialog key="settings" />
-            ) : 'SHARE' === dialog ? (
+            ) : 'SHARE' === dialog.type ? (
               <ShareDialog key="share" />
+            ) : 'TRASH-TAG-CONFIRMATION' === dialog.type ? (
+              <TrashTagConfirmation
+                key="trash-tag-confirmation"
+                tagName={dialog.tagName}
+              />
             ) : null}
           </Modal>
         ))}

@@ -11,7 +11,7 @@ import isEmailTag from '../utils/is-email-tag';
 import ReorderIcon from '../icons/reorder';
 import TagListInput from './input';
 import TrashIcon from '../icons/trash';
-import { openTag, toggleTagEditing } from '../state/ui/actions';
+import { openTag, showDialog, toggleTagEditing } from '../state/ui/actions';
 import { tagHashOf } from '../utils/tag-hash';
 
 import * as selectors from './../state/selectors';
@@ -216,10 +216,10 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     tagName,
     newIndex,
   }),
-  trashTag: (tagName) => ({
-    type: 'TRASH_TAG',
-    tagName,
-  }),
+  trashTag: (tagName) =>
+    showDialog('TRASH-TAG-CONFIRMATION', {
+      tagName,
+    }),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagList);

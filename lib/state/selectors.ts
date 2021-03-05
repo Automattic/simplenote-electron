@@ -52,3 +52,5 @@ export const openedTag: S.Selector<T.TagName | null> = ({
 
 export const showTrash: S.Selector<boolean> = ({ ui: { collection } }) =>
   collection.type === 'trash';
+export const isDialogOpen = (state: S.State, name: T.DialogType['type']) =>
+  state.ui.dialogs.find(({ type }) => type === name) !== undefined;
