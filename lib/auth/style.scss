@@ -63,6 +63,10 @@
     font-weight: 400;
   }
 
+  .spinner {
+    vertical-align: middle;
+  }
+
   button[type='submit'] {
     background-color: $studio-simplenote-blue-50;
     border: none;

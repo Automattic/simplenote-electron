@@ -103,16 +103,8 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   requestSignup = (email: string) => {
-    // TODO invoke /request-signup endpoint
-    this.setState({ authStatus: 'account-creation-requested' });
-    this.setState({ emailSentTo: email });
-  };
-
-  createUser = (usernameArg: string, password: string) => {
-    // todo we need to verify somewhere if the username matches the email we sent the token to
-    // (because it's very easy to enable a disabled form field)
-    const username = usernameArg.trim().toLowerCase();
-    if (!(username && password)) {
+    const username = email.trim().toLowerCase();
+    if (!username) {
       return;
     }
 
@@ -122,12 +114,14 @@ class AppWithoutAuth extends Component<Props, State> {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: username, password }),
+          body: JSON.stringify({ email: username }),
         }
       );
 
       if (response.ok) {
         recordEvent('user_account_creation_requested');
+        this.setState({ authStatus: 'account-creation-requested' });
+        this.setState({ emailSentTo: username });
       } else {
         this.setState({ authStatus: 'unknown-error' });
       }
@@ -158,7 +152,6 @@ class AppWithoutAuth extends Component<Props, State> {
           }
           hasLoginError={this.state.authStatus === 'unknown-error'}
           login={this.authenticate}
-          signup={this.createUser}
           tokenLogin={this.tokenLogin}
           resetErrors={() => {
             this.setState({ authStatus: 'unsubmitted' });

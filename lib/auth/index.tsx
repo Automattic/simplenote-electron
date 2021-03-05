@@ -6,7 +6,6 @@ import getConfig from '../../get-config';
 import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
-import { validatePassword } from '../utils/validate-password';
 import { isElectron, isMac } from '../utils/platform';
 import { viewExternalUrl } from '../utils/url-utils';
 
@@ -19,7 +18,6 @@ type OwnProps = {
   hasLoginError: boolean;
   login: (username: string, password: string) => any;
   requestSignup: (username: string) => any;
-  signup: (username: string, password: string) => any;
   tokenLogin: (username: string, token: string) => any;
   resetErrors: () => any;
 };
@@ -29,8 +27,6 @@ type Props = OwnProps;
 export class Auth extends Component<Props> {
   state = {
     isCreatingAccount: false,
-    isLoggingIn: true,
-    isRequestingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
   };
@@ -54,26 +50,21 @@ export class Auth extends Component<Props> {
       return null;
     }
 
-    const {
-      isCreatingAccount,
-      isLoggingIn,
-      isRequestingAccount,
-      passwordErrorMessage,
-    } = this.state;
+    const { isCreatingAccount, passwordErrorMessage } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
     });
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isLoggingIn ? logInText : signUpText;
-    const helpLinkLabel = isLoggingIn ? signUpText : logInText;
-    const helpMessage = isLoggingIn
-      ? "Don't have an account?"
-      : 'Already have an account?';
-    const errorMessage = isLoggingIn
-      ? 'Could not log in with the provided email address and password.'
-      : 'Could not create account. Please try again.';
+    const buttonLabel = isCreatingAccount ? signUpText : logInText;
+    const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
+    const helpMessage = isCreatingAccount
+      ? 'Already have an account?'
+      : "Don't have an account?";
+    const errorMessage = isCreatingAccount
+      ? 'Could not create account. Please try again.'
+      : 'Could not log in with the provided email address and password.';
 
     const mainClasses = classNames('login', {
       'is-electron': isElectron,
@@ -151,71 +142,47 @@ export class Auth extends Component<Props> {
               {passwordErrorMessage}
             </p>
           )}
-          {isCreatingAccount && (
-            <p className="login__auth-message theme-color-fg">
-              Finish setting up your Simplenote account.
-            </p>
-          )}
           <label
             className="login__field theme-color-border"
             htmlFor="login__field-username"
           >
             Email
           </label>
-          {isCreatingAccount && (
-            <input
-              id="login__field-username"
-              onInput={this.onInput}
-              onInvalid={this.onInput}
-              onFocus={this.onFocus}
-              onBlur={this.onBlur}
-              placeholder="Email"
-              ref={(ref) => (this.usernameInput = ref)}
-              spellCheck={false}
-              type="email"
-              required
-              autoFocus
-              value={this.props.emailSentTo}
-              disabled
-            />
-          )}
+          <input
+            id="login__field-username"
+            onInput={this.onInput}
+            onInvalid={this.onInput}
+            onFocus={this.onFocus}
+            onBlur={this.onBlur}
+            placeholder="Email"
+            ref={(ref) => (this.usernameInput = ref)}
+            spellCheck={false}
+            type="email"
+            required
+            autoFocus
+          />
           {!isCreatingAccount && (
-            <input
-              id="login__field-username"
-              onInput={this.onInput}
-              onInvalid={this.onInput}
-              onFocus={this.onFocus}
-              onBlur={this.onBlur}
-              placeholder="Email"
-              ref={(ref) => (this.usernameInput = ref)}
-              spellCheck={false}
-              type="email"
-              required
-              autoFocus
-            />
-          )}
-          {!isRequestingAccount && (
-            <label
-              className="login__field theme-color-border"
-              htmlFor="login__field-password"
-            >
-              Password
-            </label>
-          )}
-          {!isRequestingAccount && (
-            <input
-              id="login__field-password"
-              onInput={this.onInput}
-              onInvalid={this.onInput}
-              onFocus={this.onFocus}
-              onBlur={this.onBlur}
-              placeholder="Password"
-              ref={(ref) => (this.passwordInput = ref)}
-              spellCheck={false}
-              type="password"
-              required
-              minLength="4"
-            />
+            <>
+              <label
+                className="login__field theme-color-border"
+                htmlFor="login__field-password"
+              >
+                Password
+              </label>
+              <input
+                id="login__field-password"
+                onInput={this.onInput}
+                onInvalid={this.onInput}
+                onFocus={this.onFocus}
+                onBlur={this.onBlur}
+                placeholder="Password"
+                ref={(ref) => (this.passwordInput = ref)}
+                spellCheck={false}
+                type="password"
+                required
+                minLength={4}
+              />
+            </>
           )}
           <button
             id="login__login-button"
@@ -231,7 +198,7 @@ export class Auth extends Component<Props> {
             )}
           </button>
 
-          {isLoggingIn && (
+          {!isCreatingAccount && (
             <a
               className="login__forgot"
               href="https://app.simplenote.com/forgot/"
@@ -242,7 +209,7 @@ export class Auth extends Component<Props> {
               Forgot your password?
             </a>
           )}
-          {isElectron && isLoggingIn && (
+          {isElectron && !isCreatingAccount && (
             <Fragment>
               <span className="or">Or</span>
               <span className="or-line"></span>
@@ -251,7 +218,7 @@ export class Auth extends Component<Props> {
               </button>
             </Fragment>
           )}
-          {!isLoggingIn && (
+          {isCreatingAccount && (
             <div className="terms">
               By creating an account you agree to our
               <a
@@ -319,24 +286,6 @@ export class Auth extends Component<Props> {
     if (event.currentTarget.className !== 'validate') {
       return;
     }
-
-    const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
-
-    if (this.state.isCreatingAccount) {
-      const username = get(this.usernameInput, 'value');
-      const password = get(this.passwordInput, 'value');
-
-      // run custom validation for the password but use the default message for missing value
-      if (
-        this.passwordInput.validity.valueMissing ||
-        validatePassword(password, username)
-      ) {
-        this.passwordInput.setCustomValidity('');
-      } else {
-        this.passwordInput.setCustomValidity(passwordError);
-      }
-    }
   };
 
   clearRequestedAccount = () => {
@@ -379,39 +328,24 @@ export class Auth extends Component<Props> {
     }
 
     const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
-    const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
 
-    // signup - stricter password requirements apply
     if (this.state.isCreatingAccount) {
-      if (!validatePassword(password, username)) {
-        this.setState({
-          passwordErrorMessage: passwordError,
-        });
-        this.passwordInput.setCustomValidity(passwordError);
-        return;
-      }
-
-      this.passwordInput.setCustomValidity('');
-      this.props.signup(username, password, true);
-    } else if (this.state.isRequestingAccount) {
       this.props.requestSignup(username);
+      return;
     }
 
-    // login - slightly more relaxed password rules
-    else {
-      if (!this.passwordInput.validity.valid) {
-        this.setState({
-          passwordErrorMessage: 'Passwords must contain at least 4 characters.',
-        });
-        return;
-      }
+    const password = get(this.passwordInput, 'value');
 
-      this.props.login(username, password);
+    // login has slightly more relaxed password rules
+    if (!this.passwordInput.validity.valid) {
+      this.setState({
+        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+      });
+      return;
     }
 
     this.setState({ passwordErrorMessage: null });
+    this.props.login(username, password);
   };
 
   onWPLogin = () => {
@@ -477,7 +411,6 @@ export class Auth extends Component<Props> {
     this.setState({
       passwordErrorMessage: '',
     });
-    this.setState({ isRequestingAccount: !this.state.isRequestingAccount });
-    this.setState({ isLoggingIn: !this.state.isLoggingIn });
+    this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
 }
