@@ -1,10 +1,12 @@
 import { v4 as uuid } from 'uuid';
 
+import { tagHashOf } from '../../utils/tag-hash';
 import exportZipArchive from '../../utils/export';
 
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
+import { numberOfNonEmailTags } from '../selectors';
 
 export const middleware: S.Middleware = (store) => (
   next: (action: A.ActionType) => A.ActionType
@@ -107,6 +109,14 @@ export const middleware: S.Middleware = (store) => (
         type: 'TRASH_NOTE',
         noteId: state.ui.openedNote,
       });
+
+    case 'TRASH_TAG':
+      return state.data.tags.has(tagHashOf(action.tagName))
+        ? next({
+            ...action,
+            remainingTags: numberOfNonEmailTags(state) - 1,
+          })
+        : null;
 
     default:
       return next(action);

@@ -6,6 +6,7 @@ import { getTitle } from '../utils/note-utils';
 import type * as A from '../state/action-types';
 import type * as S from '../state';
 import type * as T from '../types';
+import { showAllNotes } from '../state/ui/actions';
 
 const emptyList = [] as unknown[];
 
@@ -224,6 +225,10 @@ export const middleware: S.Middleware = (store) => {
         }
       }
       if (!hasAllTags) {
+        continue;
+      }
+
+      if (collection.type === 'untagged' && note.tags.size) {
         continue;
       }
 
@@ -492,6 +497,10 @@ export const middleware: S.Middleware = (store) => {
         searchState.collection = { type: 'all' };
         return next(withSearch(action));
 
+      case 'SHOW_UNTAGGED_NOTES':
+        searchState.collection = { type: 'untagged' };
+        return next(withSearch(action));
+
       case 'SEARCH':
         searchState.searchQuery = action.searchQuery;
         searchState.searchTerms = getTerms(action.searchQuery);
@@ -549,7 +558,15 @@ export const middleware: S.Middleware = (store) => {
           return next(action);
         }
 
-        searchState.collection = { type: 'all' };
+        // if currently filtering by untagged notes and you're deleting
+        // the last remaining note, reset filter to all. Checking for size
+        // 1 because the deletion hasn't gone through at this point yet.
+        if (
+          searchState.collection.type === 'untagged' &&
+          store.getState().data.tags.size <= 1
+        ) {
+          searchState.collection = { type: 'all' };
+        }
         return next(withSearch(action));
       }
     }

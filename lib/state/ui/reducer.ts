@@ -97,8 +97,17 @@ const collection: A.Reducer<T.Collection> = (
       return { type: 'trash' };
     case 'SHOW_ALL_NOTES':
       return { type: 'all' };
-    case 'TRASH_TAG':
-      return action.tagName === state.tagName ? { type: 'all' } : state;
+    case 'SHOW_UNTAGGED_NOTES':
+      return { type: 'untagged' };
+    case 'TRASH_TAG': {
+      const openedTagIsGone =
+        state.type === 'tag' &&
+        tagHashOf(state.tagName) === tagHashOf(action.tagName);
+      const lastTagDisappeared =
+        state.type === 'untagged' && action?.remainingTags === 0;
+
+      return openedTagIsGone || lastTagDisappeared ? { type: 'all' } : state;
+    }
     default:
       return state;
   }
@@ -152,6 +161,7 @@ const editingTags: A.Reducer<boolean> = (state = false, action) => {
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
+    case 'SHOW_UNTAGGED_NOTES':
     case 'NAVIGATION_TOGGLE':
       return false;
     default:
@@ -290,6 +300,7 @@ const showNavigation: A.Reducer<boolean> = (state = false, action) => {
     case 'OPEN_TAG':
     case 'SELECT_TRASH':
     case 'SHOW_ALL_NOTES':
+    case 'SHOW_UNTAGGED_NOTES':
       return false;
     case 'SHOW_DIALOG':
       if (action.name === 'SETTINGS') {

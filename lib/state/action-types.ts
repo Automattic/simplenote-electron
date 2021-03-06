@@ -101,6 +101,8 @@ export type SetUnsyncedNoteIds = Action<
   { noteIds: T.EntityId[] }
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
+export type ShowUntaggedNotes = Action<'SHOW_UNTAGGED_NOTES'>;
+
 export type ShowDialog = Action<
   'SHOW_DIALOG',
   {
@@ -216,7 +218,10 @@ export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
 >;
-export type TrashTag = Action<'TRASH_TAG', { tagName: T.TagName }>;
+export type TrashTag = Action<
+  'TRASH_TAG',
+  { tagName: T.TagName; remainingTags?: number }
+>;
 
 /*
  * Simperium operations
@@ -395,6 +400,7 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | ShowAllNotes
+  | ShowUntaggedNotes
   | ShowDialog
   | StoreEditorSelection
   | StoreNumberOfMatchesInNote
