@@ -6,6 +6,7 @@ import exportZipArchive from '../../utils/export';
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
+import { numberOfNonEmailTags } from '../selectors';
 
 export const middleware: S.Middleware = (store) => (
   next: (action: A.ActionType) => A.ActionType
@@ -110,17 +111,10 @@ export const middleware: S.Middleware = (store) => (
       });
 
     case 'TRASH_TAG':
-      // for the love of all things beautiful and holy…
-      // make a function to separate email-tags from normal tags
-      // and use that to get the count of tags, even a new selector
-      // numberOfTags(state) -> number :: assumes a "tag" is not an email
-      return store.getState().data.tags.has(tagHashOf(action.tagName))
+      return state.data.tags.has(tagHashOf(action.tagName))
         ? next({
             ...action,
-            remainingTags:
-              [...store.getState().data.tags.values()].filter(
-                (tag) => !tag.name.includes('@')
-              ).length - 1,
+            remainingTags: numberOfNonEmailTags(state) - 1,
           })
         : null;
 
