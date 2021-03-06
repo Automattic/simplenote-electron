@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import { tagHashOf } from '../../utils/tag-hash';
 import {
   withCheckboxCharacters,
   withCheckboxSyntax,
@@ -98,8 +99,15 @@ const collection: A.Reducer<T.Collection> = (
       return { type: 'all' };
     case 'SHOW_UNTAGGED_NOTES':
       return { type: 'untagged' };
-    case 'TRASH_TAG':
-      return action.tagName === state.tagName ? { type: 'all' } : state;
+    case 'TRASH_TAG': {
+      const openedTagIsGone =
+        state.type === 'tag' &&
+        tagHashOf(state.tagName) === tagHashOf(action.tagName);
+      const lastTagDisappeared =
+        state.type === 'untagged' && action?.remainingTags === 0;
+
+      return openedTagIsGone || lastTagDisappeared ? { type: 'all' } : state;
+    }
     default:
       return state;
   }

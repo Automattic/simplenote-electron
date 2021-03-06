@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
+import { tagHashOf } from '../../utils/tag-hash';
 import exportZipArchive from '../../utils/export';
 
 import type * as A from '../action-types';
@@ -107,6 +108,21 @@ export const middleware: S.Middleware = (store) => (
         type: 'TRASH_NOTE',
         noteId: state.ui.openedNote,
       });
+
+    case 'TRASH_TAG':
+      // for the love of all things beautiful and holy…
+      // make a function to separate email-tags from normal tags
+      // and use that to get the count of tags, even a new selector
+      // numberOfTags(state) -> number :: assumes a "tag" is not an email
+      return store.getState().data.tags.has(tagHashOf(action.tagName))
+        ? next({
+            ...action,
+            remainingTags:
+              [...store.getState().data.tags.values()].filter(
+                (tag) => !tag.name.includes('@')
+              ).length - 1,
+          })
+        : null;
 
     default:
       return next(action);

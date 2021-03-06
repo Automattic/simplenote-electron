@@ -566,7 +566,6 @@ export const middleware: S.Middleware = (store) => {
           store.getState().data.tags.size <= 1
         ) {
           searchState.collection = { type: 'all' };
-          store.dispatch(showAllNotes());
         }
         return next(withSearch(action));
       }
