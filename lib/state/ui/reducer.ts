@@ -86,7 +86,20 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
-<<<<<<< HEAD
+const alternateLoginEmail: A.Reducer<string | null> = (
+  state = null,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return action.email;
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return null;
+    default:
+      return state;
+  }
+};
+
 const collection: A.Reducer<T.Collection> = (
   state = { type: 'all' },
   action
@@ -109,25 +122,11 @@ const collection: A.Reducer<T.Collection> = (
 
       return openedTagIsGone || lastTagDisappeared ? { type: 'all' } : state;
     }
-=======
-const alternateLoginEmail: A.Reducer<string | null> = (
-  state = null,
-  action
-) => {
-  switch (action.type) {
-    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
-      return action.email;
-    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
-      return null;
->>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
     default:
       return state;
   }
 };
-<<<<<<< HEAD
 
-=======
->>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
@@ -249,28 +248,10 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
-<<<<<<< HEAD
-const showNoteList: A.Reducer<boolean> = (state = true, action) => {
-=======
-const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
-  switch (action.type) {
-    case 'SELECT_TRASH':
-    case 'SHOW_ALL_NOTES':
-      return null;
-    case 'OPEN_TAG':
-      return tagHashOf(action.tagName);
-    case 'TRASH_TAG':
-      return tagHashOf(action.tagName) === state ? null : state;
-    default:
-      return state;
-  }
-};
-
 const showAlternateLoginPrompt: A.Reducer<boolean> = (
   state = false,
   action
 ) => {
->>>>>>> rename TokenLoginLogout to AlternateLoginPrompt etc
   switch (action.type) {
     case 'SHOW_ALTERNATE_LOGIN_PROMPT':
       return !state;

@@ -39,7 +39,6 @@ type StateProps = {
   showEmailVerification: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
-  showTrash: boolean;
   theme: 'light' | 'dark';
 };
 
