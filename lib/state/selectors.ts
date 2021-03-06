@@ -57,6 +57,4 @@ export const isDialogOpen = (state: S.State, name: T.DialogType['type']) =>
   state.ui.dialogs.find(({ type }) => type === name) !== undefined;
 
 export const numberOfNonEmailTags: S.Selector<number> = ({ data }) =>
-  [...data.tags.values()]
-    .filter((tag) => !isEmailTag(tag.name))
-    .map((tag) => tag.name).length;
+  [...data.tags.values()].filter((tag) => !isEmailTag(tag.name)).length;
