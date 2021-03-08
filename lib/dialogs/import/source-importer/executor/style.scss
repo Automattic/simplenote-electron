@@ -5,8 +5,8 @@
   flex: 1 0 auto;
 
   .import-progress {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
     margin-top: 20px;
   }
 
@@ -18,13 +18,11 @@
 
 .source-importer-executor__options {
   flex: 1 0 auto;
-  padding-top: 2em;
 
   .panel-title {
     text-transform: none;
     font-weight: normal;
     font-size: 14px;
-    margin-bottom: 6px;
   }
 
   label {
@@ -55,9 +53,19 @@
 }
 
 .source-importer-executor__button {
+  height: 56px;
+  text-align: right;
+  padding-left: 16px;
+  padding-right: 16px;
+
   button {
-    display: block;
-    margin: 30px 0 0 auto;
+    border-radius: 4px;
+    padding: 6px 14px;
+    margin-top: 14px;
+    line-height: 16px;
+    font-size: 14px;
+    border: 0;
+    font-weight: 400;
   }
 }
 

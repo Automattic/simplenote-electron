@@ -24,9 +24,10 @@ class ImportDialog extends Component<Props> {
     const { importStarted } = this.state;
     const source = {
       acceptedTypes: isElectron ? '.txt,.md,.json,.enex' : '.txt,.md,.json',
+      title: `Select the notes you'd like to import.`,
       instructions: isElectron
-        ? 'Choose a Simplenote export file (.json), one or more text files (.txt, .md), or an Evernote export file (.enex).'
-        : 'Choose a Simplenote export file (.json) or one or more text files (.txt, .md).',
+        ? 'Accepted file formats: Simplenote (JSON), Text (TXT, MD) and Evernote (ENEX).'
+        : 'Accepted file formats: Simplenote (JSON) and Text (TXT, MD).',
       multiple: true,
     };
 

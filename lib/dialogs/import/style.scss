@@ -4,7 +4,7 @@
 
   .dialog-title-text {
     text-align: left;
-    margin-left: 24px;
+    margin-left: 16px;
   }
 
   .dialog-title-side:first-child {
@@ -21,7 +21,7 @@
 
 .import__inner {
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: calc(100vh - 200px);
 }
 

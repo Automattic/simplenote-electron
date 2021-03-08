@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
@@ -63,14 +63,21 @@ function ImporterDropzone({
     onDrop,
   });
 
-  const DropzonePlaceholder = () => (
-    <Fragment>
-      {errorMessage.length > 0 ? <WarningIcon /> : <CloudIcon />}
-      {isDragActive
-        ? 'Drop files here'
-        : 'Drag and drop to upload files, or click to choose'}
-    </Fragment>
-  );
+  const DropzonePlaceholder = () => {
+    const instructions = isDragActive ? (
+      'Drop files here'
+    ) : (
+      <div className="drop-instructions">
+        Drag and drop to to select files or <span>browse</span> to choose
+      </div>
+    );
+    return (
+      <Fragment>
+        {errorMessage.length > 0 ? <WarningIcon /> : <CloudIcon />}
+        {instructions}
+      </Fragment>
+    );
+  };
 
   const FilesWithIcon = () => {
     const fileList = acceptedFile.map((file: File) => (

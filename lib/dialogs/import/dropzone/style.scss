@@ -1,14 +1,15 @@
 .importer-dropzone {
   display: flex;
+  cursor: pointer;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  padding: 16px;
   border-width: 2px;
   border-style: dashed;
   transition: padding 0.2s ease-out, background 0.2s ease-out;
   text-align: center;
-  color: $studio-gray-80;
+  color: $studio-gray-50;
   background-color: transparent;
 
   &:focus-within {
@@ -58,9 +59,7 @@
     }
 
     .error-message {
-      margin-left: 24px;
-      margin-right: 24px;
-      margin-top: 10px;
+      margin: 10px 16px 16px auto;
       border: 0;
 
       li {
@@ -73,6 +72,15 @@
           margin-bottom: 10px;
         }
       }
+    }
+  }
+
+  .drop-instructions {
+    max-width: 205px;
+    margin-top: 8px;
+
+    span {
+      color: $studio-simplenote-blue;
     }
   }
 }

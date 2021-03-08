@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import ImporterDropzone from '../dropzone';
@@ -24,7 +24,7 @@ class SourceImporter extends React.Component {
 
   render() {
     const { buckets, onClose, onStart, locked = false, source } = this.props;
-    const { acceptedTypes, instructions, multiple = false } = this.props.source;
+    const { acceptedTypes, instructions, title } = this.props.source;
     const { acceptedFiles } = this.state;
 
     const hasAcceptedFile = Boolean(acceptedFiles);
@@ -32,22 +32,28 @@ class SourceImporter extends React.Component {
     return (
       <div className="source-importer">
         {!hasAcceptedFile && (
-          <p className="theme-color-fg-dim">{instructions}</p>
+          <p>
+            {title}
+            <br />
+            {instructions}
+          </p>
         )}
         <ImporterDropzone
           acceptedTypes={acceptedTypes}
           locked={locked}
-          multiple={multiple}
+          multiple={true}
           onAccept={(files) => this.setState({ acceptedFiles: files })}
           onReset={() => this.setState({ acceptedFiles: undefined })}
         />
-        <button
-          className="button disabled button-primary"
-          type="button"
-          disabled={true}
-        >
-          Import
-        </button>
+        <div className="dialog-buttons">
+          <button
+            className="button disabled button-primary"
+            type="button"
+            disabled={true}
+          >
+            Import
+          </button>
+        </div>
 
         <TransitionFadeInOut
           wrapperClassName="source-importer__executor-wrapper"
@@ -55,9 +61,7 @@ class SourceImporter extends React.Component {
         >
           <ImportExecutor
             buckets={buckets}
-            endValue={
-              multiple && hasAcceptedFile ? acceptedFiles.length : undefined
-            }
+            endValue={hasAcceptedFile ? acceptedFiles.length : undefined}
             files={acceptedFiles}
             locked={locked}
             onClose={onClose}
