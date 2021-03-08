@@ -15,7 +15,13 @@ export const IconButton = ({ icon, title, ...props }: Props) => (
     enterDelay={200}
     title={title}
   >
-    <button className="icon-button" type="button" data-title={title} {...props}>
+    <button
+      aria-label={title}
+      className="icon-button"
+      type="button"
+      data-title={title}
+      {...props}
+    >
       {icon}
     </button>
   </Tooltip>
