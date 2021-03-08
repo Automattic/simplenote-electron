@@ -205,4 +205,4 @@ const run = (token: string | null, username: string | null) => {
   }
 };
 
-run(storedToken, storedUsername, false);
+run(storedToken, storedUsername);

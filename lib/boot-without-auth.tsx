@@ -32,7 +32,6 @@ type User = {
   access_token?: string;
 };
 
-const appProvider = 'simplenote.com';
 const config = getConfig();
 const auth = new SimperiumAuth(config.app_id, config.app_key);
 
@@ -56,6 +55,7 @@ class AppWithoutAuth extends Component<Props, State> {
 
   login(token: string, username: string) {
     window.electron?.removeListener('appCommand');
+    window.electron?.removeListener('tokenLogin');
     this.props.onAuth(token, username);
   }
 
@@ -156,10 +156,9 @@ class AppWithoutAuth extends Component<Props, State> {
           hasLoginError={this.state.authStatus === 'unknown-error'}
           login={this.authenticate}
           tokenLogin={this.tokenLogin}
-          resetErrors={() => {
-            this.setState({ authStatus: 'unsubmitted' });
-            this.setState({ emailSentTo: '' });
-          }}
+          resetErrors={() =>
+            this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
+          }
           requestSignup={this.requestSignup}
         />
         {this.state.showAbout && (
