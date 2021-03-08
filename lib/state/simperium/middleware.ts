@@ -374,7 +374,6 @@ export const initSimperium = (
 
       // other note editing actions however
       // should trigger an immediate sync
-      case 'IMPORT_NOTE_WITH_ID':
       case 'MARKDOWN_NOTE':
       case 'PIN_NOTE':
       case 'PUBLISH_NOTE':
@@ -383,6 +382,17 @@ export const initSimperium = (
       case 'TRASH_NOTE':
         queueNoteUpdate(action.noteId, 10);
         return result;
+
+      case 'IMPORT_NOTE_WITH_ID': {
+        action.note.tags.forEach((tag) => {
+          const tagHash = t(tag);
+          if (!prevState.data.tags.has(tagHash)) {
+            queueTagUpdate(tagHash, 10);
+          }
+        });
+        queueNoteUpdate(action.noteId, 10);
+        return result;
+      }
 
       case 'DELETE_NOTE_FOREVER':
         setTimeout(() => noteBucket.remove(action.noteId), 10);
