@@ -5,38 +5,42 @@ const { appCommandSender } = require('./utils');
 const buildFileMenu = (isAuthenticated) => {
   isAuthenticated = isAuthenticated || false;
 
-  const submenu = [
-    {
-      label: '&New Note',
-      visible: isAuthenticated,
-      accelerator: 'CommandOrControl+Shift+I',
-      click: appCommandSender({ action: 'newNote' }),
-    },
-    ...(isAuthenticated ? [{ type: 'separator' }] : []),
-    {
-      label: '&Import Notes…',
-      visible: isAuthenticated,
-      click: appCommandSender({
-        action: 'showDialog',
-        dialog: 'IMPORT',
-      }),
-    },
-    {
-      label: '&Export Notes…',
-      visible: isAuthenticated,
-      accelerator: 'CommandOrControl+Shift+E',
-      click: appCommandSender({
-        action: 'exportNotes',
-      }),
-    },
-    ...(isAuthenticated ? [{ type: 'separator' }] : []),
-    {
-      label: '&Print…',
-      visible: isAuthenticated,
-      accelerator: 'CommandOrControl+P',
-      click: appCommandSender({ action: 'printNote' }),
-    },
-  ];
+  let submenu = [];
+
+  if (isAuthenticated) {
+    submenu = [
+      {
+        label: '&New Note',
+        visible: isAuthenticated,
+        accelerator: 'CommandOrControl+Shift+I',
+        click: appCommandSender({ action: 'newNote' }),
+      },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
+      {
+        label: '&Import Notes…',
+        visible: isAuthenticated,
+        click: appCommandSender({
+          action: 'showDialog',
+          dialog: 'IMPORT',
+        }),
+      },
+      {
+        label: '&Export Notes…',
+        visible: isAuthenticated,
+        accelerator: 'CommandOrControl+Shift+E',
+        click: appCommandSender({
+          action: 'exportNotes',
+        }),
+      },
+      ...(isAuthenticated ? [{ type: 'separator' }] : []),
+      {
+        label: '&Print…',
+        visible: isAuthenticated,
+        accelerator: 'CommandOrControl+P',
+        click: appCommandSender({ action: 'printNote' }),
+      },
+    ];
+  }
 
   const defaultSubmenuAdditions = [
     { type: 'separator' },

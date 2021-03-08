@@ -23,32 +23,25 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     accelerator: 'CommandOrControl+A',
   };
 
+  const editModeOptions = editMode
+    ? [
+        undo,
+        redo,
+        {
+          type: 'separator',
+        },
+      ]
+    : [];
+
   // menu items with roles don't respect visibility, so we have to do this the hard way
   if (!editMode) {
     selectAll['role'] = 'selectAll';
   }
 
-  return {
-    label: '&Edit',
-    submenu: [
-      undo,
-      redo,
-      {
-        type: 'separator',
-      },
-      {
-        label: '&Cut',
-        role: 'cut',
-      },
-      {
-        label: 'C&opy',
-        role: 'copy',
-      },
-      {
-        label: '&Paste',
-        role: 'paste',
-      },
-      selectAll,
+  let menuExtras = [];
+
+  if (isAuthenticated) {
+    menuExtras = [
       { type: 'separator' },
       {
         label: '&Trash Note',
@@ -74,8 +67,36 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
       },
-    ],
+    ];
+  }
+
+  const defaultSubmenuAdditions = [
+    {
+      label: '&Cut',
+      role: 'cut',
+    },
+    {
+      label: 'C&opy',
+      role: 'copy',
+    },
+    {
+      label: '&Paste',
+      role: 'paste',
+    },
+    selectAll,
+    { type: 'separator' },
+  ];
+
+  const submenu = editModeOptions
+    .concat(defaultSubmenuAdditions)
+    .concat(menuExtras);
+
+  const fileMenu = {
+    label: '&Edit',
+    submenu,
   };
+
+  return fileMenu;
 };
 
 module.exports = buildEditMenu;
