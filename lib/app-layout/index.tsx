@@ -118,14 +118,20 @@ export class AppLayout extends Component<Props> {
     return (
       <div className={mainClasses}>
         <Suspense fallback={placeholder}>
-          <div className="app-layout__source-column theme-color-bg theme-color-fg">
+          <aside
+            aria-label="Notes list"
+            className="app-layout__source-column theme-color-bg theme-color-fg"
+          >
             <MenuBar />
             <SearchField />
             <NoteList />
             {showSortBar && <SortOrderSelector />}
-          </div>
+          </aside>
           {editorVisible && (
-            <div className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border">
+            <main
+              aria-label="Note editor"
+              className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border"
+            >
               <NoteToolbar />
               {showRevisions ? (
                 <NotePreview noteId={openedNote} note={openedRevision} />
@@ -133,7 +139,7 @@ export class AppLayout extends Component<Props> {
                 <NoteEditor />
               )}
               {hasRevisions && <RevisionSelector />}
-            </div>
+            </main>
           )}
         </Suspense>
       </div>

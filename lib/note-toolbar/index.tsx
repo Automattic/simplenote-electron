@@ -67,7 +67,7 @@ export class NoteToolbar extends Component<Props> {
     return !note ? (
       <div className="note-toolbar-placeholder theme-color-border" />
     ) : (
-      <div className="note-toolbar">
+      <div aria-label="note actions" role="toolbar" className="note-toolbar">
         <div className="note-toolbar__column-left">
           <div className="note-toolbar__button new-note-toolbar__button-sidebar theme-color-border">
             <IconButton
