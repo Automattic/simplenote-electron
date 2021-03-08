@@ -140,6 +140,10 @@
     color: transparent;
     height: 16px;
     width: 16px;
+
+    svg {
+      vertical-align: top;
+    }
   }
 
   .note-list-item-text {
