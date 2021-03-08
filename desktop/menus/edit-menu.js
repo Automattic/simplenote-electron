@@ -23,7 +23,7 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     accelerator: 'CommandOrControl+A',
   };
 
-  const editModeOptions = editMode
+  const editModeMenuOptions = editMode
     ? [
         undo,
         redo,
@@ -38,10 +38,10 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     selectAll['role'] = 'selectAll';
   }
 
-  let menuExtras = [];
+  let authenticatedMenuOptions = [];
 
   if (isAuthenticated) {
-    menuExtras = [
+    authenticatedMenuOptions = [
       { type: 'separator' },
       {
         label: '&Trash Note',
@@ -87,9 +87,9 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     { type: 'separator' },
   ];
 
-  const submenu = editModeOptions
+  const submenu = editModeMenuOptions
     .concat(defaultSubmenuAdditions)
-    .concat(menuExtras);
+    .concat(authenticatedMenuOptions);
 
   const fileMenu = {
     label: '&Edit',
