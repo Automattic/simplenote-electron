@@ -104,8 +104,8 @@ export class NoteCell extends Component<Props> {
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
     return (
-      <div style={style} className={classes}>
-        <div className="note-list-item-status">
+      <div style={style} className={classes} role="row">
+        <div className="note-list-item-status" role="cell">
           <div
             className={pinnerClasses}
             tabIndex={0}
@@ -119,6 +119,7 @@ export class NoteCell extends Component<Props> {
           className="note-list-item-text theme-color-border"
           tabIndex={0}
           onClick={() => openNote(noteId)}
+          role="cell"
         >
           <div className="note-list-item-title">
             <span>
@@ -146,7 +147,10 @@ export class NoteCell extends Component<Props> {
             </div>
           )}
         </div>
-        <div className="note-list-item-status-right theme-color-border">
+        <div
+          className="note-list-item-status-right theme-color-border"
+          role="cell"
+        >
           {hasPendingChanges && (
             <span
               className={classNames('note-list-item-pending-changes', {
