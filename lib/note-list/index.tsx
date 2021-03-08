@@ -327,7 +327,8 @@ export class NoteList extends Component<Props> {
                   <List
                     // Ideally aria-label is changed to aria-labelledby to
                     // reference the existing notes title element instead of
-                    // computing the label https://git.io/JqLvR
+                    // computing the label, but is not currently possible due to
+                    // a limitation with react-virtualized. https://git.io/JqLvR
                     aria-label={this.computedLabel()}
                     ref={this.list}
                     estimatedRowSize={24 + 18 + 21 * 4}
