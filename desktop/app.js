@@ -32,9 +32,9 @@ module.exports = function main() {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
     app.on('open-url', function (event, url) {
       event.preventDefault();
-      if (url.indexOf('wp_token') !== -1) {
+      if (url.startsWith('simplenote://auth')) {
         mainWindow.webContents.send('wpLogin', url);
-      } else {
+      } else if (url.startsWith('simplenote://login')) {
         mainWindow.webContents.send('tokenLogin', url);
       }
     });
@@ -215,10 +215,9 @@ module.exports = function main() {
     // Protocol handler for platforms other than macOS
     // argv: An array of the second instance’s (command line / deep linked) arguments
     // The last index of argv is the full deeplink url (simplenote://SOME_URL)
-
-    if (argv[argv.length-1].indexOf('wp_token') !== -1) {
+    if (argv[argv.length - 1].startsWith('simplenote://auth')) {
       mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
-    } else {
+    } else if (argv[argv.length - 1].startsWith('simplenote://login')) {
       mainWindow.webContents.send('tokenLogin', argv[argv.length - 1]);
     }
   });
