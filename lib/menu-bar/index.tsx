@@ -67,7 +67,9 @@ export const MenuBar: FunctionComponent<Props> = ({
         onClick={toggleNavigation}
         title={`Menu • ${CmdOrCtrl}+Shift+U`}
       />
-      <div className="notes-title">{placeholder}</div>
+      <div className="notes-title" aria-hidden="true">
+        {placeholder}
+      </div>
       <IconButton
         disabled={collection.type === 'trash'}
         icon={<NewNoteIcon />}

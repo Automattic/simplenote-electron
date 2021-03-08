@@ -100,71 +100,70 @@ export class NoteCell extends Component<Props> {
     const pinnerClasses = classNames('note-list-item-pinner', {
       'note-list-item-pinned': isPinned,
     });
+    const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
 
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
     return (
       <div style={style} className={classes} role="row">
-        <div className="note-list-item-status" role="cell">
-          <div
-            className={pinnerClasses}
-            tabIndex={0}
-            onClick={() => pinNote(noteId, !isPinned)}
-          >
-            <SmallPinnedIcon />
-          </div>
-        </div>
-
-        <div
-          className="note-list-item-text theme-color-border"
-          tabIndex={0}
-          onClick={() => openNote(noteId)}
-          role="cell"
-        >
-          <div className="note-list-item-title">
-            <span>
-              {decorateWith(decorators, withCheckboxCharacters(title))}
-            </span>
-          </div>
-          {'expanded' === displayMode && preview.length > 0 && (
-            <div className="note-list-item-excerpt theme-color-fg-dim">
-              {withCheckboxCharacters(preview)
-                .split('\n')
-                .map((line, index) => (
-                  <React.Fragment key={index}>
-                    {index > 0 && <br />}
-                    {decorateWith(decorators, line.slice(0, 200))}
-                  </React.Fragment>
-                ))}
-            </div>
-          )}
-          {'comfy' === displayMode && preview.length > 0 && (
-            <div className="note-list-item-excerpt theme-color-fg-dim">
-              {decorateWith(
-                decorators,
-                withCheckboxCharacters(preview).slice(0, 200)
-              )}
-            </div>
-          )}
-        </div>
-        <div
-          className="note-list-item-status-right theme-color-border"
-          role="cell"
-        >
-          {hasPendingChanges && (
-            <span
-              className={classNames('note-list-item-pending-changes', {
-                'is-offline': isOffline,
-              })}
+        <div className="note-list-item-content" role="cell">
+          <div className="note-list-item-status">
+            <button
+              aria-label={pinnerLabel}
+              className={pinnerClasses}
+              onClick={() => pinNote(noteId, !isPinned)}
             >
-              <SmallSyncIcon />
-            </span>
-          )}
-          {isPublished && (
-            <span className="note-list-item-published-icon">
-              <PublishIcon />
-            </span>
-          )}
+              <SmallPinnedIcon />
+            </button>
+          </div>
+
+          <button
+            aria-label={`Edit note ${title}`}
+            className="note-list-item-text theme-color-border"
+            onClick={() => openNote(noteId)}
+          >
+            <div className="note-list-item-title">
+              <span>
+                {decorateWith(decorators, withCheckboxCharacters(title))}
+              </span>
+            </div>
+            {'expanded' === displayMode && preview.length > 0 && (
+              <div className="note-list-item-excerpt theme-color-fg-dim">
+                {withCheckboxCharacters(preview)
+                  .split('\n')
+                  .map((line, index) => (
+                    <React.Fragment key={index}>
+                      {index > 0 && <br />}
+                      {decorateWith(decorators, line.slice(0, 200))}
+                    </React.Fragment>
+                  ))}
+              </div>
+            )}
+            {'comfy' === displayMode && preview.length > 0 && (
+              <div className="note-list-item-excerpt theme-color-fg-dim">
+                {decorateWith(
+                  decorators,
+                  withCheckboxCharacters(preview).slice(0, 200)
+                )}
+              </div>
+            )}
+          </button>
+          <div className="note-list-item-status-right theme-color-border">
+            {hasPendingChanges && (
+              <span
+                className={classNames('note-list-item-pending-changes', {
+                  'is-offline': isOffline,
+                })}
+              >
+                <SmallSyncIcon />
+              </span>
+            )}
+            {isPublished && (
+              <span className="note-list-item-published-icon">
+                <PublishIcon />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     );

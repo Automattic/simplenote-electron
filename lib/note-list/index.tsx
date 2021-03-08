@@ -20,6 +20,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
+  collection: T.Collection;
   filteredNotes: T.EntityId[];
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
@@ -212,6 +213,19 @@ export class NoteList extends Component<Props> {
     this.toggleShortcuts(false);
   }
 
+  computedLabel() {
+    switch (this.props.collection.type) {
+      case 'tag':
+        return 'Notes With Selected Tag';
+      case 'trash':
+        return 'Trash';
+      case 'untagged':
+        return 'Untagged Notes';
+      default:
+        return 'All Notes';
+    }
+  }
+
   handleShortcut = (event: KeyboardEvent) => {
     if (!this.props.keyboardShortcuts) {
       return;
@@ -311,6 +325,10 @@ export class NoteList extends Component<Props> {
               <AutoSizer>
                 {({ height, width }) => (
                   <List
+                    // Ideally aria-label is changed to aria-labelledby to
+                    // reference the existing notes title element instead of
+                    // computing the label https://git.io/JqLvR
+                    aria-label={this.computedLabel()}
                     ref={this.list}
                     estimatedRowSize={24 + 18 + 21 * 4}
                     height={height}
@@ -320,6 +338,7 @@ export class NoteList extends Component<Props> {
                     rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
                     scrollToIndex={selectedIndex}
+                    tabIndex={null}
                     width={width}
                   />
                 )}
@@ -335,6 +354,7 @@ export class NoteList extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = (state) => {
   return {
+    collection: state.ui.collection,
     isSmallScreen: selectors.isSmallScreen(state),
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,

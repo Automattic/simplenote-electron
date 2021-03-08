@@ -127,6 +127,11 @@
   font-family: 'Simplenote Tasks', $sans, sans-serif;
   min-height: 64px;
 
+  .note-list-item-content {
+    display: flex;
+    width: 100%;
+  }
+
   .note-list-item-status {
     padding: 9px 8px 0 0;
   }
@@ -151,6 +156,7 @@
   .note-list-item-title,
   .note-list-item-excerpt {
     white-space: nowrap;
+    text-align: left;
     text-overflow: ellipsis;
     overflow: hidden;
   }
