@@ -111,7 +111,7 @@ class AppWithoutAuth extends Component<Props, State> {
     this.setState({ authStatus: 'submitting' }, async () => {
       try {
         const response = await fetch(
-          'https://pr-377-dot-simple-note-hrd.appspot.com/account/request-signup',
+          'https://app.simplenote.com/account/request-signup',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
