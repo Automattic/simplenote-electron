@@ -86,6 +86,20 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
+const alternateLoginEmail: A.Reducer<string | null> = (
+  state = null,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return atob(action.email);
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return null;
+    default:
+      return state;
+  }
+};
+
 const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
@@ -201,6 +215,21 @@ const openedTag: A.Reducer<T.TagHash | null> = (state = null, action) => {
       return tagHashOf(action.tagName);
     case 'TRASH_TAG':
       return tagHashOf(action.tagName) === state ? null : state;
+    default:
+      return state;
+  }
+};
+
+const showAlternateLoginPrompt: A.Reducer<boolean> = (
+  state = false,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return !state;
+
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return false;
     default:
       return state;
   }
@@ -324,6 +353,7 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 };
 
 export default combineReducers({
+  alternateLoginEmail,
   dialogs,
   editMode,
   editorSelection,
@@ -336,6 +366,7 @@ export default combineReducers({
   openedTag,
   searchQuery,
   selectedSearchMatchIndex,
+  showAlternateLoginPrompt,
   showNavigation,
   showNoteInfo,
   showNoteList,

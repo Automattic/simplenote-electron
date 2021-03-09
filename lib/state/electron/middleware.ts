@@ -7,6 +7,14 @@ import * as S from '../';
 const debug = debugFactory('electron-middleware');
 
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
+  window.electron.receive('tokenLogin', (url) => {
+    const { searchParams } = new URL(url);
+    const tokenEmail = searchParams.get('email');
+    // if already logged in with the same account as the token, do nothing
+    if (tokenEmail !== getState().settings.accountName) {
+      dispatch(actions.ui.showAlternateLoginPrompt(tokenEmail));
+    }
+  });
   window.electron.receive('appCommand', (command) => {
     switch (command.action) {
       case 'closeWindow':

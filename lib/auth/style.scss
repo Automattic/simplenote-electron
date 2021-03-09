@@ -32,13 +32,15 @@
     text-align: center;
   }
 
-  .login__auth-message.is-error {
-    color: $studio-red-60;
+  .login__auth-message {
     font-size: 16px;
     margin: 0 auto 16px;
     max-width: 347px;
     text-align: center;
     width: 90%;
+    .is-error {
+      color: $studio-red-60;
+    }
   }
 
   label {
@@ -59,6 +61,10 @@
     width: 95%;
     font-size: 16px;
     font-weight: 400;
+  }
+
+  .spinner {
+    vertical-align: middle;
   }
 
   button[type='submit'] {
@@ -87,6 +93,7 @@
   }
 
   .login__signup a,
+  .login__auth-message a,
   .terms a {
     color: $studio-simplenote-blue-50;
     margin-left: 5px;
@@ -135,6 +142,23 @@
   }
 }
 
+.accountRequested {
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  width: 320px;
+
+  svg.icon-mail {
+    color: $studio-gray-50;
+    width: 60px;
+    height: 60px;
+  }
+  .accountRequested__footer {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
 .theme-dark .login {
   h1 {
     color: $studio-white;
@@ -150,6 +174,7 @@
   }
 
   .login__signup a,
+  .login__auth-message a,
   .terms a {
     color: $studio-simplenote-blue-30;
   }
@@ -164,5 +189,9 @@
   }
   .or-line {
     border-color: $studio-gray-80;
+  }
+
+  svg.icon-mail {
+    color: $studio-gray-30;
   }
 }
