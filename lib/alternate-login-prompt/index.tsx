@@ -50,13 +50,15 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
         <WarningIcon />
       </span>
       <h2>Logout?</h2>
-      <p>
-        You are already logged in as <strong>{email}</strong>.
+      <p>You are already logged in as:</p>
+      <p className="alternate-login__email">
+        <strong>{email}</strong>
       </p>
-      <p>
-        You tried logging in with <strong>{alternateLoginEmail}</strong>. Would
-        you like to log out?
+      <p>You tried logging in with:</p>
+      <p className="alternate-login__email">
+        <strong>{alternateLoginEmail}</strong>
       </p>
+      <p>Would you like to log out?</p>
 
       <div className="alternate-login__button-row button-borderless">
         <a target="_blank" rel="noreferrer" onClick={dismiss}>

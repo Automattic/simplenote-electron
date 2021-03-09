@@ -14,7 +14,7 @@
   display: flex;
   height: 60px;
   justify-content: flex-end;
-  line-height: 60px;
+  align-items: center;
   margin: 0 16px;
   width: 100%;
 
@@ -23,6 +23,10 @@
     width: 16px;
     margin: auto 0;
   }
+}
+
+.alternate-login__email {
+  word-break: break-all;
 }
 
 .alternate-login__modal {
