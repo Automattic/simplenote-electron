@@ -3,19 +3,21 @@ import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
 import getConfig from '../../get-config';
+import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
-import { validatePassword } from '../utils/validate-password';
 import { isElectron, isMac } from '../utils/platform';
 import { viewExternalUrl } from '../utils/url-utils';
 
 type OwnProps = {
+  accountCreationRequested: boolean;
   authPending: boolean;
+  emailSentTo: string;
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
   login: (username: string, password: string) => any;
-  signup: (username: string, password: string) => any;
+  requestSignup: (username: string) => any;
   tokenLogin: (username: string, token: string) => any;
   resetErrors: () => any;
 };
@@ -60,13 +62,57 @@ export class Auth extends Component<Props> {
     const helpMessage = isCreatingAccount
       ? 'Already have an account?'
       : "Don't have an account?";
-    const errorMessage = isCreatingAccount
-      ? 'Could not create account. Please try again.'
-      : 'Could not log in with the provided email address and password.';
+
+    const errorMessage = isCreatingAccount ? (
+      <>
+        Could not request account creation. Please try again or
+        <a
+          href="mailto:support@simplenote.com?subject=Simplenote%20Support"
+          onClick={(event) => {
+            event.preventDefault();
+            viewExternalUrl(
+              'mailto:support@simplenote.com?subject=Simplenote%20Support'
+            );
+          }}
+        >
+          contact us
+        </a>
+        .
+      </>
+    ) : (
+      'Could not log in with the provided email address and password.'
+    );
 
     const mainClasses = classNames('login', {
       'is-electron': isElectron,
     });
+
+    if (this.props.accountCreationRequested) {
+      return (
+        <div className={mainClasses}>
+          {isElectron && isMac && <div className="login__draggable-area" />}
+          <div className="accountRequested">
+            <MailIcon />
+            <p className="accountRequested__message theme-color-fg">
+              We&apos;ve sent an email to{' '}
+              <strong>{this.props.emailSentTo}</strong>. Please check your inbox
+              and follow the instructions.
+            </p>
+            <p className="accountRequested__footer theme-color-fg-dim">
+              Didn&apos;t get an email? You may already have an account. Contact{' '}
+              <a href="mailto:support@simplenote.com">support@simplenote.com</a>{' '}
+              for help.
+            </p>
+            <button
+              onClick={this.clearRequestedAccount}
+              className="button-borderless"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={mainClasses}>
@@ -132,26 +178,29 @@ export class Auth extends Component<Props> {
             required
             autoFocus
           />
-          <label
-            className="login__field theme-color-border"
-            htmlFor="login__field-password"
-          >
-            Password
-          </label>
-          <input
-            id="login__field-password"
-            onInput={this.onInput}
-            onInvalid={this.onInput}
-            onFocus={this.onFocus}
-            onBlur={this.onBlur}
-            placeholder="Password"
-            ref={(ref) => (this.passwordInput = ref)}
-            spellCheck={false}
-            type="password"
-            required
-            minLength="4"
-          />
-
+          {!isCreatingAccount && (
+            <>
+              <label
+                className="login__field theme-color-border"
+                htmlFor="login__field-password"
+              >
+                Password
+              </label>
+              <input
+                id="login__field-password"
+                onInput={this.onInput}
+                onInvalid={this.onInput}
+                onFocus={this.onFocus}
+                onBlur={this.onBlur}
+                placeholder="Password"
+                ref={(ref) => (this.passwordInput = ref)}
+                spellCheck={false}
+                type="password"
+                required
+                minLength={4}
+              />
+            </>
+          )}
           <button
             id="login__login-button"
             className={submitClasses}
@@ -254,24 +303,10 @@ export class Auth extends Component<Props> {
     if (event.currentTarget.className !== 'validate') {
       return;
     }
+  };
 
-    const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
-
-    if (this.state.isCreatingAccount) {
-      const username = get(this.usernameInput, 'value');
-      const password = get(this.passwordInput, 'value');
-
-      // run custom validation for the password but use the default message for missing value
-      if (
-        this.passwordInput.validity.valueMissing ||
-        validatePassword(password, username)
-      ) {
-        this.passwordInput.setCustomValidity('');
-      } else {
-        this.passwordInput.setCustomValidity(passwordError);
-      }
-    }
+  clearRequestedAccount = () => {
+    this.props.resetErrors();
   };
 
   onSubmit = (event) => {
@@ -283,7 +318,15 @@ export class Auth extends Component<Props> {
       passwordErrorMessage: '',
     });
 
-    if (
+    // make sure all existing form fields are filled out
+    if (!this.passwordInput) {
+      if (this.usernameInput.validity.valueMissing) {
+        this.setState({
+          passwordErrorMessage: 'Please fill out email.',
+        });
+        return;
+      }
+    } else if (
       this.usernameInput.validity.valueMissing ||
       this.passwordInput.validity.valueMissing
     ) {
@@ -302,37 +345,24 @@ export class Auth extends Component<Props> {
     }
 
     const username = get(this.usernameInput, 'value');
-    const password = get(this.passwordInput, 'value');
-    const passwordError =
-      'Sorry, that password is not strong enough. Passwords must be at least 8 characters long and may not match your email address.';
 
-    // signup - stricter password requirements apply
     if (this.state.isCreatingAccount) {
-      if (!validatePassword(password, username)) {
-        this.setState({
-          passwordErrorMessage: passwordError,
-        });
-        this.passwordInput.setCustomValidity(passwordError);
-        return;
-      }
-
-      this.passwordInput.setCustomValidity('');
-      this.props.signup(username, password, true);
+      this.props.requestSignup(username);
+      return;
     }
 
-    // login - slightly more relaxed password rules
-    else {
-      if (!this.passwordInput.validity.valid) {
-        this.setState({
-          passwordErrorMessage: 'Passwords must contain at least 4 characters.',
-        });
-        return;
-      }
+    const password = get(this.passwordInput, 'value');
 
-      this.props.login(username, password);
+    // login has slightly more relaxed password rules
+    if (!this.passwordInput.validity.valid) {
+      this.setState({
+        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+      });
+      return;
     }
 
     this.setState({ passwordErrorMessage: null });
+    this.props.login(username, password);
   };
 
   onWPLogin = () => {
@@ -351,7 +381,7 @@ export class Auth extends Component<Props> {
         : false;
       const authState = searchParams.get('state');
       const userEmail = searchParams.get('user');
-      const simpToken = searchParams.get('token');
+      const simperiumToken = searchParams.get('token');
       const wpccToken = searchParams.get('wp_token');
 
       // Display an error message if authorization failed.
@@ -373,7 +403,7 @@ export class Auth extends Component<Props> {
       if (authState !== this.authState) {
         return;
       }
-      this.props.tokenLogin(userEmail, simpToken);
+      this.props.tokenLogin(userEmail, simperiumToken);
     });
   };
 

@@ -7,6 +7,7 @@ import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
 import DialogRenderer from './dialog-renderer';
 import EmailVerification from './email-verification';
+import AlternateLoginPrompt from './alternate-login-prompt';
 import { isElectron, isMac } from './utils/platform';
 import classNames from 'classnames';
 import {
@@ -34,6 +35,7 @@ type StateProps = {
   isSmallScreen: boolean;
   lineLength: T.LineLength;
   isSearchActive: boolean;
+  showAlternateLoginPrompt: boolean;
   showEmailVerification: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
@@ -177,6 +179,7 @@ class AppComponent extends Component<Props> {
     const {
       isDevConfig,
       lineLength,
+      showAlternateLoginPrompt,
       showEmailVerification,
       showNavigation,
       showNoteInfo,
@@ -198,6 +201,7 @@ class AppComponent extends Component<Props> {
     return (
       <div className={appClasses}>
         {showEmailVerification && <EmailVerification />}
+        {showAlternateLoginPrompt && <AlternateLoginPrompt />}
         {isDevConfig && <DevBadge />}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
@@ -216,6 +220,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isSearchActive: !!state.ui.searchQuery.length,
   isSmallScreen: selectors.isSmallScreen(state),
   lineLength: state.settings.lineLength,
+  showAlternateLoginPrompt: state.ui.showAlternateLoginPrompt,
   showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
   showNoteInfo: state.ui.showNoteInfo,

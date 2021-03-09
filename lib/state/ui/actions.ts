@@ -99,6 +99,20 @@ export const showDialog: A.ActionCreator<A.ShowDialog> = <
   ...data,
 });
 
+export const showAlternateLoginPrompt: A.ActionCreator<A.ShowAlternateLoginPrompt> = (
+  email: string
+) => ({
+  type: 'SHOW_ALTERNATE_LOGIN_PROMPT',
+  email,
+});
+
+export const hideAlternateLoginPrompt: A.ActionCreator<A.HideAlternateLoginPrompt> = (
+  email: string
+) => ({
+  type: 'HIDE_ALTERNATE_LOGIN_PROMPT',
+  email,
+});
+
 export const storeRevisions: A.ActionCreator<A.StoreRevisions> = (
   noteId: T.EntityId,
   revisions: T.NoteEntity[]

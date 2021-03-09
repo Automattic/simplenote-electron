@@ -13,16 +13,18 @@ import getConfig from '../get-config';
 import '../scss/style.scss';
 
 type Props = {
-  onAuth: (token: string, username: string, createWelcomeNote: boolean) => any;
+  onAuth: (token: string, username: string) => any;
 };
 
 type State = {
   authStatus:
+    | 'account-creation-requested'
     | 'unsubmitted'
     | 'submitting'
     | 'insecure-password'
     | 'invalid-credentials'
     | 'unknown-error';
+  emailSentTo: string;
   showAbout: boolean;
 };
 
@@ -30,23 +32,31 @@ type User = {
   access_token?: string;
 };
 
-const appProvider = 'simplenote.com';
 const config = getConfig();
 const auth = new SimperiumAuth(config.app_id, config.app_key);
 
 class AppWithoutAuth extends Component<Props, State> {
   state: State = {
     authStatus: 'unsubmitted',
+    emailSentTo: '',
     showAbout: false,
   };
 
   componentDidMount() {
     window.electron?.receive('appCommand', this.onAppCommand);
+
+    window.electron?.receive('tokenLogin', (url) => {
+      const { searchParams } = new URL(url);
+      const simperiumToken = searchParams.get('token');
+      const email = atob(searchParams.get('email'));
+      this.tokenLogin(email, simperiumToken);
+    });
   }
 
-  login(token: string, username: string, createWelcomeNote: boolean) {
+  login(token: string, username: string) {
     window.electron?.removeListener('appCommand');
-    this.props.onAuth(token, username, createWelcomeNote);
+    window.electron?.removeListener('tokenLogin');
+    this.props.onAuth(token, username);
   }
 
   onAppCommand = (event) => {
@@ -92,26 +102,32 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   };
 
-  createUser = (usernameArg: string, password: string) => {
-    const username = usernameArg.trim().toLowerCase();
-    if (!(username && password)) {
+  requestSignup = (email: string) => {
+    const username = email.trim().toLowerCase();
+    if (!username) {
       return;
     }
 
-    this.setState({ authStatus: 'submitting' }, () => {
-      auth
-        .create(username, password, appProvider)
-        .then((user: User) => {
-          if (!user.access_token) {
-            throw new Error('missing access token');
+    this.setState({ authStatus: 'submitting' }, async () => {
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/request-signup',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username }),
           }
-
-          recordEvent('user_account_created');
-          this.login(user.access_token, username, true);
-        })
-        .catch(() => {
+        );
+        if (response.ok) {
+          recordEvent('user_account_creation_requested');
+          this.setState({ authStatus: 'account-creation-requested' });
+          this.setState({ emailSentTo: username });
+        } else {
           this.setState({ authStatus: 'unknown-error' });
-        });
+        }
+      } catch {
+        this.setState({ authStatus: 'unknown-error' });
+      }
     });
   };
 
@@ -128,16 +144,22 @@ class AppWithoutAuth extends Component<Props, State> {
     return (
       <div className={`app theme-${systemTheme}`}>
         <AuthApp
+          accountCreationRequested={
+            this.state.authStatus === 'account-creation-requested'
+          }
           authPending={this.state.authStatus === 'submitting'}
+          emailSentTo={this.state.emailSentTo}
           hasInsecurePassword={this.state.authStatus === 'insecure-password'}
           hasInvalidCredentials={
             this.state.authStatus === 'invalid-credentials'
           }
           hasLoginError={this.state.authStatus === 'unknown-error'}
           login={this.authenticate}
-          signup={this.createUser}
           tokenLogin={this.tokenLogin}
-          resetErrors={() => this.setState({ authStatus: 'unsubmitted' })}
+          resetErrors={() =>
+            this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
+          }
+          requestSignup={this.requestSignup}
         />
         {this.state.showAbout && (
           <Modal
@@ -160,9 +182,7 @@ class AppWithoutAuth extends Component<Props, State> {
   }
 }
 
-export const boot = (
-  onAuth: (token: string, username: string, createWelcomeNote: boolean) => any
-) => {
+export const boot = (onAuth: (token: string, username: string) => any) => {
   Modal.setAppElement('#root');
   render(<AppWithoutAuth onAuth={onAuth} />, document.getElementById('root'));
 };

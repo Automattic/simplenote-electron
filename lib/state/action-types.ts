@@ -72,6 +72,7 @@ export type FilterNotes = Action<
   { noteIds: T.EntityId[]; tagHashes: T.TagHash[] }
 >;
 export type FocusSearchField = Action<'FOCUS_SEARCH_FIELD'>;
+export type HideAlternateLoginPrompt = Action<'HIDE_ALTERNATE_LOGIN_PROMPT'>;
 export type Logout = Action<'LOGOUT'>;
 export type OpenNote = Action<'OPEN_NOTE', { noteId?: T.EntityId }>;
 export type OpenRevision = Action<
@@ -101,8 +102,10 @@ export type SetUnsyncedNoteIds = Action<
   { noteIds: T.EntityId[] }
 >;
 export type ShowAllNotes = Action<'SHOW_ALL_NOTES'>;
-export type ShowUntaggedNotes = Action<'SHOW_UNTAGGED_NOTES'>;
-
+export type ShowAlternateLoginPrompt = Action<
+  'SHOW_ALTERNATE_LOGIN_PROMPT',
+  { email: string }
+>;
 export type ShowDialog = Action<
   'SHOW_DIALOG',
   {
@@ -110,6 +113,7 @@ export type ShowDialog = Action<
     data?: object;
   }
 >;
+export type ShowUntaggedNotes = Action<'SHOW_UNTAGGED_NOTES'>;
 export type StoreEditorSelection = Action<
   'STORE_EDITOR_SELECTION',
   { noteId: T.EntityId; start: number; end: number; direction: 'RTL' | 'LTR' }
@@ -348,6 +352,7 @@ export type ActionType =
   | GhostRemoveEntity
   | GhostSetChangeVersion
   | GhostSetEntity
+  | HideAlternateLoginPrompt
   | ImportNote
   | ImportNoteWithId
   | InsertTask
@@ -400,8 +405,9 @@ export type ActionType =
   | SetTheme
   | SetUnsyncedNoteIds
   | ShowAllNotes
-  | ShowUntaggedNotes
+  | ShowAlternateLoginPrompt
   | ShowDialog
+  | ShowUntaggedNotes
   | StoreEditorSelection
   | StoreNumberOfMatchesInNote
   | StoreSearchSelection

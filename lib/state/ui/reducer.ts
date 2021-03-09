@@ -86,6 +86,20 @@ const editorSelection: A.Reducer<Map<
   }
 };
 
+const alternateLoginEmail: A.Reducer<string | null> = (
+  state = null,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return atob(action.email);
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return null;
+    default:
+      return state;
+  }
+};
+
 const collection: A.Reducer<T.Collection> = (
   state = { type: 'all' },
   action
@@ -234,6 +248,22 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
   }
 };
 
+const showAlternateLoginPrompt: A.Reducer<boolean> = (
+  state = false,
+  action
+) => {
+  switch (action.type) {
+    case 'SHOW_ALTERNATE_LOGIN_PROMPT':
+      return !state;
+
+    case 'HIDE_ALTERNATE_LOGIN_PROMPT':
+      return false;
+
+    default:
+      return state;
+  }
+};
+
 const showNoteList: A.Reducer<boolean> = (state = true, action) => {
   switch (action.type) {
     case 'NOTE_LIST_TOGGLE':
@@ -340,6 +370,7 @@ const tagSuggestions: A.Reducer<T.TagHash[]> = (
 
 export default combineReducers({
   collection,
+  alternateLoginEmail,
   dialogs,
   editMode,
   editorSelection,
@@ -351,6 +382,7 @@ export default combineReducers({
   openedRevision,
   searchQuery,
   selectedSearchMatchIndex,
+  showAlternateLoginPrompt,
   showNavigation,
   showNoteInfo,
   showNoteList,
