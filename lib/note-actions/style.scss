@@ -1,3 +1,5 @@
+$checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4Ii8+PHBhdGggZmlsbD0iIzY0Njk3MCIgZD0iTTE5IDVMMTkgNXYxNEg1VjVIMTlNMTkgM0g1QzMuODk1IDMgMyAzLjg5NSAzIDV2MTRjMCAxLjEwNSAwLjg5NSAyIDIgMmgxNGMxLjEwNSAwIDItMC44OTUgMi0yVjVDMjEgMy44OTUgMjAuMTA1IDMgMTkgM3pNNDMgM0gyOWMtMS4xMDUgMC0yIDAuODk1LTIgMnYxNGMwIDEuMTA1IDAuODk1IDIgMiAyaDE0YzEuMTA1IDAgMi0wLjg5NSAyLTJWNUM0NSAzLjg5NSA0NC4xMDUgMyA0MyAzek0zNC4xNCAxNi44NWwtNC4zOC00LjM3IDEuNDItMS40MiAzIDMgNi42My02LjYzIDEuNDEgMS40MkwzNC4xNCAxNi44NXoiLz48cGF0aCBmaWxsPSIjOGM4Zjk0IiBkPSJNMTkgMjlMMTkgMjl2MTRINVYyOUgxOU0xOSAyN0g1Yy0xLjEwNSAwLTIgMC44OTUtMiAydjE0YzAgMS4xMDUgMC44OTUgMiAyIDJoMTRjMS4xMDUgMCAyLTAuODk1IDItMlYyOUMyMSAyNy44OTUgMjAuMTA1IDI3IDE5IDI3ek00MyAyN0gyOWMtMS4xMDUgMC0yIDAuODk1LTIgMnYxNGMwIDEuMTA1IDAuODk1IDIgMiAyaDE0YzEuMTA1IDAgMi0wLjg5NSAyLTJWMjlDNDUgMjcuODk1IDQ0LjEwNSAyNyA0MyAyN3pNMzQuMTQgNDAuODVsLTQuMzgtNC4zNyAxLjQyLTEuNDIgMyAzIDYuNjMtNi42MyAxLjQxIDEuNDJMMzQuMTQgNDAuODV6Ii8+PC9zdmc+';
+
 .is-macos .note-actions {
   top: $toolbar-height + 25px + 26px;
 }
@@ -73,16 +75,24 @@
     color: $studio-red-50;
   }
 
-  .note-actions-item-control .checkbox-control .checkbox-control-base,
-  .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    border-radius: 1px;
-    border-color: $studio-gray-50;
+  .note-actions-item-control .checkbox-control {
+    bottom: 2px;
   }
 
-  .checkbox-control-checked {
-    background: $studio-simplenote-blue-50
-      url('data:image/gif;base64,R0lGODlhCwAKAIABAP////3cnSH5BAEKAAEALAAAAAALAAoAAAIUjH+AC73WHIsw0UCjglraO20PNhYAOw==')
-      3px 3px no-repeat;
+  .note-actions-item-control .checkbox-control .checkbox-control-base,
+  .note-actions-item-control .checkbox-control .checkbox-control-checked {
+    background-image: url($checkbox-sprite);
+    background-position: 0 -18px;
+    background-repeat: no-repeat;
+    background-size: 36px 36px;
+    border-radius: 0;
+    border: 0;
+  }
+
+  .note-actions-item-control .checkbox-control .checkbox-control-checked {
+    border: none;
+    background-color: transparent;
+    background-position: -18px -18px;
   }
 }
 
@@ -92,14 +102,14 @@
   }
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    border-color: $studio-gray-30;
+    background-position: 0 0;
   }
 
   .note-actions-trash {
     color: $studio-red-30;
   }
 
-  .checkbox-control-checked {
-    background-color: $studio-simplenote-blue-30;
+  .note-actions-item-control .checkbox-control .checkbox-control-checked {
+    background-position: -18px 0;
   }
 }
