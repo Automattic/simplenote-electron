@@ -9,9 +9,7 @@
 
   // Track
   &::-webkit-slider-runnable-track {
-    display: flex;
-    align-items: center;
-    height: 3px;
+    height: 4px;
     border-radius: 2px;
   }
   &::-moz-range-track {
@@ -32,9 +30,10 @@
     border: 2px solid;
     appearance: none;
     transition: 0.15s ease-in-out;
+    transform: translateY(calc(-50% + 2px));
 
     &:active {
-      transform: scale(1.15);
+      transform: translateY(calc(-50% + 2px)) scale(1.15);
     }
   }
   &::-moz-range-thumb {
