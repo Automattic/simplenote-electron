@@ -1,4 +1,4 @@
-import React, { Fragment, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
@@ -44,7 +44,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
   );
 
   const displayAlternateLoginPrompt = (
-    <Fragment>
+    <>
       {displayClose}
       <span className="theme-color-fg-dim">
         <WarningIcon />
@@ -68,7 +68,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
           <button className="button button-primary">Logout</button>
         </a>
       </div>
-    </Fragment>
+    </>
   );
 
   return (
