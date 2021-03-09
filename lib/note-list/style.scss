@@ -34,8 +34,14 @@
     .note-list-item {
       min-height: 43px;
     }
+    .note-list-item-status {
+      align-items: center;
+      padding-bottom: 3px;
+      padding-top: 0;
+    }
     .note-list-item-text {
       padding-bottom: 0;
+      padding-top: 0;
     }
     .note-list-item-excerpt {
       display: none;
@@ -133,7 +139,8 @@
   }
 
   .note-list-item-status {
-    padding: 9px 8px 0 0;
+    display: flex;
+    padding: 12px 8px 0 0;
   }
 
   .note-list-item-pinner {
@@ -151,10 +158,6 @@
     overflow: hidden;
     padding: 9px 0;
     border-bottom: 1px solid;
-
-    &:focus {
-      outline: none;
-    }
   }
 
   .note-list-item-title,
