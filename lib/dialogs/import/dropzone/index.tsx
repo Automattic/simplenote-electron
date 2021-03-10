@@ -64,17 +64,16 @@ function ImporterDropzone({
   });
 
   const DropzonePlaceholder = () => {
-    const instructions = isDragActive ? (
-      'Drop files here'
-    ) : (
-      <div className="drop-instructions">
-        Drag and drop to to select files or <span>browse</span> to choose
-      </div>
-    );
     return (
       <Fragment>
         {errorMessage.length > 0 ? <WarningIcon /> : <CloudIcon />}
-        {instructions}
+        {isDragActive ? (
+          'Drop files here'
+        ) : (
+          <div className="drop-instructions">
+            Drag and drop to select files or <span>browse</span> to choose
+          </div>
+        )}
       </Fragment>
     );
   };
