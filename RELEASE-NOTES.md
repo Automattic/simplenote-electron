@@ -25,6 +25,7 @@
 - Refresh the note list after restoring a revision [#2667](https://github.com/Automattic/simplenote-electron/pull/2667)
 - Removed the spellcheck option from the Edit menu [#2650](https://github.com/Automattic/simplenote-electron/pull/2650)
 - Fixed scrollbar styles in Firefox [#2641](https://github.com/Automattic/simplenote-electron/pull/2641)
+- Fixed slider handle alignment in Chrome [#2720](https://github.com/Automattic/simplenote-electron/pull/2720)
 
 ### Other Changes
 
