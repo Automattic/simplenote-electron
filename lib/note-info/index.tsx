@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
+import FocusTrap from 'focus-trap-react';
 
 import LastSyncTime from '../components/last-sync-time';
 import SmallCrossIcon from '../icons/cross-small';
@@ -20,7 +20,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  onOutsideClick: () => any;
+  onFocusTrapDeactivate: () => any;
 };
 
 type Props = StateProps & DispatchProps;
@@ -28,7 +28,7 @@ type Props = StateProps & DispatchProps;
 export class NoteInfo extends Component<Props> {
   static displayName = 'NoteInfo';
 
-  handleClickOutside = this.props.onOutsideClick;
+  handleFocusTrapDeactivate = this.props.onFocusTrapDeactivate;
 
   render() {
     const { noteId, note, theme } = this.props;
@@ -38,33 +38,59 @@ export class NoteInfo extends Component<Props> {
       : null;
 
     return (
-      <Modal
-        key="note-info-modal"
-        className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg"
-        contentLabel="Document"
-        isOpen
-        onRequestClose={this.handleClickOutside}
-        overlayClassName="dialog-renderer__overlay"
-        portalClassName={`dialog-renderer__portal theme-${theme}`}
+      <FocusTrap
+        focusTrapOptions={{
+          clickOutsideDeactivates: true,
+          onDeactivate: this.handleFocusTrapDeactivate,
+        }}
       >
-        <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
-          <div className="note-info-header theme-color-border">
-            <h2 className="panel-title theme-color-fg">Document</h2>
-            <button
-              type="button"
-              className="about-done button icon-button"
-              onClick={this.handleClickOutside}
-            >
-              <SmallCrossIcon />
-            </button>
-          </div>
-          {modificationDate && (
+        <Modal
+          key="note-info-modal"
+          className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg"
+          contentLabel="Document"
+          isOpen
+          onRequestClose={this.handleFocusTrapDeactivate}
+          overlayClassName="dialog-renderer__overlay"
+          portalClassName={`dialog-renderer__portal theme-${theme}`}
+        >
+          <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
+            <div className="note-info-header theme-color-border">
+              <h2 className="panel-title theme-color-fg">Document</h2>
+              <button
+                type="button"
+                aria-label="Close note info"
+                className="about-done button icon-button"
+                onClick={this.handleFocusTrapDeactivate}
+              >
+                <SmallCrossIcon />
+              </button>
+            </div>
+            {modificationDate && (
+              <p className="note-info-item">
+                <span className="note-info-item-text">
+                  <span className="note-info-name theme-color-fg">
+                    Modified
+                  </span>
+                  <span className="note-info-detail theme-color-fg-dim">
+                    <time dateTime={new Date(modificationDate).toISOString()}>
+                      {new Date(modificationDate).toLocaleString([], {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      })}
+                    </time>
+                  </span>
+                </span>
+              </p>
+            )}
             <p className="note-info-item">
               <span className="note-info-item-text">
-                <span className="note-info-name theme-color-fg">Modified</span>
+                <span className="note-info-name theme-color-fg">Created</span>
                 <span className="note-info-detail theme-color-fg-dim">
-                  <time dateTime={new Date(modificationDate).toISOString()}>
-                    {new Date(modificationDate).toLocaleString([], {
+                  <time dateTime={new Date(creationDate).toISOString()}>
+                    {new Date(creationDate).toLocaleString([], {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
@@ -75,50 +101,36 @@ export class NoteInfo extends Component<Props> {
                 </span>
               </span>
             </p>
-          )}
-          <p className="note-info-item">
-            <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Created</span>
-              <span className="note-info-detail theme-color-fg-dim">
-                <time dateTime={new Date(creationDate).toISOString()}>
-                  {new Date(creationDate).toLocaleString([], {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
-                </time>
+            <p className="note-info-item">
+              <span className="note-info-item-text">
+                <span className="note-info-name theme-color-fg">Last sync</span>
+                <span className="note-info-detail theme-color-fg-dim">
+                  <LastSyncTime noteId={noteId} />
+                </span>
               </span>
-            </span>
-          </p>
-          <p className="note-info-item">
-            <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Last sync</span>
-              <span className="note-info-detail theme-color-fg-dim">
-                <LastSyncTime noteId={noteId} />
+            </p>
+            <p className="note-info-item">
+              <span className="note-info-item-text">
+                <span className="note-info-name theme-color-fg">Words</span>
+                <span className="note-info-detail theme-color-fg-dim">
+                  {wordCount(note.content)}
+                </span>
               </span>
-            </span>
-          </p>
-          <p className="note-info-item">
-            <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Words</span>
-              <span className="note-info-detail theme-color-fg-dim">
-                {wordCount(note.content)}
+            </p>
+            <p className="note-info-item">
+              <span className="note-info-item-text">
+                <span className="note-info-name theme-color-fg">
+                  Characters
+                </span>
+                <span className="note-info-detail theme-color-fg-dim">
+                  {characterCount(note.content)}
+                </span>
               </span>
-            </span>
-          </p>
-          <p className="note-info-item">
-            <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Characters</span>
-              <span className="note-info-detail theme-color-fg-dim">
-                {characterCount(note.content)}
-              </span>
-            </span>
-          </p>
-        </div>
-        <References></References>
-      </Modal>
+            </p>
+          </div>
+          <References></References>
+        </Modal>
+      </FocusTrap>
     );
   }
 }
@@ -156,10 +168,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onOutsideClick: actions.ui.toggleNoteInfo,
+  onFocusTrapDeactivate: actions.ui.toggleNoteInfo,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(onClickOutside(NoteInfo));
+export default connect(mapStateToProps, mapDispatchToProps)(NoteInfo);
