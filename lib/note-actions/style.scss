@@ -37,6 +37,12 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     }
   }
 
+  .note-actions-item-disabled {
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
   .note-actions-item-text {
     flex: 1 1 auto;
   }
@@ -59,16 +65,14 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     padding: 5px 10px;
   }
 
-  .note-actions-copy {
+  .note-actions-item {
     button {
       padding: 0;
       font-weight: normal;
       color: inherit;
+      width: 100%;
+      text-align: left;
     }
-  }
-
-  .note-actions-public-link .note-actions-copy {
-    padding: 5px 10px;
   }
 
   .note-actions-trash {

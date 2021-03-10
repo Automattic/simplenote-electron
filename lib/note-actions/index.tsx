@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import FocusTrap from 'focus-trap-react';
 import { includes, isEmpty } from 'lodash';
 
@@ -114,21 +115,18 @@ export class NoteActions extends Component<Props> {
             </label>
 
             <div className="note-actions-item note-actions-internal-link">
-              <div className="note-actions-copy">
-                {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
-                <ClipboardButton
-                  text={noteLink}
-                  linkText="Copy Internal Link"
-                />
-              </div>
+              {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
+              <ClipboardButton text={noteLink} linkText="Copy Internal Link" />
             </div>
 
             {hasRevisions && (
-              <div
-                className="note-actions-item"
-                onClick={this.props.toggleRevisions}
-              >
-                History…
+              <div className="note-actions-item">
+                <button
+                  className="button button-borderless"
+                  onClick={this.props.toggleRevisions}
+                >
+                  History…
+                </button>
               </div>
             )}
             {hasRevisions || (
@@ -153,7 +151,11 @@ export class NoteActions extends Component<Props> {
                 />
               </span>
             </label>
-            <div className="note-actions-copy">
+            <div
+              className={classNames('note-actions-item', {
+                'note-actions-item-disabled': !isPublished,
+              })}
+            >
               {isPublished && (
                 /* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">
                 {publishURL}
@@ -166,16 +168,23 @@ export class NoteActions extends Component<Props> {
             </div>
           </div>
           <div className="note-actions-panel theme-color-border">
-            <div className="note-actions-item" onClick={this.props.shareNote}>
-              Collaborate…
+            <div className="note-actions-item">
+              <button
+                className="button button-borderless"
+                onClick={this.props.shareNote}
+              >
+                Collaborate…
+              </button>
             </div>
           </div>
           <div className="note-actions-panel theme-color-border">
-            <div
-              className="note-actions-item note-actions-trash"
-              onClick={this.props.trashNote}
-            >
-              Move to Trash
+            <div className="note-actions-item note-actions-trash">
+              <button
+                className="button button-borderless"
+                onClick={this.props.trashNote}
+              >
+                Move to Trash
+              </button>
             </div>
           </div>
         </div>
