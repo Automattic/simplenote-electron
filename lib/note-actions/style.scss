@@ -32,6 +32,14 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     align-items: center;
     padding: 5px 10px;
 
+    button {
+      padding: 0;
+      font-weight: normal;
+      color: inherit;
+      width: 100%;
+      text-align: left;
+    }
+
     &:hover {
       background-color: $studio-simplenote-blue-5;
     }
@@ -63,16 +71,6 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
   .note-actions-internal-link .note-actions-name {
     display: inline-block;
     padding: 5px 10px;
-  }
-
-  .note-actions-item {
-    button {
-      padding: 0;
-      font-weight: normal;
-      color: inherit;
-      width: 100%;
-      text-align: left;
-    }
   }
 
   .note-actions-trash {
