@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.7.1]
+
+### Enhancements
+
+- Updated new account signup flow [#2695](https://github.com/Automattic/simplenote-electron/pull/2695)
+
 ## [v2.7.0]
 
 ### Enhancements
