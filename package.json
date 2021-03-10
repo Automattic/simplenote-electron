@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "2.7.1-beta1",
+  "version": "2.7.1-beta2",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
