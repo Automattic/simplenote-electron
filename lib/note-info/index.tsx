@@ -19,7 +19,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  onModalCose: () => any;
+  onModalClose: () => any;
 };
 
 type Props = StateProps & DispatchProps;
@@ -28,7 +28,7 @@ export class NoteInfo extends Component<Props> {
   static displayName = 'NoteInfo';
 
   render() {
-    const { noteId, note, onModalCose, theme } = this.props;
+    const { noteId, note, onModalClose, theme } = this.props;
     const creationDate = note.creationDate * 1000;
     const modificationDate = note.modificationDate
       ? note.modificationDate * 1000
@@ -40,7 +40,7 @@ export class NoteInfo extends Component<Props> {
         className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg"
         contentLabel="Document"
         isOpen
-        onRequestClose={onModalCose}
+        onRequestClose={onModalClose}
         overlayClassName="dialog-renderer__overlay"
         portalClassName={`dialog-renderer__portal theme-${theme}`}
       >
@@ -51,7 +51,7 @@ export class NoteInfo extends Component<Props> {
               type="button"
               aria-label="Close note info"
               className="about-done button icon-button"
-              onClick={onModalCose}
+              onClick={onModalClose}
             >
               <SmallCrossIcon />
             </button>
@@ -154,7 +154,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  onModalCose: actions.ui.toggleNoteInfo,
+  onModalClose: actions.ui.toggleNoteInfo,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteInfo);
