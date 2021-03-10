@@ -36,6 +36,7 @@ type Props = StateProps & DispatchProps;
 export class NoteActions extends Component<Props> {
   static displayName = 'NoteActions';
   isMounted = false;
+  containerRef = React.createRef<HTMLDivElement>();
 
   componentDidMount() {
     this.isMounted = true;
@@ -75,7 +76,10 @@ export class NoteActions extends Component<Props> {
           onDeactivate: this.handleFocusTrapDeactivate,
         }}
       >
-        <div className="note-actions theme-color-bg theme-color-fg theme-color-border">
+        <div
+          className="note-actions theme-color-bg theme-color-fg theme-color-border"
+          ref={this.containerRef}
+        >
           <div className="note-actions-panel theme-color-border">
             <label
               className="note-actions-item"
@@ -115,8 +119,11 @@ export class NoteActions extends Component<Props> {
             </label>
 
             <div className="note-actions-item note-actions-internal-link">
-              {/* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">{`simplenote://note/${noteId}`}</p> */}
-              <ClipboardButton text={noteLink} linkText="Copy Internal Link" />
+              <ClipboardButton
+                container={this.containerRef}
+                text={noteLink}
+                linkText="Copy Internal Link"
+              />
             </div>
 
             {hasRevisions && (
@@ -153,16 +160,16 @@ export class NoteActions extends Component<Props> {
             </label>
             <div
               className={classNames('note-actions-item', {
-                'note-actions-item-disabled': !isPublished,
+                'note-actions-item-disabled': !isPublished || !publishURL,
               })}
             >
-              {isPublished && (
-                /* <p className="note-actions-detail note-actions-link-text theme-color-fg-dim">
-                {publishURL}
-              </p> */
-                <ClipboardButton text={publishURL} linkText="Copy Link" />
-              )}
-              {isPublished || (
+              {isPublished && publishURL ? (
+                <ClipboardButton
+                  container={this.containerRef}
+                  text={publishURL}
+                  linkText="Copy Link"
+                />
+              ) : (
                 <span className="note-actions-disabled">Copy Link</span>
               )}
             </div>
