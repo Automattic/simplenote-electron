@@ -20,15 +20,11 @@ const config = getConfig();
 export const bootWithToken = (
   logout: () => any,
   token: string,
-  username: string | null,
-  createWelcomeNote: boolean
+  username: string | null
 ) => {
   Modal.setAppElement('#root');
 
-  makeStore(
-    username,
-    initSimperium(logout, token, username, createWelcomeNote)
-  ).then((store) => {
+  makeStore(username, initSimperium(logout, token, username)).then((store) => {
     Object.defineProperties(window, {
       dispatch: {
         get() {

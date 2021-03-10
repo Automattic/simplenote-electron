@@ -10,6 +10,7 @@ const validChannels = [
   'noteImportChannel',
   'reallyCloseWindow',
   'setAutoHideMenuBar',
+  'tokenLogin',
   'wpLogin',
 ];
 

@@ -35,8 +35,7 @@ type Buckets = {
 export const initSimperium = (
   logout: () => any,
   token: string,
-  username: string | null,
-  createWelcomeNote: boolean
+  username: string | null
 ): S.Middleware => (store) => {
   const { dispatch, getState } = store;
 
@@ -230,26 +229,6 @@ export const initSimperium = (
       allowAnalytics: !!preferences?.data?.analytics_enabled,
     });
   });
-
-  if (createWelcomeNote) {
-    import(
-      /* webpackChunkName: 'welcome-message' */ '../../welcome-message'
-    ).then(({ content }) => {
-      const now = Date.now() / 1000;
-      store.dispatch(
-        actions.ui.createNote({
-          content,
-          deleted: false,
-          systemTags: [],
-          creationDate: now,
-          modificationDate: now,
-          shareURL: '',
-          publishURL: '',
-          tags: [],
-        })
-      );
-    });
-  }
 
   const noteQueue = new BucketQueue(noteBucket);
   const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
