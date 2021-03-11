@@ -92,7 +92,7 @@ const alternateLoginEmail: A.Reducer<string | null> = (
 ) => {
   switch (action.type) {
     case 'SHOW_ALTERNATE_LOGIN_PROMPT':
-      return atob(action.email);
+      return action.email ? atob(action.email) : null;
     case 'HIDE_ALTERNATE_LOGIN_PROMPT':
       return null;
     default:
