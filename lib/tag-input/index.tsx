@@ -38,6 +38,7 @@ export class TagInput extends Component<Props> {
   inputObserver?: MutationObserver;
 
   static displayName = 'TagInput';
+  caretPosition = 0;
 
   static defaultProps = {
     inputRef: identity,
@@ -111,10 +112,35 @@ export class TagInput extends Component<Props> {
     input.focus();
     const range = document.createRange();
     range.selectNodeContents(input);
+    // If the caret was moved to a position other than the end, restore that
+    // position
+    if (
+      input.firstChild !== null &&
+      this.caretPosition > 0 && 
+      range.toString().length > this.caretPosition
+    ) {
+      range.setEnd(input.firstChild, this.caretPosition);
+    }
     range.collapse(false);
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
+  };
+
+  getCaretIndex = (element) => {
+    let position = 0;
+    const isSupported = typeof window.getSelection !== 'undefined';
+    if (isSupported) {
+      const selection = window.getSelection();
+      if (selection.rangeCount !== 0) {
+        const range = window.getSelection().getRangeAt(0);
+        const preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        position = preCaretRange.toString().length;
+      }
+    }
+    return position;
   };
 
   hasFocus = () => document.activeElement === this.inputField;
@@ -180,6 +206,7 @@ export class TagInput extends Component<Props> {
       return;
     }
 
+    this.caretPosition = this.getCaretIndex(this.inputField);
     this.props.onChange(value.trim(), this.focusInput);
   };
 
@@ -243,7 +270,10 @@ export class TagInput extends Component<Props> {
     const shouldShowPlaceholder = value === '' && !this.state.isComposing;
 
     return (
-      <div className="tag-input" onClick={this.focusInput}>
+      <div className="tag-input" onClick={() => {
+        this.caretPosition = this.getCaretIndex(this.inputField);
+        this.focusInput();
+      }}>
         {shouldShowPlaceholder && (
           <span
             aria-hidden
