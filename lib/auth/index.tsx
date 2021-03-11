@@ -100,7 +100,15 @@ export class Auth extends Component<Props> {
             </p>
             <p className="accountRequested__footer theme-color-fg-dim">
               Didn&apos;t get an email? You may already have an account. Contact{' '}
-              <a href="mailto:support@simplenote.com">support@simplenote.com</a>{' '}
+              <a
+                onClick={(event) => {
+                  event.preventDefault();
+                  viewExternalUrl('mailto:support@simplenote.com');
+                }}
+                href="mailto:support@simplenote.com"
+              >
+                support@simplenote.com
+              </a>{' '}
               for help.
             </p>
             <button
