@@ -26,6 +26,7 @@ type StateProps = {
   keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
   openedNote: T.EntityId | null;
+  openedTag: T.TagName | null;
   searchQuery: string;
   showNoteList: boolean;
   showTrash: boolean;
@@ -149,10 +150,13 @@ const createCompositeNoteList = (
   ];
 };
 
-const sidebarTitle = (collection: T.Collection) => {
+const sidebarTitle = (
+  collection: T.Collection,
+  openedTag: T.TagName | null
+) => {
   switch (collection.type) {
     case 'tag':
-      return 'Notes With Selected Tag';
+      return openedTag;
     case 'trash':
       return 'Trash';
     case 'untagged':
@@ -285,6 +289,7 @@ export class NoteList extends Component<Props> {
       noteDisplay,
       onEmptyTrash,
       openedNote,
+      openedTag,
       searchQuery,
       showTrash,
       tagResultsFound,
@@ -330,7 +335,7 @@ export class NoteList extends Component<Props> {
                     // reference the existing #notes-title element instead of
                     // computing the label, but is not currently possible due to
                     // a limitation with react-virtualized. https://git.io/JqLvR
-                    aria-label={sidebarTitle(collection)}
+                    aria-label={sidebarTitle(collection, openedTag)}
                     ref={this.list}
                     estimatedRowSize={24 + 18 + 21 * 4}
                     height={height}
@@ -362,6 +367,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
     openedNote: state.ui.openedNote,
+    openedTag: selectors.openedTag(state),
     searchQuery: state.ui.searchQuery,
     showNoteList: state.ui.showNoteList,
     showTrash: selectors.showTrash(state),
