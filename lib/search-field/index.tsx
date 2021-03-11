@@ -75,8 +75,7 @@ export class SearchField extends Component<Props> {
     const hasQuery = searchQuery.length > 0;
 
     const description =
-      'Search ' +
-      (openedTag ? 'notes with tag ' + openedTag : 'notes and tags');
+      'Search ' + (openedTag ? 'notes in ' + openedTag : 'notes and tags');
 
     return (
       <div className="search-field theme-color-fg theme-color-border">

@@ -13,6 +13,7 @@
     border: 0;
     appearance: none;
     font-size: 16px;
+    text-overflow: ellipsis !important;
 
     &:focus {
       outline: none;
