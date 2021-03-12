@@ -91,7 +91,7 @@ export class TagInput extends Component<Props> {
       this,
       'inputField.removeEventListener',
       'paste',
-      this.removePastedFormatting,
+      this.parsePastedInput,
       false
     );
     this.inputObserver.disconnect();
@@ -211,16 +211,22 @@ export class TagInput extends Component<Props> {
     this.setState({ isComposing: false }, () => this.onInput(value));
   };
 
-  removePastedFormatting = (event: ClipboardEvent) => {
+  parsePastedInput = (event: ClipboardEvent) => {
     let clipboardText;
 
+    // Remove pasted formatting
     if (get(event, 'clipboardData.getData')) {
       clipboardText = event.clipboardData.getData('text/plain');
     } else if (get(window, 'clipboardData.getData')) {
       clipboardText = window.clipboardData.getData('Text'); // IE11
     }
 
-    this.onInput(clipboardText, { moveCaretToEndOfValue: true });
+    // Convert spaces/commans to submitted tags
+    const tags = clipboardText.split(/\s|,|\n/);
+    const submittedTags = tags.slice(0, tags.length - 1);
+    const [pendingTag] = tags.slice(tags.length - 1);
+    submittedTags.filter(Boolean).forEach(this.props.onSelect);
+    this.onInput(pendingTag, { moveCaretToEndOfValue: true });
 
     event.preventDefault();
     event.stopPropagation();
@@ -233,7 +239,7 @@ export class TagInput extends Component<Props> {
       this,
       'inputField.addEventListener',
       'paste',
-      this.removePastedFormatting,
+      this.parsePastedInput,
       false
     );
   };
