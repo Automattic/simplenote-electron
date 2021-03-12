@@ -1,5 +1,43 @@
 # Changelog
 
+## [v2.8.0]
+
+### Enhancements
+
+- Added Untagged Notes filter to sidebar [#2687](https://github.com/Automattic/simplenote-electron/pull/2687)
+- Added a confirmation dialog before deleting a tag [#2653](https://github.com/Automattic/simplenote-electron/pull/2653)
+- Updated the navigation bar styles [#2649](https://github.com/Automattic/simplenote-electron/pull/2649)
+- Updated navigation bar color [#2645](https://github.com/Automattic/simplenote-electron/pull/2645)
+- Updated tag input styling [#2608](https://github.com/Automattic/simplenote-electron/pull/2608)
+- Updated styling of dialogs throughout the app [#2718](https://github.com/Automattic/simplenote-electron/pull/2718)
+- Updated the Windows installation process to be able to choose to install for all users on the computer or just the current user [#2678](https://github.com/Automattic/simplenote-electron/pull/2678)
+- Auto-remove line terminators like line separators (LS) or paragraph separator (PS) [#2713](https://github.com/Automattic/simplenote-electron/pull/2713)
+
+### Fixes
+
+- Ensure that tags on imported notes are added and synced properly [#2725](https://github.com/Automattic/simplenote-electron/pull/2725)
+- Fixed overflowing dialog content when a long email address is used during signup [#2712](https://github.com/Automattic/simplenote-electron/pull/2712)
+- Fix cut-off dialog close button in Safari [#2711](https://github.com/Automattic/simplenote-electron/pull/2711)
+- Fixed a bug in note export to avoid duplicate filenames when certain characters were used in the note title [#2694](https://github.com/Automattic/simplenote-electron/pull/2694)
+- Updated the view when no notes show in a specific list; fixed the view when adding a new note from the Trash [#2618](https://github.com/Automattic/simplenote-electron/pull/2618)
+- Enable keyboard shortcut for search even when keyboard shortcut preference is set to be disabled [#2652](https://github.com/Automattic/simplenote-electron/pull/2652)
+- Fixed a bug that caused Ctrl+G and some other shortcuts to fail on Windows/Linux [#2705](https://github.com/Automattic/simplenote-electron/pull/2705)
+- Refresh the note list after restoring a revision [#2667](https://github.com/Automattic/simplenote-electron/pull/2667)
+- Removed the spellcheck option from the Edit menu [#2650](https://github.com/Automattic/simplenote-electron/pull/2650)
+- Fixed scrollbar styles in Firefox [#2641](https://github.com/Automattic/simplenote-electron/pull/2641)
+- Fixed slider handle alignment in Chrome [#2720](https://github.com/Automattic/simplenote-electron/pull/2720)
+
+### Other Changes
+
+- Refactored reducer states showTrash and openedTag [#2706](https://github.com/Automattic/simplenote-electron/pull/2706)
+- Pinned dependencies [#2642](https://github.com/Automattic/simplenote-electron/pull/2642)
+
+## [v2.7.1]
+
+### Enhancements
+
+- Updated new account signup flow [#2695](https://github.com/Automattic/simplenote-electron/pull/2695)
+
 ## [v2.7.0]
 
 ### Enhancements
