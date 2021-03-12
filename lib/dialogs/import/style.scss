@@ -1,6 +1,6 @@
 .import {
   max-width: 360px;
-  max-height: calc(100vh - 100px);
+  max-height: 420px;
 
   .dialog-title-text {
     text-align: left;
@@ -22,7 +22,7 @@
 .import__inner {
   width: 100%;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  max-height: 360px;
 }
 
 .import__placeholder {

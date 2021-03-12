@@ -48,6 +48,7 @@ export class DialogRenderer extends Component<Props> {
             onRequestClose={closeDialog}
             overlayClassName="dialog-renderer__overlay"
             portalClassName={`dialog-renderer__portal theme-${theme}`}
+            shouldCloseOnOverlayClick={false}
           >
             {'ABOUT' === dialog.type ? (
               <AboutDialog key="about" closeDialog={closeDialog} />
