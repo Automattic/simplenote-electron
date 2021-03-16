@@ -96,6 +96,11 @@
     color: $studio-gray-30;
   }
   .importer-dropzone {
+    .drop-instructions {
+      span {
+        color: $studio-blue-30;
+      }
+    }
     &.is-accepted {
       ul {
         border-color: $studio-gray-80;
