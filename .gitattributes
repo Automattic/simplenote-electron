@@ -1,0 +1,4 @@
+# Explicitly treat .enc files as binaries to prevent GitHub from occasionally
+# reporting changes to these files as "empty" instead of saying "binary file
+# not shown"
+*.enc binary
