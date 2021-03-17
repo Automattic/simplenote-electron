@@ -42,7 +42,7 @@ export const getTitle = (content) => {
  * Generate preview for note list
  *
  * Should gather the first non-whitespace content
- * for up to four lines and up to 200 characters
+ * for up to three lines and up to 200 characters
  *
  * @param content
  */
