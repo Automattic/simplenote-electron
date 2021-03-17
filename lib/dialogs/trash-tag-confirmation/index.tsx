@@ -34,6 +34,7 @@ const TrashTagConfirmation: FunctionComponent<Props> = ({
     </div>
     <div className="dialog-buttons">
       <button
+        autoFocus
         className="button-primary delete-tag"
         onClick={() => trashTag(tagName)}
       >
