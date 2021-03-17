@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { useDropzone } from 'react-dropzone';
 
 import CloudIcon from '../../../icons/cloud';
-import FileIcon from '../../../icons/file';
+import FileIcon from '../../../icons/file-small';
 import * as importers from '../importers';
 import WarningIcon from '../../../icons/warning';
 
@@ -82,7 +82,7 @@ function ImporterDropzone({
     const fileList = acceptedFile.map((file: File) => (
       <li key={file.name} title={file.name}>
         <FileIcon />
-        {file.name}
+        <span>{file.name}</span>
       </li>
     ));
 
