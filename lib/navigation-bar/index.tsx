@@ -98,16 +98,18 @@ export class NavigationBar extends Component<Props> {
           />
         </div>
         <div className="navigation-bar__tags theme-color-border">
-          <TagList />
           {(tagCount && (
-            <div className="navigation-bar__folders navigation-bar__untagged theme-color-border">
-              <NavigationBarItem
-                icon={<UntaggedNotesIcon />}
-                isSelected={this.isSelected({ selectedRow: 'untagged' })}
-                label="Untagged Notes"
-                onClick={onShowUntaggedNotes}
-              />
-            </div>
+            <>
+              <TagList />
+              <div className="navigation-bar__folders navigation-bar__untagged theme-color-border">
+                <NavigationBarItem
+                  icon={<UntaggedNotesIcon />}
+                  isSelected={this.isSelected({ selectedRow: 'untagged' })}
+                  label="Untagged Notes"
+                  onClick={onShowUntaggedNotes}
+                />
+              </div>
+            </>
           )) ||
             null}
         </div>
