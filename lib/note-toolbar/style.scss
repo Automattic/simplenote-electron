@@ -14,12 +14,12 @@
   font-size: 12px;
   height: 24px;
   line-height: 24px;
-  margin-top: 16px;
+  margin-top: 10px;
   text-align: center;
   width: 64px;
 }
 
-.is-electron .note-toolbar-wrapper .offline-badge {
+.is-electron.is-macos .note-toolbar-wrapper .offline-badge {
   margin-top: -11px;
 }
 
