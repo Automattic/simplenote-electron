@@ -31,7 +31,7 @@
     display: flex;
     border-top: 1px solid $studio-gray-5;
     border-bottom: 1px solid $studio-gray-5;
-    vertical-align: middle;
+    align-items: center;
     font-size: 16px;
     height: 28px;
     line-height: 28px;
@@ -44,7 +44,6 @@
 
   .toggle-control {
     flex: none;
-    margin-top: 6px;
   }
 }
 
