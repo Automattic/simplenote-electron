@@ -79,14 +79,14 @@ const getPreview = (content: string, searchQuery?: string) => {
     }
   }
 
-  // implicit else: if the query didn't match, fall back to first four lines
+  // implicit else: if the query didn't match, fall back to first three lines
   let index = content.indexOf('\n');
 
   if (index === -1) {
     return '';
   }
 
-  while (index > -1 && lines < 4) {
+  while (index > -1 && lines < 3) {
     const nextNewline = content.indexOf('\n', index);
     if (-1 === nextNewline) {
       return preview + content.slice(index).trim();
