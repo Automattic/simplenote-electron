@@ -8,7 +8,6 @@
   .dialog-title-text {
     font-size: 16px;
     font-weight: 600;
-    padding-left: 16px;
     text-align: left;
   }
 
@@ -42,10 +41,15 @@
     li {
       display: flex;
       padding: 4px 0;
+      align-items: center;
     }
 
     li span {
-      padding-left: 17px;
+      padding-left: 5px;
+      padding-right: 16px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .icon-attention {
