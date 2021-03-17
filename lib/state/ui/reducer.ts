@@ -107,6 +107,12 @@ const collection: A.Reducer<T.Collection> = (
   switch (action.type) {
     case 'OPEN_TAG':
       return { type: 'tag', tagName: action.tagName };
+    case 'RENAME_TAG': {
+      if (state.type === 'tag' && state.tagName === action.oldTagName) {
+        return { type: 'tag', tagName: action.newTagName };
+      }
+      return state;
+    }
     case 'SELECT_TRASH':
       return { type: 'trash' };
     case 'SHOW_ALL_NOTES':
