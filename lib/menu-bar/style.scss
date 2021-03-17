@@ -1,6 +1,6 @@
 .menu-bar {
   height: $toolbar-height;
-  padding: 20px 15px;
+  padding: 0 15px;
   border-bottom: 1px solid $studio-gray-5;
   display: flex;
   justify-content: space-between;
@@ -10,6 +10,13 @@
   .notes-title {
     font-size: 16px;
     font-weight: 500;
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon-button {
+    flex: 0 0 auto;
   }
 
   .icon-button svg.icon-menu {

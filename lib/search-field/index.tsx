@@ -73,21 +73,23 @@ export class SearchField extends Component<Props> {
   render() {
     const { openedTag, searchQuery } = this.props;
     const hasQuery = searchQuery.length > 0;
-    const placeholder = openedTag ?? 'Search notes and tags';
 
-    const screenReaderLabel =
-      'Search ' + (openedTag ? 'notes with tag ' : '') + placeholder;
+    const description =
+      'Search ' + (openedTag ? 'notes in ' + openedTag : 'notes and tags');
 
     return (
       <div className="search-field theme-color-fg theme-color-border">
-        <button onClick={this.props.focusSearchField} className="icon-button">
+        <button
+          aria-label="Focus search field"
+          onClick={this.props.focusSearchField}
+          className="icon-button"
+        >
           <SmallSearchIcon />
         </button>
         <input
-          aria-label={screenReaderLabel}
           ref={this.inputField}
           type="search"
-          placeholder={placeholder}
+          placeholder={description}
           onChange={this.update}
           onKeyUp={this.interceptEsc}
           value={searchQuery}

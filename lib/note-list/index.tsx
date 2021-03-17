@@ -20,11 +20,13 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
+  collection: T.Collection;
   filteredNotes: T.EntityId[];
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   noteDisplay: T.ListDisplayMode;
   openedNote: T.EntityId | null;
+  openedTag: T.TagName | null;
   searchQuery: string;
   showNoteList: boolean;
   showTrash: boolean;
@@ -148,6 +150,22 @@ const createCompositeNoteList = (
   ];
 };
 
+const sidebarTitle = (
+  collection: T.Collection,
+  openedTag: T.TagName | null
+) => {
+  switch (collection.type) {
+    case 'tag':
+      return openedTag;
+    case 'trash':
+      return 'Trash';
+    case 'untagged':
+      return 'Untagged Notes';
+    default:
+      return 'All Notes';
+  }
+};
+
 export class NoteList extends Component<Props> {
   static displayName = 'NoteList';
 
@@ -266,10 +284,12 @@ export class NoteList extends Component<Props> {
 
   render() {
     const {
+      collection,
       filteredNotes,
       noteDisplay,
       onEmptyTrash,
       openedNote,
+      openedTag,
       searchQuery,
       showTrash,
       tagResultsFound,
@@ -311,6 +331,11 @@ export class NoteList extends Component<Props> {
               <AutoSizer>
                 {({ height, width }) => (
                   <List
+                    // Ideally aria-label is changed to aria-labelledby to
+                    // reference the existing #notes-title element instead of
+                    // computing the label, but is not currently possible due to
+                    // a limitation with react-virtualized. https://git.io/JqLvR
+                    aria-label={sidebarTitle(collection, openedTag)}
                     ref={this.list}
                     estimatedRowSize={24 + 18 + 21 * 4}
                     height={height}
@@ -320,6 +345,7 @@ export class NoteList extends Component<Props> {
                     rowHeight={heightCache.rowHeight}
                     rowRenderer={renderNoteRow}
                     scrollToIndex={selectedIndex}
+                    tabIndex={null}
                     width={width}
                   />
                 )}
@@ -335,11 +361,13 @@ export class NoteList extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = (state) => {
   return {
+    collection: state.ui.collection,
     isSmallScreen: selectors.isSmallScreen(state),
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteDisplay: state.settings.noteDisplay,
     filteredNotes: state.ui.filteredNotes,
     openedNote: state.ui.openedNote,
+    openedTag: selectors.openedTag(state),
     searchQuery: state.ui.searchQuery,
     showNoteList: state.ui.showNoteList,
     showTrash: selectors.showTrash(state),

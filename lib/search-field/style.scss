@@ -3,7 +3,7 @@
   flex-direction: row;
   align-items: center;
   width: 100%;
-  padding: 6px 5px 5px 20px;
+  padding: 6px 5px 5px 14px;
   border-bottom: 1px solid;
   height: $toolbar-height;
 
@@ -13,6 +13,7 @@
     border: 0;
     appearance: none;
     font-size: 16px;
+    text-overflow: ellipsis !important;
 
     &:focus {
       outline: none;
@@ -21,10 +22,6 @@
 
   .icon-button {
     flex: 0 0 auto;
-  }
-
-  .icon-button:first-child() {
-    text-align: left;
   }
 
   .icon-cross-small {

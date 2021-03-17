@@ -240,6 +240,7 @@ export class TagField extends Component<Props, OwnState> {
     return (
       <div ref={this.container} className="tag-field">
         <div
+          aria-label="List of tags for the current note, click a tag to remove it"
           className={classNames('tag-editor', {
             'has-selection': this.hasSelection(),
           })}
@@ -247,6 +248,7 @@ export class TagField extends Component<Props, OwnState> {
           onKeyDown={this.onKeyDown}
         >
           <input
+            aria-hidden="true"
             className="hidden-tag"
             tabIndex={-1}
             ref={this.storeHiddenTag}

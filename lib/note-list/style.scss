@@ -34,8 +34,14 @@
     .note-list-item {
       min-height: 43px;
     }
+    .note-list-item-status {
+      align-items: center;
+      padding-bottom: 3px;
+      padding-top: 0;
+    }
     .note-list-item-text {
       padding-bottom: 0;
+      padding-top: 0;
     }
     .note-list-item-excerpt {
       display: none;
@@ -127,14 +133,24 @@
   font-family: 'Simplenote Tasks', $sans, sans-serif;
   min-height: 64px;
 
+  .note-list-item-content {
+    display: flex;
+    width: 100%;
+  }
+
   .note-list-item-status {
-    padding: 9px 8px 0 0;
+    display: flex;
+    padding: 12px 8px 0 0;
   }
 
   .note-list-item-pinner {
     color: transparent;
     height: 16px;
     width: 16px;
+
+    svg {
+      vertical-align: top;
+    }
   }
 
   .note-list-item-text {
@@ -142,15 +158,12 @@
     overflow: hidden;
     padding: 9px 0;
     border-bottom: 1px solid;
-
-    &:focus {
-      outline: none;
-    }
   }
 
   .note-list-item-title,
   .note-list-item-excerpt {
     white-space: nowrap;
+    text-align: left;
     text-overflow: ellipsis;
     overflow: hidden;
   }

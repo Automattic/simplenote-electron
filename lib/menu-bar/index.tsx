@@ -14,6 +14,7 @@ import NewNoteIcon from '../icons/new-note';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
 import { createNote, toggleNavigation } from '../state/ui/actions';
+import * as selectors from '../state/selectors';
 
 import * as S from '../state';
 import type * as T from '../types';
@@ -26,6 +27,7 @@ type OwnProps = {
 
 type StateProps = {
   collection: T.Collection;
+  openedTag: T.TagName | null;
   searchQuery: string;
 };
 
@@ -38,6 +40,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export const MenuBar: FunctionComponent<Props> = ({
   collection,
+  openedTag,
   onNewNote,
   searchQuery,
   toggleNavigation,
@@ -45,7 +48,7 @@ export const MenuBar: FunctionComponent<Props> = ({
   let placeholder;
   switch (collection.type) {
     case 'tag':
-      placeholder = 'Notes With Selected Tag';
+      placeholder = openedTag;
       break;
     case 'trash':
       placeholder = 'Trash';
@@ -67,7 +70,9 @@ export const MenuBar: FunctionComponent<Props> = ({
         onClick={toggleNavigation}
         title={`Menu • ${CmdOrCtrl}+Shift+U`}
       />
-      <div className="notes-title">{placeholder}</div>
+      <div id="notes-title" className="notes-title" aria-hidden="true">
+        {placeholder}
+      </div>
       <IconButton
         disabled={collection.type === 'trash'}
         icon={<NewNoteIcon />}
@@ -78,11 +83,10 @@ export const MenuBar: FunctionComponent<Props> = ({
   );
 };
 
-const mapStateToProps: S.MapState<StateProps> = ({
-  ui: { collection, searchQuery },
-}) => ({
-  collection,
-  searchQuery,
+const mapStateToProps: S.MapState<StateProps> = (state) => ({
+  collection: state.ui.collection,
+  openedTag: selectors.openedTag(state),
+  searchQuery: state.ui.searchQuery,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps, OwnProps> = (
