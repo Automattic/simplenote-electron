@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 
 import ConnectionStatus from '../connection-status';
+import isEmailTag from '../utils/is-email-tag';
 import NavigationBarItem from './item';
 import TagList from '../tag-list';
 import NotesIcon from '../icons/notes';
@@ -20,7 +21,7 @@ type StateProps = {
   collection: T.Collection;
   isDialogOpen: boolean;
   showNavigation: boolean;
-  tagCount: number;
+  tags: Map<T.TagHash, T.Tag>;
 };
 
 type DispatchProps = {
@@ -73,8 +74,11 @@ export class NavigationBar extends Component<Props> {
       onSettings,
       onShowAllNotes,
       onShowUntaggedNotes,
-      tagCount,
+      tags,
     } = this.props;
+    const tagCount = Array.from(tags).filter(
+      ([_, { name }]) => !isEmailTag(name)
+    ).length;
 
     return (
       <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
@@ -158,7 +162,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   collection,
   isDialogOpen: dialogs.length > 0,
   showNavigation,
-  tagCount: data.tags.size,
+  tags: data.tags,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
