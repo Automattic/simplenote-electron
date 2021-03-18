@@ -74,7 +74,6 @@ export const MenuBar: FunctionComponent<Props> = ({
         {placeholder}
       </div>
       <IconButton
-        disabled={collection.type === 'trash'}
         icon={<NewNoteIcon />}
         onClick={() => onNewNote(withoutTags(searchQuery))}
         title={`New Note • ${CmdOrCtrl}+Shift+I`}
