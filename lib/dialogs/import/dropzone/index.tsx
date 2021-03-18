@@ -1,11 +1,12 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-import GridiconUpload from 'gridicons/dist/cloud-upload';
-import GridiconWarn from 'gridicons/dist/notice-outline';
-import FileIcon from '../../../icons/file';
 import { useDropzone } from 'react-dropzone';
+
+import CloudIcon from '../../../icons/cloud';
+import FileIcon from '../../../icons/file-small';
+import * as importers from '../importers';
+import WarningIcon from '../../../icons/warning';
 
 function ImporterDropzone({
   acceptedTypes,
@@ -15,20 +16,33 @@ function ImporterDropzone({
   onReset,
 }) {
   const [acceptedFile, setAcceptedFile] = useState();
-  const [errorMessage, setErrorMessage] = useState();
+  const [errorMessage, setErrorMessage] = useState(new Array<string>());
 
   const handleAccept = (acceptedFiles) => {
-    const fileCount = acceptedFiles.length;
-    const label = fileCount > 1 ? `${fileCount} files` : acceptedFiles[0].name;
-    setAcceptedFile(label);
-    onAccept(acceptedFiles);
+    const filteredFiles = [];
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      const file = acceptedFiles[i];
+
+      const importer = importers.forFilename(file.name);
+      if (!importer) {
+        setErrorMessage([
+          ...errorMessage,
+          `The file type for "${file.name}" is not recognized`,
+        ]);
+        continue;
+      }
+
+      filteredFiles.push(file);
+    }
+    setAcceptedFile(filteredFiles);
+    onAccept(filteredFiles);
   };
 
   const handleReject = (rejectedFiles) => {
     if (!multiple && rejectedFiles.length > 1) {
-      setErrorMessage('Choose a single file');
+      setErrorMessage([...errorMessage, 'Choose a single file']);
     } else {
-      setErrorMessage('File type is incorrect');
+      setErrorMessage([...errorMessage, 'File type is incorrect']);
     }
     setAcceptedFile(undefined);
     onReset();
@@ -49,29 +63,48 @@ function ImporterDropzone({
     onDrop,
   });
 
-  useEffect(() => {
-    if (!errorMessage) {
-      return;
-    }
-    const timer = setTimeout(() => setErrorMessage(undefined), 2500);
-    return () => clearTimeout(timer);
-  }, [errorMessage]);
+  const DropzonePlaceholder = () => {
+    return (
+      <Fragment>
+        {errorMessage.length > 0 ? <WarningIcon /> : <CloudIcon />}
+        {isDragActive ? (
+          'Drop files here'
+        ) : (
+          <div className="drop-instructions">
+            Drag and drop to select files or <span>browse</span> to choose
+          </div>
+        )}
+      </Fragment>
+    );
+  };
 
-  const text = errorMessage ? errorMessage : 'Drag a file, or click to choose';
+  const FilesWithIcon = () => {
+    const fileList = acceptedFile.map((file: File) => (
+      <li key={file.name} title={file.name}>
+        <FileIcon />
+        <span>{file.name}</span>
+      </li>
+    ));
 
-  const DropzonePlaceholder = () => (
-    <Fragment>
-      {errorMessage ? <GridiconWarn /> : <GridiconUpload />}
-      {isDragActive ? 'Drop files here' : text}
-    </Fragment>
-  );
+    const errorList = errorMessage.map((error) => (
+      <li key={error}>
+        <WarningIcon />
+        {error}
+      </li>
+    ));
 
-  const FileWithIcon = () => (
-    <Fragment>
-      <FileIcon />
-      <span className="importer-dropzone__filename">{acceptedFile}</span>
-    </Fragment>
-  );
+    return (
+      <Fragment>
+        <div className="accepted-files-header">
+          {acceptedFile.length > 1 ? 'Import Files' : 'Import File'}
+        </div>
+        <ul className="accepted-files">{fileList}</ul>
+        {errorMessage.length > 0 && (
+          <ul className="error-message">{errorList}</ul>
+        )}
+      </Fragment>
+    );
+  };
 
   return (
     <div
@@ -82,7 +115,7 @@ function ImporterDropzone({
       )}
     >
       <input {...getInputProps()} />
-      {acceptedFile ? <FileWithIcon /> : <DropzonePlaceholder />}
+      {acceptedFile ? <FilesWithIcon /> : <DropzonePlaceholder />}
     </div>
   );
 }

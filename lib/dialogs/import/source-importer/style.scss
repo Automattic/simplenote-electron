@@ -4,3 +4,79 @@
   flex-direction: column;
   flex: 1 0 auto;
 }
+
+.source-importer {
+  .dialog-buttons {
+    height: 56px;
+    margin: 0 16px;
+    text-align: right;
+
+    button.disabled {
+      border-radius: 4px;
+      padding: 6px 14px;
+      margin-top: 14px;
+      line-height: 16px;
+      font-size: 14px;
+      border: 0;
+      background-color: $studio-gray-20;
+      opacity: 1;
+      font-weight: 400;
+    }
+  }
+
+  .importer-dropzone {
+    margin: auto 16px 10px 16px;
+
+    .accepted-files-header {
+      height: 28px;
+      line-height: 28px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    &.is-accepted + .dialog-buttons {
+      display: none;
+    }
+
+    &.is-accepted {
+      margin-left: 0;
+      margin-right: 0;
+
+      .accepted-files-header,
+      .accepted-files {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+  }
+  p {
+    padding-left: 16px;
+    padding-right: 16px;
+    color: $studio-gray-80;
+  }
+
+  .source-importer-executor {
+    h3,
+    label {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+  h3 {
+    height: 28px;
+    line-height: 28px;
+    margin-bottom: 0;
+  }
+}
+
+.theme-dark {
+  .source-importer {
+    p {
+      color: $studio-white;
+    }
+    button.disabled {
+      background-color: $studio-gray-50;
+      color: $studio-white;
+    }
+  }
+}

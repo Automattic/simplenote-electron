@@ -1,21 +1,19 @@
 .importer-dropzone {
   display: flex;
+  cursor: pointer;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 24px;
+  padding: 16px;
   border-width: 2px;
   border-style: dashed;
-  background: $studio-simplenote-blue-5;
   transition: padding 0.2s ease-out, background 0.2s ease-out;
+  text-align: center;
+  color: $studio-gray-50;
+  background-color: transparent;
 
   &:focus-within {
     overflow: hidden;
-    outline: $focus-outline;
-  }
-
-  @at-root .theme-dark & {
-    background: $studio-gray-70;
   }
 
   &.is-active {
@@ -23,15 +21,68 @@
   }
 
   &.is-accepted {
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 14px 18px;
-    border-width: 1px;
-    border-style: solid;
+    display: block;
+    padding: 0;
+    border-width: 0;
     background: transparent;
+    text-align: left;
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid $studio-gray-5;
+      border-bottom: 1px solid $studio-gray-5;
+    }
+
+    li {
+      line-height: 28px;
+      margin-left: 0;
+      padding-left: 0;
+      height: 28px;
+      align-items: center;
+      display: flex;
+      width: 100%;
+      color: $studio-gray-80;
+      font-size: 16px;
+      white-space: nowrap;
+
+      span {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+    }
 
     svg {
-      margin-right: 8px;
+      height: 17px;
+      fill: $studio-gray-50;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    .error-message {
+      margin: 10px 16px 16px auto;
+      border: 0;
+
+      li {
+        font-size: 14px;
+        display: block;
+        height: auto;
+        line-height: initial;
+
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+
+  .drop-instructions {
+    max-width: 205px;
+    margin-top: 8px;
+
+    span {
+      color: $studio-simplenote-blue;
     }
   }
 }
@@ -40,4 +91,37 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.theme-dark {
+  .importer-dropzone.theme-color-border {
+    border-color: $studio-gray-50;
+    color: $studio-gray-30;
+  }
+  .importer-dropzone {
+    .drop-instructions {
+      span {
+        color: $studio-blue-30;
+      }
+    }
+    &.is-accepted {
+      ul {
+        border-color: $studio-gray-80;
+      }
+
+      li {
+        color: $studio-white;
+      }
+
+      svg {
+        fill: $studio-gray-30;
+      }
+
+      .error-message {
+        li {
+          color: $studio-gray-30;
+        }
+      }
+    }
+  }
 }

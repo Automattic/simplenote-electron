@@ -15,7 +15,7 @@ const ImportProgress: FunctionComponent<OwnProps> = ({
   isDone,
 }) => {
   return (
-    <section>
+    <section className="import-progress">
       <ImportProgressBar
         currentValue={currentValue}
         endValue={isDone ? currentValue : endValue}

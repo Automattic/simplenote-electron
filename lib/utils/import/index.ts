@@ -57,11 +57,17 @@ class CoreImporter extends EventEmitter {
 
     // Add the tags to the tag bucket
     if (importedNote.tags) {
-      importedNote.tags.map((tagName) => {
-        if (isEmpty(tagName)) {
+      const filteredTags = importedNote.tags.map((tagName) => {
+        // Remove any characters not allowed in tags
+        const tag = tagName.replace(/(\r\n|\n|\r|\s|,)/gm, '');
+        if (isEmpty(tag)) {
           return;
+        } else {
+          return tag;
         }
       });
+
+      importedNote.tags = filteredTags.filter((tag) => tag !== undefined);
     }
 
     this.addNote(importedNote);

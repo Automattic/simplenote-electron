@@ -5,10 +5,15 @@ import { endsWith, isEmpty } from 'lodash';
 import * as T from '../../../types';
 
 class SimplenoteImporter extends EventEmitter {
-  constructor(addNote: (note: T.Note) => any, options) {
+  constructor(
+    addNote: (note: T.Note) => any,
+    options,
+    recordEvent: (eventName: string, eventProperties: T.JSONSerializable) => any
+  ) {
     super();
     this.addNote = addNote;
     this.options = options;
+    this.recordEvent = recordEvent;
   }
 
   importNotes = (filesArray) => {
@@ -59,6 +64,10 @@ class SimplenoteImporter extends EventEmitter {
 
       coreImporter.importNotes(processedNotes, this.options).then(() => {
         this.emit('status', 'complete', noteCount);
+        this.recordEvent('importer_import_completed', {
+          source: 'simplenote',
+          note_count: noteCount,
+        });
       });
     };
 
