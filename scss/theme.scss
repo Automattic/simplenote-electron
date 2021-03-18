@@ -91,7 +91,11 @@ span[dir='ltr'] {
     border: 3px solid gray;
   }
   .search-decoration {
-    background-color: rgba($studio-simplenote-blue-40, 0.6);
+    background-color: $studio-simplenote-blue-5;
+  }
+  .selected-search {
+    background-color: $studio-yellow-20;
+    padding: 2px 0;
   }
 }
 
@@ -253,13 +257,20 @@ span[dir='ltr'] {
     }
   }
 
+  .search-decoration {
+    background-color: $studio-simplenote-blue-50;
+  }
+  .selected-search {
+    background-color: $studio-yellow-30;
+    color: $studio-gray-90;
+  }
+
   .settings-group p {
     color: $studio-gray-5;
   }
 
   .note-list-header {
     color: $studio-gray-30;
-    background-color: rgba(50, 52, 54, 0.5);
   }
 
   .note-list {

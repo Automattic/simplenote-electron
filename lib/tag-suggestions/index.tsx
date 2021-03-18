@@ -42,7 +42,7 @@ export class TagSuggestions extends Component<Props> {
         {filteredTags.length > 0 && (
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
-            <ul className="tag-suggestions-list">
+            <ul className="tag-suggestions-list theme-color-border">
               {filteredTags.map((tagId) => (
                 <li
                   key={tagId}
