@@ -105,6 +105,12 @@ const collection: A.Reducer<T.Collection> = (
   action
 ) => {
   switch (action.type) {
+    case 'CREATE_NOTE_WITH_ID': {
+      if (state.type === 'trash') {
+        return { type: 'all' };
+      }
+      return state;
+    }
     case 'OPEN_TAG':
       return { type: 'tag', tagName: action.tagName };
     case 'SELECT_TRASH':
