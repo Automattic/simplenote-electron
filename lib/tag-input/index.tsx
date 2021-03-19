@@ -17,6 +17,26 @@ const KEY_SPACE = 32;
 const KEY_RIGHT = 39;
 const KEY_COMMA = 188;
 
+const getCaretPosition = (
+  element?: React.RefObject<HTMLDivElement> | Node | null
+) => {
+  if (!element || !window.getSelection) {
+    return 0;
+  }
+
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount < 1) {
+    return 0;
+  }
+
+  const originalRange = selection.getRangeAt(0);
+  const range = originalRange.cloneRange();
+  range.selectNodeContents(element as Node);
+  range.setEnd(originalRange.endContainer, originalRange.endOffset);
+  return range.toString().length;
+};
+
 type OwnProps = {
   inputRef: (ref: RefObject<HTMLDivElement>) => any;
   onChange: (tagName: string, callback: () => any) => any;
@@ -38,6 +58,7 @@ export class TagInput extends Component<Props> {
   inputObserver?: MutationObserver;
 
   static displayName = 'TagInput';
+  caretPosition = 0;
 
   static defaultProps = {
     inputRef: identity,
@@ -70,7 +91,7 @@ export class TagInput extends Component<Props> {
       this,
       'inputField.removeEventListener',
       'paste',
-      this.removePastedFormatting,
+      this.parsePastedInput,
       false
     );
     this.inputObserver.disconnect();
@@ -96,6 +117,7 @@ export class TagInput extends Component<Props> {
     if (suggestion) {
       onChange(suggestion, () => {
         andThen(suggestion);
+        this.caretPosition = suggestion?.length || 0;
         this.focusInput();
       });
     }
@@ -111,6 +133,13 @@ export class TagInput extends Component<Props> {
     input.focus();
     const range = document.createRange();
     range.selectNodeContents(input);
+    // If the cached caret position is still reachable, restore that position
+    if (
+      input.firstChild !== null &&
+      range.toString().length > this.caretPosition
+    ) {
+      range.setEnd(input.firstChild, this.caretPosition);
+    }
     range.collapse(false);
     const selection = window.getSelection();
     selection.removeAllRanges();
@@ -134,19 +163,10 @@ export class TagInput extends Component<Props> {
 
   interceptRightArrow = (event: KeyboardEvent) => {
     const { value } = this.props;
-    if (!window.getSelection) {
-      return;
-    }
     // if we aren't already at the right-most extreme
     // then don't complete the suggestion; we could
     // be moving the cursor around inside the input
-    const originalRange = window.getSelection().getRangeAt(0);
-    const range = originalRange.cloneRange();
-    range.selectNodeContents(event.currentTarget);
-    range.setEnd(originalRange.endContainer, originalRange.endOffset);
-    const caretPosition = range.toString().length;
-
-    if (caretPosition !== value.length) {
+    if (getCaretPosition(event.currentTarget) !== value.length) {
       return;
     }
 
@@ -175,11 +195,14 @@ export class TagInput extends Component<Props> {
     });
   };
 
-  onInput = (value: string) => {
+  onInput = (value: string, { moveCaretToEndOfValue = false } = {}) => {
     if (this.state.isComposing) {
       return;
     }
 
+    this.caretPosition = moveCaretToEndOfValue
+      ? value.length
+      : getCaretPosition(this.inputField);
     this.props.onChange(value.trim(), this.focusInput);
   };
 
@@ -188,16 +211,22 @@ export class TagInput extends Component<Props> {
     this.setState({ isComposing: false }, () => this.onInput(value));
   };
 
-  removePastedFormatting = (event: ClipboardEvent) => {
+  parsePastedInput = (event: ClipboardEvent) => {
     let clipboardText;
 
+    // Remove pasted formatting
     if (get(event, 'clipboardData.getData')) {
       clipboardText = event.clipboardData.getData('text/plain');
     } else if (get(window, 'clipboardData.getData')) {
       clipboardText = window.clipboardData.getData('Text'); // IE11
     }
 
-    this.onInput(clipboardText);
+    // Convert spaces/commans to submitted tags
+    const tags = clipboardText.split(/\s|,|\n/);
+    const submittedTags = tags.slice(0, tags.length - 1);
+    const [pendingTag] = tags.slice(tags.length - 1);
+    submittedTags.filter(Boolean).forEach(this.props.onSelect);
+    this.onInput(pendingTag, { moveCaretToEndOfValue: true });
 
     event.preventDefault();
     event.stopPropagation();
@@ -210,7 +239,7 @@ export class TagInput extends Component<Props> {
       this,
       'inputField.addEventListener',
       'paste',
-      this.removePastedFormatting,
+      this.parsePastedInput,
       false
     );
   };
@@ -243,7 +272,13 @@ export class TagInput extends Component<Props> {
     const shouldShowPlaceholder = value === '' && !this.state.isComposing;
 
     return (
-      <div className="tag-input" onClick={this.focusInput}>
+      <div
+        className="tag-input"
+        onClick={() => {
+          this.caretPosition = getCaretPosition(this.inputField);
+          this.focusInput();
+        }}
+      >
         {shouldShowPlaceholder && (
           <span
             aria-hidden
