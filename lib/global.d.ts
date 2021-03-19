@@ -26,6 +26,7 @@ declare global {
       send(command: 'clearCookies'): void;
       send(command: 'importNotes', filePath: string);
       send(command: 'reallyCloseWindow'): void;
+      send(command: 'reload');
       send(command: 'setAutoHideMenuBar', newValue: boolean);
       send(command: 'wpLogin', url: string);
     };

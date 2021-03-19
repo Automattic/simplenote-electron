@@ -9,6 +9,7 @@ const validChannels = [
   'importNotes',
   'noteImportChannel',
   'reallyCloseWindow',
+  'reload',
   'setAutoHideMenuBar',
   'tokenLogin',
   'wpLogin',
