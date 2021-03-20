@@ -1,6 +1,6 @@
 import React, { ChangeEventHandler, FunctionComponent } from 'react';
 
-type Props = {
+type OwnProps = {
   disabled: boolean;
   onChange: ChangeEventHandler<HTMLInputElement>;
   min: number;
@@ -8,7 +8,10 @@ type Props = {
   value: number;
 };
 
+type Props = OwnProps & React.HTMLProps<HTMLInputElement>;
+
 export const Slider: FunctionComponent<Props> = ({
+  'aria-valuetext': ariaValueText,
   disabled,
   min,
   max,
@@ -16,6 +19,7 @@ export const Slider: FunctionComponent<Props> = ({
   onChange,
 }) => (
   <input
+    aria-valuetext={ariaValueText}
     aria-label="Select revision"
     className="slider"
     disabled={disabled}

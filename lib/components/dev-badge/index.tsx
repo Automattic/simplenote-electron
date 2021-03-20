@@ -1,9 +1,11 @@
 import React from 'react';
 
-const DevBadge = () => (
-  <div aria-hidden="true" className="dev-badge">
-    DEV
-  </div>
-);
+const DevBadge = (props: React.HTMLProps<HTMLDivElement>) => {
+  return (
+    <div className="dev-badge" {...props}>
+      DEV
+    </div>
+  );
+};
 
 export default DevBadge;

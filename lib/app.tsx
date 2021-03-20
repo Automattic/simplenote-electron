@@ -39,6 +39,7 @@ type StateProps = {
   showEmailVerification: boolean;
   showNavigation: boolean;
   showNoteInfo: boolean;
+  showRevisions: boolean;
   theme: 'light' | 'dark';
 };
 
@@ -182,6 +183,7 @@ class AppComponent extends Component<Props> {
       showEmailVerification,
       showNavigation,
       showNoteInfo,
+      showRevisions,
       theme,
     } = this.props;
 
@@ -201,7 +203,11 @@ class AppComponent extends Component<Props> {
       <div className={appClasses}>
         {showEmailVerification && <EmailVerification />}
         {showAlternateLoginPrompt && <AlternateLoginPrompt />}
-        {isDevConfig && <DevBadge />}
+        {isDevConfig && (
+          <DevBadge
+            aria-hidden={showNavigation || showRevisions ? true : undefined}
+          />
+        )}
         <div className={mainClasses}>
           {showNavigation && <NavigationBar />}
           <AppLayout />
@@ -223,6 +229,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
   showNoteInfo: state.ui.showNoteInfo,
+  showRevisions: state.ui.showRevisions,
   theme: selectors.getTheme(state),
 });
 

@@ -39,15 +39,18 @@ type DispatchProps = {
   trashNote: () => any;
 };
 
-type Props = DispatchProps & StateProps;
+type Props = DispatchProps & StateProps & React.HTMLProps<HTMLDivElement>;
 
 export class NoteToolbar extends Component<Props> {
   static displayName = 'NoteToolbar';
 
   render() {
-    const { note } = this.props;
+    const { 'aria-hidden': ariaHidden, note } = this.props;
     return (
-      <div className="note-toolbar-wrapper theme-color-border">
+      <div
+        aria-hidden={ariaHidden}
+        className="note-toolbar-wrapper theme-color-border"
+      >
         {note?.deleted ? this.renderTrashed() : this.renderNormal()}
       </div>
     );

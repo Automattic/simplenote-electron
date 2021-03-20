@@ -7,7 +7,6 @@
   padding-top: $toolbar-height;
   width: $navigation-bar-width;
   height: 100%;
-  overflow: hidden;
   border-right: 1px solid;
   z-index: 2;
   transition: transform 200ms ease-in-out;
@@ -20,7 +19,7 @@
 .navigation-bar__folders {
   display: flex;
   flex: none;
-  flex-direction: column-reverse;
+  flex-direction: column;
   border-bottom: 1px solid;
 }
 
