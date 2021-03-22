@@ -47,7 +47,7 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         label: '&Trash Note',
         click: appCommandSender({ action: 'trashNote' }),
       },
-      ...(isAuthenticated ? [{ type: 'separator' }] : []),
+      { type: 'separator' },
       {
         label: 'Search &Notes…',
         click: appCommandSender({ action: 'focusSearchField' }),

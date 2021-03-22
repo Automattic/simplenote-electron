@@ -14,7 +14,7 @@ const buildFileMenu = (isAuthenticated) => {
         accelerator: 'CommandOrControl+Shift+I',
         click: appCommandSender({ action: 'newNote' }),
       },
-      ...(isAuthenticated ? [{ type: 'separator' }] : []),
+      { type: 'separator' },
       {
         label: '&Import Notes…',
         click: appCommandSender({
@@ -29,7 +29,7 @@ const buildFileMenu = (isAuthenticated) => {
           action: 'exportNotes',
         }),
       },
-      ...(isAuthenticated ? [{ type: 'separator' }] : []),
+      { type: 'separator' },
       {
         label: '&Print…',
         accelerator: 'CommandOrControl+P',
