@@ -45,25 +45,21 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
       { type: 'separator' },
       {
         label: '&Trash Note',
-        visible: isAuthenticated,
         click: appCommandSender({ action: 'trashNote' }),
       },
       ...(isAuthenticated ? [{ type: 'separator' }] : []),
       {
         label: 'Search &Notes…',
-        visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
         accelerator: 'CommandOrControl+Shift+S',
       },
       {
         label: '&Find in Note',
-        visible: isAuthenticated,
         click: appCommandSender({ action: 'focusSearchField' }),
         accelerator: 'CommandOrControl+F',
       },
       {
         label: 'Find A&gain',
-        visible: isAuthenticated,
         click: editorCommandSender({ action: 'findAgain' }),
         accelerator: 'CommandOrControl+G',
       },
