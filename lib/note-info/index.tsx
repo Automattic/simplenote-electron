@@ -37,7 +37,7 @@ export class NoteInfo extends Component<Props> {
     return (
       <Modal
         key="note-info-modal"
-        className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg"
+        className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg dialog"
         contentLabel="Document"
         isOpen
         onRequestClose={onModalClose}
