@@ -13,6 +13,7 @@
 - Improve error handling and messaging within the app [#2715](https://github.com/automattic/simplenote-electron/pull/2715)
 - Improve navigation sidebar and revision selector accessibility for keyboards and screen readers [#2707](https://github.com/automattic/simplenote-electron/pull/2707)
 - Updating imports to a single dialog where any supported file type can be imported at the same time [#2685](https://github.com/automattic/simplenote-electron/pull/2685)
+- Improve recognizability of inline code elements [#2739](https://github.com/automattic/simplenote-electron/pull/2739)
 
 ### Fixes
 
@@ -22,7 +23,7 @@
 - Fix editing of pending tag input [#2756](https://github.com/automattic/simplenote-electron/pull/2756)
 - Fix to only show scrollbars on the tag list when needed [#2753](https://github.com/automattic/simplenote-electron/pull/2753)
 - Fix dismissing the tooltip for disabled buttons [#2751](https://github.com/automattic/simplenote-electron/pull/2751)
-- Fixes to checkboxes in preview mode [#2461](https://github.com/automattic/simplenote-electron/pull/2461)
+- Fixes to checkboxes in preview mode [#2736](https://github.com/automattic/simplenote-electron/pull/2736)
 
 ## [v2.8.0]
 
