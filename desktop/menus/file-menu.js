@@ -49,7 +49,7 @@ const buildFileMenu = (isAuthenticated) => {
     label: '&File',
     submenu: platform.isOSX()
       ? submenu
-      : submenu.concat(defaultSubmenuAdditions),
+      : [...submenu, ...defaultSubmenuAdditions],
   };
 
   // we have nothing to show in the File menu on OSX logged out

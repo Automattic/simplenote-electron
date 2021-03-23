@@ -83,9 +83,15 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     { type: 'separator' },
   ];
 
-  const submenu = editModeMenuOptions
-    .concat(defaultSubmenuAdditions)
-    .concat(authenticatedMenuOptions);
+  // const submenu = editModeMenuOptions
+  //   .concat(defaultSubmenuAdditions)
+  //   .concat(authenticatedMenuOptions);
+
+  const submenu = [
+    ...editModeMenuOptions,
+    ...defaultSubmenuAdditions,
+    ...authenticatedMenuOptions,
+  ];
 
   const fileMenu = {
     label: '&Edit',
