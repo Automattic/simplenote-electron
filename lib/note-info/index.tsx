@@ -140,14 +140,7 @@ export class NoteInfo extends Component<Props> {
         <div className="note-info-panel note-info-markdown theme-color-border">
           <ToggleControl
             label="Markdown"
-            help={`Enable markdown formatting on this note.{' '}
-                <a
-                  target="_blank"
-                  href="http://simplenote.com/help/#markdown"
-                  rel="noopener noreferrer"
-                >
-                  Learn more…
-                </a>`}
+            help="Enable markdown formatting on this note. http://simplenote.com/help/#markdown"
             checked={isMarkdown}
             onChange={this.markdownNote}
           />
