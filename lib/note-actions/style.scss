@@ -33,6 +33,7 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     align-items: center;
     padding: 5px 16px;
     height: 28px;
+    cursor: pointer;
 
     button {
       padding: 0;
@@ -62,12 +63,6 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     flex: 1 1 auto;
   }
 
-  .note-actions-control {
-    flex: none;
-    width: 44px;
-    text-align: right;
-  }
-
   .note-actions-internal-link .note-actions-name {
     display: inline-block;
     padding: 5px 10px;
@@ -79,6 +74,10 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
 
   .note-actions-item-control .checkbox-control {
     bottom: 3px;
+
+    input {
+      cursor: pointer;
+    }
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-base,

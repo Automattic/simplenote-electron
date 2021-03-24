@@ -52,7 +52,7 @@ export class NoteActions extends Component<Props> {
 
     if (this.isMounted) {
       // Bit of a delay so that clicking the note actios toolbar will toggle the view properly.
-      setTimeout(() => onFocusTrapDeactivate(), 100);
+      setTimeout(() => onFocusTrapDeactivate(), 200);
     }
   };
 
