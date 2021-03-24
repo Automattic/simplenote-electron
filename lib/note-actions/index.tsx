@@ -177,7 +177,7 @@ export class NoteActions extends Component<Props> {
               ) : isPublished && !publishURL ? (
                 <>
                   <span className="note-actions-disabled">Copy Link</span>
-                  <Spinner isWhite={false} size={20} thickness={5} />
+                  <Spinner isWhite={false} size={16} thickness={5} />
                 </>
               ) : (
                 <span className="note-actions-disabled">Copy Link</span>
@@ -236,7 +236,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   markdownNote: actions.data.markdownNote,
-  onFocusTrapDeactivate: actions.ui.toggleNoteActions,
+  onFocusTrapDeactivate: actions.ui.closeNoteActions,
   pinNote: actions.data.pinNote,
   publishNote: actions.data.publishNote,
   shareNote: () => actions.ui.showDialog('SHARE'),

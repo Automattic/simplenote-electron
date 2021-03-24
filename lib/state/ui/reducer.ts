@@ -322,7 +322,16 @@ const simperiumConnected: A.Reducer<boolean> = (state = false, action) =>
 
 const showNoteActions: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
+    case 'NOTE_ACTIONS_CLOSE':
+      console.log('close');
+      console.log(state);
+      console.log(action);
+      return false;
+
     case 'NOTE_ACTIONS_TOGGLE':
+      console.log('toggle');
+      console.log(state);
+      console.log(action);
       return !state;
 
     case 'NAVIGATION_TOGGLE':

@@ -52,6 +52,10 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     &:hover {
       background-color: transparent;
     }
+
+    .note-actions-disabled {
+      flex: 1 1 auto;
+    }
   }
 
   .note-actions-item-text {
@@ -93,17 +97,14 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     background-position: -18px -18px;
   }
 
-  .spinner {
-    margin-left: 10px;
-  }
   .spinner__circle {
-    color: $studio-gray-80;
+    color: $studio-gray-30;
   }
 }
 
 .theme-dark {
   .spinner__circle {
-    color: $studio-white;
+    color: $studio-gray-50;
   }
   .note-actions.theme-color-bg {
     background-color: $studio-gray-90;

@@ -57,6 +57,14 @@ export class NoteInfo extends Component<Props> {
               <SmallCrossIcon />
             </button>
           </div>
+          <p className="note-info-item">
+            <span className="note-info-item-text">
+              <span className="note-info-name theme-color-fg">Last synced</span>
+              <span className="note-info-detail theme-color-fg-dim">
+                <LastSyncTime noteId={noteId} />
+              </span>
+            </span>
+          </p>
           {modificationDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
@@ -88,14 +96,6 @@ export class NoteInfo extends Component<Props> {
                     minute: 'numeric',
                   })}
                 </time>
-              </span>
-            </span>
-          </p>
-          <p className="note-info-item">
-            <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Last sync</span>
-              <span className="note-info-detail theme-color-fg-dim">
-                <LastSyncTime noteId={noteId} />
               </span>
             </span>
           </p>

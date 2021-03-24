@@ -114,7 +114,7 @@ export class NoteToolbar extends Component<Props> {
               title="Info"
             />
           </div>
-          <div className="note-toolbar__button ignore-react-onclickoutside">
+          <div className="note-toolbar__button">
             <IconButton
               icon={<EllipsisOutlineIcon />}
               onClick={toggleNoteActions}

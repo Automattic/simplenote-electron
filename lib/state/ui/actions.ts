@@ -151,6 +151,10 @@ export const toggleNoteActions: A.ActionCreator<A.ToggleNoteActions> = () => ({
   type: 'NOTE_ACTIONS_TOGGLE',
 });
 
+export const closeNoteActions: A.ActionCreator<A.CloseNoteActions> = () => ({
+  type: 'NOTE_ACTIONS_CLOSE',
+});
+
 export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({
   type: 'NOTE_INFO_TOGGLE',
 });
