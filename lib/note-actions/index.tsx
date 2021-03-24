@@ -51,7 +51,8 @@ export class NoteActions extends Component<Props> {
     const { onFocusTrapDeactivate } = this.props;
 
     if (this.isMounted) {
-      onFocusTrapDeactivate();
+      // Bit of a delay so that clicking the note actios toolbar will toggle the view properly.
+      setTimeout(() => onFocusTrapDeactivate(), 100);
     }
   };
 

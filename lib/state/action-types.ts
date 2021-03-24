@@ -339,6 +339,7 @@ export type ActionType =
   | AddNoteTag
   | ChangeConnectionStatus
   | CloseNote
+  | CloseNoteActions
   | CloseDialog
   | CloseRevision
   | CloseWindow
@@ -426,7 +427,6 @@ export type ActionType =
   | ToggleNavigation
   | ToggleNoteList
   | ToggleNoteActions
-  | CloseNoteActions
   | ToggleNoteInfo
   | ToggleRevisions
   | ToggleSimperiumConnectionStatus
