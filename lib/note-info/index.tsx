@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
-import format from 'date-fns/format';
+import { createElement } from '@wordpress/element';
 
 import ClipboardButton from '../components/clipboard-button';
 import LastSyncTime from '../components/last-sync-time';
 import PanelTitle from '../components/panel-title';
-//import ToggleControl from '../controls/toggle';
 import { ToggleControl } from '@wordpress/components';
 import CrossIcon from '../icons/cross';
 import getNoteTitleAndPreview from '../utils/note-utils';
@@ -56,6 +55,19 @@ export class NoteInfo extends Component<Props> {
       : null;
     const publishURL = this.getPublishURL(note.publishURL);
     const noteLink = this.getNoteLink(note, noteId);
+
+    const markdownHelp = createElement('span', {}, [
+      'Enable markdown formatting on this note.',
+      createElement(
+        'a',
+        {
+          href: 'https://simplenote.com/help/#markdown',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+        'Learn more…'
+      ),
+    ]);
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
@@ -140,7 +152,7 @@ export class NoteInfo extends Component<Props> {
         <div className="note-info-panel note-info-markdown theme-color-border">
           <ToggleControl
             label="Markdown"
-            help="Enable markdown formatting on this note. http://simplenote.com/help/#markdown"
+            help={markdownHelp}
             checked={isMarkdown}
             onChange={this.markdownNote}
           />

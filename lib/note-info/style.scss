@@ -100,6 +100,44 @@
       white-space: nowrap;
     }
   }
+  .components-form-toggle.is-checked .components-form-toggle__thumb {
+    transform: translateX(10px);
+  }
+
+  .components-form-toggle.is-checked .components-form-toggle__track {
+    background-color: #1ed15a;
+  }
+
+  .components-form-toggle__thumb {
+    height: 14px;
+    width: 14px;
+    top: 1px;
+    left: 0;
+    border: 0;
+    background-color: #fff;
+  }
+
+  .components-form-toggle__track {
+    width: 24px;
+    height: 16px !important;
+    border: 0 !important;
+    background-color: #c3c4c7;
+  }
+
+  .components-base-control__field {
+    margin-bottom: 0;
+  }
+
+  .components-form-toggle {
+    order: 2;
+    margin-right: 0 !important;
+    width: 24px;
+    height: 16px;
+  }
+
+  .components-toggle-control__label {
+    flex: 1 0 auto;
+  }
 }
 
 .theme-dark .note-info-detail a {
