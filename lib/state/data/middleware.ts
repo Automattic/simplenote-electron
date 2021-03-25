@@ -2,12 +2,12 @@ import { v4 as uuid } from 'uuid';
 
 import { tagHashOf } from '../../utils/tag-hash';
 import exportZipArchive from '../../utils/export';
-import { tagNameOf, withTag } from '../../utils/tag-hash';
+import { withTag } from '../../utils/tag-hash';
 
 import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
-import { numberOfNonEmailTags } from '../selectors';
+import { numberOfNonEmailTags, openedTag } from '../selectors';
 
 export const middleware: S.Middleware = (store) => (
   next: (action: A.ActionType) => A.ActionType
@@ -32,11 +32,9 @@ export const middleware: S.Middleware = (store) => (
       }
 
       // apply selected tag by default
-      const openedTag = state.ui.openedTag
-        ? tagNameOf(state.ui.openedTag)
-        : null;
+      const selectedTag = openedTag(state);
       const givenTags = action.note?.tags ?? [];
-      const tags = openedTag ? withTag(givenTags, openedTag) : givenTags;
+      const tags = selectedTag ? withTag(givenTags, selectedTag) : givenTags;
 
       return next({
         type: 'CREATE_NOTE_WITH_ID',
