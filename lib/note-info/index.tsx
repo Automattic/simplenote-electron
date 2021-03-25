@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
-import { createElement } from '@wordpress/element';
+import { ToggleControl } from '@wordpress/components';
 
 import ClipboardButton from '../components/clipboard-button';
 import LastSyncTime from '../components/last-sync-time';
 import PanelTitle from '../components/panel-title';
-import { ToggleControl } from '@wordpress/components';
 import CrossIcon from '../icons/cross';
 import getNoteTitleAndPreview from '../utils/note-utils';
 import References from './references';
@@ -56,18 +55,18 @@ export class NoteInfo extends Component<Props> {
     const publishURL = this.getPublishURL(note.publishURL);
     const noteLink = this.getNoteLink(note, noteId);
 
-    const markdownHelp = createElement('span', {}, [
-      'Enable markdown formatting on this note.',
-      createElement(
-        'a',
-        {
-          href: 'https://simplenote.com/help/#markdown',
-          target: '_blank',
-          rel: 'noopener noreferrer',
-        },
-        'Learn more…'
-      ),
-    ]);
+    const markdownHelp = (
+      <span>
+        Enable markdown formatting on this note.{' '}
+        <a
+          href="https://simplenote.com/help/#markdown'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn more…
+        </a>
+      </span>
+    );
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
