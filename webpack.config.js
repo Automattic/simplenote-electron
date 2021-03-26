@@ -9,17 +9,17 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
   const config = getConfig();
+  const devtool = isDevMode ? 'eval-cheap-module-source-map' : 'source-map';
 
   return {
     context: __dirname + '/lib',
     mode: isDevMode ? 'development' : 'production',
-    devtool:
-      process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
+    devtool: devtool,
     devServer: { inline: true },
     entry: ['./boot'],
     output: {
       path: __dirname + '/dist',
-      filename: 'app.[hash].js',
+      filename: 'app.[fullhash].js',
       chunkFilename: '[name].[chunkhash].js',
       ...(config.is_app_engine && {
         publicPath: config.web_app_url + '/',
@@ -49,7 +49,9 @@ module.exports = () => {
             {
               loader: 'postcss-loader',
               options: {
-                plugins: [autoprefixer()],
+                postcssOptions: {
+                  plugins: [autoprefixer()],
+                },
                 sourceMap: isDevMode,
               },
             },
@@ -75,6 +77,9 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,
         'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
@@ -86,8 +91,8 @@ module.exports = () => {
         title: 'Simplenote',
       }),
       new MiniCssExtractPlugin({
-        filename: isDevMode ? '[name].css' : '[name].[hash].css',
-        chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
+        filename: isDevMode ? '[name].css' : '[name].[fullhash].css',
+        chunkFilename: isDevMode ? '[id].css' : '[id].[fullhash].css',
       }),
       new MonacoWebpackPlugin({
         languages: [],
