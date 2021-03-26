@@ -368,7 +368,14 @@ export const middleware: S.Middleware = (store) => {
       }
 
       case 'CREATE_NOTE_WITH_ID':
-        searchState.collection = { type: 'all' };
+        if (action.note?.tags && action.note?.tags.length > 0) {
+          searchState.collection = {
+            type: 'tag',
+            tagName: action.note.tags[0],
+          };
+        } else {
+          searchState.collection = { type: 'all' };
+        }
         searchState.notes.set(action.noteId, toSearchNote(action.note ?? {}));
         indexNote(action.noteId);
         queueSearch();
