@@ -9,7 +9,7 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
   const config = getConfig();
-  const devtool = isDevMode ? 'eval-cheap-module-source-map' : 'source-map';
+  const devtool = isDevMode ? 'eval-cheap-module-source-map' : false;
 
   return {
     context: __dirname + '/lib',
