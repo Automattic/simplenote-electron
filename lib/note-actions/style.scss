@@ -83,17 +83,18 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
     background-image: url($checkbox-sprite);
-    background-position: 0 -18px;
     background-repeat: no-repeat;
     background-size: 36px 36px;
     border-radius: 0;
     border: 0;
+    fill: $studio-gray-50;
   }
-
+  .note-actions-item-control .checkbox-control .checkbox-control-base {
+    background-position: 0 0;
+  }
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    border: none;
     background-color: transparent;
-    background-position: -18px -18px;
+    background-position: -18px 0;
   }
 
   .spinner__circle {
@@ -123,10 +124,11 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
 
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: 0 0;
+    background-position: 0 -18px;
+    fill: $studio-gray-30;
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: -18px 0;
+    background-position: -18px -18px;
   }
 }
