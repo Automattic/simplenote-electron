@@ -31,6 +31,7 @@
   .change-list {
     border-bottom: 1px solid $studio-gray-5;
     border-top: 1px solid $studio-gray-5;
+    overflow-y: auto;
 
     ul {
       list-style: none;
