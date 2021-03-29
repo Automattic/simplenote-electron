@@ -1,5 +1,5 @@
 import React, { ElementType } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@wordpress/components';
 
 type OwnProps = {
   disableTooltip: boolean;
@@ -10,11 +10,7 @@ type OwnProps = {
 type Props = OwnProps;
 
 export const IconButton = ({ icon, title, ...props }: Props) => (
-  <Tooltip
-    classes={{ tooltip: 'icon-button__tooltip' }}
-    enterDelay={200}
-    title={title}
-  >
+  <Tooltip position="bottom center" text={title}>
     <button
       aria-label={title}
       className="icon-button"

@@ -50,6 +50,10 @@ PUBLISH ?= onTag
 
 
 # Main targets
+
+.PHONY: stats
+stats:
+	@NODE_ENV=$(NODE_ENV) npx webpack --mode production --config ./webpack.config.js --json > stats.json
 .PHONY: start
 start:
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect
