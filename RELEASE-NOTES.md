@@ -1,5 +1,30 @@
 # Changelog
 
+## [v2.9.0]
+
+### Enhancements
+
+- Updated Focus Mode/Toggle Sidebar naming to be consistent using Focus Mode (props @dplanella) [#2792](https://github.com/Automattic/simplenote-electron/pull/2792)
+- Removed the tag heading from the navigation menu when there are no tags [#2786](https://github.com/Automattic/simplenote-electron/pull/2786)
+- Updated the number of lines in the note preview to be three lines in expanded display [#2785](https://github.com/automattic/simplenote-electron/pull/2785)
+- Updated to autofocus the delete tag button when the confirmation dialog is opened [#2775](https://github.com/automattic/simplenote-electron/pull/2775)
+- Improved parsing of multiple pasted tags [#2756](https://github.com/automattic/simplenote-electron/pull/2756)
+- Improved accessibility of the application for keyboard and screen reader users [#2726](https://github.com/automattic/simplenote-electron/pull/2726)
+- Improved error handling and messaging within the app [#2715](https://github.com/automattic/simplenote-electron/pull/2715)
+- Improved navigation sidebar and revision selector accessibility for keyboards and screen readers [#2707](https://github.com/automattic/simplenote-electron/pull/2707)
+- Updated imports to a single dialog where any supported file type can be imported at the same time [#2685](https://github.com/automattic/simplenote-electron/pull/2685)
+- Improved recognizability of inline code elements [#2739](https://github.com/automattic/simplenote-electron/pull/2739)
+
+### Fixes
+
+- Fixed an issue when you rename a selected tag, the menubar title is updated to reflect the new tag name [#2784](https://github.com/automattic/simplenote-electron/pull/2784)
+- Fixed the position of the offline badge indicator in Electron builds [#2778](https://github.com/automattic/simplenote-electron/pull/2778)
+- Fixed some styling issues with the unsynchronized note warning dialog [#2776](https://github.com/automattic/simplenote-electron/pull/2776)
+- Fixed editing of pending tag input [#2756](https://github.com/automattic/simplenote-electron/pull/2756)
+- Fixed to only show scrollbars on the tag list when needed [#2753](https://github.com/automattic/simplenote-electron/pull/2753)
+- Fixed dismissing the tooltip for disabled buttons [#2751](https://github.com/automattic/simplenote-electron/pull/2751)
+- Fixed to checkboxes in preview mode [#2736](https://github.com/automattic/simplenote-electron/pull/2736)
+
 ## [v2.8.0]
 
 ### Enhancements
