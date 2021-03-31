@@ -1,5 +1,4 @@
 .tag-chip {
-  cursor: pointer;
   flex: none;
   margin: 2px 8px 6px 0;
   padding: 1px 14px 3px;
@@ -17,6 +16,10 @@
     .remove-tag-icon {
       display: inline-block;
     }
+  }
+
+  &.interactive {
+    cursor: pointer;
   }
 
   .remove-tag-icon {
