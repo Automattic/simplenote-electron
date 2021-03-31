@@ -2,7 +2,7 @@
 
 exports[`TagChip should not introduce visual regressions 1`] = `
 <div
-  className="tag-chip"
+  className="tag-chip interactive"
   data-tag-name="spline"
 >
   spline
