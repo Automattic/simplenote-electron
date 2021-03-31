@@ -7,6 +7,7 @@ import NoteToolbar from '../note-toolbar';
 import RevisionSelector from '../revision-selector';
 import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
+import NoteRevisions from '../note-revisions';
 import TransitionDelayEnter from '../components/transition-delay-enter';
 import actions from '../state/actions';
 import * as selectors from '../state/selectors';
@@ -36,7 +37,7 @@ type StateProps = {
   keyboardShortcuts: boolean;
   keyboardShortcutsAreOpen: boolean;
   openedNote: T.EntityId | null;
-  openedRevision: number | null;
+  openedRevision: T.Note | null;
   showNoteList: boolean;
   showRevisions: boolean;
 };
@@ -136,7 +137,7 @@ export class AppLayout extends Component<Props> {
             >
               <NoteToolbar aria-hidden={hiddenByRevisions} />
               {showRevisions ? (
-                <NotePreview
+                <NoteRevisions
                   aria-hidden={hiddenByRevisions}
                   noteId={openedNote}
                   note={openedRevision}
