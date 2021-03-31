@@ -1,15 +1,23 @@
+$dialog-max-height: 420px;
+$dialog-title-height: 56px;
+
 .dialog {
   display: flex;
   flex-direction: column;
   width: calc(100vw - 2rem);
   background: white;
   border-radius: 8px;
+  max-height: $dialog-max-height;
+
+  @media only screen and (max-height: $dialog-max-height) {
+    max-height: calc(100vh - 2rem);
+  }
 }
 
 .dialog-title-bar {
   display: flex;
   border-bottom: 1px solid $studio-gray-5;
-  height: 56px;
+  height: $dialog-title-height;
 
   .button {
     border: 0;
@@ -39,6 +47,12 @@
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
+  max-height: $dialog-max-height - $dialog-title-height;
+  overflow: auto;
+
+  @media only screen and (max-height: $dialog-max-height) {
+    max-height: calc(100vh - 2rem - #{$dialog-title-height});
+  }
 }
 
 .dialog-actions {
