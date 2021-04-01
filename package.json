@@ -20,7 +20,7 @@
     "build": "make build",
     "deploy": "./bin/deploy.sh",
     "stats": "make stats",
-    "analyzer": "webpack-bundle-analyzer stats.json"
+    "analyzer": "webpack-bundle-analyzer stats.json dist"
   },
   "repository": {
     "type": "git",
