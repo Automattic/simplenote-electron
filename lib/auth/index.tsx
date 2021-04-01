@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import getConfig from '../../get-config';
 import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
-import Spinner from '../components/spinner';
+import Spinner from '@wordpress/components';
 import { isElectron, isMac } from '../utils/platform';
 import { viewExternalUrl } from '../utils/url-utils';
 
@@ -216,11 +216,7 @@ export class Auth extends Component<Props> {
             onClick={this.onSubmit}
             type="submit"
           >
-            {this.props.authPending ? (
-              <Spinner isWhite={true} size={20} thickness={5} />
-            ) : (
-              buttonLabel
-            )}
+            {this.props.authPending ? <Spinner /> : buttonLabel}
           </button>
 
           {!isCreatingAccount && (

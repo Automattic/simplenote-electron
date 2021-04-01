@@ -50,6 +50,10 @@ PUBLISH ?= onTag
 
 
 # Main targets
+
+.PHONY: stats
+stats:
+	@NODE_ENV=$(NODE_ENV) npx webpack --mode production --config ./webpack.config.js --json > stats.json
 .PHONY: start
 start:
 	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect
@@ -62,7 +66,7 @@ dev:
 dev-server:
 	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
+	@NODE_ENV=$(NODE_ENV) npx webpack serve --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
 
 .PHONY: test
 test:
@@ -87,7 +91,7 @@ endif
 # Build utils
 .PHONY: build-app
 build-app:
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),--mode production) --config ./webpack.config.js
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json

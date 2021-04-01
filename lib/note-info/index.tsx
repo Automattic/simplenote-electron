@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import onClickOutside from 'react-onclickoutside';
 import { includes, isEmpty } from 'lodash';
-import format from 'date-fns/format';
+import { ToggleControl } from '@wordpress/components';
 
 import ClipboardButton from '../components/clipboard-button';
 import LastSyncTime from '../components/last-sync-time';
 import PanelTitle from '../components/panel-title';
-import ToggleControl from '../controls/toggle';
 import CrossIcon from '../icons/cross';
 import getNoteTitleAndPreview from '../utils/note-utils';
 import References from './references';
@@ -55,6 +54,19 @@ export class NoteInfo extends Component<Props> {
       : null;
     const publishURL = this.getPublishURL(note.publishURL);
     const noteLink = this.getNoteLink(note, noteId);
+
+    const markdownHelp = (
+      <span>
+        Enable markdown formatting on this note.{' '}
+        <a
+          href="https://simplenote.com/help/#markdown'"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn more…
+        </a>
+      </span>
+    );
 
     return (
       <div className="note-info theme-color-bg theme-color-fg theme-color-border">
@@ -130,46 +142,19 @@ export class NoteInfo extends Component<Props> {
           </p>
         </div>
         <div className="note-info-panel note-info-pin theme-color-border">
-          <label className="note-info-item" htmlFor="note-info-pin-checkbox">
-            <span className="note-info-item-text">
-              <span className="note-info-name">Pin to top</span>
-            </span>
-            <span className="note-info-item-control">
-              <ToggleControl
-                id="note-info-pin-checkbox"
-                checked={isPinned}
-                onChange={this.pinNote}
-              />
-            </span>
-          </label>
+          <ToggleControl
+            label="Pin to top"
+            checked={isPinned}
+            onChange={this.pinNote}
+          />
         </div>
         <div className="note-info-panel note-info-markdown theme-color-border">
-          <label
-            className="note-info-item"
-            htmlFor="note-info-markdown-checkbox"
-          >
-            <span className="note-info-item-text">
-              <span className="note-info-name">Markdown</span>
-              <br />
-              <span className="note-info-detail theme-color-fg-dim">
-                Enable markdown formatting on this note.{' '}
-                <a
-                  target="_blank"
-                  href="http://simplenote.com/help/#markdown"
-                  rel="noopener noreferrer"
-                >
-                  Learn more…
-                </a>
-              </span>
-            </span>
-            <span className="note-info-item-control">
-              <ToggleControl
-                id="note-info-markdown-checkbox"
-                checked={isMarkdown}
-                onChange={this.markdownNote}
-              />
-            </span>
-          </label>
+          <ToggleControl
+            label="Markdown"
+            help={markdownHelp}
+            checked={isMarkdown}
+            onChange={this.markdownNote}
+          />
         </div>
         {isPublished && (
           <div className="note-info-panel note-info-public-link theme-color-border">

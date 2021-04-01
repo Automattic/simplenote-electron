@@ -1,15 +1,24 @@
 import React from 'react';
-import { LinearProgress } from '@material-ui/core';
 
-const ProgressBar: typeof LinearProgress = (props) => {
+type OwnProps = {
+  value: number;
+};
+
+const ProgressBar = (props: OwnProps) => {
+  const { value } = props;
+  const completedStyle = {
+    width: `${value}%`,
+  };
   return (
-    <LinearProgress
-      classes={{
-        root: 'progress-bar',
-        bar: 'progress-bar__bar',
-      }}
-      {...props}
-    />
+    <div
+      className="progress-bar"
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <div className="completed" style={completedStyle}></div>
+    </div>
   );
 };
 

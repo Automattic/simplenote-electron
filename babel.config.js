@@ -32,6 +32,7 @@ module.exports = function (api) {
   };
 
   return {
+    sourceType: 'unambiguous',
     presets,
     plugins,
     env,

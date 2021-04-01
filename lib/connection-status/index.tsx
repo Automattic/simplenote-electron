@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@wordpress/components';
 import ConnectionIcon from '../icons/connection';
 import NoConnectionIcon from '../icons/no-connection';
 
@@ -20,9 +20,7 @@ export const ConnectionStatus: FunctionComponent<Props> = ({
 }) => (
   <div className="navigation-bar__footer-item theme-color-fg-dim">
     <Tooltip
-      enterDelay={200}
-      classes={{ tooltip: 'icon-button__tooltip' }}
-      title={
+      text={
         connectionStatus === 'green'
           ? 'Simplenote is communicating with the server.'
           : connectionStatus === 'offline'
