@@ -1,6 +1,7 @@
 import * as S from './';
 import * as T from '../types';
 import isEmailTag from '../utils/is-email-tag';
+import { tagHashOf, tagNameOf } from '../utils/tag-hash';
 
 /**
  * "Narrow" views hide the note editor
@@ -58,3 +59,21 @@ export const isDialogOpen = (state: S.State, name: T.DialogType['type']) =>
 
 export const numberOfNonEmailTags: S.Selector<number> = ({ data }) =>
   [...data.tags.values()].filter((tag) => !isEmailTag(tag.name)).length;
+
+export const noteTags: S.Selector<Map<T.TagHash, T.Tag>> = (
+  { data },
+  note: T.Note
+) => {
+  const tagHashes = note.tags
+    .filter((tagName) => !isEmailTag(tagName))
+    .map(tagHashOf);
+  const tagsEntries: Array<[T.TagHash, T.Tag]> = tagHashes.map((tagHash) => {
+    const tag = data.tags.get(tagHash) ?? {
+      name: tagNameOf(tagHash),
+      deleted: true,
+    };
+    return [tagHash, tag];
+  });
+
+  return new Map(tagsEntries);
+};
