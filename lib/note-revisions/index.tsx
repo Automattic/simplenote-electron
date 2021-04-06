@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { negate } from 'lodash';
 
 import NotePreview from '../components/note-preview';
 import TagChip from '../components/tag-chip';
-import isEmailTag from '../utils/is-email-tag';
-import { tagHashOf } from '../utils/tag-hash';
+import { noteTags } from '../state/selectors';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -16,7 +14,7 @@ type OwnProps = {
 };
 
 type StateProps = {
-  allTags: Map<T.TagHash, T.Tag>;
+  tags: Map<T.TagHash, T.Tag>;
   noteId: T.EntityId | null;
   note: T.Note | null;
 };
@@ -26,23 +24,19 @@ type Props = OwnProps & StateProps;
 export class NoteRevisions extends Component<Props> {
   static displayName = 'NoteRevisions';
 
-  getTagName = (tag: T.TagName) => {
-    const { allTags } = this.props;
-    return allTags.get(tagHashOf(tag))?.name;
-  };
-
   render() {
-    const { note, noteId } = this.props;
+    const { note, noteId, tags } = this.props;
 
     return (
       <div className="note-revisions">
         <NotePreview noteId={noteId} note={note} />
         <div className="tags">
-          {note?.tags.filter(negate(isEmailTag)).map((tag) => (
+          {[...tags.entries()].map(([tagHash, tag]) => (
             <TagChip
-              key={tag}
-              tagName={this.getTagName(tag)}
+              key={tagHash}
+              tagName={tag.name}
               interactive={false}
+              deleted={tag.deleted}
             />
           ))}
         </div>
@@ -56,7 +50,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const note = props.note ?? state.data.notes.get(noteId);
 
   return {
-    allTags: state.data.tags,
+    tags: noteTags(state, note),
     noteId,
     note,
   };
