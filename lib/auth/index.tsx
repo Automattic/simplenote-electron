@@ -99,7 +99,8 @@ export class Auth extends Component<Props> {
               and follow the instructions.
             </p>
             <p className="accountRequested__footer theme-color-fg-dim">
-              Didn&apos;t get an email? You may already have an account. Contact{' '}
+              Didn&apos;t get an email? You may already have an account
+              associated with this email address. Contact{' '}
               <a
                 onClick={(event) => {
                   event.preventDefault();
