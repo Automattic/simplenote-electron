@@ -351,6 +351,11 @@ export const initSimperium = (
         return result;
       }
 
+      case 'RESTORE_TAGS': {
+        action.tags.forEach((tagHash) => queueTagUpdate(tagHash));
+        return result;
+      }
+
       // other note editing actions however
       // should trigger an immediate sync
       case 'MARKDOWN_NOTE':

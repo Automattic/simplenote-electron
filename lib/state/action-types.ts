@@ -220,6 +220,7 @@ export type RestoreNoteRevision = Action<
   'RESTORE_NOTE_REVISION',
   { noteId: T.EntityId; version: number; note: T.Note }
 >;
+export type RestoreTags = Action<'RESTORE_TAGS', { tags: T.TagHash[] }>;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
@@ -387,6 +388,7 @@ export type ActionType =
   | RequestNotifications
   | RestoreOpenNote
   | RestoreNote
+  | RestoreTags
   | RestoreNoteRevision
   | Search
   | SelectNote
