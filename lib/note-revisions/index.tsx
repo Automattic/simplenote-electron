@@ -19,16 +19,18 @@ type StateProps = {
   note: T.Note | null;
 };
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps &
+  StateProps &
+  Pick<React.HTMLProps<HTMLDivElement>, 'aria-hidden'>;
 
 export class NoteRevisions extends Component<Props> {
   static displayName = 'NoteRevisions';
 
   render() {
-    const { note, noteId, tags } = this.props;
+    const { note, noteId, tags, 'aria-hidden': ariaHidden } = this.props;
 
     return (
-      <div className="note-revisions">
+      <div aria-hidden={ariaHidden} className="note-revisions">
         <NotePreview noteId={noteId} note={note} />
         <div className="tags">
           {[...tags.entries()].map(([tagHash, tag]) => (
