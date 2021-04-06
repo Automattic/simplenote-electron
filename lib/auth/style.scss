@@ -50,9 +50,10 @@
   input,
   button[type='submit'] {
     background-color: $studio-white;
-    border: solid 1px $studio-gray-5;
+    border: solid 1px $studio-gray-10;
     border-radius: 4px;
     box-sizing: border-box;
+    color: $studio-gray-80;
     display: block;
     height: 40px;
     padding: 11px 15px;
@@ -61,6 +62,16 @@
     width: 95%;
     font-size: 16px;
     font-weight: 400;
+  }
+
+  input:focus {
+    border: 2px solid $studio-simplenote-blue-50;
+    outline: none;
+  }
+
+  input:disabled {
+    border-color: $studio-gray-5;
+    color: $studio-gray-20;
   }
 
   .spinner {
@@ -193,5 +204,18 @@
 
   svg.icon-mail {
     color: $studio-gray-30;
+  }
+  input {
+    border-color: $studio-gray-60;
+
+    &:focus {
+      border: 2px solid $studio-simplenote-blue-30;
+      outline: none;
+    }
+
+    &:disabled {
+      color: $studio-gray-50;
+      border-color: $studio-gray-70;
+    }
   }
 }
