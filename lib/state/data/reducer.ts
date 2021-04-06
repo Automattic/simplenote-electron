@@ -443,6 +443,17 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
       return next;
     }
 
+    case 'RESTORE_TAGS': {
+      const next = new Map(state);
+      action.tags.forEach((tagHash) => {
+        if (!next.has(tagHash)) {
+          next.set(tagHash, { name: tagNameOf(tagHash) });
+        }
+      });
+
+      return next;
+    }
+
     case 'TRASH_TAG': {
       const next = new Map(state);
       return next.delete(t(action.tagName)) ? next : state;
