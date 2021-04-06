@@ -31,6 +31,7 @@ export type NoteEntity = Entity<Note>;
 export type Tag = {
   index?: number;
   name: TagName;
+  deleted?: boolean;
 };
 
 export type TagEntity = Entity<Tag>;
