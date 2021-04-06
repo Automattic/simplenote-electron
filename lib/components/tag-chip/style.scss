@@ -22,6 +22,10 @@
     cursor: pointer;
   }
 
+  &.deleted {
+    opacity: 0.75;
+  }
+
   .remove-tag-icon {
     display: none;
     position: absolute;
@@ -42,6 +46,10 @@
       left: 1px;
       top: 1px;
     }
+  }
+
+  .deleted-tag-icon {
+    margin-left: 4px;
   }
 }
 
