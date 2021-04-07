@@ -351,8 +351,14 @@ export const initSimperium = (
         return result;
       }
 
-      case 'RESTORE_TAGS': {
-        action.tags.forEach((tagHash) => queueTagUpdate(tagHash));
+      case 'RESTORE_NOTE_REVISION': {
+        action.note.tags.map(t).forEach((tagHash) => {
+          if (!prevState.data.tags.has(tagHash)) {
+            queueTagUpdate(tagHash, 10);
+          }
+        });
+
+        queueNoteUpdate(action.noteId, 10);
         return result;
       }
 
@@ -362,7 +368,6 @@ export const initSimperium = (
       case 'PIN_NOTE':
       case 'PUBLISH_NOTE':
       case 'RESTORE_NOTE':
-      case 'RESTORE_NOTE_REVISION':
       case 'TRASH_NOTE':
         queueNoteUpdate(action.noteId, 10);
         return result;

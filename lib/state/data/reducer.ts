@@ -443,9 +443,9 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
       return next;
     }
 
-    case 'RESTORE_TAGS': {
+    case 'RESTORE_NOTE_REVISION': {
       const next = new Map(state);
-      action.tags.forEach((tagHash) => {
+      action.note.tags.map(t).forEach((tagHash) => {
         if (!next.has(tagHash)) {
           next.set(tagHash, { name: tagNameOf(tagHash) });
         }
