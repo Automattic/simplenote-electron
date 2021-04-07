@@ -61,13 +61,11 @@ export const numberOfNonEmailTags: S.Selector<number> = ({ data }) =>
   [...data.tags.values()].filter((tag) => !isEmailTag(tag.name)).length;
 
 export const noteTags: S.Selector<T.Tag[]> = ({ data }, note: T.Note) => {
-  return note.tags
-    .filter((tagName) => !isEmailTag(tagName))
-    .map(
-      (tagName) =>
-        data.tags.get(tagHashOf(tagName)) ?? {
-          name: tagName,
-          deleted: true,
-        }
-    );
+  return note.tags.map(
+    (tagName) =>
+      data.tags.get(tagHashOf(tagName)) ?? {
+        name: tagName,
+        deleted: true,
+      }
+  );
 };
