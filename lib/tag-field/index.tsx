@@ -26,7 +26,7 @@ type OwnState = {
 };
 
 type StateProps = {
-  tags: Map<T.TagHash, T.Tag>;
+  tags: T.Tag[];
   keyboardShortcuts: boolean;
   noteId: T.EntityId | null;
   note: T.Note | undefined;
@@ -231,7 +231,7 @@ export class TagField extends Component<Props, OwnState> {
   };
 
   render() {
-    const { note, tags } = this.props;
+    const { tags } = this.props;
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
     return (
@@ -250,11 +250,11 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex={-1}
             ref={this.storeHiddenTag}
           />
-          {[...tags.entries()].map(([tagHash, tag]) => (
+          {tags.map(({ name }) => (
             <TagChip
-              key={tagHash}
-              tagName={tag.name}
-              selected={tag.name === selectedTag}
+              key={name}
+              tagName={name}
+              selected={name === selectedTag}
               onSelect={this.selectTag}
             />
           ))}
@@ -286,7 +286,7 @@ export class TagField extends Component<Props, OwnState> {
 const mapStateToProps: S.MapState<StateProps> = (state) => {
   const noteId = state.ui.openedNote;
   const note = noteId ? state.data.notes.get(noteId) : undefined;
-  const tags = noteId ? noteTags(state, note) : new Map<T.TagHash, T.Tag>();
+  const tags = noteId ? noteTags(state, note) : [];
 
   return {
     tags,

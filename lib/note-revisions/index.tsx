@@ -14,7 +14,7 @@ type OwnProps = {
 };
 
 type StateProps = {
-  tags: Map<T.TagHash, T.Tag>;
+  tags: T.Tag[];
   noteId: T.EntityId | null;
   note: T.Note | null;
 };
@@ -33,12 +33,12 @@ export class NoteRevisions extends Component<Props> {
       <div aria-hidden={ariaHidden} className="note-revisions">
         <NotePreview noteId={noteId} note={note} />
         <div className="tags">
-          {[...tags.entries()].map(([tagHash, tag]) => (
+          {tags.map(({ name, deleted }) => (
             <TagChip
-              key={tagHash}
-              tagName={tag.name}
+              key={name}
+              tagName={name}
               interactive={false}
-              deleted={tag.deleted}
+              deleted={deleted}
             />
           ))}
         </div>
