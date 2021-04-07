@@ -82,22 +82,12 @@ export const middleware: S.Middleware = (store) => (
         .get(action.noteId)
         ?.get(action.version);
 
-      const result = revision
+      return revision
         ? next({
             ...action,
             note: revision,
           })
         : next(action);
-
-      // Restore deleted tags of current revision
-      const tagsToRestore = (revision?.tags ?? [])
-        .map(tagHashOf)
-        .filter((tagHash) => !state.data.tags.has(tagHash));
-      if (tagsToRestore.length > 0) {
-        store.dispatch({ type: 'RESTORE_TAGS', tags: tagsToRestore });
-      }
-
-      return result;
     }
 
     case 'RESTORE_OPEN_NOTE':
