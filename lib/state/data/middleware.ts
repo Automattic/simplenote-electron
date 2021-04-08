@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 
+import { isEmailTag } from '../../utils/is-email-tag';
 import { tagHashOf } from '../../utils/tag-hash';
 import exportZipArchive from '../../utils/export';
 import { withTag } from '../../utils/tag-hash';
@@ -82,12 +83,28 @@ export const middleware: S.Middleware = (store) => (
         .get(action.noteId)
         ?.get(action.version);
 
-      return revision
-        ? next({
-            ...action,
-            note: revision,
-          })
-        : next(action);
+      if (!revision) {
+        return;
+      }
+
+      const note = state.data.notes.get(action.noteId);
+      const noteEmailTags =
+        note?.tags.filter((tagName) => isEmailTag(tagName)) ?? [];
+
+      const revisionCanonicalTags = revision.tags.filter((tagName) => {
+        const tagHash = tagHashOf(tagName);
+        const hasTag = state.data.tags.has(tagHash);
+        return !isEmailTag(tagName) && (hasTag || action.includeDeletedTags);
+      });
+
+      return next({
+        type: 'APPLY_NOTE_REVISION',
+        noteId: action.noteId,
+        note: {
+          ...revision,
+          tags: [...noteEmailTags, ...revisionCanonicalTags],
+        },
+      });
     }
 
     case 'RESTORE_OPEN_NOTE':

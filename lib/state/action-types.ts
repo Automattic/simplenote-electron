@@ -219,7 +219,18 @@ export type ReorderTag = Action<
 export type RestoreNote = Action<'RESTORE_NOTE', { noteId: T.EntityId }>;
 export type RestoreNoteRevision = Action<
   'RESTORE_NOTE_REVISION',
-  { noteId: T.EntityId; version: number; note: T.Note }
+  {
+    noteId: T.EntityId;
+    version: number;
+    includeDeletedTags: boolean;
+  }
+>;
+export type ApplyNoteRevision = Action<
+  'APPLY_NOTE_REVISION',
+  {
+    noteId: T.EntityId;
+    note: T.Note;
+  }
 >;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
@@ -338,6 +349,7 @@ export type ActionType =
   | AcknowledgePendingChange
   | AddCollaborator
   | AddNoteTag
+  | ApplyNoteRevision
   | ChangeConnectionStatus
   | CloseNote
   | CloseNoteActions
