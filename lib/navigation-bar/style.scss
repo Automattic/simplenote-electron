@@ -13,7 +13,7 @@
 }
 
 .is-macos .navigation-bar {
-  padding-top: 70px;
+  padding-top: $toolbar-height + 26px;
 }
 
 .navigation-bar__folders {

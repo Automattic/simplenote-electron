@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'focus-visible/dist/focus-visible.js';
 import NoteInfo from './note-info';
+import NoteActions from './note-actions';
 import NavigationBar from './navigation-bar';
 import AppLayout from './app-layout';
 import DevBadge from './components/dev-badge';
@@ -38,6 +39,7 @@ type StateProps = {
   showAlternateLoginPrompt: boolean;
   showEmailVerification: boolean;
   showNavigation: boolean;
+  showNoteActions: boolean;
   showNoteInfo: boolean;
   showRevisions: boolean;
   theme: 'light' | 'dark';
@@ -182,6 +184,7 @@ class AppComponent extends Component<Props> {
       showAlternateLoginPrompt,
       showEmailVerification,
       showNavigation,
+      showNoteActions,
       showNoteInfo,
       showRevisions,
       theme,
@@ -193,7 +196,6 @@ class AppComponent extends Component<Props> {
     });
 
     const mainClasses = classNames('simplenote-app', {
-      'note-info-open': showNoteInfo,
       'navigation-open': showNavigation,
       'is-electron': isElectron,
       'is-macos': isElectron && isMac,
@@ -212,6 +214,7 @@ class AppComponent extends Component<Props> {
           {showNavigation && <NavigationBar />}
           <AppLayout />
           {showNoteInfo && <NoteInfo />}
+          {showNoteActions && <NoteActions />}
         </div>
         <DialogRenderer appProps={this.props} />
       </div>
@@ -228,6 +231,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   showAlternateLoginPrompt: state.ui.showAlternateLoginPrompt,
   showEmailVerification: selectors.shouldShowEmailVerification(state),
   showNavigation: state.ui.showNavigation,
+  showNoteActions: state.ui.showNoteActions,
   showNoteInfo: state.ui.showNoteInfo,
   showRevisions: state.ui.showRevisions,
   theme: selectors.getTheme(state),

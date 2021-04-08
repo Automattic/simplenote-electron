@@ -9,6 +9,10 @@ export const closeNote: A.ActionCreator<A.CloseNote> = () => ({
   type: 'CLOSE_NOTE',
 });
 
+export const closeNoteActions: A.ActionCreator<A.CloseNoteActions> = () => ({
+  type: 'NOTE_ACTIONS_CLOSE',
+});
+
 export const closeWindow: A.ActionCreator<A.CloseWindow> = () => ({
   type: 'CLOSE_WINDOW',
 });
@@ -145,6 +149,10 @@ export const toggleNavigation: A.ActionCreator<A.ToggleNavigation> = () => ({
 
 export const toggleNoteList: A.ActionCreator<A.ToggleNoteList> = () => ({
   type: 'NOTE_LIST_TOGGLE',
+});
+
+export const toggleNoteActions: A.ActionCreator<A.ToggleNoteActions> = () => ({
+  type: 'NOTE_ACTIONS_TOGGLE',
 });
 
 export const toggleNoteInfo: A.ActionCreator<A.ToggleNoteInfo> = () => ({

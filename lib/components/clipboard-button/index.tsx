@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import Clipboard from 'clipboard';
 
-function ClipboardButton({ text }) {
+type Props = {
+  container?: React.RefObject<HTMLElement>;
+  linkText: string;
+  text: string;
+};
+
+function ClipboardButton({ container, linkText, text }: Props) {
   const buttonRef = useRef();
   const textCallback = useRef();
   const successCallback = useRef();
@@ -30,6 +35,7 @@ function ClipboardButton({ text }) {
   // create the `Clipboard` object on mount and destroy on unmount
   useEffect(() => {
     const clipboard = new Clipboard(buttonRef.current, {
+      container: container?.current || undefined,
       text: () => textCallback.current(),
     });
     clipboard.on('success', () => successCallback.current());
@@ -39,14 +45,9 @@ function ClipboardButton({ text }) {
 
   return (
     <button ref={buttonRef} type="button" className="button button-borderless">
-      {isCopied ? 'Copied!' : 'Copy'}
+      {isCopied ? 'Copied!' : linkText}
     </button>
   );
 }
-
-ClipboardButton.propTypes = {
-  disbaled: PropTypes.bool,
-  text: PropTypes.string,
-};
 
 export default ClipboardButton;

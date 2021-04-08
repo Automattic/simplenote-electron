@@ -4,15 +4,13 @@ import { CmdOrCtrl } from '../utils/platform';
 
 import BackIcon from '../icons/back';
 import ChecklistIcon from '../icons/check-list';
+import EllipsisOutlineIcon from '../icons/ellipsis-outline';
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
 import NewNoteIcon from '../icons/new-note';
 import PreviewIcon from '../icons/preview';
 import PreviewStopIcon from '../icons/preview-stop';
-import RevisionsIcon from '../icons/revisions';
-import ShareIcon from '../icons/share';
 import SidebarIcon from '../icons/sidebar';
-import TrashIcon from '../icons/trash';
 import actions from '../state/actions';
 
 import * as S from '../state';
@@ -20,7 +18,6 @@ import * as T from '../types';
 
 type StateProps = {
   editMode: boolean;
-  hasRevisions: boolean;
   isOffline: boolean;
   markdownEnabled: boolean;
   note: T.Note | null;
@@ -30,13 +27,11 @@ type DispatchProps = {
   deleteNoteForever: () => any;
   newNote: () => any;
   restoreNote: () => any;
-  shareNote: () => any;
   toggleEditMode: () => any;
   toggleFocusMode: () => any;
+  toggleNoteActions: () => any;
   toggleNoteInfo: () => any;
   toggleNoteList: () => any;
-  toggleRevisions: () => any;
-  trashNote: () => any;
 };
 
 type Props = DispatchProps & StateProps & React.HTMLProps<HTMLDivElement>;
@@ -60,10 +55,10 @@ export class NoteToolbar extends Component<Props> {
     const {
       editMode,
       newNote,
-      hasRevisions,
       isOffline,
       markdownEnabled,
       note,
+      toggleNoteActions,
       toggleNoteInfo,
     } = this.props;
 
@@ -96,13 +91,6 @@ export class NoteToolbar extends Component<Props> {
         </div>
         {isOffline && <div className="offline-badge">OFFLINE</div>}
         <div className="note-toolbar__column-right">
-          <div className="note-toolbar__button">
-            <IconButton
-              icon={<ChecklistIcon />}
-              onClick={() => window.dispatchEvent(new Event('toggleChecklist'))}
-              title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
-            />
-          </div>
           {markdownEnabled && (
             <div className="note-toolbar__button">
               <IconButton
@@ -114,24 +102,9 @@ export class NoteToolbar extends Component<Props> {
           )}
           <div className="note-toolbar__button">
             <IconButton
-              disabled={!hasRevisions}
-              icon={<RevisionsIcon />}
-              onClick={this.props.toggleRevisions}
-              title={hasRevisions ? 'History' : 'History (unavailable)'}
-            />
-          </div>
-          <div className="note-toolbar__button">
-            <IconButton
-              icon={<ShareIcon />}
-              onClick={this.props.shareNote}
-              title="Share"
-            />
-          </div>
-          <div className="note-toolbar__button">
-            <IconButton
-              icon={<TrashIcon />}
-              onClick={this.props.trashNote}
-              title="Trash"
+              icon={<ChecklistIcon />}
+              onClick={() => window.dispatchEvent(new Event('toggleChecklist'))}
+              title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
             />
           </div>
           <div className="note-toolbar__button">
@@ -139,6 +112,13 @@ export class NoteToolbar extends Component<Props> {
               icon={<InfoIcon />}
               onClick={toggleNoteInfo}
               title="Info"
+            />
+          </div>
+          <div className="note-toolbar__button">
+            <IconButton
+              icon={<EllipsisOutlineIcon />}
+              onClick={toggleNoteActions}
+              title="Actions"
             />
           </div>
         </div>
@@ -193,7 +173,6 @@ const mapStateToProps: S.MapState<StateProps> = ({
 
   return {
     editMode,
-    hasRevisions: !!data.noteRevisions.get(openedNote)?.size,
     isOffline: connectionStatus === 'offline',
     markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
@@ -204,13 +183,11 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
   newNote: actions.ui.createNote,
   restoreNote: actions.ui.restoreOpenNote,
-  shareNote: () => actions.ui.showDialog('SHARE'),
   toggleEditMode: actions.ui.toggleEditMode,
   toggleFocusMode: actions.settings.toggleFocusMode,
+  toggleNoteActions: actions.ui.toggleNoteActions,
   toggleNoteInfo: actions.ui.toggleNoteInfo,
   toggleNoteList: actions.ui.toggleNoteList,
-  toggleRevisions: actions.ui.toggleRevisions,
-  trashNote: actions.ui.trashOpenNote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteToolbar);
