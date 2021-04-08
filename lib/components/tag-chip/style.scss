@@ -23,7 +23,7 @@
   }
 
   &.deleted {
-    opacity: 0.75;
+    background: $studio-red-5;
   }
 
   .remove-tag-icon {
@@ -47,16 +47,16 @@
       top: 1px;
     }
   }
-
-  .deleted-tag-icon {
-    margin-left: 4px;
-  }
 }
 
 .theme-dark {
   .tag-chip {
     background: $studio-gray-70;
     color: $studio-white;
+
+    &.deleted {
+      background: $studio-red-70;
+    }
   }
 
   .remove-tag-icon {
