@@ -130,6 +130,10 @@ export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({
   type: 'REVISIONS_TOGGLE',
 });
 
+export const toggleDeletedTags: A.ActionCreator<A.ToggleDeletedTags> = () => ({
+  type: 'DELETED_TAGS_TOGGLE',
+});
+
 export const search: A.ActionCreator<A.Search> = (searchQuery: string) => ({
   type: 'SEARCH',
   searchQuery,
