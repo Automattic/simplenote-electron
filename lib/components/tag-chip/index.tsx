@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import SmallCrossIcon from '../../icons/cross-small';
-import RevisionsIconSmall from '../../icons/revisions-small';
 import classNames from 'classnames';
 
 import type * as T from '../../types';
@@ -26,11 +25,6 @@ const TagChip: FunctionComponent<OwnProps> = ({
     onClick={onSelect}
   >
     {tagName}
-    {deleted && (
-      <span className="deleted-tag-icon">
-        <RevisionsIconSmall />
-      </span>
-    )}
     {interactive && (
       <span className="remove-tag-icon">
         <SmallCrossIcon />
