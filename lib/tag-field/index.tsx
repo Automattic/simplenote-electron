@@ -289,7 +289,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   const tags = noteId ? noteTags(state, note) : [];
 
   return {
-    tags: tags.filter(({ name, deleted }) => !isEmailTag(name) && !deleted),
+    tags: tags.filter(({ deleted }) => !deleted),
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteId,
     note,
