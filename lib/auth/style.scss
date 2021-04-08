@@ -222,5 +222,10 @@
       color: $studio-gray-50;
       border-color: $studio-gray-70;
     }
+
+    &:read-only {
+      border-color: $studio-gray-60;
+      background-color: rgba(255, 255, 255, 0.07);
+    }
   }
 }
