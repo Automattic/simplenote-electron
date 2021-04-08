@@ -170,12 +170,10 @@ export const NotePreview: FunctionComponent<Props> = ({
       <div className="note-detail note-detail-preview">
         <div
           ref={previewNode}
-          className="note-detail-markdown theme-color-bg theme-color-fg"
+          className="note-detail-markdown theme-color-bg theme-color-fg note-preview"
           data-markdown-root
         >
-          <div style={{ whiteSpace: 'pre' }}>
-            {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
-          </div>
+          {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
         </div>
       </div>
     </div>
