@@ -50,9 +50,13 @@ export class NoteRevisions extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const noteId = props.noteId ?? state.ui.openedNote;
   const note = props.note ?? state.data.notes.get(noteId);
+  const showDeletedTags = state.ui.showDeletedTags;
+  const tags = noteTags(state, note).filter(
+    (tag) => showDeletedTags || !tag.deleted
+  );
 
   return {
-    tags: noteTags(state, note),
+    tags,
     noteId,
     note,
   };

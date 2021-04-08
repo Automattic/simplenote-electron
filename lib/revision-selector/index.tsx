@@ -4,6 +4,8 @@ import FocusTrap from 'focus-trap-react';
 import format from 'date-fns/format';
 import classNames from 'classnames';
 import Slider from '../components/slider';
+import ToggleControl from '../controls/toggle';
+import actions from '../state/actions';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -21,12 +23,14 @@ type StateProps = {
   note: T.Note | null;
   openedRevision: number | null;
   revisions: Map<number, T.Note> | null;
+  showDeletedTags: boolean;
 };
 
 type DispatchProps = {
   openRevision: (noteId: T.EntityId, version: number) => any;
   cancelRevision: () => any;
   restoreRevision: (noteId: T.EntityId, version: number) => any;
+  toggleDeletedTags: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -53,7 +57,14 @@ export class RevisionSelector extends Component<Props> {
   };
 
   render() {
-    const { isViewingRevisions, note, openedRevision, revisions } = this.props;
+    const {
+      isViewingRevisions,
+      note,
+      openedRevision,
+      revisions,
+      showDeletedTags,
+      toggleDeletedTags,
+    } = this.props;
 
     if (!isViewingRevisions) {
       return null;
@@ -130,22 +141,37 @@ export class RevisionSelector extends Component<Props> {
                 onChange={this.onSelectRevision}
               />
             </div>
-            <div className="revision-buttons">
-              <button
-                className="button button-secondary button-compact"
-                onClick={this.onCancelRevision}
-              >
-                Cancel
-              </button>
-              <button
-                aria-label={`Restore revision from ${revisionDate}`}
-                disabled={isNewest}
-                className="button button-primary button-compact"
-                onClick={this.onAcceptRevision}
-              >
-                Restore
-              </button>
-            </div>
+            <section className="revision-actions">
+              <div className="revision-deleted-tags-toggle">
+                <ToggleControl
+                  id="revision-deleted-tags-checkbox"
+                  checked={showDeletedTags}
+                  onChange={toggleDeletedTags}
+                />
+                <label
+                  htmlFor="revision-deleted-tags-checkbox"
+                  className="revision-deleted-tags-toggle-label"
+                >
+                  Restore deleted tags
+                </label>
+              </div>
+              <div className="revision-buttons">
+                <button
+                  className="button button-secondary button-compact"
+                  onClick={this.onCancelRevision}
+                >
+                  Cancel
+                </button>
+                <button
+                  aria-label={`Restore revision from ${revisionDate}`}
+                  disabled={isNewest}
+                  className="button button-primary button-compact"
+                  onClick={this.onAcceptRevision}
+                >
+                  Restore
+                </button>
+              </div>
+            </section>
           </div>
         </div>
       </FocusTrap>
@@ -162,6 +188,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
       ? state.ui.openedRevision?.[1] ?? null
       : null,
   revisions: state.data.noteRevisions.get(state.ui.openedNote) ?? null,
+  showDeletedTags: state.ui.showDeletedTags,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
@@ -178,6 +205,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     noteId,
     version,
   }),
+  toggleDeletedTags: actions.ui.toggleDeletedTags,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RevisionSelector);
