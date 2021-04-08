@@ -351,7 +351,7 @@ export const initSimperium = (
         return result;
       }
 
-      case 'RESTORE_NOTE_REVISION': {
+      case 'APPLY_NOTE_REVISION': {
         action.note.tags.map(t).forEach((tagHash) => {
           if (!prevState.data.tags.has(tagHash)) {
             queueTagUpdate(tagHash, 10);

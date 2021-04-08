@@ -29,7 +29,11 @@ type StateProps = {
 type DispatchProps = {
   openRevision: (noteId: T.EntityId, version: number) => any;
   cancelRevision: () => any;
-  restoreRevision: (noteId: T.EntityId, version: number) => any;
+  restoreRevision: (
+    noteId: T.EntityId,
+    version: number,
+    includeDeletedTags: boolean
+  ) => any;
   toggleDeletedTags: () => any;
 };
 
@@ -37,8 +41,13 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props> {
   onAcceptRevision = () => {
-    const { noteId, openedRevision, restoreRevision } = this.props;
-    restoreRevision(noteId, openedRevision);
+    const {
+      noteId,
+      openedRevision,
+      restoreRevision,
+      showDeletedTags,
+    } = this.props;
+    restoreRevision(noteId, openedRevision, showDeletedTags);
   };
 
   onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
@@ -200,11 +209,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   cancelRevision: () => ({
     type: 'CLOSE_REVISION',
   }),
-  restoreRevision: (noteId, version) => ({
-    type: 'RESTORE_NOTE_REVISION',
-    noteId,
-    version,
-  }),
+  restoreRevision: actions.data.restoreNoteRevision,
   toggleDeletedTags: actions.ui.toggleDeletedTags,
 };
 

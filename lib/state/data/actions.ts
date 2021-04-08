@@ -76,3 +76,14 @@ export const renameTag: A.ActionCreator<A.RenameTag> = (
 export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });
+
+export const restoreNoteRevision: A.ActionCreator<A.RestoreNoteRevision> = (
+  noteId: T.EntityId,
+  version: number,
+  includeDeletedTags: boolean
+) => ({
+  type: 'RESTORE_NOTE_REVISION',
+  noteId,
+  version,
+  includeDeletedTags,
+});
