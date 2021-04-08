@@ -1,7 +1,7 @@
 import * as S from './';
 import * as T from '../types';
 import isEmailTag from '../utils/is-email-tag';
-import { tagHashOf, tagNameOf } from '../utils/tag-hash';
+import { tagHashOf } from '../utils/tag-hash';
 
 /**
  * "Narrow" views hide the note editor
