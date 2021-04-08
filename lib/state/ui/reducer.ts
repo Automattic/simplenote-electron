@@ -108,6 +108,8 @@ const collection: A.Reducer<T.Collection> = (
     case 'CREATE_NOTE_WITH_ID': {
       if (state.type === 'trash') {
         return { type: 'all' };
+      } else if (state.type === 'tag') {
+        return { type: 'tag', tagName: state.tagName };
       }
       return state;
     }
