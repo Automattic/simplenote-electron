@@ -74,6 +74,11 @@
     color: $studio-gray-20;
   }
 
+  input:read-only {
+    border-color: $studio-gray-10;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
   .spinner {
     vertical-align: middle;
   }
