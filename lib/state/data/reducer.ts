@@ -108,14 +108,8 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
 
     case 'NOTE_BUCKET_UPDATE':
     case 'REMOTE_NOTE_UPDATE':
+    case 'APPLY_NOTE_REVISION':
       return new Map(state).set(action.noteId, action.note);
-
-    case 'RESTORE_NOTE_REVISION':
-      // don't update the modified stamp here. we want to borrow the original
-      // to make it clearer that this copy of the note came from history
-      return action.note
-        ? new Map(state).set(action.noteId, action.note)
-        : state;
 
     case 'IMPORT_NOTE_WITH_ID': {
       return new Map(state).set(action.noteId, action.note);
@@ -443,7 +437,7 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
       return next;
     }
 
-    case 'RESTORE_NOTE_REVISION': {
+    case 'APPLY_NOTE_REVISION': {
       const next = new Map(state);
       action.note.tags.forEach((tagName) => {
         const tagHash = t(tagName);
