@@ -50,6 +50,20 @@ export type State = {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+const actionGeneratorMiddleware: Middleware = (store) => (
+  next: (action: A.ActionType) => A.ActionType
+) => (action: A.ActionType | ReturnType<ActionGenerator>) => {
+  const state = store.getState();
+  if (typeof action === 'function') {
+    const result = action(state);
+    if (!result || !result.type) {
+      return;
+    }
+    return next(result);
+  }
+  return next(action);
+};
+
 export const makeStore = (
   accountName: string | null,
   ...middlewares: Middleware[]
@@ -78,6 +92,7 @@ export const makeStore = (
             }),
           }),
           applyMiddleware(
+            actionGeneratorMiddleware,
             dataMiddleware,
             analyticsMiddleware,
             browserMiddleware,
@@ -115,7 +130,7 @@ export type MapDispatch<
   | {
       [P in keyof DispatchProps]: (
         ...args: Parameters<DispatchProps[P]>
-      ) => A.ActionType;
+      ) => A.ActionType | ReturnType<ActionGenerator>;
     };
 
 export type Dispatch = ReduxDispatch<A.ActionType>;
@@ -126,3 +141,7 @@ export type Middleware<Extension = {}> = ReduxMiddleware<
 >;
 
 export type Selector<T> = (state: State, ...args: any[]) => T;
+
+export type ActionGenerator = (
+  ...args: any[]
+) => (state: State) => A.ActionType | void;

@@ -1,5 +1,8 @@
 import * as A from '../action-types';
 import * as T from '../../types';
+import * as S from '..';
+import isEmailTag from '../../utils/is-email-tag';
+import { tagHashOf } from '../../utils/tag-hash';
 
 export const addCollaborator: A.ActionCreator<A.AddCollaborator> = (
   noteId: T.EntityId,
@@ -77,13 +80,33 @@ export const toggleAnalytics: A.ActionCreator<A.ToggleAnalytics> = () => ({
   type: 'TOGGLE_ANALYTICS',
 });
 
-export const restoreNoteRevision: A.ActionCreator<A.RestoreNoteRevision> = (
+export const restoreNoteRevision: S.ActionGenerator = (
   noteId: T.EntityId,
   version: number,
   includeDeletedTags: boolean
-) => ({
-  type: 'RESTORE_NOTE_REVISION',
-  noteId,
-  version,
-  includeDeletedTags,
-});
+) => (state) => {
+  const revision = state.data.noteRevisions.get(noteId)?.get(version);
+
+  if (!revision) {
+    return;
+  }
+
+  const note = state.data.notes.get(noteId);
+  const noteEmailTags =
+    note?.tags.filter((tagName) => isEmailTag(tagName)) ?? [];
+
+  const revisionCanonicalTags = revision.tags.filter((tagName) => {
+    const tagHash = tagHashOf(tagName);
+    const hasTag = state.data.tags.has(tagHash);
+    return !isEmailTag(tagName) && (hasTag || includeDeletedTags);
+  });
+
+  return {
+    type: 'RESTORE_NOTE_REVISION',
+    noteId,
+    note: {
+      ...revision,
+      tags: [...noteEmailTags, ...revisionCanonicalTags],
+    },
+  };
+};
