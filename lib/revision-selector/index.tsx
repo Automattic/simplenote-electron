@@ -4,7 +4,7 @@ import FocusTrap from 'focus-trap-react';
 import format from 'date-fns/format';
 import classNames from 'classnames';
 import Slider from '../components/slider';
-import ToggleControl from '../controls/toggle';
+import CheckboxControl from '../controls/checkbox';
 import actions from '../state/actions';
 
 import * as S from '../state';
@@ -151,19 +151,20 @@ export class RevisionSelector extends Component<Props> {
               />
             </div>
             <section className="revision-actions">
-              <div className="revision-deleted-tags-toggle">
-                <ToggleControl
+              <label
+                className="revision-deleted-tags-label"
+                htmlFor="revision-deleted-tags-checkbox"
+              >
+                <CheckboxControl
                   id="revision-deleted-tags-checkbox"
                   checked={showDeletedTags}
+                  isStandard
                   onChange={toggleDeletedTags}
                 />
-                <label
-                  htmlFor="revision-deleted-tags-checkbox"
-                  className="revision-deleted-tags-toggle-label"
-                >
+                <span className="revision-deleted-tags-text">
                   Restore deleted tags
-                </label>
-              </div>
+                </span>
+              </label>
               <div className="revision-buttons">
                 <button
                   className="button button-secondary button-compact"

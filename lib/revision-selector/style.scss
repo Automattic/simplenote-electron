@@ -24,13 +24,13 @@
   .revision-actions {
     display: flex;
 
-    .revision-deleted-tags-toggle {
+    .revision-deleted-tags-label {
       display: flex;
       flex: 1 1 auto;
       align-items: center;
     }
 
-    .revision-deleted-tags-toggle-label {
+    .revision-deleted-tags-text {
       margin-left: 8px;
     }
 
