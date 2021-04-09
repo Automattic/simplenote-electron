@@ -69,8 +69,13 @@ const getPreview = (content: string, searchQuery?: string) => {
       );
       const matches = regExp.exec(content);
       if (matches && matches.length > 0) {
-        preview = matches[0];
-
+        // Remove blank lines and note title from the search note preview
+        preview = matches[0]
+          .split('\n')
+          .filter(
+            (line) => line !== '\r' && line !== '' && line !== getTitle(content)
+          )
+          .join('\n');
         // don't return half of a surrogate pair
         return isLowSurrogate(preview.charCodeAt(0))
           ? preview.slice(1)

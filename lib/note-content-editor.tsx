@@ -1129,6 +1129,28 @@ class NoteContentEditor extends Component<Props> {
     this.editor.setSelection(range);
     this.editor.revealLineInCenter(range.startLineNumber);
     this.focusEditor();
+
+    const newDecorations = [];
+    this.matchesInNote.forEach((match) => {
+      let decoration = {};
+      if (match.range === range) {
+        decoration = {
+          range: match.range,
+          options: { inlineClassName: 'selected-search' },
+        };
+      } else {
+        decoration = {
+          range: match.range,
+          options: { inlineClassName: 'search-decoration' },
+        };
+      }
+      newDecorations.push(decoration);
+    });
+
+    this.decorations = this.editor.deltaDecorations(
+      this.decorations,
+      newDecorations
+    );
   };
 
   render() {

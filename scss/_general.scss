@@ -108,16 +108,17 @@ optgroup {
 }
 
 .search-match {
-  background-color: $studio-simplenote-blue-50;
+  background-color: $studio-simplenote-blue-5;
   border-radius: 3px;
   padding-left: 2px;
   padding-right: 2px;
-  color: $studio-white;
 
   &[data-current-match='true'] {
     background-color: $studio-yellow-60;
   }
 }
-.theme-dark .note-list-item-selected .search-match {
-  background-color: $studio-simplenote-blue-20;
+
+.theme-dark .search-match {
+  background-color: rgba($studio-simplenote-blue-50, 0.4);
+  color: $studio-white;
 }
