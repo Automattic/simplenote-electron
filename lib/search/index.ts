@@ -382,7 +382,7 @@ export const middleware: S.Middleware = (store) => {
         return next(action);
       case 'IMPORT_NOTE_WITH_ID':
       case 'REMOTE_NOTE_UPDATE':
-      case 'APPLY_NOTE_REVISION':
+      case 'RESTORE_NOTE_REVISION':
         searchState.notes.set(action.noteId, toSearchNote(action.note ?? {}));
         indexNote(action.noteId);
         queueSearch();

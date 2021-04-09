@@ -225,13 +225,6 @@ export type RestoreNoteRevision = Action<
     includeDeletedTags: boolean;
   }
 >;
-export type ApplyNoteRevision = Action<
-  'APPLY_NOTE_REVISION',
-  {
-    noteId: T.EntityId;
-    note: T.Note;
-  }
->;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
   { note: T.NoteEntity; tagName: T.SystemTag; shouldHaveTag: boolean }
@@ -349,7 +342,6 @@ export type ActionType =
   | AcknowledgePendingChange
   | AddCollaborator
   | AddNoteTag
-  | ApplyNoteRevision
   | ChangeConnectionStatus
   | CloseNote
   | CloseNoteActions

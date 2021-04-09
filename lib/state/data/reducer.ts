@@ -6,6 +6,7 @@ import {
   withTag,
   withoutTag,
 } from '../../utils/tag-hash';
+import isEmailTag from '../../utils/is-email-tag';
 
 import type * as A from '../action-types';
 import type * as T from '../../types';
@@ -108,7 +109,6 @@ export const notes: A.Reducer<Map<T.EntityId, T.Note>> = (
 
     case 'NOTE_BUCKET_UPDATE':
     case 'REMOTE_NOTE_UPDATE':
-    case 'APPLY_NOTE_REVISION':
       return new Map(state).set(action.noteId, action.note);
 
     case 'IMPORT_NOTE_WITH_ID': {
@@ -437,18 +437,6 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
       return next;
     }
 
-    case 'APPLY_NOTE_REVISION': {
-      const next = new Map(state);
-      action.note.tags.forEach((tagName) => {
-        const tagHash = t(tagName);
-        if (!next.has(tagHash)) {
-          next.set(tagHash, { name: tagName });
-        }
-      });
-
-      return next;
-    }
-
     case 'TRASH_TAG': {
       const next = new Map(state);
       return next.delete(t(action.tagName)) ? next : state;
@@ -544,7 +532,9 @@ export const noteTags: A.Reducer<Map<T.TagHash, Set<T.EntityId>>> = (
   }
 };
 
-export default combineReducers({
+export type DataState = ReturnType<typeof combinedReducer>;
+
+const combinedReducer = combineReducers({
   accountVerification,
   analyticsAllowed,
   notes,
@@ -553,3 +543,56 @@ export default combineReducers({
   preferences,
   tags,
 });
+
+const crossSliceReducer = (
+  state: DataState,
+  action: A.ActionType
+): DataState => {
+  switch (action.type) {
+    case 'RESTORE_NOTE_REVISION': {
+      const revision = state.noteRevisions
+        .get(action.noteId)
+        ?.get(action.version);
+
+      if (!revision) {
+        return state;
+      }
+
+      const note = state.notes.get(action.noteId);
+      const noteEmailTags =
+        note?.tags.filter((tagName) => isEmailTag(tagName)) ?? [];
+
+      const revisionCanonicalTags = revision.tags.filter((tagName) => {
+        const tagHash = t(tagName);
+        const hasTag = state.tags.has(tagHash);
+        return !isEmailTag(tagName) && (hasTag || action.includeDeletedTags);
+      });
+
+      const notesMap = new Map(state.notes).set(action.noteId, {
+        ...revision,
+        tags: [...noteEmailTags, ...revisionCanonicalTags],
+      });
+
+      // Restore potential deleted tags
+      const tagsMap = new Map(state.tags);
+      revisionCanonicalTags.forEach((tagName) => {
+        const tagHash = t(tagName);
+        if (!tagsMap.has(tagHash)) {
+          tagsMap.set(tagHash, { name: tagName });
+        }
+      });
+
+      return { ...state, notes: notesMap, tags: tagsMap };
+    }
+    default:
+      return state;
+  }
+};
+
+const dataReducer: A.Reducer<DataState> = (state, action) => {
+  const intermediateState = combinedReducer(state, action);
+  const finalState = crossSliceReducer(intermediateState, action);
+  return finalState;
+};
+
+export default dataReducer;

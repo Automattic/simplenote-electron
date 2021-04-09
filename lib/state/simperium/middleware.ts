@@ -18,6 +18,7 @@ import { getAccountName } from './functions/username-monitor';
 import { isElectron } from '../../utils/platform';
 import { tagHashOf as t } from '../../utils/tag-hash';
 import { stopSyncing } from '../persistence';
+import isEmailTag from '../../utils/is-email-tag';
 
 import type * as A from '../action-types';
 import type * as S from '../';
@@ -351,9 +352,19 @@ export const initSimperium = (
         return result;
       }
 
-      case 'APPLY_NOTE_REVISION': {
-        action.note.tags.map(t).forEach((tagHash) => {
-          if (!prevState.data.tags.has(tagHash)) {
+      case 'RESTORE_NOTE_REVISION': {
+        const revision = nextState.data.noteRevisions
+          .get(action.noteId)
+          ?.get(action.version);
+
+        if (!revision) {
+          return result;
+        }
+
+        revision.tags.forEach((tagName) => {
+          const tagHash = t(tagName);
+          const hasTag = prevState.data.tags.has(tagHash);
+          if (!isEmailTag(tagName) && action.includeDeletedTags && !hasTag) {
             queueTagUpdate(tagHash, 10);
           }
         });

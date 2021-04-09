@@ -78,35 +78,6 @@ export const middleware: S.Middleware = (store) => (
         note: action.note,
       });
 
-    case 'RESTORE_NOTE_REVISION': {
-      const revision = state.data.noteRevisions
-        .get(action.noteId)
-        ?.get(action.version);
-
-      if (!revision) {
-        return;
-      }
-
-      const note = state.data.notes.get(action.noteId);
-      const noteEmailTags =
-        note?.tags.filter((tagName) => isEmailTag(tagName)) ?? [];
-
-      const revisionCanonicalTags = revision.tags.filter((tagName) => {
-        const tagHash = tagHashOf(tagName);
-        const hasTag = state.data.tags.has(tagHash);
-        return !isEmailTag(tagName) && (hasTag || action.includeDeletedTags);
-      });
-
-      return next({
-        type: 'APPLY_NOTE_REVISION',
-        noteId: action.noteId,
-        note: {
-          ...revision,
-          tags: [...noteEmailTags, ...revisionCanonicalTags],
-        },
-      });
-    }
-
     case 'RESTORE_OPEN_NOTE':
       if (!state.ui.openedNote) {
         return;
