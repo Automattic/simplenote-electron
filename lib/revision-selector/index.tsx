@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Slider from '../components/slider';
 import CheckboxControl from '../controls/checkbox';
 import actions from '../state/actions';
+import { getRevision } from '../state/selectors';
 
 import * as S from '../state';
 import * as T from '../types';
@@ -22,6 +23,7 @@ type StateProps = {
   noteId: T.EntityId;
   note: T.Note | null;
   openedRevision: number | null;
+  revision: T.Note | null;
   revisions: Map<number, T.Note> | null;
   showDeletedTags: boolean;
 };
@@ -29,11 +31,7 @@ type StateProps = {
 type DispatchProps = {
   openRevision: (noteId: T.EntityId, version: number) => any;
   cancelRevision: () => any;
-  restoreRevision: (
-    noteId: T.EntityId,
-    version: number,
-    includeDeletedTags: boolean
-  ) => any;
+  restoreRevision: (noteId: T.EntityId, note: T.Note) => any;
   toggleDeletedTags: () => any;
 };
 
@@ -41,13 +39,13 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props> {
   onAcceptRevision = () => {
-    const {
-      noteId,
-      openedRevision,
-      restoreRevision,
-      showDeletedTags,
-    } = this.props;
-    restoreRevision(noteId, openedRevision, showDeletedTags);
+    const { noteId, revision, restoreRevision } = this.props;
+
+    if (!revision) {
+      return;
+    }
+
+    restoreRevision(noteId, revision);
   };
 
   onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
@@ -189,17 +187,27 @@ export class RevisionSelector extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  isViewingRevisions: state.ui.showRevisions,
-  noteId: state.ui.openedNote,
-  note: state.data.notes.get(state.ui.openedNote) ?? null,
-  openedRevision:
+const mapStateToProps: S.MapState<StateProps> = (state) => {
+  const noteId = state.ui.openedNote;
+  const openedRevision =
     state.ui.openedRevision?.[0] === state.ui.openedNote
       ? state.ui.openedRevision?.[1] ?? null
-      : null,
-  revisions: state.data.noteRevisions.get(state.ui.openedNote) ?? null,
-  showDeletedTags: state.ui.showDeletedTags,
-});
+      : null;
+  const showDeletedTags = state.ui.showDeletedTags;
+
+  return {
+    isViewingRevisions: state.ui.showRevisions,
+    noteId,
+    note: state.data.notes.get(noteId) ?? null,
+    openedRevision,
+    revision:
+      noteId && openedRevision
+        ? getRevision(state, noteId, openedRevision, showDeletedTags)
+        : null,
+    revisions: state.data.noteRevisions.get(noteId) ?? null,
+    showDeletedTags,
+  };
+};
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   openRevision: (noteId, version) => ({
@@ -210,7 +218,11 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   cancelRevision: () => ({
     type: 'CLOSE_REVISION',
   }),
-  restoreRevision: actions.data.restoreNoteRevision,
+  restoreRevision: (noteId, note) => ({
+    type: 'RESTORE_NOTE_REVISION',
+    noteId,
+    note,
+  }),
   toggleDeletedTags: actions.ui.toggleDeletedTags,
 };
 
