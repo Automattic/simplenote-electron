@@ -65,7 +65,8 @@
   }
 
   input:focus {
-    border: 2px solid $studio-simplenote-blue-50;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px $studio-simplenote-blue-50;
     outline: none;
   }
 
@@ -215,8 +216,7 @@
     border-color: $studio-gray-60;
 
     &:focus {
-      border: 2px solid $studio-simplenote-blue-30;
-      outline: none;
+      box-shadow: 0 0 0 2px $studio-simplenote-blue-30;
     }
 
     &:disabled {
