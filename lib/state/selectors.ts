@@ -96,5 +96,6 @@ export const getRevision: S.Selector<T.Note | null> = (
   return {
     ...revision,
     tags: [...noteEmailTags, ...revisionCanonicalTags],
+    systemTags: note.systemTags,
   };
 };
