@@ -71,3 +71,30 @@ export const noteTags: S.Selector<T.Tag[]> = ({ data }, note: T.Note) => {
         }
     );
 };
+
+export const getRevision: S.Selector<T.Note | null> = (
+  state,
+  noteId: T.EntityId,
+  revisionVersion: number,
+  includeDeletedTags: boolean
+) => {
+  const note = state.data.notes.get(noteId);
+  const revisions = state.data.noteRevisions.get(noteId);
+  const revision = revisions?.get(revisionVersion);
+
+  if (!note || !revision) {
+    return null;
+  }
+
+  const noteEmailTags = note.tags.filter((tagName) => isEmailTag(tagName));
+  const revisionCanonicalTags = revision.tags.filter((tagName) => {
+    const tagHash = tagHashOf(tagName);
+    const hasTag = state.data.tags.has(tagHash);
+    return !isEmailTag(tagName) && (hasTag || includeDeletedTags);
+  });
+
+  return {
+    ...revision,
+    tags: [...noteEmailTags, ...revisionCanonicalTags],
+  };
+};

@@ -251,7 +251,7 @@ const openedRevision: A.Reducer<[T.EntityId, number] | null> = (
 ) => {
   switch (action.type) {
     case 'CLOSE_REVISION':
-    case 'APPLY_NOTE_REVISION':
+    case 'RESTORE_NOTE_REVISION':
       return null;
 
     case 'OPEN_REVISION':
@@ -384,7 +384,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
     case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'CREATE_NOTE_WITH_ID':
-    case 'APPLY_NOTE_REVISION':
+    case 'RESTORE_NOTE_REVISION':
       return false;
     default:
       return state;

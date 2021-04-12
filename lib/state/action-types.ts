@@ -221,14 +221,6 @@ export type RestoreNoteRevision = Action<
   'RESTORE_NOTE_REVISION',
   {
     noteId: T.EntityId;
-    version: number;
-    includeDeletedTags: boolean;
-  }
->;
-export type ApplyNoteRevision = Action<
-  'APPLY_NOTE_REVISION',
-  {
-    noteId: T.EntityId;
     note: T.Note;
   }
 >;
@@ -349,7 +341,6 @@ export type ActionType =
   | AcknowledgePendingChange
   | AddCollaborator
   | AddNoteTag
-  | ApplyNoteRevision
   | ChangeConnectionStatus
   | CloseNote
   | CloseNoteActions
