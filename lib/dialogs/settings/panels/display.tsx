@@ -10,12 +10,51 @@ import actions from '../../../state/actions';
 import * as S from '../../../state';
 import * as T from '../../../types';
 
+type SortOption = {
+  label: string;
+  type: T.SortType;
+  isReversed: boolean;
+};
+
+const sortTypes: SortOption[] = [
+  {
+    label: 'Alphabetical: A-Z',
+    type: 'alphabetical',
+    isReversed: false,
+  },
+  {
+    label: 'Alphabetical: Z-A',
+    type: 'alphabetical',
+    isReversed: true,
+  },
+  {
+    label: 'Created: Newest',
+    type: 'creationDate',
+    isReversed: false,
+  },
+  {
+    label: 'Created: Oldest',
+    type: 'creationDate',
+    isReversed: true,
+  },
+  {
+    label: 'Modified: Newest',
+    type: 'modificationDate',
+    isReversed: false,
+  },
+  {
+    label: 'Modified: Oldest',
+    type: 'modificationDate',
+    isReversed: true,
+  },
+];
+
 type StateProps = {
   activeTheme: T.Theme;
   autoHideMenuBar: boolean;
   lineLength: T.LineLength;
   noteDisplay: T.ListDisplayMode;
-  sortIsReversed: boolean;
+  sortReversed: boolean;
   sortTagsAlpha: boolean;
   sortType: T.SortType;
 };
@@ -24,9 +63,8 @@ type DispatchProps = {
   setActiveTheme: (theme: T.Theme) => any;
   setLineLength: (lineLength: T.LineLength) => any;
   setNoteDisplay: (displayMode: T.ListDisplayMode) => any;
-  setSortType: (sortType: T.SortType) => any;
+  setSortType: (sortType: T.SortType, sortReversed: boolean) => any;
   toggleAutoHideMenuBar: () => any;
-  toggleSortOrder: () => any;
   toggleSortTagsAlpha: () => any;
 };
 
@@ -58,25 +96,22 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
     </SettingsGroup>
 
     <SettingsGroup
-      title="Sort type"
+      title="Sort by"
       slug="sortType"
-      activeSlug={props.sortType}
-      onChange={props.setSortType}
+      activeSlug={
+        props.sortReversed ? props.sortType + '-reversed' : props.sortType
+      }
+      onChange={(slug) => {
+        const isReversed = slug.includes('-reversed');
+        const newSortType = slug.split('-');
+        props.setSortType(newSortType[0], isReversed);
+      }}
       renderer={RadioGroup}
     >
-      <Item title="Date modified" slug="modificationDate" />
-      <Item title="Date created" slug="creationDate" />
-      <Item title="Alphabetical" slug="alphabetical" />
-    </SettingsGroup>
-
-    <SettingsGroup
-      title="Sort order"
-      slug="sortOrder"
-      activeSlug={props.sortIsReversed ? 'reversed' : ''}
-      onChange={props.toggleSortOrder}
-      renderer={ToggleGroup}
-    >
-      <Item title="Reversed" slug="reversed" />
+      {sortTypes.map((item) => {
+        const slug = item.isReversed ? item.type + '-reversed' : item.type;
+        return <Item key={slug} title={item.label} slug={slug} />;
+      })}
     </SettingsGroup>
 
     <SettingsGroup
@@ -123,7 +158,7 @@ const mapStateToProps: S.MapState<StateProps> = ({ settings }) => ({
   autoHideMenuBar: settings.autoHideMenuBar,
   lineLength: settings.lineLength,
   noteDisplay: settings.noteDisplay,
-  sortIsReversed: settings.sortReversed,
+  sortReversed: settings.sortReversed,
   sortTagsAlpha: settings.sortTagsAlpha,
   sortType: settings.sortType,
 });
@@ -134,7 +169,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   setNoteDisplay: actions.settings.setNoteDisplay,
   setSortType: actions.settings.setSortType,
   toggleAutoHideMenuBar: actions.settings.toggleAutoHideMenuBar,
-  toggleSortOrder: actions.settings.toggleSortOrder,
   toggleSortTagsAlpha: actions.settings.toggleSortTagsAlpha,
 };
 
