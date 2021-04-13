@@ -4,7 +4,7 @@ import classNames from 'classnames';
 type OwnProps = React.HTMLProps<HTMLInputElement> & {
   className?: string;
   onChange: () => any;
-  isStandard: boolean;
+  isStandard?: boolean;
 };
 
 function CheckboxControl({ className, isStandard, ...props }: OwnProps) {
