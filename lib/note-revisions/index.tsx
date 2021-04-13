@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import NotePreview from '../components/note-preview';
 import TagChip from '../components/tag-chip';
-import { noteTags } from '../state/selectors';
+import { noteCanonicalTags } from '../state/selectors';
+import { tagHashOf } from '../utils/tag-hash';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -14,7 +15,7 @@ type OwnProps = {
 };
 
 type StateProps = {
-  tags: T.Tag[];
+  tags: Array<{ name: T.TagName; deleted: boolean }>;
   noteId: T.EntityId | null;
   note: T.Note | null;
 };
@@ -51,9 +52,14 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const noteId = props.noteId ?? state.ui.openedNote;
   const note = props.note ?? state.data.notes.get(noteId);
   const showDeletedTags = state.ui.showDeletedTags;
-  const tags = noteTags(state, note).filter(
-    (tag) => showDeletedTags || !tag.deleted
-  );
+  const tags = noteCanonicalTags(state, note)
+    .map((tagName) => {
+      const tagHash = tagHashOf(tagName);
+      return { name: tagName, deleted: !state.data.tags.has(tagHash) };
+    })
+    .filter((tag) => {
+      return showDeletedTags || !tag.deleted;
+    });
 
   return {
     tags,
