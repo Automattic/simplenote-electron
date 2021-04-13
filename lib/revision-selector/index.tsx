@@ -25,14 +25,14 @@ type StateProps = {
   openedRevision: number | null;
   revision: T.Note | null;
   revisions: Map<number, T.Note> | null;
-  showDeletedTags: boolean;
+  restoreDeletedTags: boolean;
 };
 
 type DispatchProps = {
   openRevision: (noteId: T.EntityId, version: number) => any;
   cancelRevision: () => any;
   restoreRevision: (noteId: T.EntityId, note: T.Note) => any;
-  toggleDeletedTags: () => any;
+  toggleRestoringDeletedTags: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -69,8 +69,8 @@ export class RevisionSelector extends Component<Props> {
       note,
       openedRevision,
       revisions,
-      showDeletedTags,
-      toggleDeletedTags,
+      restoreDeletedTags,
+      toggleRestoringDeletedTags,
     } = this.props;
 
     if (!isViewingRevisions) {
@@ -155,9 +155,9 @@ export class RevisionSelector extends Component<Props> {
               >
                 <CheckboxControl
                   id="revision-deleted-tags-checkbox"
-                  checked={showDeletedTags}
+                  checked={restoreDeletedTags}
                   isStandard
-                  onChange={toggleDeletedTags}
+                  onChange={toggleRestoringDeletedTags}
                 />
                 <span className="revision-deleted-tags-text">
                   Restore deleted tags
@@ -193,7 +193,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     state.ui.openedRevision?.[0] === state.ui.openedNote
       ? state.ui.openedRevision?.[1] ?? null
       : null;
-  const showDeletedTags = state.ui.showDeletedTags;
+  const restoreDeletedTags = state.ui.restoreDeletedTags;
 
   return {
     isViewingRevisions: state.ui.showRevisions,
@@ -202,10 +202,10 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
     openedRevision,
     revision:
       noteId && openedRevision
-        ? getRevision(state, noteId, openedRevision, showDeletedTags)
+        ? getRevision(state, noteId, openedRevision, restoreDeletedTags)
         : null,
     revisions: state.data.noteRevisions.get(noteId) ?? null,
-    showDeletedTags,
+    restoreDeletedTags,
   };
 };
 
@@ -223,7 +223,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     noteId,
     note,
   }),
-  toggleDeletedTags: actions.ui.toggleDeletedTags,
+  toggleRestoringDeletedTags: actions.ui.toggleRestoringDeletedTags,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RevisionSelector);

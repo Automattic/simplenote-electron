@@ -132,7 +132,9 @@ export type SystemThemeUpdate = Action<
 >;
 export type ToggleAnalytics = Action<'TOGGLE_ANALYTICS'>;
 export type ToggleAutoHideMenuBar = Action<'TOGGLE_AUTO_HIDE_MENU_BAR'>;
-export type ToggleDeletedTags = Action<'DELETED_TAGS_TOGGLE'>;
+export type ToggleRestoringDeletedTags = Action<
+  'TOGGLE_RESTORING_DELETED_TAGS'
+>;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleFocusMode = Action<'TOGGLE_FOCUS_MODE'>;
 export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
@@ -425,7 +427,7 @@ export type ActionType =
   | TagRefresh
   | ToggleAnalytics
   | ToggleAutoHideMenuBar
-  | ToggleDeletedTags
+  | ToggleRestoringDeletedTags
   | ToggleEditMode
   | ToggleFocusMode
   | ToggleKeyboardShortcuts

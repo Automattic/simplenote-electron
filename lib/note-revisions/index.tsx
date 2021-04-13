@@ -51,14 +51,15 @@ export class NoteRevisions extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const noteId = props.noteId ?? state.ui.openedNote;
   const note = props.note ?? state.data.notes.get(noteId);
-  const showDeletedTags = state.ui.showDeletedTags;
+  const restoreDeletedTags = state.ui.restoreDeletedTags;
+
   const tags = noteCanonicalTags(state, note)
     .map((tagName) => {
       const tagHash = tagHashOf(tagName);
       return { name: tagName, deleted: !state.data.tags.has(tagHash) };
     })
     .filter((tag) => {
-      return showDeletedTags || !tag.deleted;
+      return restoreDeletedTags || !tag.deleted;
     });
 
   return {
