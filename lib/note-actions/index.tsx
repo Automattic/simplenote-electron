@@ -93,8 +93,8 @@ export class NoteActions extends Component<Props> {
               <span className="note-actions-item-control">
                 <CheckboxControl
                   id="note-actions-pin-checkbox"
-                  className="theme-color-border"
                   checked={isPinned}
+                  isStandard
                   onChange={() => {
                     this.pinNote(!isPinned);
                   }}
@@ -113,6 +113,7 @@ export class NoteActions extends Component<Props> {
                 <CheckboxControl
                   id="note-actions-markdown-checkbox"
                   checked={isMarkdown}
+                  isStandard
                   onChange={() => {
                     this.markdownNote(!isMarkdown);
                   }}
@@ -158,6 +159,7 @@ export class NoteActions extends Component<Props> {
                 <CheckboxControl
                   id="note-actions-publish-checkbox"
                   checked={isPublished}
+                  isStandard
                   onChange={() => {
                     this.publishNote(!isPublished);
                   }}
