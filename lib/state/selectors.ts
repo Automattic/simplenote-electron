@@ -60,16 +60,11 @@ export const isDialogOpen = (state: S.State, name: T.DialogType['type']) =>
 export const numberOfNonEmailTags: S.Selector<number> = ({ data }) =>
   [...data.tags.values()].filter((tag) => !isEmailTag(tag.name)).length;
 
-export const noteTags: S.Selector<T.Tag[]> = ({ data }, note: T.Note) => {
-  return note.tags
-    .filter((tagName) => !isEmailTag(tagName))
-    .map(
-      (tagName) =>
-        data.tags.get(tagHashOf(tagName)) ?? {
-          name: tagName,
-          deleted: true,
-        }
-    );
+export const noteCanonicalTags: S.Selector<T.TagName[]> = (
+  { data },
+  note: T.Note
+) => {
+  return note.tags.filter((tagName) => !isEmailTag(tagName));
 };
 
 export const getRevision: S.Selector<T.Note | null> = (

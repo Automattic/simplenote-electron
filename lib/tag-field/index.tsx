@@ -9,7 +9,7 @@ import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
 import { tagHashOf } from '../utils/tag-hash';
-import { noteTags } from '../state/selectors';
+import { noteCanonicalTags } from '../state/selectors';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -26,7 +26,7 @@ type OwnState = {
 };
 
 type StateProps = {
-  tags: T.Tag[];
+  tags: T.TagName[];
   keyboardShortcuts: boolean;
   noteId: T.EntityId | null;
   note: T.Note | undefined;
@@ -250,11 +250,11 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex={-1}
             ref={this.storeHiddenTag}
           />
-          {tags.map(({ name }) => (
+          {tags.map((tagName) => (
             <TagChip
-              key={name}
-              tagName={name}
-              selected={name === selectedTag}
+              key={tagName}
+              tagName={tagName}
+              selected={tagName === selectedTag}
               onSelect={this.selectTag}
             />
           ))}
@@ -286,10 +286,10 @@ export class TagField extends Component<Props, OwnState> {
 const mapStateToProps: S.MapState<StateProps> = (state) => {
   const noteId = state.ui.openedNote;
   const note = noteId ? state.data.notes.get(noteId) : undefined;
-  const tags = noteId ? noteTags(state, note) : [];
+  const tags = noteId ? noteCanonicalTags(state, note) : [];
 
   return {
-    tags: tags.filter(({ deleted }) => !deleted),
+    tags,
     keyboardShortcuts: state.settings.keyboardShortcuts,
     noteId,
     note,
