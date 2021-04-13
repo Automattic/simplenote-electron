@@ -185,7 +185,7 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const note = props.note ?? state.data.notes.get(noteId);
 
   return {
-    isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteInfo,
+    isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteActions,
     note,
     noteId,
     notes: state.data.notes,
