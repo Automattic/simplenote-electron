@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid';
 
-import { isEmailTag } from '../../utils/is-email-tag';
 import { tagHashOf } from '../../utils/tag-hash';
 import exportZipArchive from '../../utils/export';
 import { withTag } from '../../utils/tag-hash';
