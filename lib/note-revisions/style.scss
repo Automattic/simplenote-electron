@@ -4,6 +4,12 @@
   flex: 1 1 auto;
   padding-top: 20px;
 
+  .note-revision-preview {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+  }
+
   .tags {
     display: flex;
     justify-content: flex-start;

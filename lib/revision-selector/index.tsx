@@ -1,113 +1,62 @@
-import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
-import { connect } from 'react-redux';
+import React, { Component, ChangeEventHandler } from 'react';
 import FocusTrap from 'focus-trap-react';
 import format from 'date-fns/format';
 import classNames from 'classnames';
+
 import Slider from '../components/slider';
 import CheckboxControl from '../controls/checkbox';
-import actions from '../state/actions';
-import { getRevision } from '../state/selectors';
 
-import * as S from '../state';
-import * as T from '../types';
+import type * as T from '../types';
 
-type OwnProps = {
-  onUpdateContent: Function;
-  resetIsViewingRevisions: Function;
-  cancelRevision: Function;
-  updateNoteTags: Function;
-};
-
-type StateProps = {
-  isViewingRevisions: boolean;
-  noteId: T.EntityId;
-  note: T.Note | null;
-  openedRevision: number | null;
-  revision: T.Note | null;
-  revisions: Map<number, T.Note> | null;
+type Props = {
+  onAccept: () => void;
+  onCancel: () => void;
+  onSelect: (revisionIndex: number) => void;
+  onToggleRestoreDeletedTags: (toggled: boolean) => void;
   restoreDeletedTags: boolean;
+  revision: T.Note | undefined;
+  revisionsSize: number;
+  selectedIndex: number;
 };
-
-type DispatchProps = {
-  openRevision: (noteId: T.EntityId, version: number) => any;
-  cancelRevision: () => any;
-  restoreRevision: (noteId: T.EntityId, note: T.Note) => any;
-  toggleRestoringDeletedTags: () => any;
-};
-
-type Props = OwnProps & StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props> {
-  onAcceptRevision = () => {
-    const { noteId, revision, restoreRevision } = this.props;
-
-    if (!revision) {
-      return;
-    }
-
-    restoreRevision(noteId, revision);
-  };
-
   onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
     target: { value },
   }) => {
-    const { revisions } = this.props;
-
     const selection = parseInt(value, 10);
-    const revision = [...revisions.keys()][selection];
-
-    this.props.openRevision(this.props.noteId, revision);
-  };
-
-  onCancelRevision = () => {
-    this.props.cancelRevision();
+    this.props.onSelect(selection);
   };
 
   render() {
     const {
-      isViewingRevisions,
-      note,
-      openedRevision,
-      revisions,
+      onAccept,
+      onCancel,
+      onToggleRestoreDeletedTags,
       restoreDeletedTags,
-      toggleRestoringDeletedTags,
+      revision,
+      revisionsSize,
+      selectedIndex,
     } = this.props;
 
-    if (!isViewingRevisions) {
-      return null;
-    }
-
-    const selectedIndex =
-      revisions && openedRevision
-        ? [...revisions.keys()].indexOf(openedRevision)
-        : -1;
-    const isNewest =
-      !openedRevision ||
-      (openedRevision && selectedIndex === revisions?.size - 1);
+    const isNewest = selectedIndex === revisionsSize - 1;
 
     const leftPos = Number(
       // Based on ((selected - min) * 100) / (max - min);
       // min is equal to 1
       // max is the number of size of revisions -1.
-      (((selectedIndex === -1 ? revisions?.size - 1 : selectedIndex) - 1) *
-        100) /
-        (revisions?.size - 2)
+      (((selectedIndex === -1 ? revisionsSize - 1 : selectedIndex) - 1) * 100) /
+        (revisionsSize - 2)
     );
 
     const datePos = `calc(${leftPos}% + (${8 - leftPos * 0.15}px))`;
 
-    const revisionDate = format(
-      (openedRevision
-        ? revisions.get(openedRevision).modificationDate
-        : note.modificationDate) * 1000,
-      'MMM d, yyyy h:mm a'
-    );
+    const modificationDate = revision?.modificationDate;
+    const revisionDate = modificationDate
+      ? format(modificationDate * 1000, 'MMM d, yyyy h:mm a')
+      : '';
 
     const mainClasses = classNames(
-      'revision-selector theme-color-border theme-color-fg theme-color-bg',
-      {
-        'is-visible': isViewingRevisions,
-      }
+      'revision-selector theme-color-border theme-color-fg theme-color-bg'
     );
 
     return (
@@ -117,7 +66,7 @@ export class RevisionSelector extends Component<Props> {
           // Fallback required due to RevisionSelect's placement within
           // Suspsense, which hides elements preventing focus. https://git.io/Jqep9
           fallbackFocus: 'body',
-          onDeactivate: this.onCancelRevision,
+          onDeactivate: onCancel,
         }}
       >
         <div
@@ -139,12 +88,12 @@ export class RevisionSelector extends Component<Props> {
             <div className="revision-slider">
               <Slider
                 aria-valuetext={`Revision from ${revisionDate}`}
-                disabled={!revisions || revisions.size === 0}
+                disabled={revisionsSize === 0}
                 min={
                   1 /* don't allow reverting to the very first version because that's a blank note */
                 }
-                max={revisions?.size - 1}
-                value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
+                max={revisionsSize - 1}
+                value={selectedIndex > -1 ? selectedIndex : revisionsSize - 1}
                 onChange={this.onSelectRevision}
               />
             </div>
@@ -157,7 +106,9 @@ export class RevisionSelector extends Component<Props> {
                   id="revision-deleted-tags-checkbox"
                   checked={restoreDeletedTags}
                   isStandard
-                  onChange={toggleRestoringDeletedTags}
+                  onChange={() => {
+                    onToggleRestoreDeletedTags(!restoreDeletedTags);
+                  }}
                 />
                 <span className="revision-deleted-tags-text">
                   Restore deleted tags
@@ -166,15 +117,15 @@ export class RevisionSelector extends Component<Props> {
               <div className="revision-buttons">
                 <button
                   className="button button-secondary button-compact"
-                  onClick={this.onCancelRevision}
+                  onClick={onCancel}
                 >
                   Cancel
                 </button>
                 <button
                   aria-label={`Restore revision from ${revisionDate}`}
-                  disabled={isNewest}
+                  disabled={!!isNewest}
                   className="button button-primary button-compact"
-                  onClick={this.onAcceptRevision}
+                  onClick={onAccept}
                 >
                   Restore
                 </button>
@@ -187,43 +138,4 @@ export class RevisionSelector extends Component<Props> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = (state) => {
-  const noteId = state.ui.openedNote;
-  const openedRevision =
-    state.ui.openedRevision?.[0] === state.ui.openedNote
-      ? state.ui.openedRevision?.[1] ?? null
-      : null;
-  const restoreDeletedTags = state.ui.restoreDeletedTags;
-
-  return {
-    isViewingRevisions: state.ui.showRevisions,
-    noteId,
-    note: state.data.notes.get(noteId) ?? null,
-    openedRevision,
-    revision:
-      noteId && openedRevision
-        ? getRevision(state, noteId, openedRevision, restoreDeletedTags)
-        : null,
-    revisions: state.data.noteRevisions.get(noteId) ?? null,
-    restoreDeletedTags,
-  };
-};
-
-const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
-  openRevision: (noteId, version) => ({
-    type: 'OPEN_REVISION',
-    noteId,
-    version,
-  }),
-  cancelRevision: () => ({
-    type: 'CLOSE_REVISION',
-  }),
-  restoreRevision: (noteId, note) => ({
-    type: 'RESTORE_NOTE_REVISION',
-    noteId,
-    note,
-  }),
-  toggleRestoringDeletedTags: actions.ui.toggleRestoringDeletedTags,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(RevisionSelector);
+export default RevisionSelector;

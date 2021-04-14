@@ -29,7 +29,6 @@ const NotePreview = React.lazy(() =>
 );
 
 type StateProps = {
-  hasRevisions: boolean;
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -37,8 +36,6 @@ type StateProps = {
   isSmallScreen: boolean;
   keyboardShortcuts: boolean;
   keyboardShortcutsAreOpen: boolean;
-  openedNote: T.EntityId | null;
-  openedRevision: T.Note | null;
   showNoteList: boolean;
   showRevisions: boolean;
   showSortBar: boolean;
@@ -87,14 +84,11 @@ export class AppLayout extends Component<Props> {
   render = () => {
     const {
       showNoteList,
-      hasRevisions,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
       isNoteOpen,
       isSmallScreen,
-      openedNote,
-      openedRevision,
       showRevisions,
       showSortBar,
     } = this.props;
@@ -141,15 +135,10 @@ export class AppLayout extends Component<Props> {
             >
               <NoteToolbar aria-hidden={hiddenByRevisions} />
               {showRevisions ? (
-                <NoteRevisions
-                  aria-hidden={hiddenByRevisions}
-                  noteId={openedNote}
-                  note={openedRevision}
-                />
+                <NoteRevisions aria-hidden={hiddenByRevisions} />
               ) : (
                 <NoteEditor />
               )}
-              {hasRevisions && <RevisionSelector />}
             </main>
           )}
         </Suspense>
@@ -159,8 +148,6 @@ export class AppLayout extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  hasRevisions:
-    state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
   keyboardShortcutsAreOpen: selectors.isDialogOpen(state, 'KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
   isFocusMode: state.settings.focusModeEnabled,
@@ -168,13 +155,6 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isNoteInfoOpen: state.ui.showNoteInfo,
   isNoteOpen: !state.ui.showNoteList,
   isSmallScreen: selectors.isSmallScreen(state),
-  openedRevision:
-    state.ui.openedRevision?.[0] === state.ui.openedNote
-      ? state.data.noteRevisions
-          .get(state.ui.openedNote)
-          ?.get(state.ui.openedRevision?.[1]) ?? null
-      : null,
-  openedNote: state.ui.openedNote,
   showNoteList: state.ui.showNoteList,
   showRevisions: state.ui.showRevisions,
   showSortBar: state.ui.filteredNotes.length > 0,
