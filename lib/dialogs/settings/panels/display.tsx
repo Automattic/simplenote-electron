@@ -18,12 +18,12 @@ type SortOption = {
 
 const sortTypes: SortOption[] = [
   {
-    label: 'Alphabetically: A-Z',
+    label: 'Name: A-Z',
     type: 'alphabetical',
     isReversed: false,
   },
   {
-    label: 'Alphabetically: Z-A',
+    label: 'Name: Z-A',
     type: 'alphabetical',
     isReversed: true,
   },
