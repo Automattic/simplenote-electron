@@ -172,9 +172,7 @@ class NoteContentEditor extends Component<Props> {
         });
       }
     }, SPEED_DELAY);
-    if (document?.activeElement?.id !== 'search-field') {
-      this.focusEditor();
-    }
+    this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
@@ -379,7 +377,9 @@ class NoteContentEditor extends Component<Props> {
     if (
       this.editor &&
       this.state.editor === 'full' &&
-      prevProps.selectedSearchMatchIndex !== this.props.selectedSearchMatchIndex
+      prevProps.selectedSearchMatchIndex !==
+        this.props.selectedSearchMatchIndex &&
+      prevProps.noteId !== this.props.noteId
     ) {
       this.setSearchSelection(this.props.selectedSearchMatchIndex);
     }
@@ -1245,7 +1245,7 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   note: state.data.notes.get(state.ui.openedNote),
   notes: state.data.notes,
   searchQuery: state.ui.searchQuery,
-  selectedSearchMatchIndex: state.ui.selectedSearchMatchIndex,
+  selectedSearchMatchIndex: state.ui.selectedSearchMatchIndex ?? 0,
   spellCheckEnabled: state.settings.spellCheckEnabled,
   theme: selectors.getTheme(state),
 });
