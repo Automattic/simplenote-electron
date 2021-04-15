@@ -1,11 +1,10 @@
 import { partition, sortBy } from 'lodash';
 
+import normalizeLineBreak from './normalize-line-break';
 import isEmailTag from '../is-email-tag';
 
 import * as T from '../../types';
 import { ExportNote } from './types';
-
-export const LF_ONLY_NEWLINES = /(?!\r)\n/g;
 
 const exportNotes = (notes: Map<T.EntityId, T.Note>) => {
   const activeNotes: ExportNote[] = [];
@@ -19,7 +18,7 @@ const exportNotes = (notes: Map<T.EntityId, T.Note>) => {
     const parsedNote = Object.assign(
       {
         id,
-        content: note.content.replace(LF_ONLY_NEWLINES, '\r\n'),
+        content: normalizeLineBreak(note.content),
         creationDate: new Date(note.creationDate * 1000).toISOString(),
         lastModified: new Date(note.modificationDate * 1000).toISOString(),
       },

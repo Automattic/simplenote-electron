@@ -1,7 +1,7 @@
 import sanitize from 'sanitize-filename';
 import { identity } from 'lodash';
 
-import { LF_ONLY_NEWLINES } from './export-notes';
+import normalizeLineBreak from './normalize-line-break';
 
 const FILENAME_LENGTH = 40;
 const TAG_LINE_LENGTH = 75;
@@ -100,7 +100,7 @@ export const noteExportToZip = (notes) => {
 
       zip.file(
         'source/notes.json',
-        JSON.stringify(notes, null, 2).replace(LF_ONLY_NEWLINES, '\r\n')
+        normalizeLineBreak(JSON.stringify(notes, null, 2))
       );
 
       notes.activeNotes
