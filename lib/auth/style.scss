@@ -50,9 +50,10 @@
   input,
   button[type='submit'] {
     background-color: $studio-white;
-    border: solid 1px $studio-gray-5;
+    border: solid 1px $studio-gray-10;
     border-radius: 4px;
     box-sizing: border-box;
+    color: $studio-gray-80;
     display: block;
     height: 40px;
     padding: 11px 15px;
@@ -61,6 +62,22 @@
     width: 95%;
     font-size: 16px;
     font-weight: 400;
+  }
+
+  input:disabled {
+    border-color: $studio-gray-5;
+    color: $studio-gray-20;
+  }
+
+  input:read-only {
+    border-color: $studio-gray-10;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  input:focus {
+    border-color: $studio-simplenote-blue-50;
+    box-shadow: 0 0 0 1px $studio-simplenote-blue-50;
+    outline: none;
   }
 
   .spinner {
@@ -98,6 +115,7 @@
     color: $studio-simplenote-blue-50;
     margin-left: 5px;
     text-decoration: none;
+    white-space: nowrap;
   }
 
   .or {
@@ -193,5 +211,23 @@
 
   svg.icon-mail {
     color: $studio-gray-30;
+  }
+  input {
+    border-color: $studio-gray-60;
+
+    &:disabled {
+      color: $studio-gray-50;
+      border-color: $studio-gray-70;
+    }
+
+    &:read-only {
+      border-color: $studio-gray-60;
+      background-color: rgba(255, 255, 255, 0.07);
+    }
+
+    &:focus {
+      border-color: $studio-simplenote-blue-30;
+      box-shadow: 0 0 0 1px $studio-simplenote-blue-30;
+    }
   }
 }
