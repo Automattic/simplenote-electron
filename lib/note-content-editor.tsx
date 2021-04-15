@@ -381,8 +381,9 @@ class NoteContentEditor extends Component<Props> {
       this.state.editor === 'full' &&
       (this.props.selectedSearchMatchIndex ?? 0) > this.matchesInNote.length - 1
     ) {
-      this.setSearchSelection(this.matchesInNote.length - 1);
-      this.props.storeSearchSelection(this.matchesInNote.length - 1);
+      const newIndex = Math.max(this.matchesInNote.length - 1, 0);
+      this.setSearchSelection(newIndex);
+      this.props.storeSearchSelection(newIndex);
     }
 
     if (
