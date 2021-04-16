@@ -124,7 +124,7 @@ export type StoreNumberOfMatchesInNote = Action<
 >;
 export type StoreSearchSelection = Action<
   'STORE_SEARCH_SELECTION',
-  { index: number }
+  { index: number | null }
 >;
 export type SystemThemeUpdate = Action<
   'SYSTEM_THEME_UPDATE',
