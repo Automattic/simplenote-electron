@@ -1,6 +1,14 @@
 .settings {
   max-width: 630px;
 
+  &.dialog {
+    max-height: calc(100vh - 2rem);
+
+    .dialog-content {
+      max-height: calc(100vh - 2rem - 56px);
+    }
+  }
+
   input[type='radio'] {
     cursor: pointer;
   }
