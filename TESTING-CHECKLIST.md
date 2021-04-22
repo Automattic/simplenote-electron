@@ -2,7 +2,7 @@
 
 ### Setup 
 
-- [ ] Sign up using mixed-capitalization in the email address. Use this account to run tests below.
+- [ ] Sign up using mixed-capitalization in the email address. Use this account to run all tests below.
 
 #### Login/Signup
 
