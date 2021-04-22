@@ -33,7 +33,7 @@ export class NoteRevisions extends Component<Props> {
     return (
       <div aria-hidden={ariaHidden} className="note-revisions">
         <NotePreview noteId={noteId} note={note} />
-        <div className="tags">
+        <div className="note-revisions-tag-list">
           {tags.map(({ name, deleted }) => (
             <TagChip
               key={name}
