@@ -91,7 +91,6 @@ module.exports = function main() {
     ) {
       mainWindow.openDevTools({ mode: 'detach' });
     }
-    mainWindow.openDevTools({ mode: 'detach' });
 
     // Configure and set the application menu
     const menuTemplate = createMenuTemplate();
