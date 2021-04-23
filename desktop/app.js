@@ -37,6 +37,11 @@ module.exports = function main() {
     shouldQuit = true;
   });
 
+  // Fixes rendering bug on Linux when sandbox === true (Electron 11.0)
+  if (process.platform === 'linux') {
+    app.disableHardwareAcceleration();
+  }
+
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
     app.on('open-url', function (event, url) {
@@ -96,7 +101,9 @@ module.exports = function main() {
       'test' !== process.env.NODE_ENV &&
       (isDev || process.argv.includes('--devtools'))
     ) {
-      mainWindow.openDevTools({ mode: 'detach' });
+      mainWindow.openDevTools({
+        mode: 'detach',
+      });
     }
 
     // Configure and set the application menu
