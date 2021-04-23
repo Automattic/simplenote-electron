@@ -138,6 +138,7 @@ jobs:
             set +e
             rm -rf release/github
             rm -rf release/linux-unpacked
+            rm release/builder-debug.yml
       - persist_to_workspace:
           root: ~/simplenote
           paths:
@@ -171,6 +172,7 @@ jobs:
             set +e
             rm -rf release/github
             rm -rf release/mac
+            rm release/builder-debug.yml
       - persist_to_workspace:
           root: /Users/distiller/simplenote
           paths:
@@ -209,6 +211,11 @@ jobs:
             # package.json's `certificateSubjectName` to find the imported cert.
             Import-PfxCertificate -FilePath C:\Users\circleci\simplenote-electron\resources\certificates\win.p12 -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
             npx electron-builder --win -p onTag
+      - run:
+          name: Release cleanup
+          command: |
+            set +e
+            rm release/builder-debug.yml
       - persist_to_workspace:
           root: C:\Users\circleci\simplenote-electron
           paths:
