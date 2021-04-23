@@ -214,7 +214,6 @@ jobs:
       - run:
           name: Release cleanup
           command: |
-            set +e
             rm release/builder-debug.yml
       - persist_to_workspace:
           root: C:\Users\circleci\simplenote-electron
