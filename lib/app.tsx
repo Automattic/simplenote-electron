@@ -208,22 +208,25 @@ class AppComponent extends Component<Props> {
     });
 
     return (
-      <div className={appClasses}>
-        {showEmailVerification && <EmailVerification />}
-        {showAlternateLoginPrompt && <AlternateLoginPrompt />}
-        {isDevConfig && (
-          <DevBadge
-            aria-hidden={showNavigation || showRevisions ? true : undefined}
-          />
-        )}
-        <div className={mainClasses}>
-          {showNavigation && <NavigationBar />}
-          <AppLayout />
-          {showNoteInfo && <NoteInfo />}
-          {showNoteActions && <NoteActions />}
+      <>
+        {isElectron && isMac && <div className="mac-title-bar"></div>}
+        <div className={appClasses}>
+          {showEmailVerification && <EmailVerification />}
+          {showAlternateLoginPrompt && <AlternateLoginPrompt />}
+          {isDevConfig && (
+            <DevBadge
+              aria-hidden={showNavigation || showRevisions ? true : undefined}
+            />
+          )}
+          <div className={mainClasses}>
+            {showNavigation && <NavigationBar />}
+            <AppLayout />
+            {showNoteInfo && <NoteInfo />}
+            {showNoteActions && <NoteActions />}
+          </div>
+          <DialogRenderer appProps={this.props} />
         </div>
-        <DialogRenderer appProps={this.props} />
-      </div>
+      </>
     );
   }
 }
