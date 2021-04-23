@@ -4,11 +4,11 @@
 
 .login.is-electron {
   input.validate:invalid {
-    box-shadow: 0 0 1.5px 1px red;
+    box-shadow: 0 0 1.5px 1px $studio-red-50;
   }
 
   input.validate:invalid:focus {
-    outline-color: red;
+    outline-color: $studio-red-50;
   }
 }
 
@@ -39,7 +39,7 @@
     text-align: center;
     width: 90%;
     .is-error {
-      color: $studio-red-60;
+      color: $studio-red-50;
     }
   }
 
@@ -94,14 +94,14 @@
   }
 
   a.login__forgot {
-    color: $studio-gray-60;
+    color: $studio-gray-50;
     text-decoration: none;
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-60;
+    color: $studio-gray-50;
     display: block;
     font-size: 14px;
     margin: 16px auto;
@@ -120,7 +120,7 @@
 
   .or {
     background: $studio-white;
-    color: $studio-gray-60;
+    color: $studio-gray-50;
     display: block;
     font-size: 15px;
     font-style: italic;
@@ -194,7 +194,7 @@
   .login__signup a,
   .login__auth-message a,
   .terms a {
-    color: $studio-simplenote-blue-30;
+    color: $studio-simplenote-blue-20;
   }
 
   .login__auth-message.is-error {
@@ -213,7 +213,7 @@
     color: $studio-gray-30;
   }
   input {
-    border-color: $studio-gray-60;
+    border-color: $studio-gray-50;
 
     &:disabled {
       color: $studio-gray-50;
@@ -221,13 +221,13 @@
     }
 
     &:read-only {
-      border-color: $studio-gray-60;
+      border-color: $studio-gray-50;
       background-color: rgba(255, 255, 255, 0.07);
     }
 
     &:focus {
-      border-color: $studio-simplenote-blue-30;
-      box-shadow: 0 0 0 1px $studio-simplenote-blue-30;
+      border-color: $studio-simplenote-blue-20;
+      box-shadow: 0 0 0 1px $studio-simplenote-blue-20;
     }
   }
 }

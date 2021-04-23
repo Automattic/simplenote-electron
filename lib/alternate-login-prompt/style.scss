@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba($studio-gray-20, 0.75);
+  background: rgba($studio-black, 0.3);
 }
 
 .alternate-login__dismiss {
@@ -72,10 +72,7 @@
 }
 
 .theme-dark {
-  .alternate-login__overlay {
-    background: rgba($studio-gray-100, 0.75);
-  }
   .alternate-login__button-row .button-borderless {
-    color: $studio-simplenote-blue-30;
+    color: $studio-simplenote-blue-20;
   }
 }
