@@ -351,13 +351,23 @@ export const initSimperium = (
         return result;
       }
 
+      case 'RESTORE_NOTE_REVISION': {
+        action.note.tags.map(t).forEach((tagHash) => {
+          if (!prevState.data.tags.has(tagHash)) {
+            queueTagUpdate(tagHash, 10);
+          }
+        });
+
+        queueNoteUpdate(action.noteId, 10);
+        return result;
+      }
+
       // other note editing actions however
       // should trigger an immediate sync
       case 'MARKDOWN_NOTE':
       case 'PIN_NOTE':
       case 'PUBLISH_NOTE':
       case 'RESTORE_NOTE':
-      case 'RESTORE_NOTE_REVISION':
       case 'TRASH_NOTE':
         queueNoteUpdate(action.noteId, 10);
         return result;

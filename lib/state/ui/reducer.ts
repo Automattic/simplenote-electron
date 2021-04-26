@@ -391,6 +391,17 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
   }
 };
 
+const restoreDeletedTags: A.Reducer<boolean> = (state = true, action) => {
+  switch (action.type) {
+    case 'TOGGLE_RESTORING_DELETED_TAGS':
+      return !state;
+    case 'REVISIONS_TOGGLE':
+      return true;
+    default:
+      return state;
+  }
+};
+
 const tagSuggestions: A.Reducer<T.TagHash[]> = (
   state = emptyList as T.TagHash[],
   action
@@ -414,6 +425,7 @@ export default combineReducers({
   numberOfMatchesInNote,
   openedNote,
   openedRevision,
+  restoreDeletedTags,
   searchQuery,
   selectedSearchMatchIndex,
   showAlternateLoginPrompt,

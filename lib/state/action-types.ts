@@ -132,6 +132,9 @@ export type SystemThemeUpdate = Action<
 >;
 export type ToggleAnalytics = Action<'TOGGLE_ANALYTICS'>;
 export type ToggleAutoHideMenuBar = Action<'TOGGLE_AUTO_HIDE_MENU_BAR'>;
+export type ToggleRestoringDeletedTags = Action<
+  'TOGGLE_RESTORING_DELETED_TAGS'
+>;
 export type ToggleEditMode = Action<'TOGGLE_EDIT_MODE'>;
 export type ToggleFocusMode = Action<'TOGGLE_FOCUS_MODE'>;
 export type ToggleKeyboardShortcuts = Action<'KEYBOARD_SHORTCUTS_TOGGLE'>;
@@ -218,7 +221,10 @@ export type ReorderTag = Action<
 export type RestoreNote = Action<'RESTORE_NOTE', { noteId: T.EntityId }>;
 export type RestoreNoteRevision = Action<
   'RESTORE_NOTE_REVISION',
-  { noteId: T.EntityId; version: number; note: T.Note }
+  {
+    noteId: T.EntityId;
+    note: T.Note;
+  }
 >;
 export type SetSystemTag = Action<
   'SET_SYSTEM_TAG',
@@ -421,6 +427,7 @@ export type ActionType =
   | TagRefresh
   | ToggleAnalytics
   | ToggleAutoHideMenuBar
+  | ToggleRestoringDeletedTags
   | ToggleEditMode
   | ToggleFocusMode
   | ToggleKeyboardShortcuts

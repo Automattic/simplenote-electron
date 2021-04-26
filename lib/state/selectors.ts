@@ -1,6 +1,7 @@
 import * as S from './';
 import * as T from '../types';
 import isEmailTag from '../utils/is-email-tag';
+import { tagHashOf } from '../utils/tag-hash';
 
 /**
  * "Narrow" views hide the note editor
@@ -58,3 +59,38 @@ export const isDialogOpen = (state: S.State, name: T.DialogType['type']) =>
 
 export const numberOfNonEmailTags: S.Selector<number> = ({ data }) =>
   [...data.tags.values()].filter((tag) => !isEmailTag(tag.name)).length;
+
+export const noteCanonicalTags: S.Selector<T.TagName[]> = (
+  { data },
+  note: T.Note
+) => {
+  return note.tags.filter((tagName) => !isEmailTag(tagName));
+};
+
+export const getRevision: S.Selector<T.Note | null> = (
+  state,
+  noteId: T.EntityId,
+  revisionVersion: number,
+  includeDeletedTags: boolean
+) => {
+  const note = state.data.notes.get(noteId);
+  const revisions = state.data.noteRevisions.get(noteId);
+  const revision = revisions?.get(revisionVersion);
+
+  if (!note || !revision) {
+    return null;
+  }
+
+  const noteEmailTags = note.tags.filter((tagName) => isEmailTag(tagName));
+  const revisionCanonicalTags = revision.tags.filter((tagName) => {
+    const tagHash = tagHashOf(tagName);
+    const hasTag = state.data.tags.has(tagHash);
+    return !isEmailTag(tagName) && (hasTag || includeDeletedTags);
+  });
+
+  return {
+    ...revision,
+    tags: [...noteEmailTags, ...revisionCanonicalTags],
+    systemTags: note.systemTags,
+  };
+};

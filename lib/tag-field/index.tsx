@@ -9,6 +9,7 @@ import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
 import { tagHashOf } from '../utils/tag-hash';
+import { noteCanonicalTags } from '../state/selectors';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -25,10 +26,10 @@ type OwnState = {
 };
 
 type StateProps = {
-  allTags: Map<T.TagHash, T.Tag>;
+  tags: T.TagName[];
   keyboardShortcuts: boolean;
-  noteId: T.EntityId;
-  note: T.Note;
+  noteId: T.EntityId | null;
+  note: T.Note | undefined;
 };
 
 type DispatchProps = {
@@ -229,12 +230,8 @@ export class TagField extends Component<Props, OwnState> {
     }
   };
 
-  getTagName = (tag: T.TagName) => {
-    return this.props.allTags.get(tagHashOf(tag))?.name;
-  };
-
   render() {
-    const { note } = this.props;
+    const { tags } = this.props;
     const { selectedTag, showEmailTooltip, tagInput } = this.state;
 
     return (
@@ -253,11 +250,11 @@ export class TagField extends Component<Props, OwnState> {
             tabIndex={-1}
             ref={this.storeHiddenTag}
           />
-          {note?.tags.filter(negate(isEmailTag)).map((tag) => (
+          {tags.map((tagName) => (
             <TagChip
-              key={tag}
-              tagName={this.getTagName(tag)}
-              selected={tag === selectedTag}
+              key={tagName}
+              tagName={tagName}
+              selected={tagName === selectedTag}
               onSelect={this.selectTag}
             />
           ))}
@@ -286,12 +283,18 @@ export class TagField extends Component<Props, OwnState> {
   }
 }
 
-const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  allTags: state.data.tags,
-  keyboardShortcuts: state.settings.keyboardShortcuts,
-  noteId: state.ui.openedNote,
-  note: state.data.notes.get(state.ui.openedNote),
-});
+const mapStateToProps: S.MapState<StateProps> = (state) => {
+  const noteId = state.ui.openedNote;
+  const note = noteId ? state.data.notes.get(noteId) : undefined;
+  const tags = noteId ? noteCanonicalTags(state, note) : [];
+
+  return {
+    tags,
+    keyboardShortcuts: state.settings.keyboardShortcuts,
+    noteId,
+    note,
+  };
+};
 
 export default connect(mapStateToProps, {
   addTag: (noteId, tagName) => ({

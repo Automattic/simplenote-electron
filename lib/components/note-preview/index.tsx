@@ -30,13 +30,9 @@ type DispatchProps = {
   openNote: (noteId: T.EntityId) => any;
 };
 
-type Props = OwnProps &
-  StateProps &
-  DispatchProps &
-  React.HTMLProps<HTMLDivElement>;
+type Props = OwnProps & StateProps & DispatchProps;
 
 export const NotePreview: FunctionComponent<Props> = ({
-  'aria-hidden': ariaHidden,
   editNote,
   isFocused,
   note,
@@ -166,7 +162,7 @@ export const NotePreview: FunctionComponent<Props> = ({
   }, [note?.content, searchQuery, showRenderedView]);
 
   return (
-    <div aria-hidden={ariaHidden} className="note-detail-wrapper">
+    <div className="note-detail-wrapper">
       <div className="note-detail note-detail-preview">
         <div
           ref={previewNode}

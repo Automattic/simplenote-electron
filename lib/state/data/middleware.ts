@@ -77,19 +77,6 @@ export const middleware: S.Middleware = (store) => (
         note: action.note,
       });
 
-    case 'RESTORE_NOTE_REVISION': {
-      const revision = state.data.noteRevisions
-        .get(action.noteId)
-        .get(action.version);
-
-      return revision
-        ? next({
-            ...action,
-            note: revision,
-          })
-        : next(action);
-    }
-
     case 'RESTORE_OPEN_NOTE':
       if (!state.ui.openedNote) {
         return;

@@ -6,24 +6,30 @@ import type * as T from '../../types';
 
 type OwnProps = {
   onSelect?: (event: React.MouseEvent<HTMLDivElement>) => any;
-  selected: boolean;
+  selected?: boolean;
+  interactive?: boolean;
+  deleted?: boolean;
   tagName: T.TagName | undefined;
 };
 
 const TagChip: FunctionComponent<OwnProps> = ({
   onSelect,
-  selected,
+  selected = false,
+  interactive = true,
+  deleted = false,
   tagName,
 }) => (
   <div
-    className={classNames('tag-chip', { selected })}
+    className={classNames('tag-chip', { selected, interactive, deleted })}
     data-tag-name={tagName}
     onClick={onSelect}
   >
     {tagName}
-    <span className="remove-tag-icon">
-      <SmallCrossIcon />
-    </span>
+    {interactive && (
+      <span className="remove-tag-icon">
+        <SmallCrossIcon />
+      </span>
+    )}
   </div>
 );
 

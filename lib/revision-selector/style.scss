@@ -21,16 +21,29 @@
     margin: 0 auto;
   }
 
-  .revision-buttons {
+  .revision-actions {
     display: flex;
-    justify-content: flex-end;
-    margin: 0 auto;
 
-    button {
-      @extend %smart-focus-outline;
+    .revision-deleted-tags-label {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+    }
 
-      font-weight: 400;
-      border: 0;
+    .revision-deleted-tags-text {
+      margin-left: 8px;
+    }
+
+    .revision-buttons {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        @extend %smart-focus-outline;
+
+        font-weight: 400;
+        border: 0;
+      }
     }
   }
 
