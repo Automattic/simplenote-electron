@@ -214,7 +214,7 @@
   }
 }
 
-.theme-dark .note-detail-markdown p > code {
+body[data-theme='dark'] .note-detail-markdown p > code {
   background-color: $studio-gray-70;
 }
 

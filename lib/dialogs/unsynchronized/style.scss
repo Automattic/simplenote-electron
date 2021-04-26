@@ -82,7 +82,7 @@
   }
 }
 
-.theme-dark .logoutConfirmation .dialog {
+body[data-theme='dark'] .logoutConfirmation .dialog {
   .change-list {
     border-color: $studio-gray-80;
   }

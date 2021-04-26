@@ -93,7 +93,7 @@
   text-overflow: ellipsis;
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .importer-dropzone.theme-color-border {
     border-color: $studio-gray-50;
     color: $studio-gray-30;

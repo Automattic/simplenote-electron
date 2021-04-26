@@ -18,6 +18,10 @@
   border-bottom: 1px solid;
 }
 
+body .tag-list-item {
+  z-index: 2;
+}
+
 .tag-list {
   display: flex;
   flex-direction: column;
@@ -112,7 +116,7 @@ input.tag-list-input {
   margin-right: 8px;
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .icon-button {
     &.button-reorder {
       color: $studio-gray-50;
@@ -129,7 +133,7 @@ input.tag-list-input {
   }
 }
 
-.theme-light {
+body[data-theme='light'] {
   .icon-button {
     &.button-trash {
       color: $studio-simplenote-blue-20;

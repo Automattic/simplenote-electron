@@ -33,7 +33,7 @@
     height: 28px;
     cursor: pointer;
 
-    button {
+    button.button-borderless {
       padding: 0;
       font-weight: normal;
       color: inherit;
@@ -83,7 +83,7 @@
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .spinner__circle {
     color: $studio-gray-50;
   }

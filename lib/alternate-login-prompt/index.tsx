@@ -79,7 +79,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
       onRequestClose={dismiss}
       contentLabel="Log out?"
       overlayClassName="alternate-login__overlay"
-      portalClassName={classNames('alternate-login__portal', 'theme-' + theme)}
+      portalClassName={classNames('alternate-login__portal')}
     >
       {displayAlternateLoginPrompt}
     </Modal>

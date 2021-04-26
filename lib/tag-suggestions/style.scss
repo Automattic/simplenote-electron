@@ -28,13 +28,13 @@
   }
 }
 
-.theme-light {
+body[data-theme='light'] {
   .tag-suggestion {
     border-color: $studio-gray-5;
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .tag-suggestion {
     border-color: $studio-gray-80;
   }

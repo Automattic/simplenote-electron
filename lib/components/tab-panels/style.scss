@@ -19,17 +19,18 @@
       border-bottom-color: transparent;
     }
 
-    &.is-active {
-      color: $studio-simplenote-blue-50;
-      border-bottom-color: $studio-simplenote-blue-50;
-    }
     &:active {
       color: $studio-white;
     }
   }
 }
 
-.theme-dark .tab-panels__tab-list li.is-active {
+body[data-theme='light'] .tab-panels__tab-list li.is-active {
+  color: $studio-simplenote-blue-50;
+  border-bottom-color: $studio-simplenote-blue-50;
+}
+
+body[data-theme='dark'] .tab-panels__tab-list li.is-active {
   color: $studio-simplenote-blue-20;
   border-bottom-color: $studio-simplenote-blue-20;
 }

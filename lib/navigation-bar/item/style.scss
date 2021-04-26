@@ -59,7 +59,7 @@
   border-top: none;
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .navigation-bar-item {
     &.is-selected button {
       color: $studio-white;

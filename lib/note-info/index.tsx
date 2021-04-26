@@ -42,7 +42,7 @@ export class NoteInfo extends Component<Props> {
         isOpen
         onRequestClose={onModalClose}
         overlayClassName="dialog-renderer__overlay"
-        portalClassName={`dialog-renderer__portal theme-${theme}`}
+        portalClassName="dialog-renderer__portal"
         shouldCloseOnOverlayClick={false}
       >
         <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
