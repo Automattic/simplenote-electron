@@ -128,7 +128,7 @@ body[data-theme='dark'] {
 
   .tag-list-item {
     &:hover {
-      background-color: $studio-gray-80;
+      background-color: var(--foreground-color);
     }
   }
 }
