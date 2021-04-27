@@ -11,7 +11,7 @@
     margin: 0 0.5em;
     border-bottom: 2px solid;
     padding: 0.75em;
-    color: $studio-gray-80;
+    color: var(--primary-color);
     text-transform: capitalize;
     border-radius: 0;
 
@@ -19,8 +19,12 @@
       border-bottom-color: transparent;
     }
 
+    &.is-active {
+      color: var(--accent-color);
+      border-bottom-color: var(--accent-color);
+    }
     &:active {
-      color: $studio-white;
+      color: var(--background-color);
     }
   }
 }

@@ -5,7 +5,7 @@
   border-radius: 16px;
   line-height: 1.25em;
   white-space: nowrap;
-  background: $studio-gray-5;
+  background: var(--secondary-color);
   text-decoration: none;
   font-size: 14px;
   position: relative;
@@ -29,8 +29,8 @@
   .remove-tag-icon {
     display: none;
     position: absolute;
-    background-color: $studio-gray-50;
-    color: $studio-white;
+    background-color: var(--foreground-color);
+    color: var(--background-color);
     border-radius: 50%;
     top: -8px;
     width: 16px;

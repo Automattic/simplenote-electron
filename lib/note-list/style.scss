@@ -61,7 +61,7 @@
 
   .search-match {
     background-color: transparent;
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
     padding-left: 0;
     padding-right: 0;
     border-radius: 0;
@@ -81,11 +81,11 @@
 
   .no-notes-message {
     font-size: 16px;
-    color: $studio-gray-50;
+    color: var(--foreground-color);
   }
 
   button {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
     display: block;
     font-size: 14px;
     margin-top: 8px;
@@ -132,7 +132,7 @@ body[data-theme='dark'] {
   font-size: 14px;
   font-weight: 500;
   line-height: normal;
-  color: $studio-gray-50;
+  color: var(--foreground-color);
   padding: 5px 16px;
 }
 
@@ -182,11 +182,11 @@ body[data-theme='dark'] {
   }
 
   &.note-list-item-selected {
-    background: $studio-simplenote-blue-5;
+    background: var(--highlight-color);
   }
 
   &:not(.note-list-item-pinned):hover .note-list-item-pinner {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
   }
 
   &:not(.note-list-item-selected) {
@@ -209,7 +209,7 @@ body[data-theme='dark'] {
   .note-list-item-pending-changes,
   .note-list-item-published-icon {
     padding: 0 4px;
-    color: $studio-gray-50;
+    color: var(--foreground-color);
 
     & svg {
       height: 16px;
@@ -224,7 +224,7 @@ body[data-theme='dark'] {
 
     &.is-offline svg {
       animation: none;
-      fill: $studio-gray-20;
+      fill: var(--tertiary-color);
     }
 
     body[data-theme='dark'] &.is-offline svg {

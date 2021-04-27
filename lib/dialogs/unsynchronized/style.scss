@@ -14,7 +14,7 @@
   .dialog-title-side svg {
     height: 16px;
     width: 16px;
-    color: $studio-gray-50;
+    color: var(--foreground-color);
   }
 
   .explanation,
@@ -26,12 +26,12 @@
   }
 
   .explanation-secondary {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
   }
 
   .change-list {
-    border-bottom: 1px solid $studio-gray-5;
-    border-top: 1px solid $studio-gray-5;
+    border-bottom: 1px solid var(--secondary-color);
+    border-top: 1px solid var(--secondary-color);
     overflow-y: auto;
 
     ul {
@@ -62,7 +62,7 @@
   }
 
   .export-unsynchronized {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
     padding: 17px;
     text-align: left;
   }
@@ -73,8 +73,8 @@
 
     .log-out {
       border-radius: 4px;
-      background-color: $studio-simplenote-blue-50;
-      color: $studio-white;
+      background-color: var(--accent-color);
+      color: var(--background-color);
       font-size: 14px;
       padding: 6px 12px;
       margin: 14px 12px;

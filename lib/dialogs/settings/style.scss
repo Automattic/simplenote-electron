@@ -33,12 +33,12 @@
 
   p {
     line-height: normal;
-    color: $studio-gray-80;
+    color: var(--primary-color);
   }
 }
 
 .settings-items {
-  border: 1px solid $studio-gray-5;
+  border: 1px solid var(--secondary-color);
 }
 
 .settings-item {
@@ -47,7 +47,7 @@
   height: 3em;
   padding-left: 18px;
   padding-right: 18px;
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid var(--secondary-color);
 
   &:last-child {
     border-bottom: none;

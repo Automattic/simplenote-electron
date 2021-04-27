@@ -1,6 +1,6 @@
 .progress-bar {
   @at-root body[data-theme='light'] & {
-    background-color: $studio-gray-5;
+    background-color: var(--secondary-color);
   }
   @at-root body[data-theme='dark'] & {
     background-color: $studio-gray-80;
@@ -8,5 +8,5 @@
 }
 
 .progress-bar__bar {
-  background-color: $studio-gray-50 !important;
+  background-color: var(--foreground-color) !important;
 }

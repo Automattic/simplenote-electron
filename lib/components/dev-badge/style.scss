@@ -5,8 +5,8 @@
   right: 12px;
   bottom: 12px;
   padding: 2px 4px;
-  background: $studio-gray-5;
-  color: $studio-gray-80;
+  background: var(--secondary-color);
+  color: var(--primary-color);
   font-size: 0.75rem;
   line-height: 1;
 }

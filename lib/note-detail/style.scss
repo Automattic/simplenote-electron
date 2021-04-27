@@ -40,7 +40,7 @@
     opacity: 0.2;
 
     path {
-      fill: $studio-gray-50;
+      fill: var(--foreground-color);
     }
   }
 
@@ -56,8 +56,8 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
-  color: $studio-gray-50;
-  background: $studio-white;
+  color: var(--foreground-color);
+  background: var(--background-color);
   resize: none;
   -webkit-tap-highlight-color: transparent;
   word-break: break-word;
@@ -127,12 +127,12 @@
 
   hr {
     border: 0;
-    border-top: 1px solid $studio-gray-5;
+    border-top: 1px solid var(--secondary-color);
   }
 
   blockquote {
     font-style: italic;
-    border-left: 4px solid $studio-gray-5;
+    border-left: 4px solid var(--secondary-color);
     margin-left: 0;
     padding-left: 1em;
   }
@@ -167,14 +167,14 @@
   }
 
   pre {
-    border: 1px solid $studio-gray-20;
+    border: 1px solid var(--tertiary-color);
     padding: 1em;
     border-radius: $border-radius;
     font-size: 85%;
   }
 
   p > code {
-    background-color: $studio-gray-5;
+    background-color: var(--secondary-color);
     border-radius: 2px;
     padding: 3px;
   }
@@ -186,12 +186,12 @@
     width: 100%;
 
     tr:nth-child(2n) {
-      background-color: $studio-gray-5;
+      background-color: var(--secondary-color);
     }
 
     th,
     td {
-      border: 1px solid $studio-gray-20;
+      border: 1px solid var(--tertiary-color);
       padding: 6px 13px;
     }
 

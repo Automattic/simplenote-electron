@@ -25,19 +25,19 @@
   }
 
   &.is-selected {
-    background-color: $studio-simplenote-blue-5;
+    background-color: var(--highlight-color);
 
     button {
       border-top: none;
 
       svg[class^='icon-'] {
-        fill: $studio-simplenote-blue-50;
+        fill: var(--accent-color);
       }
     }
   }
 
   .navigation-bar-item__icon {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
     display: inline-block;
     margin-right: 18px;
     vertical-align: middle;

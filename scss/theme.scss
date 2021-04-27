@@ -91,7 +91,7 @@ span[dir='ltr'] {
     border: 3px solid gray;
   }
   .search-decoration {
-    background-color: $studio-simplenote-blue-5;
+    background-color: var(--highlight-color);
   }
   .selected-search {
     background-color: $studio-yellow-20;
@@ -124,37 +124,37 @@ span[dir='ltr'] {
 }
 
 body[data-theme='light'] {
-  background-color: $studio-white;
-  color: $studio-gray-50;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
 
   .theme-color-bg {
-    background-color: $studio-white;
+    background-color: var(--background-color);
   }
   .theme-color-bg-lighter {
-    background-color: $studio-white;
+    background-color: var(--background-color);
   }
   .theme-color-fg {
-    color: $studio-gray-80;
+    color: var(--primary-color);
   }
   .theme-color-fg-dim {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
   }
   .theme-color-border,
   &.theme-color-border,
   .button {
-    border-color: $studio-gray-5;
+    border-color: var(--secondary-color);
   }
   .button-borderless {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
   }
 
   .note-list-item-pinned .note-list-item-pinner {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
   }
 }
 
 .theme-light.theme-color-border {
-  border-color: $studio-gray-5;
+  border-color: var(--secondary-color);
 }
 
 body[data-theme='dark'] {

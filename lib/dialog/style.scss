@@ -5,7 +5,7 @@ $dialog-title-height: 56px;
   display: flex;
   flex-direction: column;
   width: calc(100vw - 2rem);
-  background: white;
+  background: var(--background-color);
   border-radius: 8px;
   max-height: $dialog-max-height;
 
@@ -16,7 +16,7 @@ $dialog-title-height: 56px;
 
 .dialog-title-bar {
   display: flex;
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid var(--secondary-color);
   height: $dialog-title-height;
 
   .button {

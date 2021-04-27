@@ -9,7 +9,7 @@
   top: $toolbar-height + 16px;
   border: 1px solid;
   border-radius: 6px;
-  box-shadow: 0 3px 6px 0 rgba($studio-black, 0.2);
+  box-shadow: 0 3px 6px 0 var(--overlay-color);
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -47,7 +47,7 @@
   }
 
   .note-actions-item-disabled {
-    color: $studio-gray-5;
+    color: var(--secondary-color);
     &:hover {
       background-color: transparent;
     }
