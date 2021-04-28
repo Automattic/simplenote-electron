@@ -95,14 +95,15 @@ export class SearchField extends Component<Props> {
           value={searchQuery}
           spellCheck={false}
         />
-        <button
-          aria-label="Clear search"
-          className="icon-button"
-          hidden={!hasQuery}
-          onClick={this.clearQuery}
-        >
-          <SmallCrossIcon />
-        </button>
+        {hasQuery && (
+          <button
+            aria-label="Clear search"
+            className="icon-button"
+            onClick={this.clearQuery}
+          >
+            <SmallCrossIcon />
+          </button>
+        )}
       </div>
     );
   }
