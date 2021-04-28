@@ -16,7 +16,7 @@
 - Fixed displaying extra blank spaces in history screen [#2829](https://github.com/automattic/simplenote-electron/pull/2829)
 - Fixed to apply selected tag to a new note by default [#2556](https://github.com/automattic/simplenote-electron/pull/2556)
 - Fixed spacing on unsynced notes warning message [#2797](https://github.com/automattic/simplenote-electron/pull/2797)
-- Fixed cut off issue for dialogs when the window is too small [#2815](https://github.com/automattic/simplenote-electron/pull/2815), [#2834](https://github.com/automattic/simplenote-electron/pull/2834)
+- Fixed cut off issue for dialogs when the window is too small [#2815](https://github.com/automattic/simplenote-electron/pull/2815), [#2834](https://github.com/automattic/simplenote-electron/pull/2834), [#2863](https://github.com/automattic/simplenote-electron/pull/2863)
 - Fixed unnecessary separators in the Electron builds File and Edit menus when not yet logged in (props @Klauswk) [#2724](https://github.com/automattic/simplenote-electron/pull/2724)
 
 ## [v2.9.0]
