@@ -2,10 +2,12 @@
   .dialog {
     max-width: 500px;
     margin: auto;
+    max-height: calc(100vh - 2rem);
   }
 
   .dialog-content {
     padding: 10px 20px 20px;
+    max-height: calc(100vh - 2rem - 56px);
   }
 
   ul {
