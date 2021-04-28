@@ -18,6 +18,7 @@
 - Fixed spacing on unsynced notes warning message [#2797](https://github.com/automattic/simplenote-electron/pull/2797)
 - Fixed cut off issue for dialogs when the window is too small [#2815](https://github.com/automattic/simplenote-electron/pull/2815), [#2834](https://github.com/automattic/simplenote-electron/pull/2834), [#2863](https://github.com/automattic/simplenote-electron/pull/2863)
 - Fixed unnecessary separators in the Electron builds File and Edit menus when not yet logged in (props @Klauswk) [#2724](https://github.com/automattic/simplenote-electron/pull/2724)
+- Fixed the clear search button so it does not appear unless there is a search term to clear [#2862](https://github.com/automattic/simplenote-electron/pull/2862)
 
 ## [v2.9.0]
 
