@@ -6,12 +6,19 @@ const enableCheckboxes = {
   replace: '<input type="checkbox" ',
 };
 
+const removeLineBreaks = {
+  type: 'output',
+  regex: '>\n',
+  replace: '>',
+};
+
 export const renderNoteToHtml = (content: string) => {
   return import(/* webpackChunkName: 'showdown' */ 'showdown').then(
     ({ default: showdown }) => {
       showdown.extension('enableCheckboxes', enableCheckboxes);
+      showdown.extension('removeLineBreaks', removeLineBreaks);
       const markdownConverter = new showdown.Converter({
-        extensions: ['enableCheckboxes'],
+        extensions: ['enableCheckboxes', 'removeLineBreaks'],
       });
       markdownConverter.setFlavor('github');
       markdownConverter.setOption('simpleLineBreaks', false); // override GFM

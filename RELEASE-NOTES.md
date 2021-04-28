@@ -13,7 +13,7 @@
 ### Fixes
 
 - Fixed extra line breaks issue when exporting notes [#2819](https://github.com/automattic/simplenote-electron/pull/2819)
-- Fixed displaying extra blank spaces in history screen [#2829](https://github.com/automattic/simplenote-electron/pull/2829)
+- Fixed displaying extra blank spaces in history screen [#2829](https://github.com/automattic/simplenote-electron/pull/2829), [#2867](https://github.com/automattic/simplenote-electron/pull/2867)
 - Fixed to apply selected tag to a new note by default [#2556](https://github.com/automattic/simplenote-electron/pull/2556)
 - Fixed spacing on unsynced notes warning message [#2797](https://github.com/automattic/simplenote-electron/pull/2797)
 - Fixed cut off issue for dialogs when the window is too small [#2815](https://github.com/automattic/simplenote-electron/pull/2815), [#2834](https://github.com/automattic/simplenote-electron/pull/2834)
