@@ -86,7 +86,7 @@ export class SearchField extends Component<Props> {
         <input
           ref={this.inputField}
           type="search"
-          placeholder="Search notes and tags"
+          placeholder="Search all notes and tags"
           onChange={this.update}
           onKeyUp={this.interceptEsc}
           value={searchQuery}
