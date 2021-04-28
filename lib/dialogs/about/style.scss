@@ -2,6 +2,7 @@
   .dialog {
     position: relative;
     max-width: 472px;
+    max-height: calc(100vh - 2rem);
 
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
@@ -15,6 +16,7 @@
 
   .dialog-content {
     padding: 30px 20px 20px;
+    max-height: calc(100vh - 2rem - 70px);
   }
 
   a {

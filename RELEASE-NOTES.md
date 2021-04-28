@@ -1,5 +1,25 @@
 # Changelog
 
+## [v2.10.0]
+
+### Enhancements
+
+- Removed the sort options bar from the note list and updated the sort options in the Settings [#2841](https://github.com/automattic/simplenote-electron/pull/2841)
+- Updated the design of the login/sign up form as well as clarifying the message shown when requesting an account [#2831](https://github.com/automattic/simplenote-electron/pull/2831)
+- Updated the styling of the search UI including the search highlighting [#2791](https://github.com/automattic/simplenote-electron/pull/2791)
+- Updated the note toolbar and note info sidebar to be two dialogs, one for note info, and one for note actions [#2622](https://github.com/automattic/simplenote-electron/pull/2622), [#2835](https://github.com/automattic/simplenote-electron/pull/2835), [#2843](https://github.com/automattic/simplenote-electron/pull/2843), [#2842](https://github.com/automattic/simplenote-electron/pull/2842)
+- Added scrolling to the list of unsynchronized notes in the warning dialog [#2816](https://github.com/automattic/simplenote-electron/pull/2816)
+
+### Fixes
+
+- Fixed extra line breaks issue when exporting notes [#2819](https://github.com/automattic/simplenote-electron/pull/2819)
+- Fixed displaying extra blank spaces in history screen [#2829](https://github.com/automattic/simplenote-electron/pull/2829), [#2867](https://github.com/automattic/simplenote-electron/pull/2867)
+- Fixed to apply selected tag to a new note by default [#2556](https://github.com/automattic/simplenote-electron/pull/2556)
+- Fixed spacing on unsynced notes warning message [#2797](https://github.com/automattic/simplenote-electron/pull/2797)
+- Fixed cut off issue for dialogs when the window is too small [#2815](https://github.com/automattic/simplenote-electron/pull/2815), [#2834](https://github.com/automattic/simplenote-electron/pull/2834), [#2863](https://github.com/automattic/simplenote-electron/pull/2863)
+- Fixed unnecessary separators in the Electron builds File and Edit menus when not yet logged in (props @Klauswk) [#2724](https://github.com/automattic/simplenote-electron/pull/2724)
+- Fixed the clear search button so it does not appear unless there is a search term to clear [#2862](https://github.com/automattic/simplenote-electron/pull/2862)
+
 ## [v2.9.0]
 
 ### Enhancements
