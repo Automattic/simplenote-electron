@@ -217,18 +217,22 @@ export const middleware: S.Middleware = (store) => {
         continue;
       }
 
+      const showUntagged =
+        collection.type === 'untagged' ||
+        searchTags.has(t('untagged' as T.TagName));
+
+      if (showUntagged && note.tags.size) {
+        continue;
+      }
+
       let hasAllTags = true;
       for (const tagName of searchTags.values()) {
-        if (!note.tags.has(tagName)) {
+        if (tagName !== 'untagged' && !note.tags.has(tagName)) {
           hasAllTags = false;
           break;
         }
       }
       if (!hasAllTags) {
-        continue;
-      }
-
-      if (collection.type === 'untagged' && note.tags.size) {
         continue;
       }
 
