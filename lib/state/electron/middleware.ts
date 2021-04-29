@@ -15,8 +15,13 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
       dispatch(actions.ui.showAlternateLoginPrompt(tokenEmail));
     }
   });
+
   window.electron.receive('appCommand', (command) => {
     switch (command.action) {
+      case 'systemTheme':
+        dispatch({ type: 'SYSTEM_THEME_UPDATE', prefers: command.theme });
+        return;
+
       case 'closeWindow':
         dispatch(actions.ui.closeWindow());
         return;

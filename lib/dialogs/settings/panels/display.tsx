@@ -131,9 +131,7 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
       onChange={props.setActiveTheme}
       renderer={RadioGroup}
     >
-      {navigator.userAgent.toLowerCase().indexOf(' electron/') === -1 && (
-        <Item title="System" slug="system" />
-      )}
+      <Item title="System" slug="system" />
       <Item title="Light" slug="light" />
       <Item title="Dark" slug="dark" />
     </SettingsGroup>

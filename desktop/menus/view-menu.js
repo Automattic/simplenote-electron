@@ -109,6 +109,10 @@ const buildViewMenu = (settings, isAuthenticated) => {
         visible: isAuthenticated,
         submenu: [
           {
+            label: '&System',
+            id: 'system',
+          },
+          {
             label: '&Light',
             id: 'light',
           },

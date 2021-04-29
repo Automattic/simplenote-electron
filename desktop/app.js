@@ -7,6 +7,7 @@ const {
   shell,
   Menu,
   session,
+  nativeTheme,
 } = require('electron');
 
 const path = require('path');
@@ -102,6 +103,18 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );
+    });
+
+    mainWindow.webContents.send('appCommand', {
+      action: 'systemTheme',
+      theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+    });
+
+    nativeTheme.on('updated', () => {
+      mainWindow.webContents.send('appCommand', {
+        action: 'systemTheme',
+        theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+      });
     });
 
     ipcMain.on('clearCookies', function () {
