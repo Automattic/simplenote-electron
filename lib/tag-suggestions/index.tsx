@@ -43,20 +43,22 @@ export class TagSuggestions extends Component<Props> {
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
             <ul className="tag-suggestions-list theme-color-border">
-              {filteredTags.map((tagId) => (
-                <li
-                  key={tagId}
-                  id={tagId}
-                  className="tag-suggestion-row"
-                  onClick={() =>
-                    this.updateSearch(`tag:${tags.get(tagId)!.name}`)
-                  }
-                >
-                  <div className="tag-suggestion" title={tags.get(tagId)!.name}>
-                    tag:{tags.get(tagId)!.name}
-                  </div>
-                </li>
-              ))}
+              {filteredTags.map((tagId) => {
+                const tagName =
+                  tagId === 'untagged' ? 'untagged' : tags.get(tagId)!.name;
+                return (
+                  <li
+                    key={tagId}
+                    id={tagId}
+                    className="tag-suggestion-row"
+                    onClick={() => this.updateSearch(`tag:${tagName}`)}
+                  >
+                    <div className="tag-suggestion" title={tagName}>
+                      tag:{tagName}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -104,6 +106,12 @@ export const filterTags = (
   for (const tagHash of tags.keys()) {
     if (matcher(tagHash)) {
       filteredTags.push(tagHash);
+    }
+  }
+
+  if (!query.includes('tag:')) {
+    if (matcher(tagHashOf('untagged' as T.TagName))) {
+      filteredTags.push(tagHashOf('untagged' as T.TagName));
     }
   }
 
