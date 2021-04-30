@@ -102,20 +102,26 @@ it('matches with the tag: prefix (only prefixes)', () => {
 });
 
 it('falls-back to plain text matching if the tag: prefix is incomplete', () => {
-  expect(filterTags(animals, new Map(), 't')).toEqual(['bat', 'cat']);
-  expect(filterTags(animals, new Map(), 'ta')).toEqual([]);
-  expect(filterTags(animals, new Map(), 'tag')).toEqual([]);
+  expect(filterTags(animals, new Map(), 't')).toEqual([
+    'bat',
+    'cat',
+    'untagged',
+  ]);
+  expect(filterTags(animals, new Map(), 'ta')).toEqual(['untagged']);
+  expect(filterTags(animals, new Map(), 'tag')).toEqual(['untagged']);
   expect(filterTags(animals, new Map(), 'tag:')).toEqual([]);
+  expect(filterTags(animals, new Map(), 'do')).toEqual(['dog']);
+  expect(filterTags(animals, new Map(), 'dot')).toEqual([]);
 
   // matching first-letter takes precedence over lexical sort
   expect(filterTags(taggers, new Map(), 't')).toEqual(
-    ['tag', 'atag', 'atag:what?'].map(th)
+    ['tag', 'atag', 'atag:what?', 'untagged'].map(th)
   );
   expect(filterTags(taggers, new Map(), 'ta')).toEqual(
-    ['tag', 'atag', 'atag:what?'].map(th)
+    ['tag', 'atag', 'atag:what?', 'untagged'].map(th)
   );
   expect(filterTags(taggers, new Map(), 'tag')).toEqual(
-    ['tag', 'atag', 'atag:what?'].map(th)
+    ['tag', 'atag', 'atag:what?', 'untagged'].map(th)
   );
   expect(filterTags(taggers, new Map(), 'tag:')).toEqual(
     ['atag:what?'].map(th)
