@@ -103,6 +103,7 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );
+      nativeTheme.themeSource = settings.theme;
     });
 
     mainWindow.webContents.send('appCommand', {
