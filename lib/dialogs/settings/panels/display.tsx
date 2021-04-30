@@ -1,7 +1,7 @@
 import React, { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 
-import { isElectron, isMac } from '../../../utils/platform';
+import { isElectron, isLinux, isMac } from '../../../utils/platform';
 import RadioGroup from '../../radio-settings-group';
 import SettingsGroup, { Item } from '../../settings-group';
 import ToggleGroup from '../../toggle-settings-group';
@@ -131,7 +131,7 @@ const DisplayPanel: FunctionComponent<Props> = (props) => (
       onChange={props.setActiveTheme}
       renderer={RadioGroup}
     >
-      <Item title="System" slug="system" />
+      {!isLinux && <Item title="System" slug="system" />}
       <Item title="Light" slug="light" />
       <Item title="Dark" slug="dark" />
     </SettingsGroup>

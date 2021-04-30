@@ -5,6 +5,32 @@ const buildViewMenu = (settings, isAuthenticated) => {
   settings = settings || {};
   isAuthenticated = isAuthenticated || false;
 
+  const themeSubMenu = platform.isLinux()
+    ? [
+        {
+          label: '&Light',
+          id: 'light',
+        },
+        {
+          label: '&Dark',
+          id: 'dark',
+        },
+      ]
+    : [
+        {
+          label: '&System',
+          id: 'system',
+        },
+        {
+          label: '&Light',
+          id: 'light',
+        },
+        {
+          label: '&Dark',
+          id: 'dark',
+        },
+      ];
+
   const menu = {
     label: '&View',
     submenu: [
@@ -107,20 +133,7 @@ const buildViewMenu = (settings, isAuthenticated) => {
       {
         label: 'T&heme',
         visible: isAuthenticated,
-        submenu: [
-          {
-            label: '&System',
-            id: 'system',
-          },
-          {
-            label: '&Light',
-            id: 'light',
-          },
-          {
-            label: '&Dark',
-            id: 'dark',
-          },
-        ].map(
+        submenu: themeSubMenu.map(
           buildRadioGroup({
             action: 'activateTheme',
             propName: 'theme',

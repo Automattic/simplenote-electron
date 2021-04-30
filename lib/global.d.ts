@@ -10,6 +10,7 @@ declare global {
     electron: {
       confirmLogout(changes: string): 'logout' | 'reconsider' | 'export';
       isMac: boolean;
+      isLinux: boolean;
       receive(command: 'appCommand', callback: (event: any) => any);
       receive(command: 'editorCommand', callback: (event: any) => any);
       receive(command: 'noteImportChannel', callback: (event: any) => any);
