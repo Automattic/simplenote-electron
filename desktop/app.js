@@ -106,17 +106,17 @@ module.exports = function main() {
       nativeTheme.themeSource = settings.theme;
     });
 
-    mainWindow.webContents.send('appCommand', {
-      action: 'systemTheme',
-      theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
-    });
+    // mainWindow.webContents.send('appCommand', {
+    //   action: 'systemTheme',
+    //   theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+    // });
 
-    nativeTheme.on('updated', () => {
-      mainWindow.webContents.send('appCommand', {
-        action: 'systemTheme',
-        theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
-      });
-    });
+    // nativeTheme.on('updated', () => {
+    //   mainWindow.webContents.send('appCommand', {
+    //     action: 'systemTheme',
+    //     theme: nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+    //   });
+    // });
 
     ipcMain.on('clearCookies', function () {
       // Removes any cookies stored in the app. We're particularly interested in
