@@ -60,4 +60,5 @@ contextBridge.exposeInMainWorld('electron', {
     }
   },
   isMac: process.platform === 'darwin',
+  isLinux: process.platform === 'linux',
 });

@@ -7,6 +7,7 @@ const {
   shell,
   Menu,
   session,
+  nativeTheme,
 } = require('electron');
 
 const path = require('path');
@@ -102,6 +103,7 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );
+      nativeTheme.themeSource = settings.theme;
     });
 
     ipcMain.on('clearCookies', function () {
