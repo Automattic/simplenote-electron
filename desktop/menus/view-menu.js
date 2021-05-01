@@ -5,31 +5,21 @@ const buildViewMenu = (settings, isAuthenticated) => {
   settings = settings || {};
   isAuthenticated = isAuthenticated || false;
 
-  const themeSubMenu = platform.isLinux()
-    ? [
-        {
-          label: '&Light',
-          id: 'light',
-        },
-        {
-          label: '&Dark',
-          id: 'dark',
-        },
-      ]
-    : [
-        {
-          label: '&System',
-          id: 'system',
-        },
-        {
-          label: '&Light',
-          id: 'light',
-        },
-        {
-          label: '&Dark',
-          id: 'dark',
-        },
-      ];
+  const themeSubMenu = [];
+  if (!platform.isLinux()) {
+    themeSubMenu.push({
+      label: '&System',
+      id: 'system',
+    });
+  }
+  themeSubMenu.push({
+    label: '&Light',
+    id: 'light',
+  });
+  themeSubMenu.push({
+    label: '&Dark',
+    id: 'dark',
+  });
 
   const menu = {
     label: '&View',
