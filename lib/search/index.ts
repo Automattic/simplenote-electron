@@ -237,7 +237,12 @@ export const middleware: S.Middleware = (store) => {
       }
 
       const openedTagHash = collection.type === 'tag' && t(collection.tagName);
-      if (openedTagHash && !note.tags.has(openedTagHash)) {
+      if (
+        searchTerms.length === 0 &&
+        searchTags.size === 0 &&
+        openedTagHash &&
+        !note.tags.has(openedTagHash)
+      ) {
         continue;
       }
 

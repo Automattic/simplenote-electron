@@ -74,9 +74,6 @@ export class SearchField extends Component<Props> {
     const { openedTag, searchQuery } = this.props;
     const hasQuery = searchQuery.length > 0;
 
-    const description =
-      'Search ' + (openedTag ? 'notes in ' + openedTag : 'notes and tags');
-
     return (
       <div className="search-field theme-color-fg theme-color-border">
         <button
@@ -89,7 +86,7 @@ export class SearchField extends Component<Props> {
         <input
           ref={this.inputField}
           type="search"
-          placeholder={description}
+          placeholder="Search all notes and tags"
           onChange={this.update}
           onKeyUp={this.interceptEsc}
           value={searchQuery}
