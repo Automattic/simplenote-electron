@@ -308,7 +308,10 @@ const searchQuery: A.Reducer<string> = (state = '', action) => {
   }
 };
 
-const selectedSearchMatchIndex: A.Reducer<number> = (state = null, action) => {
+const selectedSearchMatchIndex: A.Reducer<number | null> = (
+  state = null,
+  action
+) => {
   switch (action.type) {
     case 'STORE_SEARCH_SELECTION':
       return action.index;

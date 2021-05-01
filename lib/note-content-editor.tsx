@@ -105,7 +105,7 @@ type DispatchProps = {
     direction: 'LTR' | 'RTL'
   ) => any;
   storeNumberOfMatchesInNote: (matches: number) => any;
-  storeSearchSelection: (index: number) => any;
+  storeSearchSelection: (index: number | null) => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -151,7 +151,7 @@ class NoteContentEditor extends Component<Props> {
     // to avoid, for example, opening a note and having the fourth match selected (or "4 of 1")
     const searchChanged = props.searchQuery !== state.searchQuery;
     if (noteChanged || searchChanged) {
-      props.storeSearchSelection(0);
+      props.storeSearchSelection(null);
     }
 
     return {
@@ -1111,6 +1111,7 @@ class NoteContentEditor extends Component<Props> {
     const newIndex = (total + (index ?? -1) + 1) % total;
     this.props.storeSearchSelection(newIndex);
     this.setSearchSelection(newIndex);
+    this.focusEditor();
   };
 
   setPrevSearchSelection = () => {
@@ -1119,16 +1120,16 @@ class NoteContentEditor extends Component<Props> {
     const newIndex = (total + (index ?? total) - 1) % total;
     this.props.storeSearchSelection(newIndex);
     this.setSearchSelection(newIndex);
+    this.focusEditor();
   };
 
   setSearchSelection = (index) => {
-    if (!this.matchesInNote.length) {
+    if (!this.matchesInNote.length || index === null) {
       return;
     }
     const range = this.matchesInNote[index].range;
     this.editor.setSelection(range);
     this.editor.revealLineInCenter(range.startLineNumber);
-    this.focusEditor();
 
     const newDecorations = [];
     this.matchesInNote.forEach((match) => {
