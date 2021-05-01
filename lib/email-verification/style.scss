@@ -77,7 +77,7 @@
   word-break: break-all;
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .email-verification__button-row .button-borderless {
     color: $studio-simplenote-blue-20;
   }

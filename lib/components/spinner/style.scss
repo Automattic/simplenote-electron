@@ -1,8 +1,8 @@
 .spinner__circle {
-  @at-root .theme-light & {
+  @at-root body[data-theme='light'] & {
     color: $studio-gray-5;
   }
-  @at-root .theme-dark & {
+  @at-root body[data-theme='dark'] & {
     color: $studio-gray-80;
   }
 

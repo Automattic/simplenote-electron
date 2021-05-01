@@ -68,6 +68,7 @@ class AppComponent extends Component<Props> {
 
   componentDidMount() {
     window.electron?.send('setAutoHideMenuBar', this.props.autoHideMenuBar);
+    document.body.dataset.theme = this.props.theme;
 
     this.toggleShortcuts(true);
 
@@ -75,8 +76,13 @@ class AppComponent extends Component<Props> {
     __TEST__ && window.testEvents.push('booted');
   }
 
+  componentDidUpdate() {
+    document.body.dataset.theme = this.props.theme;
+  }
+
   componentWillUnmount() {
     this.toggleShortcuts(false);
+    delete document.body.dataset.theme;
   }
 
   handleShortcut = (event: KeyboardEvent) => {
@@ -190,7 +196,7 @@ class AppComponent extends Component<Props> {
       theme,
     } = this.props;
 
-    const appClasses = classNames('app', `theme-${theme}`, {
+    const appClasses = classNames('app', {
       'is-line-length-full': lineLength === 'full',
       'touch-enabled': 'ontouchstart' in document.body,
     });

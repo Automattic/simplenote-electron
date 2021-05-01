@@ -4,14 +4,17 @@ import { render } from 'react-dom';
 import '../scss/style.scss';
 
 class LoggingOut extends Component {
-  render() {
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-      .matches
-      ? 'dark'
-      : 'light';
+  systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 
+  componentDidMount() {
+    document.body.dataset.theme = this.systemTheme;
+  }
+
+  render() {
     return (
-      <div className={`app theme-${systemTheme}`}>
+      <div className="app">
         <div
           style={{
             fontSize: '18px',

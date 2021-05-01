@@ -123,7 +123,7 @@ span[dir='ltr'] {
   }
 }
 
-.theme-light {
+body[data-theme='light'] {
   background-color: $studio-white;
   color: $studio-gray-50;
 
@@ -157,7 +157,7 @@ span[dir='ltr'] {
   border-color: $studio-gray-5;
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   background-color: $studio-gray-90;
   color: $studio-gray-20;
 

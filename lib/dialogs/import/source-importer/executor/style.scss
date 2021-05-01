@@ -70,7 +70,7 @@
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .source-importer-executor {
     .source-importer-executor__options {
       label {

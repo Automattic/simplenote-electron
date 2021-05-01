@@ -43,8 +43,13 @@ class AppWithoutAuth extends Component<Props, State> {
     showAbout: false,
   };
 
+  systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+
   componentDidMount() {
     window.electron?.receive('appCommand', this.onAppCommand);
+    document.body.dataset.theme = this.systemTheme;
 
     window.electron?.receive('tokenLogin', (url) => {
       const { searchParams } = new URL(url);
@@ -137,13 +142,8 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   render() {
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-      .matches
-      ? 'dark'
-      : 'light';
-
     return (
-      <div className={`app theme-${systemTheme}`}>
+      <div className="app">
         <ErrorBoundary>
           <AuthApp
             accountCreationRequested={
@@ -171,10 +171,7 @@ class AppWithoutAuth extends Component<Props, State> {
               isOpen
               onRequestClose={this.onDismissDialog}
               overlayClassName="dialog-renderer__overlay"
-              portalClassName={classNames(
-                'dialog-renderer__portal',
-                'theme-' + systemTheme
-              )}
+              portalClassName={classNames('dialog-renderer__portal')}
             >
               <AboutDialog key="about" closeDialog={this.onDismissDialog} />
             </Modal>

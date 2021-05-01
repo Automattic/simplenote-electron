@@ -122,10 +122,7 @@ const EmailVerification: FunctionComponent<Props> = ({
       onRequestClose={dismiss}
       contentLabel="Confirm your email"
       overlayClassName="email-verification__overlay"
-      portalClassName={classNames(
-        'email-verification__portal',
-        'theme-' + theme
-      )}
+      portalClassName={classNames('email-verification__portal')}
     >
       {accountVerification === 'pending'
         ? displayEmailRequested

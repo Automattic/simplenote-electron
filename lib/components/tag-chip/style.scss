@@ -49,7 +49,7 @@
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .tag-chip {
     background: $studio-gray-70;
     color: $studio-white;

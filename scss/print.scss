@@ -3,7 +3,7 @@
     -ms-overflow-style: -ms-autohiding-scrollbar;
   }
 
-  .theme-dark .theme-color-bg {
+  body[data-theme='dark'] .theme-color-bg {
     background-color: $studio-white;
   }
 

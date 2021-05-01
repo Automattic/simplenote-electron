@@ -177,7 +177,7 @@
   }
 }
 
-.theme-dark .login {
+body[data-theme='dark'] .login {
   h1 {
     color: $studio-white;
   }

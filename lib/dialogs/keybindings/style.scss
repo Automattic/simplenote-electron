@@ -28,15 +28,15 @@
     text-align: center;
     display: inline-block;
     box-shadow: 0 1px 1px gray;
-
-    .theme-dark & {
-      border: 1px solid white;
-    }
-
-    .theme-light & {
-      border: 1px solid black;
-    }
   }
+}
+
+body[data-theme='light'] .keybindings kbd {
+  border: 1px solid black;
+}
+
+body[data-theme='dark'] .keybindings kbd {
+  border: 1px solid white;
 }
 
 .keybindings__key-item {

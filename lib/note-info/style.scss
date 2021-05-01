@@ -101,7 +101,7 @@
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .note-info {
     .reference-link {
       &:hover {

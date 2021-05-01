@@ -69,7 +69,7 @@
   }
 }
 
-.theme-dark {
+body[data-theme='dark'] {
   .source-importer {
     p {
       color: $studio-white;

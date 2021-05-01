@@ -100,7 +100,7 @@ const ErrorBoundaryWithSentry: FunctionComponent<ErrorBoundaryWithSentryProps> =
   theme,
 }) => {
   return (
-    <div className={`theme-${theme}`}>
+    <div>
       {isDevConfig || !allowAnalytics ? (
         <ErrorBoundary>{children}</ErrorBoundary>
       ) : (
