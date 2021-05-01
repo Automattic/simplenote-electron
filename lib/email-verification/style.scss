@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba($studio-gray-20, 0.75);
+  background: rgba($studio-black, 0.3);
 }
 
 .email-verification__dismiss {
@@ -78,10 +78,7 @@
 }
 
 .theme-dark {
-  .email-verification__overlay {
-    background: rgba($studio-gray-100, 0.75);
-  }
   .email-verification__button-row .button-borderless {
-    color: $studio-simplenote-blue-30;
+    color: $studio-simplenote-blue-20;
   }
 }

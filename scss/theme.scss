@@ -125,7 +125,7 @@ span[dir='ltr'] {
 
 .theme-light {
   background-color: $studio-white;
-  color: $studio-gray-60;
+  color: $studio-gray-50;
 
   .theme-color-bg {
     background-color: $studio-white;
@@ -181,7 +181,7 @@ span[dir='ltr'] {
 
   ::-webkit-scrollbar-thumb {
     background-color: $studio-gray-80;
-    border-color: $studio-gray-60;
+    border-color: $studio-gray-50;
   }
   ::-webkit-scrollbar-thumb:hover {
     background-color: $studio-gray-90;
@@ -191,12 +191,12 @@ span[dir='ltr'] {
   }
 
   .button-borderless {
-    color: $studio-simplenote-blue-30;
+    color: $studio-simplenote-blue-20;
 
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
-        fill: $studio-gray-60;
+        fill: $studio-gray-50;
       }
     }
   }
@@ -293,7 +293,7 @@ span[dir='ltr'] {
 
     .note-list-item-pinned:not(.note-list-item-selected) {
       .note-list-item-pinner {
-        color: $studio-simplenote-blue-30;
+        color: $studio-simplenote-blue-20;
       }
     }
 
@@ -328,7 +328,7 @@ span[dir='ltr'] {
     table {
       th,
       td {
-        border-color: $studio-gray-60;
+        border-color: $studio-gray-50;
       }
       tr:nth-child(2n) {
         background-color: $studio-gray-80;
@@ -342,7 +342,7 @@ span[dir='ltr'] {
     background-color: $studio-gray-90;
 
     button svg {
-      fill: $studio-simplenote-blue-30;
+      fill: $studio-simplenote-blue-20;
     }
   }
 }

@@ -578,7 +578,7 @@ class NoteContentEditor extends Component<Props> {
       colors: {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90
-        'editor.selectionBackground': '#50575e', // $studio-gray-60
+        'editor.selectionBackground': '#646970', // $studio-gray-50
         'scrollbarSlider.activeBackground': '#646970', // $studio-gray-50
         'scrollbarSlider.background': '#2c3338', // $studio-gray-80
         'scrollbarSlider.hoverBackground': '#1d2327', // $studio-gray-90

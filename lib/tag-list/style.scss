@@ -118,13 +118,13 @@ input.tag-list-input {
       color: $studio-gray-50;
     }
     &.button-trash {
-      color: $studio-simplenote-blue-30;
+      color: $studio-simplenote-blue-20;
     }
   }
 
   .tag-list-item {
     &:hover {
-      background-color: $studio-gray-60;
+      background-color: $studio-gray-80;
     }
   }
 }
@@ -132,7 +132,7 @@ input.tag-list-input {
 .theme-light {
   .icon-button {
     &.button-trash {
-      color: $studio-simplenote-blue-30;
+      color: $studio-simplenote-blue-20;
     }
     &.button-reorder {
       color: $studio-gray-10;
