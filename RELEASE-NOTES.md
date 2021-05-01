@@ -1,5 +1,20 @@
 # Changelog
 
+## [v2.11.0]
+
+### Enhancements
+
+- Updated search so that all notes are searched even if there is a currently selected tag [#2878](https://github.com/automattic/simplenote-electron/pull/2878)
+- Added the option to search with `tag:untagged` to find notes without any tags [#2879](https://github.com/automattic/simplenote-electron/pull/2879)
+- Added tags to the note history screen [#2817](https://github.com/automattic/simplenote-electron/pull/2817)
+- Added system theme for Mac and Windows Electron apps [#2882](https://github.com/automattic/simplenote-electron/pull/2882)
+- Updated the method of setting the theme selection [#2873](https://github.com/automattic/simplenote-electron/pull/2873)
+- Reduced the number of colors used throughout the project [#2872](https://github.com/automattic/simplenote-electron/pull/2872)
+
+### Fixes
+
+- Fixed a couple of bugs where the editor would get focus instead of staying with the search field [#2531](https://github.com/automattic/simplenote-electron/pull/2531)
+
 ## [v2.10.0]
 
 ### Enhancements
