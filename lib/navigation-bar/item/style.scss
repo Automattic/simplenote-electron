@@ -21,7 +21,7 @@
   }
 
   &:hover:not(.is-selected) {
-    background: $studio-gray-0;
+    background: var(--secondary-highlight-color);
   }
 
   &.is-selected {

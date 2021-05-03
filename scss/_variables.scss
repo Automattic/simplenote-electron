@@ -34,6 +34,14 @@ body[data-theme='light'] {
   --secondary-color: #dcdcde; // $studio-gray-5
   --tertiary-color: #a7aaad; // $studio-gray-20
   --accent-color: #3361cc; // $studio-simplenote-blue-50
+  --secondary-accent-color: #c3c4c7; // $studio-gray-10
   --highlight-color: #ced9f2; // $studio-simplenote-blue-5
+  --secondary-highlight-color: #f6f7f7; // $studio-gray-0;
+  --tertiary-highlight-color: #d63638; // $studio-red-50
+
   --overlay-color: rgba(0, 0, 0, 0.2); // black with 20% opacity
+  --search-selection-color: #7d5600; // $studio-yellow-60
+  --wordpress-color: #006088; // $studio-wordpress-blue-50
+  --active-controls-color: #1ed15a; // $studio-green-20
+  --warning-highlight-color: #faa754; // $studio-orange-20
 }

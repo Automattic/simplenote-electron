@@ -114,7 +114,7 @@ optgroup {
   padding-right: 2px;
 
   &[data-current-match='true'] {
-    background-color: $studio-yellow-60;
+    background-color: var(--search-selection-color);
   }
 }
 

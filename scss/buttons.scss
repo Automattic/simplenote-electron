@@ -65,11 +65,11 @@ button {
 
 // Danger buttons
 .button-danger {
-  color: $studio-red-50;
-  border-color: $studio-red-50;
+  color: var(--tertiary-highlight-color);
+  border-color: var(--tertiary-highlight-color);
 
   &:active {
-    background: $studio-red-50;
+    background: var(--tertiary-highlight-color);
     color: var(--background-color);
   }
 }
@@ -86,7 +86,7 @@ button {
 
 .button-borderless.button-danger {
   &:active {
-    color: darken($studio-red-50, 20%);
+    color: var(--tertiary-highlight-color);
   }
 }
 
