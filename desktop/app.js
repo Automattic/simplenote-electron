@@ -71,7 +71,6 @@ module.exports = function main() {
       height: mainWindowState.height,
       minWidth: 370,
       minHeight: 520,
-      titleBarStyle: 'hidden',
       show: false,
       webPreferences: {
         contextIsolation: true,
