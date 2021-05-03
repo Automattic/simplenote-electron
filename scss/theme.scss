@@ -94,7 +94,7 @@ span[dir='ltr'] {
     background-color: var(--highlight-color);
   }
   .selected-search {
-    background-color: $studio-yellow-20;
+    background-color: var(--search-selection-color);
     padding: 2px 0;
   }
 }
