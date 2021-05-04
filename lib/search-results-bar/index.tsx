@@ -41,7 +41,9 @@ const SearchResultsBar: FunctionComponent<Props> = ({
   return (
     <div className="search-results">
       <div>
-        {index === null ? `${total} Results` : `${index + 1} of ${total}`}
+        {index === null
+          ? `${total} ${total > 1 ? 'Results' : 'Result'}`
+          : `${index + 1} of ${total}`}
       </div>
       <span className="search-results-next">
         <IconButton
