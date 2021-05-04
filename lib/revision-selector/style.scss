@@ -45,6 +45,15 @@
         border: 0;
       }
     }
+
+    .icon-button {
+      color: inherit;
+
+      svg {
+        position: relative;
+        bottom: 2px;
+      }
+    }
   }
 
   .button-primary {

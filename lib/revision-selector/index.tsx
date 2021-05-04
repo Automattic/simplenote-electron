@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import FocusTrap from 'focus-trap-react';
 import format from 'date-fns/format';
 import classNames from 'classnames';
+import IconButton from '../icon-button';
+import SmallHelpIcon from '../icons/help-small';
 import Slider from '../components/slider';
 import CheckboxControl from '../controls/checkbox';
 import actions from '../state/actions';
@@ -161,6 +163,12 @@ export class RevisionSelector extends Component<Props> {
                 />
                 <span className="revision-deleted-tags-text">
                   Restore deleted tags
+                </span>
+                <span>
+                  <IconButton
+                    icon={<SmallHelpIcon />}
+                    title="Any deleted tags associated with the restored version of this note will be re-added to your list of tags."
+                  />
                 </span>
               </label>
               <div className="revision-buttons">
