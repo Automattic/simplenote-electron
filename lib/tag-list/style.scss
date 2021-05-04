@@ -12,6 +12,10 @@
   &.is-selected {
     background-color: var(--highlight-color);
   }
+
+  .icon-button:last-child {
+    margin-right: 10px;
+  }
 }
 
 .tag-list-item:not(:last-child) {
@@ -110,10 +114,6 @@ input.tag-list-input {
       outline: none;
     }
   }
-}
-
-.button-reorder {
-  margin-right: 8px;
 }
 
 body[data-theme='dark'] {
