@@ -12,7 +12,7 @@
     min-width: 140px;
     outline: none;
     font: 14px/1.5 $sans;
-    color: $studio-gray-80;
+    color: var(--primary-color);
     background: transparent;
   }
 }
@@ -43,5 +43,5 @@
 }
 
 .tag-input__suggestion {
-  color: $studio-gray-50;
+  color: var(--foreground-color);
 }

@@ -7,10 +7,10 @@
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
 
-    background: $studio-simplenote-blue-50 !important;
-    color: $studio-white !important;
+    background: var(--accent-color) !important;
+    color: var(--background-color) !important;
     a {
-      color: $studio-white;
+      color: var(--background-color);
     }
   }
 
@@ -20,7 +20,7 @@
   }
 
   a {
-    color: white;
+    color: var(--background-color);
     text-decoration: none;
   }
 }
@@ -95,6 +95,6 @@
 
   & svg,
   &:active svg {
-    fill: white;
+    fill: var(--background-color);
   }
 }

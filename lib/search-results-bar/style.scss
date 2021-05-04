@@ -2,8 +2,8 @@
   height: $toolbar-height;
   line-height: $toolbar-height;
   z-index: 100;
-  border-top: 1px solid $studio-gray-5;
-  background-color: $studio-white;
+  border-top: 1px solid var(--secondary-color);
+  background-color: var(--background-color);
   text-align: center;
   user-select: none;
 
@@ -19,7 +19,7 @@
     height: 100%;
 
     svg {
-      fill: $studio-simplenote-blue-50;
+      fill: var(--accent-color);
     }
   }
   .search-results-next {

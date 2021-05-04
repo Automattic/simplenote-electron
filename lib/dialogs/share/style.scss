@@ -1,5 +1,5 @@
 .share-collaborators-heading {
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid var(--secondary-color);
 }
 
 .share-collaborators {
@@ -21,7 +21,7 @@
     height: 34px;
     border-radius: 50%;
     overflow: hidden;
-    background: $studio-gray-5;
+    background: var(--secondary-color);
   }
 
   .share-collaborator-name {

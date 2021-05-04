@@ -16,7 +16,7 @@
   text-align: center;
 }
 .error-message__icon {
-  color: $studio-gray-50;
+  color: var(--foreground-color);
   height: 80px;
   margin: 0 auto 0.5rem;
   width: 80px;
@@ -42,6 +42,6 @@
 }
 
 .error-message__footnote {
-  color: $studio-gray-50;
+  color: var(--foreground-color);
   font-size: 14px;
 }

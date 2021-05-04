@@ -32,7 +32,7 @@
 
     &::before {
       content: '';
-      background-color: rgba($studio-black, 0.2);
+      background-color: var(--overlay-color);
       display: block;
       height: 100%;
       left: 0;
@@ -85,7 +85,7 @@
     animation: pulse 2s infinite ease-in-out;
 
     path {
-      fill: $studio-gray-5;
+      fill: var(--secondary-color);
     }
   }
 

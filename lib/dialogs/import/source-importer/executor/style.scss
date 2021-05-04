@@ -29,8 +29,8 @@
 
   label {
     display: flex;
-    border-top: 1px solid $studio-gray-5;
-    border-bottom: 1px solid $studio-gray-5;
+    border-top: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--secondary-color);
     align-items: center;
     font-size: 16px;
     height: 28px;

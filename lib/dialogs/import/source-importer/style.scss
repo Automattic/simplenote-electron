@@ -18,7 +18,7 @@
       line-height: 16px;
       font-size: 14px;
       border: 0;
-      background-color: $studio-gray-20;
+      background-color: var(--tertiary-color);
       opacity: 1;
       font-weight: 400;
     }
@@ -52,7 +52,7 @@
   p {
     padding-left: 16px;
     padding-right: 16px;
-    color: $studio-gray-80;
+    color: var(--primary-color);
   }
 
   .source-importer-executor {

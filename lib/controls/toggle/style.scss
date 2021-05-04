@@ -64,7 +64,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
     display: block;
     width: $toggle-control-knob-size;
     height: $toggle-control-knob-size;
-    background: white;
+    background: var(--background-color);
     border-radius: $toggle-control-height * 0.5;
     transform: translate(
       $toggle-control-knob-margin,

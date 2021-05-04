@@ -1,7 +1,7 @@
 .menu-bar {
   height: $toolbar-height;
   padding: 0 15px;
-  border-bottom: 1px solid $studio-gray-5;
+  border-bottom: 1px solid var(--secondary-color);
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -108,36 +108,36 @@ body[data-theme='light'] {
   .slider {
     // Track
     &::-webkit-slider-runnable-track {
-      background: $studio-gray-5;
+      background: var(--secondary-color);
     }
     &::-moz-range-track {
-      background: $studio-gray-5;
+      background: var(--secondary-color);
     }
     &::-ms-track {
-      border-color: $studio-gray-5;
+      border-color: var(--secondary-color);
     }
     &::-ms-fill-lower {
-      background: $studio-white;
+      background: var(--background-color);
     }
     &::-ms-fill-upper {
-      background: $studio-white;
+      background: var(--background-color);
     }
 
     // Thumb
     &::-webkit-slider-thumb {
-      border-color: $studio-gray-5;
-      background: $studio-white;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      border-color: var(--secondary-color);
+      background: var(--background-color);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
     &::-moz-range-thumb {
-      background: $studio-white;
-      border-color: $studio-gray-5;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      background: var(--background-color);
+      border-color: var(--secondary-color);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
     &::-ms-thumb {
-      border-color: $studio-gray-5;
-      background: $studio-white;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      border-color: var(--secondary-color);
+      background: var(--background-color);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
   }
 }

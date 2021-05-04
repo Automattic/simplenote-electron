@@ -49,11 +49,11 @@
 
   input,
   button[type='submit'] {
-    background-color: $studio-white;
+    background-color: var(--background-color);
     border: solid 1px $studio-gray-10;
     border-radius: 4px;
     box-sizing: border-box;
-    color: $studio-gray-80;
+    color: var(--primary-color);
     display: block;
     height: 40px;
     padding: 11px 15px;
@@ -65,8 +65,8 @@
   }
 
   input:disabled {
-    border-color: $studio-gray-5;
-    color: $studio-gray-20;
+    border-color: var(--secondary-color);
+    color: var(--tertiary-color);
   }
 
   input:read-only {
@@ -75,8 +75,8 @@
   }
 
   input:focus {
-    border-color: $studio-simplenote-blue-50;
-    box-shadow: 0 0 0 1px $studio-simplenote-blue-50;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
     outline: none;
   }
 
@@ -85,23 +85,23 @@
   }
 
   button[type='submit'] {
-    background-color: $studio-simplenote-blue-50;
+    background-color: var(--accent-color);
     border: none;
-    color: $studio-white;
+    color: var(--background-color);
     font-weight: 500;
     margin: 16px auto 8px;
     padding: 0 15px 2px;
   }
 
   a.login__forgot {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
     text-decoration: none;
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
     display: block;
     font-size: 14px;
     margin: 16px auto;
@@ -112,15 +112,15 @@
   .login__signup a,
   .login__auth-message a,
   .terms a {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
     margin-left: 5px;
     text-decoration: none;
     white-space: nowrap;
   }
 
   .or {
-    background: $studio-white;
-    color: $studio-gray-50;
+    background: var(--background-color);
+    color: var(--foreground-color);
     display: block;
     font-size: 15px;
     font-style: italic;
@@ -133,7 +133,7 @@
   }
 
   .or-line {
-    border-bottom: 1px solid $studio-gray-5;
+    border-bottom: 1px solid var(--secondary-color);
     margin: -20px auto;
     max-width: 320px;
     text-align: center;
@@ -146,7 +146,7 @@
     background-color: $studio-wordpress-blue-50;
     border-radius: 4px;
     box-sizing: border-box;
-    color: $studio-white;
+    color: var(--background-color);
     display: block;
     font-size: 16px;
     font-weight: 500;
@@ -167,7 +167,7 @@
   width: 320px;
 
   svg.icon-mail {
-    color: $studio-gray-50;
+    color: var(--foreground-color);
     width: 60px;
     height: 60px;
   }
@@ -206,22 +206,22 @@ body[data-theme='dark'] .login {
     color: $studio-gray-20;
   }
   .or-line {
-    border-color: $studio-gray-80;
+    border-color: var(--primary-color);
   }
 
   svg.icon-mail {
     color: $studio-gray-30;
   }
   input {
-    border-color: $studio-gray-50;
+    border-color: var(--foreground-color);
 
     &:disabled {
-      color: $studio-gray-50;
+      color: var(--foreground-color);
       border-color: $studio-gray-70;
     }
 
     &:read-only {
-      border-color: $studio-gray-50;
+      border-color: var(--foreground-color);
       background-color: rgba(255, 255, 255, 0.07);
     }
 

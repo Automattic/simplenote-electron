@@ -7,7 +7,7 @@
 a {
   @extend %smart-focus-outline;
 
-  color: $studio-simplenote-blue-50;
+  color: var(--accent-color);
 }
 
 /* stylelint-disable block-opening-brace-space-before */
@@ -108,7 +108,7 @@ optgroup {
 }
 
 .search-match {
-  background-color: $studio-simplenote-blue-5;
+  background-color: var(--highlight-color);
   border-radius: 3px;
   padding-left: 2px;
   padding-right: 2px;

@@ -30,7 +30,7 @@
 
 body[data-theme='light'] {
   .tag-suggestion {
-    border-color: $studio-gray-5;
+    border-color: var(--secondary-color);
   }
 }
 

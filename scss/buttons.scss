@@ -41,8 +41,8 @@ button {
 
   &:active,
   &.active {
-    background: $studio-simplenote-blue-50;
-    color: $studio-white;
+    background: var(--accent-color);
+    color: var(--background-color);
   }
   &[disabled],
   &:disabled {
@@ -52,8 +52,8 @@ button {
 
 // Primary buttons. Solid buttons.
 .button-primary {
-  background: $studio-simplenote-blue-50;
-  color: white;
+  background: var(--accent-color);
+  color: var(--background-color);
 }
 
 // Compact buttons. Use to make buttons smaller.
@@ -70,7 +70,7 @@ button {
 
   &:active {
     background: $studio-red-50;
-    color: $studio-white;
+    color: var(--background-color);
   }
 }
 

@@ -1,7 +1,7 @@
 .icon-button {
   width: 32px;
   height: 32px;
-  color: $studio-gray-50;
+  color: var(--foreground-color);
 
   svg {
     transition: $anim-fast;

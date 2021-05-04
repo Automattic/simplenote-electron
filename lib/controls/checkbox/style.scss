@@ -45,7 +45,7 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     pointer-events: none;
     border-radius: 50%;
     overflow: hidden;
-    border: 1px solid $studio-gray-5;
+    border: 1px solid var(--secondary-color);
   }
 
   .checkbox-control-checked {
@@ -73,7 +73,7 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
       background-size: 36px 36px;
       border-radius: 0;
       border: 0;
-      fill: $studio-gray-50;
+      fill: var(--foreground-color);
     }
     .checkbox-control-base {
       background-position: 0 0;

@@ -11,8 +11,8 @@ svg[class^='icon-'][class$='-small'] {
 
 // Color for the Simplenote logo
 .logo path {
-  fill: $studio-simplenote-blue-50;
+  fill: var(--accent-color);
 }
 .logo circle {
-  fill: $studio-white;
+  fill: var(--background-color);
 }

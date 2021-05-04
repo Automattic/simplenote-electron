@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba($studio-black, 0.2);
+  background: var(--overlay-color);
 }
 
 .dialog-renderer__content {

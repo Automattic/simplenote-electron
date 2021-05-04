@@ -23,3 +23,17 @@ $toolbar-height: 44px;
 // Viewport widths for media queries
 $single-column: 750px;
 $medium: 900px;
+
+// Theme color variables
+
+:root,
+body[data-theme='light'] {
+  --background-color: #fff; // $studio-white
+  --foreground-color: #646970; // $studio-gray-50
+  --primary-color: #2c3338; // $studio-gray-80
+  --secondary-color: #dcdcde; // $studio-gray-5
+  --tertiary-color: #a7aaad; // $studio-gray-20
+  --accent-color: #3361cc; // $studio-simplenote-blue-50
+  --highlight-color: #ced9f2; // $studio-simplenote-blue-5
+  --overlay-color: rgba(0, 0, 0, 0.2); // black with 20% opacity
+}

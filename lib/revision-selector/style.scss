@@ -49,19 +49,19 @@
 
   .button-primary {
     &:active {
-      background: $studio-simplenote-blue-5;
-      border-color: $studio-simplenote-blue-5;
+      background: var(--highlight-color);
+      border-color: var(--highlight-color);
     }
   }
 
   .button-secondary {
-    background: $studio-gray-50;
-    color: $studio-white;
+    background: var(--foreground-color);
+    color: var(--background-color);
     margin-right: 10px;
 
     &:active {
-      background: $studio-white;
-      color: $studio-simplenote-blue-50;
+      background: var(--background-color);
+      color: var(--accent-color);
     }
   }
 

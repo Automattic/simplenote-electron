@@ -10,7 +10,7 @@
   }
 
   &.is-selected {
-    background-color: $studio-simplenote-blue-5;
+    background-color: var(--highlight-color);
   }
 }
 
@@ -54,7 +54,7 @@ body .tag-list-item {
 
     .tag-list-edit-toggle {
       &:active {
-        color: $studio-white;
+        color: var(--background-color);
       }
     }
   }
@@ -88,7 +88,7 @@ body .tag-list-item {
   appearance: none;
 
   &.is-selected {
-    color: $studio-simplenote-blue-50;
+    color: var(--accent-color);
   }
 }
 
