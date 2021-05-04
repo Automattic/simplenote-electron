@@ -103,7 +103,9 @@ module.exports = function main() {
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );
-      nativeTheme.themeSource = settings.theme;
+      if ('theme' in settings) {
+        nativeTheme.themeSource = settings.theme;
+      }
     });
 
     ipcMain.on('clearCookies', function () {
