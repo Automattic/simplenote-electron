@@ -62,39 +62,6 @@ optgroup {
   height: 100%;
 }
 
-.is-macos {
-  .note-toolbar-wrapper {
-    box-sizing: border-box;
-    -webkit-app-region: drag;
-    padding: 40px 0 30px;
-  }
-
-  .new-note-toolbar__button-sidebar {
-    border-right: 0;
-    padding-right: 0;
-  }
-
-  .menu-bar {
-    padding: 40px 15px 30px;
-    box-sizing: border-box;
-    -webkit-app-region: drag;
-  }
-
-  .note-toolbar-placeholder {
-    height: 71px;
-    -webkit-app-region: drag;
-  }
-
-  .note-info {
-    padding-top: 10px;
-  }
-
-  .button,
-  .search-field {
-    -webkit-app-region: no-drag;
-  }
-}
-
 .login__draggable-area {
   height: 100px;
   position: absolute;

@@ -204,7 +204,6 @@ class AppComponent extends Component<Props> {
     const mainClasses = classNames('simplenote-app', {
       'navigation-open': showNavigation,
       'is-electron': isElectron,
-      'is-macos': isElectron && isMac,
     });
 
     return (
