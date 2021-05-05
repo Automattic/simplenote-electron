@@ -184,6 +184,7 @@
     "string-replace-to-array": "1.0.3",
     "turndown": "6.0.0",
     "unorm": "1.6.0",
+    "util": "0.12.3",
     "valid-url": "1.0.9",
     "winston": "3.3.3"
   }
