@@ -1,4 +1,5 @@
 import './utils/ensure-platform-support';
+import 'setimmediate';
 
 import { parse } from 'cookie';
 
