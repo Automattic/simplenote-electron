@@ -88,7 +88,7 @@
     }
 
     &:hover {
-      background-color: $studio-gray-0;
+      background-color: var(--secondary-highlight-color);
     }
 
     .reference-title {

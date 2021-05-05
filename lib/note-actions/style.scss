@@ -42,7 +42,7 @@
     }
 
     &:hover {
-      background-color: $studio-gray-0;
+      background-color: var(--secondary-highlight-color);
     }
   }
 
@@ -67,7 +67,7 @@
   }
 
   .note-actions-trash {
-    color: $studio-red-50;
+    color: var(--tertiary-highlight-color);
   }
 
   .note-actions-item-control .checkbox-control {

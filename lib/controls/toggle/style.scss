@@ -51,11 +51,11 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
   }
 
   .toggle-control-unchecked-color {
-    background: $studio-gray-10;
+    background: var(--secondary-accent-color);
   }
 
   .toggle-control-checked-color {
-    background: $studio-green-20;
+    background: var(--active-controls-color);
     transition: $anim;
     opacity: 0;
   }

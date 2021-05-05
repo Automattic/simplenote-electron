@@ -49,7 +49,7 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
   }
 
   .checkbox-control-checked {
-    background: $studio-green-20;
+    background: var(--active-controls-color);
     transition: all 0.15s ease;
     opacity: 0;
   }

@@ -6,7 +6,7 @@
   align-items: center;
 
   &:hover {
-    background-color: $studio-gray-0;
+    background-color: var(--secondary-highlight-color);
   }
 
   &.is-selected {
@@ -136,10 +136,10 @@ body[data-theme='dark'] {
 body[data-theme='light'] {
   .icon-button {
     &.button-trash {
-      color: $studio-simplenote-blue-20;
+      color: var(--accent-color);
     }
     &.button-reorder {
-      color: $studio-gray-10;
+      color: var(--secondary-accent-color);
     }
   }
 }
