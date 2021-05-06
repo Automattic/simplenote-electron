@@ -28,6 +28,14 @@ module.exports = function main() {
   // be closed automatically when the JavaScript object is GCed.
   let mainWindow = null;
   let isAuthenticated;
+  let shouldQuit = false;
+
+  // Checks to see if the application was asked to quit instead of just close the window
+  // we then use this variable to check if we should quit the app.
+  // Important for MacOS so it will quit when pressing CMD+Q
+  app.on('before-quit', () => {
+    shouldQuit = true;
+  });
 
   app.on('will-finish-launching', function () {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
@@ -186,9 +194,10 @@ module.exports = function main() {
     ipcMain.on('reallyCloseWindow', () => {
       // On OSX we potentially have an ipc listerner that does not have a mainWindow.
       mainWindow && mainWindow.destroy();
-      if (!platform.isOSX()) {
+      if (!platform.isOSX() || shouldQuit) {
         app.exit(0);
       }
+      shouldQuit = false;
     });
 
     // Emitted when the window is closed.
