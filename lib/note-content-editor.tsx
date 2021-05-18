@@ -125,6 +125,10 @@ class NoteContentEditor extends Component<Props> {
   contentDiv = createRef<HTMLDivElement>();
   decorations: string[] = [];
   matchesInNote: [] = [];
+  overviewRuler = {
+    color: '#3361cc',
+    position: Editor.OverviewRulerLane.Full,
+  };
 
   state: OwnState = {
     content: '',
@@ -443,10 +447,7 @@ class NoteContentEditor extends Component<Props> {
           matches.push({
             options: {
               inlineClassName: 'search-decoration',
-              overviewRuler: {
-                color: '#3361cc',
-                position: Editor.OverviewRulerLane.Full,
-              },
+              overviewRuler: this.overviewRuler,
             },
             range: {
               startLineNumber: start.lineNumber,
@@ -1137,12 +1138,18 @@ class NoteContentEditor extends Component<Props> {
       if (match.range === range) {
         decoration = {
           range: match.range,
-          options: { inlineClassName: 'selected-search' },
+          options: {
+            inlineClassName: 'selected-search',
+            overviewRuler: this.overviewRuler,
+          },
         };
       } else {
         decoration = {
           range: match.range,
-          options: { inlineClassName: 'search-decoration' },
+          options: {
+            inlineClassName: 'search-decoration',
+            overviewRuler: this.overviewRuler,
+          },
         };
       }
       newDecorations.push(decoration);
