@@ -27,7 +27,8 @@ class AutoUpdater extends Updater {
   // Check and download in the background, and only notify the user if
   // an update exists and has completed downloading.
   ping() {
-    autoUpdater.checkForUpdates();
+    // introduce a slight delay for the non-user-initiated checks
+    setTimeout(() => autoUpdater.checkForUpdates(), 10 * 1000);
   }
 
   // For user-initiated checks.
