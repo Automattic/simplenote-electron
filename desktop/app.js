@@ -184,6 +184,7 @@ module.exports = function main() {
     // tell the app to check for unsynchronized notes.
     mainWindow.on('close', (event) => {
       if (isAuthenticated) {
+        setTimeout(updater.ping.bind(updater), config.updater.delay);
         event.preventDefault();
         mainWindow.webContents.send('appCommand', { action: 'closeWindow' });
       }
