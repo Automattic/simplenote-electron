@@ -84,7 +84,7 @@ body[data-theme='dark'] {
     color: $studio-gray-50;
   }
   .note-actions.theme-color-bg {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
 
   .note-actions-trash {

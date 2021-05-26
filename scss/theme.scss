@@ -158,14 +158,14 @@ body[data-theme='light'] {
 }
 
 body[data-theme='dark'] {
-  background-color: $studio-gray-90;
+  background-color: var(--background-color);
   color: $studio-gray-20;
 
   .theme-color-bg {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   .theme-color-bg-lighter {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   .theme-color-fg {
     color: $studio-white;
@@ -184,7 +184,7 @@ body[data-theme='dark'] {
     border-color: $studio-gray-50;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   ::-webkit-scrollbar-thumb:active {
     background-color: $studio-gray-50;
@@ -262,7 +262,7 @@ body[data-theme='dark'] {
   }
   .selected-search {
     background-color: $studio-yellow-30;
-    color: $studio-gray-90;
+    color: var(--background-color);
   }
 
   .settings-group p {
@@ -339,7 +339,7 @@ body[data-theme='dark'] {
   .search-results {
     color: $studio-gray-10;
     border-color: $studio-gray-80;
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
 
     button svg {
       fill: $studio-simplenote-blue-20;

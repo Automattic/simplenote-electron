@@ -202,7 +202,7 @@ body[data-theme='dark'] .login {
   }
 
   .or {
-    background: $studio-gray-90;
+    background: var(--background-color);
     color: $studio-gray-20;
   }
   .or-line {

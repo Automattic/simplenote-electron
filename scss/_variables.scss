@@ -44,3 +44,7 @@ body[data-theme='light'] {
   --active-controls-color: #1ed15a; // $studio-green-20
   --warning-highlight-color: #faa754; // $studio-orange-20
 }
+
+body[data-theme='dark'] {
+  --background-color: #1d2327; // $studio-gray-90
+}
