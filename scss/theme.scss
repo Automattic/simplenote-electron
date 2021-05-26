@@ -191,7 +191,7 @@ body[data-theme='dark'] {
   }
 
   .button-borderless {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
 
     &[disabled],
     &:disabled {
@@ -293,7 +293,7 @@ body[data-theme='dark'] {
 
     .note-list-item-pinned:not(.note-list-item-selected) {
       .note-list-item-pinner {
-        color: $studio-simplenote-blue-20;
+        color: var(--accent-color);
       }
     }
 
@@ -342,7 +342,7 @@ body[data-theme='dark'] {
     background-color: var(--background-color);
 
     button svg {
-      fill: $studio-simplenote-blue-20;
+      fill: var(--accent-color);
     }
   }
 }

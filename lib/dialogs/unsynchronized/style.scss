@@ -88,6 +88,6 @@ body[data-theme='dark'] .logoutConfirmation .dialog {
   }
 
   .export-unsynchronized {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
   }
 }

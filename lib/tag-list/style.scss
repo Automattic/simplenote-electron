@@ -122,7 +122,7 @@ body[data-theme='dark'] {
       color: var(--tertiary-color);
     }
     &.button-trash {
-      color: $studio-simplenote-blue-20;
+      color: var(--accent-color);
     }
   }
 

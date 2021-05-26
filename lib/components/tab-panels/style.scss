@@ -35,8 +35,8 @@ body[data-theme='light'] .tab-panels__tab-list li.is-active {
 }
 
 body[data-theme='dark'] .tab-panels__tab-list li.is-active {
-  color: $studio-simplenote-blue-20;
-  border-bottom-color: $studio-simplenote-blue-20;
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
 }
 
 .tab-panels__panel {

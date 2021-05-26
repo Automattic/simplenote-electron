@@ -100,12 +100,12 @@ body[data-theme='dark'] {
     }
 
     button {
-      color: $studio-simplenote-blue-20;
+      color: var(--accent-color);
     }
   }
 
   .note-list .search-match {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
   }
 }
 

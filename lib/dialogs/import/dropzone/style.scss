@@ -101,7 +101,7 @@ body[data-theme='dark'] {
   .importer-dropzone {
     .drop-instructions {
       span {
-        color: $studio-simplenote-blue-20;
+        color: var(--accent-color);
       }
     }
     &.is-accepted {
