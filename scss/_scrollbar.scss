@@ -16,7 +16,7 @@
 }
 // hover effect for scrollbar 'thumb'
 ::-webkit-scrollbar-thumb:hover {
-  background-color: $studio-gray-20;
+  background-color: var(--foreground-color);
 }
 ::-webkit-scrollbar-thumb:active {
   background: $studio-gray-30;

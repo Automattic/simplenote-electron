@@ -182,13 +182,13 @@ body[data-theme='dark'] .login {
     color: $studio-white;
   }
   a.login__forgot {
-    color: $studio-gray-20;
+    color: var(--foreground-color);
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-20;
+    color: var(--foreground-color);
   }
 
   .login__signup a,
@@ -203,7 +203,7 @@ body[data-theme='dark'] .login {
 
   .or {
     background: var(--background-color);
-    color: $studio-gray-20;
+    color: var(--foreground-color);
   }
   .or-line {
     border-color: var(--primary-color);

@@ -159,7 +159,7 @@ body[data-theme='light'] {
 
 body[data-theme='dark'] {
   background-color: var(--background-color);
-  color: $studio-gray-20;
+  color: var(--foreground-color);
 
   .theme-color-bg {
     background-color: var(--background-color);
@@ -253,7 +253,7 @@ body[data-theme='dark'] {
     background: transparent;
 
     &::placeholder {
-      color: $studio-gray-20;
+      color: var(--foreground-color);
     }
   }
 
