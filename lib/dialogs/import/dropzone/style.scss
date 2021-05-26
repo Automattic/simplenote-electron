@@ -106,7 +106,7 @@ body[data-theme='dark'] {
     }
     &.is-accepted {
       ul {
-        border-color: $studio-gray-80;
+        border-color: var(--secondary-color);
       }
 
       li {

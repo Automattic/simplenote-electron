@@ -74,7 +74,7 @@ body[data-theme='dark'] {
   .source-importer-executor {
     .source-importer-executor__options {
       label {
-        border-color: $studio-gray-80;
+        border-color: var(--secondary-color);
       }
     }
   }

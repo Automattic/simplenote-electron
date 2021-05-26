@@ -105,7 +105,7 @@ body[data-theme='dark'] {
   .note-info {
     .reference-link {
       &:hover {
-        background-color: $studio-gray-80;
+        background-color: var(--secondary-color);
       }
     }
   }

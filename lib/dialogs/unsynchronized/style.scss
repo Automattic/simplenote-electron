@@ -84,7 +84,7 @@
 
 body[data-theme='dark'] .logoutConfirmation .dialog {
   .change-list {
-    border-color: $studio-gray-80;
+    border-color: var(--secondary-color);
   }
 
   .export-unsynchronized {
