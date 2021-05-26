@@ -95,7 +95,7 @@
 
 body[data-theme='dark'] {
   .importer-dropzone.theme-color-border {
-    border-color: $studio-gray-50;
+    border-color: var(--tertiary-color);
     color: $studio-gray-30;
   }
   .importer-dropzone {

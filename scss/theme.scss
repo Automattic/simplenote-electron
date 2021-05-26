@@ -181,13 +181,13 @@ body[data-theme='dark'] {
 
   ::-webkit-scrollbar-thumb {
     background-color: var(--secondary-color);
-    border-color: $studio-gray-50;
+    border-color: var(--tertiary-color);
   }
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--background-color);
   }
   ::-webkit-scrollbar-thumb:active {
-    background-color: $studio-gray-50;
+    background-color: var(--tertiary-color);
   }
 
   .button-borderless {
@@ -196,7 +196,7 @@ body[data-theme='dark'] {
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
-        fill: $studio-gray-50;
+        fill: var(--tertiary-color);
       }
     }
   }
@@ -328,7 +328,7 @@ body[data-theme='dark'] {
     table {
       th,
       td {
-        border-color: $studio-gray-50;
+        border-color: var(--tertiary-color);
       }
       tr:nth-child(2n) {
         background-color: var(--secondary-color);

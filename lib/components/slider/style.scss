@@ -70,13 +70,13 @@ body[data-theme='dark'] {
   .slider {
     // Track
     &::-webkit-slider-runnable-track {
-      background: $studio-gray-50;
+      background: var(--tertiary-color);
     }
     &::-moz-range-track {
-      background: $studio-gray-50;
+      background: var(--tertiary-color);
     }
     &::-ms-track {
-      border-color: $studio-gray-50;
+      border-color: var(--tertiary-color);
     }
     &::-ms-fill-lower {
       background: var(--primary-color);

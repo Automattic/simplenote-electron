@@ -86,7 +86,7 @@ optgroup {
 }
 
 .MuiTooltip-tooltip.icon-button__tooltip {
-  background-color: $studio-gray-50;
+  background-color: var(--tertiary-color);
 }
 
 body[data-theme='dark'] .search-match {

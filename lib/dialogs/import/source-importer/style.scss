@@ -75,7 +75,7 @@ body[data-theme='dark'] {
       color: var(--primary-color);
     }
     button.disabled {
-      background-color: $studio-gray-50;
+      background-color: var(--tertiary-color);
       color: var(--primary-color);
     }
   }

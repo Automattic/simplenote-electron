@@ -119,7 +119,7 @@ input.tag-list-input {
 body[data-theme='dark'] {
   .icon-button {
     &.button-reorder {
-      color: $studio-gray-50;
+      color: var(--tertiary-color);
     }
     &.button-trash {
       color: $studio-simplenote-blue-20;
