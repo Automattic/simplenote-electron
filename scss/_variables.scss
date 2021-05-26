@@ -52,4 +52,7 @@ body[data-theme='dark'] {
   --secondary-color: #2c3338; // $studio-gray-80
   --tertiary-color: #646970; // $studio-gray-50
   --accent-color: #84a4f0; // $studio-simplenote-blue-20
+  // --secondary-accent-color: #c3c4c7; // $studio-gray-10
+  // --highlight-color = $studio-simplenote-blue-50 with 40% opacity
+  --highlight-color: rgba(51, 97, 204, 0.4);
 }

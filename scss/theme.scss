@@ -239,7 +239,7 @@ body[data-theme='dark'] {
 
   .navigation-bar-item.is-selected,
   .tag-list-item.is-selected {
-    background-color: rgba($studio-simplenote-blue-50, 0.4);
+    background-color: var(--highlight-color);
 
     svg[class^='icon-'] {
       fill: var(--primary-color);
@@ -275,7 +275,7 @@ body[data-theme='dark'] {
 
   .note-list {
     .note-list-item-selected {
-      background: rgba($studio-simplenote-blue-50, 0.4);
+      background: var(--highlight-color);
       .note-list-item-excerpt,
       .note-list-item-published-icon,
       .note-list-item-pending-changes {
