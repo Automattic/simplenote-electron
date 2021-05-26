@@ -79,26 +79,26 @@ body[data-theme='dark'] {
       border-color: $studio-gray-50;
     }
     &::-ms-fill-lower {
-      background: $studio-white;
+      background: var(--primary-color);
     }
     &::-ms-fill-upper {
-      background: $studio-white;
+      background: var(--primary-color);
     }
 
     // Thumb
     &::-webkit-slider-thumb {
       border-color: $studio-gray-5;
-      background: $studio-white;
+      background: var(--primary-color);
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
     }
     &::-moz-range-thumb {
-      background: $studio-white;
+      background: var(--primary-color);
       border-color: $studio-gray-5;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
     }
     &::-ms-thumb {
       border-color: $studio-gray-5;
-      background: $studio-white;
+      background: var(--primary-color);
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
     }
   }

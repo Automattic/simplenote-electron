@@ -91,5 +91,5 @@ optgroup {
 
 body[data-theme='dark'] .search-match {
   background-color: rgba($studio-simplenote-blue-50, 0.4);
-  color: $studio-white;
+  color: var(--primary-color);
 }

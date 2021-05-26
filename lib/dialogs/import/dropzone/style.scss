@@ -110,7 +110,7 @@ body[data-theme='dark'] {
       }
 
       li {
-        color: $studio-white;
+        color: var(--primary-color);
       }
 
       svg {

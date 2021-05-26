@@ -179,7 +179,7 @@
 
 body[data-theme='dark'] .login {
   h1 {
-    color: $studio-white;
+    color: var(--primary-color);
   }
   a.login__forgot {
     color: var(--foreground-color);

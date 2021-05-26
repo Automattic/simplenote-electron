@@ -72,11 +72,11 @@
 body[data-theme='dark'] {
   .source-importer {
     p {
-      color: $studio-white;
+      color: var(--primary-color);
     }
     button.disabled {
       background-color: $studio-gray-50;
-      color: $studio-white;
+      color: var(--primary-color);
     }
   }
 }

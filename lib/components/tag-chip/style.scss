@@ -52,7 +52,7 @@
 body[data-theme='dark'] {
   .tag-chip {
     background: $studio-gray-70;
-    color: $studio-white;
+    color: var(--primary-color);
 
     &.deleted {
       background: $studio-red-70;
