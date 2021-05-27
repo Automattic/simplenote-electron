@@ -7,6 +7,8 @@
     // For overriding theme settings.
     // TODO: Improve theme management so this isn't necessary
 
+    --accent-color: #3361cc; // $studio-simplenote-blue-50
+    --background-color: #fff; // $studio-white
     background: var(--accent-color) !important;
     color: var(--background-color) !important;
     a {
