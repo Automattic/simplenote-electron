@@ -5,6 +5,7 @@ import { parse } from 'cookie';
 import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
 import { boot as bootLoggingOut } from './logging-out';
+import { isElectron } from './utils/platform';
 
 const config = getConfig();
 
@@ -59,7 +60,13 @@ const clearStorage = (): Promise<void> =>
       .catch(() => resolveStorage());
   });
 
-const forceReload = () => history.go();
+const forceReload = () => {
+  if (isElectron) {
+    window.electron?.send('reload');
+  } else {
+    window.history.go();
+  }
+};
 
 const loadAccount = () => {
   const storedUserData = localStorage.getItem('stored_user');
