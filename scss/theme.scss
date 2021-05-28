@@ -91,7 +91,7 @@ span[dir='ltr'] {
     border: 3px solid gray;
   }
   .search-decoration {
-    background-color: var(--highlight-color);
+    background-color: var(--search-highlight-color);
   }
   .selected-search {
     background-color: var(--search-selection-color);
@@ -258,7 +258,7 @@ body[data-theme='dark'] {
   }
 
   .search-decoration {
-    background-color: $studio-simplenote-blue-50;
+    background-color: var(--search-highlight-color);
   }
   .selected-search {
     background-color: $studio-yellow-30;
