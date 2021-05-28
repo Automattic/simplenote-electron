@@ -48,6 +48,7 @@ body[data-theme='light'] {
   --primary-button-bg-color: #3361cc; // $studio-simplenote-blue-50
   --secondary-button-bg-color: #646970; // $studio-gray-50
   --primary-button-fg-color: #fff; // $studio-white
+  --primary-branding-color: #3361cc; // $studio-simplenote-blue-50
 }
 
 body[data-theme='dark'] {
@@ -57,8 +58,7 @@ body[data-theme='dark'] {
   --secondary-color: #2c3338; // $studio-gray-80
   --tertiary-color: #646970; // $studio-gray-50
   --accent-color: #84a4f0; // $studio-simplenote-blue-20
-  // --secondary-accent-color: #c3c4c7; // $studio-gray-10
-  // --highlight-color = $studio-simplenote-blue-50 with 40% opacity
+  // highlight-color = $studio-simplenote-blue-50 with 40% opacity
   --highlight-color: rgba(51, 97, 204, 0.4);
   --search-highlight-color: #3361cc; // $studio-simplenote-blue-50
   --search-selection-color: #deb100; // $studio-yellow-30

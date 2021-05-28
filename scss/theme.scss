@@ -266,7 +266,7 @@ body[data-theme='dark'] {
   }
 
   .settings-group p {
-    color: $studio-gray-5;
+    color: var(--primary-color);
   }
 
   .note-list-header {
@@ -337,7 +337,7 @@ body[data-theme='dark'] {
   }
 
   .search-results {
-    color: $studio-gray-10;
+    color: var(--primary-color);
     border-color: var(--secondary-color);
     background-color: var(--background-color);
 

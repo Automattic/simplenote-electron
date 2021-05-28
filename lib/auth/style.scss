@@ -85,9 +85,9 @@
   }
 
   button[type='submit'] {
-    background-color: var(--accent-color);
+    background-color: var(--primary-button-bg-color);
     border: none;
-    color: var(--background-color);
+    color: var(--primary-button-fg-color);
     font-weight: 500;
     margin: 16px auto 8px;
     padding: 0 15px 2px;
