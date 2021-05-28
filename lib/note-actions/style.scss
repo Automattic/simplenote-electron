@@ -75,7 +75,7 @@
   }
 
   .spinner__circle {
-    color: $studio-gray-30;
+    color: var(--tertiary-accent-color);
   }
 }
 
@@ -102,7 +102,7 @@ body[data-theme='dark'] {
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
     background-position: 0 -18px;
-    fill: $studio-gray-30;
+    fill: var(--foreground-color);
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-checked {

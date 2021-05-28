@@ -96,7 +96,7 @@ body[data-theme='dark'] {
   .note-list-placeholder {
     .no-notes-icon,
     .no-notes-message {
-      color: $studio-gray-30;
+      color: var(--foreground-color);
     }
 
     button {

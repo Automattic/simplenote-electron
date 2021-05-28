@@ -171,7 +171,7 @@ body[data-theme='dark'] {
     color: var(--primary-color);
   }
   .theme-color-fg-dim {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   .theme-color-border,
   &.theme-color-border,
@@ -203,7 +203,7 @@ body[data-theme='dark'] {
 
   .icon-button,
   a {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   a.button {
     color: var(--primary-color);
@@ -221,7 +221,7 @@ body[data-theme='dark'] {
 
   .transparent-input::placeholder,
   input::placeholder {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
 
   .checkbox-control-base {
@@ -233,7 +233,7 @@ body[data-theme='dark'] {
       color: var(--primary-color);
     }
     svg[class^='icon-'] {
-      fill: $studio-gray-30;
+      fill: var(--foreground-color);
     }
   }
 
@@ -270,7 +270,7 @@ body[data-theme='dark'] {
   }
 
   .note-list-header {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
 
   .note-list {
@@ -283,7 +283,7 @@ body[data-theme='dark'] {
       }
       .note-list-item-pending-changes {
         &.is-offline svg {
-          fill: $studio-gray-30;
+          fill: var(--foreground-color);
         }
       }
       &.note-list-item-pinned .note-list-item-pinner {

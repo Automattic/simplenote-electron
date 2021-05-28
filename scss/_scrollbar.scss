@@ -19,12 +19,12 @@
   background-color: var(--foreground-color);
 }
 ::-webkit-scrollbar-thumb:active {
-  background: $studio-gray-30;
+  background: var(--tertiary-accent-color);
   border-radius: 100px;
 }
 
 // Styles for Firefox not a lot of options we are able to set for custom scrollbars
 body {
   scrollbar-width: thin;
-  scrollbar-color: $studio-gray-30 transparent;
+  scrollbar-color: var(--tertiary-accent-color) transparent;
 }

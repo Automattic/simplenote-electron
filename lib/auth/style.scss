@@ -210,7 +210,7 @@ body[data-theme='dark'] .login {
   }
 
   svg.icon-mail {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   input {
     border-color: var(--foreground-color);

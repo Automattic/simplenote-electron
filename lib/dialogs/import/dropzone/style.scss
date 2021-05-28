@@ -96,7 +96,7 @@
 body[data-theme='dark'] {
   .importer-dropzone.theme-color-border {
     border-color: var(--tertiary-color);
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   .importer-dropzone {
     .drop-instructions {
@@ -114,12 +114,12 @@ body[data-theme='dark'] {
       }
 
       svg {
-        fill: $studio-gray-30;
+        fill: var(--foreground-color);
       }
 
       .error-message {
         li {
-          color: $studio-gray-30;
+          color: var(--foreground-color);
         }
       }
     }

@@ -35,6 +35,7 @@ body[data-theme='light'] {
   --tertiary-color: #a7aaad; // $studio-gray-20
   --accent-color: #3361cc; // $studio-simplenote-blue-50
   --secondary-accent-color: #c3c4c7; // $studio-gray-10
+  --tertiary-accent-color: #8c8f94; // $studio-gray-30
   --highlight-color: #ced9f2; // $studio-simplenote-blue-5
   --secondary-highlight-color: #f6f7f7; // $studio-gray-0;
   --tertiary-highlight-color: #d63638; // $studio-red-50
@@ -49,7 +50,7 @@ body[data-theme='light'] {
 
 body[data-theme='dark'] {
   --background-color: #1d2327; // $studio-gray-90
-  --foreground-color: #a7aaad; // $studio-gray-20
+  --foreground-color: #8c8f94; // $studio-gray-30
   --primary-color: #fff; // $studio-white
   --secondary-color: #2c3338; // $studio-gray-80
   --tertiary-color: #646970; // $studio-gray-50

@@ -60,7 +60,7 @@ body[data-theme='dark'] {
   }
 
   .remove-tag-icon {
-    background-color: $studio-gray-30;
+    background-color: var(--foreground-color);
     color: $studio-black;
   }
 }
