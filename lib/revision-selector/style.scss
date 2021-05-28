@@ -64,8 +64,8 @@
   }
 
   .button-secondary {
-    background: var(--foreground-color);
-    color: var(--background-color);
+    background: var(--secondary-button-bg-color);
+    color: var(--primary-button-fg-color);
     margin-right: 10px;
 
     &:active {
