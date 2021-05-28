@@ -261,7 +261,7 @@ body[data-theme='dark'] {
     background-color: var(--search-highlight-color);
   }
   .selected-search {
-    background-color: $studio-yellow-30;
+    background-color: var(--search-selection-color);
     color: var(--background-color);
   }
 
