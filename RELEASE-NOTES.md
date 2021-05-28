@@ -1,5 +1,19 @@
 # Changelog
 
+## [v2.12.0]
+
+### Enhancements
+
+- Added a tooltip to the note revision selector to better explain the new restore deleted tags action [#2899](https://github.com/automattic/simplenote-electron/pull/2899)
+- Added a default window title bar to Mac Electron app [#2896](https://github.com/automattic/simplenote-electron/pull/2896)
+- Updated CSS colors to use CSS variables [#2874](https://github.com/automattic/simplenote-electron/pull/2874), [#2885](https://github.com/automattic/simplenote-electron/pull/2885)
+
+### Fixes
+
+- Fixed search results bar to only use the plural Results if there is more than one matching keyword [#2892](https://github.com/automattic/simplenote-electron/pull/2892)
+- Fixed spacing issue on the trash tag button when set to sort tags alphabetically [#2893](https://github.com/automattic/simplenote-electron/pull/2893)
+- Fixed a bug where the Mac app wouldn't quit on the first request [#2901](https://github.com/automattic/simplenote-electron/pull/2901)
+
 ## [v2.11.0]
 
 ### Enhancements
