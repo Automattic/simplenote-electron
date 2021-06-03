@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.13.0]
+
+### Enhancements
+
+- Upgraded the Electron and Electron Builder dependencies to newer versions [#2895](https://github.com/automattic/simplenote-electron/pull/2895)
+
+### Fixes
+
+- Fixed search scrollbar highlights so it always shows search matches while in the editor [#2910](https://github.com/automattic/simplenote-electron/pull/2910)
+
 ## [v2.12.0]
 
 ### Enhancements
