@@ -215,13 +215,8 @@ body[data-theme='dark'] {
 
   input,
   textarea {
-    border-color: $studio-gray-70;
+    border-color: var(--secondary-accent-color);
     background-color: transparent;
-  }
-
-  .transparent-input::placeholder,
-  input::placeholder {
-    color: var(--foreground-color);
   }
 
   .checkbox-control-base {

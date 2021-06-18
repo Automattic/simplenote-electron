@@ -213,7 +213,7 @@ body[data-theme='dark'] .login {
     color: var(--foreground-color);
   }
   input {
-    border-color: var(--foreground-color);
+    border-color: var(--secondary-accent-color);
 
     &:disabled {
       color: var(--foreground-color);

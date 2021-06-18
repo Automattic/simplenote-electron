@@ -51,7 +51,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
   }
 
   .toggle-control-unchecked-color {
-    background: var(--secondary-accent-color);
+    background: var(--inactive-controls-color);
   }
 
   .toggle-control-checked-color {

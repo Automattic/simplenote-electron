@@ -44,11 +44,13 @@ body[data-theme='light'] {
   --search-highlight-color: #ced9f2; // $studio-simplenote-blue-5
   --wordpress-color: #006088; // $studio-wordpress-blue-50
   --active-controls-color: #1ed15a; // $studio-green-20
+  --inactive-controls-color: #c3c4c7; // $studio-gray-10
   --warning-highlight-color: #faa754; // $studio-orange-20
   --primary-button-bg-color: #3361cc; // $studio-simplenote-blue-50
   --secondary-button-bg-color: #646970; // $studio-gray-50
   --primary-button-fg-color: #fff; // $studio-white
   --primary-branding-color: #3361cc; // $studio-simplenote-blue-50
+  --placeholder-color: #646970; // $studio-gray-50
 }
 
 body[data-theme='dark'] {
@@ -58,8 +60,11 @@ body[data-theme='dark'] {
   --secondary-color: #2c3338; // $studio-gray-80
   --tertiary-color: #646970; // $studio-gray-50
   --accent-color: #84a4f0; // $studio-simplenote-blue-20
+  --secondary-accent-color: #50575e; // $studio-gray-60
   // highlight-color = $studio-simplenote-blue-50 with 40% opacity
   --highlight-color: rgba(51, 97, 204, 0.4);
   --search-highlight-color: #3361cc; // $studio-simplenote-blue-50
   --search-selection-color: #deb100; // $studio-yellow-30
+  --placeholder-color: #646970; // $studio-gray-50
+  --primary-button-bg-color: #3361cc; // $studio-simplenote-blue-50
 }
