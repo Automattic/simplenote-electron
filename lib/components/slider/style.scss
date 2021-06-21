@@ -89,17 +89,17 @@ body[data-theme='dark'] {
     &::-webkit-slider-thumb {
       border-color: $studio-gray-5;
       background: var(--primary-color);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
     &::-moz-range-thumb {
       background: var(--primary-color);
       border-color: $studio-gray-5;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
     &::-ms-thumb {
       border-color: $studio-gray-5;
       background: var(--primary-color);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px 0 var(--overlay-color);
     }
   }
 }
