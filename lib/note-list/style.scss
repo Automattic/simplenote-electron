@@ -228,7 +228,7 @@ body[data-theme='dark'] {
     }
 
     body[data-theme='dark'] &.is-offline svg {
-      fill: $studio-gray-70;
+      fill: var(--tertiary-color);
     }
   }
 

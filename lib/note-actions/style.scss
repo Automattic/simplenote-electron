@@ -88,7 +88,7 @@ body[data-theme='dark'] {
   }
 
   .note-actions-trash {
-    color: $studio-red-30;
+    color: var(--tertiary-highlight-color);
   }
 
   .note-actions-item-disabled {
