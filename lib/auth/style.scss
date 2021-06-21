@@ -67,7 +67,7 @@
 
   input:read-only,
   input:disabled {
-    border-color: var(--readonly-input-bg-color);
+    border-color: var(--readonly-input-highlight-color);
     background-color: var(--readonly-input-color);
   }
 
@@ -214,7 +214,7 @@ body[data-theme='dark'] .login {
 
     &:read-only,
     &:disabled {
-      border-color: var(--readonly-input-bg-color);
+      border-color: var(--readonly-input-highlight-color);
       background-color: var(--readonly-input-color);
     }
 

@@ -53,7 +53,7 @@ body[data-theme='light'] {
   --placeholder-color: #646970; // $studio-gray-50
   // readonly-input-color = $studio-black with 0.05 opacity
   --readonly-input-color: rgba(0, 0, 0, 0.05);
-  --readonly-input-bg-color: #c3c4c7; // $studio-gray-10
+  --readonly-input-highlight-color: #c3c4c7; // $studio-gray-10
 }
 
 body[data-theme='dark'] {
@@ -73,5 +73,5 @@ body[data-theme='dark'] {
   --tertiary-highlight-color: #ff8085; // $studio-red-20
   // readonly-input-color = $studio-white with 0.07 opacity
   --readonly-input-color: rgba(255, 255, 255, 0.07);
-  --readonly-input-bg-color: #8c8f94; // $studio-gray-30
+  --readonly-input-highlight-color: #8c8f94; // $studio-gray-30
 }
