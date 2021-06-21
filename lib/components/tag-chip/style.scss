@@ -5,7 +5,7 @@
   border-radius: 16px;
   line-height: 1.25em;
   white-space: nowrap;
-  background: var(--secondary-color);
+  background: var(--primary-tag-chip-color);
   text-decoration: none;
   font-size: 14px;
   position: relative;
@@ -23,7 +23,7 @@
   }
 
   &.deleted {
-    background: $studio-red-5;
+    background: var(--secondary-tag-chip-color);
   }
 
   .remove-tag-icon {
@@ -51,16 +51,16 @@
 
 body[data-theme='dark'] {
   .tag-chip {
-    background: $studio-gray-70;
+    background: var(--primary-tag-chip-color);
     color: var(--primary-color);
 
     &.deleted {
-      background: $studio-red-70;
+      background: var(--secondary-tag-chip-color);
     }
   }
 
   .remove-tag-icon {
     background-color: var(--foreground-color);
-    color: $studio-black;
+    color: var(--background-color);
   }
 }
