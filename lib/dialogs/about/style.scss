@@ -5,10 +5,11 @@
     max-height: calc(100vh - 2rem);
 
     // For overriding theme settings.
-    // TODO: Improve theme management so this isn't necessary
+    // TODO: Improve theme management so this isn't neccessary
 
     --accent-color: #3361cc; // $studio-simplenote-blue-50
     --background-color: #fff; // $studio-white
+
     background: var(--accent-color) !important;
     color: var(--background-color) !important;
     a {
