@@ -91,7 +91,7 @@
   }
 
   a.login__forgot {
-    color: var(--foreground-color);
+    color: var(--accent-color);
     text-decoration: none;
   }
 
@@ -178,9 +178,6 @@ body[data-theme='dark'] .login {
   h1 {
     color: var(--primary-color);
   }
-  a.login__forgot {
-    color: var(--foreground-color);
-  }
 
   .login__forgot,
   .login__signup,
@@ -190,7 +187,8 @@ body[data-theme='dark'] .login {
 
   .login__signup a,
   .login__auth-message a,
-  .terms a {
+  .terms a,
+  .login__forgot {
     color: var(--accent-color);
   }
 
