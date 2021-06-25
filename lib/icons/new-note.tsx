@@ -8,7 +8,7 @@ export default function NewNoteIcon() {
       viewBox="0 0 24 24"
     >
       <rect x="0" fill="none" width="24" height="24" />
-      <path d="M17 21H5c-1.105 0-2-0.895-2-2V7c0-1.105 0.895-2 2-2h7v2H5v12h12v-7h2v7C19 20.105 18.105 21 17 21zM7 10h8v2H7V10zM7 14h8v2H7V14zM22 5h-3V2h-2v3h-3v2h3v3h2V7h3V5z" />
+      <path d="M9.707 12.879L19.59 3 21 4.41l-9.879 9.883L9 15 9.707 12.879zM18 18H6V6h7V4H6.002C4.896 4 4 4.896 4 6.002v11.996C4 19.104 4.896 20 6.002 20h11.996C19.104 20 20 19.104 20 17.998V11h-2V18z" />
     </svg>
   );
 }
