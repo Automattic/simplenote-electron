@@ -82,7 +82,7 @@
     margin-top: 8px;
 
     span {
-      color: $studio-simplenote-blue;
+      color: var(--primary-branding-color);
     }
   }
 }
@@ -95,31 +95,31 @@
 
 body[data-theme='dark'] {
   .importer-dropzone.theme-color-border {
-    border-color: $studio-gray-50;
-    color: $studio-gray-30;
+    border-color: var(--tertiary-color);
+    color: var(--foreground-color);
   }
   .importer-dropzone {
     .drop-instructions {
       span {
-        color: $studio-simplenote-blue-20;
+        color: var(--accent-color);
       }
     }
     &.is-accepted {
       ul {
-        border-color: $studio-gray-80;
+        border-color: var(--secondary-color);
       }
 
       li {
-        color: $studio-white;
+        color: var(--primary-color);
       }
 
       svg {
-        fill: $studio-gray-30;
+        fill: var(--foreground-color);
       }
 
       .error-message {
         li {
-          color: $studio-gray-30;
+          color: var(--foreground-color);
         }
       }
     }

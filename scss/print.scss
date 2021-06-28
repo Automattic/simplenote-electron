@@ -4,7 +4,7 @@
   }
 
   body[data-theme='dark'] .theme-color-bg {
-    background-color: $studio-white;
+    background-color: var(--primary-color);
   }
 
   .app-layout__note-column {

@@ -29,10 +29,10 @@ button {
   transition: $anim-fast;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
-  border-color: $studio-gray-30;
+  border-color: var(--tertiary-accent-color);
   border-style: solid;
   border-width: 2px;
-  color: $studio-gray-30;
+  color: var(--tertiary-accent-color);
   font-size: 14px;
   line-height: 1.5;
   font-weight: $bold;
@@ -41,8 +41,8 @@ button {
 
   &:active,
   &.active {
-    background: var(--accent-color);
-    color: var(--background-color);
+    background: var(--primary-button-bg-color);
+    color: var(--primary-button-fg-color);
   }
   &[disabled],
   &:disabled {
@@ -52,8 +52,8 @@ button {
 
 // Primary buttons. Solid buttons.
 .button-primary {
-  background: var(--accent-color);
-  color: var(--background-color);
+  background: var(--primary-button-bg-color);
+  color: var(--primary-button-fg-color);
 }
 
 // Compact buttons. Use to make buttons smaller.

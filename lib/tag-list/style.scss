@@ -119,16 +119,16 @@ input.tag-list-input {
 body[data-theme='dark'] {
   .icon-button {
     &.button-reorder {
-      color: $studio-gray-50;
+      color: var(--tertiary-color);
     }
     &.button-trash {
-      color: $studio-simplenote-blue-20;
+      color: var(--accent-color);
     }
   }
 
   .tag-list-item {
     &:hover {
-      background-color: $studio-gray-80;
+      background-color: var(--secondary-color);
     }
   }
 }

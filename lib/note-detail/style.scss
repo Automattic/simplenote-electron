@@ -215,7 +215,7 @@
 }
 
 body[data-theme='dark'] .note-detail-markdown p > code {
-  background-color: $studio-gray-70;
+  background-color: var(--secondary-color);
 }
 
 .monaco-editor.monaco-editor .detected-link {

@@ -38,7 +38,8 @@
     max-width: 347px;
     text-align: center;
     width: 90%;
-    .is-error {
+
+    &.is-error {
       color: var(--tertiary-highlight-color);
     }
   }
@@ -64,14 +65,10 @@
     font-weight: 400;
   }
 
+  input:read-only,
   input:disabled {
-    border-color: var(--secondary-color);
-    color: var(--tertiary-color);
-  }
-
-  input:read-only {
-    border-color: var(--secondary-accent-color);
-    background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--readonly-input-highlight-color);
+    background-color: var(--readonly-input-color);
   }
 
   input:focus {
@@ -85,16 +82,16 @@
   }
 
   button[type='submit'] {
-    background-color: var(--accent-color);
+    background-color: var(--primary-button-bg-color);
     border: none;
-    color: var(--background-color);
+    color: var(--primary-button-fg-color);
     font-weight: 500;
     margin: 16px auto 8px;
     padding: 0 15px 2px;
   }
 
   a.login__forgot {
-    color: var(--foreground-color);
+    color: var(--accent-color);
     text-decoration: none;
   }
 
@@ -146,7 +143,7 @@
     background-color: var(--wordpress-color);
     border-radius: 4px;
     box-sizing: border-box;
-    color: var(--background-color);
+    color: var(--primary-button-fg-color);
     display: block;
     font-size: 16px;
     font-weight: 500;
@@ -179,55 +176,49 @@
 
 body[data-theme='dark'] .login {
   h1 {
-    color: $studio-white;
-  }
-  a.login__forgot {
-    color: $studio-gray-20;
+    color: var(--primary-color);
   }
 
   .login__forgot,
   .login__signup,
   .terms {
-    color: $studio-gray-20;
+    color: var(--foreground-color);
   }
 
   .login__signup a,
   .login__auth-message a,
-  .terms a {
-    color: $studio-simplenote-blue-20;
+  .terms a,
+  .login__forgot {
+    color: var(--accent-color);
   }
 
   .login__auth-message.is-error {
-    color: $studio-red-20;
+    color: var(--tertiary-highlight-color);
   }
 
   .or {
-    background: $studio-gray-90;
-    color: $studio-gray-20;
+    background: var(--background-color);
+    color: var(--foreground-color);
   }
   .or-line {
     border-color: var(--primary-color);
   }
 
   svg.icon-mail {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   input {
-    border-color: var(--foreground-color);
+    border-color: var(--secondary-accent-color);
 
+    &:read-only,
     &:disabled {
-      color: var(--foreground-color);
-      border-color: $studio-gray-70;
-    }
-
-    &:read-only {
-      border-color: var(--foreground-color);
-      background-color: rgba(255, 255, 255, 0.07);
+      border-color: var(--readonly-input-highlight-color);
+      background-color: var(--readonly-input-color);
     }
 
     &:focus {
-      border-color: $studio-simplenote-blue-20;
-      box-shadow: 0 0 0 1px $studio-simplenote-blue-20;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 1px var(--accent-color);
     }
   }
 }

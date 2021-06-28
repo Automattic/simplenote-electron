@@ -62,11 +62,11 @@
 body[data-theme='dark'] {
   .navigation-bar-item {
     &.is-selected button {
-      color: $studio-white;
+      color: var(--primary-color);
     }
 
     &:hover:not(.is-selected) {
-      background: $studio-gray-80;
+      background: var(--secondary-color);
     }
   }
 }

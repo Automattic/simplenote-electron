@@ -96,16 +96,16 @@ body[data-theme='dark'] {
   .note-list-placeholder {
     .no-notes-icon,
     .no-notes-message {
-      color: $studio-gray-30;
+      color: var(--foreground-color);
     }
 
     button {
-      color: $studio-simplenote-blue-20;
+      color: var(--accent-color);
     }
   }
 
   .note-list .search-match {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
   }
 }
 
@@ -228,7 +228,7 @@ body[data-theme='dark'] {
     }
 
     body[data-theme='dark'] &.is-offline svg {
-      fill: $studio-gray-70;
+      fill: var(--tertiary-color);
     }
   }
 

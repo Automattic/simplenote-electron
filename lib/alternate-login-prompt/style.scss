@@ -73,6 +73,6 @@
 
 body[data-theme='dark'] {
   .alternate-login__button-row .button-borderless {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
   }
 }

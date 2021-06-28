@@ -36,6 +36,6 @@ body[data-theme='light'] {
 
 body[data-theme='dark'] {
   .tag-suggestion {
-    border-color: $studio-gray-80;
+    border-color: var(--secondary-color);
   }
 }

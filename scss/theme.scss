@@ -91,7 +91,7 @@ span[dir='ltr'] {
     border: 3px solid gray;
   }
   .search-decoration {
-    background-color: var(--highlight-color);
+    background-color: var(--search-highlight-color);
   }
   .selected-search {
     background-color: var(--search-selection-color);
@@ -158,94 +158,89 @@ body[data-theme='light'] {
 }
 
 body[data-theme='dark'] {
-  background-color: $studio-gray-90;
-  color: $studio-gray-20;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
 
   .theme-color-bg {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   .theme-color-bg-lighter {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   .theme-color-fg {
-    color: $studio-white;
+    color: var(--primary-color);
   }
   .theme-color-fg-dim {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   .theme-color-border,
   &.theme-color-border,
   .button {
-    border-color: $studio-gray-80;
+    border-color: var(--secondary-color);
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: $studio-gray-80;
-    border-color: $studio-gray-50;
+    background-color: var(--secondary-color);
+    border-color: var(--tertiary-color);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
   ::-webkit-scrollbar-thumb:active {
-    background-color: $studio-gray-50;
+    background-color: var(--tertiary-color);
   }
 
   .button-borderless {
-    color: $studio-simplenote-blue-20;
+    color: var(--accent-color);
 
     &[disabled],
     &:disabled {
       svg[class^='icon-'] {
-        fill: $studio-gray-50;
+        fill: var(--tertiary-color);
       }
     }
   }
 
   .icon-button,
   a {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
   a.button {
-    color: $studio-white;
+    color: var(--primary-color);
   }
 
   input {
-    color: $studio-white;
+    color: var(--primary-color);
   }
 
   input,
   textarea {
-    border-color: $studio-gray-70;
+    border-color: var(--secondary-accent-color);
     background-color: transparent;
   }
 
-  .transparent-input::placeholder,
-  input::placeholder {
-    color: $studio-gray-30;
-  }
-
   .checkbox-control-base {
-    border-color: $studio-gray-80;
+    border-color: var(--secondary-color);
   }
 
   .navigation-bar-item {
     button {
-      color: $studio-white;
+      color: var(--primary-color);
     }
     svg[class^='icon-'] {
-      fill: $studio-gray-30;
+      fill: var(--foreground-color);
     }
   }
 
   .navigation-bar-item.is-selected,
   .tag-list-item.is-selected {
-    background-color: rgba($studio-simplenote-blue-50, 0.4);
+    background-color: var(--highlight-color);
 
     svg[class^='icon-'] {
-      fill: $studio-white;
+      fill: var(--primary-color);
     }
     button {
-      color: $studio-white;
+      color: var(--primary-color);
     }
   }
 
@@ -253,47 +248,47 @@ body[data-theme='dark'] {
     background: transparent;
 
     &::placeholder {
-      color: $studio-gray-20;
+      color: var(--foreground-color);
     }
   }
 
   .search-decoration {
-    background-color: $studio-simplenote-blue-50;
+    background-color: var(--search-highlight-color);
   }
   .selected-search {
-    background-color: $studio-yellow-30;
-    color: $studio-gray-90;
+    background-color: var(--search-selection-color);
+    color: var(--background-color);
   }
 
   .settings-group p {
-    color: $studio-gray-5;
+    color: var(--settings-fg-color);
   }
 
   .note-list-header {
-    color: $studio-gray-30;
+    color: var(--foreground-color);
   }
 
   .note-list {
     .note-list-item-selected {
-      background: rgba($studio-simplenote-blue-50, 0.4);
+      background: var(--highlight-color);
       .note-list-item-excerpt,
       .note-list-item-published-icon,
       .note-list-item-pending-changes {
-        color: $studio-white;
+        color: var(--primary-color);
       }
       .note-list-item-pending-changes {
         &.is-offline svg {
-          fill: $studio-gray-30;
+          fill: var(--foreground-color);
         }
       }
       &.note-list-item-pinned .note-list-item-pinner {
-        color: $studio-white;
+        color: var(--primary-color);
       }
     }
 
     .note-list-item-pinned:not(.note-list-item-selected) {
       .note-list-item-pinner {
-        color: $studio-simplenote-blue-20;
+        color: var(--accent-color);
       }
     }
 
@@ -305,7 +300,7 @@ body[data-theme='dark'] {
 
     .note-list-item:not(.note-list-item-selected) {
       &:hover {
-        background: $studio-gray-80;
+        background: var(--secondary-color);
       }
     }
   }
@@ -314,35 +309,35 @@ body[data-theme='dark'] {
     @import '../node_modules/highlight.js/scss/solarized-dark.scss';
 
     hr {
-      border-color: $studio-gray-80;
+      border-color: var(--secondary-color);
     }
 
     blockquote {
-      border-color: $studio-gray-80;
+      border-color: var(--secondary-color);
     }
 
     pre {
-      border-color: $studio-gray-80;
+      border-color: var(--secondary-color);
     }
 
     table {
       th,
       td {
-        border-color: $studio-gray-50;
+        border-color: var(--tertiary-color);
       }
       tr:nth-child(2n) {
-        background-color: $studio-gray-80;
+        background-color: var(--secondary-color);
       }
     }
   }
 
   .search-results {
-    color: $studio-gray-10;
-    border-color: $studio-gray-80;
-    background-color: $studio-gray-90;
+    color: var(--primary-color);
+    border-color: var(--secondary-color);
+    background-color: var(--background-color);
 
     button svg {
-      fill: $studio-simplenote-blue-20;
+      fill: var(--accent-color);
     }
   }
 }

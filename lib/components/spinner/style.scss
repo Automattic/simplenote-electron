@@ -3,7 +3,7 @@
     color: var(--secondary-color);
   }
   @at-root body[data-theme='dark'] & {
-    color: $studio-gray-80;
+    color: var(--secondary-color);
   }
 
   &.is-white {

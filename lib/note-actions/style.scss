@@ -75,34 +75,34 @@
   }
 
   .spinner__circle {
-    color: $studio-gray-30;
+    color: var(--tertiary-accent-color);
   }
 }
 
 body[data-theme='dark'] {
   .spinner__circle {
-    color: $studio-gray-50;
+    color: var(--tertiary-color);
   }
   .note-actions.theme-color-bg {
-    background-color: $studio-gray-90;
+    background-color: var(--background-color);
   }
 
   .note-actions-trash {
-    color: $studio-red-30;
+    color: var(--tertiary-highlight-color);
   }
 
   .note-actions-item-disabled {
-    color: $studio-gray-50;
+    color: var(--tertiary-color);
   }
 
   .note-actions-item:hover {
-    background-color: $studio-gray-80;
+    background-color: var(--secondary-color);
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-base,
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
     background-position: 0 -18px;
-    fill: $studio-gray-30;
+    fill: var(--foreground-color);
   }
 
   .note-actions-item-control .checkbox-control .checkbox-control-checked {
