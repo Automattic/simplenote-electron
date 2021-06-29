@@ -1,5 +1,16 @@
 # Changelog
 
+## [v2.14.0]
+
+### Enhancements
+
+- Updated the new note icon to the new design [#2939](https://github.com/automattic/simplenote-electron/pull/2939)
+- Updated colors in dark mode to use CSS variables [#2936](https://github.com/automattic/simplenote-electron/pull/2936)
+
+### Fixes
+
+- Updated the logo used when pinning to the Windows start menu [#2937](https://github.com/automattic/simplenote-electron/pull/2937)
+
 ## [v2.13.0]
 
 ### Enhancements
