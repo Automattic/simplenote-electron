@@ -4,6 +4,7 @@
   flex: none;
   height: $toolbar-height;
   border-bottom: 1px solid var(--secondary-color);
+  background-color: var(--background-color);
 }
 
 .note-toolbar-wrapper .offline-badge {
