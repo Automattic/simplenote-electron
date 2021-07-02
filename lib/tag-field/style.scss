@@ -8,6 +8,7 @@
   overflow: auto;
   max-height: calc(2.5 * 1.75em + 16px); // about 2.5 rows
   padding: 8px 12px;
+  background-color: var(--background-color);
 
   &:focus {
     outline: none;

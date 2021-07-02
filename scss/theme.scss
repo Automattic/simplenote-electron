@@ -123,221 +123,221 @@ span[dir='ltr'] {
   }
 }
 
-body[data-theme='light'] {
-  background-color: var(--background-color);
-  color: var(--foreground-color);
+// body[data-theme='light'] {
+//   background-color: var(--background-color);
+//   color: var(--foreground-color);
 
-  .theme-color-bg {
-    background-color: var(--background-color);
-  }
-  .theme-color-bg-lighter {
-    background-color: var(--background-color);
-  }
-  .theme-color-fg {
-    color: var(--primary-color);
-  }
-  .theme-color-fg-dim {
-    color: var(--foreground-color);
-  }
-  .theme-color-border,
-  &.theme-color-border,
-  .button {
-    border-color: var(--secondary-color);
-  }
-  .button-borderless {
-    color: var(--accent-color);
-  }
+//   .theme-color-bg {
+//     background-color: var(--background-color);
+//   }
+//   .theme-color-bg-lighter {
+//     background-color: var(--background-color);
+//   }
+//   .theme-color-fg {
+//     color: var(--primary-color);
+//   }
+//   .theme-color-fg-dim {
+//     color: var(--foreground-color);
+//   }
+//   .theme-color-border,
+//   &.theme-color-border,
+//   .button {
+//     border-color: var(--secondary-color);
+//   }
+//   .button-borderless {
+//     color: var(--accent-color);
+//   }
 
-  .note-list-item-pinned .note-list-item-pinner {
-    color: var(--accent-color);
-  }
-}
+//   .note-list-item-pinned .note-list-item-pinner {
+//     color: var(--accent-color);
+//   }
+// }
 
-.theme-light.theme-color-border {
-  border-color: var(--secondary-color);
-}
+// .theme-light.theme-color-border {
+//   border-color: var(--secondary-color);
+// }
 
-body[data-theme='dark'] {
-  background-color: var(--background-color);
-  color: var(--foreground-color);
+// body[data-theme='dark'] {
+//   background-color: var(--background-color);
+//   color: var(--foreground-color);
 
-  .theme-color-bg {
-    background-color: var(--background-color);
-  }
-  .theme-color-bg-lighter {
-    background-color: var(--background-color);
-  }
-  .theme-color-fg {
-    color: var(--primary-color);
-  }
-  .theme-color-fg-dim {
-    color: var(--foreground-color);
-  }
-  .theme-color-border,
-  &.theme-color-border,
-  .button {
-    border-color: var(--secondary-color);
-  }
+//   .theme-color-bg {
+//     background-color: var(--background-color);
+//   }
+//   .theme-color-bg-lighter {
+//     background-color: var(--background-color);
+//   }
+//   .theme-color-fg {
+//     color: var(--primary-color);
+//   }
+//   .theme-color-fg-dim {
+//     color: var(--foreground-color);
+//   }
+//   .theme-color-border,
+//   &.theme-color-border,
+//   .button {
+//     border-color: var(--secondary-color);
+//   }
 
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--secondary-color);
-    border-color: var(--tertiary-color);
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--background-color);
-  }
-  ::-webkit-scrollbar-thumb:active {
-    background-color: var(--tertiary-color);
-  }
+//   ::-webkit-scrollbar-thumb {
+//     background-color: var(--secondary-color);
+//     border-color: var(--tertiary-color);
+//   }
+//   ::-webkit-scrollbar-thumb:hover {
+//     background-color: var(--background-color);
+//   }
+//   ::-webkit-scrollbar-thumb:active {
+//     background-color: var(--tertiary-color);
+//   }
 
-  .button-borderless {
-    color: var(--accent-color);
+//   .button-borderless {
+//     color: var(--accent-color);
 
-    &[disabled],
-    &:disabled {
-      svg[class^='icon-'] {
-        fill: var(--tertiary-color);
-      }
-    }
-  }
+//     &[disabled],
+//     &:disabled {
+//       svg[class^='icon-'] {
+//         fill: var(--tertiary-color);
+//       }
+//     }
+//   }
 
-  .icon-button,
-  a {
-    color: var(--foreground-color);
-  }
-  a.button {
-    color: var(--primary-color);
-  }
+//   .icon-button,
+//   a {
+//     color: var(--foreground-color);
+//   }
+//   a.button {
+//     color: var(--primary-color);
+//   }
 
-  input {
-    color: var(--primary-color);
-  }
+//   input {
+//     color: var(--primary-color);
+//   }
 
-  input,
-  textarea {
-    border-color: var(--secondary-accent-color);
-    background-color: transparent;
-  }
+//   input,
+//   textarea {
+//     border-color: var(--secondary-accent-color);
+//     background-color: transparent;
+//   }
 
-  .checkbox-control-base {
-    border-color: var(--secondary-color);
-  }
+//   .checkbox-control-base {
+//     border-color: var(--secondary-color);
+//   }
 
-  .navigation-bar-item {
-    button {
-      color: var(--primary-color);
-    }
-    svg[class^='icon-'] {
-      fill: var(--foreground-color);
-    }
-  }
+//   .navigation-bar-item {
+//     button {
+//       color: var(--primary-color);
+//     }
+//     svg[class^='icon-'] {
+//       fill: var(--foreground-color);
+//     }
+//   }
 
-  .navigation-bar-item.is-selected,
-  .tag-list-item.is-selected {
-    background-color: var(--highlight-color);
+//   .navigation-bar-item.is-selected,
+//   .tag-list-item.is-selected {
+//     background-color: var(--highlight-color);
 
-    svg[class^='icon-'] {
-      fill: var(--primary-color);
-    }
-    button {
-      color: var(--primary-color);
-    }
-  }
+//     svg[class^='icon-'] {
+//       fill: var(--primary-color);
+//     }
+//     button {
+//       color: var(--primary-color);
+//     }
+//   }
 
-  .tag-field input {
-    background: transparent;
+//   .tag-field input {
+//     background: transparent;
 
-    &::placeholder {
-      color: var(--foreground-color);
-    }
-  }
+//     &::placeholder {
+//       color: var(--foreground-color);
+//     }
+//   }
 
-  .search-decoration {
-    background-color: var(--search-highlight-color);
-  }
-  .selected-search {
-    background-color: var(--search-selection-color);
-    color: var(--background-color);
-  }
+//   .search-decoration {
+//     background-color: var(--search-highlight-color);
+//   }
+//   .selected-search {
+//     background-color: var(--search-selection-color);
+//     color: var(--background-color);
+//   }
 
-  .settings-group p {
-    color: var(--settings-fg-color);
-  }
+//   .settings-group p {
+//     color: var(--settings-fg-color);
+//   }
 
-  .note-list-header {
-    color: var(--foreground-color);
-  }
+//   .note-list-header {
+//     color: var(--foreground-color);
+//   }
 
-  .note-list {
-    .note-list-item-selected {
-      background: var(--highlight-color);
-      .note-list-item-excerpt,
-      .note-list-item-published-icon,
-      .note-list-item-pending-changes {
-        color: var(--primary-color);
-      }
-      .note-list-item-pending-changes {
-        &.is-offline svg {
-          fill: var(--foreground-color);
-        }
-      }
-      &.note-list-item-pinned .note-list-item-pinner {
-        color: var(--primary-color);
-      }
-    }
+//   .note-list {
+//     .note-list-item-selected {
+//       background: var(--highlight-color);
+//       .note-list-item-excerpt,
+//       .note-list-item-published-icon,
+//       .note-list-item-pending-changes {
+//         color: var(--primary-color);
+//       }
+//       .note-list-item-pending-changes {
+//         &.is-offline svg {
+//           fill: var(--foreground-color);
+//         }
+//       }
+//       &.note-list-item-pinned .note-list-item-pinner {
+//         color: var(--primary-color);
+//       }
+//     }
 
-    .note-list-item-pinned:not(.note-list-item-selected) {
-      .note-list-item-pinner {
-        color: var(--accent-color);
-      }
-    }
+//     .note-list-item-pinned:not(.note-list-item-selected) {
+//       .note-list-item-pinner {
+//         color: var(--accent-color);
+//       }
+//     }
 
-    .note-list-item:not(.note-list-item-pinned):hover {
-      .note-list-item-pinner {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
+//     .note-list-item:not(.note-list-item-pinned):hover {
+//       .note-list-item-pinner {
+//         color: rgba(255, 255, 255, 0.4);
+//       }
+//     }
 
-    .note-list-item:not(.note-list-item-selected) {
-      &:hover {
-        background: var(--secondary-color);
-      }
-    }
-  }
+//     .note-list-item:not(.note-list-item-selected) {
+//       &:hover {
+//         background: var(--secondary-color);
+//       }
+//     }
+//   }
 
-  .note-detail-markdown {
-    @import '../node_modules/highlight.js/scss/solarized-dark.scss';
+//   .note-detail-markdown {
+//     @import '../node_modules/highlight.js/scss/solarized-dark.scss';
 
-    hr {
-      border-color: var(--secondary-color);
-    }
+//     hr {
+//       border-color: var(--secondary-color);
+//     }
 
-    blockquote {
-      border-color: var(--secondary-color);
-    }
+//     blockquote {
+//       border-color: var(--secondary-color);
+//     }
 
-    pre {
-      border-color: var(--secondary-color);
-    }
+//     pre {
+//       border-color: var(--secondary-color);
+//     }
 
-    table {
-      th,
-      td {
-        border-color: var(--tertiary-color);
-      }
-      tr:nth-child(2n) {
-        background-color: var(--secondary-color);
-      }
-    }
-  }
+//     table {
+//       th,
+//       td {
+//         border-color: var(--tertiary-color);
+//       }
+//       tr:nth-child(2n) {
+//         background-color: var(--secondary-color);
+//       }
+//     }
+//   }
 
-  .search-results {
-    color: var(--primary-color);
-    border-color: var(--secondary-color);
-    background-color: var(--background-color);
+//   .search-results {
+//     color: var(--primary-color);
+//     border-color: var(--secondary-color);
+//     background-color: var(--background-color);
 
-    button svg {
-      fill: var(--accent-color);
-    }
-  }
-}
+//     button svg {
+//       fill: var(--accent-color);
+//     }
+//   }
+// }

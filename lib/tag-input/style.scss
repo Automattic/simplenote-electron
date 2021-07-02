@@ -5,6 +5,7 @@
   flex: 1 0 auto;
   overflow: visible;
   min-height: 26px;
+  color: var(--primary-color);
 
   input {
     width: 100%;
@@ -22,6 +23,7 @@
   display: block;
   background: transparent;
   user-select: none;
+  color: var(--placeholder-color);
 }
 
 .tag-input__entry {

@@ -42,7 +42,7 @@ export class TagSuggestions extends Component<Props> {
         {filteredTags.length > 0 && (
           <div className="tag-suggestions">
             <div className="note-list-header">Search by Tag</div>
-            <ul className="tag-suggestions-list theme-color-border">
+            <ul className="tag-suggestions-list">
               {filteredTags.map((tagId) => {
                 const tagName =
                   tagId === 'untagged' ? 'untagged' : tags.get(tagId)!.name;
