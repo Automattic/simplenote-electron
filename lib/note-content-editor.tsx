@@ -18,7 +18,7 @@ import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
-import { noteTitleAndPreview } from './utils/note-utils';
+import { noteTitleAndPreview, isMarkdown } from './utils/note-utils';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -561,7 +561,19 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
-      rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
+      rules: [
+        { background: 'FFFFFF', foreground: '#2c3338' },
+        { token: 'keyword.md', foreground: '#2c3338', fontStyle: 'bold' },
+        { token: 'variable.source' },
+        { token: 'string.md', background: '#fdf6e3', foreground: '#657b83' },
+        { token: 'comment.md', foreground: '#a7aaad' },
+        { token: 'keyword.table', foreground: '#a7aaad' },
+        {
+          token: 'keyword.table.header',
+          foreground: '#2c3338',
+          fontStyle: 'bold',
+        },
+      ],
       colors: {
         'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
         'editor.background': '#ffffff',
@@ -1162,7 +1174,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { lineLength, noteId, searchQuery, theme } = this.props;
+    const { lineLength, noteId, searchQuery, theme, note } = this.props;
     const { content, editor, overTodo } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
@@ -1191,7 +1203,7 @@ class NoteContentEditor extends Component<Props> {
             key={noteId}
             editorDidMount={this.editorReady}
             editorWillMount={this.editorInit}
-            language="plaintext"
+            language={isMarkdown(note) ? 'markdown' : 'plaintext'}
             theme={theme === 'dark' ? 'simplenote-dark' : 'simplenote'}
             onChange={this.updateNote}
             options={{
@@ -1210,7 +1222,7 @@ class NoteContentEditor extends Component<Props> {
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
-              matchBrackets: 'never',
+              matchBrackets: isMarkdown(note) ? 'always' : 'never',
               minimap: { enabled: false },
               occurrencesHighlight: false,
               overviewRulerBorder: false,
