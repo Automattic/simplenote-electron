@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.15.0]
+
+### Enhancements
+
+- Updated the Note Detail, Tag Field, Tag Input, and Tag Suggestion components to use CSS variables for colors
+- Updated the Note toolbar, Menu bar, Note editor, and Search field components to use CSS variables for colors
+
+### Fixes
+
+- Fixed the font stack used so the font is consistent everywhere
+- Fixed the color used for headings on the login and sign up pages
+
 ## [v2.14.0]
 
 ### Enhancements
