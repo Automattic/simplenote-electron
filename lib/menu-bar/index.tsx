@@ -64,7 +64,7 @@ export const MenuBar: FunctionComponent<Props> = ({
   const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
   return (
-    <div className="menu-bar theme-color-border">
+    <div className="menu-bar">
       <IconButton
         icon={<MenuIcon />}
         onClick={toggleNavigation}
