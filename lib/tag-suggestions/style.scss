@@ -20,22 +20,11 @@
       margin-left: 28px;
       overflow-x: hidden;
       text-overflow: ellipsis;
+      border-color: var(--secondary-color);
     }
   }
 
   .tag-suggestion-row:last-child .tag-suggestion {
     border-bottom: none;
-  }
-}
-
-body[data-theme='light'] {
-  .tag-suggestion {
-    border-color: var(--secondary-color);
-  }
-}
-
-body[data-theme='dark'] {
-  .tag-suggestion {
-    border-color: var(--secondary-color);
   }
 }

@@ -280,10 +280,7 @@ export class TagInput extends Component<Props> {
         }}
       >
         {shouldShowPlaceholder && (
-          <span
-            aria-hidden
-            className="tag-input__placeholder theme-color-fg-dim"
-          >
+          <span aria-hidden className="tag-input__placeholder">
             Add tag…
           </span>
         )}
