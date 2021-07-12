@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.15.0]
+
+### Enhancements
+
+- Updated the Note Detail, Tag Field, Tag Input, and Tag Suggestion components to use CSS variables for colors [#2955](https://github.com/automattic/simplenote-electron/pull/2955)
+- Updated the Note toolbar, Menu bar, Note editor, and Search field components to use CSS variables for colors [#2943](https://github.com/automattic/simplenote-electron/pull/2943)
+
+### Fixes
+
+- Fixed the font stack used so the font is consistent everywhere [#2946](https://github.com/automattic/simplenote-electron/pull/2946)
+- Fixed the color used for headings on the login and sign up pages [#2947](https://github.com/automattic/simplenote-electron/pull/2947)
+
 ## [v2.14.0]
 
 ### Enhancements
