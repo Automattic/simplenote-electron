@@ -1,9 +1,0 @@
-{
-  "updater": {
-    "downloadUrl": "https://github.com/Automattic/simplenote-electron/releases/latest",
-    "changelogUrl": "https://github.com/Automattic/simplenote-electron/blob/develop/RELEASE-NOTES.md",
-    "apiUrl": "https://api.github.com/repos/automattic/simplenote-electron/releases/latest",
-    "delay": 2000,
-    "interval": 600000
-  }
-}
