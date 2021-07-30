@@ -169,23 +169,6 @@
     color: var(--foreground-color);
   }
 
-  .note-list-item-title {
-    color: var(--primary-color);
-  }
-
-  &.note-list-item-selected {
-    background: var(--highlight-color);
-
-    .note-list-item-excerpt {
-      color: var(--primary-color);
-    }
-
-    .note-list-item-pending-changes,
-    .note-list-item-published-icon {
-      color: var(--primary-color);
-    }
-  }
-
   &:not(.note-list-item-pinned):hover .note-list-item-pinner {
     color: var(--foreground-color);
   }
@@ -234,6 +217,7 @@
     justify-content: space-between;
     font-size: 16px;
     font-weight: 500;
+    color: var(--primary-color);
 
     & span {
       text-overflow: ellipsis;
@@ -248,6 +232,17 @@
   }
 
   &.note-list-item-selected {
+    background: var(--highlight-color);
+
+    .note-list-item-excerpt {
+      color: var(--primary-color);
+    }
+
+    .note-list-item-pending-changes,
+    .note-list-item-published-icon {
+      color: var(--primary-color);
+    }
+
     &.note-list-item-pinned .note-list-item-pinner {
       color: var(--primary-color);
     }
