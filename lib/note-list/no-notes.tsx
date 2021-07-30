@@ -80,7 +80,7 @@ const NoNotes = () => {
   });
 
   return (
-    <div className="note-list-placeholder theme-color-fg">
+    <div className="note-list-placeholder">
       <div className="no-notes-icon">{icon}</div>
       <div className="no-notes-message">{message}</div>
       <div className="no-notes-button">{hasLoaded && button}</div>

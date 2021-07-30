@@ -25,6 +25,7 @@
   flex: 1 1 auto;
   overflow: hidden;
   background: inherit;
+  background-color: var(--background-color);
 
   .comfy .note-list-item-excerpt {
     white-space: nowrap;
@@ -92,23 +93,6 @@
   }
 }
 
-body[data-theme='dark'] {
-  .note-list-placeholder {
-    .no-notes-icon,
-    .no-notes-message {
-      color: var(--foreground-color);
-    }
-
-    button {
-      color: var(--accent-color);
-    }
-  }
-
-  .note-list .search-match {
-    color: var(--accent-color);
-  }
-}
-
 .note-list-items {
   flex: 1 1 auto;
   overflow: hidden;
@@ -122,7 +106,7 @@ body[data-theme='dark'] {
 .note-list-empty-trash {
   flex: none;
   padding: 10px 20px;
-  border-top: 1px solid;
+  border-top: 1px solid var(--secondary-color);
   text-align: center;
 }
 
@@ -170,7 +154,7 @@ body[data-theme='dark'] {
     flex: 1 1 auto;
     overflow: hidden;
     padding: 9px 0;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--secondary-color);
   }
 
   .note-list-item-title,
@@ -181,8 +165,25 @@ body[data-theme='dark'] {
     overflow: hidden;
   }
 
+  .note-list-item-excerpt {
+    color: var(--foreground-color);
+  }
+
+  .note-list-item-title {
+    color: var(--primary-color);
+  }
+
   &.note-list-item-selected {
     background: var(--highlight-color);
+
+    .note-list-item-excerpt {
+      color: var(--primary-color);
+    }
+
+    .note-list-item-pending-changes,
+    .note-list-item-published-icon {
+      color: var(--primary-color);
+    }
   }
 
   &:not(.note-list-item-pinned):hover .note-list-item-pinner {
@@ -191,7 +192,7 @@ body[data-theme='dark'] {
 
   &:not(.note-list-item-selected) {
     &:hover {
-      background: var(--secondary-highlight-color);
+      background: var(--secondary-color);
     }
   }
 
@@ -203,7 +204,7 @@ body[data-theme='dark'] {
   .note-list-item-status-right {
     display: flex;
     padding: 9px 6px 0 0; // we want 10px total to the right side, but the icon has 4px padding already
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--secondary-color);
   }
 
   .note-list-item-pending-changes,
@@ -226,10 +227,6 @@ body[data-theme='dark'] {
       animation: none;
       fill: var(--tertiary-color);
     }
-
-    body[data-theme='dark'] &.is-offline svg {
-      fill: var(--tertiary-color);
-    }
   }
 
   .note-list-item-title {
@@ -241,6 +238,18 @@ body[data-theme='dark'] {
     & span {
       text-overflow: ellipsis;
       overflow: hidden;
+    }
+  }
+
+  &.note-list-item-pinned:not(.note-list-item-selected) {
+    .note-list-item-pinner {
+      color: var(--accent-color);
+    }
+  }
+
+  &.note-list-item-selected {
+    &.note-list-item-pinned .note-list-item-pinner {
+      color: var(--primary-color);
     }
   }
 }
