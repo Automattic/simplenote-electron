@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.16.0]
+
+### Enhancements
+
+- Updated tile icons for Windows with a new size and shadow [#2965](https://github.com/automattic/simplenote-electron/pull/2965)
+
 ## [v2.15.0]
 
 ### Enhancements
