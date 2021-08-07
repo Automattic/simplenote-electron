@@ -13,6 +13,7 @@ type OwnProps = {
   accountCreationRequested: boolean;
   authPending: boolean;
   emailSentTo: string;
+  hasCompromisedPassword: boolean;
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
@@ -152,6 +153,28 @@ export class Auth extends Component<Props> {
               </a>
               . Passwords must be between 8 and 64 characters long and may not
               include your email address, new lines, or tabs.
+            </p>
+          )}
+          {this.props.hasCompromisedPassword && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
+              This password has appeared in a data breach, which puts your
+              account at high risk of compromise. Please
+              <a
+                className="login__reset"
+                href={
+                  'https://app.simplenote.com/reset/?email=' +
+                  encodeURIComponent(get(this.usernameInput, 'value'))
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={this.onForgot}
+              >
+                reset
+              </a>{' '}
+              your password.
             </p>
           )}
           {this.props.hasInvalidCredentials ||
