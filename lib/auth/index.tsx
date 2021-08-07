@@ -17,6 +17,7 @@ type OwnProps = {
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
+  hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
   requestSignup: (username: string) => any;
   tokenLogin: (username: string, token: string) => any;
@@ -153,6 +154,27 @@ export class Auth extends Component<Props> {
               </a>
               . Passwords must be between 8 and 64 characters long and may not
               include your email address, new lines, or tabs.
+            </p>
+          )}
+          {this.props.hasUnverifiedAccount && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="verification-required"
+            >
+              Account verification required. You must verify your email before
+              logging in to your account.
+              <a
+                className="login__reset"
+                href={
+                  'https://app.simplenote.com/account/verify-email/' +
+                  btoa(get(this.usernameInput, 'value'))
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={this.onForgot}
+              >
+                Send Verification Email
+              </a>{' '}
             </p>
           )}
           {this.props.hasCompromisedPassword && (
