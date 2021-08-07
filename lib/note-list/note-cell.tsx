@@ -119,7 +119,7 @@ export class NoteCell extends Component<Props> {
 
           <button
             aria-label={`Edit note ${title}`}
-            className="note-list-item-text theme-color-border focus-visible"
+            className="note-list-item-text focus-visible"
             onClick={() => openNote(noteId)}
           >
             <div className="note-list-item-title">
@@ -128,7 +128,7 @@ export class NoteCell extends Component<Props> {
               </span>
             </div>
             {'expanded' === displayMode && preview.length > 0 && (
-              <div className="note-list-item-excerpt theme-color-fg-dim">
+              <div className="note-list-item-excerpt">
                 {withCheckboxCharacters(preview)
                   .split('\n')
                   .map((line, index) => (
@@ -140,7 +140,7 @@ export class NoteCell extends Component<Props> {
               </div>
             )}
             {'comfy' === displayMode && preview.length > 0 && (
-              <div className="note-list-item-excerpt theme-color-fg-dim">
+              <div className="note-list-item-excerpt">
                 {decorateWith(
                   decorators,
                   withCheckboxCharacters(preview).slice(0, 200)
@@ -148,7 +148,7 @@ export class NoteCell extends Component<Props> {
               </div>
             )}
           </button>
-          <div className="note-list-item-status-right theme-color-border">
+          <div className="note-list-item-status-right">
             {hasPendingChanges && (
               <span
                 className={classNames('note-list-item-pending-changes', {

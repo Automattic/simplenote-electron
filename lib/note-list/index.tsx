@@ -74,7 +74,7 @@ const renderNote = (
         rowIndex={index}
       >
         <div className="note-list is-empty" style={{ ...style, height: 200 }}>
-          <span className="note-list-placeholder theme-color-fg">No Notes</span>
+          <span className="note-list-placeholder">No Notes</span>
         </div>
       </CellMeasurer>
     );
@@ -310,7 +310,7 @@ export class NoteList extends Component<Props> {
     const isEmptyList = compositeNoteList.length === 0;
 
     const emptyTrashButton = (
-      <div className="note-list-empty-trash theme-color-border">
+      <div className="note-list-empty-trash">
         <button
           type="button"
           className="button button-borderless button-danger"
