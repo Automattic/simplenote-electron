@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.17.0]
+
+### Enhancements
+
+- Updated the Note List, Note Cell, and No Notes, components to use CSS variables for colors [#2969](https://github.com/automattic/simplenote-electron/pull/2969)
+
 ## [v2.16.0]
 
 ### Enhancements
