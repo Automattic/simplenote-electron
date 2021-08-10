@@ -158,7 +158,7 @@ export class Auth extends Component<Props> {
           {this.props.hasCompromisedPassword && (
             <p
               className="login__auth-message is-error"
-              data-error-name="invalid-login"
+              data-error-name="compromised-password"
             >
               This password has appeared in a data breach, which puts your
               account at high risk of compromise. Please
@@ -177,15 +177,14 @@ export class Auth extends Component<Props> {
               your password.
             </p>
           )}
-          {this.props.hasInvalidCredentials ||
-            (this.props.hasLoginError && (
-              <p
-                className="login__auth-message is-error"
-                data-error-name="invalid-login"
-              >
-                {errorMessage}
-              </p>
-            ))}
+          {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
+              {errorMessage}
+            </p>
+          )}
           {passwordErrorMessage && (
             <p className="login__auth-message is-error">
               {passwordErrorMessage}

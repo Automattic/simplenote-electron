@@ -99,12 +99,12 @@ class AppWithoutAuth extends Component<Props, State> {
         .catch((error: unknown) => {
           const message = error?.underlyingError.message ?? '';
           if (
-            'invalid password' === message ||
+            'invalid login' === message ||
             message.startsWith('unknown username:')
           ) {
             this.setState({ authStatus: 'invalid-credentials' });
           } else if ('compromised password' === message) {
-            +this.setState({ authStatus: 'compromised-password' });
+            this.setState({ authStatus: 'compromised-password' });
           } else {
             this.setState({ authStatus: 'unknown-error' });
           }
