@@ -17,7 +17,7 @@ const clearStorage = (): Promise<void> =>
     localStorage.removeItem('localQueue:preferences');
     localStorage.removeItem('localQueue:tag');
     localStorage.removeItem('stored_user');
-    localStorage.removeItem('note_positions');
+    sessionStorage.clear();
     window.electron?.send('appStateUpdate', {});
 
     const settings = localStorage.getItem('simpleNote');
