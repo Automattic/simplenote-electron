@@ -13,7 +13,7 @@ export const setNotePosition = (noteId: string, position: notePosition) => {
   const positions = getAllPositions();
   if (positions) {
     positions[noteId] = position;
-    localStorage.setItem('note_positions', JSON.stringify(positions));
+    sessionStorage.setItem('note_positions', JSON.stringify(positions));
   }
 };
 
@@ -26,10 +26,8 @@ export const getNotePosition = (noteId: string): notePosition | '' => {
   }
 };
 
-export const removeNotePostion = (noteId: string) => {};
-
 const getAllPositions = (): notePositions | '' => {
-  const notePositions = localStorage.getItem('note_positions');
+  const notePositions = sessionStorage.getItem('note_positions');
   let currentSavedPositions: notePositions;
   if (notePositions) {
     try {
@@ -38,6 +36,8 @@ const getAllPositions = (): notePositions | '' => {
     } catch (e) {
       return '';
     }
+  } else {
+    currentSavedPositions = {};
   }
-  return '';
+  return currentSavedPositions;
 };
