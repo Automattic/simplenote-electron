@@ -19,6 +19,7 @@ import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
+import { getNotePosition, setNotePosition } from './utils/note-scroll-position';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -206,61 +207,25 @@ class NoteContentEditor extends Component<Props> {
     };
     removeById(contextMenuLinks, removableIds);
 
-    const notePositions = localStorage.getItem('note_positions');
-    let currentSavedPositions: any;
-    if (notePositions) {
-      try {
-        currentSavedPositions = JSON.parse(notePositions);
-      } catch (e) {
-        // pass - we only care if we can successfully do this,
-        //        not if we fail to do it
-      }
-    } else {
-      currentSavedPositions = {};
+    const position = getNotePosition(noteId);
+
+    if (position) {
+      this.editor?.revealLineInCenter(position.line);
+      window.setTimeout(() => {
+        this.editor?.setScrollPosition({
+          scrollTop: position.scroll,
+        });
+      }, 200);
     }
-
-    this.editor?.revealLineInCenter(currentSavedPositions[noteId].line);
-    window.setTimeout(() => {
-      this.editor?.setScrollPosition({
-        scrollTop: currentSavedPositions[noteId].scroll,
-      });
-    }, 200);
-
-    // const currentState = currentSavedPositions[noteId].state ?? {};
-    // if (currentState) {
-    //   this.editor?.restoreViewState(currentState);
-    //   window.setTimeout(() => {
-    //     this.editor?.setScrollPosition({
-    //       scrollTop: currentSavedPositions[noteId].scroll,
-    //     });
-    //   }, 200);
-    // }
   }
 
   componentWillUnmount() {
-    const notePositions = localStorage.getItem('note_positions');
-    let currentSavedPositions;
-    if (notePositions) {
-      try {
-        currentSavedPositions = JSON.parse(notePositions);
-      } catch (e) {
-        // pass - we only care if we can successfully do this,
-        //        not if we fail to do it
-      }
-    } else {
-      currentSavedPositions = {};
-    }
-
     const { noteId } = this.props;
-    currentSavedPositions[noteId] = {
-      //state: this.editor?.saveViewState(),
-      line: this.editor?.getPosition()?.lineNumber,
-      scroll: this.editor?.getScrollTop(),
+    const position = {
+      line: this.editor?.getPosition()?.lineNumber ?? 0,
+      scroll: this.editor?.getScrollTop() ?? 0,
     };
-    localStorage.setItem(
-      'note_positions',
-      JSON.stringify(currentSavedPositions)
-    );
+    setNotePosition(noteId, position);
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
