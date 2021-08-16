@@ -220,12 +220,10 @@ class NoteContentEditor extends Component<Props> {
   }
 
   componentWillUnmount() {
-    const { noteId } = this.props;
-    const position = {
+    setNotePosition(this.props.noteId, {
       line: this.editor?.getPosition()?.lineNumber ?? 0,
       scroll: this.editor?.getScrollTop() ?? 0,
-    };
-    setNotePosition(noteId, position);
+    });
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
