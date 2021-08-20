@@ -19,7 +19,11 @@ import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
-import { getNotePosition, setNotePosition } from './utils/note-scroll-position';
+import {
+  clearNotePositions,
+  getNotePosition,
+  setNotePosition,
+} from './utils/note-scroll-position';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -175,11 +179,18 @@ class NoteContentEditor extends Component<Props> {
           editor: 'full',
           content: withCheckboxCharacters(this.props.note.content),
         });
+        const position = getNotePosition(noteId);
+        if (position) {
+          this.editor?.setScrollPosition({
+            scrollTop: position,
+          });
+        }
       }
     }, SPEED_DELAY);
     this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
+    window.addEventListener('resize', clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
 
@@ -206,24 +217,10 @@ class NoteContentEditor extends Component<Props> {
       } while ((node = node.next));
     };
     removeById(contextMenuLinks, removableIds);
-
-    const position = getNotePosition(noteId);
-
-    if (position) {
-      this.editor?.revealLineInCenter(position.line);
-      window.setTimeout(() => {
-        this.editor?.setScrollPosition({
-          scrollTop: position.scroll,
-        });
-      }, 200);
-    }
   }
 
   componentWillUnmount() {
-    setNotePosition(this.props.noteId, {
-      line: this.editor?.getPosition()?.lineNumber ?? 0,
-      scroll: this.editor?.getScrollTop() ?? 0,
-    });
+    setNotePosition(this.props.noteId, this.editor?.getScrollTop() ?? 0);
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
@@ -231,6 +228,7 @@ class NoteContentEditor extends Component<Props> {
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
     window.removeEventListener('toggleChecklist', this.handleChecklist, true);
+    window.removeEventListener('resize', clearNotePositions, true);
     this.toggleShortcuts(false);
   }
 

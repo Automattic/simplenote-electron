@@ -1,15 +1,8 @@
-export type notePosition =
-  | {
-      scroll: number;
-      line: number;
-    }
-  | undefined;
-
 export type notePositions = {
-  [key: string]: notePosition;
+  [key: string]: number;
 };
 
-export const setNotePosition = (noteId: string, position: notePosition) => {
+export const setNotePosition = (noteId: string, position: number) => {
   const positions = getAllPositions();
   if (positions) {
     positions[noteId] = position;
@@ -17,16 +10,20 @@ export const setNotePosition = (noteId: string, position: notePosition) => {
   }
 };
 
-export const getNotePosition = (noteId: string): notePosition | '' => {
+export const getNotePosition = (noteId: string): number => {
   const positions = getAllPositions();
   if (positions) {
     return positions[noteId];
   } else {
-    return '';
+    return 0;
   }
 };
 
-const getAllPositions = (): notePositions | '' => {
+export const clearNotePositions = () => {
+  sessionStorage.removeItem('note_positions');
+};
+
+const getAllPositions = (): notePositions => {
   const notePositions = sessionStorage.getItem('note_positions');
   let currentSavedPositions: notePositions;
   if (notePositions) {
@@ -34,7 +31,7 @@ const getAllPositions = (): notePositions | '' => {
       currentSavedPositions = JSON.parse(notePositions);
       return currentSavedPositions;
     } catch (e) {
-      return '';
+      return {};
     }
   } else {
     currentSavedPositions = {};
