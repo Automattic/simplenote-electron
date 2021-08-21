@@ -20,6 +20,7 @@ type Props = {
 type State = {
   authStatus:
     | 'account-creation-requested'
+    | 'compromised-password'
     | 'unsubmitted'
     | 'submitting'
     | 'insecure-password'
@@ -96,11 +97,14 @@ class AppWithoutAuth extends Component<Props, State> {
           this.login(user.access_token, username, false);
         })
         .catch((error: unknown) => {
+          const message = error?.underlyingError.message ?? '';
           if (
-            'invalid password' === error?.message ||
-            error?.message.startsWith('unknown username:')
+            'invalid login' === message ||
+            message.startsWith('unknown username:')
           ) {
             this.setState({ authStatus: 'invalid-credentials' });
+          } else if ('compromised password' === message) {
+            this.setState({ authStatus: 'compromised-password' });
           } else {
             this.setState({ authStatus: 'unknown-error' });
           }
@@ -152,6 +156,9 @@ class AppWithoutAuth extends Component<Props, State> {
             authPending={this.state.authStatus === 'submitting'}
             emailSentTo={this.state.emailSentTo}
             hasInsecurePassword={this.state.authStatus === 'insecure-password'}
+            hasCompromisedPassword={
+              this.state.authStatus === 'compromised-password'
+            }
             hasInvalidCredentials={
               this.state.authStatus === 'invalid-credentials'
             }
