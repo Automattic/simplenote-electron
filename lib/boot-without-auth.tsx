@@ -25,7 +25,8 @@ type State = {
     | 'submitting'
     | 'insecure-password'
     | 'invalid-credentials'
-    | 'unknown-error';
+    | 'unknown-error'
+    | 'verification-required';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -102,9 +103,14 @@ class AppWithoutAuth extends Component<Props, State> {
             'invalid login' === message ||
             message.startsWith('unknown username:')
           ) {
+            // We check for compromised password before verified account as if the password is
+            // compromised it will require a password reset. During that process unverified
+            // accounts will be verified as it requires an email to the account address
             this.setState({ authStatus: 'invalid-credentials' });
           } else if ('compromised password' === message) {
             this.setState({ authStatus: 'compromised-password' });
+          } else if ('verification required' === message) {
+            this.setState({ authStatus: 'verification-required' });
           } else {
             this.setState({ authStatus: 'unknown-error' });
           }
@@ -161,6 +167,9 @@ class AppWithoutAuth extends Component<Props, State> {
             }
             hasInvalidCredentials={
               this.state.authStatus === 'invalid-credentials'
+            }
+            hasUnverifiedAccount={
+              this.state.authStatus === 'verification-required'
             }
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
