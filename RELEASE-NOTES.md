@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.18.0]
+
+### Enhancements
+
+- Added support for handling failed logins due to having an unverified account email [#2976](https://github.com/automattic/simplenote-electron/pull/2976)
+- Add support for handling passwords found in known data breaches [#2972](https://github.com/automattic/simplenote-electron/pull/2972)
+
 ## [v2.17.0]
 
 ### Enhancements
