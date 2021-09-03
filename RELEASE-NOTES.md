@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.19.0]
+
+- Updated to save the scroll position of a note so you can be restored when the note is viewed again [#2977](https://github.com/automattic/simplenote-electron/pull/2977)
+
+### Enhancements
+
 ## [v2.18.0]
 
 ### Enhancements
