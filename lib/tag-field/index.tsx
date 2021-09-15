@@ -8,7 +8,11 @@ import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
-import { tagHashOf } from '../utils/tag-hash';
+import {
+  isTagInputKey,
+  tagHashOf,
+  MAX_TAG_HASH_LENGTH,
+} from '../utils/tag-hash';
 import { noteCanonicalTags } from '../state/selectors';
 
 import type * as S from '../state';
@@ -201,6 +205,14 @@ export class TagField extends Component<Props, OwnState> {
   onKeyDown = (e: React.KeyboardEvent) => {
     if (this.state.showEmailTooltip) {
       this.hideEmailTooltip();
+    }
+
+    if (
+      tagHashOf(this.state.tagInput as T.TagName).length >
+        MAX_TAG_HASH_LENGTH &&
+      isTagInputKey(e.which)
+    ) {
+      e.preventDefault();
     }
 
     return this.interceptKeys(e);

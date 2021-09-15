@@ -8,6 +8,8 @@ import React, {
 import { connect } from 'react-redux';
 import { get, identity, invoke, noop } from 'lodash';
 
+import { tagHashOf, MAX_TAG_HASH_LENGTH } from '../utils/tag-hash';
+
 import type * as S from '../state';
 import type * as T from '../types';
 
@@ -223,8 +225,12 @@ export class TagInput extends Component<Props> {
 
     // Convert spaces/commans to submitted tags
     const tags = clipboardText.split(/\s|,|\n/);
-    const submittedTags = tags.slice(0, tags.length - 1);
-    const [pendingTag] = tags.slice(tags.length - 1);
+    const filteredTags = tags.filter(
+      (tag) => tagHashOf(tag).length <= MAX_TAG_HASH_LENGTH
+    );
+    const submittedTags = filteredTags.slice(0, filteredTags.length - 1);
+    const [pendingTag] = filteredTags.slice(filteredTags.length - 1);
+
     submittedTags.filter(Boolean).forEach(this.props.onSelect);
     this.onInput(pendingTag, { moveCaretToEndOfValue: true });
 
