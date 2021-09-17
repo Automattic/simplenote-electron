@@ -80,15 +80,3 @@
     color: var(--disabled-text-color);
   }
 }
-
-body[data-theme='dark'] {
-  .note-actions-item-control .checkbox-control .checkbox-control-base,
-  .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: 0 -18px;
-    fill: var(--foreground-color);
-  }
-
-  .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: -18px -18px;
-  }
-}
