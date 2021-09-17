@@ -109,7 +109,7 @@ body[data-theme='dark'] .note-toolbar-wrapper .offline-badge {
 }
 
 .new-note-toolbar__button-sidebar {
-  border-right: 1px solid;
+  border-right: 1px solid var(--secondary-color);
   display: none;
   height: $toolbar-height;
   line-height: $toolbar-height;
