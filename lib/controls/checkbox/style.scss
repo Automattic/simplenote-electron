@@ -1,5 +1,3 @@
-$checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4Ii8+PHBhdGggZmlsbD0iIzY0Njk3MCIgZD0iTTE5IDVMMTkgNXYxNEg1VjVIMTlNMTkgM0g1QzMuODk1IDMgMyAzLjg5NSAzIDV2MTRjMCAxLjEwNSAwLjg5NSAyIDIgMmgxNGMxLjEwNSAwIDItMC44OTUgMi0yVjVDMjEgMy44OTUgMjAuMTA1IDMgMTkgM3pNNDMgM0gyOWMtMS4xMDUgMC0yIDAuODk1LTIgMnYxNGMwIDEuMTA1IDAuODk1IDIgMiAyaDE0YzEuMTA1IDAgMi0wLjg5NSAyLTJWNUM0NSAzLjg5NSA0NC4xMDUgMyA0MyAzek0zNC4xNCAxNi44NWwtNC4zOC00LjM3IDEuNDItMS40MiAzIDMgNi42My02LjYzIDEuNDEgMS40MkwzNC4xNCAxNi44NXoiLz48cGF0aCBmaWxsPSIjOGM4Zjk0IiBkPSJNMTkgMjlMMTkgMjl2MTRINVYyOUgxOU0xOSAyN0g1Yy0xLjEwNSAwLTIgMC44OTUtMiAydjE0YzAgMS4xMDUgMC44OTUgMiAyIDJoMTRjMS4xMDUgMCAyLTAuODk1IDItMlYyOUMyMSAyNy44OTUgMjAuMTA1IDI3IDE5IDI3ek00MyAyN0gyOWMtMS4xMDUgMC0yIDAuODk1LTIgMnYxNGMwIDEuMTA1IDAuODk1IDIgMiAyaDE0YzEuMTA1IDAgMi0wLjg5NSAyLTJWMjlDNDUgMjcuODk1IDQ0LjEwNSAyNyA0MyAyN3pNMzQuMTQgNDAuODVsLTQuMzgtNC4zNyAxLjQyLTEuNDIgMyAzIDYuNjMtNi42MyAxLjQxIDEuNDJMMzQuMTQgNDAuODV6Ii8+PC9zdmc+';
-
 .checkbox-control {
   -webkit-touch-callout: none;
   width: 16px;
@@ -66,21 +64,9 @@ $checkbox-sprite: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5
     width: 18px;
     height: 18px;
 
-    .checkbox-control-base,
-    .checkbox-control-checked {
-      background-image: url($checkbox-sprite);
-      background-repeat: no-repeat;
-      background-size: 36px 36px;
-      border-radius: 0;
-      border: 0;
+    svg {
+      vertical-align: top;
       fill: var(--foreground-color);
-    }
-    .checkbox-control-base {
-      background-position: 0 0;
-    }
-    .checkbox-control-checked {
-      background-color: transparent;
-      background-position: -18px 0;
     }
   }
 }

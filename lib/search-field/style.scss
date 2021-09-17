@@ -9,13 +9,14 @@
   background-color: var(--background-color);
 
   input {
-    width: 100%;
-    min-width: 0; // Firefox
-    border: 0;
     appearance: none;
-    font-size: 16px;
-    text-overflow: ellipsis !important;
     background-color: var(--background-color);
+    border: 0;
+    color: var(--primary-color);
+    font-size: 16px;
+    min-width: 0; // Firefox
+    text-overflow: ellipsis !important;
+    width: 100%;
 
     &:focus {
       outline: none;

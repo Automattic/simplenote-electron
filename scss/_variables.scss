@@ -61,6 +61,7 @@ body[data-theme='light'] {
   --secondary-tag-chip-color: #facfd2; // $studio-red-5
   --settings-fg-color: #2c3338; // $studio-gray-80
   --alternative-highlight-color: #f6f7f7; // $studio-gray-0;
+  --disabled-text-color: #dcdcde; // $studio-gray-5
 }
 
 body[data-theme='dark'] {
@@ -87,4 +88,5 @@ body[data-theme='dark'] {
   --secondary-tag-chip-color: #8a2424; // $studio-red-70
   --settings-fg-color: #dcdcde; // $studio-gray-5
   --alternative-highlight-color: #2c3338; // $studio-gray-80
+  --disabled-text-color: #646970; // $studio-gray-50
 }
