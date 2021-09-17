@@ -146,7 +146,7 @@ jobs:
 
   mac:
     macos:
-      xcode: '10.0.0'
+      xcode: '12.5.1'
     shell: /bin/bash --login
     working_directory: /Users/distiller/simplenote
     steps:
