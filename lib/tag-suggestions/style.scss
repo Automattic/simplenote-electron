@@ -16,11 +16,12 @@
     }
 
     .tag-suggestion {
+      border-color: var(--secondary-color);
+      color: var(--primary-color);
       font-size: 16px;
       margin-left: 28px;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      border-color: var(--secondary-color);
     }
   }
 
