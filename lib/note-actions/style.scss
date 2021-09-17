@@ -1,11 +1,13 @@
 .note-actions {
+  background-color: var(--background-color);
   width: 200px;
   position: absolute;
   right: 16px;
   top: $toolbar-height + 16px;
-  border: 1px solid;
+  border: 1px solid var(--secondary-color);
   border-radius: 6px;
   box-shadow: 0 3px 6px 0 var(--overlay-color);
+  color: var(--primary-color);
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -14,7 +16,7 @@
 
   .note-actions-panel {
     flex: none;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--secondary-color);
     padding: 4px 0;
 
     &:last-child {
@@ -38,12 +40,12 @@
     }
 
     &:hover {
-      background-color: var(--secondary-highlight-color);
+      background-color: var(--alternative-highlight-color);
     }
   }
 
   .note-actions-item-disabled {
-    color: var(--secondary-color);
+    color: var(--disabled-text-color);
     &:hover {
       background-color: transparent;
     }
@@ -74,38 +76,7 @@
     }
   }
 
-  .spinner__circle {
-    color: var(--tertiary-accent-color);
-  }
-}
-
-body[data-theme='dark'] {
-  .spinner__circle {
-    color: var(--tertiary-color);
-  }
-  .note-actions.theme-color-bg {
-    background-color: var(--background-color);
-  }
-
-  .note-actions-trash {
-    color: var(--tertiary-highlight-color);
-  }
-
-  .note-actions-item-disabled {
-    color: var(--tertiary-color);
-  }
-
-  .note-actions-item:hover {
-    background-color: var(--secondary-color);
-  }
-
-  .note-actions-item-control .checkbox-control .checkbox-control-base,
-  .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: 0 -18px;
-    fill: var(--foreground-color);
-  }
-
-  .note-actions-item-control .checkbox-control .checkbox-control-checked {
-    background-position: -18px -18px;
+  svg .spinner__circle {
+    color: var(--disabled-text-color);
   }
 }

@@ -78,11 +78,8 @@ export class NoteActions extends Component<Props> {
           onDeactivate: this.handleFocusTrapDeactivate,
         }}
       >
-        <div
-          className="note-actions theme-color-bg theme-color-fg theme-color-border"
-          ref={this.containerRef}
-        >
-          <div className="note-actions-panel theme-color-border">
+        <div className="note-actions" ref={this.containerRef}>
+          <div className="note-actions-panel">
             <label
               className="note-actions-item"
               htmlFor="note-actions-pin-checkbox"
@@ -147,7 +144,7 @@ export class NoteActions extends Component<Props> {
               </div>
             )}
           </div>
-          <div className="note-actions-panel note-actions-public-link theme-color-border">
+          <div className="note-actions-panel note-actions-public-link">
             <label
               className="note-actions-item"
               htmlFor="note-actions-publish-checkbox"
@@ -187,7 +184,7 @@ export class NoteActions extends Component<Props> {
               )}
             </div>
           </div>
-          <div className="note-actions-panel theme-color-border">
+          <div className="note-actions-panel">
             <div className="note-actions-item">
               <button
                 className="button button-borderless"
@@ -197,7 +194,7 @@ export class NoteActions extends Component<Props> {
               </button>
             </div>
           </div>
-          <div className="note-actions-panel theme-color-border">
+          <div className="note-actions-panel">
             <div className="note-actions-item note-actions-trash">
               <button
                 className="button button-borderless"
