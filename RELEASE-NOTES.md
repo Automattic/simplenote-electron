@@ -1,10 +1,22 @@
 # Changelog
 
-## [v2.19.0]
-
-- Updated to save the scroll position of a note so you can be restored when the note is viewed again [#2977](https://github.com/automattic/simplenote-electron/pull/2977)
+## [v2.20.0]
 
 ### Enhancements
+
+- Updated the Note Action components to use CSS variables for colors [#3001](https://github.com/automattic/simplenote-electron/pull/3001)
+- Updated the Search Field and Tag Suggestion components to use CSS variables for colors [#2997](https://github.com/automattic/simplenote-electron/pull/2997)
+- Updated the standard checkbox component to use individual SVG images for checked and unchecked states [#3002](https://github.com/automattic/simplenote-electron/pull/3002)
+
+### Fixes
+
+- Fixed the new note button separator color while in focus mode [#2998](https://github.com/automattic/simplenote-electron/pull/2998)
+
+## [v2.19.0]
+
+### Enhancements
+
+- Updated to save the scroll position of a note so you can be restored when the note is viewed again [#2977](https://github.com/automattic/simplenote-electron/pull/2977)
 
 ## [v2.18.0]
 
