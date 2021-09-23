@@ -183,8 +183,8 @@ export class Auth extends Component<Props> {
               data-error-name="compromised-password"
             >
               This password has appeared in a data breach, which puts your
-              account at high risk of compromise. To protect your data, you'll
-              need to{' '}
+              account at high risk of compromise. To protect your data,
+              you&apos;ll need to
               <a
                 className="login__reset"
                 href={
