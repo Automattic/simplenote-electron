@@ -183,7 +183,8 @@ export class Auth extends Component<Props> {
               data-error-name="compromised-password"
             >
               This password has appeared in a data breach, which puts your
-              account at high risk of compromise. Please
+              account at high risk of compromise. To protect your data, you'll
+              need to{' '}
               <a
                 className="login__reset"
                 href={
@@ -194,9 +195,9 @@ export class Auth extends Component<Props> {
                 rel="noopener noreferrer"
                 onClick={this.onForgot}
               >
-                reset
+                update your password
               </a>{' '}
-              your password.
+              before being able to log in again.
             </p>
           )}
           {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
