@@ -6,6 +6,11 @@ import actions from '../state/actions';
 
 import type * as S from '../state';
 import type * as T from '../types';
+import {
+  isTagInputKey,
+  tagHashOf,
+  MAX_TAG_HASH_LENGTH,
+} from '../utils/tag-hash';
 
 type OwnProps = {
   editable: boolean;
@@ -35,9 +40,23 @@ export const TagListInput: FunctionComponent<Props> = ({
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTagName(event.target.value.replace(/[\s,]/g, ''));
   };
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (
+      tagHashOf(enteredTagName).length >= MAX_TAG_HASH_LENGTH &&
+      isTagInputKey(event.which)
+    ) {
+      event.preventDefault();
+    }
+  };
+
   const onDone = (event: React.FocusEvent<HTMLInputElement>) => {
     const newTagName = event.target?.value.trim() as T.TagName;
 
+    if (tagHashOf(newTagName).length > MAX_TAG_HASH_LENGTH) {
+      setTagName(tagName);
+      return;
+    }
     if (newTagName && newTagName !== tagName) {
       renameTag(tagName, newTagName);
     } else {
@@ -57,6 +76,7 @@ export const TagListInput: FunctionComponent<Props> = ({
       onChange={onChange}
       onBlur={onDone}
       spellCheck={false}
+      onKeyDown={onKeyDown}
     />
   ) : (
     <button className={classes} onClick={onClick}>
