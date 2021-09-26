@@ -105,12 +105,9 @@ export class RevisionSelector extends Component<Props> {
       'MMM d, yyyy h:mm a'
     );
 
-    const mainClasses = classNames(
-      'revision-selector theme-color-border theme-color-fg theme-color-bg',
-      {
-        'is-visible': isViewingRevisions,
-      }
-    );
+    const mainClasses = classNames('revision-selector', {
+      'is-visible': isViewingRevisions,
+    });
 
     return (
       <FocusTrap
