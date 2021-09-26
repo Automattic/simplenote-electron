@@ -46,7 +46,6 @@ export const TagListInput: FunctionComponent<Props> = ({
       tagHashOf(enteredTagName).length >= MAX_TAG_HASH_LENGTH &&
       isTagInputKey(event.which)
     ) {
-      console.log('key: ' + event.which);
       event.preventDefault();
     }
   };
