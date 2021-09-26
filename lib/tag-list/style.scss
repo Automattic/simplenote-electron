@@ -19,7 +19,7 @@
 }
 
 .tag-list-item:not(:last-child) {
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--secondary-color);
 }
 
 body .tag-list-item {
@@ -38,15 +38,17 @@ body .tag-list-item {
     justify-content: space-between;
     align-items: center;
     padding: 0 17px 13px;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--secondary-color);
 
     h2 {
+      color: var(--primary-color);
       font-size: 16px;
       font-weight: 400;
       margin: 0;
     }
 
     button {
+      color: var(--accent-color);
       font-size: 14px;
       font-weight: 400;
       padding: 0 2px 0;
@@ -80,6 +82,7 @@ body .tag-list-item {
 }
 
 .tag-list-input {
+  color: var(--primary-color);
   flex: 1 1 auto;
   display: block;
   width: 50px;

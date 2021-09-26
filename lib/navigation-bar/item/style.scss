@@ -59,15 +59,3 @@
 .navigation-bar-item.is-selected + .navigation-bar-item .button {
   border-top: none;
 }
-
-body[data-theme='dark'] {
-  .navigation-bar-item {
-    &.is-selected button {
-      color: var(--primary-color);
-    }
-
-    &:hover:not(.is-selected) {
-      background: var(--secondary-color);
-    }
-  }
-}
