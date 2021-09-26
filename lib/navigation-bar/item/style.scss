@@ -6,8 +6,9 @@
 
   .button {
     border: 0;
-    border-top: 1px solid;
+    border-top: 1px solid var(--secondary-color);
     border-radius: 0;
+    color: var(--primary-color);
     font-size: 16px;
     font-weight: 400;
     height: 44px;
