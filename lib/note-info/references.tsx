@@ -20,9 +20,9 @@ export const References: FunctionComponent<Props> = ({ references }) => {
   }
 
   return (
-    <div className="note-references note-info-panel note-info-internal-link theme-color-border">
+    <div className="note-references note-info-panel note-info-internal-link">
       <div className="note-info-item">
-        <div className="note-info-name theme-color-fg-dim">Referenced In</div>
+        <div className="note-info-name">Referenced In</div>
         {references.map((noteId) => (
           <Reference noteId={noteId} key={noteId} />
         ))}

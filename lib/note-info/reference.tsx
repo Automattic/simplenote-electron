@@ -39,10 +39,8 @@ export const Reference: FunctionComponent<Props> = ({
 
   return (
     <button className="reference-link" onClick={openNote}>
-      <span className="reference-title note-info-name theme-color-fg">
-        {reference.title}
-      </span>
-      <span className="theme-color-fg-dim">
+      <span className="reference-title note-info-name">{reference.title}</span>
+      <span>
         {reference.count} Reference{reference.count > 1 ? 's' : ''}
         {reference.modificationDate && ', last modified '}
         {reference.modificationDate && (
