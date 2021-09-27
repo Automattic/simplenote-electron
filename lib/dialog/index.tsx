@@ -25,14 +25,9 @@ export class Dialog extends Component {
     } = this.props;
 
     return (
-      <div
-        className={classNames(
-          className,
-          'dialog theme-color-bg theme-color-fg theme-color-border'
-        )}
-      >
+      <div className={classNames(className, 'dialog')}>
         {!hideTitleBar && (
-          <div className="dialog-title-bar theme-color-border">
+          <div className="dialog-title-bar">
             <h2 className="dialog-title-text">{title}</h2>
             <div className="dialog-title-side">
               {!!onDone && (

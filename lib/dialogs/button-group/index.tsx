@@ -8,7 +8,7 @@ const ButtonGroup = (props) => {
   return (
     <ul className="button-group">
       {items.map((item) => (
-        <li key={item.slug} className="button-group__item theme-color-border">
+        <li key={item.slug} className="button-group__item">
           <button type="button" onClick={() => onClickItem(item)}>
             {item.name}
             <SmallChevronRightIcon />

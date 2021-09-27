@@ -36,6 +36,7 @@ $dialog-title-height: 56px;
 }
 
 .dialog-title-text {
+  color: var(--primary-color);
   flex: 1 1 auto;
   margin: 15px 0 0 16px;
   text-align: left;

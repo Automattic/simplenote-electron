@@ -11,7 +11,7 @@ const PanelTitle: FunctionComponent<OwnProps> = ({
 }) => {
   return createElement(
     `h${headingLevel}`,
-    { className: 'panel-title theme-color-fg-dim' },
+    { className: 'panel-title' },
     children
   );
 };

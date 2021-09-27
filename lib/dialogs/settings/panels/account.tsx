@@ -35,8 +35,8 @@ const AccountPanel: FunctionComponent<Props> = ({
     <div className="settings-account">
       <PanelTitle headingLevel={3}>Account</PanelTitle>
 
-      <div className="settings-items theme-color-border">
-        <div className="settings-item theme-color-border">
+      <div className="settings-items">
+        <div className="settings-item">
           <span className="settings-account-name">{accountName}</span>
         </div>
       </div>
