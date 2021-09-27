@@ -23,7 +23,6 @@ export class Dialog extends Component {
       children,
       onDone,
     } = this.props;
-
     return (
       <div
         className={classNames(
