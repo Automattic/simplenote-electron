@@ -46,7 +46,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
   const displayAlternateLoginPrompt = (
     <>
       {displayClose}
-      <span className="theme-color-fg-dim">
+      <span className="">
         <WarningIcon />
       </span>
       <h2>Logout?</h2>
@@ -74,7 +74,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
   return (
     <Modal
       key="alternate-login"
-      className="alternate-login__modal theme-color-fg theme-color-bg"
+      className="alternate-login__modal"
       isOpen
       onRequestClose={dismiss}
       contentLabel="Log out?"
