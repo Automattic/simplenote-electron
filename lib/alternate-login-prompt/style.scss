@@ -31,7 +31,9 @@
 
 .alternate-login__modal {
   align-items: center;
+  background-color: var(--background-color);
   border-radius: 8px;
+  color: var(--primary-color);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -39,6 +41,10 @@
   max-width: 420px;
   padding: 0 24px 16px;
   font-size: 16px;
+
+  .icon-warning {
+    color: var(--foreground-color);
+  }
 
   p {
     margin: 0 26px;

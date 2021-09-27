@@ -46,7 +46,7 @@ const AlternateLoginPrompt: FunctionComponent<Props> = ({
   const displayAlternateLoginPrompt = (
     <>
       {displayClose}
-      <span className="">
+      <span>
         <WarningIcon />
       </span>
       <h2>Logout?</h2>
