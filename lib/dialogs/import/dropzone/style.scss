@@ -5,8 +5,7 @@
   justify-content: center;
   align-items: center;
   padding: 16px;
-  border-width: 2px;
-  border-style: dashed;
+  border: 2px dashed var(--disabled-text-color);
   transition: padding 0.2s ease-out, background 0.2s ease-out;
   text-align: center;
   color: var(--foreground-color);
@@ -82,7 +81,7 @@
     margin-top: 8px;
 
     span {
-      color: var(--primary-branding-color);
+      color: var(--accent-color);
     }
   }
 }
@@ -91,37 +90,4 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-body[data-theme='dark'] {
-  .importer-dropzone.theme-color-border {
-    border-color: var(--tertiary-color);
-    color: var(--foreground-color);
-  }
-  .importer-dropzone {
-    .drop-instructions {
-      span {
-        color: var(--accent-color);
-      }
-    }
-    &.is-accepted {
-      ul {
-        border-color: var(--secondary-color);
-      }
-
-      li {
-        color: var(--primary-color);
-      }
-
-      svg {
-        fill: var(--foreground-color);
-      }
-
-      .error-message {
-        li {
-          color: var(--foreground-color);
-        }
-      }
-    }
-  }
 }
