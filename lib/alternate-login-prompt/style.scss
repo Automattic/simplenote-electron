@@ -70,9 +70,3 @@
     outline: 0;
   }
 }
-
-body[data-theme='dark'] {
-  .alternate-login__button-row .button-borderless {
-    color: var(--accent-color);
-  }
-}

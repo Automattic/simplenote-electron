@@ -27,6 +27,7 @@
 
 .email-verification__modal {
   align-items: center;
+  background-color: var(--background-color);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -75,10 +76,4 @@
 
 .email-verification__email {
   word-break: break-all;
-}
-
-body[data-theme='dark'] {
-  .email-verification__button-row .button-borderless {
-    color: var(--accent-color);
-  }
 }
