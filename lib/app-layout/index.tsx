@@ -124,17 +124,14 @@ export class AppLayout extends Component<Props> {
           <aside
             aria-hidden={hiddenByRevisions}
             aria-label="Notes list"
-            className="app-layout__source-column theme-color-bg theme-color-fg"
+            className="app-layout__source-column"
           >
             <MenuBar />
             <SearchField />
             <NoteList />
           </aside>
           {editorVisible && (
-            <main
-              aria-label="Note editor"
-              className="app-layout__note-column theme-color-bg theme-color-fg theme-color-border"
-            >
+            <main aria-label="Note editor" className="app-layout__note-column">
               <NoteToolbar aria-hidden={hiddenByRevisions} />
               {showRevisions ? (
                 <NoteRevisions

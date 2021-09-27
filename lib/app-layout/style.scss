@@ -134,7 +134,7 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  border-left: 1px solid;
+  border-left: 1px solid var(--secondary-color);
 
   @media only screen and (max-width: $single-column) {
     position: absolute;
