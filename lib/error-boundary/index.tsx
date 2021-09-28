@@ -18,9 +18,9 @@ type ErrorMessageProps = {
 const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({
   allowAnalytics,
 }) => (
-  <div className="error-message theme-color-bg">
-    <div className="error-message__content theme-color-fg">
-      <div className="error-message__icon theme-color-fg-dim">
+  <div className="error-message">
+    <div className="error-message__content">
+      <div className="error-message__icon">
         <WarningIcon />
       </div>
       <h1 className="error-message__heading">Oops!</h1>

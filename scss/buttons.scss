@@ -53,6 +53,7 @@ button {
 // Primary buttons. Solid buttons.
 .button-primary {
   background: var(--primary-button-bg-color);
+  border-color: var(--secondary-color);
   color: var(--primary-button-fg-color);
 }
 
