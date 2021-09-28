@@ -115,7 +115,7 @@ class ImportExecutor extends Component<Props> {
               disabled={locked}
             />
           </label>
-          {hint && <p className="theme-color-fg-dim">{hint}</p>}
+          {hint && <p className="hint">{hint}</p>}
         </section>
         <TransitionFadeInOut shouldMount={Boolean(errorMessage)}>
           <div role="alert" className="source-importer-executor__error">
