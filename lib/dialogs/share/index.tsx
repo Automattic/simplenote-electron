@@ -78,9 +78,9 @@ export class ShareDialog extends Component<Props> {
                 Add an email address of another Simplenote user to share a note.
                 You&apos;ll both be able to edit and view the note.
               </p>
-              <div className="settings-items theme-color-border">
+              <div className="settings-items">
                 <form
-                  className="settings-item theme-color-border"
+                  className="settings-item"
                   onSubmit={this.onAddCollaborator}
                 >
                   <input
@@ -101,7 +101,7 @@ export class ShareDialog extends Component<Props> {
               </div>
             </div>
             <div className="settings-group">
-              <div className="share-collaborators-heading theme-color-border">
+              <div className="share-collaborators-heading">
                 <PanelTitle headingLevel={3}>Collaborators</PanelTitle>
               </div>
               <ul className="share-collaborators">

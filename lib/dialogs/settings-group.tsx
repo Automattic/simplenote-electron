@@ -32,10 +32,10 @@ export const SettingsGroup = ({
   return (
     <div className="settings-group">
       <PanelTitle headingLevel={3}>{groupTitle}</PanelTitle>
-      <div className="settings-items theme-color-border">
+      <div className="settings-items">
         {childElements.map(({ props: { slug, title } }) => (
           <label
-            className="settings-item theme-color-border"
+            className="settings-item"
             htmlFor={`settings-field-${groupSlug}-${slug}`}
             key={slug}
           >

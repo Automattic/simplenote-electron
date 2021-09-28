@@ -5,11 +5,11 @@
 }
 
 .button-group__item {
+  color: var(--primary-color);
   display: flex;
   height: 3em;
   margin: 0;
-  border-width: 1px;
-  border-style: solid;
+  border: 1px solid var(--secondary-color);
 
   & + & {
     border-top-width: 0;

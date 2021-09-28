@@ -18,7 +18,7 @@ export class TabPanels extends Component<OwnProps> {
 
     return (
       <Tabs selectedTabClassName="is-active">
-        <TabList className="tab-panels__tab-list theme-color-border">
+        <TabList className="tab-panels__tab-list">
           {tabNames.map((tabName, key) => (
             <Tab className="button button-borderless" key={key}>
               {tabName}
