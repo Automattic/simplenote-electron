@@ -82,9 +82,14 @@
   }
 }
 
-.note-detail-markdown {
+body[data-theme='light'] .note-detail-markdown {
   @import '../node_modules/highlight.js/scss/solarized-light.scss';
+}
+body[data-theme='dark'] .note-detail-markdown {
+  @import '../node_modules/highlight.js/scss/solarized-dark.scss';
+}
 
+.note-detail-markdown {
   overflow: visible;
   -webkit-overflow-scrolling: touch;
 
