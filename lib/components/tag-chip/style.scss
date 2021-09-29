@@ -1,4 +1,5 @@
 .tag-chip {
+  color: var(--primary-color);
   flex: none;
   margin: 2px 8px 6px 0;
   padding: 1px 14px 3px;
@@ -46,21 +47,5 @@
       left: 1px;
       top: 1px;
     }
-  }
-}
-
-body[data-theme='dark'] {
-  .tag-chip {
-    background: var(--primary-tag-chip-color);
-    color: var(--primary-color);
-
-    &.deleted {
-      background: var(--secondary-tag-chip-color);
-    }
-  }
-
-  .remove-tag-icon {
-    background-color: var(--foreground-color);
-    color: var(--background-color);
   }
 }
