@@ -44,7 +44,7 @@ export const TagListInput: FunctionComponent<Props> = ({
       setTagName(tagName);
     }
   };
-  const classes = classNames('tag-list-input', 'theme-color-fg', {
+  const classes = classNames('tag-list-input', {
     'is-selected': isSelected,
   });
 

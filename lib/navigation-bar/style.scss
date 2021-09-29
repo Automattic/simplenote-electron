@@ -1,4 +1,5 @@
 .navigation-bar {
+  background-color: var(--background-color);
   display: flex;
   flex-direction: column;
   position: absolute;
@@ -7,7 +8,7 @@
   padding-top: $toolbar-height;
   width: $navigation-bar-width;
   height: 100%;
-  border-right: 1px solid;
+  border-right: 1px solid var(--secondary-color);
   z-index: 2;
   transition: transform 200ms ease-in-out;
 }
@@ -16,7 +17,7 @@
   display: flex;
   flex: none;
   flex-direction: column;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--secondary-color);
 }
 
 .navigation-bar__tags {
@@ -30,16 +31,17 @@
 }
 
 .navigation-bar__untagged {
-  border-top: 1px solid;
+  border-top: 1px solid var(--secondary-color);
 }
 
 .navigation-bar__tools {
   flex: 1 0 auto;
   padding: 10px 0;
-  border-top: 1px solid;
+  border-top: 1px solid var(--secondary-color);
 }
 
 .navigation-bar__footer {
+  color: var(--foreground-color);
   display: flex;
   flex: none;
   justify-content: flex-start;
@@ -48,6 +50,7 @@
 }
 
 .navigation-bar__server-connection {
+  color: var(--foreground-color);
   display: flex;
   flex: none;
   justify-content: flex-start;
