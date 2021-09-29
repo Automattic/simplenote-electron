@@ -166,7 +166,7 @@ export const NotePreview: FunctionComponent<Props> = ({
       <div className="note-detail note-detail-preview">
         <div
           ref={previewNode}
-          className="note-detail-markdown theme-color-bg theme-color-fg note-preview"
+          className="note-detail-markdown note-preview"
           data-markdown-root
         >
           {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
