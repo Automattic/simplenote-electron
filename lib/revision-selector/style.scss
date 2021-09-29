@@ -1,5 +1,7 @@
 .revision-selector {
-  border-top: 1px solid;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--secondary-color);
+  color: var(--primary-color);
   height: 178px;
   padding: 19px 20px 20px;
   position: relative;
