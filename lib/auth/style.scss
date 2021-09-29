@@ -2,6 +2,10 @@
   z-index: 1000;
 }
 
+body {
+  background-color: var(--background-color);
+}
+
 .login.is-electron {
   input.validate:invalid {
     box-shadow: 0 0 1.5px 1px var(--tertiary-highlight-color);

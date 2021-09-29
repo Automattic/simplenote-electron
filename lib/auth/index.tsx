@@ -95,12 +95,12 @@ export class Auth extends Component<Props> {
           {isElectron && isMac && <div className="login__draggable-area" />}
           <div className="accountRequested">
             <MailIcon />
-            <p className="accountRequested__message theme-color-fg">
+            <p className="accountRequested__message">
               We&apos;ve sent an email to{' '}
               <strong>{this.props.emailSentTo}</strong>. Please check your inbox
               and follow the instructions.
             </p>
-            <p className="accountRequested__footer theme-color-fg-dim">
+            <p className="accountRequested__footer">
               Didn&apos;t get an email? You may already have an account
               associated with this email address. Contact{' '}
               <a
@@ -213,10 +213,7 @@ export class Auth extends Component<Props> {
               {passwordErrorMessage}
             </p>
           )}
-          <label
-            className="login__field theme-color-border"
-            htmlFor="login__field-username"
-          >
+          <label className="login__field" htmlFor="login__field-username">
             Email
           </label>
           <input
@@ -234,10 +231,7 @@ export class Auth extends Component<Props> {
           />
           {!isCreatingAccount && (
             <>
-              <label
-                className="login__field theme-color-border"
-                htmlFor="login__field-password"
-              >
+              <label className="login__field" htmlFor="login__field-password">
                 Password
               </label>
               <input
