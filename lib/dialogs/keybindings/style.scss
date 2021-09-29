@@ -32,12 +32,8 @@
   }
 }
 
-body[data-theme='light'] .keybindings kbd {
-  border: 1px solid black;
-}
-
-body[data-theme='dark'] .keybindings kbd {
-  border: 1px solid white;
+.keybindings kbd {
+  border: 1px solid var(--primary-color);
 }
 
 .keybindings__key-item {
