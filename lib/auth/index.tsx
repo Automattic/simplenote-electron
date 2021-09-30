@@ -17,6 +17,7 @@ type OwnProps = {
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
+  hasTooManyRequests: boolean;
   hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
   requestSignup: (username: string) => any;
@@ -198,6 +199,14 @@ export class Auth extends Component<Props> {
                 update your password
               </a>{' '}
               before being able to log in again.
+            </p>
+          )}
+          {this.props.hasTooManyRequests && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="too-many-requests"
+            >
+              Too many log in attempts. Try again later.
             </p>
           )}
           {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
