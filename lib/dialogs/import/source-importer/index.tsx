@@ -23,7 +23,7 @@ class SourceImporter extends React.Component {
   };
 
   render() {
-    const { buckets, onClose, onStart, locked = false, source } = this.props;
+    const { buckets, onClose, onStart, locked = false } = this.props;
     const { acceptedTypes, instructions, title } = this.props.source;
     const { acceptedFiles } = this.state;
 
@@ -66,7 +66,6 @@ class SourceImporter extends React.Component {
             locked={locked}
             onClose={onClose}
             onStart={onStart}
-            source={source}
           />
         </TransitionFadeInOut>
       </div>

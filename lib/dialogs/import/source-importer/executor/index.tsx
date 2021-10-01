@@ -19,9 +19,6 @@ type OwnProps = {
   locked: boolean;
   onClose: Function;
   onStart: Function;
-  source: {
-    optionsHint: string;
-  };
 };
 
 type DispatchProps = {
@@ -91,7 +88,6 @@ class ImportExecutor extends Component<Props> {
 
   render() {
     const { endValue, locked, onClose } = this.props;
-    const { optionsHint: hint } = this.props.source;
     const {
       errorMessage,
       finalNoteCount,
@@ -115,7 +111,6 @@ class ImportExecutor extends Component<Props> {
               disabled={locked}
             />
           </label>
-          {hint && <p className="hint">{hint}</p>}
         </section>
         <TransitionFadeInOut shouldMount={Boolean(errorMessage)}>
           <div role="alert" className="source-importer-executor__error">
