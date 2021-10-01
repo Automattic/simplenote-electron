@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.21.0]
+
+### Enhancements
+
+- Updated the remaining components to use CSS variables for colors [#3025](https://github.com/automattic/simplenote-electron/pull/3025), [#3024](https://github.com/automattic/simplenote-electron/pull/3024), [#3023](https://github.com/automattic/simplenote-electron/pull/3023), [#3022](https://github.com/automattic/simplenote-electron/pull/3022), [#3021](https://github.com/automattic/simplenote-electron/pull/3021), [#3020](https://github.com/automattic/simplenote-electron/pull/3020), [#3019](https://github.com/automattic/simplenote-electron/pull/3019), [#3018](https://github.com/automattic/simplenote-electron/pull/3018)
+- Updated the message that is shown when attempting to log in with a known compromised password [#3013](https://github.com/automattic/simplenote-electron/pull/3013)
+- Removed unused hint option in the importer dialog [#3027](https://github.com/automattic/simplenote-electron/pull/3027)
+- Updated the CSS to complete the move to using CSS variables for colors [#3028](https://github.com/automattic/simplenote-electron/pull/3028)
+- Updated login error handling for the case of too many login attempts [#3029](https://github.com/automattic/simplenote-electron/pull/3029)
+
 ## [v2.20.0]
 
 ### Enhancements
