@@ -26,7 +26,8 @@ type State = {
     | 'insecure-password'
     | 'invalid-credentials'
     | 'unknown-error'
-    | 'verification-required';
+    | 'verification-required'
+    | 'too-many-requests';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -111,6 +112,8 @@ class AppWithoutAuth extends Component<Props, State> {
             this.setState({ authStatus: 'compromised-password' });
           } else if ('verification required' === message) {
             this.setState({ authStatus: 'verification-required' });
+          } else if ('too many requests' === message) {
+            this.setState({ authStatus: 'too-many-requests' });
           } else {
             this.setState({ authStatus: 'unknown-error' });
           }
@@ -171,6 +174,7 @@ class AppWithoutAuth extends Component<Props, State> {
             hasUnverifiedAccount={
               this.state.authStatus === 'verification-required'
             }
+            hasTooManyRequests={this.state.authStatus === 'too-many-requests'}
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
             tokenLogin={this.tokenLogin}
