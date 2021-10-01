@@ -10,7 +10,7 @@
 .note-toolbar-wrapper .offline-badge {
   border: solid 1px var(--secondary-color);
   border-radius: 2px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px 0 var(--readonly-input-color);
   color: var(--foreground-color);
   font-size: 12px;
   height: 24px;
@@ -18,12 +18,6 @@
   margin-top: 10px;
   text-align: center;
   width: 64px;
-}
-
-body[data-theme='dark'] .note-toolbar-wrapper .offline-badge {
-  border: solid 1px var(--secondary-color);
-  box-shadow: 0 2px 4px 0 rgba(255, 255, 255, 0.02);
-  color: var(--tertiary-color);
 }
 
 .note-toolbar {

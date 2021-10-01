@@ -21,6 +21,7 @@
   }
 
   kbd {
+    border: 1px solid var(--primary-color);
     border-radius: 5px;
     margin: 4px;
     padding: 0 5px;
@@ -30,14 +31,6 @@
     display: inline-block;
     box-shadow: 0 1px 1px gray;
   }
-}
-
-body[data-theme='light'] .keybindings kbd {
-  border: 1px solid black;
-}
-
-body[data-theme='dark'] .keybindings kbd {
-  border: 1px solid white;
 }
 
 .keybindings__key-item {

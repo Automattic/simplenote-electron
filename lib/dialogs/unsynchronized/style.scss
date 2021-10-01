@@ -83,13 +83,3 @@
     }
   }
 }
-
-body[data-theme='dark'] .logoutConfirmation .dialog {
-  .change-list {
-    border-color: var(--secondary-color);
-  }
-
-  .export-unsynchronized {
-    color: var(--accent-color);
-  }
-}

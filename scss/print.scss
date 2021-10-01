@@ -3,8 +3,8 @@
     -ms-overflow-style: -ms-autohiding-scrollbar;
   }
 
-  body[data-theme='dark'] .theme-color-bg {
-    background-color: var(--primary-color);
+  body {
+    background-color: #fff;
   }
 
   .app-layout__note-column {
@@ -39,11 +39,7 @@
     max-width: 100%;
     width: 100%;
     color: $studio-black;
-
-    &.theme-color-fg {
-      color: $studio-black;
-      overflow-y: auto !important;
-    }
+    overflow-y: auto !important;
   }
 
   .note-content-plaintext {

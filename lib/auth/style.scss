@@ -2,6 +2,10 @@
   z-index: 1000;
 }
 
+body {
+  background-color: var(--background-color);
+}
+
 .login.is-electron {
   input.validate:invalid {
     box-shadow: 0 0 1.5px 1px var(--tertiary-highlight-color);
@@ -131,7 +135,7 @@
   }
 
   .or-line {
-    border-bottom: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--disabled-text-color);
     margin: -20px auto;
     max-width: 320px;
     text-align: center;
@@ -172,54 +176,5 @@
   .accountRequested__footer {
     font-size: 14px;
     line-height: 20px;
-  }
-}
-
-body[data-theme='dark'] .login {
-  h1 {
-    color: var(--primary-color);
-  }
-
-  .login__forgot,
-  .login__signup,
-  .terms {
-    color: var(--foreground-color);
-  }
-
-  .login__signup a,
-  .login__auth-message a,
-  .terms a,
-  .login__forgot {
-    color: var(--accent-color);
-  }
-
-  .login__auth-message.is-error {
-    color: var(--tertiary-highlight-color);
-  }
-
-  .or {
-    background: var(--background-color);
-    color: var(--foreground-color);
-  }
-  .or-line {
-    border-color: var(--primary-color);
-  }
-
-  svg.icon-mail {
-    color: var(--foreground-color);
-  }
-  input {
-    border-color: var(--secondary-accent-color);
-
-    &:read-only,
-    &:disabled {
-      border-color: var(--readonly-input-highlight-color);
-      background-color: var(--readonly-input-color);
-    }
-
-    &:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 1px var(--accent-color);
-    }
   }
 }

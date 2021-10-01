@@ -578,7 +578,7 @@ class NoteContentEditor extends Component<Props> {
       inherit: true,
       rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
       colors: {
-        'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
+        'editor.foreground': '#2c3338', // $studio-gray-80
         'editor.background': '#ffffff',
         'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
         'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30

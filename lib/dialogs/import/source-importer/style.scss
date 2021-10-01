@@ -13,6 +13,7 @@
 
     button.disabled {
       border-radius: 4px;
+      color: var(--primary-button-fg-color);
       padding: 6px 14px;
       margin-top: 14px;
       line-height: 16px;
@@ -66,17 +67,5 @@
     height: 28px;
     line-height: 28px;
     margin-bottom: 0;
-  }
-}
-
-body[data-theme='dark'] {
-  .source-importer {
-    p {
-      color: var(--primary-color);
-    }
-    button.disabled {
-      background-color: var(--tertiary-color);
-      color: var(--primary-color);
-    }
   }
 }
