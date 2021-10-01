@@ -175,7 +175,7 @@
     "sax": "1.2.4",
     "semver": "7.3.2",
     "showdown": "1.9.1",
-    "simperium": "github:Automattic/node-simperium#e5474ed3b9629eb55e3f2464bc849675eeaebd24",
+    "simperium": "1.1.4",
     "string-replace-to-array": "1.0.3",
     "turndown": "6.0.0",
     "unorm": "1.6.0",
