@@ -62,7 +62,7 @@ export class NoteActions extends Component<Props> {
   };
 
   getPublishURL = (url: string | undefined) => {
-    return isEmpty(url) ? null : `http://simp.ly/p/${url}`;
+    return isEmpty(url) ? null : `https://simp.ly/p/${url}`;
   };
 
   render() {
