@@ -6,7 +6,7 @@ labels: bug
 assignees: ""
 ---
 
-<!-- IMPORTANT NOTE: Do not share any private information here. GitHub issues are public, including any information uploaded to this report. For assistance troubleshooting account-related questions, please contact us at support@simplenote.com. -->
+<!-- IMPORTANT NOTE: Do not share any private information here. GitHub issues are public, including any screenshots or files uploaded to this issue. For assistance troubleshooting account-related questions, please contact us at support@simplenote.com. -->
 
 <!-- Please, be as descriptive as possible.  Issues lacking detail, or for any other reason than to report a bug, may be closed without action. -->
 
