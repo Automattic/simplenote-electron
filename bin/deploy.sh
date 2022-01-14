@@ -79,6 +79,6 @@ git reset .
 
 echo "Deployed Successfully!"
 
-git checkout develop
+git checkout trunk
 
 exit 0
