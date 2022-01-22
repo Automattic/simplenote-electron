@@ -27,7 +27,7 @@ const exportNotes = (notes: Map<T.EntityId, T.Note>) => {
       tags.length && { tags },
       note.systemTags.includes('published') &&
         note?.publishURL && {
-          publicURL: `http://simp.ly/p/${note.publishURL}`,
+          publicURL: `https://simp.ly/p/${note.publishURL}`,
         },
       note.systemTags.includes('shared') &&
         collaboratorEmails.length && { collaboratorEmails }
