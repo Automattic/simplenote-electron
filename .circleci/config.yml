@@ -82,7 +82,7 @@ references:
 jobs:
   build:
     docker:
-      - image: circleci/node:12.14.0
+      - image: cimg/node:12.14.0
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -100,7 +100,7 @@ jobs:
           paths: *app_cache_paths
   test:
     docker:
-      - image: circleci/node:12.14.0
+      - image: cimg/node:12.14.0
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -118,7 +118,7 @@ jobs:
 
   linux:
     docker:
-      - image: circleci/node:12.14.0
+      - image: cimg/node:12.14.0
     working_directory: ~/simplenote
     steps:
       - checkout
@@ -264,7 +264,6 @@ jobs:
           path: /tmp/simplenote/release
 
 workflows:
-  version: 2
   simplenote:
     jobs:
       - build:
