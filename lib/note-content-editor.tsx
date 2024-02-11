@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Monaco, {
@@ -12,18 +13,14 @@ import {
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
-import * as monacoactions from 'monaco-editor/esm/vs/platform/actions/common/actions';
+import { MenuRegistry } from 'monaco-editor/esm/vs/platform/actions/common/actions';
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
-import { noteTitleAndPreview } from './utils/note-utils';
-import {
-  clearNotePositions,
-  getNotePosition,
-  setNotePosition,
-} from './utils/note-scroll-position';
+import { noteTitleAndPreview, isMarkdown } from './utils/note-utils';
+import * as noteScrollPosition from './utils/note-scroll-position';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -32,6 +29,7 @@ import {
 
 import * as S from './state';
 import * as T from './types';
+import { Note } from './types';
 
 const SPEED_DELAY = 120;
 
@@ -179,7 +177,7 @@ class NoteContentEditor extends Component<Props> {
           editor: 'full',
           content: withCheckboxCharacters(this.props.note.content),
         });
-        const position = getNotePosition(noteId);
+        const position = noteScrollPosition.getNotePosition(noteId);
         if (position) {
           this.editor?.setScrollPosition({
             scrollTop: position,
@@ -190,12 +188,12 @@ class NoteContentEditor extends Component<Props> {
     this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
-    window.addEventListener('resize', clearNotePositions);
+    window.addEventListener('resize', noteScrollPosition.clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
 
     /* remove unwanted context menu items */
-    const menus = monacoactions.MenuRegistry._menuItems;
+    const menus = MenuRegistry._menuItems;
     const contextMenuEntry = [...menus].find(
       (entry) => entry[0]._debugName === 'EditorContext'
     );
@@ -220,7 +218,10 @@ class NoteContentEditor extends Component<Props> {
   }
 
   componentWillUnmount() {
-    setNotePosition(this.props.noteId, this.editor?.getScrollTop() ?? 0);
+    noteScrollPosition.setNotePosition(
+      this.props.noteId,
+      this.editor?.getScrollTop() ?? 0
+    );
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
@@ -228,7 +229,11 @@ class NoteContentEditor extends Component<Props> {
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
     window.removeEventListener('toggleChecklist', this.handleChecklist, true);
-    window.removeEventListener('resize', clearNotePositions, true);
+    window.removeEventListener(
+      'resize',
+      noteScrollPosition.clearNotePositions,
+      true
+    );
     this.toggleShortcuts(false);
   }
 
@@ -576,7 +581,19 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
-      rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
+      rules: [
+        { background: 'FFFFFF', foreground: '#2c3338' },
+        { token: 'keyword.md', foreground: '#2c3338', fontStyle: 'bold' },
+        { token: 'variable.source' },
+        { token: 'string.md', background: '#fdf6e3', foreground: '#657b83' },
+        { token: 'comment.md', foreground: '#a7aaad' },
+        { token: 'keyword.table', foreground: '#a7aaad' },
+        {
+          token: 'keyword.table.header',
+          foreground: '#2c3338',
+          fontStyle: 'bold',
+        },
+      ],
       colors: {
         'editor.foreground': '#2c3338', // $studio-gray-80
         'editor.background': '#ffffff',
@@ -1177,7 +1194,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   render() {
-    const { lineLength, noteId, searchQuery, theme } = this.props;
+    const { lineLength, noteId, searchQuery, theme, note } = this.props;
     const { content, editor, overTodo } = this.state;
     const searchMatches = searchQuery ? this.searchMatches() : [];
 
@@ -1206,7 +1223,7 @@ class NoteContentEditor extends Component<Props> {
             key={noteId}
             editorDidMount={this.editorReady}
             editorWillMount={this.editorInit}
-            language="plaintext"
+            language={isMarkdown(note) ? 'markdown' : 'plaintext'}
             theme={theme === 'dark' ? 'simplenote-dark' : 'simplenote'}
             onChange={this.updateNote}
             options={{
@@ -1225,7 +1242,7 @@ class NoteContentEditor extends Component<Props> {
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
-              matchBrackets: 'never',
+              matchBrackets: isMarkdown(note) ? 'always' : 'never',
               minimap: { enabled: false },
               occurrencesHighlight: false,
               overviewRulerBorder: false,

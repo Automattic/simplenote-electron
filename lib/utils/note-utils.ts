@@ -146,7 +146,7 @@ export const noteTitleAndPreview = (
   return result;
 };
 
-function isMarkdown(note: T.Note): boolean {
+export function isMarkdown(note: T.Note): boolean {
   return note.systemTags.includes('markdown');
 }
 

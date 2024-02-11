@@ -67,6 +67,7 @@
     "@types/react-virtualized": "9.21.10",
     "@types/redux": "3.6.0",
     "@types/redux-localstorage": "1.0.8",
+    "@types/remove-markdown": "^0.3.4",
     "@types/rimraf": "3.0.0",
     "@types/simperium": "1.1.1",
     "@types/uuid": "8.0.0",
