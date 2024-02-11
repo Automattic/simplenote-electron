@@ -111,7 +111,7 @@ function ImporterDropzone({
       {...getRootProps()}
       className={classnames(
         { 'is-accepted': acceptedFile },
-        'importer-dropzone theme-color-border'
+        'importer-dropzone'
       )}
     >
       <input {...getInputProps()} />

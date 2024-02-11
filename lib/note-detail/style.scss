@@ -5,6 +5,7 @@
   flex-direction: column;
   flex: 1 1 auto;
   padding-top: 0;
+  background-color: var(--background-color);
 }
 
 .note-detail {
@@ -56,7 +57,7 @@
   border: 0;
   line-height: 1.5em;
   font-size: 16px;
-  color: var(--foreground-color);
+  color: var(--primary-color);
   background: var(--background-color);
   resize: none;
   -webkit-tap-highlight-color: transparent;
@@ -81,9 +82,14 @@
   }
 }
 
-.note-detail-markdown {
+body[data-theme='light'] .note-detail-markdown {
   @import '../node_modules/highlight.js/scss/solarized-light.scss';
+}
+body[data-theme='dark'] .note-detail-markdown {
+  @import '../node_modules/highlight.js/scss/solarized-dark.scss';
+}
 
+.note-detail-markdown {
   overflow: visible;
   -webkit-overflow-scrolling: touch;
 
@@ -212,10 +218,6 @@
     border-radius: 3px;
     box-shadow: inset 0 0 0 #959da5;
   }
-}
-
-body[data-theme='dark'] .note-detail-markdown p > code {
-  background-color: $studio-gray-70;
 }
 
 .monaco-editor.monaco-editor .detected-link {

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Monaco, {
@@ -12,13 +13,14 @@ import {
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
-import * as monacoactions from 'monaco-editor/esm/vs/platform/actions/common/actions';
+import { MenuRegistry } from 'monaco-editor/esm/vs/platform/actions/common/actions';
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview, isMarkdown } from './utils/note-utils';
+import * as noteScrollPosition from './utils/note-scroll-position';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -27,6 +29,7 @@ import {
 
 import * as S from './state';
 import * as T from './types';
+import { Note } from './types';
 
 const SPEED_DELAY = 120;
 
@@ -174,16 +177,23 @@ class NoteContentEditor extends Component<Props> {
           editor: 'full',
           content: withCheckboxCharacters(this.props.note.content),
         });
+        const position = noteScrollPosition.getNotePosition(noteId);
+        if (position) {
+          this.editor?.setScrollPosition({
+            scrollTop: position,
+          });
+        }
       }
     }, SPEED_DELAY);
     this.focusEditor();
     this.props.storeFocusEditor(this.focusEditor);
     this.props.storeHasFocus(this.hasFocus);
+    window.addEventListener('resize', noteScrollPosition.clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
 
     /* remove unwanted context menu items */
-    const menus = monacoactions.MenuRegistry._menuItems;
+    const menus = MenuRegistry._menuItems;
     const contextMenuEntry = [...menus].find(
       (entry) => entry[0]._debugName === 'EditorContext'
     );
@@ -208,12 +218,22 @@ class NoteContentEditor extends Component<Props> {
   }
 
   componentWillUnmount() {
+    noteScrollPosition.setNotePosition(
+      this.props.noteId,
+      this.editor?.getScrollTop() ?? 0
+    );
+
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
     }
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
     window.removeEventListener('toggleChecklist', this.handleChecklist, true);
+    window.removeEventListener(
+      'resize',
+      noteScrollPosition.clearNotePositions,
+      true
+    );
     this.toggleShortcuts(false);
   }
 
@@ -575,7 +595,7 @@ class NoteContentEditor extends Component<Props> {
         },
       ],
       colors: {
-        'editor.foreground': '#2c3338', // $studio-gray-80 AKA theme-color-fg
+        'editor.foreground': '#2c3338', // $studio-gray-80
         'editor.background': '#ffffff',
         'editor.selectionBackground': '#ced9f2', // $studio-simplenote-blue-5
         'scrollbarSlider.activeBackground': '#8c8f94', // $studio-gray-30

@@ -37,7 +37,7 @@ export class NoteInfo extends Component<Props> {
     return (
       <Modal
         key="note-info-modal"
-        className="dialog-renderer__content note-info theme-color-border theme-color-bg theme-color-fg dialog"
+        className="dialog-renderer__content note-info dialog"
         contentLabel="Document"
         isOpen
         onRequestClose={onModalClose}
@@ -45,9 +45,9 @@ export class NoteInfo extends Component<Props> {
         portalClassName="dialog-renderer__portal"
         shouldCloseOnOverlayClick={false}
       >
-        <div className="note-info-panel note-info-stats theme-color-border theme-color-fg-dim">
-          <div className="note-info-header theme-color-border">
-            <h2 className="panel-title theme-color-fg">Document</h2>
+        <div className="note-info-panel note-info-stats">
+          <div className="note-info-header">
+            <h2 className="panel-title">Document</h2>
             <button
               type="button"
               aria-label="Close note info"
@@ -59,8 +59,8 @@ export class NoteInfo extends Component<Props> {
           </div>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Last synced</span>
-              <span className="note-info-detail theme-color-fg-dim">
+              <span className="note-info-name">Last synced</span>
+              <span className="note-info-detail">
                 <LastSyncTime noteId={noteId} />
               </span>
             </span>
@@ -68,8 +68,8 @@ export class NoteInfo extends Component<Props> {
           {modificationDate && (
             <p className="note-info-item">
               <span className="note-info-item-text">
-                <span className="note-info-name theme-color-fg">Modified</span>
-                <span className="note-info-detail theme-color-fg-dim">
+                <span className="note-info-name">Modified</span>
+                <span className="note-info-detail">
                   <time dateTime={new Date(modificationDate).toISOString()}>
                     {new Date(modificationDate).toLocaleString([], {
                       year: 'numeric',
@@ -85,8 +85,8 @@ export class NoteInfo extends Component<Props> {
           )}
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Created</span>
-              <span className="note-info-detail theme-color-fg-dim">
+              <span className="note-info-name">Created</span>
+              <span className="note-info-detail">
                 <time dateTime={new Date(creationDate).toISOString()}>
                   {new Date(creationDate).toLocaleString([], {
                     year: 'numeric',
@@ -101,16 +101,16 @@ export class NoteInfo extends Component<Props> {
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Words</span>
-              <span className="note-info-detail theme-color-fg-dim">
+              <span className="note-info-name">Words</span>
+              <span className="note-info-detail">
                 {wordCount(note.content)}
               </span>
             </span>
           </p>
           <p className="note-info-item">
             <span className="note-info-item-text">
-              <span className="note-info-name theme-color-fg">Characters</span>
-              <span className="note-info-detail theme-color-fg-dim">
+              <span className="note-info-name">Characters</span>
+              <span className="note-info-detail">
                 {characterCount(note.content)}
               </span>
             </span>

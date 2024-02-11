@@ -5,8 +5,7 @@
   justify-content: center;
   align-items: center;
   padding: 16px;
-  border-width: 2px;
-  border-style: dashed;
+  border: 2px dashed var(--disabled-text-color);
   transition: padding 0.2s ease-out, background 0.2s ease-out;
   text-align: center;
   color: var(--foreground-color);
@@ -82,7 +81,7 @@
     margin-top: 8px;
 
     span {
-      color: $studio-simplenote-blue;
+      color: var(--accent-color);
     }
   }
 }
@@ -91,37 +90,4 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-body[data-theme='dark'] {
-  .importer-dropzone.theme-color-border {
-    border-color: $studio-gray-50;
-    color: $studio-gray-30;
-  }
-  .importer-dropzone {
-    .drop-instructions {
-      span {
-        color: $studio-simplenote-blue-20;
-      }
-    }
-    &.is-accepted {
-      ul {
-        border-color: $studio-gray-80;
-      }
-
-      li {
-        color: $studio-white;
-      }
-
-      svg {
-        fill: $studio-gray-30;
-      }
-
-      .error-message {
-        li {
-          color: $studio-gray-30;
-        }
-      }
-    }
-  }
 }

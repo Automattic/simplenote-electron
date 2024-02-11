@@ -5,7 +5,7 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--secondary-color);
 
     .tag-suggestion-row {
       height: 36px;
@@ -16,6 +16,8 @@
     }
 
     .tag-suggestion {
+      border-color: var(--secondary-color);
+      color: var(--primary-color);
       font-size: 16px;
       margin-left: 28px;
       overflow-x: hidden;
@@ -25,17 +27,5 @@
 
   .tag-suggestion-row:last-child .tag-suggestion {
     border-bottom: none;
-  }
-}
-
-body[data-theme='light'] {
-  .tag-suggestion {
-    border-color: var(--secondary-color);
-  }
-}
-
-body[data-theme='dark'] {
-  .tag-suggestion {
-    border-color: $studio-gray-80;
   }
 }

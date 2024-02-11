@@ -58,14 +58,9 @@ const SortableTag = SortableElement(
   }) => (
     <li
       key={tagHash}
-      className={classNames(
-        `tag-list-item`,
-        `theme-color-border`,
-        `theme-color-fg`,
-        {
-          'is-selected': isSelected,
-        }
-      )}
+      className={classNames(`tag-list-item`, {
+        'is-selected': isSelected,
+      })}
       data-tag-name={tag.name}
     >
       <TagListInput
@@ -80,7 +75,7 @@ const SortableTag = SortableElement(
         </button>
       )}
       {editingActive && allowReordering && (
-        <button className="icon-button button-reorder theme-color-fg-dim">
+        <button className="icon-button button-reorder">
           <TagHandle />
         </button>
       )}
@@ -163,8 +158,8 @@ export class TagList extends Component<Props> {
 
     return (
       <div className={classes}>
-        <div className="tag-list-title theme-color-border">
-          <h2 className="theme-color-fg">Tags</h2>
+        <div className="tag-list-title">
+          <h2>Tags</h2>
           {sortedTags.length > 0 && (
             <button
               className="tag-list-edit-toggle button button-borderless"

@@ -56,7 +56,7 @@ const EmailVerification: FunctionComponent<Props> = ({
   const displayEmailConfirm = (
     <Fragment>
       {displayClose}
-      <span className="theme-color-fg-dim">
+      <span>
         <WarningIcon />
       </span>
       <h2>Review Your Account</h2>
@@ -93,7 +93,7 @@ const EmailVerification: FunctionComponent<Props> = ({
   const displayEmailRequested = (
     <Fragment>
       {displayClose}
-      <span className="theme-color-fg-dim">
+      <span>
         <MailIcon />
       </span>
       <h2>Verify Your Email</h2>
@@ -117,7 +117,7 @@ const EmailVerification: FunctionComponent<Props> = ({
   return (
     <Modal
       key="email-verification"
-      className="email-verification__modal theme-color-fg theme-color-bg"
+      className="email-verification__modal"
       isOpen
       onRequestClose={dismiss}
       contentLabel="Confirm your email"

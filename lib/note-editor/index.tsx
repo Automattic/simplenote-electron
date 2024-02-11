@@ -133,7 +133,7 @@ export class NoteEditor extends Component<Props> {
     const isTrashed = !!note.deleted;
 
     return (
-      <div className="note-editor theme-color-bg theme-color-fg">
+      <div className="note-editor">
         {editMode || !note.systemTags.includes('markdown') ? (
           <NoteDetail
             storeFocusEditor={this.storeFocusEditor}

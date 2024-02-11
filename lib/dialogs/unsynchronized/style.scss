@@ -19,6 +19,7 @@
 
   .explanation,
   .explanation-secondary {
+    color: var(--primary-color);
     font-size: 14px;
     margin: 12px 0;
     padding-left: 16px;
@@ -47,6 +48,7 @@
     }
 
     li span {
+      color: var(--primary-color);
       padding-left: 5px;
       padding-right: 16px;
       overflow: hidden;
@@ -79,15 +81,5 @@
       padding: 6px 12px;
       margin: 14px 12px;
     }
-  }
-}
-
-body[data-theme='dark'] .logoutConfirmation .dialog {
-  .change-list {
-    border-color: $studio-gray-80;
-  }
-
-  .export-unsynchronized {
-    color: $studio-simplenote-blue-20;
   }
 }

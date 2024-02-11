@@ -4,16 +4,19 @@
   align-items: center;
   width: 100%;
   padding: 6px 5px 5px 14px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--secondary-color);
   height: $toolbar-height;
+  background-color: var(--background-color);
 
   input {
-    width: 100%;
-    min-width: 0; // Firefox
-    border: 0;
     appearance: none;
+    background-color: var(--background-color);
+    border: 0;
+    color: var(--primary-color);
     font-size: 16px;
+    min-width: 0; // Firefox
     text-overflow: ellipsis !important;
+    width: 100%;
 
     &:focus {
       outline: none;

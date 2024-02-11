@@ -49,6 +49,10 @@
       }
     ]
   },
+  "appx": {
+    "backgroundColor": "transparent",
+    "showNameOnTiles": true
+  },
   "nsis": {
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "deleteAppDataOnUninstall": true,

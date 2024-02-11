@@ -4,39 +4,30 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--secondary-color);
   list-style: none;
 
   li {
     margin: 0 0.5em;
     border-bottom: 2px solid;
     padding: 0.75em;
-    color: var(--primary-color);
+    color: var(--accent-color);
     text-transform: capitalize;
     border-radius: 0;
 
     &.button {
-      border-bottom-color: transparent;
+      border-bottom-color: var(--secondary-color);
+
+      &.is-active {
+        color: var(--accent-color);
+        border-bottom-color: var(--accent-color);
+      }
     }
 
-    &.is-active {
-      color: var(--accent-color);
-      border-bottom-color: var(--accent-color);
-    }
     &:active {
       color: var(--background-color);
     }
   }
-}
-
-body[data-theme='light'] .tab-panels__tab-list li.is-active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
-}
-
-body[data-theme='dark'] .tab-panels__tab-list li.is-active {
-  color: $studio-simplenote-blue-20;
-  border-bottom-color: $studio-simplenote-blue-20;
 }
 
 .tab-panels__panel {

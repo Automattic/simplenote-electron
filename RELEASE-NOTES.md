@@ -1,5 +1,86 @@
 # Changelog
 
+## [v2.21.0]
+
+### Enhancements
+
+- Updated the remaining components to use CSS variables for colors [#3025](https://github.com/automattic/simplenote-electron/pull/3025), [#3024](https://github.com/automattic/simplenote-electron/pull/3024), [#3023](https://github.com/automattic/simplenote-electron/pull/3023), [#3022](https://github.com/automattic/simplenote-electron/pull/3022), [#3021](https://github.com/automattic/simplenote-electron/pull/3021), [#3020](https://github.com/automattic/simplenote-electron/pull/3020), [#3019](https://github.com/automattic/simplenote-electron/pull/3019), [#3018](https://github.com/automattic/simplenote-electron/pull/3018)
+- Updated the message that is shown when attempting to log in with a known compromised password [#3013](https://github.com/automattic/simplenote-electron/pull/3013)
+- Removed unused hint option in the importer dialog [#3027](https://github.com/automattic/simplenote-electron/pull/3027)
+- Updated the CSS to complete the move to using CSS variables for colors [#3028](https://github.com/automattic/simplenote-electron/pull/3028)
+- Updated login error handling for the case of too many login attempts [#3029](https://github.com/automattic/simplenote-electron/pull/3029)
+
+## [v2.20.0]
+
+### Enhancements
+
+- Updated the Note Action components to use CSS variables for colors [#3001](https://github.com/automattic/simplenote-electron/pull/3001)
+- Updated the Search Field and Tag Suggestion components to use CSS variables for colors [#2997](https://github.com/automattic/simplenote-electron/pull/2997)
+- Updated the standard checkbox component to use individual SVG images for checked and unchecked states [#3002](https://github.com/automattic/simplenote-electron/pull/3002)
+
+### Fixes
+
+- Fixed the new note button separator color while in focus mode [#2998](https://github.com/automattic/simplenote-electron/pull/2998)
+
+## [v2.19.0]
+
+### Enhancements
+
+- Updated to save the scroll position of a note so you can be restored when the note is viewed again [#2977](https://github.com/automattic/simplenote-electron/pull/2977)
+
+## [v2.18.0]
+
+### Enhancements
+
+- Added support for handling failed logins due to having an unverified account email [#2976](https://github.com/automattic/simplenote-electron/pull/2976)
+- [Internal] Added support for handling passwords found in known data breaches [#2972](https://github.com/automattic/simplenote-electron/pull/2972)
+- [Internal] Updated Simperium library dependency to latest version [#2984](https://github.com/automattic/simplenote-electron/pull/2984)
+
+## [v2.17.0]
+
+### Enhancements
+
+- Updated the Note List, Note Cell, and No Notes, components to use CSS variables for colors [#2969](https://github.com/automattic/simplenote-electron/pull/2969)
+
+## [v2.16.0]
+
+### Enhancements
+
+- Updated tile icons for Windows with a new size and shadow [#2965](https://github.com/automattic/simplenote-electron/pull/2965)
+
+## [v2.15.0]
+
+### Enhancements
+
+- Updated the Note Detail, Tag Field, Tag Input, and Tag Suggestion components to use CSS variables for colors [#2955](https://github.com/automattic/simplenote-electron/pull/2955)
+- Updated the Note toolbar, Menu bar, Note editor, and Search field components to use CSS variables for colors [#2943](https://github.com/automattic/simplenote-electron/pull/2943)
+
+### Fixes
+
+- Fixed the font stack used so the font is consistent everywhere [#2946](https://github.com/automattic/simplenote-electron/pull/2946)
+- Fixed the color used for headings on the login and sign up pages [#2947](https://github.com/automattic/simplenote-electron/pull/2947)
+
+## [v2.14.0]
+
+### Enhancements
+
+- Updated the new note icon to the new design [#2939](https://github.com/automattic/simplenote-electron/pull/2939)
+- Updated colors in dark mode to use CSS variables [#2936](https://github.com/automattic/simplenote-electron/pull/2936)
+
+### Fixes
+
+- Updated the logo used when pinning to the Windows start menu [#2937](https://github.com/automattic/simplenote-electron/pull/2937)
+
+## [v2.13.0]
+
+### Enhancements
+
+- Upgraded the Electron and Electron Builder dependencies to newer versions [#2895](https://github.com/automattic/simplenote-electron/pull/2895)
+
+### Fixes
+
+- Fixed search scrollbar highlights so it always shows search matches while in the editor [#2910](https://github.com/automattic/simplenote-electron/pull/2910)
+
 ## [v2.12.0]
 
 ### Enhancements

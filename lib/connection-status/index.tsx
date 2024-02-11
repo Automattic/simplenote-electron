@@ -18,7 +18,7 @@ type Props = StateProps;
 export const ConnectionStatus: FunctionComponent<Props> = ({
   connectionStatus,
 }) => (
-  <div className="navigation-bar__footer-item theme-color-fg-dim">
+  <div className="navigation-bar__footer-item">
     <Tooltip
       enterDelay={200}
       classes={{ tooltip: 'icon-button__tooltip' }}

@@ -95,8 +95,8 @@ export class NavigationBar extends Component<Props> {
           onDeactivate: this.handleFocusTrapDeactivate,
         }}
       >
-        <div className="navigation-bar theme-color-bg theme-color-fg theme-color-border">
-          <div className="navigation-bar__folders theme-color-border">
+        <div className="navigation-bar">
+          <div className="navigation-bar__folders">
             <NavigationBarItem
               icon={<NotesIcon />}
               isSelected={this.isSelected({ selectedRow: 'all' })}
@@ -115,11 +115,11 @@ export class NavigationBar extends Component<Props> {
               onClick={onSettings}
             />
           </div>
-          <div className="navigation-bar__tags theme-color-border">
+          <div className="navigation-bar__tags">
             {(tagCount && (
               <>
                 <TagList />
-                <div className="navigation-bar__folders navigation-bar__untagged theme-color-border">
+                <div className="navigation-bar__folders navigation-bar__untagged">
                   <NavigationBarItem
                     icon={<UntaggedNotesIcon />}
                     isSelected={this.isSelected({ selectedRow: 'untagged' })}
@@ -131,7 +131,7 @@ export class NavigationBar extends Component<Props> {
             )) ||
               null}
           </div>
-          <div className="navigation-bar__tools theme-color-border">
+          <div className="navigation-bar__tools">
             <div className="navigation-bar__server-connection">
               <ConnectionStatus />
             </div>
@@ -139,7 +139,7 @@ export class NavigationBar extends Component<Props> {
           <div className="navigation-bar__footer">
             <button
               type="button"
-              className="navigation-bar__footer-item theme-color-fg-dim"
+              className="navigation-bar__footer-item"
               onClick={this.props.showKeyboardShortcuts}
             >
               Keyboard Shortcuts
@@ -148,14 +148,14 @@ export class NavigationBar extends Component<Props> {
           <div className="navigation-bar__footer">
             <button
               type="button"
-              className="navigation-bar__footer-item theme-color-fg-dim"
+              className="navigation-bar__footer-item"
               onClick={this.onHelpClicked}
             >
               Help &amp; Support
             </button>
             <button
               type="button"
-              className="navigation-bar__footer-item theme-color-fg-dim"
+              className="navigation-bar__footer-item"
               onClick={onAbout}
             >
               About

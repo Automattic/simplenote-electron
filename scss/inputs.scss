@@ -11,7 +11,7 @@ input {
   -webkit-tap-highlight-color: transparent;
 
   &::placeholder {
-    color: var(--foreground-color);
+    color: var(--placeholder-color);
     opacity: 1;
   }
 

@@ -1,6 +1,10 @@
 .settings {
   max-width: 630px;
 
+  .button-borderless {
+    color: var(--accent-color);
+  }
+
   &.dialog {
     max-height: calc(100vh - 2rem);
 
@@ -33,12 +37,13 @@
 
   p {
     line-height: normal;
-    color: var(--primary-color);
+    color: var(--settings-fg-color);
   }
 }
 
 .settings-items {
   border: 1px solid var(--secondary-color);
+  color: var(--primary-color);
 }
 
 .settings-item {

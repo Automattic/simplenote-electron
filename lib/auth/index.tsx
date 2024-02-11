@@ -13,9 +13,12 @@ type OwnProps = {
   accountCreationRequested: boolean;
   authPending: boolean;
   emailSentTo: string;
+  hasCompromisedPassword: boolean;
   hasInsecurePassword: boolean;
   hasInvalidCredentials: boolean;
   hasLoginError: boolean;
+  hasTooManyRequests: boolean;
+  hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
   requestSignup: (username: string) => any;
   tokenLogin: (username: string, token: string) => any;
@@ -93,12 +96,12 @@ export class Auth extends Component<Props> {
           {isElectron && isMac && <div className="login__draggable-area" />}
           <div className="accountRequested">
             <MailIcon />
-            <p className="accountRequested__message theme-color-fg">
+            <p className="accountRequested__message">
               We&apos;ve sent an email to{' '}
               <strong>{this.props.emailSentTo}</strong>. Please check your inbox
               and follow the instructions.
             </p>
-            <p className="accountRequested__footer theme-color-fg-dim">
+            <p className="accountRequested__footer">
               Didn&apos;t get an email? You may already have an account
               associated with this email address. Contact{' '}
               <a
@@ -154,24 +157,72 @@ export class Auth extends Component<Props> {
               include your email address, new lines, or tabs.
             </p>
           )}
-          {this.props.hasInvalidCredentials ||
-            (this.props.hasLoginError && (
-              <p
-                className="login__auth-message is-error"
-                data-error-name="invalid-login"
+          {this.props.hasUnverifiedAccount && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="verification-required"
+            >
+              Account verification required. You must verify your email before
+              logging in to your account.
+              <a
+                className="login__reset"
+                href={
+                  'https://app.simplenote.com/account/verify-email/' +
+                  btoa(get(this.usernameInput, 'value'))
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={this.onForgot}
               >
-                {errorMessage}
-              </p>
-            ))}
+                Send Verification Email
+              </a>{' '}
+            </p>
+          )}
+          {this.props.hasCompromisedPassword && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="compromised-password"
+            >
+              This password has appeared in a data breach, which puts your
+              account at high risk of compromise. To protect your data,
+              you&apos;ll need to
+              <a
+                className="login__reset"
+                href={
+                  'https://app.simplenote.com/reset/?email=' +
+                  encodeURIComponent(get(this.usernameInput, 'value'))
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={this.onForgot}
+              >
+                update your password
+              </a>{' '}
+              before being able to log in again.
+            </p>
+          )}
+          {this.props.hasTooManyRequests && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="too-many-requests"
+            >
+              Too many log in attempts. Try again later.
+            </p>
+          )}
+          {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
+            <p
+              className="login__auth-message is-error"
+              data-error-name="invalid-login"
+            >
+              {errorMessage}
+            </p>
+          )}
           {passwordErrorMessage && (
             <p className="login__auth-message is-error">
               {passwordErrorMessage}
             </p>
           )}
-          <label
-            className="login__field theme-color-border"
-            htmlFor="login__field-username"
-          >
+          <label className="login__field" htmlFor="login__field-username">
             Email
           </label>
           <input
@@ -189,10 +240,7 @@ export class Auth extends Component<Props> {
           />
           {!isCreatingAccount && (
             <>
-              <label
-                className="login__field theme-color-border"
-                htmlFor="login__field-password"
-              >
+              <label className="login__field" htmlFor="login__field-password">
                 Password
               </label>
               <input

@@ -2,6 +2,10 @@
   z-index: 1000;
 }
 
+body {
+  background-color: var(--background-color);
+}
+
 .login.is-electron {
   input.validate:invalid {
     box-shadow: 0 0 1.5px 1px var(--tertiary-highlight-color);
@@ -26,6 +30,7 @@
   }
 
   h1 {
+    color: var(--primary-color);
     font-size: 36px;
     font-weight: 600;
     margin: 0 0 16px;
@@ -38,7 +43,8 @@
     max-width: 347px;
     text-align: center;
     width: 90%;
-    .is-error {
+
+    &.is-error {
       color: var(--tertiary-highlight-color);
     }
   }
@@ -64,14 +70,10 @@
     font-weight: 400;
   }
 
+  input:read-only,
   input:disabled {
-    border-color: var(--secondary-color);
-    color: var(--tertiary-color);
-  }
-
-  input:read-only {
-    border-color: var(--secondary-accent-color);
-    background-color: rgba(0, 0, 0, 0.05);
+    border-color: var(--readonly-input-highlight-color);
+    background-color: var(--readonly-input-color);
   }
 
   input:focus {
@@ -85,16 +87,16 @@
   }
 
   button[type='submit'] {
-    background-color: var(--accent-color);
+    background-color: var(--primary-button-bg-color);
     border: none;
-    color: var(--background-color);
+    color: var(--primary-button-fg-color);
     font-weight: 500;
     margin: 16px auto 8px;
     padding: 0 15px 2px;
   }
 
   a.login__forgot {
-    color: var(--foreground-color);
+    color: var(--accent-color);
     text-decoration: none;
   }
 
@@ -133,7 +135,7 @@
   }
 
   .or-line {
-    border-bottom: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--disabled-text-color);
     margin: -20px auto;
     max-width: 320px;
     text-align: center;
@@ -146,7 +148,7 @@
     background-color: var(--wordpress-color);
     border-radius: 4px;
     box-sizing: border-box;
-    color: var(--background-color);
+    color: var(--primary-button-fg-color);
     display: block;
     font-size: 16px;
     font-weight: 500;
@@ -174,60 +176,5 @@
   .accountRequested__footer {
     font-size: 14px;
     line-height: 20px;
-  }
-}
-
-body[data-theme='dark'] .login {
-  h1 {
-    color: $studio-white;
-  }
-  a.login__forgot {
-    color: $studio-gray-20;
-  }
-
-  .login__forgot,
-  .login__signup,
-  .terms {
-    color: $studio-gray-20;
-  }
-
-  .login__signup a,
-  .login__auth-message a,
-  .terms a {
-    color: $studio-simplenote-blue-20;
-  }
-
-  .login__auth-message.is-error {
-    color: $studio-red-20;
-  }
-
-  .or {
-    background: $studio-gray-90;
-    color: $studio-gray-20;
-  }
-  .or-line {
-    border-color: var(--primary-color);
-  }
-
-  svg.icon-mail {
-    color: $studio-gray-30;
-  }
-  input {
-    border-color: var(--foreground-color);
-
-    &:disabled {
-      color: var(--foreground-color);
-      border-color: $studio-gray-70;
-    }
-
-    &:read-only {
-      border-color: var(--foreground-color);
-      background-color: rgba(255, 255, 255, 0.07);
-    }
-
-    &:focus {
-      border-color: $studio-simplenote-blue-20;
-      box-shadow: 0 0 0 1px $studio-simplenote-blue-20;
-    }
   }
 }

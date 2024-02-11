@@ -1,11 +1,12 @@
 .tag-chip {
+  color: var(--primary-color);
   flex: none;
   margin: 2px 8px 6px 0;
   padding: 1px 14px 3px;
   border-radius: 16px;
   line-height: 1.25em;
   white-space: nowrap;
-  background: var(--secondary-color);
+  background: var(--primary-tag-chip-color);
   text-decoration: none;
   font-size: 14px;
   position: relative;
@@ -23,7 +24,7 @@
   }
 
   &.deleted {
-    background: $studio-red-5;
+    background: var(--secondary-tag-chip-color);
   }
 
   .remove-tag-icon {
@@ -46,21 +47,5 @@
       left: 1px;
       top: 1px;
     }
-  }
-}
-
-body[data-theme='dark'] {
-  .tag-chip {
-    background: $studio-gray-70;
-    color: $studio-white;
-
-    &.deleted {
-      background: $studio-red-70;
-    }
-  }
-
-  .remove-tag-icon {
-    background-color: $studio-gray-30;
-    color: $studio-black;
   }
 }

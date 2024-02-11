@@ -75,7 +75,7 @@ export class SearchField extends Component<Props> {
     const hasQuery = searchQuery.length > 0;
 
     return (
-      <div className="search-field theme-color-fg theme-color-border">
+      <div className="search-field">
         <button
           aria-label="Focus search field"
           onClick={this.props.focusSearchField}

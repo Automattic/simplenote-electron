@@ -42,10 +42,7 @@ export class NoteToolbar extends Component<Props> {
   render() {
     const { 'aria-hidden': ariaHidden, note } = this.props;
     return (
-      <div
-        aria-hidden={ariaHidden}
-        className="note-toolbar-wrapper theme-color-border"
-      >
+      <div aria-hidden={ariaHidden} className="note-toolbar-wrapper">
         {note?.deleted ? this.renderTrashed() : this.renderNormal()}
       </div>
     );
@@ -63,11 +60,11 @@ export class NoteToolbar extends Component<Props> {
     } = this.props;
 
     return !note ? (
-      <div className="note-toolbar-placeholder theme-color-border" />
+      <div className="note-toolbar-placeholder" />
     ) : (
       <div aria-label="note actions" role="toolbar" className="note-toolbar">
         <div className="note-toolbar__column-left">
-          <div className="note-toolbar__button new-note-toolbar__button-sidebar theme-color-border">
+          <div className="note-toolbar__button new-note-toolbar__button-sidebar">
             <IconButton
               icon={<NewNoteIcon />}
               onClick={() => newNote()}

@@ -22,6 +22,7 @@
   flex: 1 0 auto;
 
   .panel-title {
+    color: var(--foreground-color);
     text-transform: none;
     font-weight: normal;
     font-size: 14px;
@@ -38,6 +39,7 @@
   }
 
   .enable-markdown {
+    color: var(--primary-color);
     flex: 1 1 auto;
     line-height: 28px;
   }
@@ -67,15 +69,5 @@
     font-size: 14px;
     border: 0;
     font-weight: 400;
-  }
-}
-
-body[data-theme='dark'] {
-  .source-importer-executor {
-    .source-importer-executor__options {
-      label {
-        border-color: $studio-gray-80;
-      }
-    }
   }
 }

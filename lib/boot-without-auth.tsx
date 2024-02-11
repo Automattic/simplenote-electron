@@ -20,11 +20,14 @@ type Props = {
 type State = {
   authStatus:
     | 'account-creation-requested'
+    | 'compromised-password'
     | 'unsubmitted'
     | 'submitting'
     | 'insecure-password'
     | 'invalid-credentials'
-    | 'unknown-error';
+    | 'unknown-error'
+    | 'verification-required'
+    | 'too-many-requests';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -96,11 +99,21 @@ class AppWithoutAuth extends Component<Props, State> {
           this.login(user.access_token, username, false);
         })
         .catch((error: unknown) => {
+          const message = error?.underlyingError.message ?? '';
           if (
-            'invalid password' === error?.message ||
-            error?.message.startsWith('unknown username:')
+            'invalid login' === message ||
+            message.startsWith('unknown username:')
           ) {
+            // We check for compromised password before verified account as if the password is
+            // compromised it will require a password reset. During that process unverified
+            // accounts will be verified as it requires an email to the account address
             this.setState({ authStatus: 'invalid-credentials' });
+          } else if ('compromised password' === message) {
+            this.setState({ authStatus: 'compromised-password' });
+          } else if ('verification required' === message) {
+            this.setState({ authStatus: 'verification-required' });
+          } else if ('too many requests' === message) {
+            this.setState({ authStatus: 'too-many-requests' });
           } else {
             this.setState({ authStatus: 'unknown-error' });
           }
@@ -152,9 +165,16 @@ class AppWithoutAuth extends Component<Props, State> {
             authPending={this.state.authStatus === 'submitting'}
             emailSentTo={this.state.emailSentTo}
             hasInsecurePassword={this.state.authStatus === 'insecure-password'}
+            hasCompromisedPassword={
+              this.state.authStatus === 'compromised-password'
+            }
             hasInvalidCredentials={
               this.state.authStatus === 'invalid-credentials'
             }
+            hasUnverifiedAccount={
+              this.state.authStatus === 'verification-required'
+            }
+            hasTooManyRequests={this.state.authStatus === 'too-many-requests'}
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
             tokenLogin={this.tokenLogin}
