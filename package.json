@@ -99,7 +99,7 @@
     "fake-indexeddb": "3.1.0",
     "file-loader": "6.2.0",
     "html-webpack-plugin": "5.6.0",
-    "husky": "4.2.5",
+    "husky": "4.3.8",
     "jest": "26.1.0",
     "jest-localstorage-mock": "2.4.2",
     "mini-css-extract-plugin": "2.8.1",
