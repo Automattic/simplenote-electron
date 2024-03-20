@@ -62,7 +62,7 @@ dev:
 dev-server:
 	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
+	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --static dist --host $(HOST) --port $(PORT) --hot
 
 .PHONY: test
 test:

@@ -14,8 +14,7 @@ module.exports = () => {
     context: __dirname + '/lib',
     mode: isDevMode ? 'development' : 'production',
     devtool:
-      process.env.SOURCEMAP || (isDevMode && 'cheap-module-eval-source-map'),
-    devServer: { inline: true },
+      process.env.SOURCEMAP || (isDevMode && 'eval-cheap-module-source-map'),
     entry: ['./boot'],
     output: {
       path: __dirname + '/dist',
@@ -118,7 +117,10 @@ module.exports = () => {
         __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),
         config: JSON.stringify(config),
       }),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
     ],
   };
 };
