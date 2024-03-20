@@ -85,7 +85,7 @@
     "classnames": "2.2.6",
     "concurrently": "5.2.0",
     "css-loader": "6.10.0",
-    "debug": "4.1.1",
+    "debug": "4.3.4",
     "electron": "29.1.4",
     "electron-builder": "24.13.3",
     "enzyme": "3.11.0",
