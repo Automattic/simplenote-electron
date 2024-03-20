@@ -199,6 +199,10 @@ class NoteContentEditor extends Component<Props> {
     const contextMenuEntry = [...menus].find(
       (entry) => entry[0]._debugName === 'EditorContext'
     );
+    /* TODO FIX ME */
+    if (!contextMenuEntry) {
+      return;
+    }
     const contextMenuLinks = contextMenuEntry[1];
     const removableIds = [
       'editor.action.changeAll',
@@ -667,13 +671,14 @@ class NoteContentEditor extends Component<Props> {
     if (window.electron && isMac) {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
     }
-    shortcutsToDisable.forEach(function (action) {
-      editor._standaloneKeybindingService.addDynamicKeybinding(
-        '-' + action,
-        undefined,
-        () => {}
-      );
-    });
+    /* TODO FIX ME */
+    // shortcutsToDisable.forEach(function (action) {
+    //   editor._standaloneKeybindingService.addDynamicKeybinding(
+    //     '-' + action,
+    //     undefined,
+    //     () => {}
+    //   );
+    // });
 
     // disable editor keybindings for Electron since it is handled by editorCommand
     // doing it this way will always show the keyboard hint in the context menu!
