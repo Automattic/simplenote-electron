@@ -13,7 +13,6 @@
   "scripts": {
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
-    "test-e2e": "npx jest --config=./jest.config.e2e.js --runInBand",
     "test": "make test",
     "lint": "make lint",
     "format": "make format",
@@ -123,9 +122,6 @@
     "webpack": "4.43.0",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.2"
-  },
-  "optionalDependencies": {
-    "spectron": "11.1.0"
   },
   "dependencies": {
     "@automattic/color-studio": "2.3.0",
