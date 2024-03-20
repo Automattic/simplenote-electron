@@ -17,7 +17,6 @@ module.exports = () => {
       process.env.SOURCEMAP || (isDevMode && 'eval-cheap-module-source-map'),
     entry: ['./boot'],
     output: {
-      path: __dirname + '/dist',
       filename: 'app.[hash].js',
       chunkFilename: '[name].[chunkhash].js',
       ...(config.is_app_engine && {
