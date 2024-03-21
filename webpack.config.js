@@ -20,7 +20,7 @@ module.exports = () => {
       process.env.SOURCEMAP || (isDevMode && 'eval-cheap-module-source-map'),
     entry: ['./boot'],
     output: {
-      filename: 'app.[hash].js',
+      filename: 'app.[fullhash].js',
       chunkFilename: '[name].[chunkhash].js',
       ...(config.is_app_engine && {
         publicPath: config.web_app_url + '/',
@@ -53,8 +53,8 @@ module.exports = () => {
               options: {
                 postcssOptions: {
                   plugins: [autoprefixer()],
-                  sourceMap: isDevMode,
                 },
+                sourceMap: isDevMode,
               },
             },
             {
@@ -82,7 +82,9 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
-      new NodePolyfillPlugin(),
+      new NodePolyfillPlugin({
+        includeAliases: ['path', 'process', 'stream', 'util'],
+      }),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,
         'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
@@ -94,8 +96,8 @@ module.exports = () => {
         title: 'Simplenote',
       }),
       new MiniCssExtractPlugin({
-        filename: isDevMode ? '[name].css' : '[name].[hash].css',
-        chunkFilename: isDevMode ? '[id].css' : '[id].[hash].css',
+        filename: isDevMode ? '[name].css' : '[name].[fullhash].css',
+        chunkFilename: isDevMode ? '[id].css' : '[id].[fullhash].css',
       }),
       new MonacoWebpackPlugin({
         languages: [],

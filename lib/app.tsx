@@ -26,10 +26,6 @@ import * as selectors from './state/selectors';
 import * as S from './state';
 import * as T from './types';
 
-// this adds a shim that makes this function available under webpack
-// TODO: there should be some way to add this to webpack config instead of here
-require('setimmediate');
-
 type OwnProps = {
   isDevConfig: boolean;
 };
