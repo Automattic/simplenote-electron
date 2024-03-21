@@ -40,7 +40,6 @@
     }
   },
   "devDependencies": {
-    "@adlk/misty": "0.2.0",
     "@babel/core": "7.24.1",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/plugin-transform-runtime": "7.24.1",
@@ -80,7 +79,7 @@
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "classnames": "2.2.6",
-    "concurrently": "5.2.0",
+    "concurrently": "8.2.2",
     "css-loader": "6.10.0",
     "debug": "4.3.4",
     "electron": "29.1.4",

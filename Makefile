@@ -52,11 +52,11 @@ PUBLISH ?= onTag
 # Main targets
 .PHONY: start
 start:
-	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect
+	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect --watchDir=./desktop
 
 .PHONY: dev
 dev:
-	@npx misty
+	@NODE_ENV=development DEV_SERVER=true npx concurrently -c gray.dim "make dev-server" "wait-on http://localhost:4000 && make start"
 
 .PHONY: dev-server
 dev-server:

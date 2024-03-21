@@ -1,7 +1,0 @@
-simplenote: 
- 	cmd: make dev-server NODE_ENV=development
-  
-electron:
-  cmd: make start NODE_ENV=development DEV_SERVER=true
-  waitOn: http://localhost:4000
-  watchDir: ./desktop
