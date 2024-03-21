@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import parseISO from 'date-fns/parseISO';
+import { parseISO } from 'date-fns/parseISO';
 import { endsWith } from 'lodash';
 import CoreImporter from '../';
 
