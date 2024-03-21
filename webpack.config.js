@@ -5,12 +5,9 @@ const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-// const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 // Object.assign(global, { WebSocket: require('ws') });
-
-// SIDE EFFECT warning: this import adds a polyfill for setImmediate
-require('setimmediate');
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
@@ -85,7 +82,7 @@ module.exports = () => {
       modules: ['node_modules'],
     },
     plugins: [
-      // new NodePolyfillPlugin(),
+      new NodePolyfillPlugin(),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,
         'build-reference': spawnSync('git', ['describe', '--always', '--dirty'])
@@ -136,6 +133,9 @@ module.exports = () => {
       // new webpack.ProvidePlugin({
       //   setImmediate: require.resolve('setimmediate/'),
       // }),
+      new webpack.ProvidePlugin({
+        isemail: require.resolve('isemail/'),
+      }),
     ],
   };
 };

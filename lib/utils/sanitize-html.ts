@@ -1,4 +1,4 @@
-// import isemail from 'isemail';
+import isemail from 'isemail';
 import validUrl from 'valid-url';
 import { filter } from 'lodash';
 
@@ -257,9 +257,8 @@ export const sanitizeHtml = (content: string) => {
       // emails must be reasonably-verifiable email addresses
       if (
         'href' === name &&
-        value.startsWith('mailto:')
-        // TODO FIX MISSING POLYFILL
-        // && isemail.validate(value.slice(7))
+        value.startsWith('mailto:') &&
+        isemail.validate(value.slice(7))
       ) {
         return false;
       }
