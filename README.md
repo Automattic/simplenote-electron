@@ -26,8 +26,6 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 
 Unit tests are run with `npm test`.
 
-End-to-end tests are run with `npm run test-e2e`.
-
 ## Coding Guidelines
 
 Please adhere to the same guidelines as found in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines.md).
