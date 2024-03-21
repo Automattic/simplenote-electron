@@ -133,9 +133,9 @@ module.exports = () => {
       // new webpack.ProvidePlugin({
       //   setImmediate: require.resolve('setimmediate/'),
       // }),
-      new webpack.ProvidePlugin({
-        isemail: require.resolve('isemail/'),
-      }),
+      // new webpack.ProvidePlugin({
+      //   isemail: require.resolve('isemail/'),
+      // }),
     ],
   };
 };
