@@ -87,7 +87,7 @@ endif
 # Build utils
 .PHONY: build-app
 build-app:
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),--mode-production) --config ./webpack.config.js
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),--mode production) --config ./webpack.config.js
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json

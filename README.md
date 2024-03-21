@@ -24,7 +24,7 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 
 ## Testing
 
-Unit tests are run with `npm test`...
+Unit tests are run with `npm test`.
 
 ## Coding Guidelines
 
