@@ -31,7 +31,7 @@ module.exports = () => {
       rules: [
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules\/core-js/,
+          exclude: /node_modules/,
           use: [
             {
               loader: 'babel-loader',
