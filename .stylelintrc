@@ -1,10 +1,8 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-prettier"],
-  "plugins": ["stylelint-prettier", "stylelint-scss"],
+  "extends": ["stylelint-config-standard", "stylelint-config-prettier", "stylelint-config-standard-scss"],
+  "plugins": ["stylelint-prettier"],
   "rules": {
     "prettier/prettier": true,
-    "at-rule-no-unknown": null,
-    "scss/at-rule-no-unknown": true,
     "no-descending-specificity": null
   }
 }
