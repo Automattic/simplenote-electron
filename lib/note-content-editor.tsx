@@ -411,11 +411,12 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
     const titleDecoration = this.getTitleDecoration() ?? [];
 
-    const decorationsCollection = this.editor?.getModel()?.decorations;
-    this.decorations = decorationsCollection?.changeDecorations(
-      this.decorations,
-      [...this.matchesInNote, ...titleDecoration]
-    );
+    this.editor.changeDecorations((changeAccessor) => {
+      this.decorations = changeAccessor.deltaDecorations(this.decorations, [
+        ...this.matchesInNote,
+        ...titleDecoration,
+      ]);
+    });
   };
 
   getTitleDecoration = () => {
@@ -1176,11 +1177,12 @@ class NoteContentEditor extends Component<Props> {
       newDecorations.push(decoration);
     });
 
-    const decorationsCollection = this.editor?.getModel()?.decorations;
-    this.decorations = decorationsCollection?.changeDecorations(
-      this.decorations,
-      newDecorations
-    );
+    this.editor.changeDecorations((changeAccessor) => {
+      this.decorations = changeAccessor.deltaDecorations(
+        this.decorations,
+        newDecorations
+      );
+    });
   };
 
   render() {
