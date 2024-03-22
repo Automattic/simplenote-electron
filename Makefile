@@ -161,7 +161,7 @@ config-release: config.json install
 
 .PHONY: format
 format:
-	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass,ts,tsx}"
+	@npx prettier --write "**/*.{js,jsx,json,sass,scss,ts,tsx}"
 
 .PHONY: lint
 lint: lint-js lint-scss

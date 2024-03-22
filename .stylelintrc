@@ -1,5 +1,5 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-prettier", "stylelint-config-standard-scss"],
+  "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
   "plugins": ["stylelint-prettier"],
   "rules": {
     "prettier/prettier": true,
