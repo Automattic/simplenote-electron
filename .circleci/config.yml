@@ -190,7 +190,7 @@ jobs:
           at: C:\Users\circleci\simplenote-electron
       - run:
           name: Install make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install node version
           command: |
@@ -234,7 +234,7 @@ jobs:
           at: C:\Users\circleci\simplenote-electron
       - run:
           name: Install make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install node version
           command: |
