@@ -37,6 +37,7 @@ See <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a> for more guidelines.
 - [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
 - [ReactJS](https://reactjs.org/) for UI.
 - [Electron](https://electronjs.org/) for wrapping the JavaScript application.
+- `rpm` must be installed in order to build Linux packages (`brew install rpm` on OSX).
 
 ## Simplenote for Other Platforms
 

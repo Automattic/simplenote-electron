@@ -12,7 +12,17 @@
     "artifactName": "Simplenote-macOS-${version}.${ext}",
     "entitlements": "./resources/macos/entitlements.mac.plist",
     "entitlementsInherit": "./resources/macos/entitlements.mac.inherit.plist",
-    "hardenedRuntime": true
+    "hardenedRuntime": true,
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["universal"]
+      },
+      {
+        "target": "zip",
+        "arch": ["universal"]
+      }
+    ]
   },
   "dmg": {
     "title": "Simplenote Installer",
@@ -63,19 +73,19 @@
     "target": [
       {
         "target": "AppImage",
-        "arch": ["x64", "ia32", "arm64", "armv7l"]
+        "arch": ["x64", "arm64", "armv7l"]
       },
       {
         "target": "deb",
-        "arch": ["x64", "ia32", "armv7l"]
+        "arch": ["x64", "armv7l"]
       },
       {
         "target": "rpm",
-        "arch": ["x64", "ia32", "armv7l"]
+        "arch": ["x64", "armv7l"]
       },
       {
         "target": "tar.gz",
-        "arch": ["x64", "ia32", "arm64", "armv7l"]
+        "arch": ["x64", "arm64", "armv7l"]
       }
     ],
     "synopsis": "The simplest way to keep notes",
