@@ -82,7 +82,7 @@ references:
 jobs:
   build:
     docker:
-      - image: cimg/node:12.14.0
+      - image: cimg/node:18.19.1
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -100,7 +100,7 @@ jobs:
           paths: *app_cache_paths
   test:
     docker:
-      - image: cimg/node:12.14.0
+      - image: cimg/node:18.19.1
     shell: /bin/bash --login
     working_directory: ~/simplenote
     steps:
@@ -118,7 +118,7 @@ jobs:
 
   linux:
     docker:
-      - image: cimg/node:12.14.0
+      - image: cimg/node:18.19.1
     working_directory: ~/simplenote
     steps:
       - checkout
@@ -190,7 +190,7 @@ jobs:
           at: C:\Users\circleci\simplenote-electron
       - run:
           name: Install make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install node version
           command: |
@@ -234,7 +234,7 @@ jobs:
           at: C:\Users\circleci\simplenote-electron
       - run:
           name: Install make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install node version
           command: |

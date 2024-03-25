@@ -18,7 +18,7 @@ describe('SimplenoteImporter', () => {
 
   it('should emit error when no notes are passed', () => {
     importer.importNotes();
-    expect(importer.emit).toBeCalledWith(
+    expect(importer.emit).toHaveBeenCalledWith(
       'status',
       'error',
       'No file to import.'

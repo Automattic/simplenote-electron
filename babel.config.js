@@ -6,6 +6,11 @@ module.exports = function (api) {
       '@babel/preset-env',
       {
         corejs: '3',
+        include: [
+          'transform-class-properties',
+          'transform-object-rest-spread',
+          'transform-optional-chaining',
+        ],
         useBuiltIns: 'entry',
         targets: {
           esmodules: true,
@@ -16,9 +21,6 @@ module.exports = function (api) {
     '@babel/typescript',
   ];
   const plugins = [
-    '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-object-rest-spread',
-    '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-transform-runtime',
   ];

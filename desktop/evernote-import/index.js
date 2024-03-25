@@ -1,6 +1,6 @@
 const { createStream } = require('sax');
 const { JSDOM } = require('jsdom');
-const parseISO = require('date-fns/parseISO');
+const { parseISO } = require('date-fns/parseISO');
 const { endsWith, get } = require('lodash');
 const fs = require('fs');
 const enmlToMarkdown = require('./enml-to-markdown');

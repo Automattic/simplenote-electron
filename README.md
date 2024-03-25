@@ -26,11 +26,6 @@ _Note: Simplenote API features such as sharing and publishing will not work with
 
 Unit tests are run with `npm test`.
 
-End-to-end tests are run with `npm run test-e2e`.
-Note that the `Spectron` version [corresponds with the version](https://www.npmjs.com/package/spectron#version-map) of `Electron` we are using.
-Use the corresponding API docs for `webdriver-io` which correspond to the `Spectron` version.
-At the time of writing you will want to refer to the [webdriver-io v4.13 API docs](http://v4.webdriver.io/v4.13/api.html).
-
 ## Coding Guidelines
 
 Please adhere to the same guidelines as found in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines.md).
@@ -42,6 +37,7 @@ See <a href="./CONTRIBUTING.md">CONTRIBUTING.md</a> for more guidelines.
 - [node-simperium](https://github.com/Simperium/node-simperium) for Simperium syncing.
 - [ReactJS](https://reactjs.org/) for UI.
 - [Electron](https://electronjs.org/) for wrapping the JavaScript application.
+- `rpm` must be installed in order to build Linux packages (`brew install rpm` on OSX).
 
 ## Simplenote for Other Platforms
 

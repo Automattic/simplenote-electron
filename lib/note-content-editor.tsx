@@ -12,7 +12,7 @@ import {
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
-import * as monacoactions from 'monaco-editor/esm/vs/platform/actions/common/actions';
+const monacoMenuItems = require('monaco-editor/esm/vs/platform/actions/common/actions').MenuRegistry._menuItems;
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
@@ -195,8 +195,7 @@ class NoteContentEditor extends Component<Props> {
     this.toggleShortcuts(true);
 
     /* remove unwanted context menu items */
-    const menus = monacoactions.MenuRegistry._menuItems;
-    const contextMenuEntry = [...menus].find(
+    const contextMenuEntry = [...monacoMenuItems].find(
       (entry) => entry[0]._debugName === 'EditorContext'
     );
     const contextMenuLinks = contextMenuEntry[1];
@@ -207,7 +206,7 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.clipboardPasteAction',
       'editor.action.quickCommand',
     ];
-    const removeById = (list, ids) => {
+    const removeById = (list, ids: Array<string>) => {
       let node = list._first;
       do {
         const shouldRemove = ids.includes(node.element?.command?.id);
@@ -368,7 +367,7 @@ class NoteContentEditor extends Component<Props> {
     }
 
     if (this.props.searchQuery === '' && prevProps.searchQuery !== '') {
-      this.editor?.setSelection(new this.monaco.Range(0, 0, 0, 0));
+      this.editor?.setSelection(new Range(0, 0, 0, 0));
     }
 
     if (
@@ -407,10 +406,12 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
     const titleDecoration = this.getTitleDecoration() ?? [];
 
-    this.decorations = this.editor.deltaDecorations(this.decorations, [
-      ...this.matchesInNote,
-      ...titleDecoration,
-    ]);
+    this.editor.changeDecorations((changeAccessor) => {
+      this.decorations = changeAccessor.deltaDecorations(this.decorations, [
+        ...this.matchesInNote,
+        ...titleDecoration,
+      ]);
+    });
   };
 
   getTitleDecoration = () => {
@@ -558,7 +559,7 @@ class NoteContentEditor extends Component<Props> {
 
     const lineOffset = prefixSpace.length + (bullet?.length ?? 0) + 1;
     const text = hasTask ? '' : '\ue000 ';
-    const range = new this.monaco.Range(
+    const range = new Range(
       lineNumber,
       lineOffset,
       lineNumber,
@@ -605,7 +606,6 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    this.monaco = monaco;
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -685,7 +685,7 @@ class NoteContentEditor extends Component<Props> {
     editor.addAction({
       id: 'context_undo',
       label: 'Undo',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyZ],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 2,
@@ -698,8 +698,8 @@ class NoteContentEditor extends Component<Props> {
       id: 'context_redo',
       label: 'Redo',
       keybindings: [
-        monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+        monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyY,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyZ,
         // @todo can we switch these so Windows displays the default ^Y?
       ],
       keybindingContext: 'allowBrowserKeybinding',
@@ -715,7 +715,7 @@ class NoteContentEditor extends Component<Props> {
     editor.addAction({
       id: 'context_cut',
       label: 'Cut',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 1,
@@ -726,7 +726,7 @@ class NoteContentEditor extends Component<Props> {
     editor.addAction({
       id: 'context_copy',
       label: 'Copy',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 2,
@@ -754,7 +754,7 @@ class NoteContentEditor extends Component<Props> {
         label: 'Paste',
         contextMenuGroupId: '9_cutcopypaste',
         contextMenuOrder: 3,
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
         keybindingContext: 'allowBrowserKeybinding',
         run: () => {
           document.execCommand('paste');
@@ -767,7 +767,7 @@ class NoteContentEditor extends Component<Props> {
       label: 'Select All',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 4,
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyA],
       keybindingContext: 'allowBrowserKeybinding',
       run: () => {
         editor.setSelection(editor.getModel().getFullModelRange());
@@ -778,8 +778,8 @@ class NoteContentEditor extends Component<Props> {
       id: 'insertChecklist',
       label: 'Insert Checklist',
       keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
-        monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
+        monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
       ],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '10_checklist',
@@ -1057,7 +1057,7 @@ class NoteContentEditor extends Component<Props> {
           lineNumber: lineNumber + 1,
         });
 
-        const range = new this.monaco.Range(
+        const range = new Range(
           lineNumber,
           0,
           lineNumber + 1,
@@ -1087,7 +1087,7 @@ class NoteContentEditor extends Component<Props> {
         lineNumber: lineNumber + 2,
       });
 
-      const range = new this.monaco.Range(
+      const range = new Range(
         lineNumber + 1,
         0,
         lineNumber + 1,
@@ -1170,10 +1170,12 @@ class NoteContentEditor extends Component<Props> {
       newDecorations.push(decoration);
     });
 
-    this.decorations = this.editor.deltaDecorations(
-      this.decorations,
-      newDecorations
-    );
+    this.editor.changeDecorations((changeAccessor) => {
+      this.decorations = changeAccessor.deltaDecorations(
+        this.decorations,
+        newDecorations
+      );
+    });
   };
 
   render() {
@@ -1230,7 +1232,7 @@ class NoteContentEditor extends Component<Props> {
               occurrencesHighlight: false,
               overviewRulerBorder: false,
               quickSuggestions: false,
-              renderIndentGuides: false,
+              guides: { indentation: false },
               renderLineHighlight: 'none',
               scrollbar: {
                 horizontal: 'hidden',

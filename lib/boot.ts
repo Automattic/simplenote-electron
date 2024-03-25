@@ -1,4 +1,7 @@
 import './utils/ensure-platform-support';
+// this adds a shim that makes this function available under webpack
+// TODO: there should be some way to add this to webpack config instead of here
+import 'setimmediate';
 
 import { parse } from 'cookie';
 

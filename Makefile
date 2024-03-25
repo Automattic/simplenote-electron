@@ -52,17 +52,17 @@ PUBLISH ?= onTag
 # Main targets
 .PHONY: start
 start:
-	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect
+	@NODE_ENV=$(NODE_ENV) DEV_SERVER=$(DEV_SERVER) npx electron . --inspect --watchDir=./desktop
 
 .PHONY: dev
 dev:
-	@npx misty
+	@NODE_ENV=development DEV_SERVER=true npx concurrently -c gray.dim "make dev-server" "wait-on http://localhost:4000 && make start"
 
 .PHONY: dev-server
 dev-server:
 	@$(MAKE) build NODE_ENV=$(NODE_ENV)
 
-	@NODE_ENV=$(NODE_ENV) npx webpack-dev-server --config ./webpack.config.js --content-base dist --host $(HOST) --port $(PORT) --hot
+	@NODE_ENV=$(NODE_ENV) npx webpack serve --config ./webpack.config.js --static dist --host $(HOST) --port $(PORT) --hot
 
 .PHONY: test
 test:
@@ -87,7 +87,7 @@ endif
 # Build utils
 .PHONY: build-app
 build-app:
-	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),-p) --config ./webpack.config.js
+	@NODE_ENV=$(NODE_ENV) npx webpack $(if $(IS_PRODUCTION),--mode production) --config ./webpack.config.js
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json
@@ -161,14 +161,14 @@ config-release: config.json install
 
 .PHONY: format
 format:
-	@npx prettier --ignore-path .gitignore --write "**/*.{js,jsx,json,sass,ts,tsx}"
+	@npx prettier --write "**/*.{js,jsx,json,sass,scss,ts,tsx}"
 
 .PHONY: lint
 lint: lint-js lint-scss
 
 .PHONY: lint-scss
 lint-scss:
-	@npx stylelint --ignore-path .gitignore "**/*.scss" --syntax scss
+	@npx stylelint --ignore-path .gitignore "**/*.scss"
 
 .PHONY: lint-js
 lint-js:
