@@ -39,7 +39,7 @@ module.exports = function main() {
 
   // Fixes rendering bug on Linux when sandbox === true (Electron 11.0)
   if (process.platform === 'linux') {
-    app.disableHardwareAcceleration();
+    app.commandLine.appendSwitch('disable-gpu-sandbox'); 
   }
 
   app.on('will-finish-launching', function () {
