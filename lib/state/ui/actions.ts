@@ -65,7 +65,7 @@ export const openTag: A.ActionCreator<A.OpenTag> = (tagName: T.TagName) => ({
 });
 
 export const reallyLogOut: A.ActionCreator<A.ReallyLogOut> = () => ({
-  type: 'REALLY_LOGOUT',
+  type: 'REALLY_LOG_OUT',
 });
 
 export const restoreOpenNote: A.ActionCreator<A.RestoreOpenNote> = () => ({

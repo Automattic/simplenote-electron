@@ -483,13 +483,14 @@ class NoteContentEditor extends Component<Props> {
 
   focusEditor = () => this.editor?.focus();
 
-  hasFocus = () => this.editor?.hasTextFocus();
+  hasFocus = () => this.editor?.hasTextFocus() || false;
 
-  handleChecklist = (event: InputEvent) => {
+  handleChecklist = (event: Event) => {
     this.editor?.trigger('editorCommand', 'insertChecklist', null);
   };
 
-  handleUndoRedo = (event: InputEvent) => {
+  handleUndoRedo = (e: Event) => {
+    const event = e as InputEvent;
     switch (event.inputType) {
       case 'historyUndo':
         this.editor?.trigger('browserMenu', 'undo', null);
@@ -650,10 +651,6 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.transposeLetters', // ctrl+T
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
-      // multicursor shortcuts
-      'editor.action.insertCursorAbove', // alt+meta+UpArrow
-      'editor.action.insertCursorBelow', // alt+meta+DownArrow
-      'editor.action.insertCursorAtEndOfEachLineSelected', // shift+alt+I
       // search shortcuts
       'editor.action.changeAll',
       'actions.find',
@@ -787,27 +784,6 @@ class NoteContentEditor extends Component<Props> {
       run: this.insertOrRemoveCheckboxes,
     });
 
-    editor.addAction({
-      id: 'selectUpWithoutMulticursor',
-      label: 'Select Up',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
-      ],
-      run: () => {
-        editor.trigger('shortcuts', 'cursorUpSelect', null);
-      },
-    });
-    editor.addAction({
-      id: 'selectDownWithoutMulticursor',
-      label: 'Select Down',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
-      ],
-      run: () => {
-        editor.trigger('shortcuts', 'cursorDownSelect', null);
-      },
-    });
-
     // Tab to indent lists and tasks
     editor.addCommand(monaco.KeyCode.Tab, () => {
       const lineNumber = editor.getPosition()?.lineNumber;
@@ -841,7 +817,8 @@ class NoteContentEditor extends Component<Props> {
           return;
         case 'selectAll':
           if (editor.hasTextFocus()) {
-            editor.setSelection(editor.getModel().getFullModelRange());
+            const range = editor.getModel()?.getFullModelRange();
+            range && editor.setSelection(range);
           } else {
             document.execCommand('selectAll');
           }
@@ -1139,7 +1116,7 @@ class NoteContentEditor extends Component<Props> {
     this.focusEditor();
   };
 
-  setSearchSelection = (index) => {
+  setSearchSelection = (index: number) => {
     if (!this.matchesInNote.length || index === null) {
       return;
     }
@@ -1217,6 +1194,8 @@ class NoteContentEditor extends Component<Props> {
               autoIndent: 'keep',
               autoSurround: 'never',
               automaticLayout: true,
+              // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
+              "bracketPairColorization.enabled": false,
               codeLens: false,
               folding: false,
               fontFamily:
@@ -1230,6 +1209,7 @@ class NoteContentEditor extends Component<Props> {
               links: true,
               matchBrackets: 'never',
               minimap: { enabled: false },
+              multiCursorLimit: 1,
               occurrencesHighlight: false,
               overviewRulerBorder: false,
               quickSuggestions: false,
