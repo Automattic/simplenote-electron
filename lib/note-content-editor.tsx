@@ -268,11 +268,12 @@ class NoteContentEditor extends Component<Props> {
             titleOnly: true,
           },
           5
-        ).map(([noteId, note]) => ({
+        ).filter(([noteId, note]) => {return typeof note !== 'undefined'})
+        .map(([noteId, note]) => ({
           noteId,
-          content: note.content,
-          isPinned: note.systemTags.includes('pinned'),
-          ...noteTitleAndPreview(note),
+          content: note!.content,
+          isPinned: note!.systemTags.includes('pinned'),
+          ...noteTitleAndPreview(note!),
         }));
 
         const additionalTextEdits =
@@ -415,7 +416,7 @@ class NoteContentEditor extends Component<Props> {
   };
 
   getTitleDecoration = () => {
-    const model = this.editor.getModel();
+    const model = this.editor?.getModel();
     if (!model) {
       return;
     }
@@ -578,7 +579,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
-      rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
+      rules: [],
       colors: {
         'editor.foreground': '#2c3338', // $studio-gray-80
         'editor.background': '#ffffff',
@@ -592,7 +593,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote-dark', {
       base: 'vs-dark',
       inherit: true,
-      rules: [{ background: '1d2327', foreground: 'ffffff' }],
+      rules: [],
       colors: {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90
@@ -631,7 +632,7 @@ class NoteContentEditor extends Component<Props> {
           return;
         }
 
-        const [fullMatch, linkedNoteId] = match as [string, T.EntityId];
+        const [_fullMatch, linkedNoteId] = match as [string, T.EntityId];
 
         // if we try to open a note that doesn't exist in local state,
         // then we annoyingly close the open note without opening anything else
@@ -767,7 +768,8 @@ class NoteContentEditor extends Component<Props> {
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyA],
       keybindingContext: 'allowBrowserKeybinding',
       run: () => {
-        editor.setSelection(editor.getModel().getFullModelRange());
+        const range = editor.getModel()?.getFullModelRange();
+        range && editor.setSelection(range);
       },
     });
 
@@ -849,16 +851,11 @@ class NoteContentEditor extends Component<Props> {
       this.completionProvider(this.state.noteId, editor)
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
-    monaco.languages.setLanguageConfiguration('plaintext', {
-      // Allow any non-whitespace character to be part of a "word"
-      // This prevents the dictionary suggestions from taking over our autosuggest
-      wordPattern: /[^\s]+/g,
-    });
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
       //        need to intercept copy events coming from the editor
-      event.clipboardData.setData(
+      event.clipboardData?.setData(
         'text/plain',
         withCheckboxSyntax(event.clipboardData.getData('text/plain'))
       );
@@ -1121,6 +1118,8 @@ class NoteContentEditor extends Component<Props> {
       return;
     }
     const range = this.matchesInNote[index].range;
+
+    if (! range) { return; }
     this.editor.setSelection(range);
     this.editor.revealLineInCenter(range.startLineNumber);
 
@@ -1210,7 +1209,7 @@ class NoteContentEditor extends Component<Props> {
               matchBrackets: 'never',
               minimap: { enabled: false },
               multiCursorLimit: 1,
-              occurrencesHighlight: false,
+              occurrencesHighlight: 'off',
               overviewRulerBorder: false,
               quickSuggestions: false,
               renderLineHighlight: 'none',
