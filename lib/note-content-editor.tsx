@@ -642,12 +642,11 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
+    // remove some default keybindings
+    // @see https://github.com/microsoft/monaco-editor/issues/3623#issuecomment-1472578786
     const shortcutsToDisable = [
-      'cancelSelection', // escape; we need to allow this to bubble up to clear search
-      'cursorUndo', // meta+U
+      'editor.action.quickCommand', // command palette
       'editor.action.commentLine', // meta+/
-      'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
@@ -656,6 +655,7 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.insertCursorBelow', // alt+meta+DownArrow
       'editor.action.insertCursorAtEndOfEachLineSelected', // shift+alt+I
       // search shortcuts
+      'editor.action.changeAll',
       'actions.find',
       'actions.findWithSelection',
       'editor.action.addSelectionToNextFindMatch',
@@ -667,12 +667,12 @@ class NoteContentEditor extends Component<Props> {
     if (window.electron && isMac) {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
     }
+
     shortcutsToDisable.forEach(function (action) {
-      editor._standaloneKeybindingService.addDynamicKeybinding(
-        '-' + action,
-        undefined,
-        () => {}
-      );
+      monaco.editor.addKeybindingRule({
+        keybinding: 0,
+        command: '-' + action
+      })
     });
 
     // disable editor keybindings for Electron since it is handled by editorCommand
@@ -1222,8 +1222,9 @@ class NoteContentEditor extends Component<Props> {
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
               hideCursorInOverviewRuler: true,
-              lineDecorationsWidth: editorPadding,
               fontSize: 16,
+              guides: { indentation: false },
+              lineDecorationsWidth: editorPadding,
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
@@ -1232,7 +1233,6 @@ class NoteContentEditor extends Component<Props> {
               occurrencesHighlight: false,
               overviewRulerBorder: false,
               quickSuggestions: false,
-              guides: { indentation: false },
               renderLineHighlight: 'none',
               scrollbar: {
                 horizontal: 'hidden',
@@ -1244,8 +1244,8 @@ class NoteContentEditor extends Component<Props> {
               suggestOnTriggerCharacters: true,
               unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
-              wrappingStrategy: isSafari ? 'simple' : 'advanced',
               wordWrapColumn: 400,
+              wrappingStrategy: isSafari ? 'simple' : 'advanced',
             }}
             value={content}
           />
