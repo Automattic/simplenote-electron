@@ -14,7 +14,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 6. For all logging from Electron to be printed to the terminal (e.g. `console.log` statements within `app.js`), you might need to set `env ELECTRON_ENABLE_LOGGING=1`.
 7. Sign up for a new account within the app. Use the account for **testing purposes only** as all note data will be periodically cleared out on the server.
 
-_Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces._
+_Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces. You also need nodejs 12 max to get this app built._
 
 ## Building
 

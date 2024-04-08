@@ -38,3 +38,7 @@ const getAllPositions = (): notePositions => {
   }
   return currentSavedPositions;
 };
+
+export function isMarkdown(note: Note) {
+  throw new Error('Function not implemented.');
+}
