@@ -87,7 +87,7 @@ export const renderToNode = (
       if (codeElements.length) {
         return import(/* webpackChunkName: 'highlight' */ 'highlight.js')
           .then(({ default: highlight }) => {
-            codeElements.forEach(highlight.highlightBlock);
+            codeElements.forEach(highlight.highlightElement);
           })
           .catch();
       }
