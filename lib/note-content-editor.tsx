@@ -246,7 +246,7 @@ class NoteContentEditor extends Component<Props> {
     return {
       triggerCharacters: ['['],
 
-      provideCompletionItems(model, position, context, token) {
+      provideCompletionItems(model: Editor.ITextModel, position: Editor.Position, _context: Editor.CompletionContext, _token: Editor.CancellationToken) {
         const line = model.getLineContent(position.lineNumber);
         const precedingOpener = line.lastIndexOf('[', position.column);
         const precedingCloser = line.lastIndexOf(']', position.column);
@@ -877,7 +877,7 @@ class NoteContentEditor extends Component<Props> {
 
     editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
 
-    editor.onDidChangeCursorSelection((e) => {
+    editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangeEvent) => {
       if (
         e.reason === Editor.CursorChangeReason.Undo ||
         e.reason === Editor.CursorChangeReason.Redo
@@ -886,18 +886,18 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
-      const start = editor
+      const newStart = editor
         .getModel()
         ?.getOffsetAt(e.selection.getStartPosition());
-      const end = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
-      const direction =
+      const newEnd = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
+      const newDirection =
         e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
 
-      this.props.storeEditorSelection(this.props.noteId, start, end, direction);
+      this.props.storeEditorSelection(this.props.noteId, newStart, newEnd, newDirection);
     });
 
     // @TODO: Is this really slow and dumb?
-    editor.onMouseMove((e) => {
+    editor.onMouseMove((e: Editor.IEditorMouseEvent) => {
       const { content } = this.state;
       const {
         target: { range },
@@ -929,7 +929,7 @@ class NoteContentEditor extends Component<Props> {
       }
     });
 
-    editor.onMouseDown((event) => {
+    editor.onMouseDown((event: Editor.IEditorMouseEvent) => {
       const { editNote, noteId } = this.props;
       const { content } = this.state;
       const {
