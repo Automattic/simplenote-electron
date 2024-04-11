@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { mount, shallow } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
 
 import TagChip from './';
 
@@ -8,66 +8,74 @@ describe('TagChip', () => {
   it('should select tag when clicked', () => {
     const selectIt = jest.fn();
 
-    const chip = mount(<TagChip tagName="spline" onSelect={selectIt} />);
+    const { getByText } = render(
+      <TagChip tagName="spline" onSelect={selectIt} />
+    );
 
     expect(selectIt).not.toHaveBeenCalled();
-    chip.simulate('click');
+    fireEvent.click(getByText('spline'));
     expect(selectIt).toHaveBeenCalled();
   });
 
   describe('selected state', () => {
     it('should not include the `selected` class by default', () => {
-      const chip = shallow(<TagChip tagName="spline" />);
+      const { container } = render(<TagChip tagName="spline" />);
 
-      expect(chip.hasClass('selected')).toBe(false);
+      expect(container.firstChild.classList.contains('selected')).toBe(false);
     });
 
     it('should include the `selected` class when selected', () => {
-      const chip = shallow(<TagChip tagName="spline" selected />);
+      const { container } = render(<TagChip tagName="spline" selected />);
 
-      expect(chip.hasClass('selected')).toBe(true);
+      expect(container.firstChild.classList.contains('selected')).toBe(true);
     });
 
     it('should toggle the `selected` class with prop changes', () => {
-      const chip = shallow(<TagChip tagName="spline" />);
+      const { container, rerender } = render(<TagChip tagName="spline" />);
 
-      expect(chip.hasClass('selected')).toBe(false);
+      expect(container.firstChild.classList.contains('selected')).toBe(false);
 
-      chip.setProps({ selected: true });
+      rerender(<TagChip tagName="spline" selected />);
 
-      expect(chip.hasClass('selected')).toBe(true);
+      expect(container.firstChild.classList.contains('selected')).toBe(true);
 
-      chip.setProps({ selected: false });
+      rerender(<TagChip tagName="spline" />);
 
-      expect(chip.hasClass('selected')).toBe(false);
+      expect(container.firstChild.classList.contains('selected')).toBe(false);
     });
   });
 
   describe('interactive state', () => {
     it('should include the `interactive` class by default', () => {
-      const chip = shallow(<TagChip tagName="spline" />);
+      const { container } = render(<TagChip tagName="spline" />);
 
-      expect(chip.hasClass('interactive')).toBe(true);
+      expect(container.firstChild.classList.contains('interactive')).toBe(true);
     });
 
     it('should not include the `interactive` class when is not interactive', () => {
-      const chip = shallow(<TagChip tagName="spline" interactive={false} />);
+      const { container } = render(
+        <TagChip tagName="spline" interactive={false} />
+      );
 
-      expect(chip.hasClass('interactive')).toBe(false);
+      expect(container.firstChild.classList.contains('interactive')).toBe(
+        false
+      );
     });
 
     it('should toggle the `interactive` class with prop changes', () => {
-      const chip = shallow(<TagChip tagName="spline" />);
+      const { container, rerender } = render(<TagChip tagName="spline" />);
 
-      expect(chip.hasClass('interactive')).toBe(true);
+      expect(container.firstChild.classList.contains('interactive')).toBe(true);
 
-      chip.setProps({ interactive: false });
+      rerender(<TagChip tagName="spline" interactive={false} />);
 
-      expect(chip.hasClass('interactive')).toBe(false);
+      expect(container.firstChild.classList.contains('interactive')).toBe(
+        false
+      );
 
-      chip.setProps({ interactive: true });
+      rerender(<TagChip tagName="spline" interactive={true} />);
 
-      expect(chip.hasClass('interactive')).toBe(true);
+      expect(container.firstChild.classList.contains('interactive')).toBe(true);
     });
   });
 
