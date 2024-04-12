@@ -12,7 +12,8 @@ import {
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
-const monacoMenuItems = require('monaco-editor/esm/vs/platform/actions/common/actions').MenuRegistry._menuItems;
+const monacoMenuItems = require('monaco-editor/esm/vs/platform/actions/common/actions')._menuItems as Map<any, any>
+// const monacoMenuItems = require('monaco-editor/esm/vs/platform/actions/common/actions').MenuRegistry._menuItems;
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
@@ -195,27 +196,44 @@ class NoteContentEditor extends Component<Props> {
     this.toggleShortcuts(true);
 
     /* remove unwanted context menu items */
-    const contextMenuEntry = [...monacoMenuItems].find(
-      (entry) => entry[0]._debugName === 'EditorContext'
-    );
-    const contextMenuLinks = contextMenuEntry[1];
-    const removableIds = [
-      'editor.action.changeAll',
-      'editor.action.clipboardCutAction',
-      'editor.action.clipboardCopyAction',
-      'editor.action.clipboardPasteAction',
-      'editor.action.quickCommand',
-    ];
-    const removeById = (list, ids: Array<string>) => {
-      let node = list._first;
-      do {
-        const shouldRemove = ids.includes(node.element?.command?.id);
-        if (shouldRemove) {
-          list._remove(node);
-        }
-      } while ((node = node.next));
-    };
-    removeById(contextMenuLinks, removableIds);
+    // TODO none of this works in Monaco 0.34.1 and up.
+    // see https://github.com/microsoft/monaco-editor/issues/1567
+    // const contextMenuEntry = [...monacoMenuItems].find(
+    //   (entry) => entry[0]._debugName === 'EditorContext'
+    // );
+    // const contextMenuEntry = Array.from(monacoMenuItems, ([key, value]) => ({key, value})).find(entry => entry.key.id === 'EditorContext')
+
+    // const removableIds = [
+    //   'editor.action.changeAll',
+    //   'editor.action.clipboardCutAction',
+    //   'editor.action.clipboardCopyAction',
+    //   'editor.action.clipboardPasteAction',
+    //   'editor.action.quickCommand',
+    // ];
+    // let removableIds = ["editor.action.clipboardCopyAction", "editor.action.clipboardPasteAction"]
+    // const removeById = (list, ids: Array<string>) => {
+    //   let node = list._first
+    //   do {
+    //     const shouldRemove = ids.includes(node.element?.command?.id)
+    //     if (shouldRemove) {
+    //       list._remove(node)
+    //     }
+    //   } while ((node = node.next))
+    // }
+    // removeById(contextMenuEntry.value, removableIds)
+
+
+    //   const contextMenuLinks = contextMenuEntry[1];
+    //   const removeById = (list, ids: Array<string>) => {
+    //     let node = list._first;
+    //     do {
+    //       const shouldRemove = ids.includes(node.element?.command?.id);
+    //       if (shouldRemove) {
+    //         list._remove(node);
+    //       }
+    //     } while ((node = node.next));
+    //   };
+    //   removeById(contextMenuLinks, removableIds);
   }
 
   componentWillUnmount() {
@@ -710,33 +728,36 @@ class NoteContentEditor extends Component<Props> {
     });
 
     // add a new Cut and Copy that show keyboard shortcuts
-    editor.addAction({
-      id: 'context_cut',
-      label: 'Cut',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX],
-      keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 1,
-      run: () => {
-        editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
-      },
-    });
-    editor.addAction({
-      id: 'context_copy',
-      label: 'Copy',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC],
-      keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 2,
-      run: () => {
-        editor.trigger(
-          'contextMenu',
-          'editor.action.clipboardCopyAction',
-          null
-        );
-      },
-    });
+    // Cut and Copy don't show keybindings
+    // @see https://github.com/microsoft/monaco-editor/issues/2882
+    // editor.addAction({
+    //   id: 'context_cut',
+    //   label: 'Cut',
+    //   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX],
+    //   keybindingContext: 'allowBrowserKeybinding',
+    //   contextMenuGroupId: '9_cutcopypaste',
+    //   contextMenuOrder: 1,
+    //   run: () => {
+    //     editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
+    //   },
+    // });
+    // editor.addAction({
+    //   id: 'context_copy',
+    //   label: 'Copy',
+    //   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC],
+    //   keybindingContext: 'allowBrowserKeybinding',
+    //   contextMenuGroupId: '9_cutcopypaste',
+    //   contextMenuOrder: 2,
+    //   run: () => {
+    //     editor.trigger(
+    //       'contextMenu',
+    //       'editor.action.clipboardCopyAction',
+    //       null
+    //     );
+    //   },
+    // });
 
+    // cancel selection that bubbles up to clear any search terms
     editor.addAction({
       id: 'cancel_selection',
       label: 'Cancel Selection',
@@ -746,19 +767,19 @@ class NoteContentEditor extends Component<Props> {
     });
 
     /* paste doesn't work in the browser due to security issues */
-    if (window.electron) {
-      editor.addAction({
-        id: 'paste',
-        label: 'Paste',
-        contextMenuGroupId: '9_cutcopypaste',
-        contextMenuOrder: 3,
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
-        keybindingContext: 'allowBrowserKeybinding',
-        run: () => {
-          document.execCommand('paste');
-        },
-      });
-    }
+    // if (window.electron) {
+    //   editor.addAction({
+    //     id: 'paste',
+    //     label: 'Paste',
+    //     contextMenuGroupId: '9_cutcopypaste',
+    //     contextMenuOrder: 3,
+    //     keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
+    //     keybindingContext: 'allowBrowserKeybinding',
+    //     run: () => {
+    //       document.execCommand('paste');
+    //     },
+    //   });
+    // }
 
     editor.addAction({
       id: 'select_all',
