@@ -54,7 +54,7 @@ references:
       command: |
         source $HOME/.nvm/nvm.sh
         nvm use
-        npm ci --force
+        npm install --force
   npm_restore_cache: &npm_restore_cache
     restore_cache:
       name: Restore npm cache
