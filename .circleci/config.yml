@@ -8,7 +8,7 @@ references:
     run:
       name: Decrypt assets
       command: |
-        openssl aes-256-cbc -md md5 -d -in ./resources/certificates/win.p12.enc -out ./resources/certificates/win.p12 -k ${SECRECTS_ENCRYPTION_KEY_2024}
+        openssl aes-256-cbc -md md5 -d -in ./resources/certificates/win.p12.enc -out ./resources/certificates/win.p12 -k ${SECRETS_ENCRYPTION_KEY_2024}
         openssl aes-256-cbc -md md5 -d -in ./resources/certificates/mac.p12.enc -out ./resources/certificates/mac.p12 -k ${SECRETS_ENCRYPTION_KEY}
         openssl aes-256-cbc -md md5 -d -in ./resources/secrets/config.json.enc -out ./config.json -k ${SECRETS_ENCRYPTION_KEY}
   job_filters: &job_filters
