@@ -5,4 +5,23 @@
   user-select: text;
   padding-top: 40px;
   background-color: var(--background-color);
+
+  // Hack: this hides the "Command Pallette" menu item
+  .monaco-menu .monaco-action-bar .actions-container li:last-of-type {
+    display: none;
+  }
+
+  // Monaco overrides, accessible through `useShadowDOM:false` setting
+  .monaco-menu-container {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+
+    .monaco-menu {
+      background-color: #3c3c3c;
+      color: #fff;
+
+      li:hover:not(.disabled) {
+        background-color: var(--tertiary-accent-color);
+      }
+    }
+  }
 }
