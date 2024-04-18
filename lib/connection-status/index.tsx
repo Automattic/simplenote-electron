@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import ConnectionIcon from '../icons/connection';
 import NoConnectionIcon from '../icons/no-connection';
 

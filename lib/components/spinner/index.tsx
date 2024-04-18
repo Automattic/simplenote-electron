@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { CircularProgress, CircularProgressProps } from '@material-ui/core';
+import { CircularProgress, CircularProgressProps } from '@mui/material';
 import classnames from 'classnames';
 
 const Spinner = ({

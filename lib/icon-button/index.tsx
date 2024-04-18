@@ -1,5 +1,5 @@
 import React, { ElementType } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 
 type OwnProps = {
   disableTooltip: boolean;

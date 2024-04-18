@@ -111,7 +111,10 @@
   },
   "dependencies": {
     "@automattic/color-studio": "2.6.0",
-    "@material-ui/core": "4.11.2",
+    "@emotion/react": "11.11.4",
+    "@emotion/styled": "11.11.5",
+    "@mui/material": "5.15.15",
+    "@mui/styles": "5.15.15",
     "@sentry/react": "7.110.1",
     "clipboard": "2.0.11",
     "cookie": "0.6.0",
