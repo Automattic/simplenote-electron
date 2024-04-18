@@ -73,7 +73,7 @@
     "target": [
       {
         "target": "rpm",
-        "arch": ["x64", "armv7l"]
+        "arch": ["x64"]
       }
     ],
     "synopsis": "The simplest way to keep notes",
