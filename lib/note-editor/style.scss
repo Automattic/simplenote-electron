@@ -6,7 +6,7 @@
   padding-top: 40px;
   background-color: var(--background-color);
 
-  // Hack: this hides the "Command Pallette" menu item
+  // Hack: this hides the "Command Palette" menu item
   .monaco-menu .monaco-action-bar .actions-container li:last-of-type {
     display: none;
   }
