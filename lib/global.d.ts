@@ -1,11 +1,13 @@
 import { TKQItem, TracksAPI } from './analytics/types';
+import { compose } from 'redux';
 
-import * as S from '../../state';
+import * as S from './state';
 
 declare global {
   const __TEST__: boolean;
 
   interface Window {
+    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
     analyticsEnabled: boolean;
     electron: {
       confirmLogout(changes: string): 'logout' | 'reconsider' | 'export';

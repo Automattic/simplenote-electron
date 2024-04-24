@@ -7,7 +7,9 @@ import Monaco, {
 } from 'react-monaco-editor';
 import {
   editor as Editor,
+  CancellationToken,
   languages,
+  Position,
   Range,
   Selection,
   SelectionDirection,
@@ -130,7 +132,7 @@ class NoteContentEditor extends Component<Props> {
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
   decorations: string[] = [];
-  matchesInNote: [] = [];
+  matchesInNote: Editor.FindMatch[] = [];
   overviewRuler = {
     color: '#3361cc',
     position: Editor.OverviewRulerLane.Full,
@@ -264,7 +266,7 @@ class NoteContentEditor extends Component<Props> {
     return {
       triggerCharacters: ['['],
 
-      provideCompletionItems(model: Editor.ITextModel, position: Editor.Position, _context: Editor.CompletionContext, _token: Editor.CancellationToken) {
+      provideCompletionItems(model: Editor.ITextModel, position: Position, _context: languages.CompletionContext, _token: CancellationToken) {
         const line = model.getLineContent(position.lineNumber);
         const precedingOpener = line.lastIndexOf('[', position.column);
         const precedingCloser = line.lastIndexOf(']', position.column);
@@ -898,7 +900,7 @@ class NoteContentEditor extends Component<Props> {
 
     editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
 
-    editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangeEvent) => {
+    editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangedEvent) => {
       if (
         e.reason === Editor.CursorChangeReason.Undo ||
         e.reason === Editor.CursorChangeReason.Redo
@@ -1141,8 +1143,8 @@ class NoteContentEditor extends Component<Props> {
     const range = this.matchesInNote[index].range;
 
     if (! range) { return; }
-    this.editor.setSelection(range);
-    this.editor.revealLineInCenter(range.startLineNumber);
+    this.editor?.setSelection(range);
+    this.editor?.revealLineInCenter(range.startLineNumber);
 
     const newDecorations = [];
     this.matchesInNote.forEach((match) => {
@@ -1167,7 +1169,7 @@ class NoteContentEditor extends Component<Props> {
       newDecorations.push(decoration);
     });
 
-    this.editor.changeDecorations((changeAccessor) => {
+    this.editor?.changeDecorations((changeAccessor) => {
       this.decorations = changeAccessor.deltaDecorations(
         this.decorations,
         newDecorations
@@ -1230,6 +1232,7 @@ class NoteContentEditor extends Component<Props> {
               matchBrackets: 'never',
               minimap: { enabled: false },
               multiCursorLimit: 1,
+              // @ts-ignore, type out-of-date @see https://github.com/microsoft/monaco-editor/blob/707338797bebe978449ded37c419c5daf5ad63ec/CHANGELOG.md?plain=1#L33
               occurrencesHighlight: 'off',
               overviewRulerBorder: false,
               quickSuggestions: false,
