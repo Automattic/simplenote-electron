@@ -8,7 +8,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
 2. `cd simplenote-electron`
-3. `npm install`
+3. `npm install --legacy-peer-deps` (This flag is necessary because `react-monaco-editor` is pinned to a specific `monaco-editor` dependency, but `npm` [considers minor versions to be breaking changes for sub-1.0.0 apps](https://stackoverflow.com/questions/62629878/why-doesnt-npm-upgrade-install-my-0-0-1-dep-with-a-dependency-on-0-0-0))
 4. `npm run dev`
 5. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
 6. For all logging from Electron to be printed to the terminal (e.g. `console.log` statements within `app.js`), you might need to set `env ELECTRON_ENABLE_LOGGING=1`.
