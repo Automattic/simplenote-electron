@@ -1246,6 +1246,10 @@ class NoteContentEditor extends Component<Props> {
               selectionHighlight: false,
               suggestOnTriggerCharacters: true,
               unusualLineTerminators: 'auto',
+              unicodeHighlight: {
+                ambiguousCharacters: false,
+                invisibleCharacters: false,
+              },
               wordWrap: 'bounded',
               wordWrapColumn: 400,
               wrappingStrategy: isSafari ? 'simple' : 'advanced',
