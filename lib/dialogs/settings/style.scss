@@ -84,3 +84,17 @@
     }
   }
 }
+
+.collab_notice {
+  color: var(--primary-button-fg-color);
+  background-color: var(--primary-branding-color);
+  text-align: center;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.collab_notice a {
+  color: var(--primary-button-fg-color);
+  text-decoration: none;
+}
