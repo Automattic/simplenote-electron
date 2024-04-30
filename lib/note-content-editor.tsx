@@ -9,6 +9,7 @@ import {
   editor as Editor,
   CancellationToken,
   languages,
+  IRange,
   Position,
   Range,
   Selection,
@@ -37,6 +38,20 @@ import * as S from './state';
 import * as T from './types';
 
 const SPEED_DELAY = 120;
+
+const overviewRuler = {
+  color: '#3361cc',
+  position: Editor.OverviewRulerLane.Full
+};
+
+const selectedSearchDecoration = (range: IRange) => ({
+  range: range,
+  options: {
+    inlineClassName: 'selected-search',
+    zIndex: 10,
+    overviewRuler: overviewRuler,
+  },
+});
 
 const titleDecorationForLine = (line: number) => ({
   range: new Range(line, 1, line, 1),
@@ -131,12 +146,9 @@ class NoteContentEditor extends Component<Props> {
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
-  decorations: string[] = [];
-  matchesInNote: Editor.FindMatch[] = [];
-  overviewRuler = {
-    color: '#3361cc',
-    position: Editor.OverviewRulerLane.Full,
-  };
+  decorations: Editor.IEditorDecorationsCollection | undefined;
+  matchesInNote: Editor.IModelDeltaDecoration[] = [];
+  selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
 
   state: OwnState = {
     content: '',
@@ -423,16 +435,28 @@ class NoteContentEditor extends Component<Props> {
   }
 
   setDecorators = () => {
+    // special styling for title (first line)
+    const titleDecoration = this.getTitleDecoration() ?? [];
+    this.editor?.createDecorationsCollection([titleDecoration]);
+
+    // search highlights
     this.matchesInNote = this.searchMatches() ?? [];
     this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
-    const titleDecoration = this.getTitleDecoration() ?? [];
 
-    this.editor.changeDecorations((changeAccessor) => {
-      this.decorations = changeAccessor.deltaDecorations(this.decorations, [
-        ...this.matchesInNote,
-        ...titleDecoration,
-      ]);
-    });
+    this.decorations?.clear();
+    if(this.matchesInNote.length === 0) { return; }
+    this.decorations = this.editor?.createDecorationsCollection(this.matchesInNote);
+
+    // selected search highlight
+    this.selectedDecoration?.clear();
+    const range = this.editor?.getSelection();
+    if(range) {
+      this.matchesInNote.forEach((match) => {
+        if (match.range === range) {
+          this.editor?.createDecorationsCollection([selectedSearchDecoration(range)]);
+        }
+      });
+    }
   };
 
   getTitleDecoration = () => {
@@ -444,7 +468,7 @@ class NoteContentEditor extends Component<Props> {
     for (let i = 1; i <= model.getLineCount(); i++) {
       const line = model.getLineContent(i);
       if (line.trim().length > 0) {
-        return [titleDecorationForLine(i)];
+        return titleDecorationForLine(i);
       }
     }
     return;
@@ -463,42 +487,21 @@ class NoteContentEditor extends Component<Props> {
       return [];
     }
 
-    const content = model.getValue().normalize().toLowerCase();
-
     const highlights = terms.reduce(
-      (matches: monaco.languages.DocumentHighlight, term) => {
-        let termAt = null;
-        let startAt = 0;
-
-        while (termAt !== -1) {
-          termAt = content.indexOf(term, startAt);
-          if (termAt === -1) {
-            break;
-          }
-
-          startAt = termAt + term.length;
-
-          const start = model.getPositionAt(termAt);
-          const end = model.getPositionAt(termAt + term.length);
-
-          matches.push({
-            options: {
-              inlineClassName: 'search-decoration',
-              overviewRuler: this.overviewRuler,
-            },
-            range: {
-              startLineNumber: start.lineNumber,
-              startColumn: start.column,
-              endLineNumber: end.lineNumber,
-              endColumn: end.column,
-            },
-          });
-        }
-
+      (matches: Editor.IModelDeltaDecoration[], term) => {
+          const findMatches = model?.findMatches(term, true, false, false, null, false);
+          findMatches?.forEach(match => {
+            matches.push({
+              options: {
+                inlineClassName: 'search-decoration',
+                overviewRuler: overviewRuler,
+              },
+              range: match.range
+            });
+          })
         return matches;
       },
-      []
-    );
+    []);
     return highlights;
   };
 
@@ -1137,7 +1140,8 @@ class NoteContentEditor extends Component<Props> {
   };
 
   setSearchSelection = (index: number) => {
-    if (!this.matchesInNote.length || index === null) {
+    this.selectedDecoration?.clear();
+    if (!this.matchesInNote.length || index === null || isNaN(index)) {
       return;
     }
     const range = this.matchesInNote[index].range;
@@ -1146,41 +1150,18 @@ class NoteContentEditor extends Component<Props> {
     this.editor?.setSelection(range);
     this.editor?.revealLineInCenter(range.startLineNumber);
 
-    const newDecorations = [];
+    // Add a selected-search decoration on top of the existing decorations
     this.matchesInNote.forEach((match) => {
-      let decoration = {};
-      if (match.range === range) {
-        decoration = {
-          range: match.range,
-          options: {
-            inlineClassName: 'selected-search',
-            overviewRuler: this.overviewRuler,
-          },
-        };
-      } else {
-        decoration = {
-          range: match.range,
-          options: {
-            inlineClassName: 'search-decoration',
-            overviewRuler: this.overviewRuler,
-          },
-        };
+      if(match.range === range) {
+        const selectedDecoration = selectedSearchDecoration(range);
+        this.selectedDecoration = this.editor?.createDecorationsCollection([selectedDecoration]);
       }
-      newDecorations.push(decoration);
     });
-
-    this.editor?.changeDecorations((changeAccessor) => {
-      this.decorations = changeAccessor.deltaDecorations(
-        this.decorations,
-        newDecorations
-      );
-    });
-  };
+ };
 
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo } = this.state;
-    const searchMatches = searchQuery ? this.searchMatches() : [];
 
     const editorPadding = getEditorPadding(
       lineLength,
@@ -1232,7 +1213,6 @@ class NoteContentEditor extends Component<Props> {
               matchBrackets: 'never',
               minimap: { enabled: false },
               multiCursorLimit: 1,
-              // @ts-ignore, type out-of-date @see https://github.com/microsoft/monaco-editor/blob/707338797bebe978449ded37c419c5daf5ad63ec/CHANGELOG.md?plain=1#L33
               occurrencesHighlight: 'off',
               overviewRulerBorder: false,
               quickSuggestions: false,
@@ -1245,11 +1225,11 @@ class NoteContentEditor extends Component<Props> {
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               suggestOnTriggerCharacters: true,
-              unusualLineTerminators: 'auto',
               unicodeHighlight: {
                 ambiguousCharacters: false,
                 invisibleCharacters: false,
               },
+              unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
               wordWrapColumn: 400,
               wrappingStrategy: isSafari ? 'simple' : 'advanced',
