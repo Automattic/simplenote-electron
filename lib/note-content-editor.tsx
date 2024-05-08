@@ -394,8 +394,8 @@ class NoteContentEditor extends Component<Props> {
 
   setDecorators = () => {
     // special styling for title (first line)
-    const titleDecoration = this.getTitleDecoration() ?? [];
-    this.editor?.createDecorationsCollection([titleDecoration]);
+    const titleDecoration = this.getTitleDecoration();
+    titleDecoration && this.editor?.createDecorationsCollection([titleDecoration]);
 
     // search highlights
     this.matchesInNote = this.searchMatches() ?? [];
@@ -873,17 +873,17 @@ class NoteContentEditor extends Component<Props> {
     const start = this.editor.getModel()?.getPositionAt(startOffset);
     const end = this.editor.getModel()?.getPositionAt(endOffset);
 
-    this.editor.setSelection(
+    start && end && this.editor.setSelection(
       Selection.createWithDirection(
-        start?.lineNumber,
-        start?.column,
-        end?.lineNumber,
-        end?.column,
+        start.lineNumber,
+        start.column,
+        end.lineNumber,
+        end.column,
         direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
       )
     );
 
-    editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
+    start && editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
 
     editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangedEvent) => {
       if (
@@ -901,7 +901,7 @@ class NoteContentEditor extends Component<Props> {
       const newDirection =
         e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
 
-      this.props.storeEditorSelection(this.props.noteId, newStart, newEnd, newDirection);
+      newStart && newEnd && this.props.storeEditorSelection(this.props.noteId, newStart, newEnd, newDirection);
     });
 
     // @TODO: Is this really slow and dumb?
@@ -1011,14 +1011,14 @@ class NoteContentEditor extends Component<Props> {
       }
 
       const model = this.editor.getModel();
-      const prevLine = model.getLineContent(lineNumber);
+      const prevLine = model?.getLineContent(lineNumber) || '';
 
       const prevList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
       if (null === prevList) {
         return;
       }
 
-      const thisLine = model.getLineContent(lineNumber + 1);
+      const thisLine = model?.getLineContent(lineNumber + 1) || '';
       if (!/^\s*$/.test(thisLine)) {
         return;
       }
@@ -1029,12 +1029,12 @@ class NoteContentEditor extends Component<Props> {
       const isLonelyBullet =
         thisLine.trim().length === 0 && prevLine.length === prevList[0].length;
       if (isLonelyBullet) {
-        const prevLineStart = model.getOffsetAt({
+        const prevLineStart = model?.getOffsetAt({
           column: 0,
           lineNumber: lineNumber,
         });
 
-        const thisLineStart = model.getOffsetAt({
+        const thisLineStart = model?.getOffsetAt({
           column: 0,
           lineNumber: lineNumber + 1,
         });
@@ -1049,8 +1049,8 @@ class NoteContentEditor extends Component<Props> {
         const op = { identifier, range, text: null, forceMoveMarkers: true };
 
         Promise.resolve().then(() => {
-          this.editor.executeEdits('autolist', [op]);
-          this.editor.setPosition({
+          this.editor?.executeEdits('autolist', [op]);
+          this.editor?.setPosition({
             column: 0,
             lineNumber: lineNumber,
           });
@@ -1059,12 +1059,12 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
-      const lineStart = model.getOffsetAt({
+      const lineStart = model?.getOffsetAt({
         column: 0,
         lineNumber: lineNumber + 1,
       });
 
-      const nextStart = model.getOffsetAt({
+      const nextStart = model?.getOffsetAt({
         column: 0,
         lineNumber: lineNumber + 2,
       });
@@ -1084,7 +1084,7 @@ class NoteContentEditor extends Component<Props> {
       // the cursor position when executed immediately
       // so we are running it on the next micro-task
       Promise.resolve().then(() =>
-        this.editor.setPosition({
+        this.editor?.setPosition({
           column: prevList[0].length + 1,
           lineNumber: lineNumber + 1,
         })
@@ -1121,7 +1121,7 @@ class NoteContentEditor extends Component<Props> {
     this.focusEditor();
   };
 
-  setSearchSelection = (index: number) => {
+  setSearchSelection = (index: number | null) => {
     this.selectedDecoration?.clear();
     if (!this.matchesInNote.length || index === null || isNaN(index)) {
       return;
