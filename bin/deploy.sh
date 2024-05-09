@@ -36,7 +36,7 @@ case $1 in
 esac
 
 # Install Node Modules
-npm install
+npm install --legacy-peer-deps
 
 # Temporarily move config-local so it doesn't get overwritten
 mv config-local.json config-local.original.json
