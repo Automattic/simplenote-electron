@@ -13,6 +13,6 @@
   },
   "dependencies": {
     "@automattic/vip-go": "0.3.3",
-    "express": "4.17.1"
+    "express": "4.19.2"
   }
 }
