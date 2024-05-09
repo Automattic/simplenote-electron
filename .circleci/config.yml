@@ -54,7 +54,7 @@ references:
       command: |
         source $HOME/.nvm/nvm.sh
         nvm use
-        npm install --force
+        npm install --legacy-peer-deps
   npm_restore_cache: &npm_restore_cache
     restore_cache:
       name: Restore npm cache
@@ -200,7 +200,7 @@ jobs:
       - run:
           name: Npm install
           command: |
-            npm install --force
+            npm install --legacy-peer-deps
       - run:
           name: Build windows
           command: |
@@ -244,7 +244,7 @@ jobs:
       - run:
           name: Npm install
           command: |
-            npm install --force
+            npm install --legacy-peer-deps
       - run:
           name: Build windows
           command: |
