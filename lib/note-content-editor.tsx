@@ -1231,7 +1231,7 @@ class NoteContentEditor extends Component<Props> {
               hideCursorInOverviewRuler: true,
               fontSize: 16,
               guides: { indentation: false },
-              lineDecorationsWidth: editorPadding,
+              lineDecorationsWidth: editorPadding, /* hack for left padding */
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
@@ -1240,15 +1240,19 @@ class NoteContentEditor extends Component<Props> {
               multiCursorLimit: 1,
               occurrencesHighlight: 'off',
               overviewRulerBorder: false,
+              padding: { 'top': 40, 'bottom': 0 },
               quickSuggestions: false,
+              renderControlCharacters: false,
               renderLineHighlight: 'none',
+              renderWhitespace: 'none',
               scrollbar: {
                 horizontal: 'hidden',
                 useShadows: false,
-                verticalScrollbarSize: editorPadding,
+                verticalScrollbarSize: editorPadding, /* hack for right padding */
               },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
+              showFoldingControls: 'never',
               suggestOnTriggerCharacters: true,
               unicodeHighlight: {
                 ambiguousCharacters: false,
