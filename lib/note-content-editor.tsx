@@ -977,6 +977,10 @@ class NoteContentEditor extends Component<Props> {
     });
 
     editor.onMouseDown((event: Editor.IEditorMouseEvent) => {
+      if((event.event.ctrlKey && event.event.leftButton) || event.event.rightButton) {
+        // ignore right clicks and OSX trackpad right clicks (ctrl+click)
+        return;
+      }
       const { editNote, noteId } = this.props;
       const { content } = this.state;
       const {
@@ -1199,7 +1203,20 @@ class NoteContentEditor extends Component<Props> {
         className={`note-content-editor-shell${
           overTodo ? ' cursor-pointer' : ''
         }`}
-        onClick={this.focusEditor}
+        onClick={(e: React.MouseEvent) => {
+          // click was on the editor body, let the editor handle it
+          const target = e.target as HTMLDivElement;
+          if(target.classList.contains('view-line') || target.classList.contains('view-lines')) {
+            return;
+          }
+
+          // it was a fake (trackpad) right click, ignore it
+          if(e.ctrlKey) {
+            // TODO it would be nice if we could trigger the context menu from the left gutter :/
+            return;
+         }
+          this.focusEditor();
+        }}
       >
         <div
           className={`note-content-plaintext${
