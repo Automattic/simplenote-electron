@@ -1214,7 +1214,7 @@ class NoteContentEditor extends Component<Props> {
               unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
               wordWrapColumn: 400,
-              wrappingStrategy: isSafari ? 'simple' : 'advanced',
+              wrappingStrategy: 'advanced',
             }}
             value={content}
           />
