@@ -15,16 +15,17 @@ import * as selectors from '../state/selectors';
 import * as S from '../state';
 import * as T from '../types';
 
-const NoteList = React.lazy(() =>
-  import(/* webpackChunkName: 'note-list' */ '../note-list')
+const NoteList = React.lazy(
+  () => import(/* webpackChunkName: 'note-list' */ '../note-list')
 );
 
-const NoteEditor = React.lazy(() =>
-  import(/* webpackChunkName: 'note-editor' */ '../note-editor')
+const NoteEditor = React.lazy(
+  () => import(/* webpackChunkName: 'note-editor' */ '../note-editor')
 );
 
-const NotePreview = React.lazy(() =>
-  import(/* webpackChunkName: 'note-preview' */ '../components/note-preview')
+const NotePreview = React.lazy(
+  () =>
+    import(/* webpackChunkName: 'note-preview' */ '../components/note-preview')
 );
 
 type StateProps = {

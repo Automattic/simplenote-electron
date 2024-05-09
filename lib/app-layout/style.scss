@@ -8,7 +8,9 @@
       overflow: hidden;
       opacity: $fade-alpha;
       width: 0;
-      transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
+      transition:
+        width 0.2s ease-in-out,
+        opacity 0.2s ease-in-out;
     }
     .app-layout__note-column {
       border-left-width: 0;

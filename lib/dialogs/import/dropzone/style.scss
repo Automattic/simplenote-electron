@@ -6,7 +6,9 @@
   align-items: center;
   padding: 16px;
   border: 2px dashed var(--disabled-text-color);
-  transition: padding 0.2s ease-out, background 0.2s ease-out;
+  transition:
+    padding 0.2s ease-out,
+    background 0.2s ease-out;
   text-align: center;
   color: var(--foreground-color);
   background-color: transparent;

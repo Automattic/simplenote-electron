@@ -23,9 +23,9 @@ export class PreferencesBucket implements BucketStore<T.Preferences> {
   find(query: {}, callback: EntitiesCallback<BucketObject<T.Preferences>>) {
     callback(
       null,
-      [
-        ...this.store.getState().data.preferences.entries(),
-      ].map(([id, data]) => ({ id, data }))
+      [...this.store.getState().data.preferences.entries()].map(
+        ([id, data]) => ({ id, data })
+      )
     );
   }
 

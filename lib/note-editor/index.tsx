@@ -114,13 +114,8 @@ export class NoteEditor extends Component<Props> {
   };
 
   render() {
-    const {
-      editMode,
-      hasSearchQuery,
-      hasSearchMatchesInNote,
-      note,
-      noteId,
-    } = this.props;
+    const { editMode, hasSearchQuery, hasSearchMatchesInNote, note, noteId } =
+      this.props;
 
     if (!note) {
       return (

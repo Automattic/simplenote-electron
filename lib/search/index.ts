@@ -81,24 +81,24 @@ export const middleware: S.Middleware = (store) => {
   type Comparator<U> = (a: U, b: U) => number;
 
   const indexNote = (noteId: T.EntityId): void => {
-    const compareWith = (
-      compare: Comparator<SearchNote>
-    ): Comparator<T.EntityId> => (a: T.EntityId, b: T.EntityId) => {
-      const noteA = searchState.notes.get(a);
-      const noteB = searchState.notes.get(b);
+    const compareWith =
+      (compare: Comparator<SearchNote>): Comparator<T.EntityId> =>
+      (a: T.EntityId, b: T.EntityId) => {
+        const noteA = searchState.notes.get(a);
+        const noteB = searchState.notes.get(b);
 
-      if (!noteA || !noteB) {
-        return a.localeCompare(b);
-      }
+        if (!noteA || !noteB) {
+          return a.localeCompare(b);
+        }
 
-      if (noteA.isPinned !== noteB.isPinned) {
-        return noteA.isPinned ? -1 : 1;
-      }
+        if (noteA.isPinned !== noteB.isPinned) {
+          return noteA.isPinned ? -1 : 1;
+        }
 
-      const comparison = compare(noteA, noteB);
+        const comparison = compare(noteA, noteB);
 
-      return comparison !== 0 ? comparison : a.localeCompare(b);
-    };
+        return comparison !== 0 ? comparison : a.localeCompare(b);
+      };
 
     const alphabetical = compareWith((a, b) =>
       a.casedContent.localeCompare(b.casedContent)
@@ -133,31 +133,33 @@ export const middleware: S.Middleware = (store) => {
       return midPoint;
     };
 
-    ([
-      [indexAlphabetical, alphabetical],
-      [indexCreationDate, creationDate],
-      [indexModification, modification],
-    ] as [T.EntityId[], Comparator<T.EntityId>][]).forEach(
-      ([index, compare]) => {
-        const existingAt = index.indexOf(noteId);
+    (
+      [
+        [indexAlphabetical, alphabetical],
+        [indexCreationDate, creationDate],
+        [indexModification, modification],
+      ] as [T.EntityId[], Comparator<T.EntityId>][]
+    ).forEach(([index, compare]) => {
+      const existingAt = index.indexOf(noteId);
 
-        // remove existing entry
-        if (existingAt > -1) {
-          index.splice(existingAt, 1);
-        }
-
-        const nextAt = findSpot(index, noteId, compare, 0, index.length);
-        index.splice(nextAt, 0, noteId);
+      // remove existing entry
+      if (existingAt > -1) {
+        index.splice(existingAt, 1);
       }
-    );
+
+      const nextAt = findSpot(index, noteId, compare, 0, index.length);
+      index.splice(nextAt, 0, noteId);
+    });
   };
 
   const removeNoteFromIndex = (noteId: T.EntityId) => {
-    ([
-      indexAlphabetical,
-      indexCreationDate,
-      indexModification,
-    ] as T.EntityId[][]).forEach((index) => {
+    (
+      [
+        indexAlphabetical,
+        indexCreationDate,
+        indexModification,
+      ] as T.EntityId[][]
+    ).forEach((index) => {
       const at = index.indexOf(noteId);
       if (at > -1) {
         index.splice(at, 1);
@@ -194,8 +196,8 @@ export const middleware: S.Middleware = (store) => {
       sortType === 'alphabetical'
         ? indexAlphabetical
         : sortType === 'creationDate'
-        ? indexCreationDate
-        : indexModification;
+          ? indexCreationDate
+          : indexModification;
 
     for (
       let i = 0;

@@ -259,16 +259,20 @@ function buildTracks() {
     const sx =
       window.pageXOffset !== undefined
         ? window.pageXOffset
-        : ((document.documentElement ||
-            document.body.parentNode ||
-            document.body) as HTMLElement).scrollLeft;
+        : (
+            (document.documentElement ||
+              document.body.parentNode ||
+              document.body) as HTMLElement
+          ).scrollLeft;
 
     const sy =
       window.pageYOffset !== undefined
         ? window.pageYOffset
-        : ((document.documentElement ||
-            document.body.parentNode ||
-            document.body) as HTMLElement).scrollTop;
+        : (
+            (document.documentElement ||
+              document.body.parentNode ||
+              document.body) as HTMLElement
+          ).scrollTop;
 
     query._sx = sx !== undefined ? sx : 0;
     query._sy = sy !== undefined ? sy : 0;

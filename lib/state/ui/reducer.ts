@@ -11,10 +11,9 @@ import type * as T from '../../types';
 
 const emptyList: unknown[] = [];
 
-const editorSelection: A.Reducer<Map<
-  T.EntityId,
-  [number, number, 'RTL' | 'LTR']
->> = (state = new Map(), action) => {
+const editorSelection: A.Reducer<
+  Map<T.EntityId, [number, number, 'RTL' | 'LTR']>
+> = (state = new Map(), action) => {
   switch (action.type) {
     case 'REMOTE_NOTE_UPDATE': {
       if (

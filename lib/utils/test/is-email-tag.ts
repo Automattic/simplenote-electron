@@ -28,12 +28,9 @@ describe('Utils', () => {
     });
 
     it('should not match when no domain is present', () => {
-      [
-        'test@',
-        'test@host',
-        'test.com@host.',
-        'test@host.test.',
-      ].forEach((tag) => expect(tag).not.toBeAnEmail());
+      ['test@', 'test@host', 'test.com@host.', 'test@host.test.'].forEach(
+        (tag) => expect(tag).not.toBeAnEmail()
+      );
     });
 
     it('should require at least a two-letter TLD', () => {

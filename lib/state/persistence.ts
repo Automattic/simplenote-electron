@@ -195,23 +195,25 @@ export const saveState = (state: S.State) => {
   });
 };
 
-export const middleware: S.Middleware = ({ dispatch, getState }) => (next) => {
-  let worker: ReturnType<typeof setTimeout> | null = null;
+export const middleware: S.Middleware =
+  ({ dispatch, getState }) =>
+  (next) => {
+    let worker: ReturnType<typeof setTimeout> | null = null;
 
-  return (action: A.ActionType) => {
-    const result = next(action);
+    return (action: A.ActionType) => {
+      const result = next(action);
 
-    if (worker) {
-      clearTimeout(worker);
-    }
-    if (keepSyncing) {
-      worker = setTimeout(() => keepSyncing && saveState(getState()), 1000);
-    }
+      if (worker) {
+        clearTimeout(worker);
+      }
+      if (keepSyncing) {
+        worker = setTimeout(() => keepSyncing && saveState(getState()), 1000);
+      }
 
-    if (action.type === 'LOAD_REVISIONS' && action.revisions.length > 0) {
-      persistRevisions(action.noteId, action.revisions);
-    }
+      if (action.type === 'LOAD_REVISIONS' && action.revisions.length > 0) {
+        persistRevisions(action.noteId, action.revisions);
+      }
 
-    return result;
+      return result;
+    };
   };
-};

@@ -64,8 +64,7 @@ export const middleware: S.Middleware = (store) => {
               (SentryModule) => {
                 Sentry = SentryModule;
                 Sentry.init({
-                  dsn:
-                    'https://e5349c4269ef4665bfc44be218a786c2@o248881.ingest.sentry.io/5378892',
+                  dsn: 'https://e5349c4269ef4665bfc44be218a786c2@o248881.ingest.sentry.io/5378892',
                 });
               }
             );

@@ -109,7 +109,7 @@ export type MapDispatchFunction<DispatchProps, OwnProps = {}> = (
 
 export type MapDispatch<
   DispatchProps extends { [name: string]: (...args: any[]) => any },
-  OwnProps = {}
+  OwnProps = {},
 > =
   | MapDispatchFunction<DispatchProps, OwnProps>
   | {
