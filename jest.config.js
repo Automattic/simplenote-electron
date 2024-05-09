@@ -6,5 +6,6 @@ module.exports = {
     },
   },
   roots: ['desktop', 'lib'],
+  testEnvironment: 'jsdom',
   testRegex: '(/test/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
 };

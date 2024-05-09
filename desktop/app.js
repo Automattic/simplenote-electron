@@ -82,7 +82,6 @@ module.exports = function main() {
       show: false,
       webPreferences: {
         contextIsolation: true,
-        enableRemoteModule: false,
         nodeIntegration: false,
         preload: path.join(__dirname, './preload.js'),
       },
@@ -163,14 +162,9 @@ module.exports = function main() {
 
     mainWindowState.manage(mainWindow);
 
-    // this TERRIBLE HACK forces vscode to call window.open(url) rather than window.open()
-    // see https://github.com/microsoft/monaco-editor/issues/628
-    mainWindow.webContents.userAgent =
-      mainWindow.webContents.userAgent + '/Edge/WebView/FakeUA';
-
-    mainWindow.webContents.on('new-window', function (event, linkUrl) {
-      event.preventDefault();
-      shell.openExternal(linkUrl);
+    mainWindow.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url);
+      return { action: 'deny' };
     });
 
     // Disables navigation for app window drag and drop

@@ -1,6 +1,5 @@
 import React, { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import format from 'date-fns/format';
 
 import actions from '../state/actions';
 import { getNoteReference } from '../utils/get-note-references';

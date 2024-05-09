@@ -31,7 +31,7 @@ describe('CoreImporter', () => {
   describe('importNotes', () => {
     it('should emit error when no notes are passed', () => {
       importer.importNotes();
-      expect(importer.emit).toBeCalledWith(
+      expect(importer.emit).toHaveBeenCalledWith(
         'status',
         'error',
         'No notes to import.'
@@ -41,7 +41,7 @@ describe('CoreImporter', () => {
     it('should emit error when invalid object is passed', () => {
       const bogusNotes = { actveNotes: [] };
       importer.importNotes(bogusNotes);
-      expect(importer.emit).toBeCalledWith(
+      expect(importer.emit).toHaveBeenCalledWith(
         'status',
         'error',
         'Invalid import format: No active or trashed notes found.'

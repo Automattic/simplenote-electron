@@ -81,7 +81,7 @@ export type OpenRevision = Action<
 >;
 export type OpenTag = Action<'OPEN_TAG', { tagName: T.TagName }>;
 export type ReallyCloseWindow = Action<'REALLY_CLOSE_WINDOW'>;
-export type ReallyLogout = Action<'REALLY_LOGOUT'>;
+export type ReallyLogOut = Action<'REALLY_LOG_OUT'>;
 export type RecordEvent = Action<
   'RECORD_EVENT',
   { eventName: string; eventProperties?: T.JSONSerializable }
@@ -379,7 +379,7 @@ export type ActionType =
   | PreferencesBucketUpdate
   | PublishNote
   | ReallyCloseWindow
-  | ReallyLogout
+  | ReallyLogOut
   | RecordEvent
   | RemoteAnalyticsUpdate
   | RemoteNoteUpdate

@@ -1,7 +1,7 @@
 import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
 import { connect } from 'react-redux';
 import FocusTrap from 'focus-trap-react';
-import format from 'date-fns/format';
+import { format } from 'date-fns/format';
 import classNames from 'classnames';
 import IconButton from '../icon-button';
 import SmallHelpIcon from '../icons/help-small';

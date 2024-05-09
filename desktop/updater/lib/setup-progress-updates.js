@@ -1,6 +1,6 @@
 const { app, dialog } = require('electron');
 const ProgressBar = require('electron-progressbar');
-const prettyBytes = require('pretty-bytes');
+const prettyBytes = import('pretty-bytes');
 
 const progressBarBlue = '#4895d9';
 

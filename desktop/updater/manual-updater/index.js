@@ -64,7 +64,7 @@ class ManualUpdater extends Updater {
         }
 
         const configBody = await configResp.text();
-        const releaseConfig = yaml.safeLoad(configBody);
+        const releaseConfig = yaml.load(configBody);
 
         if (semver.lt(app.getVersion(), releaseConfig.version)) {
           // eslint-disable-next-line no-console

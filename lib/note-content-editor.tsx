@@ -7,12 +7,14 @@ import Monaco, {
 } from 'react-monaco-editor';
 import {
   editor as Editor,
+  CancellationToken,
   languages,
+  IRange,
+  Position,
   Range,
   Selection,
   SelectionDirection,
 } from 'monaco-editor';
-import * as monacoactions from 'monaco-editor/esm/vs/platform/actions/common/actions';
 
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
@@ -34,6 +36,20 @@ import * as S from './state';
 import * as T from './types';
 
 const SPEED_DELAY = 120;
+
+const overviewRuler = {
+  color: '#3361cc',
+  position: Editor.OverviewRulerLane.Full
+};
+
+const selectedSearchDecoration = (range: IRange) => ({
+  range: range,
+  options: {
+    inlineClassName: 'selected-search',
+    zIndex: 10,
+    overviewRuler: overviewRuler,
+  },
+});
 
 const titleDecorationForLine = (line: number) => ({
   range: new Range(line, 1, line, 1),
@@ -128,12 +144,9 @@ class NoteContentEditor extends Component<Props> {
   editor: Editor.IStandaloneCodeEditor | null = null;
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
-  decorations: string[] = [];
-  matchesInNote: [] = [];
-  overviewRuler = {
-    color: '#3361cc',
-    position: Editor.OverviewRulerLane.Full,
-  };
+  decorations: Editor.IEditorDecorationsCollection | undefined;
+  matchesInNote: Editor.IModelDeltaDecoration[] = [];
+  selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
 
   state: OwnState = {
     content: '',
@@ -193,30 +206,6 @@ class NoteContentEditor extends Component<Props> {
     window.addEventListener('resize', clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
-
-    /* remove unwanted context menu items */
-    const menus = monacoactions.MenuRegistry._menuItems;
-    const contextMenuEntry = [...menus].find(
-      (entry) => entry[0]._debugName === 'EditorContext'
-    );
-    const contextMenuLinks = contextMenuEntry[1];
-    const removableIds = [
-      'editor.action.changeAll',
-      'editor.action.clipboardCutAction',
-      'editor.action.clipboardCopyAction',
-      'editor.action.clipboardPasteAction',
-      'editor.action.quickCommand',
-    ];
-    const removeById = (list, ids) => {
-      let node = list._first;
-      do {
-        const shouldRemove = ids.includes(node.element?.command?.id);
-        if (shouldRemove) {
-          list._remove(node);
-        }
-      } while ((node = node.next));
-    };
-    removeById(contextMenuLinks, removableIds);
   }
 
   componentWillUnmount() {
@@ -247,7 +236,7 @@ class NoteContentEditor extends Component<Props> {
     return {
       triggerCharacters: ['['],
 
-      provideCompletionItems(model, position, context, token) {
+      provideCompletionItems(model: Editor.ITextModel, position: Position, _context: languages.CompletionContext, _token: CancellationToken) {
         const line = model.getLineContent(position.lineNumber);
         const precedingOpener = line.lastIndexOf('[', position.column);
         const precedingCloser = line.lastIndexOf(']', position.column);
@@ -269,11 +258,12 @@ class NoteContentEditor extends Component<Props> {
             titleOnly: true,
           },
           5
-        ).map(([noteId, note]) => ({
+        ).filter(([noteId, note]) => {return typeof note !== 'undefined'})
+        .map(([noteId, note]) => ({
           noteId,
-          content: note.content,
-          isPinned: note.systemTags.includes('pinned'),
-          ...noteTitleAndPreview(note),
+          content: note!.content,
+          isPinned: note!.systemTags.includes('pinned'),
+          ...noteTitleAndPreview(note!),
         }));
 
         const additionalTextEdits =
@@ -368,7 +358,7 @@ class NoteContentEditor extends Component<Props> {
     }
 
     if (this.props.searchQuery === '' && prevProps.searchQuery !== '') {
-      this.editor?.setSelection(new this.monaco.Range(0, 0, 0, 0));
+      this.editor?.setSelection(new Range(0, 0, 0, 0));
     }
 
     if (
@@ -403,18 +393,32 @@ class NoteContentEditor extends Component<Props> {
   }
 
   setDecorators = () => {
+    // special styling for title (first line)
+    const titleDecoration = this.getTitleDecoration();
+    titleDecoration && this.editor?.createDecorationsCollection([titleDecoration]);
+
+    // search highlights
     this.matchesInNote = this.searchMatches() ?? [];
     this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
-    const titleDecoration = this.getTitleDecoration() ?? [];
 
-    this.decorations = this.editor.deltaDecorations(this.decorations, [
-      ...this.matchesInNote,
-      ...titleDecoration,
-    ]);
+    this.decorations?.clear();
+    if(this.matchesInNote.length === 0) { return; }
+    this.decorations = this.editor?.createDecorationsCollection(this.matchesInNote);
+
+    // selected search highlight
+    this.selectedDecoration?.clear();
+    const range = this.editor?.getSelection();
+    if(range) {
+      this.matchesInNote.forEach((match) => {
+        if (match.range === range) {
+          this.editor?.createDecorationsCollection([selectedSearchDecoration(range)]);
+        }
+      });
+    }
   };
 
   getTitleDecoration = () => {
-    const model = this.editor.getModel();
+    const model = this.editor?.getModel();
     if (!model) {
       return;
     }
@@ -422,7 +426,7 @@ class NoteContentEditor extends Component<Props> {
     for (let i = 1; i <= model.getLineCount(); i++) {
       const line = model.getLineContent(i);
       if (line.trim().length > 0) {
-        return [titleDecorationForLine(i)];
+        return titleDecorationForLine(i);
       }
     }
     return;
@@ -441,54 +445,34 @@ class NoteContentEditor extends Component<Props> {
       return [];
     }
 
-    const content = model.getValue().normalize().toLowerCase();
-
     const highlights = terms.reduce(
-      (matches: monaco.languages.DocumentHighlight, term) => {
-        let termAt = null;
-        let startAt = 0;
-
-        while (termAt !== -1) {
-          termAt = content.indexOf(term, startAt);
-          if (termAt === -1) {
-            break;
-          }
-
-          startAt = termAt + term.length;
-
-          const start = model.getPositionAt(termAt);
-          const end = model.getPositionAt(termAt + term.length);
-
-          matches.push({
-            options: {
-              inlineClassName: 'search-decoration',
-              overviewRuler: this.overviewRuler,
-            },
-            range: {
-              startLineNumber: start.lineNumber,
-              startColumn: start.column,
-              endLineNumber: end.lineNumber,
-              endColumn: end.column,
-            },
-          });
-        }
-
+      (matches: Editor.IModelDeltaDecoration[], term) => {
+          const findMatches = model?.findMatches(term, true, false, false, null, false);
+          findMatches?.forEach(match => {
+            matches.push({
+              options: {
+                inlineClassName: 'search-decoration',
+                overviewRuler: overviewRuler,
+              },
+              range: match.range
+            });
+          })
         return matches;
       },
-      []
-    );
+    []);
     return highlights;
   };
 
   focusEditor = () => this.editor?.focus();
 
-  hasFocus = () => this.editor?.hasTextFocus();
+  hasFocus = () => this.editor?.hasTextFocus() || false;
 
-  handleChecklist = (event: InputEvent) => {
+  handleChecklist = (event: Event) => {
     this.editor?.trigger('editorCommand', 'insertChecklist', null);
   };
 
-  handleUndoRedo = (event: InputEvent) => {
+  handleUndoRedo = (e: Event) => {
+    const event = e as InputEvent;
     switch (event.inputType) {
       case 'historyUndo':
         this.editor?.trigger('browserMenu', 'undo', null);
@@ -558,7 +542,7 @@ class NoteContentEditor extends Component<Props> {
 
     const lineOffset = prefixSpace.length + (bullet?.length ?? 0) + 1;
     const text = hasTask ? '' : '\ue000 ';
-    const range = new this.monaco.Range(
+    const range = new Range(
       lineNumber,
       lineOffset,
       lineNumber,
@@ -576,7 +560,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote', {
       base: 'vs',
       inherit: true,
-      rules: [{ background: 'FFFFFF', foreground: '#2c3338' }],
+      rules: [],
       colors: {
         'editor.foreground': '#2c3338', // $studio-gray-80
         'editor.background': '#ffffff',
@@ -590,7 +574,7 @@ class NoteContentEditor extends Component<Props> {
     Editor.defineTheme('simplenote-dark', {
       base: 'vs-dark',
       inherit: true,
-      rules: [{ background: '1d2327', foreground: 'ffffff' }],
+      rules: [],
       colors: {
         'editor.foreground': '#ffffff',
         'editor.background': '#1d2327', // $studio-gray-90
@@ -605,7 +589,6 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    this.monaco = monaco;
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -630,7 +613,7 @@ class NoteContentEditor extends Component<Props> {
           return;
         }
 
-        const [fullMatch, linkedNoteId] = match as [string, T.EntityId];
+        const [_fullMatch, linkedNoteId] = match as [string, T.EntityId];
 
         // if we try to open a note that doesn't exist in local state,
         // then we annoyingly close the open note without opening anything else
@@ -642,20 +625,40 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // remove keybindings; see https://github.com/microsoft/monaco-editor/issues/287
+    /* remove unwanted context menu items */
+    // see https://github.com/Microsoft/monaco-editor/issues/1058#issuecomment-468681208
+    const removableIds = [
+      'editor.action.changeAll',
+      'editor.action.clipboardCutAction',
+      'editor.action.clipboardCopyAction',
+      'editor.action.clipboardPasteAction',
+      'editor.action.quickCommand',
+    ];
+
+    const contextmenu = this.editor.getContribution('editor.contrib.contextmenu');
+
+    // @ts-ignore undocumented internals
+    const realMethod = contextmenu._getMenuActions;
+
+    // @ts-ignore undocumented internals
+    contextmenu._getMenuActions = function(...args) {
+      const items = realMethod.apply(contextmenu, args);
+
+      return items.filter(function(item) {
+        return ! removableIds.includes(item.id);
+      });
+    };
+
+    // remove some default keybindings
+    // @see https://github.com/microsoft/monaco-editor/issues/3623#issuecomment-1472578786
     const shortcutsToDisable = [
-      'cancelSelection', // escape; we need to allow this to bubble up to clear search
-      'cursorUndo', // meta+U
+      'editor.action.quickCommand', // command palette
       'editor.action.commentLine', // meta+/
-      'editor.action.jumpToBracket', // shift+meta+\
       'editor.action.transposeLetters', // ctrl+T
       'expandLineSelection', // meta+L
       'editor.action.gotoLine', // ctrl+G
-      // multicursor shortcuts
-      'editor.action.insertCursorAbove', // alt+meta+UpArrow
-      'editor.action.insertCursorBelow', // alt+meta+DownArrow
-      'editor.action.insertCursorAtEndOfEachLineSelected', // shift+alt+I
       // search shortcuts
+      'editor.action.changeAll',
       'actions.find',
       'actions.findWithSelection',
       'editor.action.addSelectionToNextFindMatch',
@@ -667,12 +670,12 @@ class NoteContentEditor extends Component<Props> {
     if (window.electron && isMac) {
       shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
     }
+
     shortcutsToDisable.forEach(function (action) {
-      editor._standaloneKeybindingService.addDynamicKeybinding(
-        '-' + action,
-        undefined,
-        () => {}
-      );
+      monaco.editor.addKeybindingRule({
+        keybinding: 0,
+        command: '-' + action
+      })
     });
 
     // disable editor keybindings for Electron since it is handled by editorCommand
@@ -685,7 +688,7 @@ class NoteContentEditor extends Component<Props> {
     editor.addAction({
       id: 'context_undo',
       label: 'Undo',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyZ],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 2,
@@ -698,8 +701,8 @@ class NoteContentEditor extends Component<Props> {
       id: 'context_redo',
       label: 'Redo',
       keybindings: [
-        monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_Y,
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z,
+        monaco.KeyMod.WinCtrl | monaco.KeyCode.KeyY,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyZ,
         // @todo can we switch these so Windows displays the default ^Y?
       ],
       keybindingContext: 'allowBrowserKeybinding',
@@ -712,10 +715,12 @@ class NoteContentEditor extends Component<Props> {
     });
 
     // add a new Cut and Copy that show keyboard shortcuts
+    // Cut and Copy don't show keybindings
+    // @see https://github.com/microsoft/monaco-editor/issues/2882
     editor.addAction({
       id: 'context_cut',
       label: 'Cut',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_X],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 1,
@@ -726,7 +731,7 @@ class NoteContentEditor extends Component<Props> {
     editor.addAction({
       id: 'context_copy',
       label: 'Copy',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_C],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 2,
@@ -739,6 +744,7 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
+    // cancel selection that bubbles up to clear any search terms
     editor.addAction({
       id: 'cancel_selection',
       label: 'Cancel Selection',
@@ -754,7 +760,7 @@ class NoteContentEditor extends Component<Props> {
         label: 'Paste',
         contextMenuGroupId: '9_cutcopypaste',
         contextMenuOrder: 3,
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_V],
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
         keybindingContext: 'allowBrowserKeybinding',
         run: () => {
           document.execCommand('paste');
@@ -767,10 +773,11 @@ class NoteContentEditor extends Component<Props> {
       label: 'Select All',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 4,
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_A],
+      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyA],
       keybindingContext: 'allowBrowserKeybinding',
       run: () => {
-        editor.setSelection(editor.getModel().getFullModelRange());
+        const range = editor.getModel()?.getFullModelRange();
+        range && editor.setSelection(range);
       },
     });
 
@@ -778,34 +785,13 @@ class NoteContentEditor extends Component<Props> {
       id: 'insertChecklist',
       label: 'Insert Checklist',
       keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
-        monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
+        monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
       ],
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
-    });
-
-    editor.addAction({
-      id: 'selectUpWithoutMulticursor',
-      label: 'Select Up',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
-      ],
-      run: () => {
-        editor.trigger('shortcuts', 'cursorUpSelect', null);
-      },
-    });
-    editor.addAction({
-      id: 'selectDownWithoutMulticursor',
-      label: 'Select Down',
-      keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
-      ],
-      run: () => {
-        editor.trigger('shortcuts', 'cursorDownSelect', null);
-      },
     });
 
     // Tab to indent lists and tasks
@@ -841,7 +827,8 @@ class NoteContentEditor extends Component<Props> {
           return;
         case 'selectAll':
           if (editor.hasTextFocus()) {
-            editor.setSelection(editor.getModel().getFullModelRange());
+            const range = editor.getModel()?.getFullModelRange();
+            range && editor.setSelection(range);
           } else {
             document.execCommand('selectAll');
           }
@@ -872,16 +859,11 @@ class NoteContentEditor extends Component<Props> {
       this.completionProvider(this.state.noteId, editor)
     );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
-    monaco.languages.setLanguageConfiguration('plaintext', {
-      // Allow any non-whitespace character to be part of a "word"
-      // This prevents the dictionary suggestions from taking over our autosuggest
-      wordPattern: /[^\s]+/g,
-    });
 
     document.oncopy = (event) => {
       // @TODO: This is selecting everything in the app but we should only
       //        need to intercept copy events coming from the editor
-      event.clipboardData.setData(
+      event.clipboardData?.setData(
         'text/plain',
         withCheckboxSyntax(event.clipboardData.getData('text/plain'))
       );
@@ -891,19 +873,19 @@ class NoteContentEditor extends Component<Props> {
     const start = this.editor.getModel()?.getPositionAt(startOffset);
     const end = this.editor.getModel()?.getPositionAt(endOffset);
 
-    this.editor.setSelection(
+    start && end && this.editor.setSelection(
       Selection.createWithDirection(
-        start?.lineNumber,
-        start?.column,
-        end?.lineNumber,
-        end?.column,
+        start.lineNumber,
+        start.column,
+        end.lineNumber,
+        end.column,
         direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
       )
     );
 
-    editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
+    start && editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
 
-    editor.onDidChangeCursorSelection((e) => {
+    editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangedEvent) => {
       if (
         e.reason === Editor.CursorChangeReason.Undo ||
         e.reason === Editor.CursorChangeReason.Redo
@@ -912,18 +894,18 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
-      const start = editor
+      const newStart = editor
         .getModel()
         ?.getOffsetAt(e.selection.getStartPosition());
-      const end = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
-      const direction =
+      const newEnd = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
+      const newDirection =
         e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
 
-      this.props.storeEditorSelection(this.props.noteId, start, end, direction);
+      newStart && newEnd && this.props.storeEditorSelection(this.props.noteId, newStart, newEnd, newDirection);
     });
 
     // @TODO: Is this really slow and dumb?
-    editor.onMouseMove((e) => {
+    editor.onMouseMove((e: Editor.IEditorMouseEvent) => {
       const { content } = this.state;
       const {
         target: { range },
@@ -955,7 +937,7 @@ class NoteContentEditor extends Component<Props> {
       }
     });
 
-    editor.onMouseDown((event) => {
+    editor.onMouseDown((event: Editor.IEditorMouseEvent) => {
       const { editNote, noteId } = this.props;
       const { content } = this.state;
       const {
@@ -1029,14 +1011,14 @@ class NoteContentEditor extends Component<Props> {
       }
 
       const model = this.editor.getModel();
-      const prevLine = model.getLineContent(lineNumber);
+      const prevLine = model?.getLineContent(lineNumber) || '';
 
       const prevList = /^(\s*)([-+*\u2022\ue000\ue001])(\s+)/.exec(prevLine);
       if (null === prevList) {
         return;
       }
 
-      const thisLine = model.getLineContent(lineNumber + 1);
+      const thisLine = model?.getLineContent(lineNumber + 1) || '';
       if (!/^\s*$/.test(thisLine)) {
         return;
       }
@@ -1047,17 +1029,17 @@ class NoteContentEditor extends Component<Props> {
       const isLonelyBullet =
         thisLine.trim().length === 0 && prevLine.length === prevList[0].length;
       if (isLonelyBullet) {
-        const prevLineStart = model.getOffsetAt({
+        const prevLineStart = model?.getOffsetAt({
           column: 0,
           lineNumber: lineNumber,
         });
 
-        const thisLineStart = model.getOffsetAt({
+        const thisLineStart = model?.getOffsetAt({
           column: 0,
           lineNumber: lineNumber + 1,
         });
 
-        const range = new this.monaco.Range(
+        const range = new Range(
           lineNumber,
           0,
           lineNumber + 1,
@@ -1067,8 +1049,8 @@ class NoteContentEditor extends Component<Props> {
         const op = { identifier, range, text: null, forceMoveMarkers: true };
 
         Promise.resolve().then(() => {
-          this.editor.executeEdits('autolist', [op]);
-          this.editor.setPosition({
+          this.editor?.executeEdits('autolist', [op]);
+          this.editor?.setPosition({
             column: 0,
             lineNumber: lineNumber,
           });
@@ -1077,17 +1059,17 @@ class NoteContentEditor extends Component<Props> {
         return;
       }
 
-      const lineStart = model.getOffsetAt({
+      const lineStart = model?.getOffsetAt({
         column: 0,
         lineNumber: lineNumber + 1,
       });
 
-      const nextStart = model.getOffsetAt({
+      const nextStart = model?.getOffsetAt({
         column: 0,
         lineNumber: lineNumber + 2,
       });
 
-      const range = new this.monaco.Range(
+      const range = new Range(
         lineNumber + 1,
         0,
         lineNumber + 1,
@@ -1102,7 +1084,7 @@ class NoteContentEditor extends Component<Props> {
       // the cursor position when executed immediately
       // so we are running it on the next micro-task
       Promise.resolve().then(() =>
-        this.editor.setPosition({
+        this.editor?.setPosition({
           column: prevList[0].length + 1,
           lineNumber: lineNumber + 1,
         })
@@ -1139,47 +1121,29 @@ class NoteContentEditor extends Component<Props> {
     this.focusEditor();
   };
 
-  setSearchSelection = (index) => {
-    if (!this.matchesInNote.length || index === null) {
+  setSearchSelection = (index: number | null) => {
+    this.selectedDecoration?.clear();
+    if (!this.matchesInNote.length || index === null || isNaN(index)) {
       return;
     }
     const range = this.matchesInNote[index].range;
-    this.editor.setSelection(range);
-    this.editor.revealLineInCenter(range.startLineNumber);
 
-    const newDecorations = [];
+    if (! range) { return; }
+    this.editor?.setSelection(range);
+    this.editor?.revealLineInCenter(range.startLineNumber);
+
+    // Add a selected-search decoration on top of the existing decorations
     this.matchesInNote.forEach((match) => {
-      let decoration = {};
-      if (match.range === range) {
-        decoration = {
-          range: match.range,
-          options: {
-            inlineClassName: 'selected-search',
-            overviewRuler: this.overviewRuler,
-          },
-        };
-      } else {
-        decoration = {
-          range: match.range,
-          options: {
-            inlineClassName: 'search-decoration',
-            overviewRuler: this.overviewRuler,
-          },
-        };
+      if(match.range === range) {
+        const selectedDecoration = selectedSearchDecoration(range);
+        this.selectedDecoration = this.editor?.createDecorationsCollection([selectedDecoration]);
       }
-      newDecorations.push(decoration);
     });
-
-    this.decorations = this.editor.deltaDecorations(
-      this.decorations,
-      newDecorations
-    );
-  };
+ };
 
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo } = this.state;
-    const searchMatches = searchQuery ? this.searchMatches() : [];
 
     const editorPadding = getEditorPadding(
       lineLength,
@@ -1215,22 +1179,25 @@ class NoteContentEditor extends Component<Props> {
               autoIndent: 'keep',
               autoSurround: 'never',
               automaticLayout: true,
+              // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
+              "bracketPairColorization.enabled": false,
               codeLens: false,
               folding: false,
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
               hideCursorInOverviewRuler: true,
-              lineDecorationsWidth: editorPadding,
               fontSize: 16,
+              guides: { indentation: false },
+              lineDecorationsWidth: editorPadding,
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
               matchBrackets: 'never',
               minimap: { enabled: false },
-              occurrencesHighlight: false,
+              multiCursorLimit: 1,
+              occurrencesHighlight: 'off',
               overviewRulerBorder: false,
               quickSuggestions: false,
-              renderIndentGuides: false,
               renderLineHighlight: 'none',
               scrollbar: {
                 horizontal: 'hidden',
@@ -1240,10 +1207,14 @@ class NoteContentEditor extends Component<Props> {
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               suggestOnTriggerCharacters: true,
+              unicodeHighlight: {
+                ambiguousCharacters: false,
+                invisibleCharacters: false,
+              },
               unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
-              wrappingStrategy: isSafari ? 'simple' : 'advanced',
               wordWrapColumn: 400,
+              wrappingStrategy: isSafari ? 'simple' : 'advanced',
             }}
             value={content}
           />
