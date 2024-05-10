@@ -133,8 +133,8 @@ export const NotePreview: FunctionComponent<Props> = ({
                   ? '- [x]'
                   : '- [ ]'
                 : inside === ' '
-                ? '- [ ]'
-                : '- [x]';
+                  ? '- [ ]'
+                  : '- [x]';
             return prespace + newCheckbox + postspace;
           }
         );

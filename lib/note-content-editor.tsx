@@ -39,7 +39,7 @@ const SPEED_DELAY = 120;
 
 const overviewRuler = {
   color: '#3361cc',
-  position: Editor.OverviewRulerLane.Full
+  position: Editor.OverviewRulerLane.Full,
 };
 
 const selectedSearchDecoration = (range: IRange) => ({
@@ -236,7 +236,12 @@ class NoteContentEditor extends Component<Props> {
     return {
       triggerCharacters: ['['],
 
-      provideCompletionItems(model: Editor.ITextModel, position: Position, _context: languages.CompletionContext, _token: CancellationToken) {
+      provideCompletionItems(
+        model: Editor.ITextModel,
+        position: Position,
+        _context: languages.CompletionContext,
+        _token: CancellationToken
+      ) {
         const line = model.getLineContent(position.lineNumber);
         const precedingOpener = line.lastIndexOf('[', position.column);
         const precedingCloser = line.lastIndexOf(']', position.column);
@@ -258,13 +263,16 @@ class NoteContentEditor extends Component<Props> {
             titleOnly: true,
           },
           5
-        ).filter(([noteId, note]) => {return typeof note !== 'undefined'})
-        .map(([noteId, note]) => ({
-          noteId,
-          content: note!.content,
-          isPinned: note!.systemTags.includes('pinned'),
-          ...noteTitleAndPreview(note!),
-        }));
+        )
+          .filter(([noteId, note]) => {
+            return typeof note !== 'undefined';
+          })
+          .map(([noteId, note]) => ({
+            noteId,
+            content: note!.content,
+            isPinned: note!.systemTags.includes('pinned'),
+            ...noteTitleAndPreview(note!),
+          }));
 
         const additionalTextEdits =
           precedingBracket >= 0
@@ -395,23 +403,30 @@ class NoteContentEditor extends Component<Props> {
   setDecorators = () => {
     // special styling for title (first line)
     const titleDecoration = this.getTitleDecoration();
-    titleDecoration && this.editor?.createDecorationsCollection([titleDecoration]);
+    titleDecoration &&
+      this.editor?.createDecorationsCollection([titleDecoration]);
 
     // search highlights
     this.matchesInNote = this.searchMatches() ?? [];
     this.props.storeNumberOfMatchesInNote(this.matchesInNote.length);
 
     this.decorations?.clear();
-    if(this.matchesInNote.length === 0) { return; }
-    this.decorations = this.editor?.createDecorationsCollection(this.matchesInNote);
+    if (this.matchesInNote.length === 0) {
+      return;
+    }
+    this.decorations = this.editor?.createDecorationsCollection(
+      this.matchesInNote
+    );
 
     // selected search highlight
     this.selectedDecoration?.clear();
     const range = this.editor?.getSelection();
-    if(range) {
+    if (range) {
       this.matchesInNote.forEach((match) => {
         if (match.range === range) {
-          this.editor?.createDecorationsCollection([selectedSearchDecoration(range)]);
+          this.editor?.createDecorationsCollection([
+            selectedSearchDecoration(range),
+          ]);
         }
       });
     }
@@ -447,19 +462,27 @@ class NoteContentEditor extends Component<Props> {
 
     const highlights = terms.reduce(
       (matches: Editor.IModelDeltaDecoration[], term) => {
-          const findMatches = model?.findMatches(term, true, false, false, null, false);
-          findMatches?.forEach(match => {
-            matches.push({
-              options: {
-                inlineClassName: 'search-decoration',
-                overviewRuler: overviewRuler,
-              },
-              range: match.range
-            });
-          })
+        const findMatches = model?.findMatches(
+          term,
+          true,
+          false,
+          false,
+          null,
+          false
+        );
+        findMatches?.forEach((match) => {
+          matches.push({
+            options: {
+              inlineClassName: 'search-decoration',
+              overviewRuler: overviewRuler,
+            },
+            range: match.range,
+          });
+        });
         return matches;
       },
-    []);
+      []
+    );
     return highlights;
   };
 
@@ -635,17 +658,19 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.quickCommand',
     ];
 
-    const contextmenu = this.editor.getContribution('editor.contrib.contextmenu');
+    const contextmenu = this.editor.getContribution(
+      'editor.contrib.contextmenu'
+    );
 
     // @ts-ignore undocumented internals
     const realMethod = contextmenu._getMenuActions;
 
     // @ts-ignore undocumented internals
-    contextmenu._getMenuActions = function(...args) {
+    contextmenu._getMenuActions = function (...args) {
       const items = realMethod.apply(contextmenu, args);
 
-      return items.filter(function(item) {
-        return ! removableIds.includes(item.id);
+      return items.filter(function (item) {
+        return !removableIds.includes(item.id);
       });
     };
 
@@ -674,8 +699,8 @@ class NoteContentEditor extends Component<Props> {
     shortcutsToDisable.forEach(function (action) {
       monaco.editor.addKeybindingRule({
         keybinding: 0,
-        command: '-' + action
-      })
+        command: '-' + action,
+      });
     });
 
     // disable editor keybindings for Electron since it is handled by editorCommand
@@ -854,10 +879,11 @@ class NoteContentEditor extends Component<Props> {
     editor.onDidChangeModelContent(() => this.setDecorators());
 
     // register completion provider for internal links
-    const completionProviderHandle = monaco.languages.registerCompletionItemProvider(
-      'plaintext',
-      this.completionProvider(this.state.noteId, editor)
-    );
+    const completionProviderHandle =
+      monaco.languages.registerCompletionItemProvider(
+        'plaintext',
+        this.completionProvider(this.state.noteId, editor)
+      );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
 
     document.oncopy = (event) => {
@@ -873,36 +899,49 @@ class NoteContentEditor extends Component<Props> {
     const start = this.editor.getModel()?.getPositionAt(startOffset);
     const end = this.editor.getModel()?.getPositionAt(endOffset);
 
-    start && end && this.editor.setSelection(
-      Selection.createWithDirection(
-        start.lineNumber,
-        start.column,
-        end.lineNumber,
-        end.column,
-        direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
-      )
-    );
+    start &&
+      end &&
+      this.editor.setSelection(
+        Selection.createWithDirection(
+          start.lineNumber,
+          start.column,
+          end.lineNumber,
+          end.column,
+          direction === 'RTL' ? SelectionDirection.RTL : SelectionDirection.LTR
+        )
+      );
 
     start && editor.revealLine(start.lineNumber, Editor.ScrollType.Immediate);
 
-    editor.onDidChangeCursorSelection((e: Editor.ICursorSelectionChangedEvent) => {
-      if (
-        e.reason === Editor.CursorChangeReason.Undo ||
-        e.reason === Editor.CursorChangeReason.Redo
-      ) {
-        // @TODO: Adjust selection in Undo/Redo
-        return;
+    editor.onDidChangeCursorSelection(
+      (e: Editor.ICursorSelectionChangedEvent) => {
+        if (
+          e.reason === Editor.CursorChangeReason.Undo ||
+          e.reason === Editor.CursorChangeReason.Redo
+        ) {
+          // @TODO: Adjust selection in Undo/Redo
+          return;
+        }
+
+        const newStart = editor
+          .getModel()
+          ?.getOffsetAt(e.selection.getStartPosition());
+        const newEnd = editor
+          .getModel()
+          ?.getOffsetAt(e.selection.getEndPosition());
+        const newDirection =
+          e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
+
+        newStart &&
+          newEnd &&
+          this.props.storeEditorSelection(
+            this.props.noteId,
+            newStart,
+            newEnd,
+            newDirection
+          );
       }
-
-      const newStart = editor
-        .getModel()
-        ?.getOffsetAt(e.selection.getStartPosition());
-      const newEnd = editor.getModel()?.getOffsetAt(e.selection.getEndPosition());
-      const newDirection =
-        e.selection.getDirection() === SelectionDirection.LTR ? 'LTR' : 'RTL';
-
-      newStart && newEnd && this.props.storeEditorSelection(this.props.noteId, newStart, newEnd, newDirection);
-    });
+    );
 
     // @TODO: Is this really slow and dumb?
     editor.onMouseMove((e: Editor.IEditorMouseEvent) => {
@@ -1128,18 +1167,22 @@ class NoteContentEditor extends Component<Props> {
     }
     const range = this.matchesInNote[index].range;
 
-    if (! range) { return; }
+    if (!range) {
+      return;
+    }
     this.editor?.setSelection(range);
     this.editor?.revealLineInCenter(range.startLineNumber);
 
     // Add a selected-search decoration on top of the existing decorations
     this.matchesInNote.forEach((match) => {
-      if(match.range === range) {
+      if (match.range === range) {
         const selectedDecoration = selectedSearchDecoration(range);
-        this.selectedDecoration = this.editor?.createDecorationsCollection([selectedDecoration]);
+        this.selectedDecoration = this.editor?.createDecorationsCollection([
+          selectedDecoration,
+        ]);
       }
     });
- };
+  };
 
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
@@ -1180,7 +1223,7 @@ class NoteContentEditor extends Component<Props> {
               autoSurround: 'never',
               automaticLayout: true,
               // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
-              "bracketPairColorization.enabled": false,
+              'bracketPairColorization.enabled': false,
               codeLens: false,
               folding: false,
               fontFamily:

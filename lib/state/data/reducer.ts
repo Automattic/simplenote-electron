@@ -412,8 +412,8 @@ export const tags: A.Reducer<Map<T.TagHash, T.Tag>> = (
           'undefined' !== typeof a[1].index && 'undefined' !== typeof b[1].index
             ? a[1].index - b[1].index
             : 'undefined' === typeof a[1].index
-            ? 1
-            : -1
+              ? 1
+              : -1
         )
         .forEach(([tagId, tag], index) => {
           next.set(tagId, {

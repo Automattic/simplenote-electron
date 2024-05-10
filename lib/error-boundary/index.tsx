@@ -93,12 +93,9 @@ type ErrorBoundaryWithSentryStateProps = {
 type ErrorBoundaryWithSentryProps = ErrorBoundaryWithSentryOwnProps &
   ErrorBoundaryWithSentryStateProps;
 
-const ErrorBoundaryWithSentry: FunctionComponent<ErrorBoundaryWithSentryProps> = ({
-  allowAnalytics,
-  children,
-  isDevConfig,
-  theme,
-}) => {
+const ErrorBoundaryWithSentry: FunctionComponent<
+  ErrorBoundaryWithSentryProps
+> = ({ allowAnalytics, children, isDevConfig, theme }) => {
   return (
     <div>
       {isDevConfig || !allowAnalytics ? (

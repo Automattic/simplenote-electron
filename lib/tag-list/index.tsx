@@ -149,11 +149,11 @@ export class TagList extends Component<Props> {
         sortTagsAlpha
           ? aTag.name.localeCompare(bTag.name)
           : 'undefined' !== typeof aTag.index &&
-            'undefined' !== typeof bTag.index
-          ? aTag.index - bTag.index
-          : 'undefined' === typeof aTag.index
-          ? 1
-          : -1
+              'undefined' !== typeof bTag.index
+            ? aTag.index - bTag.index
+            : 'undefined' === typeof aTag.index
+              ? 1
+              : -1
       );
 
     return (

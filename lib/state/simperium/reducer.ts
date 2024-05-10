@@ -11,10 +11,9 @@ const connectionStatus: A.Reducer<T.ConnectionState> = (
   action
 ) => (action.type === 'CHANGE_CONNECTION_STATUS' ? action.status : state);
 
-const ghosts: A.Reducer<[
-  Map<string, ChangeVersion>,
-  Map<string, Map<EntityId, Ghost<unknown>>>
-]> = (state = [new Map(), new Map()], action) => {
+const ghosts: A.Reducer<
+  [Map<string, ChangeVersion>, Map<string, Map<EntityId, Ghost<unknown>>>]
+> = (state = [new Map(), new Map()], action) => {
   switch (action.type) {
     case 'GHOST_REMOVE_ENTITY': {
       const [cvs, buckets] = state;

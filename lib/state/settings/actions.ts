@@ -20,7 +20,9 @@ export const setLineLength: A.ActionCreator<A.SetLineLength> = (
   lineLength,
 });
 
-export const toggleKeyboardShortcuts: A.ActionCreator<A.ToggleKeyboardShortcuts> = () => ({
+export const toggleKeyboardShortcuts: A.ActionCreator<
+  A.ToggleKeyboardShortcuts
+> = () => ({
   type: 'KEYBOARD_SHORTCUTS_TOGGLE',
 });
 
@@ -37,7 +39,9 @@ export const setSortType: A.ActionCreator<A.SetSortType> = (
   sortReversed,
 });
 
-export const toggleSortTagsAlpha: A.ActionCreator<A.ToggleSortTagsAlpha> = () => ({
+export const toggleSortTagsAlpha: A.ActionCreator<
+  A.ToggleSortTagsAlpha
+> = () => ({
   type: 'TOGGLE_SORT_TAGS_ALPHA',
 });
 
@@ -56,6 +60,8 @@ export const toggleSpellCheck: A.ActionCreator<A.ToggleSpellcheck> = () => ({
   type: 'TOGGLE_SPELLCHECK',
 });
 
-export const toggleAutoHideMenuBar: A.ActionCreator<A.ToggleAutoHideMenuBar> = () => ({
+export const toggleAutoHideMenuBar: A.ActionCreator<
+  A.ToggleAutoHideMenuBar
+> = () => ({
   type: 'TOGGLE_AUTO_HIDE_MENU_BAR',
 });

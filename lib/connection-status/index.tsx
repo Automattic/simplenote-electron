@@ -26,8 +26,8 @@ export const ConnectionStatus: FunctionComponent<Props> = ({
         connectionStatus === 'green'
           ? 'Simplenote is communicating with the server.'
           : connectionStatus === 'offline'
-          ? "Simplenote is operating in offline mode and changes won't be synchronized with the server until it connects again."
-          : "Simplenote hasn't communicated with the server in a while; changes may not be synchronized with the server until the connection improves."
+            ? "Simplenote is operating in offline mode and changes won't be synchronized with the server until it connects again."
+            : "Simplenote hasn't communicated with the server in a while; changes may not be synchronized with the server until the connection improves."
       }
     >
       <p>

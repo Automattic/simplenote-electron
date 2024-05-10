@@ -58,70 +58,72 @@ type NoteListItem =
  * @param notes list of filtered note ids
  * @returns does the actual rendering for the List
  */
-const renderNote = (
-  notes: NoteListItem[],
-  { heightCache }: { heightCache: CellMeasurerCache }
-): ListRowRenderer => ({ index, key, parent, style }) => {
-  const note = notes[index];
+const renderNote =
+  (
+    notes: NoteListItem[],
+    { heightCache }: { heightCache: CellMeasurerCache }
+  ): ListRowRenderer =>
+  ({ index, key, parent, style }) => {
+    const note = notes[index];
 
-  if ('no-notes' === note) {
+    if ('no-notes' === note) {
+      return (
+        <CellMeasurer
+          cache={heightCache}
+          columnIndex={0}
+          key="no-notes"
+          parent={parent}
+          rowIndex={index}
+        >
+          <div className="note-list is-empty" style={{ ...style, height: 200 }}>
+            <span className="note-list-placeholder">No Notes</span>
+          </div>
+        </CellMeasurer>
+      );
+    }
+
+    if ('tag-suggestions' === note || 'notes-header' === note) {
+      return 'tag-suggestions' === note ? (
+        <CellMeasurer
+          cache={heightCache}
+          columnIndex={0}
+          key="tag-suggestions"
+          parent={parent}
+          rowIndex={index}
+        >
+          <TagSuggestions style={{ ...style }} />
+        </CellMeasurer>
+      ) : (
+        <CellMeasurer
+          cache={heightCache}
+          columnIndex={0}
+          key="notes-header"
+          parent={parent}
+          rowIndex={index}
+        >
+          <div className="note-list-header" style={{ ...style }}>
+            Notes
+          </div>
+        </CellMeasurer>
+      );
+    }
+
     return (
       <CellMeasurer
         cache={heightCache}
         columnIndex={0}
-        key="no-notes"
+        key={key}
         parent={parent}
         rowIndex={index}
       >
-        <div className="note-list is-empty" style={{ ...style, height: 200 }}>
-          <span className="note-list-placeholder">No Notes</span>
-        </div>
+        <NoteCell
+          invalidateHeight={() => heightCache.clear(index, 0)}
+          noteId={note}
+          style={style}
+        />
       </CellMeasurer>
     );
-  }
-
-  if ('tag-suggestions' === note || 'notes-header' === note) {
-    return 'tag-suggestions' === note ? (
-      <CellMeasurer
-        cache={heightCache}
-        columnIndex={0}
-        key="tag-suggestions"
-        parent={parent}
-        rowIndex={index}
-      >
-        <TagSuggestions style={{ ...style }} />
-      </CellMeasurer>
-    ) : (
-      <CellMeasurer
-        cache={heightCache}
-        columnIndex={0}
-        key="notes-header"
-        parent={parent}
-        rowIndex={index}
-      >
-        <div className="note-list-header" style={{ ...style }}>
-          Notes
-        </div>
-      </CellMeasurer>
-    );
-  }
-
-  return (
-    <CellMeasurer
-      cache={heightCache}
-      columnIndex={0}
-      key={key}
-      parent={parent}
-      rowIndex={index}
-    >
-      <NoteCell
-        invalidateHeight={() => heightCache.clear(index, 0)}
-        noteId={note}
-        style={style}
-      />
-    </CellMeasurer>
-  );
-};
+  };
 
 /**
  * Modifies the filtered notes list to insert special sections. This

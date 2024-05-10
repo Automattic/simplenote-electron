@@ -24,12 +24,16 @@ export const createNote: A.ActionCreator<A.CreateNote> = (
   note: note,
 });
 
-export const dismissEmailVerifyDialog: A.ActionCreator<A.UpdateAccountVerification> = () => ({
+export const dismissEmailVerifyDialog: A.ActionCreator<
+  A.UpdateAccountVerification
+> = () => ({
   type: 'UPDATE_ACCOUNT_VERIFICATION',
   state: 'dismissed',
 });
 
-export const deleteOpenNoteForever: A.ActionCreator<A.DeleteOpenNoteForever> = () => ({
+export const deleteOpenNoteForever: A.ActionCreator<
+  A.DeleteOpenNoteForever
+> = () => ({
   type: 'DELETE_OPEN_NOTE_FOREVER',
 });
 
@@ -93,7 +97,7 @@ export const showUntaggedNotes: A.ActionCreator<A.ShowUntaggedNotes> = () => ({
 });
 
 export const showDialog: A.ActionCreator<A.ShowDialog> = <
-  D extends T.DialogType
+  D extends T.DialogType,
 >(
   name: D['type'],
   data: object = {}
@@ -103,16 +107,16 @@ export const showDialog: A.ActionCreator<A.ShowDialog> = <
   ...data,
 });
 
-export const showAlternateLoginPrompt: A.ActionCreator<A.ShowAlternateLoginPrompt> = (
-  email: string
-) => ({
+export const showAlternateLoginPrompt: A.ActionCreator<
+  A.ShowAlternateLoginPrompt
+> = (email: string) => ({
   type: 'SHOW_ALTERNATE_LOGIN_PROMPT',
   email,
 });
 
-export const hideAlternateLoginPrompt: A.ActionCreator<A.HideAlternateLoginPrompt> = (
-  email: string
-) => ({
+export const hideAlternateLoginPrompt: A.ActionCreator<
+  A.HideAlternateLoginPrompt
+> = (email: string) => ({
   type: 'HIDE_ALTERNATE_LOGIN_PROMPT',
   email,
 });
@@ -130,7 +134,9 @@ export const toggleRevisions: A.ActionCreator<A.ToggleRevisions> = () => ({
   type: 'REVISIONS_TOGGLE',
 });
 
-export const toggleRestoringDeletedTags: A.ActionCreator<A.ToggleRestoringDeletedTags> = () => ({
+export const toggleRestoringDeletedTags: A.ActionCreator<
+  A.ToggleRestoringDeletedTags
+> = () => ({
   type: 'TOGGLE_RESTORING_DELETED_TAGS',
 });
 

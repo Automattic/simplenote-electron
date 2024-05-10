@@ -16,8 +16,10 @@ const getWidth = () => window.innerWidth;
 ////  REDUCERS
 ///////////////////////////////////////
 
-const systemTheme: A.Reducer<'light' | 'dark'> = (state = getTheme(), action) =>
-  action.type === 'SYSTEM_THEME_UPDATE' ? action.prefers : state;
+const systemTheme: A.Reducer<'light' | 'dark'> = (
+  state = getTheme(),
+  action
+) => (action.type === 'SYSTEM_THEME_UPDATE' ? action.prefers : state);
 
 const windowWidth: A.Reducer<number> = (state = getWidth(), action) =>
   action.type === 'WINDOW_RESIZE' ? action.innerWidth : state;
