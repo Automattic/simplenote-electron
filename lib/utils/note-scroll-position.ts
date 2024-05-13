@@ -1,4 +1,4 @@
-export type notePositions = {
+export type NotePositions = {
   [key: string]: number;
 };
 
@@ -23,9 +23,9 @@ export const clearNotePositions = () => {
   sessionStorage.removeItem('note_positions');
 };
 
-const getAllPositions = (): notePositions => {
+const getAllPositions = (): NotePositions => {
   const notePositions = sessionStorage.getItem('note_positions');
-  let currentSavedPositions: notePositions;
+  let currentSavedPositions: NotePositions;
   if (notePositions) {
     try {
       currentSavedPositions = JSON.parse(notePositions);

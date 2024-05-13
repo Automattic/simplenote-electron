@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  */
 import { CmdOrCtrl } from '../utils/platform';
 import IconButton from '../icon-button';
-import { isMac } from '../utils/platform';
 import NewNoteIcon from '../icons/new-note';
 import MenuIcon from '../icons/menu';
 import { withoutTags } from '../utils/filter-notes';
@@ -60,8 +59,6 @@ export const MenuBar: FunctionComponent<Props> = ({
       placeholder = 'All Notes';
       break;
   }
-
-  const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl';
 
   return (
     <div className="menu-bar">
