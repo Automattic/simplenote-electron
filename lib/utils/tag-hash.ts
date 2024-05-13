@@ -25,7 +25,7 @@ export const withoutTag = (tags: T.TagName[], tag: T.TagName): T.TagName[] => {
 
   for (const tagName of tags) {
     if (tagHashOf(tagName) === hash) {
-      return tags.filter((tagName) => tagHashOf(tagName) !== hash);
+      return tags.filter((name) => tagHashOf(name) !== hash);
     }
   }
 
