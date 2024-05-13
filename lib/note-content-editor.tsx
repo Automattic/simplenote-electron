@@ -977,7 +977,10 @@ class NoteContentEditor extends Component<Props> {
     });
 
     editor.onMouseDown((event: Editor.IEditorMouseEvent) => {
-      if((event.event.ctrlKey && event.event.leftButton) || event.event.rightButton) {
+      if (
+        (event.event.ctrlKey && event.event.leftButton) ||
+        event.event.rightButton
+      ) {
         // ignore right clicks and OSX trackpad right clicks (ctrl+click)
         return;
       }
@@ -1206,15 +1209,18 @@ class NoteContentEditor extends Component<Props> {
         onClick={(e: React.MouseEvent) => {
           // click was on the editor body, let the editor handle it
           const target = e.target as HTMLDivElement;
-          if(target.classList.contains('view-line') || target.classList.contains('view-lines')) {
+          if (
+            target.classList.contains('view-line') ||
+            target.classList.contains('view-lines')
+          ) {
             return;
           }
 
           // it was a fake (trackpad) right click, ignore it
-          if(e.ctrlKey) {
+          if (e.ctrlKey) {
             // TODO it would be nice if we could trigger the context menu from the left gutter :/
             return;
-         }
+          }
           this.focusEditor();
         }}
       >
@@ -1248,7 +1254,7 @@ class NoteContentEditor extends Component<Props> {
               hideCursorInOverviewRuler: true,
               fontSize: 16,
               guides: { indentation: false },
-              lineDecorationsWidth: editorPadding, /* hack for left padding */
+              lineDecorationsWidth: editorPadding /* hack for left padding */,
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
@@ -1257,7 +1263,7 @@ class NoteContentEditor extends Component<Props> {
               multiCursorLimit: 1,
               occurrencesHighlight: 'off',
               overviewRulerBorder: false,
-              padding: { 'top': 40, 'bottom': 0 },
+              padding: { top: 40, bottom: 0 },
               quickSuggestions: false,
               renderControlCharacters: false,
               renderLineHighlight: 'none',
@@ -1265,7 +1271,8 @@ class NoteContentEditor extends Component<Props> {
               scrollbar: {
                 horizontal: 'hidden',
                 useShadows: false,
-                verticalScrollbarSize: editorPadding, /* hack for right padding */
+                verticalScrollbarSize:
+                  editorPadding /* hack for right padding */,
               },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
