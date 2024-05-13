@@ -977,6 +977,13 @@ class NoteContentEditor extends Component<Props> {
     });
 
     editor.onMouseDown((event: Editor.IEditorMouseEvent) => {
+      if (
+        (event.event.ctrlKey && event.event.leftButton) ||
+        event.event.rightButton
+      ) {
+        // ignore right clicks and OSX trackpad right clicks (ctrl+click)
+        return;
+      }
       const { editNote, noteId } = this.props;
       const { content } = this.state;
       const {
@@ -1199,7 +1206,23 @@ class NoteContentEditor extends Component<Props> {
         className={`note-content-editor-shell${
           overTodo ? ' cursor-pointer' : ''
         }`}
-        onClick={this.focusEditor}
+        onClick={(e: React.MouseEvent) => {
+          // click was on the editor body, let the editor handle it
+          const target = e.target as HTMLDivElement;
+          if (
+            target.classList.contains('view-line') ||
+            target.classList.contains('view-lines')
+          ) {
+            return;
+          }
+
+          // it was a fake (trackpad) right click, ignore it
+          if (e.ctrlKey) {
+            // TODO it would be nice if we could trigger the context menu from the left gutter :/
+            return;
+          }
+          this.focusEditor();
+        }}
       >
         <div
           className={`note-content-plaintext${
@@ -1231,7 +1254,7 @@ class NoteContentEditor extends Component<Props> {
               hideCursorInOverviewRuler: true,
               fontSize: 16,
               guides: { indentation: false },
-              lineDecorationsWidth: editorPadding,
+              lineDecorationsWidth: editorPadding /* hack for left padding */,
               lineHeight: 24,
               lineNumbers: 'off',
               links: true,
@@ -1240,15 +1263,20 @@ class NoteContentEditor extends Component<Props> {
               multiCursorLimit: 1,
               occurrencesHighlight: 'off',
               overviewRulerBorder: false,
+              padding: { top: 40, bottom: 0 },
               quickSuggestions: false,
+              renderControlCharacters: false,
               renderLineHighlight: 'none',
+              renderWhitespace: 'none',
               scrollbar: {
                 horizontal: 'hidden',
                 useShadows: false,
-                verticalScrollbarSize: editorPadding,
+                verticalScrollbarSize:
+                  editorPadding /* hack for right padding */,
               },
               scrollBeyondLastLine: false,
               selectionHighlight: false,
+              showFoldingControls: 'never',
               suggestOnTriggerCharacters: true,
               unicodeHighlight: {
                 ambiguousCharacters: false,
