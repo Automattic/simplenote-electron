@@ -6,7 +6,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 
 ## Running
 
-**Read this first!!**: Local development is currently not supported if you don't have an existing account on the test server or access to the production credentials. This is because the move to an email-first signup flow has made it impossible to create accounts in the test database. We hope to be able to support an open-source development workflow again in the future.
+**Read this first!!** Local development is currently not supported if you don't have an existing account on the test server or access to the production credentials. This is because the move to an email-first signup flow has made it impossible to create accounts in the test database. We hope to be able to support an open-source development workflow again in the future.
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
 2. `cd simplenote-electron`
@@ -16,7 +16,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 6. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
 7. For all logging from Electron to be printed to the terminal (e.g. `console.log` statements within `app.js`), you might need to set `env ELECTRON_ENABLE_LOGGING=1`.
 
-_Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make` installation paths used for build cannot have spaces._
+_Note: Simplenote API features such as sharing and publishing will not work with development builds. Due to a limitation of `make`, installation paths used for build cannot have spaces._
 
 ## Building
 
