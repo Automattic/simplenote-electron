@@ -12,7 +12,7 @@
     "url": "git://github.com/Automattic/simplenote-electron.git"
   },
   "dependencies": {
-    "@automattic/vip-go": "0.3.3",
-    "express": "4.17.1"
+    "@automattic/vip-go": "1.1.0",
+    "express": "4.19.2"
   }
 }

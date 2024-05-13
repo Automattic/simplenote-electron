@@ -173,3 +173,21 @@ lint-scss:
 .PHONY: lint-js
 lint-js:
 	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"
+
+
+# encrypted config file
+.PHONY: _pwd_prompt decrypt_conf encrypt_conf
+
+CONF_FILE=./resources/secrets/config.json.enc
+
+# 'private' task for echoing instructions
+_pwd_prompt:
+	@echo "Check the secret store for Simplenote!"
+
+# to create config
+decrypt_conf: _pwd_prompt
+	openssl aes-256-cbc -d -in ${CONF_FILE} -out ./config-local.json -pbkdf2
+
+# for updating config
+encrypt_conf: _pwd_prompt
+	openssl aes-256-cbc -e -in config-local.json -out ${CONF_FILE} -pbkdf2
