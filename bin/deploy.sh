@@ -31,6 +31,7 @@ case $1 in
     ;;
 
   *)
+    echo "Deploy environment must be one of: production, develop, staging"
     exit 0
     ;;
 esac
