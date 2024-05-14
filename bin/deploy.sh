@@ -31,12 +31,13 @@ case $1 in
     ;;
 
   *)
+    echo "Deploy environment must be one of: production, develop, staging"
     exit 0
     ;;
 esac
 
 # Install Node Modules
-npm install
+npm install --legacy-peer-deps
 
 # Temporarily move config-local so it doesn't get overwritten
 mv config-local.json config-local.original.json
