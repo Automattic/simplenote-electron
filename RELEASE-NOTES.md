@@ -1,5 +1,16 @@
 # Changelog
 
+## [v2.22.0]
+
+### Fixes
+
+- Adjusted word wrap borders in Safari to match other browsers [#3191](https://github.com/Automattic/simplenote-electron/pull/3191)
+- Fixed an issue that caused the right-click menu to vanish immediately in Safari [#3192](https://github.com/Automattic/simplenote-electron/pull/3192)
+
+### Other Changes
+
+- Updated dependencies, build pipeline and documentation [#3183](https://github.com/Automattic/simplenote-electron/pull/3183), [#3097](https://github.com/Automattic/simplenote-electron/pull/3097), [#3194](https://github.com/Automattic/simplenote-electron/pull/3194), [#3195](https://github.com/Automattic/simplenote-electron/pull/3195)
+
 ## [v2.21.0]
 
 ### Enhancements
