@@ -186,20 +186,6 @@ class NoteContentEditor extends Component<Props> {
 
   componentDidMount() {
     const { noteId } = this.props;
-    // this.bootTimer = setTimeout(() => {
-    //   if (noteId === this.props.noteId) {
-    //     this.setState({
-    //       editor: 'full',
-    //       content: withCheckboxCharacters(this.props.note.content),
-    //     });
-    //     const position = getNotePosition(noteId);
-    //     if (position) {
-    //       this.editor?.setScrollPosition({
-    //         scrollTop: position,
-    //       });
-    //     }
-    //   }
-    // }, SPEED_DELAY);
     window.addEventListener('resize', clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
@@ -615,12 +601,12 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
 
     this.bootTimer = setTimeout(() => {
-        const position = getNotePosition(this.props.noteId);
-        if (position) {
-          this.editor?.setScrollPosition({
-            scrollTop: position,
-          });
-        }
+      const position = getNotePosition(this.props.noteId);
+      if (position) {
+        this.editor?.setScrollPosition({
+          scrollTop: position,
+        });
+      }
     }, SPEED_DELAY);
 
     monaco.languages.registerLinkProvider('plaintext', {
