@@ -6,7 +6,7 @@ steps:
     plugins:
       - $NVM_PLUGIN
     command: |
-      npm ci
+      .buildkite/commands/install_node_dependencies.sh
       npm run build
       npm test
 
@@ -17,7 +17,7 @@ steps:
     plugins:
       - $NVM_PLUGIN
     command: |
-      npm ci
+      .buildkite/commands/install_node_dependencies.sh
       npm run build
       npm run lint
 
@@ -29,7 +29,7 @@ steps:
       sudo dpkg --add-architecture i386
       sudo apt update
       sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
-      npm ci
+      .buildkite/commands/install_node_dependencies.sh
       make build
 
   - label: Test code signing fetching
@@ -41,5 +41,5 @@ steps:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
     command: |
-      npm ci
+      .buildkite/commands/install_node_dependencies.sh
       make package-osx
