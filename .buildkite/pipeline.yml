@@ -1,0 +1,13 @@
+agents:
+  queue: mac
+env:
+  IMAGE_ID: $IMAGE_ID
+
+steps:
+  - label: Test code signing fetching
+    command: |
+      npm ci
+      make package-osx
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
