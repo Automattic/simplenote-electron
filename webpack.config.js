@@ -83,7 +83,7 @@ module.exports = () => {
     },
     plugins: [
       new NodePolyfillPlugin({
-        includeAliases: ['path', 'process', 'stream', 'util'],
+        includeAliases: ['Buffer', 'path', 'process', 'stream', 'util'],
       }),
       new HtmlWebpackPlugin({
         'build-platform': process.platform,

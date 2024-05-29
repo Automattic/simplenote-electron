@@ -6,6 +6,7 @@
 
 - Adjusted word wrap borders in Safari to match other browsers [#3191](https://github.com/Automattic/simplenote-electron/pull/3191)
 - Fixed an issue that caused the right-click menu to vanish immediately in Safari [#3192](https://github.com/Automattic/simplenote-electron/pull/3192)
+- Fixed a bug where an email address in a note would cause the preview to be blank [#3205](https://github.com/Automattic/simplenote-electron/pull/3205)
 
 ### Other Changes
 
