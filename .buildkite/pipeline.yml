@@ -21,6 +21,17 @@ steps:
       npm run build
       npm run lint
 
+  - label: Build
+    key: build
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      sudo dpkg --add-architecture i386
+      sudo apt update
+      sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
+      npm ci
+      make build
+
   - label: Test code signing fetching
     agents:
       queue: mac
