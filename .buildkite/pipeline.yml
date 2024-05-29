@@ -24,6 +24,7 @@ steps:
       - $NVM_PLUGIN
     command: |
       .buildkite/commands/install_node_dependencies.sh
+      echo "--- :jest: Test"
       npm test
 
   # - label: Build
