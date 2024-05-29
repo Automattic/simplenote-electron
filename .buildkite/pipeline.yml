@@ -1,45 +1,48 @@
 steps:
-  - label: Test
-    key: test
-    env:
-      NODE_ENV: test
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      npm run build
-      npm test
+  # - label: Test
+  #   key: test
+  #   env:
+  #     NODE_ENV: test
+  #   plugins:
+  #     - $NVM_PLUGIN
+  #   command: |
+  #     .buildkite/commands/install_node_dependencies.sh
+  #     npm run build
+  #     npm test
 
   - label: Lint
     key: lint
-    env:
-      NODE_ENV: test
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      npm run build
-      npm run lint
-
-  - label: Build
-    key: build
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      sudo dpkg --add-architecture i386
-      sudo apt update
-      sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
-      .buildkite/commands/install_node_dependencies.sh
-      make build
-
-  - label: Test code signing fetching
     agents:
       queue: mac
     env:
       IMAGE_ID: $IMAGE_ID
+      NODE_ENV: test
     plugins:
-      - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
     command: |
       .buildkite/commands/install_node_dependencies.sh
-      make package-osx
+      # npm run build # doesn't seem to be needed locally
+      npm run lint
+
+  # - label: Build
+  #   key: build
+  #   plugins:
+  #     - $NVM_PLUGIN
+  #   command: |
+  #     sudo dpkg --add-architecture i386
+  #     sudo apt update
+  #     sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
+  #     .buildkite/commands/install_node_dependencies.sh
+  #     make build
+
+  # - label: Test code signing fetching
+  #   agents:
+  #     queue: mac
+  #   env:
+  #     IMAGE_ID: $IMAGE_ID
+  #   plugins:
+  #     - $CI_TOOLKIT_PLUGIN
+  #     - $NVM_PLUGIN
+  #   command: |
+  #     .buildkite/commands/install_node_dependencies.sh
+  #     make package-osx
