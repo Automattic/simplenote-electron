@@ -1,13 +1,34 @@
-agents:
-  queue: mac
-env:
-  IMAGE_ID: $IMAGE_ID
-
 steps:
-  - label: Test code signing fetching
+  - label: Test
+    key: test
+    env:
+      NODE_ENV: test
+    plugins:
+      - $NVM_PLUGIN
     command: |
       npm ci
-      make package-osx
+      npm run build
+      npm test
+
+  - label: Lint
+    key: lint
+    env:
+      NODE_ENV: test
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      npm ci
+      npm run build
+      npm run lint
+
+  - label: Test code signing fetching
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
     plugins:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
+    command: |
+      npm ci
+      make package-osx
