@@ -1,15 +1,4 @@
 steps:
-  # - label: Test
-  #   key: test
-  #   env:
-  #     NODE_ENV: test
-  #   plugins:
-  #     - $NVM_PLUGIN
-  #   command: |
-  #     .buildkite/commands/install_node_dependencies.sh
-  #     npm run build
-  #     npm test
-
   - label: Lint
     key: lint
     agents:
@@ -21,9 +10,19 @@ steps:
       - $NVM_PLUGIN
     command: |
       .buildkite/commands/install_node_dependencies.sh
-      # npm run build # doesn't seem to be needed locally
       echo "--- :eslint: Lint"
       make lint
+
+  # - label: Test
+  #   key: test
+  #   env:
+  #     NODE_ENV: test
+  #   plugins:
+  #     - $NVM_PLUGIN
+  #   command: |
+  #     .buildkite/commands/install_node_dependencies.sh
+  #     npm run build
+  #     npm test
 
   # - label: Build
   #   key: build

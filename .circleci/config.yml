@@ -114,7 +114,6 @@ jobs:
       - *npm_install
       - run: NODE_ENV=test npm run build
       - run: npm test
-      - run: npm run lint
 
   linux:
     docker:
