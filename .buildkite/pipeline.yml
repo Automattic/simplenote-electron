@@ -23,7 +23,7 @@ steps:
       .buildkite/commands/install_node_dependencies.sh
       # npm run build # doesn't seem to be needed locally
       echo "--- :eslint: Lint"
-      npm run lint
+      make lint
 
   # - label: Build
   #   key: build
