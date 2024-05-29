@@ -1,14 +1,1 @@
-node_modules/**/*
 config-local.json
-desktop-build/
-dist/
-logs/
-release/
-*.pvk
-*.p12
-*.spc
-*.tgz
-.idea
-.DS_Store
-dev-app-update.yml
-lib/state/data/test_account.json
