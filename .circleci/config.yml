@@ -98,23 +98,6 @@ jobs:
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths
-  test:
-    docker:
-      - image: cimg/node:18.19.1
-    shell: /bin/bash --login
-    working_directory: ~/simplenote
-    steps:
-      - *install_linux_deps
-      - checkout
-      - *decrypt
-      - *restore_nvm
-      - *setup_nvm
-      - *save_nvm
-      - *npm_restore_cache
-      - *npm_install
-      - run: NODE_ENV=test npm run build
-      - run: npm test
-      - run: npm run lint
 
   linux:
     docker:
@@ -267,8 +250,6 @@ workflows:
   simplenote:
     jobs:
       - build:
-          filters: *job_filters
-      - test:
           filters: *job_filters
       - linux:
           requires:

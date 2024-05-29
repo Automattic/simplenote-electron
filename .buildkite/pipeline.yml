@@ -1,0 +1,48 @@
+env:
+  BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
+
+steps:
+  - label: Build cache
+    key: build_cache
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: |
+      echo "--- :npm: Pre-build npm cache if needed"
+      .buildkite/commands/install_node_dependencies.sh
+
+  - label: Lint
+    key: lint
+    depends_on: build_cache
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+      NODE_ENV: test
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- :eslint: Lint"
+      make lint
+
+  - label: Test
+    key: test
+    depends_on: build_cache
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+      NODE_ENV: test
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- :jest: Test"
+      npm test
