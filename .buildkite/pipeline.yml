@@ -13,16 +13,18 @@ steps:
       echo "--- :eslint: Lint"
       make lint
 
-  # - label: Test
-  #   key: test
-  #   env:
-  #     NODE_ENV: test
-  #   plugins:
-  #     - $NVM_PLUGIN
-  #   command: |
-  #     .buildkite/commands/install_node_dependencies.sh
-  #     npm run build
-  #     npm test
+  - label: Test
+    key: test
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+      NODE_ENV: test
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      npm test
 
   # - label: Build
   #   key: build
