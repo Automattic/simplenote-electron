@@ -41,6 +41,27 @@ steps:
       echo "--- Build"
       make build
 
+  - label: Package on macOS
+    key: package-macos
+    env:
+      IMAGE_ID: $IMAGE_ID
+    plugins:
+      - $NVM_PLUGIN
+    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- Decrypt secrets"
+      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
+      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
+      echo "--- Build"
+      make build
+      echo "--- Package"
+      make package-osx SKIP_BUILD=true
+    artifact_paths:
+      - release/*.dmg
+      - release/*.dmg.blockmap
+      - release/latest-mac.yml
+
   # - label: Build
   #   key: build
   #   plugins:
