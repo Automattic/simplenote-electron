@@ -46,6 +46,8 @@ steps:
 
   - label: Package on macOS
     key: package-macos
+    agents:
+      queue: mac
     env:
       IMAGE_ID: $IMAGE_ID
     plugins:
