@@ -1,3 +1,6 @@
+env:
+  BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
+
 steps:
   - label: Lint
     key: lint
