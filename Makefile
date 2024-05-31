@@ -91,11 +91,23 @@ build-app:
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json
-	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
+	@if [ -f $(SIMPLENOTE_JS) ]; then \
+		echo "File $(SIMPLENOTE_JS) exists, skipping build."; \
+		true; \
+	else \
+		echo "File $(SIMPLENOTE_JS) does not exist, running build."; \
+		make build; \
+	fi
 
 .PHONY: build-if-changed
 build-if-changed: build-if-not-exists
-	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
+	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then \
+		echo "No changes detected, skipping build."; \
+		true; \
+	else \
+		echo "Changes detected, running build."; \
+		make build; \
+	fi
 
 
 # Build binaries only
