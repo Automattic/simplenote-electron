@@ -76,7 +76,6 @@
     "concurrently": "8.2.2",
     "css-loader": "7.1.1",
     "debug": "4.3.4",
-    "dmg-license": "1.0.11",
     "electron": "30.0.2",
     "electron-builder": "24.13.3",
     "eslint": "8.57.0",
