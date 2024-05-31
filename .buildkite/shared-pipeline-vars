@@ -5,7 +5,7 @@
 
 # The ~> modifier is not currently used, but we check for it just in case
 XCODE_VERSION=$(sed -E -n 's/^(~> )?(.*)/xcode-\2/p' .xcode-version)
-CI_TOOLKIT_PLUGIN_VERSION='#mokagio/npm_ci'
+CI_TOOLKIT_PLUGIN_VERSION='mokagio/npm_ci'
 NVM_PLUGIN_VERSION='0.3.0'
 
 export IMAGE_ID="$XCODE_VERSION"
