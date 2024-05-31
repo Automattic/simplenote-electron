@@ -7,11 +7,6 @@ module.exports = async function (params) {
     return;
   }
 
-  if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
-    console.log('Not on a tag. Skipping notarization'); // eslint-disable-line no-console
-    return;
-  }
-
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
 
@@ -29,7 +24,7 @@ module.exports = async function (params) {
   console.log(`Notarizing ${appId} found at ${appPath}`); // eslint-disable-line no-console
 
   try {
-    const electron_notarize = require('electron-notarize');
+    const electron_notarize = require('@electron/notarize');
     await electron_notarize.notarize({
       appBundleId: appId,
       appPath: appPath,

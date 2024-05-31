@@ -140,11 +140,11 @@ package-linux: build-if-changed
 install: node_modules
 
 node_modules/%:
-	@npm install $(notdir $@)
+	@npm install $(notdir $@) --legacy-peer-deps
 
 node_modules: package.json
 	@npm prune
-	@npm install
+	@npm install --legacy-peer-deps
 	@touch node_modules
 
 
