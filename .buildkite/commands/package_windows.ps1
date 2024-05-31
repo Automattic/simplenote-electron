@@ -3,6 +3,8 @@ $ErrorActionPreference = "Stop"
 
 & "prepare_windows_host_for_node.ps1"
 
+Write-Host "--- :windows: Installing make"
+choco install make
 
 Write-Host "--- :npm: Installing dependencies"
 npm ci --legacy-peer-deps
