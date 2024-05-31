@@ -63,7 +63,20 @@ steps:
     artifact_paths:
       - release/*.dmg
       - release/*.dmg.blockmap
-      - release/latest-mac.yml
+      - release/*.yml
+
+  - label: Package on Windows
+    key: package-windows
+    agents:
+      queue: windows
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
+    command: .buildkite/commands/package_windows.ps1
+    artifact_paths:
+      - release\*.exe
+      - release\*.appx
+      - release\*.yml
 
   # - label: Build
   #   key: build
