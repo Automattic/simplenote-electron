@@ -1,0 +1,29 @@
+AllCops:
+  NewCops: enable
+
+Metrics/BlockLength:
+  Exclude: &fastlane
+    - fastlane/Fastfile
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude: *fastlane
+
+Layout/LineLength:
+  Max: 180
+  Exclude: *fastlane
+
+Layout/EmptyLines:
+  Exclude: *fastlane
+
+Style/AsciiComments:
+  Exclude: *fastlane
+
+Metrics/AbcSize:
+  Exclude: *fastlane
+
+Metrics/CyclomaticComplexity:
+  Exclude: *fastlane
+
+Metrics/PerceivedComplexity:
+  Exclude: *fastlane

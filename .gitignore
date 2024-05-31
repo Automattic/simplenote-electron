@@ -4,6 +4,7 @@ desktop-build/
 dist/
 logs/
 release/
+vendor/
 *.pvk
 *.p12
 *.spc
