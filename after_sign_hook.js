@@ -30,7 +30,7 @@ module.exports = async function (params) {
       // TODO: Move to using API key
       appleId: process.env.NOTARIZATION_ID,
       appleIdPassword: process.env.NOTARIZATION_PWD,
-      teamId: '99KV9Z6BKV',
+      teamId: 'PZYM8XX95Q',
     });
   } catch (error) {
     console.error(error); // eslint-disable-line no-console
