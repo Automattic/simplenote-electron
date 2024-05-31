@@ -29,13 +29,13 @@ module.exports = async function (params) {
   console.log(`Notarizing ${appId} found at ${appPath}`); // eslint-disable-line no-console
 
   try {
-    const electron_notarize = require('electron-notarize');
+    const electron_notarize = require('@electron/notarize');
     await electron_notarize.notarize({
-      appBundleId: appId,
       appPath: appPath,
+      // TODO: Move to using API key
       appleId: process.env.NOTARIZATION_ID,
       appleIdPassword: process.env.NOTARIZATION_PWD,
-      ascProvider: 'AutomatticInc',
+      teamId: '99KV9Z6BKV',
     });
   } catch (error) {
     console.error(error); // eslint-disable-line no-console
