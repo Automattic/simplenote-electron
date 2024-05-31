@@ -27,19 +27,19 @@ steps:
       echo "--- :jest: Test"
       npm test
 
-  - label: Build on macOS
-    key: build
-    env:
-      IMAGE_ID: $IMAGE_ID
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      echo "--- Decrypt secrets"
-      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
-      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
-      echo "--- Build"
-      make build
+  # - label: Build on macOS
+  #   key: build
+  #   env:
+  #     IMAGE_ID: $IMAGE_ID
+  #   plugins:
+  #     - $NVM_PLUGIN
+  #   command: |
+  #     .buildkite/commands/install_node_dependencies.sh
+  #     echo "--- Decrypt secrets"
+  #     # This comes from 'make decrypt_conf' which we cannot call because it's interactive
+  #     openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
+  #     echo "--- Build"
+  #     make build
 
   - label: Package on macOS
     key: package-macos
