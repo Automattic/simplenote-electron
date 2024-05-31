@@ -186,6 +186,23 @@ class NoteContentEditor extends Component<Props> {
 
   componentDidMount() {
     const { noteId } = this.props;
+    this.bootTimer = setTimeout(() => {
+      if (noteId === this.props.noteId) {
+        this.setState({
+          editor: 'full',
+          content: withCheckboxCharacters(this.props.note.content),
+        });
+        const position = getNotePosition(noteId);
+        if (position) {
+          this.editor?.setScrollPosition({
+            scrollTop: position,
+          });
+        }
+      }
+    }, SPEED_DELAY);
+    this.focusEditor();
+    this.props.storeFocusEditor(this.focusEditor);
+    this.props.storeHasFocus(this.hasFocus);
     window.addEventListener('resize', clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
     this.toggleShortcuts(true);
@@ -595,19 +612,6 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-
-    this.focusEditor();
-    this.props.storeFocusEditor(this.focusEditor);
-    this.props.storeHasFocus(this.hasFocus);
-
-    this.bootTimer = setTimeout(() => {
-      const position = getNotePosition(this.props.noteId);
-      if (position) {
-        this.editor?.setScrollPosition({
-          scrollTop: position,
-        });
-      }
-    }, SPEED_DELAY);
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
