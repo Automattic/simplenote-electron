@@ -7,11 +7,6 @@ module.exports = async function (params) {
     return;
   }
 
-  if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
-    console.log('Not on a tag. Skipping notarization'); // eslint-disable-line no-console
-    return;
-  }
-
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
 
