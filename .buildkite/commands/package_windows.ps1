@@ -13,6 +13,6 @@ Write-Host "--- :node: Building app"
 make build
 
 Write-Host "--- :windows: Packaging for Windows"
-make package-windows SKIP_BUILD=true
+make package-win32 SKIP_BUILD=true
 
 If ($LastExitCode -ne 0) { Exit $LastExitCode }
