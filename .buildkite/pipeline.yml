@@ -109,6 +109,17 @@ steps:
       - release\*.tar.gz
       - release\*.yml
 
+  - label: GitHub Release (fake)
+    depends_on:
+      - package-linux
+      - package-macos
+      - package-windows
+    commands: |
+      echo "+++ Fake GitHub Release Upload"
+      echo "...will need to add a tag filter to this"
+      echo "TODO: Download assets"
+      echo "TODO: Create release and upload assets"
+
   # - label: Build
   #   key: build
   #   plugins:
