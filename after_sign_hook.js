@@ -75,7 +75,7 @@ module.exports = async function (params) {
       appleApiIssuer: process.env.APP_STORE_CONNECT_API_KEY_ISSUER_ID,
     });
   } catch (error) {
-    console.error(error); // eslint-disable-line no-console
+    throw new Error(`Notarization failed with error:\n${error}`);
   }
 
   console.log(`Done notarizing ${appId}`); // eslint-disable-line no-console
