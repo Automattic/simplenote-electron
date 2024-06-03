@@ -5,7 +5,7 @@
   "files_to_copy": [
     {
       "file": "iOS/app_store_connect_fastlane_api_key.p8",
-      "destination": "~/.configure/wordpress-secrets/secrets/app_store_connect_api_key.p8",
+      "destination": "~/.configure/simplenote-electron/secrets/app_store_connect_api_key.p8",
       "encrypt": true
     }
   ],
