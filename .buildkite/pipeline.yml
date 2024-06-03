@@ -96,6 +96,7 @@ steps:
     key: package-linux
     plugins:
       - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
     # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
     command: |
       .buildkite/commands/install_node_dependencies.sh
