@@ -23,9 +23,10 @@ module.exports = async function (params) {
   if (fs.existsSync(envPath)) {
     dotenv.config({ path: envPath });
   } else {
+    // eslint-disable-next-line no-console
     console.log(
-      `No env file found at ${envPath}. Will check for individual env variables...`
-    ); // eslint-disable-line no-console
+      `No env file found at ${envPath}. Checking individual values...`
+    );
     let errors = [];
     if (process.env.APP_STORE_CONNECT_API_KEY_KEY_ID === undefined) {
       errors.push(
@@ -37,7 +38,7 @@ module.exports = async function (params) {
         'APP_STORE_CONNECT_API_KEY_ISSUER_ID value not found in env. Please set it.'
       );
     }
-    if (fs.existsSync(appStoreConnectKeyPath) == false) {
+    if (fs.existsSync(appStoreConnectKeyPath) === false) {
       errors.push(
         `Key file not found at ${appStoreConnectKeyPath}. Please add it.`
       );
