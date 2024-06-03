@@ -52,20 +52,6 @@ steps:
       echo "--- :jest: Test"
       npm test
 
-  # - label: Build on macOS
-  #   key: build
-  #   env:
-  #     IMAGE_ID: $IMAGE_ID
-  #   plugins:
-  #     - $NVM_PLUGIN
-  #   command: |
-  #     .buildkite/commands/install_node_dependencies.sh
-  #     echo "--- Decrypt secrets"
-  #     # This comes from 'make decrypt_conf' which we cannot call because it's interactive
-  #     openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
-  #     echo "--- Build"
-  #     make build
-
   - label: Package on macOS
     key: package-macos
     agents:
@@ -116,15 +102,3 @@ steps:
   #     sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
   #     .buildkite/commands/install_node_dependencies.sh
   #     make build
-
-  # - label: Test code signing fetching
-  #   agents:
-  #     queue: mac
-  #   env:
-  #     IMAGE_ID: $IMAGE_ID
-  #   plugins:
-  #     - $CI_TOOLKIT_PLUGIN
-  #     - $NVM_PLUGIN
-  #   command: |
-  #     .buildkite/commands/install_node_dependencies.sh
-  #     make package-osx
