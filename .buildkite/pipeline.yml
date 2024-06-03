@@ -64,12 +64,13 @@ steps:
     # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
     command: |
       .buildkite/commands/install_node_dependencies.sh
-      echo "--- Decrypt secrets"
-      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
-      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
       echo "--- Fetch code signing identity"
       install_gems
       bundle exec fastlane configure_code_signing
+      echo "--- Decrypt secrets"
+      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
+      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
+      bundle exec fastlane run configure_apply
       echo "--- Build"
       make build
       echo "--- Package"
