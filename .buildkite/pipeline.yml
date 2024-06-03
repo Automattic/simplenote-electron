@@ -92,6 +92,22 @@ steps:
       - release\*.appx
       - release\*.yml
 
+  - label: Package on Linux
+    key: package-linux
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- Build"
+      make build
+      echo "--- Package"
+      make package-linux SKIP_BUILD=true
+    artifact_paths:
+      - release\*.deb
+      - release\*.tar.gz
+      - release\*.yml
+
   # - label: Build
   #   key: build
   #   plugins:
