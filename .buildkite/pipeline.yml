@@ -27,6 +27,14 @@ steps:
   # Notice that we build the app in each platform because it takes ~1-2 minutes
   # to do so which is comparable to a dedicated build step, archiving the
   # artifacts, uploading them, then downloading them in each package step.
+  #
+  # Also notice that we package for the different platforms on every build.
+  # It's up to the elector-builder configuration to decided whether to upload
+  # the artifacts to a GitHub release.
+  #
+  # See:
+  # - Makefile PUBLISH value
+  # - https://www.electron.build/configuration/publish
 
   - label: Package on macOS
     key: package-macos
