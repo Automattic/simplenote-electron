@@ -24,14 +24,9 @@ steps:
       echo "--- :jest: Test"
       npm test
 
-  - label: Build
-    key: build
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      echo "--- Build"
-      make build
+  # Notice that we build the app in each platform because it takes ~1-2 minutes
+  # to do so which is comparable to a dedicated build step, archiving the
+  # artifacts, uploading them, then downloading them in each package step.
 
   - label: Package on macOS
     key: package-macos
@@ -42,7 +37,6 @@ steps:
     plugins:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
-    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
     command: |
       .buildkite/commands/install_node_dependencies.sh
       echo "--- Fetch code signing identity"
@@ -67,7 +61,6 @@ steps:
       queue: windows
     plugins:
       - $CI_TOOLKIT_PLUGIN
-    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
     command: .buildkite/commands/package_windows.ps1
     artifact_paths:
       - release\*.exe
@@ -79,7 +72,6 @@ steps:
     plugins:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
-    # TODO: Download artifacts from "build" step, otherwise we're just wasting time!
     command: |
       .buildkite/commands/install_node_dependencies.sh
       echo "--- Build"
