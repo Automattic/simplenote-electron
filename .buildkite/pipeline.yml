@@ -2,34 +2,9 @@ env:
   BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
 
 steps:
-  - label: Lint Linux
-    key: lint-alt
-    env:
-      NODE_ENV: test
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      echo "--- :eslint: Lint"
-      make lint
-
-  - label: Test Linux
-    key: test-alt
-    env:
-      NODE_ENV: test
-    plugins:
-      - $NVM_PLUGIN
-    command: |
-      .buildkite/commands/install_node_dependencies.sh
-      echo "--- :jest: Test"
-      npm test
-
   - label: Lint
     key: lint
-    agents:
-      queue: mac
     env:
-      IMAGE_ID: $IMAGE_ID
       NODE_ENV: test
     plugins:
       - $NVM_PLUGIN
@@ -40,10 +15,7 @@ steps:
 
   - label: Test
     key: test
-    agents:
-      queue: mac
     env:
-      IMAGE_ID: $IMAGE_ID
       NODE_ENV: test
     plugins:
       - $NVM_PLUGIN
