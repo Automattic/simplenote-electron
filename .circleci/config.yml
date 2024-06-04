@@ -251,31 +251,33 @@ workflows:
     jobs:
       - build:
           filters: *job_filters
-      - linux:
-          requires:
-            - build
-          filters: *job_filters
-      - mac:
-          requires:
-            - build
-          filters: *job_filters
-      - windows:
-          requires:
-            - build
-          filters: *job_filters
-      - windowsstore:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - none
-            tags:
-              only: /.*/
-      - artifacts:
-          requires:
-            - linux
-            - mac
-            - windows
-            - windowsstore
-          filters: *job_filters
+      # Disabled to see if Buildkite makes GitHub release alone
+      #
+      # - linux:
+      #     requires:
+      #       - build
+      #     filters: *job_filters
+      # - mac:
+      #     requires:
+      #       - build
+      #     filters: *job_filters
+      # - windows:
+      #     requires:
+      #       - build
+      #     filters: *job_filters
+      # - windowsstore:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only:
+      #           - none
+      #       tags:
+      #         only: /.*/
+      # - artifacts:
+      #     requires:
+      #       - linux
+      #       - mac
+      #       - windows
+      #       - windowsstore
+      #     filters: *job_filters
