@@ -24,6 +24,15 @@ steps:
       echo "--- :jest: Test"
       npm test
 
+  - label: Build
+    key: build
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- Build"
+      make build
+
   - label: Package on macOS
     key: package-macos
     agents:
@@ -92,14 +101,3 @@ steps:
       echo "...will need to add a tag filter to this"
       echo "TODO: Download assets"
       echo "TODO: Create release and upload assets"
-
-  # - label: Build
-  #   key: build
-  #   plugins:
-  #     - $NVM_PLUGIN
-  #   command: |
-  #     sudo dpkg --add-architecture i386
-  #     sudo apt update
-  #     sudo apt -y install libxkbfile-dev libxkbfile-dev:i386 libxext-dev libx11-dev libx11-dev:i386 libxss-dev gcc-multilib g++-multilib rpm
-  #     .buildkite/commands/install_node_dependencies.sh
-  #     make build
