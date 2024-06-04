@@ -61,7 +61,7 @@ steps:
     artifact_paths:
       - release/*.dmg
       - release/*.dmg.blockmap
-      - release/*.yml
+      - release/latest*.yml
 
   - label: Package on Windows
     key: package-windows
@@ -73,6 +73,7 @@ steps:
     artifact_paths:
       - release\*.exe
       - release\*.appx
+      - release\*.blockmap
       - release\*.yml
 
   - label: Package on Linux
