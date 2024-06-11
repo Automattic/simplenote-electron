@@ -15,9 +15,15 @@ If (Test-Path $certPath) {
     Exit 1
 }
 
-$windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Machine)
+# First try to get the env var from the process environment
+$windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Process)
 If ([string]::IsNullOrEmpty($windowsCertPassword)) {
-    Write-Host "[!] WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set in the environment."
+    # If it fails, try from the machine-wide environment
+    $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Machine)
+}
+
+If ([string]::IsNullOrEmpty($windowsCertPassword)) {
+    Write-Host "[!] WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set in either process or machine environments."
     Exit 1
 } else {
     [System.Environment]::SetEnvironmentVariable('CSC_KEY_PASSWORD', $windowsCertPassword, [System.EnvironmentVariableTarget]::Machine)
