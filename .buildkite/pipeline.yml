@@ -1,5 +1,7 @@
 env:
   BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
+  # See https://www.electron.build/index.html#debug
+  DEBUG: electron-builder
 
 steps:
   - label: Lint
