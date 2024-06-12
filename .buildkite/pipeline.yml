@@ -42,6 +42,7 @@ steps:
       queue: mac
     env:
       IMAGE_ID: $IMAGE_ID
+      CSC_FOR_PULL_REQUEST: true
     plugins:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
@@ -70,6 +71,8 @@ steps:
     plugins:
       - $CI_TOOLKIT_PLUGIN
     command: .buildkite/commands/package_windows.ps1
+    env:
+      CSC_FOR_PULL_REQUEST: true
     artifact_paths:
       - release\*.exe
       - release\*.appx
@@ -87,6 +90,8 @@ steps:
       make build
       echo "--- Package"
       make package-linux SKIP_BUILD=true
+    env:
+      CSC_FOR_PULL_REQUEST: true
     artifact_paths:
       - release\*.deb
       - release\*.tar.gz
