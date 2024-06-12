@@ -99,9 +99,9 @@ steps:
     env:
       CSC_FOR_PULL_REQUEST: true
     artifact_paths:
-      - release\*.deb
-      - release\*.tar.gz
-      - release\*.yml
+      - release/*.deb
+      - release/*.tar.gz
+      - release/*.yml
 
   - label: GitHub Release (fake)
     depends_on:
