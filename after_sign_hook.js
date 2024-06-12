@@ -25,7 +25,7 @@ module.exports = async function (params) {
   } else {
     // eslint-disable-next-line no-console
     console.log(
-      `No env file found at ${envPath}. Checking individual values...`
+      `No env file found at ${envPath}. Looking for required env vars individually...`
     );
     let errors = [];
     if (process.env.APP_STORE_CONNECT_API_KEY_KEY_ID === undefined) {
@@ -48,6 +48,8 @@ module.exports = async function (params) {
       throw new Error(
         `Could not begin signing macOS build. Errors: ${errors.join('\n')}`
       );
+    } else {
+      console.log('All required env vars found. Moving on...');
     }
   }
 
