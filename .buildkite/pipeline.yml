@@ -1,7 +1,8 @@
 env:
   BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
-  # See https://www.electron.build/index.html#debug
-  DEBUG: electron-builder
+  # Uncomment this to get more logs during the electron-builder calls.
+  # Useful for debugging, but very noisy
+  # DEBUG: electron-builder
 
 steps:
   - label: Lint
