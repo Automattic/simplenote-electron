@@ -21,13 +21,11 @@ export const renderNoteToHtml = (content: string) => {
         extensions: ['enableCheckboxes', 'removeLineBreaks'],
       });
       markdownConverter.setFlavor('github');
-      markdownConverter.setOption('ghMentions', false);
-      markdownConverter.setOption('literalMidWordUnderscores', true);
       markdownConverter.setOption('simpleLineBreaks', false); // override GFM
+      markdownConverter.setOption('ghMentions', false);
       markdownConverter.setOption('smoothLivePreview', true);
-      markdownConverter.setOption('splitAdjacentBlockquotes', true);
-      markdownConverter.setOption('strikethrough', true); // ~~strikethrough~~
       markdownConverter.setOption('tables', true); // table syntax
+      markdownConverter.setOption('strikethrough', true); // ~~strikethrough~~
 
       let transformedContent = content.replace(
         /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
