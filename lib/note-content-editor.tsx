@@ -1248,7 +1248,6 @@ class NoteContentEditor extends Component<Props> {
               // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
               'bracketPairColorization.enabled': false,
               codeLens: false,
-              detectIndentation: false,
               folding: false,
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
@@ -1279,7 +1278,6 @@ class NoteContentEditor extends Component<Props> {
               selectionHighlight: false,
               showFoldingControls: 'never',
               suggestOnTriggerCharacters: true,
-              tabSize: 3 /* 4 spaces is considered the beginning of a code block */,
               unicodeHighlight: {
                 ambiguousCharacters: false,
                 invisibleCharacters: false,
