@@ -37,7 +37,6 @@ ASC_API_KEY_ENV_VARS = %w[
   APP_STORE_CONNECT_API_KEY_KEY
 ].freeze
 
-require_relative 'lib/helpers'
 import 'lib/helpers.rb'
 
 before_all do
