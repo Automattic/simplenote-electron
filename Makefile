@@ -46,8 +46,16 @@ DEV_SERVER ?= false
 
 # electron-builder publish option
 # options: always|onTag|onTagOrDraft|never
-PUBLISH ?= onTag
-
+#
+# Unfortunately, electron-builder does not recognize Buildkite as a provider, so we need to manually check that.
+# See https://github.com/electron-userland/electron-builder/blob/14942b70a5da79a5e36e330f64de66ec501b4ac6/packages/electron-publish/src/publisher.ts#L139
+#
+# Notice the use of ?= to still be able to override at call time
+ifeq ($(strip $(BUILDKITE_TAG)),)
+	PUBLISH ?= never
+else
+	PUBLISH ?= always
+endif
 
 # Main targets
 .PHONY: start
