@@ -98,7 +98,6 @@ jobs:
       - persist_to_workspace:
           root: ~/simplenote
           paths: *app_cache_paths
-    resource_class: large
   test:
     docker:
       - image: cimg/node:18.19.1
