@@ -200,6 +200,7 @@ lint-js:
 .PHONY: _pwd_prompt decrypt_conf encrypt_conf
 
 CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
+CONF_FILE_LOCAL=./config-local.json
 
 # 'private' task for echoing instructions
 _pwd_prompt:
@@ -207,8 +208,8 @@ _pwd_prompt:
 
 # to create config for local development
 decrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ./config-local.json -pbkdf2
+	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE_LOCAL} -pbkdf2
 
 # for updating the stored config with the local values
 encrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -e -in config-local.json -out ${CONF_FILE_ENCRYPTED} -pbkdf2
+	openssl aes-256-cbc -e -in ${CONF_FILE_LOCAL} -out ${CONF_FILE_ENCRYPTED} -pbkdf2
