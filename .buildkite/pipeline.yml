@@ -55,8 +55,7 @@ steps:
       install_gems
       bundle exec fastlane configure_code_signing
       echo "--- Decrypt secrets"
-      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
-      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config-local.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
+      make decrypt_conf_production
       bundle exec fastlane run configure_apply
       echo "--- Build"
       make build
@@ -96,8 +95,7 @@ steps:
       echo "--- Build"
       make build
       echo "--- Decrypt secrets"
-      # This comes from 'make decrypt_conf' which we cannot call because it's interactive
-      openssl aes-256-cbc -d -in ./resources/secrets/config.json.enc -out ./config.json -pbkdf2 -k $SECRETS_ENCRYPTION_KEY
+      make decrypt_conf_production
       echo "--- Package"
       make package-linux SKIP_BUILD=true
     env:

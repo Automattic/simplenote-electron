@@ -41,6 +41,9 @@ choco install make
 Write-Host "--- :npm: Installing dependencies"
 npm ci --legacy-peer-deps
 
+Write-Host "--- :lock_with_ink_pen: Decrypting secrets"
+make decrypt_conf_production
+
 Write-Host "--- :node: Building app"
 make build
 
