@@ -199,16 +199,16 @@ lint-js:
 # encrypted config file
 .PHONY: _pwd_prompt decrypt_conf encrypt_conf
 
-CONF_FILE=./resources/secrets/config.json.enc
+CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
 
 # 'private' task for echoing instructions
 _pwd_prompt:
 	@echo "Check the secret store for Simplenote!"
 
-# to create config
+# to create config for local development
 decrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -d -in ${CONF_FILE} -out ./config-local.json -pbkdf2
+	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ./config-local.json -pbkdf2
 
-# for updating config
+# for updating the stored config with the local values
 encrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -e -in config-local.json -out ${CONF_FILE} -pbkdf2
+	openssl aes-256-cbc -e -in config-local.json -out ${CONF_FILE_ENCRYPTED} -pbkdf2
