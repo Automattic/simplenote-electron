@@ -214,3 +214,25 @@ decrypt_conf: _pwd_prompt
 # for updating the stored config with the local values
 encrypt_conf: _pwd_prompt
 	openssl aes-256-cbc -e -in ${CONF_FILE_LOCAL} -out ${CONF_FILE_ENCRYPTED} -pbkdf2
+
+# There's likely a neater way to conditionally decrypt the config but:
+#
+# - This was added in the context of a time restricted effort to deploy a new version
+# - It seems safer to add a new task rather than modifying existing ones and meddling with the dependencies tree
+# - config.json is tracked under Git, which means we ought to be extra careful with the edits that go into it. We don't want leakages
+decrypt_conf_production:
+ifeq ($(strip $(CI)),)
+	$(error "'make decrypt_conf' should only run in CI environments!")
+else
+ifeq ($(NODE_ENV),production)
+	@echo "$(CONF_FILE) not found. Attempting to decode because running for prod (NODE_ENV = $(NODE_ENV))..."
+ifeq ($(strip $(SECRETS_ENCRYPTION_KEY)),)
+	$(error Could not decode $(CONF_FILE) because SECRETS_ENCRYPTION_KEY is missing from environment.)
+else
+	@openssl aes-256-cbc -d -in $(CONF_FILE_ENCRYPTED) -out $(CONF_FILE) -pbkdf2 -k ${SECRETS_ENCRYPTION_KEY}
+	@echo "Succefully decoded $(CONF_FILE_ENCRYPTED) into $(CONF_FILE)."
+endif
+else
+	@echo "Will not attempt to decode $(CONF_FILE_ENCRYPTED) because not running in production (NODE_ENV = $(NODE_ENV))."
+endif
+endif
