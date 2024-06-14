@@ -168,7 +168,7 @@ node_modules/%:
 	@npm install $(notdir $@) --legacy-peer-deps
 
 node_modules: package.json
-	@npm prune
+	@npm prune --legacy-peer-deps
 	@npm install --legacy-peer-deps
 	@touch node_modules
 
