@@ -10,6 +10,10 @@ endif
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
+CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
+CONF_FILE_LOCAL=./config-local.json
+CONF_FILE=./config.json
+
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
 
@@ -171,8 +175,8 @@ node_modules: package.json
 
 # Checks
 config.json:
-ifeq (,$(wildcard $(THIS_DIR)$/config.json))
-	$(error config.json not found. Required file, see docs)
+ifeq (,$(wildcard $(THIS_DIR)$/$CONF_FILE))
+	$(error $(CONF_FILE) not found. Required file, see docs)
 endif
 
 
@@ -198,9 +202,6 @@ lint-js:
 
 # encrypted config file
 .PHONY: _pwd_prompt decrypt_conf encrypt_conf
-
-CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
-CONF_FILE_LOCAL=./config-local.json
 
 # 'private' task for echoing instructions
 _pwd_prompt:
