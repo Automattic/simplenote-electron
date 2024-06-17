@@ -230,7 +230,7 @@ ifeq ($(strip $(SECRETS_ENCRYPTION_KEY)),)
 	$(error Could not decode $(CONF_FILE) because SECRETS_ENCRYPTION_KEY is missing from environment.)
 else
 	@openssl aes-256-cbc -d -in $(CONF_FILE_ENCRYPTED) -out $(CONF_FILE) -pbkdf2 -k ${SECRETS_ENCRYPTION_KEY}
-	@echo "Succefully decoded $(CONF_FILE_ENCRYPTED) into $(CONF_FILE)."
+	@echo "Successfully decoded $(CONF_FILE_ENCRYPTED) into $(CONF_FILE)."
 endif
 else
 	@echo "Will not attempt to decode $(CONF_FILE_ENCRYPTED) because not running in production (NODE_ENV = $(NODE_ENV))."
