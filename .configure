@@ -1,0 +1,15 @@
+{
+  "project_name": "simplenote-electron",
+  "branch": "trunk",
+  "pinned_hash": "bbd0130868d58b2e59c909433df83f4ae6721b76",
+  "files_to_copy": [
+    {
+      "file": "iOS/app_store_connect_fastlane_api_key.p8",
+      "destination": "~/.configure/simplenote-electron/secrets/app_store_connect_api_key.p8",
+      "encrypt": true
+    }
+  ],
+  "file_dependencies": [
+
+  ]
+}

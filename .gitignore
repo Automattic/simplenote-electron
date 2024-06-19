@@ -4,6 +4,7 @@ desktop-build/
 dist/
 logs/
 release/
+vendor/
 *.pvk
 *.p12
 *.spc
@@ -12,3 +13,5 @@ release/
 .DS_Store
 dev-app-update.yml
 lib/state/data/test_account.json
+# Ignore all files in the .configure-files folder apart from the encoded ones
+!.configure-files/*.enc

@@ -6,7 +6,7 @@
     "email": "support@simplenote.com"
   },
   "productName": "Simplenote",
-  "version": "2.22.0-beta3",
+  "version": "2.22.0-beta7",
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
@@ -78,6 +78,7 @@
     "debug": "4.3.4",
     "electron": "30.0.2",
     "electron-builder": "24.13.3",
+    "@electron/notarize": "2.3.2",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jest": "28.5.0",
