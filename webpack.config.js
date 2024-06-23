@@ -75,9 +75,9 @@ module.exports = () => {
       ],
     },
     resolve: {
-      // fallback: {
-      //   setImmediate: require.resolve('setimmediate/'),
-      // },
+      fallback: {
+        './config-local': require.resolve('./config'), // fallback to config.json if config-local.json is missing
+      },
       extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.ts', '.tsx'],
       modules: ['node_modules'],
     },

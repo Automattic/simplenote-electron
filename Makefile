@@ -11,8 +11,7 @@ THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
-CONF_FILE_LOCAL=./config-local.json
-CONF_FILE=./config.json
+CONF_FILE=./config-local.json
 
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
@@ -209,11 +208,11 @@ _pwd_prompt:
 
 # to create config for local development
 decrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE_LOCAL} -pbkdf2
+	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE} -pbkdf2
 
 # for updating the stored config with the local values
 encrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -e -in ${CONF_FILE_LOCAL} -out ${CONF_FILE_ENCRYPTED} -pbkdf2
+	openssl aes-256-cbc -e -in ${CONF_FILE} -out ${CONF_FILE_ENCRYPTED} -pbkdf2
 
 # There's likely a neater way to conditionally decrypt the config but:
 #
