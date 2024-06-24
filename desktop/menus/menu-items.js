@@ -2,6 +2,7 @@ const { app } = require('electron');
 
 const { appCommandSender } = require('./utils');
 const updater = require('../updater');
+const { autoUpdater } = require('electron-updater');
 
 const about = {
   label: '&About ' + app.name,
@@ -13,6 +14,7 @@ const about = {
 
 const checkForUpdates = {
   label: '&Check for Updates…',
+  enabled: autoUpdater.isUpdaterActive(),
   click: updater.pingAndShowProgress.bind(updater),
 };
 
