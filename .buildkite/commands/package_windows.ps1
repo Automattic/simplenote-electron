@@ -42,7 +42,7 @@ Write-Host "--- :npm: Installing dependencies"
 npm ci --legacy-peer-deps
 
 Write-Host "--- :lock_with_ink_pen: Decrypting secrets"
-make decrypt_conf_production
+make decrypt_conf
 
 Write-Host "--- :node: Building app"
 make build
