@@ -18,7 +18,9 @@ ELECTRON_VERSION := $(shell node -e "console.log(require('./package.json').devDe
 RED=`tput setaf 1`
 RESET=`tput sgr0`
 
-SIMPLENOTE_JS := $(THIS_DIR)/dist/app.js
+# SIMPLENOTE_JS := `find $(THIS_DIR)/dist -name 'app.*.js'`
+# this finds the newest file that matches app.*.js
+SIMPLENOTE_JS := $(shell find $(THIS_DIR)/dist -name 'app.*.js' -print0 | xargs -r -0 ls -1 -t | head -1)
 SIMPLENOTE_CHANGES_STD := `find "$(THIS_DIR)" -newer "$(SIMPLENOTE_JS)" \( -name "*.js" -o -name "*.jsx" -o -name "*.json" -o -name "*.scss" -o -name "*.ts" -o -name "*.tsx" \) -type f -print -quit | grep -v .min. | wc -l`
 SIMPLENOTE_BRANCH = $(shell git --git-dir .git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
@@ -91,12 +93,11 @@ build-app:
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json
-	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
+	@if [ ! -z $(SIMPLENOTE_JS) ] && [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
 
 .PHONY: build-if-changed
 build-if-changed: build-if-not-exists
-	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
-
+	@if [ ! -z $(SIMPLENOTE_JS) ] && [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi
 
 # Build binaries only
 .PHONY: osx
