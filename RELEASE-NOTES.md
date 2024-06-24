@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Updated dependencies, build pipeline and documentation [#3183](https://github.com/Automattic/simplenote-electron/pull/3183), [#3097](https://github.com/Automattic/simplenote-electron/pull/3097), [#3194](https://github.com/Automattic/simplenote-electron/pull/3194), [#3195](https://github.com/Automattic/simplenote-electron/pull/3195)
+- Updated dependencies, build pipeline and documentation [#3183](https://github.com/Automattic/simplenote-electron/pull/3183), [#3097](https://github.com/Automattic/simplenote-electron/pull/3097), [#3194](https://github.com/Automattic/simplenote-electron/pull/3194), [#3195](https://github.com/Automattic/simplenote-electron/pull/3195), [#3218](https://github.com/Automattic/simplenote-electron/pull/3218), [#3223](https://github.com/Automattic/simplenote-electron/pull/3223)
 
 ## [v2.21.0]
 

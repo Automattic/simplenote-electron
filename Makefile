@@ -11,8 +11,7 @@ THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
 CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
-CONF_FILE_LOCAL=./config-local.json
-CONF_FILE=./config.json
+CONF_FILE=./config-local.json
 
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
@@ -205,34 +204,26 @@ lint-js:
 
 # 'private' task for echoing instructions
 _pwd_prompt:
+ifeq ($(strip $(CI)),)
 	@echo "Check the secret store for Simplenote!"
+else
+	@echo "Use input disabled because running in CI (CI env var set)"
+endif
 
+OPENSSL_CMD=openssl aes-256-cbc -pbkdf2
+DECRYPT_CMD=${OPENSSL_CMD} -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE}
 # to create config for local development
 decrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE_LOCAL} -pbkdf2
-
-# for updating the stored config with the local values
-encrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -e -in ${CONF_FILE_LOCAL} -out ${CONF_FILE_ENCRYPTED} -pbkdf2
-
-# There's likely a neater way to conditionally decrypt the config but:
-#
-# - This was added in the context of a time restricted effort to deploy a new version
-# - It seems safer to add a new task rather than modifying existing ones and meddling with the dependencies tree
-# - config.json is tracked under Git, which means we ought to be extra careful with the edits that go into it. We don't want leakages
-decrypt_conf_production:
 ifeq ($(strip $(CI)),)
-	$(error "'make decrypt_conf' should only run in CI environments!")
+	${DECRYPT_CMD}
 else
-ifeq ($(NODE_ENV),production)
-	@echo "$(CONF_FILE) not found. Attempting to decode because running for prod (NODE_ENV = $(NODE_ENV))..."
 ifeq ($(strip $(SECRETS_ENCRYPTION_KEY)),)
 	$(error Could not decode $(CONF_FILE) because SECRETS_ENCRYPTION_KEY is missing from environment.)
 else
-	@openssl aes-256-cbc -d -in $(CONF_FILE_ENCRYPTED) -out $(CONF_FILE) -pbkdf2 -k ${SECRETS_ENCRYPTION_KEY}
-	@echo "Successfully decoded $(CONF_FILE_ENCRYPTED) into $(CONF_FILE)."
-endif
-else
-	@echo "Will not attempt to decode $(CONF_FILE_ENCRYPTED) because not running in production (NODE_ENV = $(NODE_ENV))."
+	@${DECRYPT_CMD} -k ${SECRETS_ENCRYPTION_KEY}
 endif
 endif
+
+# for updating the stored config with the local values
+encrypt_conf: _pwd_prompt
+	${OPENSSL_CMD} -e -in ${CONF_FILE} -out ${CONF_FILE_ENCRYPTED}
