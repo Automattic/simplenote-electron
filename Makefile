@@ -204,7 +204,11 @@ lint-js:
 
 # 'private' task for echoing instructions
 _pwd_prompt:
+ifeq ($(strip $(CI)),)
 	@echo "Check the secret store for Simplenote!"
+else
+	@echo "Use input disabled because running in CI (CI env var set)"
+endif
 
 OPENSSL_CMD=openssl aes-256-cbc -pbkdf2
 DECRYPT_CMD=${OPENSSL_CMD} -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE}
@@ -216,7 +220,7 @@ else
 ifeq ($(strip $(SECRETS_ENCRYPTION_KEY)),)
 	$(error Could not decode $(CONF_FILE) because SECRETS_ENCRYPTION_KEY is missing from environment.)
 else
-	${DECRYPT_CMD} -k ${SECRETS_ENCRYPTION_KEY}
+	@${DECRYPT_CMD} -k ${SECRETS_ENCRYPTION_KEY}
 endif
 endif
 
