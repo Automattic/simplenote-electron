@@ -55,7 +55,7 @@ steps:
       install_gems
       bundle exec fastlane configure_code_signing
       echo "--- Decrypt secrets"
-      make decrypt_conf_production
+      make decrypt_conf
       bundle exec fastlane run configure_apply
       echo "--- Build"
       make build
@@ -92,10 +92,10 @@ steps:
       - $NVM_PLUGIN
     command: |
       .buildkite/commands/install_node_dependencies.sh
+      echo "--- Decrypt secrets"
+      make decrypt_conf
       echo "--- Build"
       make build
-      echo "--- Decrypt secrets"
-      make decrypt_conf_production
       echo "--- Package"
       make package-linux SKIP_BUILD=true
     env:
