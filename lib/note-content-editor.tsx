@@ -1285,6 +1285,7 @@ class NoteContentEditor extends Component<Props> {
               unusualLineTerminators: 'auto',
               wordWrap: 'bounded',
               wordWrapColumn: 400,
+              wrappingIndent: 'none',
               wrappingStrategy: 'advanced',
             }}
             value={content}
