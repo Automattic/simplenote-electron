@@ -2,6 +2,7 @@ const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const getConfig = require('./get-config');
+const fs = require('fs');
 const spawnSync = require('child_process').spawnSync;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
@@ -9,7 +10,17 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 // Object.assign(global, { WebSocket: require('ws') });
 
+function createAppConfig() {
+  const configPath = fs.existsSync('./config-local.json')
+    ? './config-local.json'
+    : './config.json';
+
+  const configData = fs.readFileSync(configPath, 'utf8');
+  fs.writeFileSync('app-config.json', configData, null, 2);
+}
+
 module.exports = () => {
+  createAppConfig();
   const isDevMode = process.env.NODE_ENV === 'development';
   const config = getConfig();
 

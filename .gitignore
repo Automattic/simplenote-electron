@@ -1,4 +1,5 @@
 node_modules/**/*
+app-config.json
 config-local.json
 desktop-build/
 dist/
