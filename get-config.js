@@ -1,6 +1,7 @@
 function readConfig() {
+  const configPath = './config-local';
   try {
-    const config = require('./config-local');
+    const config = require(configPath);
     if (typeof config === 'function') {
       throw new Error('Invalid config file. Config must be JSON.');
     }
@@ -8,7 +9,7 @@ function readConfig() {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(
-      `Could not load the required configuration file.\n` +
+      `Could not load the required configuration file at ${configPath}.\n` +
         'Please consult the project README.md for further information.'
     );
 
