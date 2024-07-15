@@ -6,7 +6,6 @@ import React from 'react';
 import App from './app';
 import { ErrorBoundaryWithAnalytics } from './error-boundary';
 import Modal from 'react-modal';
-import getConfig from '../get-config';
 import { makeStore } from './state';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -15,8 +14,6 @@ import { initSimperium } from './state/simperium/middleware';
 import '../scss/style.scss';
 
 import isDevConfig from './utils/is-dev-config';
-
-const config = getConfig();
 
 export const bootWithToken = (
   logout: () => any,

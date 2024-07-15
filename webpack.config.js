@@ -1,13 +1,40 @@
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const getConfig = require('./get-config');
 const spawnSync = require('child_process').spawnSync;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const fs = require('fs');
 
-// Object.assign(global, { WebSocket: require('ws') });
+function readConfig() {
+  const configPath = fs.existsSync('./config-local.json')
+    ? './config-local.json'
+    : './config.json';
+
+  try {
+    const config = fs.readFileSync(configPath, 'utf8');
+    // if (typeof config === 'function') {
+    //   throw new Error('Invalid config file. Config must be JSON.');
+    // }
+    return JSON.parse(config);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `Could not load the required configuration file.\n` +
+        'Please consult the project README.md for further information.'
+    );
+
+    throw e;
+  }
+}
+
+function getConfig() {
+  var config = readConfig();
+  var pkg = require('./package.json');
+  config.version = pkg.version;
+  return config;
+}
 
 module.exports = () => {
   const isDevMode = process.env.NODE_ENV === 'development';
@@ -26,7 +53,7 @@ module.exports = () => {
         publicPath: config.web_app_url + '/',
       }),
     },
-    // target: 'node',
+    target: 'web', // this seems like it should be "node" or "electron-renderer" but those both crash
     module: {
       rules: [
         {
@@ -75,9 +102,6 @@ module.exports = () => {
       ],
     },
     resolve: {
-      fallback: {
-        './config-local': require.resolve('./config'), // fallback to config.json if config-local.json is missing
-      },
       extensions: ['.js', '.jsx', '.json', '.scss', '.css', '.ts', '.tsx'],
       modules: ['node_modules'],
     },
@@ -139,12 +163,6 @@ module.exports = () => {
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
       }),
-      // new webpack.ProvidePlugin({
-      //   setImmediate: require.resolve('setimmediate/'),
-      // }),
-      // new webpack.ProvidePlugin({
-      //   isemail: require.resolve('isemail/'),
-      // }),
     ],
   };
 };
