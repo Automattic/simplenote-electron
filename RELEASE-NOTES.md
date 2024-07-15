@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.22.1]
+
+### Fixes
+
+- The final release build of v2.22.0 was not correctly packaged, causing a crash on startup. Affected users will need to manually download this version, which properly includes a necessary configuration file during the build process [#3232](https://github.com/Automattic/simplenote-electron/pull/3232)
+
 ## [v2.22.0]
 
 ### Fixes
