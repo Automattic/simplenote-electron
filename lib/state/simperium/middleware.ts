@@ -2,7 +2,6 @@ import { default as createClient } from 'simperium';
 
 import debugFactory from 'debug';
 import actions from '../actions';
-// import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
 import { InMemoryGhost } from './functions/in-memory-ghost';
@@ -23,7 +22,6 @@ import type * as A from '../action-types';
 import type * as S from '../';
 import type * as T from '../../types';
 
-// const config = getConfig();
 const debug = debugFactory('simperium-middleware');
 
 type Buckets = {
