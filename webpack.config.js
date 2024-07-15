@@ -14,9 +14,6 @@ function readConfig() {
 
   try {
     const config = fs.readFileSync(configPath, 'utf8');
-    // if (typeof config === 'function') {
-    //   throw new Error('Invalid config file. Config must be JSON.');
-    // }
     return JSON.parse(config);
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -53,7 +50,7 @@ module.exports = () => {
         publicPath: config.web_app_url + '/',
       }),
     },
-    target: 'web', // this seems like it should be "node" or "electron-renderer" but those both crash
+    // target: 'browserslist', // this seems like it should be "node" or "electron-renderer" but those both crash
     module: {
       rules: [
         {
