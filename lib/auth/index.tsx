@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
-import getConfig from '../../get-config';
 import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
@@ -48,7 +47,6 @@ export class Auth extends Component<Props> {
 
   render() {
     // Don't render this component when running on the web
-    const config = getConfig();
     if (config.is_app_engine) {
       return null;
     }
@@ -423,7 +421,6 @@ export class Auth extends Component<Props> {
   };
 
   onWPLogin = () => {
-    const config = getConfig();
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
     this.authState = `app-${cryptoRandomString(20)}`;
     const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;

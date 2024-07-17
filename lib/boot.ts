@@ -5,12 +5,9 @@ import 'setimmediate';
 
 import { parse } from 'cookie';
 
-import getConfig from '../get-config';
 import { boot as bootWithoutAuth } from './boot-without-auth';
 import { boot as bootLoggingOut } from './logging-out';
 import { isElectron } from './utils/platform';
-
-const config = getConfig();
 
 const clearStorage = (): Promise<void> =>
   new Promise((resolveStorage) => {

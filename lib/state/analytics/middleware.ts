@@ -1,10 +1,7 @@
 import { debounce } from 'lodash';
 
 import analytics from '../../analytics';
-import getConfig from '../../../get-config';
 import isDevConfig from '../../utils/is-dev-config';
-
-const config = getConfig();
 
 import type * as A from '../action-types';
 import type * as S from '../';
