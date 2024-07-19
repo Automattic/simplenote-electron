@@ -62,6 +62,7 @@
     ]
   },
   "appx": {
+    "applicationId": "Simplenote",
     "backgroundColor": "transparent",
     "showNameOnTiles": true,
     "identityName": "22490Automattic.Simplenote",
