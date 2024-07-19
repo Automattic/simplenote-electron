@@ -1,6 +1,7 @@
 {
   "productName": "Simplenote",
   "appId": "com.automattic.simplenote",
+  "generateUpdatesFilesForAllChannels": true,
   "directories": {
     "output": "./release",
     "buildResources": "./resources"
