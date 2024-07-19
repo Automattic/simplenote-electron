@@ -10,6 +10,9 @@
   "main": "desktop/index.js",
   "license": "GPL-2.0",
   "homepage": "https://simplenote.com",
+  "build": {
+    "generateUpdatesFilesForAllChannels": true
+  },
   "scripts": {
     "dev": "make dev",
     "start": "make start NODE_ENV=development",
