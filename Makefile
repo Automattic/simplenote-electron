@@ -141,14 +141,7 @@ package: build-if-changed
 
 .PHONY: package-win32
 package-win32:
-	@echo Packaging .exe...
 	@npx electron-builder --win -p $(PUBLISH)
-ifeq ($(IS_WINDOWS),true)
-	@echo Packaging .appx as well...
-	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
-else
-	@echo Skipping packaging .appx because we are not running on a Windows machine.
-endif
 
 .PHONY: package-osx
 package-osx: build-if-changed
