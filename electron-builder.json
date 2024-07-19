@@ -23,7 +23,8 @@
         "target": "zip",
         "arch": ["universal"]
       }
-    ]
+    ],
+    "mergeASARs": false
   },
   "dmg": {
     "title": "Simplenote Installer",
