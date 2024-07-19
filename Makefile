@@ -10,6 +10,9 @@ endif
 THIS_MAKEFILE_PATH := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 THIS_DIR := $(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
 
+CONF_FILE_ENCRYPTED=./resources/secrets/config.json.enc
+CONF_FILE=./config-local.json
+
 NPM ?= $(NODE) $(shell which npm)
 NPM_BIN = $(shell npm bin)
 
@@ -46,8 +49,16 @@ DEV_SERVER ?= false
 
 # electron-builder publish option
 # options: always|onTag|onTagOrDraft|never
-PUBLISH ?= onTag
-
+#
+# Unfortunately, electron-builder does not recognize Buildkite as a provider, so we need to manually check that.
+# See https://github.com/electron-userland/electron-builder/blob/14942b70a5da79a5e36e330f64de66ec501b4ac6/packages/electron-publish/src/publisher.ts#L139
+#
+# Notice the use of ?= to still be able to override at call time
+ifeq ($(strip $(BUILDKITE_TAG)),)
+	PUBLISH ?= never
+else
+	PUBLISH ?= always
+endif
 
 # Main targets
 .PHONY: start
@@ -91,11 +102,23 @@ build-app:
 
 .PHONY: build-if-not-exists
 build-if-not-exists: config.json
-	@if [ -f $(SIMPLENOTE_JS) ]; then true; else make build; fi
+	@if [ -f $(SIMPLENOTE_JS) ]; then \
+		echo "File $(SIMPLENOTE_JS) exists, skipping build."; \
+		true; \
+	else \
+		echo "File $(SIMPLENOTE_JS) does not exist, running build."; \
+		make build; \
+	fi
 
 .PHONY: build-if-changed
 build-if-changed: build-if-not-exists
-	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then true; else make build; fi;
+	@if [ $(SIMPLENOTE_CHANGES_STD) -eq 0 ]; then \
+		echo "No changes detected, skipping build."; \
+		true; \
+	else \
+		echo "Changes detected, running build."; \
+		make build; \
+	fi
 
 
 # Build binaries only
@@ -118,12 +141,13 @@ package: build-if-changed
 
 .PHONY: package-win32
 package-win32:
+	@echo Packaging .exe...
+	@npx electron-builder --win -p $(PUBLISH)
 ifeq ($(IS_WINDOWS),true)
-	@echo Building .appx as well
+	@echo Packaging .appx as well...
 	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 else
-	@echo Skipping .appx as we are not on a Windows host
-	@npx electron-builder --win -p $(PUBLISH)
+	@echo Skipping packaging .appx because we are not running on a Windows machine.
 endif
 
 .PHONY: package-osx
@@ -140,18 +164,18 @@ package-linux: build-if-changed
 install: node_modules
 
 node_modules/%:
-	@npm install $(notdir $@)
+	@npm install $(notdir $@) --legacy-peer-deps
 
 node_modules: package.json
-	@npm prune
-	@npm install
+	@npm prune --legacy-peer-deps
+	@npm install --legacy-peer-deps
 	@touch node_modules
 
 
 # Checks
 config.json:
-ifeq (,$(wildcard $(THIS_DIR)$/config.json))
-	$(error config.json not found. Required file, see docs)
+ifeq (,$(wildcard $(THIS_DIR)$/$CONF_FILE))
+	$(error $(CONF_FILE) not found. Required file, see docs)
 endif
 
 
@@ -178,16 +202,28 @@ lint-js:
 # encrypted config file
 .PHONY: _pwd_prompt decrypt_conf encrypt_conf
 
-CONF_FILE=./resources/secrets/config.json.enc
-
 # 'private' task for echoing instructions
 _pwd_prompt:
+ifeq ($(strip $(CI)),)
 	@echo "Check the secret store for Simplenote!"
+else
+	@echo "Use input disabled because running in CI (CI env var set)"
+endif
 
-# to create config
+OPENSSL_CMD=openssl aes-256-cbc -pbkdf2
+DECRYPT_CMD=${OPENSSL_CMD} -d -in ${CONF_FILE_ENCRYPTED} -out ${CONF_FILE}
+# to create config for local development
 decrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -d -in ${CONF_FILE} -out ./config-local.json -pbkdf2
+ifeq ($(strip $(CI)),)
+	${DECRYPT_CMD}
+else
+ifeq ($(strip $(SECRETS_ENCRYPTION_KEY)),)
+	$(error Could not decode $(CONF_FILE) because SECRETS_ENCRYPTION_KEY is missing from environment.)
+else
+	@${DECRYPT_CMD} -k ${SECRETS_ENCRYPTION_KEY}
+endif
+endif
 
-# for updating config
+# for updating the stored config with the local values
 encrypt_conf: _pwd_prompt
-	openssl aes-256-cbc -e -in config-local.json -out ${CONF_FILE} -pbkdf2
+	${OPENSSL_CMD} -e -in ${CONF_FILE} -out ${CONF_FILE_ENCRYPTED}

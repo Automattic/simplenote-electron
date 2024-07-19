@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.22.1]
+
+### Fixes
+
+- The final release build of v2.22.0 was not correctly packaged, causing a crash on startup. Affected users will need to manually download this version, which properly includes a necessary configuration file during the build process [#3232](https://github.com/Automattic/simplenote-electron/pull/3232)
+
 ## [v2.22.0]
 
 ### Fixes
@@ -10,7 +16,7 @@
 
 ### Other Changes
 
-- Updated dependencies, build pipeline and documentation [#3183](https://github.com/Automattic/simplenote-electron/pull/3183), [#3097](https://github.com/Automattic/simplenote-electron/pull/3097), [#3194](https://github.com/Automattic/simplenote-electron/pull/3194), [#3195](https://github.com/Automattic/simplenote-electron/pull/3195)
+- Updated dependencies, build pipeline and documentation [#3183](https://github.com/Automattic/simplenote-electron/pull/3183), [#3097](https://github.com/Automattic/simplenote-electron/pull/3097), [#3194](https://github.com/Automattic/simplenote-electron/pull/3194), [#3195](https://github.com/Automattic/simplenote-electron/pull/3195), [#3218](https://github.com/Automattic/simplenote-electron/pull/3218), [#3223](https://github.com/Automattic/simplenote-electron/pull/3223)
 
 ## [v2.21.0]
 

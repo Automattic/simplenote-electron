@@ -5,6 +5,16 @@ import * as S from './state';
 
 declare global {
   const __TEST__: boolean;
+  const config: {
+    app_engine_url: string;
+    app_id: string;
+    app_key: string;
+    development: boolean;
+    is_app_engine: string;
+    version: string;
+    wpcc_client_id: string;
+    wpcc_redirect_url: string;
+  };
 
   interface Window {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;

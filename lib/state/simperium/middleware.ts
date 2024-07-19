@@ -2,7 +2,6 @@ import { default as createClient } from 'simperium';
 
 import debugFactory from 'debug';
 import actions from '../actions';
-import getConfig from '../../../get-config';
 import { BucketQueue } from './functions/bucket-queue';
 import { InMemoryBucket } from './functions/in-memory-bucket';
 import { InMemoryGhost } from './functions/in-memory-ghost';
@@ -37,7 +36,7 @@ export const initSimperium =
   (store) => {
     const { dispatch, getState } = store;
 
-    const client = createClient<Buckets>(getConfig().app_id, token, {
+    const client = createClient<Buckets>(config.app_id, token, {
       objectStoreProvider: (bucket) => {
         switch (bucket.name) {
           case 'account':
@@ -465,7 +464,7 @@ export const initSimperium =
           return result;
         }
 
-        case 'REALLY_LOGOUT':
+        case 'REALLY_LOG_OUT':
           stopSyncing();
           localStorage.setItem('simplenote_logout', Math.random().toString());
           client.end();

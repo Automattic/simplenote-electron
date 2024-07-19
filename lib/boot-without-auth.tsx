@@ -9,8 +9,6 @@ import classNames from 'classnames';
 import AboutDialog from './dialogs/about';
 import ErrorBoundary from './error-boundary';
 
-import getConfig from '../get-config';
-
 import '../scss/style.scss';
 
 type Props = {
@@ -36,7 +34,6 @@ type User = {
   access_token?: string;
 };
 
-const config = getConfig();
 const auth = new SimperiumAuth(config.app_id, config.app_key);
 
 class AppWithoutAuth extends Component<Props, State> {

@@ -1,0 +1,106 @@
+env:
+  BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: 1
+  # Uncomment this to get more logs during the electron-builder calls.
+  # Useful for debugging, but very noisy
+  # DEBUG: electron-builder
+
+steps:
+  - label: Lint
+    key: lint
+    env:
+      NODE_ENV: test
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- :eslint: Lint"
+      make lint
+
+  - label: Test
+    key: test
+    env:
+      NODE_ENV: test
+    plugins:
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- :jest: Test"
+      npm test
+
+  # Notice that we build the app in each platform because it takes ~1-2 minutes
+  # to do so which is comparable to a dedicated build step, archiving the
+  # artifacts, uploading them, then downloading them in each package step.
+  #
+  # Also notice that we package for the different platforms on every build.
+  # It's up to the elector-builder configuration to decided whether to upload
+  # the artifacts to a GitHub release.
+  #
+  # See:
+  # - Makefile PUBLISH value
+  # - https://www.electron.build/configuration/publish
+
+  - label: Package on macOS
+    key: package-macos
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+      CSC_FOR_PULL_REQUEST: true
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- Fetch code signing identity"
+      install_gems
+      bundle exec fastlane configure_code_signing
+      echo "--- Decrypt secrets"
+      make decrypt_conf
+      bundle exec fastlane run configure_apply
+      echo "--- Build"
+      make build
+      echo "--- Package"
+      make package-osx SKIP_BUILD=true
+    artifact_paths:
+      - release/*.dmg
+      - release/*.dmg.blockmap
+      - release/latest*.yml
+
+  - label: Package on Windows
+    key: package-windows
+    agents:
+      queue: windows
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+    command: .buildkite/commands/package_windows.ps1
+    env:
+      CSC_FOR_PULL_REQUEST: true
+    artifact_paths:
+      - release\*.exe
+      # Notice that this will not signed.
+      # electron-builder logs "AppX is not signed  reason=Windows Store only build"
+      # The behavior occurs in CircleCI, too. See:
+      # https://app.circleci.com/pipelines/github/Automattic/simplenote-electron/3150/workflows/9970dee9-bc25-432a-a659-38ed5d4d1c36/jobs/25900?invite=true#step-106-66244_55
+      - release\*.appx
+      - release\*.blockmap
+      - release\*.yml
+
+  - label: Package on Linux
+    key: package-linux
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: |
+      .buildkite/commands/install_node_dependencies.sh
+      echo "--- Decrypt secrets"
+      make decrypt_conf
+      echo "--- Build"
+      make build
+      echo "--- Package"
+      make package-linux SKIP_BUILD=true
+    env:
+      CSC_FOR_PULL_REQUEST: true
+    artifact_paths:
+      - release/*.deb
+      - release/*.tar.gz
+      - release/*.yml

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
 
 module.exports = async function (params) {
   // Only notarize the app on Mac OS only.
@@ -7,9 +8,49 @@ module.exports = async function (params) {
     return;
   }
 
-  if (!process.env.CIRCLE_TAG || process.env.CIRCLE_TAG.length === 0) {
-    console.log('Not on a tag. Skipping notarization'); // eslint-disable-line no-console
-    return;
+  const appStoreConnectKeyPath = path.join(
+    process.env.HOME,
+    '.configure',
+    'simplenote-electron',
+    'secrets',
+    'app_store_connect_api_key.p8'
+  );
+
+  const envPath = path.join(
+    process.env.HOME,
+    '.a8c-apps/simplenote-electron.env'
+  );
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(
+      `No env file found at ${envPath}. Looking for required env vars individually...`
+    );
+    let errors = [];
+    if (process.env.APP_STORE_CONNECT_API_KEY_KEY_ID === undefined) {
+      errors.push(
+        'APP_STORE_CONNECT_API_KEY_KEY_ID value not found in env. Please set it.'
+      );
+    }
+    if (process.env.APP_STORE_CONNECT_API_KEY_ISSUER_ID === undefined) {
+      errors.push(
+        'APP_STORE_CONNECT_API_KEY_ISSUER_ID value not found in env. Please set it.'
+      );
+    }
+    if (fs.existsSync(appStoreConnectKeyPath) === false) {
+      errors.push(
+        `Key file not found at ${appStoreConnectKeyPath}. Please add it.`
+      );
+    }
+
+    if (errors.length > 0) {
+      throw new Error(
+        `Could not begin signing macOS build. Errors: ${errors.join('\n')}`
+      );
+    } else {
+      console.log('All required env vars found. Moving on...');
+    }
   }
 
   // Same appId in electron-builder.
@@ -29,16 +70,15 @@ module.exports = async function (params) {
   console.log(`Notarizing ${appId} found at ${appPath}`); // eslint-disable-line no-console
 
   try {
-    const electron_notarize = require('electron-notarize');
+    const electron_notarize = require('@electron/notarize');
     await electron_notarize.notarize({
-      appBundleId: appId,
       appPath: appPath,
-      appleId: process.env.NOTARIZATION_ID,
-      appleIdPassword: process.env.NOTARIZATION_PWD,
-      ascProvider: 'AutomatticInc',
+      appleApiKey: appStoreConnectKeyPath,
+      appleApiKeyId: process.env.APP_STORE_CONNECT_API_KEY_KEY_ID,
+      appleApiIssuer: process.env.APP_STORE_CONNECT_API_KEY_ISSUER_ID,
     });
   } catch (error) {
-    console.error(error); // eslint-disable-line no-console
+    throw new Error(`Notarization failed with error:\n${error}`);
   }
 
   console.log(`Done notarizing ${appId}`); // eslint-disable-line no-console
