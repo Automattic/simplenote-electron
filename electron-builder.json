@@ -63,7 +63,10 @@
   },
   "appx": {
     "backgroundColor": "transparent",
-    "showNameOnTiles": true
+    "showNameOnTiles": true,
+    "identityName": "22490Automattic.Simplenote",
+    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
+    "publisherDisplayName": "Automattic, Inc."
   },
   "nsis": {
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
