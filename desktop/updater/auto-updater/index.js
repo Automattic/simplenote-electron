@@ -21,6 +21,7 @@ class AutoUpdater extends Updater {
     autoUpdater.on('update-downloaded', this.onDownloaded.bind(this));
 
     autoUpdater.autoInstallOnAppQuit = false;
+    autoUpdater.channel = 'beta';
   }
 
   // For non-user-initiated checks.
