@@ -67,7 +67,7 @@
     "artifactName": "Simplenote-win-store-${version}-${arch}.${ext}",
     "displayName": "Simplenote",
     "applicationId": "Automattic.Simplenote",
-    "identityName": "22490Automattic.Simplenote",
+    "identityName": "22490Automattic.Simplenote_9h07f78gwnchp",
     "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
     "publisherDisplayName": "Automattic, Inc."
   },
