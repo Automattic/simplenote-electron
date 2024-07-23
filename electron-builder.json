@@ -48,7 +48,6 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
-    "certificateSubjectName": "Automattic, Inc.",
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [
       {
@@ -68,8 +67,7 @@
     "displayName": "Simplenote",
     "applicationId": "Automattic.Simplenote",
     "identityName": "22490Automattic.Simplenote",
-    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
-    "publisherDisplayName": "Automattic, Inc."
+    "publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306"
   },
   "nsis": {
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
