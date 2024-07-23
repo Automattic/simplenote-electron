@@ -73,7 +73,9 @@ steps:
       queue: windows
     plugins:
       - $CI_TOOLKIT_PLUGIN
-    command: .buildkite/commands/package_windows.ps1
+    command: |
+      .buildkite/commands/decrypt-dedicated-windows-cert.sh
+      .buildkite/commands/package_windows.ps1
     env:
       CSC_FOR_PULL_REQUEST: true
     artifact_paths:
