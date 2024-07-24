@@ -43,8 +43,8 @@ Import-PfxCertificate `
 Write-Host "--- :windows: Installing make"
 choco install make
 
-Write-Host "--- :npm: Installing dependencies"
-npm ci --legacy-peer-deps
+bash ".\.buildkite\commands\install_node_dependencies.sh"
+If ($LastExitCode -ne 0) { Exit $LastExitCode }
 
 Write-Host "--- :lock_with_ink_pen: Decrypting secrets"
 make decrypt_conf
