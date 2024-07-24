@@ -48,6 +48,7 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
+    "publisherName": "Automattic, Inc.",
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [
       {
