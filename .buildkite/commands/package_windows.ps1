@@ -3,6 +3,8 @@ $ErrorActionPreference = "Stop"
 
 & "prepare_windows_host_for_node.ps1"
 
+bash ".\.buildkite\commands\decrypt-dedicated-windows-cert.sh"
+
 # First try to get the env var from the process environment
 $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('DEDICATED_WINDOWS_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Process)
 If ([string]::IsNullOrEmpty($windowsCertPassword)) {
