@@ -25,7 +25,7 @@ If (Test-Path $certPath) {
     [System.Environment]::SetEnvironmentVariable('CSC_LINK', $certPath, [System.EnvironmentVariableTarget]::Machine)
     Write-Host "Environment variable CSC_LINK set to $certPath"
 } else {
-    Write-Host "[!] certificate.pfx file does not exist."
+    Write-Host "[!] Certificate file does not exist at given path $certPath."
     Exit 1
 }
 
