@@ -141,7 +141,10 @@ package: build-if-changed
 
 .PHONY: package-win32
 package-win32:
+	@echo "Packaging exe..."
 	@npx electron-builder --win -p $(PUBLISH)
+	@echo "Packaging appx with dedicated configuration to work around code signing conflicts..."
+	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 
 .PHONY: package-osx
 package-osx: build-if-changed
