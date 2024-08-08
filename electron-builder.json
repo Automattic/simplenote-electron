@@ -110,8 +110,7 @@
     }
   ],
   "deb": {
-    "compression": "gz",
-    "depends": ["gconf2"]
+    "compression": "gz"
   },
   "afterSign": "./after_sign_hook.js",
   "afterAllArtifactBuild": "./after_sign_hook.js"
