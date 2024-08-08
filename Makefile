@@ -143,7 +143,11 @@ package: build-if-changed
 package-win32:
 	@echo "Packaging exe..."
 	@npx electron-builder --win -p $(PUBLISH)
-	@echo "Packaging appx with dedicated configuration to work around code signing conflicts..."
+	# Note: the configuration required to generate a code signed exe via the `nsis` target will conflict with the `appx` configuration.
+	# In practice, "certificateSubjectName": "Automattic, Inc." is required to sign the exe, but if that setting is present and so are the `appx` settings, there will be a failure.
+	# Hence the need for a separate configuration here.
+	# See also in https://github.com/electron-userland/electron-builder/issues/6698
+	@echo "Packaging appx — with dedicated configuration to work around code signing conflicts..."
 	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 
 .PHONY: package-osx
