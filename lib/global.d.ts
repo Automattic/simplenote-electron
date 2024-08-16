@@ -1,6 +1,8 @@
 import { TKQItem, TracksAPI } from './analytics/types';
 import { compose } from 'redux';
 
+import { IpcMainEvent } from 'electron';
+
 import * as S from './state';
 
 declare global {
@@ -23,13 +25,18 @@ declare global {
       confirmLogout(changes: string): 'logout' | 'reconsider' | 'export';
       isMac: boolean;
       isLinux: boolean;
-      receive(command: 'appCommand', callback: (event: any) => any);
-      receive(command: 'editorCommand', callback: (event: any) => any);
-      receive(command: 'noteImportChannel', callback: (event: any) => any);
-      receive(command: 'tokenLogin', callback: (event: any) => any);
-      receive(command: 'wpLogin', callback: (event: any) => any);
+      receive(command: 'appCommand', callback: (event: IpcMainEvent) => any);
+      receive(command: 'editorCommand', callback: (event: IpcMainEvent) => any);
+      receive(
+        command: 'noteImportChannel',
+        callback: (event: IpcMainEvent) => any
+      );
+      receive(command: 'tokenLogin', callback: (event: IpcMainEvent) => any);
+      receive(command: 'wpLogin', callback: (event: IpcMainEvent) => any);
+      removeListener(command: 'appCommand');
       removeListener(command: 'editorCommand');
       removeListener(command: 'noteImportChannel');
+      removeListener(command: 'tokenLogin');
       send(
         command: 'appStateUpdate',
         args: {

@@ -84,6 +84,7 @@ module.exports = function main() {
         contextIsolation: true,
         nodeIntegration: false,
         preload: path.join(__dirname, './preload.js'),
+        webSecurity: false,
       },
     });
 

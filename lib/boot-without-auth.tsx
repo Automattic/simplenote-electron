@@ -9,6 +9,8 @@ import classNames from 'classnames';
 import AboutDialog from './dialogs/about';
 import ErrorBoundary from './error-boundary';
 
+import { IpcMainEvent, IpcMessageEvent } from 'electron';
+
 import '../scss/style.scss';
 
 type Props = {
@@ -19,13 +21,14 @@ type State = {
   authStatus:
     | 'account-creation-requested'
     | 'compromised-password'
-    | 'unsubmitted'
-    | 'submitting'
     | 'insecure-password'
     | 'invalid-credentials'
+    | 'login-requested'
+    | 'submitting'
+    | 'too-many-requests'
     | 'unknown-error'
-    | 'verification-required'
-    | 'too-many-requests';
+    | 'unsubmitted'
+    | 'verification-required';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -65,13 +68,13 @@ class AppWithoutAuth extends Component<Props, State> {
     this.props.onAuth(token, username);
   }
 
-  onAppCommand = (event) => {
+  onAppCommand = (event: IpcMainEvent) => {
     if ('showDialog' === event.action && 'ABOUT' === event.dialog) {
       this.setState({ showAbout: true });
     }
   };
 
-  onDismissDialog = (event) => {
+  onDismissDialog = (event: Event) => {
     this.setState({ showAbout: false });
   };
 
@@ -115,6 +118,34 @@ class AppWithoutAuth extends Component<Props, State> {
             this.setState({ authStatus: 'unknown-error' });
           }
         });
+    });
+  };
+
+  requestLogin = (email: string) => {
+    const username = email.trim().toLowerCase();
+    if (!username) {
+      return;
+    }
+    this.setState({ authStatus: 'submitting' }, async () => {
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/request-login',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username }),
+          }
+        );
+        if (response.ok) {
+          recordEvent('user_requested_login_link');
+          this.setState({ authStatus: 'login-requested' });
+          this.setState({ emailSentTo: username });
+        } else {
+          this.setState({ authStatus: 'unknown-error' });
+        }
+      } catch {
+        this.setState({ authStatus: 'unknown-error' });
+      }
     });
   };
 
@@ -174,10 +205,12 @@ class AppWithoutAuth extends Component<Props, State> {
             hasTooManyRequests={this.state.authStatus === 'too-many-requests'}
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
+            loginRequested={this.state.authStatus === 'login-requested'}
             tokenLogin={this.tokenLogin}
             resetErrors={() =>
               this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
             }
+            requestLogin={this.requestLogin}
             requestSignup={this.requestSignup}
           />
           {this.state.showAbout && (

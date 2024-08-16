@@ -19,18 +19,22 @@ type OwnProps = {
   hasTooManyRequests: boolean;
   hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
+  loginRequested: boolean;
+  requestLogin: (username: string) => any;
   requestSignup: (username: string) => any;
-  tokenLogin: (username: string, token: string) => any;
   resetErrors: () => any;
+  tokenLogin: (username: string, token: string) => any;
 };
 
 type Props = OwnProps;
 
 export class Auth extends Component<Props> {
   state = {
+    authState: '',
     isCreatingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
+    usePassword: false,
   };
 
   componentDidMount() {
@@ -51,14 +55,20 @@ export class Auth extends Component<Props> {
       return null;
     }
 
-    const { isCreatingAccount, passwordErrorMessage } = this.state;
+    const { isCreatingAccount, passwordErrorMessage, usePassword } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
     });
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isCreatingAccount ? signUpText : logInText;
+    const buttonLabel = isCreatingAccount
+      ? signUpText
+      : usePassword
+        ? logInText
+        : logInText + ' with email';
+    const wpccLabel =
+      (isCreatingAccount ? signUpText : logInText) + ' with WordPress.com';
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
     const helpMessage = isCreatingAccount
       ? 'Already have an account?'
@@ -81,7 +91,7 @@ export class Auth extends Component<Props> {
         .
       </>
     ) : (
-      'Could not log in with the provided email address and password.'
+      'Could not log in with the provided credentials.'
     );
 
     const mainClasses = classNames('login', {
@@ -112,6 +122,28 @@ export class Auth extends Component<Props> {
                 support@simplenote.com
               </a>{' '}
               for help.
+            </p>
+            <button
+              onClick={this.clearRequestedAccount}
+              className="button-borderless"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (this.props.loginRequested) {
+      return (
+        <div className={mainClasses}>
+          {isElectron && isMac && <div className="login__draggable-area" />}
+          <div className="accountRequested">
+            <MailIcon />
+            <p className="accountRequested__message">
+              We&apos;ve sent an email to{' '}
+              <strong>{this.props.emailSentTo}</strong>. Please check your inbox
+              and follow the instructions.
             </p>
             <button
               onClick={this.clearRequestedAccount}
@@ -204,7 +236,7 @@ export class Auth extends Component<Props> {
               className="login__auth-message is-error"
               data-error-name="too-many-requests"
             >
-              Too many log in attempts. Try again later.
+              Too many login attempts. Try again later.
             </p>
           )}
           {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
@@ -236,7 +268,7 @@ export class Auth extends Component<Props> {
             required
             autoFocus
           />
-          {!isCreatingAccount && (
+          {!isCreatingAccount && usePassword && (
             <>
               <label className="login__field" htmlFor="login__field-password">
                 Password
@@ -270,7 +302,33 @@ export class Auth extends Component<Props> {
             )}
           </button>
 
-          {!isCreatingAccount && (
+          {!usePassword && (
+            <a
+              className="login__forgot"
+              href=""
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={this.togglePassword}
+            >
+              Use a password
+            </a>
+          )}
+          {usePassword && (
+            <Fragment>
+              {/* <span className="or">Or</span>
+              <span className="or-line"></span> */}
+              <a
+                className="login__forgot"
+                href="#"
+                rel="noopener noreferrer"
+                onClick={this.togglePassword}
+              >
+                Request a code
+              </a>
+            </Fragment>
+          )}
+
+          {!isCreatingAccount && usePassword && (
             <a
               className="login__forgot"
               href="https://app.simplenote.com/forgot/"
@@ -286,7 +344,7 @@ export class Auth extends Component<Props> {
               <span className="or">Or</span>
               <span className="or-line"></span>
               <button className="wpcc-button" onClick={this.onWPLogin}>
-                {buttonLabel} with WordPress.com
+                {wpccLabel}
               </button>
             </Fragment>
           )}
@@ -364,7 +422,7 @@ export class Auth extends Component<Props> {
     this.props.resetErrors();
   };
 
-  onSubmit = (event) => {
+  onSubmit = (event: MouseEvent) => {
     event.preventDefault();
 
     // clear any existing error messages on submit
@@ -383,7 +441,7 @@ export class Auth extends Component<Props> {
       }
     } else if (
       this.usernameInput.validity.valueMissing ||
-      this.passwordInput.validity.valueMissing
+      (this.state.usePassword && this.passwordInput.validity.valueMissing)
     ) {
       this.setState({
         passwordErrorMessage: 'Please fill out email and password.',
@@ -406,24 +464,28 @@ export class Auth extends Component<Props> {
       return;
     }
 
-    const password = get(this.passwordInput, 'value');
+    if (this.state.usePassword) {
+      const password = get(this.passwordInput, 'value');
 
-    // login has slightly more relaxed password rules
-    if (!this.passwordInput.validity.valid) {
-      this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
-      });
-      return;
+      // login has slightly more relaxed password rules
+      if (!this.passwordInput.validity.valid) {
+        this.setState({
+          passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        });
+        return;
+      }
+      this.setState({ passwordErrorMessage: null });
+      this.props.login(username, password);
     }
 
-    this.setState({ passwordErrorMessage: null });
-    this.props.login(username, password);
+    // default: magic link login
+    this.props.requestLogin(username);
   };
 
   onWPLogin = () => {
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
-    this.authState = `app-${cryptoRandomString(20)}`;
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;
+    this.setState({ authState: `app-${cryptoRandomString(20)}` });
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.state.authState}`;
 
     window.electron.send('wpLogin', authUrl);
 
@@ -454,34 +516,42 @@ export class Auth extends Component<Props> {
           return this.authError('An error was encountered while signing in.');
       }
 
-      if (authState !== this.authState) {
+      if (authState !== this.state.authState) {
         return;
       }
       this.props.tokenLogin(userEmail, simperiumToken);
     });
   };
 
-  authError = (errorMessage) => {
+  authError = (errorMessage: string) => {
     this.setState({
       passwordErrorMessage: errorMessage,
     });
   };
 
-  onForgot = (event) => {
+  onForgot = (event: MouseEvent) => {
     event.preventDefault();
     window.open(
-      event.currentTarget.href,
-      null,
+      (event.currentTarget as HTMLAnchorElement).href,
+      undefined,
       'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes'
     );
   };
 
-  toggleSignUp = (event) => {
+  toggleSignUp = (event: Event) => {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({
       passwordErrorMessage: '',
     });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
+  };
+  togglePassword = (event: Event) => {
+    event.preventDefault();
+    this.props.resetErrors();
+    this.setState({
+      passwordErrorMessage: '',
+    });
+    this.setState({ usePassword: !this.state.usePassword });
   };
 }
