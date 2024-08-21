@@ -422,7 +422,7 @@ export class Auth extends Component<Props> {
     this.props.resetErrors();
   };
 
-  onSubmit = (event: MouseEvent) => {
+  onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     // clear any existing error messages on submit
@@ -489,7 +489,7 @@ export class Auth extends Component<Props> {
 
     window.electron.send('wpLogin', authUrl);
 
-    window.electron.receive('wpLogin', (url) => {
+    window.electron.receive('wpLogin', (url: string) => {
       const { searchParams } = new URL(url);
 
       const errorCode = searchParams.get('error')
@@ -529,7 +529,7 @@ export class Auth extends Component<Props> {
     });
   };
 
-  onForgot = (event: MouseEvent) => {
+  onForgot = (event: React.MouseEvent) => {
     event.preventDefault();
     window.open(
       (event.currentTarget as HTMLAnchorElement).href,
@@ -538,7 +538,7 @@ export class Auth extends Component<Props> {
     );
   };
 
-  toggleSignUp = (event: Event) => {
+  toggleSignUp = (event: React.MouseEvent) => {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({
@@ -546,7 +546,7 @@ export class Auth extends Component<Props> {
     });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
   };
-  togglePassword = (event: Event) => {
+  togglePassword = (event: React.MouseEvent) => {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({

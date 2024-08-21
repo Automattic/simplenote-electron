@@ -9,8 +9,6 @@ import classNames from 'classnames';
 import AboutDialog from './dialogs/about';
 import ErrorBoundary from './error-boundary';
 
-import { IpcMainEvent, IpcMessageEvent } from 'electron';
-
 import '../scss/style.scss';
 
 type Props = {
@@ -68,13 +66,13 @@ class AppWithoutAuth extends Component<Props, State> {
     this.props.onAuth(token, username);
   }
 
-  onAppCommand = (event: IpcMainEvent) => {
+  onAppCommand = (event: Electron.IpcRendererEvent) => {
     if ('showDialog' === event.action && 'ABOUT' === event.dialog) {
       this.setState({ showAbout: true });
     }
   };
 
-  onDismissDialog = (event: Event) => {
+  onDismissDialog = (event: React.MouseEvent) => {
     this.setState({ showAbout: false });
   };
 
@@ -179,7 +177,7 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   tokenLogin = (username: string, token: string) => {
-    this.login(token, username, false);
+    this.login(token, username);
   };
 
   render() {

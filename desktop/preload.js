@@ -15,7 +15,7 @@ const validChannels = [
   'wpLogin',
 ];
 
-contextBridge.exposeInMainWorld('electron', {
+export const electronAPI = {
   confirmLogout: (changes) => {
     const response = remote.dialog.showMessageBoxSync({
       type: 'warning',
@@ -61,4 +61,6 @@ contextBridge.exposeInMainWorld('electron', {
   },
   isMac: process.platform === 'darwin',
   isLinux: process.platform === 'linux',
-});
+};
+
+contextBridge.exposeInMainWorld('electron', electronAPI);
