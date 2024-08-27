@@ -4,6 +4,7 @@
 
 body {
   background-color: var(--background-color);
+  color: var(--primary-color);
 }
 
 .login.is-electron {
@@ -162,18 +163,36 @@ body {
   }
 }
 
-.accountRequested {
+.account-requested {
   font-size: 16px;
   line-height: 22px;
   text-align: center;
   width: 320px;
+  .button {
+    width: 95%;
+  }
+
+  .or-section {
+    display: block;
+    min-height: 40px;
+    margin-top: 16px;
+  }
 
   svg.icon-mail {
     color: var(--foreground-color);
     width: 60px;
     height: 60px;
   }
-  .accountRequested__footer {
+
+  .account-requested__code {
+    margin: 16px auto;
+  }
+
+  .account-requested__password-button {
+    margin-bottom: 16px;
+  }
+
+  .account-requested__footer {
     font-size: 14px;
     line-height: 20px;
   }

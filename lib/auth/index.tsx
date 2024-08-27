@@ -21,6 +21,7 @@ type OwnProps = {
   login: (username: string, password: string) => any;
   loginRequested: boolean;
   requestLogin: (username: string) => any;
+  completeLogin: (username: string, code: string) => any;
   requestSignup: (username: string) => any;
   resetErrors: () => any;
   tokenLogin: (username: string, token: string) => any;
@@ -62,11 +63,7 @@ export class Auth extends Component<Props> {
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isCreatingAccount
-      ? signUpText
-      : usePassword
-        ? logInText
-        : logInText + ' with email';
+    const buttonLabel = isCreatingAccount ? signUpText : logInText;
     const wpccLabel =
       (isCreatingAccount ? signUpText : logInText) + ' with WordPress.com';
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
@@ -102,14 +99,14 @@ export class Auth extends Component<Props> {
       return (
         <div className={mainClasses}>
           {isElectron && isMac && <div className="login__draggable-area" />}
-          <div className="accountRequested">
+          <div className="account-requested">
             <MailIcon />
-            <p className="accountRequested__message">
+            <p className="account-requested__message">
               We&apos;ve sent an email to{' '}
               <strong>{this.props.emailSentTo}</strong>. Please check your inbox
               and follow the instructions.
             </p>
-            <p className="accountRequested__footer">
+            <p className="account-requested__footer">
               Didn&apos;t get an email? You may already have an account
               associated with this email address. Contact{' '}
               <a
@@ -138,19 +135,48 @@ export class Auth extends Component<Props> {
       return (
         <div className={mainClasses}>
           {isElectron && isMac && <div className="login__draggable-area" />}
-          <div className="accountRequested">
-            <MailIcon />
-            <p className="accountRequested__message">
-              We&apos;ve sent an email to{' '}
-              <strong>{this.props.emailSentTo}</strong>. Please check your inbox
-              and follow the instructions.
-            </p>
-            <button
-              onClick={this.clearRequestedAccount}
-              className="button-borderless"
-            >
-              Go Back
-            </button>
+          <div className="account-requested">
+            <form className="login__form" onSubmit={this.onSubmitCode}>
+              <MailIcon />
+              <p className="account-requested__message">
+                We&apos;ve sent a code to{' '}
+                <strong>{this.props.emailSentTo}</strong>. The code will be
+                valid for a few minutes.
+              </p>
+              {passwordErrorMessage && (
+                <p className="login__auth-message is-error">
+                  {passwordErrorMessage}
+                </p>
+              )}
+              <input
+                type="text"
+                className="account-requested__code"
+                placeholder="Code"
+                maxLength={6}
+                ref={(ref) => (this.codeInput = ref)}
+              ></input>
+              <button className="button button-primary" type="submit">
+                Log in
+              </button>
+              <Fragment>
+                <div className="or-section">
+                  <span className="or">Or</span>
+                  <span className="or-line"></span>
+                </div>
+                <button
+                  className="button button-secondary account-requested__password-button"
+                  onClick={this.togglePassword}
+                >
+                  Enter password
+                </button>
+              </Fragment>
+              <button
+                onClick={this.clearRequestedAccount}
+                className="button-borderless"
+              >
+                Go Back
+              </button>
+            </form>
           </div>
         </div>
       );
@@ -302,17 +328,6 @@ export class Auth extends Component<Props> {
             )}
           </button>
 
-          {!usePassword && (
-            <a
-              className="login__forgot"
-              href=""
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={this.togglePassword}
-            >
-              Use a password
-            </a>
-          )}
           {usePassword && (
             <Fragment>
               {/* <span className="or">Or</span>
@@ -323,7 +338,7 @@ export class Auth extends Component<Props> {
                 rel="noopener noreferrer"
                 onClick={this.togglePassword}
               >
-                Request a code
+                Log in with email
               </a>
             </Fragment>
           )}
@@ -480,6 +495,27 @@ export class Auth extends Component<Props> {
 
     // default: magic link login
     this.props.requestLogin(username);
+  };
+
+  onSubmitCode = (event: React.FormEvent) => {
+    event.preventDefault();
+    this.setState({ authState: 'login-requested' });
+    this.setState({
+      passwordErrorMessage: '',
+    });
+
+    const code = get(this.codeInput, 'value');
+    const alphanumericRegex = /^[a-zA-Z0-9]{6}$/;
+    if (!alphanumericRegex.test(code)) {
+      this.setState({
+        passwordErrorMessage: 'Code must be 6 alphanumeric characters.',
+      });
+      return;
+    }
+
+    const email = this.props.emailSentTo;
+
+    this.props.completeLogin(email, code);
   };
 
   onWPLogin = () => {

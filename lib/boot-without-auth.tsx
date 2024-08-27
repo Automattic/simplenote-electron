@@ -147,6 +147,48 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   };
 
+  completeLogin = (email: string, code: string) => {
+    const username = email.trim().toLowerCase();
+    if (!username) {
+      return;
+    }
+
+    const upperCaseCode = code.trim().toUpperCase();
+    if (!upperCaseCode) {
+      return;
+    }
+
+    console.log(`Username: ${username}, Code: ${upperCaseCode}`);
+
+    this.setState({ authStatus: 'submitting' }, async () => {
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/complete-login',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: username,
+              auth_code: upperCaseCode,
+            }),
+          }
+        );
+        if (response.ok) {
+          // Set token and LOGIN!
+          console.log('Logging in via email');
+          const data = await response.json();
+          const syncToken = data.sync_token;
+          console.log('Sync token!', syncToken);
+          this.login(syncToken, username);
+        } else {
+          this.setState({ authStatus: 'unknown-error' });
+        }
+      } catch {
+        this.setState({ authStatus: 'unknown-error' });
+      }
+    });
+  };
+
   requestSignup = (email: string) => {
     const username = email.trim().toLowerCase();
     if (!username) {
@@ -209,6 +251,7 @@ class AppWithoutAuth extends Component<Props, State> {
               this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
             }
             requestLogin={this.requestLogin}
+            completeLogin={this.completeLogin}
             requestSignup={this.requestSignup}
           />
           {this.state.showAbout && (
