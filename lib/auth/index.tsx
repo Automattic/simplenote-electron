@@ -357,8 +357,6 @@ export class Auth extends Component<Props> {
 
           {usePassword && (
             <Fragment>
-              {/* <span className="or">Or</span>
-              <span className="or-line"></span> */}
               <a
                 className="login__forgot"
                 href="#"
