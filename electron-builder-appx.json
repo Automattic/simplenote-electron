@@ -2,8 +2,8 @@
   "productName": "Simplenote",
   "appId": "com.automattic.simplenote",
   "directories": {
-    "output": "release",
-    "buildResources": "resources"
+    "output": "./release",
+    "buildResources": "./resources"
   },
   "files": ["desktop", "dist", "shared"],
   "win": {
@@ -29,7 +29,5 @@
       "name": "simplenote",
       "schemes": ["simplenote"]
     }
-  ],
-  "afterSign": "./after_sign_hook.js",
-  "afterAllArtifactBuild": "./after_sign_hook.js"
+  ]
 }

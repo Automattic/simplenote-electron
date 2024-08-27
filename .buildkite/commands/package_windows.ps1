@@ -26,7 +26,7 @@ If (Test-Path $certPath) {
     [System.Environment]::SetEnvironmentVariable('CSC_LINK', $certPath, [System.EnvironmentVariableTarget]::Machine)
     Write-Host "Environment variable CSC_LINK set to $certPath"
 } else {
-    Write-Host "[!] certificate.pfx file does not exist."
+    Write-Host "[!] Certificate file does not exist at given path $certPath."
     Exit 1
 }
 
@@ -38,8 +38,8 @@ Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\
 Write-Host "--- :windows: Installing make"
 choco install make
 
-Write-Host "--- :npm: Installing dependencies"
-npm ci --legacy-peer-deps
+bash ".\.buildkite\commands\install_node_dependencies.sh"
+If ($LastExitCode -ne 0) { Exit $LastExitCode }
 
 Write-Host "--- :lock_with_ink_pen: Decrypting secrets"
 make decrypt_conf
