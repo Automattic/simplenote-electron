@@ -129,7 +129,7 @@ class AppWithoutAuth extends Component<Props, State> {
     this.setState({ authStatus: 'submitting' }, async () => {
       try {
         const response = await fetch(
-          'https://app.simplenote.com/account/request-login',
+          'https://pr-615-dot-simple-note-hrd.uc.r.appspot.com/account/request-login',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -166,7 +166,7 @@ class AppWithoutAuth extends Component<Props, State> {
     this.setState({ authStatus: 'completing-login' }, async () => {
       try {
         const response = await fetch(
-          'https://app.simplenote.com/account/complete-login',
+          'https://pr-615-dot-simple-note-hrd.uc.r.appspot.com/account/complete-login',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
