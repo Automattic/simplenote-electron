@@ -38,6 +38,7 @@ export class Auth extends Component<Props> {
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
     usePassword: false,
+    emailForPasswordForm: null,
   };
 
   componentDidMount() {
@@ -48,6 +49,15 @@ export class Auth extends Component<Props> {
   componentWillUnmount() {
     window.removeEventListener('online', this.setConnectivity, false);
     window.removeEventListener('offline', this.setConnectivity, false);
+  }
+
+  componentDidUpdate() {
+    // Add the email to the username/password form if it was set
+    if (this.state.usePassword && this.state.emailForPasswordForm) {
+      this.usernameInput.value = this.state.emailForPasswordForm;
+      this.setState({ emailForPasswordForm: null });
+      this.passwordInput.focus();
+    }
   }
 
   setConnectivity = () => this.setState({ onLine: window.navigator.onLine });
@@ -503,6 +513,7 @@ export class Auth extends Component<Props> {
       }
       this.setState({ passwordErrorMessage: null });
       this.props.login(username, password);
+      return;
     }
 
     // default: magic link login
@@ -599,7 +610,8 @@ export class Auth extends Component<Props> {
     this.props.resetErrors();
     this.setState({
       passwordErrorMessage: '',
+      emailForPasswordForm: this.props.emailSentTo,
+      usePassword: !this.state.usePassword,
     });
-    this.setState({ usePassword: !this.state.usePassword });
   };
 }
