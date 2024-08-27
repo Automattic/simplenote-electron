@@ -531,7 +531,7 @@ export class Auth extends Component<Props> {
     const alphanumericRegex = /^[a-zA-Z0-9]{6}$/;
     if (!alphanumericRegex.test(code)) {
       this.setState({
-        passwordErrorMessage: 'Code must be 6 alphanumeric characters.',
+        passwordErrorMessage: 'Code must be 6 characters.',
       });
       return;
     }
