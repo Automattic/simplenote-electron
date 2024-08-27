@@ -75,7 +75,12 @@ export class Auth extends Component<Props> {
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isCreatingAccount ? signUpText : logInText;
+    const headerLabel = isCreatingAccount ? signUpText : logInText;
+    const buttonLabel = isCreatingAccount
+      ? signUpText
+      : !isCreatingAccount && !usePassword
+        ? 'Log in with email'
+        : logInText;
     const wpccLabel =
       (isCreatingAccount ? signUpText : logInText) + ' with WordPress.com';
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
@@ -209,7 +214,7 @@ export class Auth extends Component<Props> {
         {isElectron && isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onSubmit}>
-          <h1>{buttonLabel}</h1>
+          <h1>{headerLabel}</h1>
           {!this.state.onLine && (
             <p className="login__auth-message is-error">Offline</p>
           )}
