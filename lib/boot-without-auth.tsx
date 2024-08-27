@@ -26,7 +26,9 @@ type State = {
     | 'too-many-requests'
     | 'unknown-error'
     | 'unsubmitted'
-    | 'verification-required';
+    | 'verification-required'
+    | 'completing-login'
+    | 'code-error';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -158,9 +160,7 @@ class AppWithoutAuth extends Component<Props, State> {
       return;
     }
 
-    console.log(`Username: ${username}, Code: ${upperCaseCode}`);
-
-    this.setState({ authStatus: 'submitting' }, async () => {
+    this.setState({ authStatus: 'completing-login' }, async () => {
       try {
         const response = await fetch(
           'https://app.simplenote.com/account/complete-login',
@@ -174,17 +174,14 @@ class AppWithoutAuth extends Component<Props, State> {
           }
         );
         if (response.ok) {
-          // Set token and LOGIN!
-          console.log('Logging in via email');
           const data = await response.json();
           const syncToken = data.sync_token;
-          console.log('Sync token!', syncToken);
           this.login(syncToken, username);
         } else {
-          this.setState({ authStatus: 'unknown-error' });
+          this.setState({ authStatus: 'code-error' });
         }
       } catch {
-        this.setState({ authStatus: 'unknown-error' });
+        this.setState({ authStatus: 'code-error' });
       }
     });
   };
@@ -246,6 +243,8 @@ class AppWithoutAuth extends Component<Props, State> {
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
             loginRequested={this.state.authStatus === 'login-requested'}
+            isCompletingLogin={this.state.authStatus === 'completing-login'}
+            hasCodeError={this.state.authStatus === 'code-error'}
             tokenLogin={this.tokenLogin}
             resetErrors={() =>
               this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })

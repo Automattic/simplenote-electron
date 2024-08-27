@@ -20,6 +20,8 @@ type OwnProps = {
   hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
   loginRequested: boolean;
+  isCompletingLogin: boolean;
+  hasCodeError: boolean;
   requestLogin: (username: string) => any;
   completeLogin: (username: string, code: string) => any;
   requestSignup: (username: string) => any;
@@ -131,7 +133,11 @@ export class Auth extends Component<Props> {
       );
     }
 
-    if (this.props.loginRequested) {
+    if (
+      this.props.loginRequested ||
+      this.props.isCompletingLogin ||
+      this.props.hasCodeError
+    ) {
       return (
         <div className={mainClasses}>
           {isElectron && isMac && <div className="login__draggable-area" />}
@@ -143,9 +149,11 @@ export class Auth extends Component<Props> {
                 <strong>{this.props.emailSentTo}</strong>. The code will be
                 valid for a few minutes.
               </p>
-              {passwordErrorMessage && (
+              {(passwordErrorMessage || this.props.hasCodeError) && (
                 <p className="login__auth-message is-error">
-                  {passwordErrorMessage}
+                  {passwordErrorMessage
+                    ? passwordErrorMessage
+                    : 'Could not log in. Check the code and try again.'}
                 </p>
               )}
               <input
@@ -156,7 +164,11 @@ export class Auth extends Component<Props> {
                 ref={(ref) => (this.codeInput = ref)}
               ></input>
               <button className="button button-primary" type="submit">
-                Log in
+                {this.props.isCompletingLogin ? (
+                  <Spinner isWhite={true} size={20} thickness={5} />
+                ) : (
+                  'Log in'
+                )}
               </button>
               <Fragment>
                 <div className="or-section">
