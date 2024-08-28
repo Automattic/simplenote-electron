@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
+import { isDev } from '../../desktop/env';
 import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
@@ -37,7 +38,7 @@ export class Auth extends Component<Props> {
     isCreatingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
-    usePassword: false,
+    usePassword: isDev, // Magic link login doesn't work in dev mode
     emailForPasswordForm: null,
   };
 
