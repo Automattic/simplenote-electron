@@ -18,11 +18,8 @@ class LoggingOut extends Component {
         <div
           style={{
             fontSize: '18px',
-            margin: 'auto',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: '-50% -50%',
+            alignSelf: 'center',
+            margin: '0 auto',
           }}
         >
           Logging out…

@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import cryptoRandomString from '../utils/crypto-random-string';
 import { get } from 'lodash';
+import { isDev } from '../../desktop/env';
 import MailIcon from '../icons/mail';
 import SimplenoteLogo from '../icons/simplenote';
 import Spinner from '../components/spinner';
@@ -19,18 +20,26 @@ type OwnProps = {
   hasTooManyRequests: boolean;
   hasUnverifiedAccount: boolean;
   login: (username: string, password: string) => any;
+  loginRequested: boolean;
+  isCompletingLogin: boolean;
+  hasCodeError: boolean;
+  requestLogin: (username: string) => any;
+  completeLogin: (username: string, code: string) => any;
   requestSignup: (username: string) => any;
-  tokenLogin: (username: string, token: string) => any;
   resetErrors: () => any;
+  tokenLogin: (username: string, token: string) => any;
 };
 
 type Props = OwnProps;
 
 export class Auth extends Component<Props> {
   state = {
+    authState: '',
     isCreatingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
+    usePassword: isDev, // Magic link login doesn't work in dev mode
+    emailForPasswordForm: null,
   };
 
   componentDidMount() {
@@ -43,6 +52,15 @@ export class Auth extends Component<Props> {
     window.removeEventListener('offline', this.setConnectivity, false);
   }
 
+  componentDidUpdate() {
+    // Add the email to the username/password form if it was set
+    if (this.state.usePassword && this.state.emailForPasswordForm) {
+      this.usernameInput.value = this.state.emailForPasswordForm;
+      this.setState({ emailForPasswordForm: null });
+      this.passwordInput.focus();
+    }
+  }
+
   setConnectivity = () => this.setState({ onLine: window.navigator.onLine });
 
   render() {
@@ -51,14 +69,21 @@ export class Auth extends Component<Props> {
       return null;
     }
 
-    const { isCreatingAccount, passwordErrorMessage } = this.state;
+    const { isCreatingAccount, passwordErrorMessage, usePassword } = this.state;
     const submitClasses = classNames('button', 'button-primary', {
       pending: this.props.authPending,
     });
 
     const signUpText = 'Sign up';
     const logInText = 'Log in';
-    const buttonLabel = isCreatingAccount ? signUpText : logInText;
+    const headerLabel = isCreatingAccount ? signUpText : logInText;
+    const buttonLabel = isCreatingAccount
+      ? signUpText
+      : !isCreatingAccount && !usePassword
+        ? 'Log in with email'
+        : logInText;
+    const wpccLabel =
+      (isCreatingAccount ? signUpText : logInText) + ' with WordPress.com';
     const helpLinkLabel = isCreatingAccount ? logInText : signUpText;
     const helpMessage = isCreatingAccount
       ? 'Already have an account?'
@@ -81,7 +106,7 @@ export class Auth extends Component<Props> {
         .
       </>
     ) : (
-      'Could not log in with the provided email address and password.'
+      'Could not log in with the provided credentials.'
     );
 
     const mainClasses = classNames('login', {
@@ -92,14 +117,14 @@ export class Auth extends Component<Props> {
       return (
         <div className={mainClasses}>
           {isElectron && isMac && <div className="login__draggable-area" />}
-          <div className="accountRequested">
+          <div className="account-requested">
             <MailIcon />
-            <p className="accountRequested__message">
+            <p className="account-requested__message">
               We&apos;ve sent an email to{' '}
               <strong>{this.props.emailSentTo}</strong>. Please check your inbox
               and follow the instructions.
             </p>
-            <p className="accountRequested__footer">
+            <p className="account-requested__footer">
               Didn&apos;t get an email? You may already have an account
               associated with this email address. Contact{' '}
               <a
@@ -124,12 +149,74 @@ export class Auth extends Component<Props> {
       );
     }
 
+    if (
+      this.props.loginRequested ||
+      this.props.isCompletingLogin ||
+      this.props.hasCodeError
+    ) {
+      return (
+        <div className={mainClasses}>
+          {isElectron && isMac && <div className="login__draggable-area" />}
+          <div className="account-requested">
+            <form className="login__form" onSubmit={this.onSubmitCode}>
+              <MailIcon />
+              <p className="account-requested__message">
+                We&apos;ve sent a code to{' '}
+                <strong>{this.props.emailSentTo}</strong>. The code will be
+                valid for a few minutes.
+              </p>
+              {(passwordErrorMessage || this.props.hasCodeError) && (
+                <p className="login__auth-message is-error">
+                  {passwordErrorMessage
+                    ? passwordErrorMessage
+                    : 'Could not log in. Check the code and try again.'}
+                </p>
+              )}
+              <input
+                type="text"
+                className="account-requested__code"
+                placeholder="Code"
+                maxLength={6}
+                autoFocus
+                ref={(ref) => (this.codeInput = ref)}
+              ></input>
+              <button className="button button-primary" type="submit">
+                {this.props.isCompletingLogin ? (
+                  <Spinner isWhite={true} size={20} thickness={5} />
+                ) : (
+                  'Log in'
+                )}
+              </button>
+              <Fragment>
+                <div className="or-section">
+                  <span className="or">Or</span>
+                  <span className="or-line"></span>
+                </div>
+                <button
+                  className="button button-secondary account-requested__password-button"
+                  onClick={this.togglePassword}
+                >
+                  Enter password
+                </button>
+              </Fragment>
+              <button
+                onClick={this.clearRequestedAccount}
+                className="button-borderless"
+              >
+                Go Back
+              </button>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={mainClasses}>
         {isElectron && isMac && <div className="login__draggable-area" />}
         <SimplenoteLogo />
         <form className="login__form" onSubmit={this.onSubmit}>
-          <h1>{buttonLabel}</h1>
+          <h1>{headerLabel}</h1>
           {!this.state.onLine && (
             <p className="login__auth-message is-error">Offline</p>
           )}
@@ -204,7 +291,7 @@ export class Auth extends Component<Props> {
               className="login__auth-message is-error"
               data-error-name="too-many-requests"
             >
-              Too many log in attempts. Try again later.
+              Too many login attempts. Try again later.
             </p>
           )}
           {(this.props.hasInvalidCredentials || this.props.hasLoginError) && (
@@ -236,7 +323,7 @@ export class Auth extends Component<Props> {
             required
             autoFocus
           />
-          {!isCreatingAccount && (
+          {!isCreatingAccount && usePassword && (
             <>
               <label className="login__field" htmlFor="login__field-password">
                 Password
@@ -270,7 +357,20 @@ export class Auth extends Component<Props> {
             )}
           </button>
 
-          {!isCreatingAccount && (
+          {usePassword && (
+            <Fragment>
+              <a
+                className="login__forgot"
+                href="#"
+                rel="noopener noreferrer"
+                onClick={this.togglePassword}
+              >
+                Log in with email
+              </a>
+            </Fragment>
+          )}
+
+          {!isCreatingAccount && usePassword && (
             <a
               className="login__forgot"
               href="https://app.simplenote.com/forgot/"
@@ -286,7 +386,7 @@ export class Auth extends Component<Props> {
               <span className="or">Or</span>
               <span className="or-line"></span>
               <button className="wpcc-button" onClick={this.onWPLogin}>
-                {buttonLabel} with WordPress.com
+                {wpccLabel}
               </button>
             </Fragment>
           )}
@@ -364,7 +464,7 @@ export class Auth extends Component<Props> {
     this.props.resetErrors();
   };
 
-  onSubmit = (event) => {
+  onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     // clear any existing error messages on submit
@@ -383,7 +483,7 @@ export class Auth extends Component<Props> {
       }
     } else if (
       this.usernameInput.validity.valueMissing ||
-      this.passwordInput.validity.valueMissing
+      (this.state.usePassword && this.passwordInput.validity.valueMissing)
     ) {
       this.setState({
         passwordErrorMessage: 'Please fill out email and password.',
@@ -406,28 +506,54 @@ export class Auth extends Component<Props> {
       return;
     }
 
-    const password = get(this.passwordInput, 'value');
+    if (this.state.usePassword) {
+      const password = get(this.passwordInput, 'value');
 
-    // login has slightly more relaxed password rules
-    if (!this.passwordInput.validity.valid) {
+      // login has slightly more relaxed password rules
+      if (!this.passwordInput.validity.valid) {
+        this.setState({
+          passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        });
+        return;
+      }
+      this.setState({ passwordErrorMessage: null });
+      this.props.login(username, password);
+      return;
+    }
+
+    // default: magic link login
+    this.props.requestLogin(username);
+  };
+
+  onSubmitCode = (event: React.FormEvent) => {
+    event.preventDefault();
+    this.setState({ authState: 'login-requested' });
+    this.setState({
+      passwordErrorMessage: '',
+    });
+
+    const code = get(this.codeInput, 'value');
+    const alphanumericRegex = /^[a-zA-Z0-9]{6}$/;
+    if (!alphanumericRegex.test(code)) {
       this.setState({
-        passwordErrorMessage: 'Passwords must contain at least 4 characters.',
+        passwordErrorMessage: 'Code must be 6 characters.',
       });
       return;
     }
 
-    this.setState({ passwordErrorMessage: null });
-    this.props.login(username, password);
+    const email = this.props.emailSentTo;
+
+    this.props.completeLogin(email, code);
   };
 
   onWPLogin = () => {
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
-    this.authState = `app-${cryptoRandomString(20)}`;
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.authState}`;
+    this.setState({ authState: `app-${cryptoRandomString(20)}` });
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.state.authState}`;
 
     window.electron.send('wpLogin', authUrl);
 
-    window.electron.receive('wpLogin', (url) => {
+    window.electron.receive('wpLogin', (url: string) => {
       const { searchParams } = new URL(url);
 
       const errorCode = searchParams.get('error')
@@ -454,34 +580,43 @@ export class Auth extends Component<Props> {
           return this.authError('An error was encountered while signing in.');
       }
 
-      if (authState !== this.authState) {
+      if (authState !== this.state.authState) {
         return;
       }
       this.props.tokenLogin(userEmail, simperiumToken);
     });
   };
 
-  authError = (errorMessage) => {
+  authError = (errorMessage: string) => {
     this.setState({
       passwordErrorMessage: errorMessage,
     });
   };
 
-  onForgot = (event) => {
+  onForgot = (event: React.MouseEvent) => {
     event.preventDefault();
     window.open(
-      event.currentTarget.href,
-      null,
+      (event.currentTarget as HTMLAnchorElement).href,
+      undefined,
       'width=640,innerWidth=640,height=480,innerHeight=480,useContentSize=true,chrome=yes,centerscreen=yes'
     );
   };
 
-  toggleSignUp = (event) => {
+  toggleSignUp = (event: React.MouseEvent) => {
     event.preventDefault();
     this.props.resetErrors();
     this.setState({
       passwordErrorMessage: '',
     });
     this.setState({ isCreatingAccount: !this.state.isCreatingAccount });
+  };
+  togglePassword = (event: React.MouseEvent) => {
+    event.preventDefault();
+    this.props.resetErrors();
+    this.setState({
+      passwordErrorMessage: '',
+      emailForPasswordForm: this.props.emailSentTo,
+      usePassword: !this.state.usePassword,
+    });
   };
 }

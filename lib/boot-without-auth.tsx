@@ -19,13 +19,16 @@ type State = {
   authStatus:
     | 'account-creation-requested'
     | 'compromised-password'
-    | 'unsubmitted'
-    | 'submitting'
     | 'insecure-password'
     | 'invalid-credentials'
+    | 'login-requested'
+    | 'submitting'
+    | 'too-many-requests'
     | 'unknown-error'
+    | 'unsubmitted'
     | 'verification-required'
-    | 'too-many-requests';
+    | 'completing-login'
+    | 'code-error';
   emailSentTo: string;
   showAbout: boolean;
 };
@@ -65,13 +68,13 @@ class AppWithoutAuth extends Component<Props, State> {
     this.props.onAuth(token, username);
   }
 
-  onAppCommand = (event) => {
+  onAppCommand = (event: Electron.IpcRendererEvent) => {
     if ('showDialog' === event.action && 'ABOUT' === event.dialog) {
       this.setState({ showAbout: true });
     }
   };
 
-  onDismissDialog = (event) => {
+  onDismissDialog = (event: React.MouseEvent) => {
     this.setState({ showAbout: false });
   };
 
@@ -118,6 +121,74 @@ class AppWithoutAuth extends Component<Props, State> {
     });
   };
 
+  requestLogin = (email: string) => {
+    const username = email.trim().toLowerCase();
+    if (!username) {
+      return;
+    }
+    this.setState({ authStatus: 'submitting' }, async () => {
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/request-login',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: username,
+              request_source: 'electron',
+            }),
+          }
+        );
+        if (response.ok) {
+          recordEvent('user_requested_login_link');
+          this.setState({ authStatus: 'login-requested' });
+          this.setState({ emailSentTo: username });
+        } else {
+          this.setState({ authStatus: 'unknown-error' });
+        }
+      } catch {
+        this.setState({ authStatus: 'unknown-error' });
+      }
+    });
+  };
+
+  completeLogin = (email: string, code: string) => {
+    const username = email.trim().toLowerCase();
+    if (!username) {
+      return;
+    }
+
+    const upperCaseCode = code.trim().toUpperCase();
+    if (!upperCaseCode) {
+      return;
+    }
+
+    this.setState({ authStatus: 'completing-login' }, async () => {
+      try {
+        const response = await fetch(
+          'https://app.simplenote.com/account/complete-login',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username: username,
+              auth_code: upperCaseCode,
+            }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const syncToken = data.sync_token;
+          this.login(syncToken, username);
+        } else {
+          this.setState({ authStatus: 'code-error' });
+        }
+      } catch {
+        this.setState({ authStatus: 'code-error' });
+      }
+    });
+  };
+
   requestSignup = (email: string) => {
     const username = email.trim().toLowerCase();
     if (!username) {
@@ -148,7 +219,7 @@ class AppWithoutAuth extends Component<Props, State> {
   };
 
   tokenLogin = (username: string, token: string) => {
-    this.login(token, username, false);
+    this.login(token, username);
   };
 
   render() {
@@ -174,10 +245,15 @@ class AppWithoutAuth extends Component<Props, State> {
             hasTooManyRequests={this.state.authStatus === 'too-many-requests'}
             hasLoginError={this.state.authStatus === 'unknown-error'}
             login={this.authenticate}
+            loginRequested={this.state.authStatus === 'login-requested'}
+            isCompletingLogin={this.state.authStatus === 'completing-login'}
+            hasCodeError={this.state.authStatus === 'code-error'}
             tokenLogin={this.tokenLogin}
             resetErrors={() =>
               this.setState({ authStatus: 'unsubmitted', emailSentTo: '' })
             }
+            requestLogin={this.requestLogin}
+            completeLogin={this.completeLogin}
             requestSignup={this.requestSignup}
           />
           {this.state.showAbout && (

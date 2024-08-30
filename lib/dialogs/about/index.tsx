@@ -8,7 +8,7 @@ import Dialog from '../../dialog';
 const appVersion = config.version; // eslint-disable-line no-undef
 
 type OwnProps = {
-  closeDialog: () => any;
+  closeDialog: () => void;
 };
 
 type Props = OwnProps;
