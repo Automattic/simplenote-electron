@@ -177,6 +177,7 @@ export class Auth extends Component<Props> {
                 className="account-requested__code"
                 placeholder="Code"
                 maxLength={6}
+                autoFocus
                 ref={(ref) => (this.codeInput = ref)}
               ></input>
               <button className="button button-primary" type="submit">
