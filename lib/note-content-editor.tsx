@@ -1277,6 +1277,7 @@ class NoteContentEditor extends Component<Props> {
               scrollBeyondLastLine: false,
               selectionHighlight: false,
               showFoldingControls: 'never',
+              stickyScroll: { enabled: false },
               suggestOnTriggerCharacters: true,
               unicodeHighlight: {
                 ambiguousCharacters: false,
