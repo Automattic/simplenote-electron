@@ -129,17 +129,12 @@ module.exports = () => {
       }),
       new MonacoWebpackPlugin({
         languages: [],
-        // don't include features we disable. these generally correspond to the options
-        // passed to editor initialization in note-content-editor.tsx
-        // @see https://github.com/microsoft/monaco-editor/blob/main/webpack-plugin/README.md#options
         features: [
           '!bracketMatching',
           '!codeAction',
           '!codelens',
-          '!colorPicker',
+          '!colorDetector',
           '!comment',
-          '!diffEditor',
-          '!diffEditorBreadcrumbs',
           '!folding',
           '!gotoError',
           '!gotoLine',
@@ -149,15 +144,12 @@ module.exports = () => {
           '!multicursor',
           '!parameterHints',
           '!quickCommand',
-          '!quickHelp',
           '!quickOutline',
           '!referenceSearch',
           '!rename',
-          '!snippet',
-          '!stickyScroll',
+          '!snippets',
           '!suggest',
           '!toggleHighContrast',
-          '!unicodeHighlighter',
         ],
       }),
       new webpack.DefinePlugin({
