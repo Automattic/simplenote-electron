@@ -38,7 +38,7 @@ export class Auth extends Component<Props> {
     isCreatingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
-    usePassword: isDev, // Magic link login doesn't work in dev mode
+    usePassword: false,
     emailForPasswordForm: null,
   };
 
@@ -356,6 +356,22 @@ export class Auth extends Component<Props> {
               buttonLabel
             )}
           </button>
+
+          {!isCreatingAccount && !usePassword && (
+            <Fragment>
+              <div className="terms">
+                We'll email you a code to log in, or you can
+                <a
+                  href="#"
+                  rel="noopener noreferrer"
+                  onClick={this.togglePassword}
+                >
+                  log in manually
+                </a>
+                .
+              </div>
+            </Fragment>
+          )}
 
           {usePassword && (
             <Fragment>
