@@ -360,7 +360,7 @@ export class Auth extends Component<Props> {
           {!isCreatingAccount && !usePassword && (
             <Fragment>
               <div className="terms">
-                We'll email you a code to log in, or you can
+                We&rsquo;ll email you a code to log in, or you can
                 <a
                   href="#"
                   rel="noopener noreferrer"
