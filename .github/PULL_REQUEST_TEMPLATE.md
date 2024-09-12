@@ -21,12 +21,14 @@ videos to help illustrate the fix.
 
 ### Release
 
+<!--
 **_(Required)_** Add a concise statement to `RELEASE-NOTES.md` if the changes should be included in release notes. Include details about updating the notes in this section. For example:
 
-> `RELEASE-NOTES.txt` was updated in d3adb3ef with:
+> `RELEASE-NOTES.md` was updated with:
 >
 > > Added markdown support
 
 If the changes should not be included in release notes, add a statement to this section. For example:
 
 > These changes do not require release notes.
+-->
