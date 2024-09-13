@@ -1,10 +1,27 @@
 # Changelog
 
+## [v2.22.2]
+
+### Enhancements
+
+- Added "magic link" login [#3246](https://github.com/Automattic/simplenote-electron/pull/3246)
+- Added a link to log in with a password from the initial login screen [#3256](https://github.com/Automattic/simplenote-electron/pull/3256)
+
+### Fixes
+
+- Disabled "sticky scrolling" option [#3254](https://github.com/Automattic/simplenote-electron/pull/3254)
+
+### Other Changes
+
+- Removed gconf2 dependency [#3244](https://github.com/Automattic/simplenote-electron/pull/3244)
+
 ## [v2.22.1]
 
 ### Fixes
 
 - The final release build of v2.22.0 was not correctly packaged, causing a crash on startup. Affected users will need to manually download this version, which properly includes a necessary configuration file during the build process [#3232](https://github.com/Automattic/simplenote-electron/pull/3232)
+- Disabled the menu item to check for updates in the development environment [#3214](https://github.com/Automattic/simplenote-electron/pull/3214)
+- Don't indent lines following an indent (hanging indent support) [#3216](https://github.com/Automattic/simplenote-electron/pull/3216)
 
 ## [v2.22.0]
 
