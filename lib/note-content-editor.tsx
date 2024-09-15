@@ -391,6 +391,18 @@ class NoteContentEditor extends Component<Props> {
       this.setDecorators();
     }
 
+    // If content is changed so that the selected search index is greater then the number of matches
+    // then select the last match instead
+    if (
+      this.editor &&
+      this.state.editor === 'full' &&
+      (this.props.selectedSearchMatchIndex ?? 0) > this.matchesInNote.length - 1
+    ) {
+      const newIndex = Math.max(this.matchesInNote.length - 1, 0);
+      this.setSearchSelection(newIndex);
+      this.props.storeSearchSelection(newIndex);
+    }
+
     if (
       this.editor &&
       this.state.editor === 'full' &&
