@@ -16,20 +16,10 @@ const clearStorage = (): Promise<void> =>
     localStorage.removeItem('localQueue:note');
     localStorage.removeItem('localQueue:preferences');
     localStorage.removeItem('localQueue:tag');
+    localStorage.removeItem('simpleNote');
     localStorage.removeItem('stored_user');
     sessionStorage.clear();
     window.electron?.send('appStateUpdate', {});
-
-    const settings = localStorage.getItem('simpleNote');
-    if (settings) {
-      try {
-        const { accountName, ...otherSettings } = JSON.parse(settings);
-        localStorage.setItem('simpleNote', JSON.stringify(otherSettings));
-      } catch (e) {
-        // pass - we only care if we can successfully do this,
-        //        not if we fail to do it
-      }
-    }
 
     Promise.all([
       new Promise((resolve) => {
