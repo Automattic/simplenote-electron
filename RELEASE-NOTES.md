@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.23.0]
+
+### Fixes
+
+- Properly clear analytics cookies on logout [#3269](https://github.com/Automattic/simplenote-electron/pull/3269)
+
 ## [v2.22.2]
 
 ### Enhancements
