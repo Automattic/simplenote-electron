@@ -100,6 +100,7 @@ export const middleware: S.Middleware = (store) => {
         break;
       case 'LOGOUT':
         record('user_signed_out');
+        analytics.clearedIdentity();
         break;
       case 'OPEN_NOTE':
         record('list_note_opened');
