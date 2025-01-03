@@ -543,7 +543,7 @@ export class Auth extends Component<Props> {
 
   onSubmitCode = (event: React.FormEvent) => {
     event.preventDefault();
-    this.setState({ authState: 'login-requested' });
+    // this.setState({ authStatus: 'login-requested' });
     this.setState({
       passwordErrorMessage: '',
     });
