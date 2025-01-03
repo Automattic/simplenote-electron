@@ -593,10 +593,12 @@ export class Auth extends Component<Props> {
             'Please confirm your account with the confirmation email before signing in to Simplenote.'
           );
         default:
+          console.log(errorCode);
           return this.authError('An error was encountered while signing in.');
       }
 
       if (authState !== this.state.authState) {
+        console.log(['authState mismatch: ', authState, this.state.authState]);
         return;
       }
       this.props.tokenLogin(userEmail, simperiumToken);
