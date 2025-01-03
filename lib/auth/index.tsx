@@ -34,7 +34,6 @@ type Props = OwnProps;
 
 export class Auth extends Component<Props> {
   state = {
-    authState: '',
     isCreatingAccount: false,
     passwordErrorMessage: null,
     onLine: window.navigator.onLine,
@@ -543,7 +542,6 @@ export class Auth extends Component<Props> {
 
   onSubmitCode = (event: React.FormEvent) => {
     event.preventDefault();
-    // this.setState({ authStatus: 'login-requested' });
     this.setState({
       passwordErrorMessage: '',
     });
@@ -564,8 +562,8 @@ export class Auth extends Component<Props> {
 
   onWPLogin = () => {
     const redirectUrl = encodeURIComponent(config.wpcc_redirect_url);
-    this.setState({ authState: `app-${cryptoRandomString(20)}` });
-    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${this.state.authState}`;
+    const savedAuthState = `app-${cryptoRandomString(20)}`;
+    const authUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${config.wpcc_client_id}&redirect_uri=${redirectUrl}&response_type=code&scope=global&state=${savedAuthState}`;
 
     window.electron.send('wpLogin', authUrl);
 
@@ -593,12 +591,10 @@ export class Auth extends Component<Props> {
             'Please confirm your account with the confirmation email before signing in to Simplenote.'
           );
         default:
-          console.log(errorCode);
           return this.authError('An error was encountered while signing in.');
       }
 
-      if (authState !== this.state.authState) {
-        console.log(['authState mismatch: ', authState, this.state.authState]);
+      if (authState !== savedAuthState) {
         return;
       }
       this.props.tokenLogin(userEmail, simperiumToken);
