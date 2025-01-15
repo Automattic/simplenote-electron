@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.23.1]
+
+### Other Changes
+
+- Updated dependencies [#3286](https://github.com/Automattic/simplenote-electron/pull/3286)
+
 ## [v2.23.0]
 
 ### Fixes
