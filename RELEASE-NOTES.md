@@ -2,6 +2,10 @@
 
 ## [v2.23.1]
 
+### Fixes
+
+- Fixed inconsistent tag encoding of special characters that led to duplicate tags across platforms [#3017](https://github.com/Automattic/simplenote-electron/pull/3017)
+
 ### Other Changes
 
 - Updated dependencies [#3286](https://github.com/Automattic/simplenote-electron/pull/3286)
