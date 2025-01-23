@@ -6,11 +6,7 @@ import actions from '../state/actions';
 
 import type * as S from '../state';
 import type * as T from '../types';
-import {
-  isTagInputKey,
-  tagHashOf,
-  MAX_TAG_HASH_LENGTH,
-} from '../utils/tag-hash';
+import { tagHashOf, MAX_TAG_HASH_LENGTH } from '../utils/tag-hash';
 
 type OwnProps = {
   editable: boolean;
@@ -44,7 +40,7 @@ export const TagListInput: FunctionComponent<Props> = ({
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (
       tagHashOf(enteredTagName).length >= MAX_TAG_HASH_LENGTH &&
-      isTagInputKey(event.which)
+      String.fromCharCode(event.which).match(/([^,\s])/g)
     ) {
       event.preventDefault();
     }

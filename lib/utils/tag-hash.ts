@@ -33,27 +33,3 @@ export const withoutTag = (tags: T.TagName[], tag: T.TagName): T.TagName[] => {
 
   return tags;
 };
-
-export const isTagInputKey = (key: number) => {
-  // Check if a key will add to an input based on keycodes from https://keycode.info
-  if (key >= 48 && key <= 90) {
-    return true;
-  }
-  if (key >= 160 && key <= 165) {
-    return true;
-  }
-  if (key >= 170 && key <= 171) {
-    return true;
-  }
-  if (key >= 186 && key <= 194) {
-    return true;
-  }
-  if (key >= 219 && key <= 223) {
-    return true;
-  }
-  if (key >= 225 && key <= 226) {
-    return true;
-  }
-
-  return false;
-};

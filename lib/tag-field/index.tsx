@@ -8,11 +8,7 @@ import EmailToolTip from '../tag-email-tooltip';
 import TagChip from '../components/tag-chip';
 import TagInput from '../tag-input';
 import classNames from 'classnames';
-import {
-  isTagInputKey,
-  tagHashOf,
-  MAX_TAG_HASH_LENGTH,
-} from '../utils/tag-hash';
+import { tagHashOf, MAX_TAG_HASH_LENGTH } from '../utils/tag-hash';
 import { noteCanonicalTags } from '../state/selectors';
 
 import type * as S from '../state';
@@ -210,7 +206,7 @@ export class TagField extends Component<Props, OwnState> {
     if (
       tagHashOf(this.state.tagInput as T.TagName).length >
         MAX_TAG_HASH_LENGTH &&
-      isTagInputKey(e.which)
+      String.fromCharCode(e.which).match(/([^,\s])/g)
     ) {
       e.preventDefault();
     }
