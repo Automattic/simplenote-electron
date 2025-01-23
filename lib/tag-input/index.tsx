@@ -223,7 +223,7 @@ export class TagInput extends Component<Props> {
       clipboardText = window.clipboardData.getData('Text'); // IE11
     }
 
-    // Convert spaces/commans to submitted tags
+    // Convert spaces/commas to submitted tags
     const tags = clipboardText.split(/\s|,|\n/);
     const filteredTags = tags.filter(
       (tag) => tagHashOf(tag).length <= MAX_TAG_HASH_LENGTH
