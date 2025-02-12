@@ -177,7 +177,7 @@ export class RevisionSelector extends Component<Props> {
                 </button>
                 <button
                   aria-label={`Restore revision from ${revisionDate}`}
-                  disabled={isNewest}
+                  disabled={!!isNewest}
                   className="button button-primary button-compact"
                   onClick={this.onAcceptRevision}
                 >

@@ -66,7 +66,7 @@ function buildTracks() {
       const tokens = host.split('.');
       let tryDomain: string;
       if (typeof TRACKS_COOKIE_DOMAIN !== 'undefined') {
-        cookieDomain = TRACKS_COOKIE_DOMAIN; // eslint-disable-line no-undef
+        cookieDomain = TRACKS_COOKIE_DOMAIN;
       } else {
         for (let i = 1; i <= tokens.length; ++i) {
           tryDomain = '.' + tokens.slice(-i).join('.');

@@ -12,7 +12,7 @@ const exportZipArchive = (notes: Map<T.EntityId, T.Note>) => {
   return exportNotes(notes)
     .then(exportToZip)
     .then((zip) =>
-      zip.generateAsync({
+      zip?.generateAsync({
         compression: 'DEFLATE',
         platform: get(window, 'process.platform', 'DOS'),
         type: 'blob',

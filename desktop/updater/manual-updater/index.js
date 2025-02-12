@@ -67,7 +67,6 @@ class ManualUpdater extends Updater {
         const releaseConfig = yaml.load(configBody);
 
         if (semver.lt(app.getVersion(), releaseConfig.version)) {
-          // eslint-disable-next-line no-console
           log.info(
             'New update is available, prompting user to update to',
             releaseConfig.version

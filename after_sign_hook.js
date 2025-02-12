@@ -49,7 +49,7 @@ module.exports = async function (params) {
         `Could not begin signing macOS build. Errors: ${errors.join('\n')}`
       );
     } else {
-      console.log('All required env vars found. Moving on...');
+      console.log('All required env vars found. Moving on...'); // eslint-disable-line no-console
     }
   }
 

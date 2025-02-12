@@ -5,7 +5,7 @@ import CrossIcon from '../../icons/cross';
 import TopRightArrowIcon from '../../icons/arrow-top-right';
 import Dialog from '../../dialog';
 
-const appVersion = config.version; // eslint-disable-line no-undef
+const appVersion = config.version;
 
 type OwnProps = {
   closeDialog: () => void;

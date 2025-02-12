@@ -196,7 +196,7 @@ lint-scss:
 
 .PHONY: lint-js
 lint-js:
-	@npx eslint --ignore-path .gitignore "**/*.{js,jsx,ts,tsx}"
+	@npx eslint
 
 
 # encrypted config file

@@ -46,7 +46,7 @@ const analytics = {
       const fullEventName = `${prefix}_${eventName}`;
       const fullEventProperties = {
         ...eventProperties,
-        device_info_app_version: config.version, // eslint-disable-line no-undef
+        device_info_app_version: config.version,
       };
 
       debug(`${fullEventName}: %o`, fullEventProperties);

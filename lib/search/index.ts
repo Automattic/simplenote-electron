@@ -42,7 +42,7 @@ const toSearchNote = (note: Partial<T.Note>): SearchNote => ({
   creationDate: note.creationDate ?? Date.now() / 1000,
   modificationDate: note.modificationDate ?? Date.now() / 1000,
   isPinned: note.systemTags?.includes('pinned') ?? false,
-  isTrashed: !!note.deleted ?? false,
+  isTrashed: !!note.deleted,
 });
 
 export const tagsFromSearch = (query: string) => {
