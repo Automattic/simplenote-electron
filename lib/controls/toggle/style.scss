@@ -3,8 +3,9 @@
 $toggle-control-width: 24px;
 $toggle-control-height: 16px;
 $toggle-control-knob-margin: 2px;
-$toggle-control-knob-size: $toggle-control-height -
-  $toggle-control-knob-margin - $toggle-control-knob-margin;
+
+// prettier-ignore
+$toggle-control-knob-size: calc($toggle-control-height - 2 * $toggle-control-knob-margin);
 
 .toggle-control {
   -webkit-touch-callout: none;
@@ -80,10 +81,10 @@ $toggle-control-knob-size: $toggle-control-height -
       opacity: 1;
     }
 
+    // prettier-ignore
     .toggle-control-knob {
       transform: translate(
-        $toggle-control-width - $toggle-control-knob-size -
-          $toggle-control-knob-margin,
+        calc($toggle-control-width - $toggle-control-knob-size - $toggle-control-knob-margin),
         $toggle-control-knob-margin
       );
     }
