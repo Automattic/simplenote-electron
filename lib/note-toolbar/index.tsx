@@ -166,7 +166,7 @@ const mapStateToProps: S.MapState<StateProps> = ({
   ui: { editMode, openedNote },
   simperium: { connectionStatus },
 }) => {
-  const note = openedNote ? data.notes.get(openedNote) ?? null : null;
+  const note = openedNote ? (data.notes.get(openedNote) ?? null) : null;
 
   return {
     editMode,

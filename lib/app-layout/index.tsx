@@ -164,9 +164,9 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isSmallScreen: selectors.isSmallScreen(state),
   openedRevision:
     state.ui.openedRevision?.[0] === state.ui.openedNote
-      ? state.data.noteRevisions
+      ? (state.data.noteRevisions
           .get(state.ui.openedNote)
-          ?.get(state.ui.openedRevision?.[1]) ?? null
+          ?.get(state.ui.openedRevision?.[1]) ?? null)
       : null,
   openedNote: state.ui.openedNote,
   showNoteList: state.ui.showNoteList,

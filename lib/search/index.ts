@@ -311,8 +311,8 @@ export const middleware: S.Middleware = (store) => {
     const noteAt = filteredNotes.findIndex((noteId) => noteId === openedNote);
     const nextNoteToOpen =
       noteAt === -1
-        ? filteredNotes[0] ?? null
-        : filteredNotes[noteAt + 1] ?? filteredNotes[noteAt - 1] ?? null;
+        ? (filteredNotes[0] ?? null)
+        : (filteredNotes[noteAt + 1] ?? filteredNotes[noteAt - 1] ?? null);
 
     return {
       ...action,
