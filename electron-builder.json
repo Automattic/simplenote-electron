@@ -48,7 +48,9 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
-    "certificateSubjectName": "Automattic, Inc.",
+    "signtoolOptions": {
+      "certificateSubjectName": "Automattic, Inc."
+    },
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [
       {
@@ -86,13 +88,17 @@
     "category": "Utility",
     "executableName": "simplenote",
     "desktop": {
-      "Name": "Simplenote",
-      "Comment": "Simplenote for Linux",
-      "GenericName": "Note Taking Application",
-      "Type": "Application",
-      "Icon": "simplenote",
-      "StartupNotify": true,
-      "Categories": "Utility"
+      "desktopActions": {
+        "LinuxDesktopFile": {
+          "Name": "Simplenote",
+          "Comment": "Simplenote for Linux",
+          "GenericName": "Note Taking Application",
+          "Type": "Application",
+          "Icon": "simplenote",
+          "StartupNotify": true,
+          "Categories": "Utility"
+        }
+      }
     },
     "vendor": "Automattic, Inc.",
     "maintainer": "Automattic, Inc. <support@simplenote.com>"
