@@ -111,7 +111,7 @@
     "webpack-dev-server": "5.0.4"
   },
   "dependencies": {
-    "@automattic/color-studio": "2.6.0",
+    "@automattic/color-studio": "4.1.0",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.0",
     "@mui/material": "6.4.4",
