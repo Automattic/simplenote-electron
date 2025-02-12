@@ -93,7 +93,7 @@
     "mini-css-extract-plugin": "2.9.0",
     "postcss": "8.4.38",
     "postcss-loader": "8.1.1",
-    "prettier": "3.5.0",
+    "prettier": "3.2.5",
     "pretty-quick": "4.0.0",
     "react-onclickoutside": "6.13.1",
     "react-test-renderer": "17.0.2",
