@@ -139,7 +139,7 @@ function buildTracks() {
     }
     userId = loadWpcomIdentity();
     if (userId) {
-      userIdType = 'wpcom:user_id';
+      userIdType = 'simplenote:user_id';
     } else {
       userIdType = 'anon';
       userId = get(userAnonCookie);
@@ -317,7 +317,7 @@ function buildTracks() {
     }
 
     userId = newUserId;
-    userIdType = 'wpcom:user_id';
+    userIdType = 'simplenote:user_id';
     set(userNameCookie, userId);
     const anonId = get(userAnonCookie);
     if (anonId) {
