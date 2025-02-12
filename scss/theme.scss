@@ -1,4 +1,4 @@
-@use 'variables';
+@use 'variables' as *;
 
 /*
  * Regenerate the Simplenote Tasks font with the following script.
@@ -89,7 +89,7 @@ span[dir='ltr'] {
   color: var(--primary-color);
   height: 100%;
   width: 100%;
-  font-family: 'Simplenote Tasks', variables.$sans, sans-serif;
+  font-family: 'Simplenote Tasks', $sans, sans-serif;
 
   .slider {
     border-radius: 10px;

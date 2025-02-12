@@ -1,4 +1,4 @@
-@use 'variables';
+@use 'variables' as *;
 
 // Hide focus outlines when interacting with mouse
 // https://github.com/WICG/focus-visible
@@ -8,7 +8,7 @@
   }
 
   &:focus-visible {
-    outline: variables.$focus-outline;
+    outline: $focus-outline;
   }
 }
 

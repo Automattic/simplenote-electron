@@ -1,11 +1,11 @@
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 .note-actions {
   background-color: var(--background-color);
   width: 200px;
   position: absolute;
   right: 16px;
-  top: variables.$toolbar-height + 16px;
+  top: $toolbar-height + 16px;
   border: 1px solid var(--secondary-color);
   border-radius: 6px;
   box-shadow: 0 3px 6px 0 var(--overlay-color);

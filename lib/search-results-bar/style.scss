@@ -1,9 +1,9 @@
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 .search-results {
   color: var(--primary-color);
-  height: variables.$toolbar-height;
-  line-height: variables.$toolbar-height;
+  height: $toolbar-height;
+  line-height: $toolbar-height;
   z-index: 100;
   border-top: 1px solid var(--secondary-color);
   background-color: var(--background-color);
@@ -34,7 +34,7 @@
     transform: scaleX(-1);
   }
 
-  @media only screen and (max-width: variables.$single-column) {
+  @media only screen and (max-width: $single-column) {
     left: 0;
   }
 }

@@ -1,5 +1,5 @@
 @use 'sass:meta';
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 .note-detail-wrapper {
   position: relative;
@@ -48,7 +48,7 @@
     }
   }
 
-  @media only screen and (max-width: variables.$single-column) {
+  @media only screen and (max-width: $single-column) {
     display: none; // prevents flicker when closing note
   }
 }
@@ -132,7 +132,7 @@ body[data-theme='dark'] .note-detail-markdown {
   }
 
   h1 {
-    font-weight: variables.$light;
+    font-weight: $light;
   }
 
   h5,
@@ -184,7 +184,7 @@ body[data-theme='dark'] .note-detail-markdown {
   pre {
     border: 1px solid var(--tertiary-color);
     padding: 1em;
-    border-radius: variables.$border-radius;
+    border-radius: $border-radius;
     font-size: 85%;
   }
 

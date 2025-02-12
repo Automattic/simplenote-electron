@@ -1,4 +1,4 @@
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 @keyframes announce-note-update {
   0% {
@@ -132,7 +132,7 @@
   cursor: pointer;
   display: flex;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'Simplenote Tasks', variables.$sans, sans-serif;
+  font-family: 'Simplenote Tasks', $sans, sans-serif;
   min-height: 64px;
 
   .note-list-item-content {

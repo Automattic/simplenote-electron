@@ -1,4 +1,4 @@
-@use '../../../scss/variables';
+@use '../../../scss/variables' as *;
 @use '../../../scss/mixins';
 
 .slider {
@@ -7,7 +7,7 @@
   background-color: var(--background-color);
   cursor: pointer;
   width: 100%;
-  max-width: variables.$max-content-width;
+  max-width: $max-content-width;
   padding: 0; // IE11
   appearance: none;
 

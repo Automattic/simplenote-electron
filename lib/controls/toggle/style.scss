@@ -1,4 +1,4 @@
-@use '../../../scss/variables';
+@use '../../../scss/variables' as *;
 
 $toggle-control-width: 24px;
 $toggle-control-height: 16px;
@@ -17,7 +17,7 @@ $toggle-control-knob-size: calc($toggle-control-height - 2 * $toggle-control-kno
   overflow: hidden;
 
   &:focus-within {
-    outline: variables.$focus-outline;
+    outline: $focus-outline;
   }
 
   input {
@@ -59,7 +59,7 @@ $toggle-control-knob-size: calc($toggle-control-height - 2 * $toggle-control-kno
 
   .toggle-control-checked-color {
     background: var(--active-controls-color);
-    transition: variables.$anim;
+    transition: $anim;
     opacity: 0;
   }
 
@@ -73,7 +73,7 @@ $toggle-control-knob-size: calc($toggle-control-height - 2 * $toggle-control-kno
       $toggle-control-knob-margin,
       $toggle-control-knob-margin
     );
-    transition: variables.$anim;
+    transition: $anim;
   }
 
   input:checked + .toggle-control-layers {

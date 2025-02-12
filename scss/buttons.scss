@@ -1,4 +1,4 @@
-@use 'variables';
+@use 'variables' as *;
 @use 'mixins';
 
 // Resets button styles
@@ -29,7 +29,7 @@ button {
   overflow: hidden;
   text-decoration: none;
   vertical-align: top;
-  transition: variables.$anim-fast;
+  transition: $anim-fast;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
   border-color: var(--tertiary-accent-color);
@@ -38,8 +38,8 @@ button {
   color: var(--tertiary-accent-color);
   font-size: 14px;
   line-height: 1.5;
-  font-weight: variables.$bold;
-  border-radius: variables.$border-radius;
+  font-weight: $bold;
+  border-radius: $border-radius;
   padding: 8px 12px;
 
   &:active,
@@ -85,7 +85,7 @@ button {
   background: transparent;
 
   svg[class^='icon-'] {
-    transition: variables.$anim-fast;
+    transition: $anim-fast;
   }
 }
 
@@ -109,11 +109,11 @@ button {
 
     &:first-child {
       border-left-width: 2px;
-      border-radius: variables.$border-radius 0 0 variables.$border-radius;
+      border-radius: $border-radius 0 0 $border-radius;
     }
 
     &:last-child {
-      border-radius: 0 variables.$border-radius variables.$border-radius 0;
+      border-radius: 0 $border-radius $border-radius 0;
     }
   }
 }

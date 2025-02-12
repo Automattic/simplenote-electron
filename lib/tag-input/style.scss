@@ -1,4 +1,4 @@
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 .tag-input {
   cursor: text;
@@ -14,7 +14,7 @@
     height: 1.75em;
     min-width: 140px;
     outline: none;
-    font: 14px/1.5 variables.$sans;
+    font: 14px/1.5 $sans;
     color: var(--primary-color);
     background: transparent;
   }

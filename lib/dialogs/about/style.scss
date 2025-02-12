@@ -1,5 +1,5 @@
 @use '~@automattic/color-studio/dist/color-variables' as *;
-@use '../../../scss/variables';
+@use '../../../scss/variables' as *;
 
 .about {
   .dialog {
@@ -44,7 +44,7 @@
   h1 {
     margin: 0;
     line-height: 1.25em;
-    font-weight: variables.$light;
+    font-weight: $light;
   }
 
   small {
@@ -81,7 +81,7 @@
 
 .about-links-title {
   font-size: 143%;
-  font-weight: variables.$light;
+  font-weight: $light;
 }
 
 .about-bottom {

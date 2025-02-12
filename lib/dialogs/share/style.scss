@@ -1,4 +1,4 @@
-@use '../../../scss/variables';
+@use '../../../scss/variables' as *;
 
 .share-collaborators-heading {
   border-bottom: 1px solid var(--secondary-color);
@@ -30,7 +30,7 @@
     color: var(--primary-color);
     flex: 1 1 auto;
     font-size: 143%;
-    font-weight: variables.$light;
+    font-weight: $light;
     line-height: 1.5em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -41,7 +41,7 @@
     flex: none;
     margin-left: 10px;
     opacity: 0;
-    transform: variables.$anim;
+    transform: $anim;
 
     .touch-enabled & {
       opacity: 1;

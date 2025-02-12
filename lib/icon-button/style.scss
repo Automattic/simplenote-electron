@@ -1,4 +1,4 @@
-@use '../../scss/variables';
+@use '../../scss/variables' as *;
 
 .icon-button {
   width: 32px;
@@ -6,7 +6,7 @@
   color: var(--foreground-color);
 
   svg {
-    transition: variables.$anim-fast;
+    transition: $anim-fast;
   }
 
   &:disabled {
