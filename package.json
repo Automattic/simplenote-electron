@@ -73,6 +73,7 @@
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-lodash": "3.3.4",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
+    "caniuse-lite": "1.0.30001699",
     "classnames": "2.5.1",
     "concurrently": "8.2.2",
     "css-loader": "7.1.2",
