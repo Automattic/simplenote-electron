@@ -3,8 +3,6 @@
 
 // Resets button styles
 button {
-  @extend %smart-focus-outline;
-
   background: transparent;
   border: none;
   padding: 0;
@@ -12,6 +10,14 @@ button {
   font-size: 14px;
   appearance: none;
   vertical-align: baseline;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+  }
 
   svg {
     cursor: pointer;

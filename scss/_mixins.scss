@@ -1,17 +1,5 @@
 @use 'variables' as *;
 
-// Hide focus outlines when interacting with mouse
-// https://github.com/WICG/focus-visible
-%smart-focus-outline {
-  &:focus {
-    outline: 0;
-  }
-
-  &:focus-visible {
-    outline: $focus-outline;
-  }
-}
-
 @mixin react-transition-fade-in {
   &-enter {
     opacity: 0;

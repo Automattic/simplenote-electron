@@ -44,8 +44,6 @@
       justify-content: flex-end;
 
       button {
-        @extend %smart-focus-outline;
-
         font-weight: 400;
         border: 0;
       }

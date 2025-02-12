@@ -8,9 +8,15 @@
 }
 
 a {
-  @extend %smart-focus-outline;
-
   color: var(--accent-color);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+  }
 }
 
 /* stylelint-disable block-opening-brace-space-before */
