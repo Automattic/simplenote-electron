@@ -113,7 +113,7 @@
     "@sentry/react": "7.120.3",
     "clipboard": "2.0.11",
     "cookie": "1.0.2",
-    "core-js": "3.37.0",
+    "core-js": "3.40.0",
     "date-fns": "3.6.0",
     "electron-fetch": "1.9.1",
     "electron-progressbar": "2.2.1",
