@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.23.2]
+
+### Other Changes
+
+- Updated styles, sass, style linting [#3294](https://github.com/Automattic/simplenote-electron/pull/3294)
+
 ## [v2.23.1]
 
 ### Fixes
