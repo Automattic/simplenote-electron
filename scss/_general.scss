@@ -89,6 +89,7 @@ optgroup {
   }
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .MuiTooltip-tooltip.icon-button__tooltip {
   background-color: var(--tertiary-color);
 }

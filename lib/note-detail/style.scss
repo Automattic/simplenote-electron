@@ -64,7 +64,8 @@
   background: var(--background-color);
   resize: none;
   -webkit-tap-highlight-color: transparent;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: anywhere;
 
   &:focus {
     outline: none;

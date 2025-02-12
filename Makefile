@@ -192,7 +192,7 @@ lint: lint-js lint-scss
 
 .PHONY: lint-scss
 lint-scss:
-	@npx stylelint --ignore-path .gitignore "**/*.scss"
+	@npx stylelint "**/*.scss"
 
 .PHONY: lint-js
 lint-js:

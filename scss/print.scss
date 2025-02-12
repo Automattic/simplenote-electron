@@ -1,4 +1,4 @@
-@use '~@automattic/color-studio/dist/color-variables';
+@use '~@automattic/color-studio/dist/color-variables' as *;
 
 @media print {
   html {
@@ -40,7 +40,7 @@
   [class^='note-detail-'] {
     max-width: 100%;
     width: 100%;
-    color: color-variables.$studio-black;
+    color: $studio-black;
     overflow-y: auto !important;
   }
 

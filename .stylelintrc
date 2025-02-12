@@ -3,6 +3,7 @@
   "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
   "plugins": ["stylelint-prettier"],
   "rules": {
+    "declaration-property-value-no-unknown": null,
     "prettier/prettier": true,
     "no-descending-specificity": null,
     "selector-class-pattern": [

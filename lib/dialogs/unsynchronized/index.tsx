@@ -46,7 +46,7 @@ export class UnsynchronizedConfirmation extends Component<Props> {
     } = this.props;
 
     return (
-      <div className="logoutConfirmation">
+      <div className="logout__confirmation">
         <Dialog onDone={closeDialog} title="Unsynchronized Notes">
           <p className="explanation">
             {notes.size > 0 ? description : 'All notes have synchronized!'}

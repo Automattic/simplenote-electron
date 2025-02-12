@@ -1,4 +1,4 @@
-@use '~@automattic/color-studio/dist/color-variables';
+@use '~@automattic/color-studio/dist/color-variables' as *;
 
 $sans: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
   'Arial', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -10,7 +10,7 @@ $anim-fast: all 0.1s ease-in-out;
 $anim: all 0.2s ease-in-out;
 $fade-alpha: 0.25;
 $border-radius: 3px;
-$focus-outline: 4px auto color-variables.$studio-simplenote-blue-5;
+$focus-outline: 4px auto $studio-simplenote-blue-5;
 
 // Global Measurements
 
