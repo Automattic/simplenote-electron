@@ -17,6 +17,7 @@
     &.button-trash {
       color: var(--accent-color);
     }
+
     &.button-reorder {
       color: var(--secondary-accent-color);
     }
@@ -60,7 +61,7 @@ body .tag-list-item {
       color: var(--accent-color);
       font-size: 14px;
       font-weight: 400;
-      padding: 0 2px 0;
+      padding: 0 2px;
     }
 
     button:active {
@@ -79,8 +80,7 @@ body .tag-list-item {
   flex: 1 1 auto;
   list-style: none;
   overflow-y: auto;
-  padding-inline-start: 18px;
-  padding-inline-end: 0;
+  padding-inline: 18px 0;
   padding-top: 0;
   padding-bottom: 0;
   margin: 0;

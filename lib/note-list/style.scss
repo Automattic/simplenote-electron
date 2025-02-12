@@ -4,9 +4,11 @@
   0% {
     padding-left: 8px;
   }
+
   50% {
     padding-left: 16px;
   }
+
   100% {
     padding-left: 8px;
   }
@@ -16,6 +18,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -37,15 +40,18 @@
     .note-list-item {
       min-height: 43px;
     }
+
     .note-list-item-status {
       align-items: center;
       padding-bottom: 3px;
       padding-top: 0;
     }
+
     .note-list-item-text {
       padding-bottom: 0;
       padding-top: 0;
     }
+
     .note-list-item-excerpt {
       display: none;
     }
@@ -125,7 +131,7 @@
 .note-list-item {
   cursor: pointer;
   display: flex;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(0 0 0 / 0%);
   font-family: 'Simplenote Tasks', variables.$sans, sans-serif;
   min-height: 64px;
 
@@ -136,7 +142,7 @@
 
   .note-list-item-status {
     display: flex;
-    padding: 12px 0 0 0;
+    padding: 12px 0 0;
     width: 28px;
     flex-shrink: 0;
   }

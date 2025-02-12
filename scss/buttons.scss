@@ -47,6 +47,7 @@ button {
     background: var(--primary-button-bg-color);
     color: var(--primary-button-fg-color);
   }
+
   &[disabled],
   &:disabled {
     opacity: 0.5;
@@ -99,7 +100,7 @@ button {
   display: flex;
   flex-direction: row;
 
-  //Individual segmented control buttons
+  // Individual segmented control buttons
   .button-segmented-control {
     border-radius: 0;
     border-left-width: 0;

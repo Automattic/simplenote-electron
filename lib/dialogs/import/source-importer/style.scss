@@ -26,7 +26,7 @@
   }
 
   .importer-dropzone {
-    margin: auto 16px 10px 16px;
+    margin: auto 16px 10px;
 
     .accepted-files-header {
       height: 28px;
@@ -50,6 +50,7 @@
       }
     }
   }
+
   p {
     padding-left: 16px;
     padding-right: 16px;
@@ -63,6 +64,7 @@
       padding-right: 16px;
     }
   }
+
   h3 {
     height: 28px;
     line-height: 28px;

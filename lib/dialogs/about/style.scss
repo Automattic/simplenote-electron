@@ -15,6 +15,7 @@
 
     background: var(--accent-color) !important;
     color: var(--background-color) !important;
+
     a {
       color: var(--background-color);
     }
@@ -63,10 +64,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(color-variables.$studio-white, 0.25);
+    border-bottom: 1px solid rgba(color-variables.$studio-white / 25%);
 
     &:first-child {
-      border-top: 1px solid rgba(color-variables.$studio-white, 0.25);
+      border-top: 1px solid rgba(color-variables.$studio-white / 25%);
     }
   }
 

@@ -76,6 +76,7 @@ span[dir='ltr'] {
     }
   }
 }
+
 // scrollbar search highlights
 .decorationsOverviewRuler {
   width: 10px !important;
@@ -93,9 +94,11 @@ span[dir='ltr'] {
     border-radius: 10px;
     border: 3px solid gray;
   }
+
   .search-decoration {
     background-color: var(--search-highlight-color);
   }
+
   .selected-search {
     background-color: var(--search-selection-color);
     padding: 2px 0;

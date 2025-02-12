@@ -1,20 +1,15 @@
 @use '~@automattic/color-studio/dist/color-variables';
 
-$sans:
-  -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
+$sans: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
   'Arial', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji',
   'Segoe UI Symbol';
 $bold: 600;
 $light: 300;
-
 $anim-transition: all 200ms ease-in-out;
 $anim-fast: all 0.1s ease-in-out;
 $anim: all 0.2s ease-in-out;
-
 $fade-alpha: 0.25;
-
 $border-radius: 3px;
-
 $focus-outline: 4px auto color-variables.$studio-simplenote-blue-5;
 
 // Global Measurements
@@ -43,7 +38,7 @@ body[data-theme='light'] {
   --highlight-color: #ced9f2; // $studio-simplenote-blue-5
   --secondary-highlight-color: #f6f7f7; // $studio-gray-0;
   --tertiary-highlight-color: #d63638; // $studio-red-50
-  --overlay-color: rgba(0, 0, 0, 0.2); // black with 20% opacity
+  --overlay-color: rgba(0 0 0 / 20%); // black with 20% opacity
   --search-selection-color: #f0c930; // $studio-yellow-20
   --search-highlight-color: #ced9f2; // $studio-simplenote-blue-5
   --wordpress-color: #006088; // $studio-wordpress-blue-50
@@ -56,7 +51,7 @@ body[data-theme='light'] {
   --primary-branding-color: #3361cc; // $studio-simplenote-blue-50
   --placeholder-color: #646970; // $studio-gray-50
   // readonly-input-color = $studio-black with 0.05 opacity
-  --readonly-input-color: rgba(0, 0, 0, 0.05);
+  --readonly-input-color: rgba(0 0 0 / 5%);
   --readonly-input-highlight-color: #c3c4c7; // $studio-gray-10
   --primary-slider-color: #dcdcde; // $studio-gray-5
   --secondary-slider-color: #fff; // $studio-white
@@ -76,7 +71,7 @@ body[data-theme='dark'] {
   --accent-color: #84a4f0; // $studio-simplenote-blue-20
   --secondary-accent-color: #50575e; // $studio-gray-60
   // highlight-color = $studio-simplenote-blue-50 with 40% opacity
-  --highlight-color: rgba(51, 97, 204, 0.4);
+  --highlight-color: rgba(51 97 204 / 40%);
   --secondary-highlight-color: #2c3338; // $studio-gray-80
   --search-highlight-color: #3361cc; // $studio-simplenote-blue-50
   --search-selection-color: #deb100; // $studio-yellow-30
@@ -84,7 +79,7 @@ body[data-theme='dark'] {
   --primary-button-bg-color: #3361cc; // $studio-simplenote-blue-50
   --tertiary-highlight-color: #ff8085; // $studio-red-20
   // readonly-input-color = $studio-white with 0.07 opacity
-  --readonly-input-color: rgba(255, 255, 255, 0.07);
+  --readonly-input-color: rgba(255 255 255 / 7%);
   --readonly-input-highlight-color: #8c8f94; // $studio-gray-30
   --primary-slider-color: #646970; // $studio-gray-50
   --secondary-slider-color: #fff; // $studio-white

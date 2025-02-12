@@ -87,12 +87,13 @@
 
 body[data-theme='light'] .note-detail-markdown {
   @include meta.load-css(
-    '../../node_modules/highlight.js/scss/base16/solarized-light.scss'
+    '../../node_modules/highlight.js/scss/base16/solarized-light'
   );
 }
+
 body[data-theme='dark'] .note-detail-markdown {
   @include meta.load-css(
-    '../../node_modules/highlight.js/scss/base16/solarized-dark.scss'
+    '../../node_modules/highlight.js/scss/base16/solarized-dark'
   );
 }
 

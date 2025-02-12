@@ -15,6 +15,7 @@
   margin: auto 0;
   text-align: center;
 }
+
 .error-message__icon {
   color: var(--foreground-color);
   height: 80px;
@@ -29,12 +30,12 @@
 
 .error-message__heading {
   font-size: 36px;
-  margin: 0 0 0.25em 0;
+  margin: 0 0 0.25em;
   text-align: center;
 }
 
 .error-message p {
-  margin: 0 0 1.67em 0;
+  margin: 0 0 1.67em;
 }
 
 .error-message__action {

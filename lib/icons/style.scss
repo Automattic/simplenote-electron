@@ -1,5 +1,5 @@
 svg[class^='icon-'] {
-  fill: currentColor;
+  fill: currentcolor;
   height: 24px;
   width: 24px;
 }
@@ -13,6 +13,7 @@ svg[class^='icon-'][class$='-small'] {
 .logo path {
   fill: var(--primary-branding-color);
 }
+
 .logo circle {
   fill: var(--background-color);
 }

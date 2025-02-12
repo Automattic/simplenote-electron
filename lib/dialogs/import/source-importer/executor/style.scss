@@ -1,7 +1,7 @@
 .source-importer-executor {
   display: flex;
   flex-direction: column;
-  align-items: space-between;
+  justify-content: space-between;
   flex: 1 0 auto;
 
   .import-progress {
