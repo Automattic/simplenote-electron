@@ -5,6 +5,7 @@
 ### Other Changes
 
 - Updated styles, sass, style linting [#3294](https://github.com/Automattic/simplenote-electron/pull/3294)
+- Upgraded dependencies [#3292](https://github.com/Automattic/simplenote-electron/pull/3292)
 
 ## [v2.23.1]
 
