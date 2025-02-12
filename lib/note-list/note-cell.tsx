@@ -119,7 +119,7 @@ export class NoteCell extends Component<Props> {
 
           <button
             aria-label={`Edit note ${title}`}
-            className="note-list-item-text focus-visible"
+            className="note-list-item-text"
             onClick={() => openNote(noteId)}
           >
             <div className="note-list-item-title">

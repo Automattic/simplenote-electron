@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import 'focus-visible/dist/focus-visible.js';
 import NoteInfo from './note-info';
 import NoteActions from './note-actions';
 import NavigationBar from './navigation-bar';
