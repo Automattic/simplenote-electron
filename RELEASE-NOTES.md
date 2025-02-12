@@ -6,6 +6,7 @@
 
 - Updated styles, sass, style linting [#3294](https://github.com/Automattic/simplenote-electron/pull/3294)
 - Upgraded dependencies [#3292](https://github.com/Automattic/simplenote-electron/pull/3292)
+- Updated the ID type used for analytics to avoid sending invalid WPCOM IDs [#3291](https://github.com/Automattic/simplenote-electron/pull/3291)
 
 ## [v2.23.1]
 
