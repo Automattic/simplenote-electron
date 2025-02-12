@@ -3,6 +3,8 @@
   "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
   "plugins": ["stylelint-prettier"],
   "rules": {
+    "alpha-value-notation": null,
+    "color-function-notation": "legacy",
     "declaration-property-value-no-unknown": null,
     "prettier/prettier": true,
     "no-descending-specificity": null,

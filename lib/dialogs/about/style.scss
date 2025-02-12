@@ -1,4 +1,4 @@
-@use '~@automattic/color-studio/dist/color-variables';
+@use '~@automattic/color-studio/dist/color-variables' as *;
 @use '../../../scss/variables';
 
 .about {
@@ -64,10 +64,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(color-variables.$studio-white / 25%);
+    border-bottom: 1px solid #{rgba($studio-white, 0.2)};
 
     &:first-child {
-      border-top: 1px solid rgba(color-variables.$studio-white / 25%);
+      border-top: 1px solid #{rgba($studio-white, 0.25)};
     }
   }
 
