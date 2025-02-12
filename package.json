@@ -140,7 +140,7 @@
     "react-addons-update": "15.6.3",
     "react-dom": "17.0.2",
     "react-dropzone": "11.7.1",
-    "react-modal": "3.16.1",
+    "react-modal": "3.16.3",
     "react-monaco-editor": "0.50.1",
     "react-overlays": "5.2.1",
     "react-redux": "8.1.3",
