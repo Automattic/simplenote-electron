@@ -1,19 +1,19 @@
 // Vendor
-@import 'normalize';
+@use 'normalize';
 
-@import '~@automattic/color-studio/dist/color-variables';
+@use '~@automattic/color-studio/dist/color-variables';
 
 // Internal
-@import 'variables';
-@import 'mixins';
-@import 'general';
-@import 'scrollbar';
-@import 'components';
+@use 'variables';
+@use 'mixins';
+@use 'general';
+@use 'scrollbar';
+@use 'components';
 
 // TODO: Tie these styles to their own components
-@import 'inputs';
-@import 'buttons';
+@use 'inputs';
+@use 'buttons';
 
 // TODO: Figure out a better way to manage these
-@import 'theme';
-@import 'print';
+@use 'theme';
+@use 'print';

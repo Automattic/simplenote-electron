@@ -1,3 +1,5 @@
+@use '../../../scss/variables';
+
 .checkbox-control {
   -webkit-touch-callout: none;
   width: 16px;
@@ -8,7 +10,7 @@
   overflow: hidden;
 
   &:focus-within {
-    outline: $focus-outline;
+    outline: variables.$focus-outline;
   }
 
   input {

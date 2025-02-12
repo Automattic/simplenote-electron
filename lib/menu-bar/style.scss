@@ -1,5 +1,7 @@
+@use '../../scss/variables';
+
 .menu-bar {
-  height: $toolbar-height;
+  height: variables.$toolbar-height;
   padding: 0 15px;
   border-bottom: 1px solid var(--secondary-color);
   display: flex;

@@ -1,3 +1,5 @@
+@use 'variables';
+
 /*
  * Regenerate the Simplenote Tasks font with the following script.
  * Download the SVG task icons from the Simplecons repo
@@ -85,7 +87,7 @@ span[dir='ltr'] {
   color: var(--primary-color);
   height: 100%;
   width: 100%;
-  font-family: 'Simplenote Tasks', $sans, sans-serif;
+  font-family: 'Simplenote Tasks', variables.$sans, sans-serif;
 
   .slider {
     border-radius: 10px;

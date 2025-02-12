@@ -1,3 +1,5 @@
+@use '../../scss/variables';
+
 .app-layout {
   display: flex;
   flex: 1 0 auto;
@@ -6,7 +8,7 @@
   &.is-focus-mode {
     .app-layout__source-column {
       overflow: hidden;
-      opacity: $fade-alpha;
+      opacity: variables.$fade-alpha;
       width: 0;
       transition:
         width 0.2s ease-in-out,
@@ -17,7 +19,7 @@
       transition: border-left-width 0.2s;
     }
 
-    @media only screen and (max-width: $single-column) {
+    @media only screen and (max-width: variables.$single-column) {
       .app-layout__source-column {
         overflow: inherit;
         opacity: 1;
@@ -44,7 +46,7 @@
       z-index: 1;
     }
 
-    @media only screen and (max-width: $single-column) {
+    @media only screen and (max-width: variables.$single-column) {
       .app-layout__note-column {
         opacity: 0;
       }
@@ -60,7 +62,7 @@
       transition: opacity 0.2s ease-in-out;
     }
 
-    @media only screen and (max-width: $single-column) {
+    @media only screen and (max-width: variables.$single-column) {
       .app-layout__source-column {
         opacity: 0;
         pointer-events: none;
@@ -108,24 +110,24 @@
 }
 
 .app-layout__source-column {
-  width: $note-list-width;
+  width: variables.$note-list-width;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   transition: transform 200ms ease-in-out;
 
-  @media only screen and (max-width: $medium) {
+  @media only screen and (max-width: variables.$medium) {
     width: 300px;
   }
 
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     flex: none;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    transition: $anim-transition;
+    transition: variables.$anim-transition;
     opacity: 1;
     pointer-events: auto;
   }
@@ -138,7 +140,7 @@
   flex: 1 1 auto;
   border-left: 1px solid var(--secondary-color);
 
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     position: absolute;
     flex: none;
     width: 100%;
@@ -147,6 +149,6 @@
     left: 0;
     opacity: 0;
     z-index: -1;
-    transition: $anim-transition;
+    transition: variables.$anim-transition;
   }
 }

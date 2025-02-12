@@ -1,8 +1,10 @@
+@use 'variables';
+
 // Hide focus outlines when interacting with mouse
 // https://github.com/WICG/focus-visible
 %smart-focus-outline {
   &:focus {
-    outline: $focus-outline;
+    outline: variables.$focus-outline;
   }
 
   @at-root .js-focus-visible &:focus:not(.focus-visible) {

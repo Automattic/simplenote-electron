@@ -1,3 +1,5 @@
+@use '../../scss/variables';
+
 @keyframes announce-note-update {
   0% {
     padding-left: 8px;
@@ -124,7 +126,7 @@
   cursor: pointer;
   display: flex;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'Simplenote Tasks', $sans, sans-serif;
+  font-family: 'Simplenote Tasks', variables.$sans, sans-serif;
   min-height: 64px;
 
   .note-list-item-content {

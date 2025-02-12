@@ -1,3 +1,5 @@
+@use '../../../scss/mixins';
+
 .transition-delay-enter {
-  @include react-transition-fade-in;
+  @include mixins.react-transition-fade-in;
 }

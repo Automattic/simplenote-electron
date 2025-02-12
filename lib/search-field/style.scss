@@ -1,3 +1,5 @@
+@use '../../scss/variables';
+
 .search-field {
   display: flex;
   flex-direction: row;
@@ -5,7 +7,7 @@
   width: 100%;
   padding: 6px 5px 5px 14px;
   border-bottom: 1px solid var(--secondary-color);
-  height: $toolbar-height;
+  height: variables.$toolbar-height;
   background-color: var(--background-color);
 
   input {
@@ -31,6 +33,6 @@
   }
 
   .icon-cross-small {
-    transition: $anim-transition;
+    transition: variables.$anim-transition;
   }
 }

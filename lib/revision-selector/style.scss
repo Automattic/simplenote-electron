@@ -1,3 +1,6 @@
+@use '../../scss/variables';
+@use '../../scss/mixins';
+
 .revision-selector {
   background-color: var(--background-color);
   border-top: 1px solid var(--secondary-color);
@@ -12,12 +15,12 @@
     bottom: 0;
   }
 
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     width: 100%;
   }
 
   .revision-selector-inner {
-    max-width: $max-content-width;
+    max-width: variables.$max-content-width;
     width: 85%;
     position: relative;
     margin: 0 auto;

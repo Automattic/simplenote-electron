@@ -84,6 +84,7 @@ module.exports = () => {
             {
               loader: 'sass-loader',
               options: {
+                api: 'modern-compiler',
                 sassOptions: {
                   includePaths: [__dirname + '/lib'],
                 },

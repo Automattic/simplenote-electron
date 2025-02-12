@@ -1,3 +1,6 @@
+@use 'sass:meta';
+@use '../../scss/variables';
+
 .note-detail-wrapper {
   position: relative;
   overflow: hidden;
@@ -45,7 +48,7 @@
     }
   }
 
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     display: none; // prevents flicker when closing note
   }
 }
@@ -83,10 +86,14 @@
 }
 
 body[data-theme='light'] .note-detail-markdown {
-  @import '../node_modules/highlight.js/scss/base16/solarized-light.scss';
+  @include meta.load-css(
+    '../../node_modules/highlight.js/scss/base16/solarized-light.scss'
+  );
 }
 body[data-theme='dark'] .note-detail-markdown {
-  @import '../node_modules/highlight.js/scss/base16/solarized-dark.scss';
+  @include meta.load-css(
+    '../../node_modules/highlight.js/scss/base16/solarized-dark.scss'
+  );
 }
 
 .note-detail-markdown {
@@ -123,7 +130,7 @@ body[data-theme='dark'] .note-detail-markdown {
   }
 
   h1 {
-    font-weight: $light;
+    font-weight: variables.$light;
   }
 
   h5,
@@ -175,7 +182,7 @@ body[data-theme='dark'] .note-detail-markdown {
   pre {
     border: 1px solid var(--tertiary-color);
     padding: 1em;
-    border-radius: $border-radius;
+    border-radius: variables.$border-radius;
     font-size: 85%;
   }
 

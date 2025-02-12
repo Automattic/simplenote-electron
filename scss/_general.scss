@@ -1,3 +1,6 @@
+@use 'variables';
+@use 'mixins';
+
 *,
 *::before,
 *::after {
@@ -26,7 +29,7 @@ body {
 
 body {
   margin: 0;
-  font: 14px/1.5 $sans;
+  font: 14px/1.5 variables.$sans;
   overflow: hidden;
   -webkit-touch-callout: none;
 }
@@ -39,7 +42,7 @@ svg {
 b,
 strong,
 optgroup {
-  font-weight: $bold;
+  font-weight: variables.$bold;
 }
 
 [contenteditable] {

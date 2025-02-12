@@ -1,10 +1,13 @@
+@use '../../../scss/variables';
+@use '../../../scss/mixins';
+
 .slider {
   @extend %smart-focus-outline;
 
   background-color: var(--background-color);
   cursor: pointer;
   width: 100%;
-  max-width: $max-content-width;
+  max-width: variables.$max-content-width;
   padding: 0; // IE11
   appearance: none;
 

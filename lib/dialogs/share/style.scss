@@ -1,3 +1,5 @@
+@use '../../../scss/variables';
+
 .share-collaborators-heading {
   border-bottom: 1px solid var(--secondary-color);
 }
@@ -28,7 +30,7 @@
     color: var(--primary-color);
     flex: 1 1 auto;
     font-size: 143%;
-    font-weight: $light;
+    font-weight: variables.$light;
     line-height: 1.5em;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -39,7 +41,7 @@
     flex: none;
     margin-left: 10px;
     opacity: 0;
-    transform: $anim;
+    transform: variables.$anim;
 
     .touch-enabled & {
       opacity: 1;

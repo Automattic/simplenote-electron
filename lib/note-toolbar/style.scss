@@ -1,8 +1,10 @@
+@use '../../scss/variables';
+
 .note-toolbar-wrapper {
   display: flex;
   justify-content: flex-end;
   flex: none;
-  height: $toolbar-height;
+  height: variables.$toolbar-height;
   border-bottom: 1px solid var(--secondary-color);
   background-color: var(--background-color);
 }
@@ -52,18 +54,18 @@
   .note-toolbar__column-left {
     display: none;
 
-    @media only screen and (max-width: $single-column) {
+    @media only screen and (max-width: variables.$single-column) {
       display: flex;
     }
   }
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     .note-toolbar__column-right {
       justify-content: flex-end;
     }
   }
 }
 
-@media only screen and (max-width: $single-column) {
+@media only screen and (max-width: variables.$single-column) {
   .offline-badge {
     margin: 0 25px;
   }
@@ -91,7 +93,7 @@
 .note-toolbar-back {
   display: none;
 
-  @media only screen and (max-width: $single-column) {
+  @media only screen and (max-width: variables.$single-column) {
     display: flex;
   }
 }
@@ -99,14 +101,14 @@
 .note-toolbar-placeholder {
   border-bottom: 1px solid var(--secondary-color);
   display: block;
-  height: $toolbar-height;
+  height: variables.$toolbar-height;
 }
 
 .new-note-toolbar__button-sidebar {
   border-right: 1px solid var(--secondary-color);
   display: none;
-  height: $toolbar-height;
-  line-height: $toolbar-height;
+  height: variables.$toolbar-height;
+  line-height: variables.$toolbar-height;
   padding-right: 13px;
 
   .icon-button {

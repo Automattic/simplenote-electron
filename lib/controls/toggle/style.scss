@@ -1,8 +1,10 @@
+@use '../../../scss/variables';
+
 $toggle-control-width: 24px;
 $toggle-control-height: 16px;
 $toggle-control-knob-margin: 2px;
-$toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin -
-  $toggle-control-knob-margin;
+$toggle-control-knob-size: $toggle-control-height -
+  $toggle-control-knob-margin - $toggle-control-knob-margin;
 
 .toggle-control {
   -webkit-touch-callout: none;
@@ -14,7 +16,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
   overflow: hidden;
 
   &:focus-within {
-    outline: $focus-outline;
+    outline: variables.$focus-outline;
   }
 
   input {
@@ -56,7 +58,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
 
   .toggle-control-checked-color {
     background: var(--active-controls-color);
-    transition: $anim;
+    transition: variables.$anim;
     opacity: 0;
   }
 
@@ -70,7 +72,7 @@ $toggle-control-knob-size: $toggle-control-height - $toggle-control-knob-margin 
       $toggle-control-knob-margin,
       $toggle-control-knob-margin
     );
-    transition: $anim;
+    transition: variables.$anim;
   }
 
   input:checked + .toggle-control-layers {
