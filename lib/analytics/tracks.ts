@@ -106,16 +106,6 @@ function buildTracks() {
     setCookie(key, value, ttl);
   };
 
-  const loadWpcomIdentity = function () {
-    const wpcomCookie =
-      getCookie('wordpress') ||
-      getCookie('wordpress_sec') ||
-      getCookie('wordpress_loggedin');
-    if (wpcomCookie) {
-      return get(userNameCookie);
-    }
-  };
-
   const newAnonId = function () {
     const randomBytesLength = 18; // 18 * 4/3 = 24
     let randomBytes: number[] | Uint8Array = [];
@@ -131,23 +121,6 @@ function buildTracks() {
 
     // eslint-disable-next-line
     return btoa(String.fromCharCode.apply(String, randomBytes as number[]));
-  };
-
-  const loadIdentity = function () {
-    if (userId) {
-      return;
-    }
-    userId = loadWpcomIdentity();
-    if (userId) {
-      userIdType = 'wpcom:user_email';
-    } else {
-      userIdType = 'anon';
-      userId = get(userAnonCookie);
-      if (!userId) {
-        userId = newAnonId();
-        set(userAnonCookie, userId);
-      }
-    }
   };
 
   const getQueries = function () {
@@ -238,7 +211,6 @@ function buildTracks() {
   };
 
   const send = function (query: Query) {
-    loadIdentity();
     retryQueries();
     query._ui = userId;
     query._ut = userIdType;
@@ -334,7 +306,6 @@ function buildTracks() {
     userLogin = null;
     set(userNameCookie, '', -1);
     set(userAnonCookie, '', -1);
-    loadIdentity();
   };
 
   const setProperties = function (properties: Query) {
