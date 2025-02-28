@@ -1,6 +1,7 @@
 @use '~@automattic/color-studio/dist/color-variables' as *;
 
-$sans: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
+$sans:
+  -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica',
   'Arial', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji',
   'Segoe UI Symbol';
 $bold: 600;
