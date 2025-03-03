@@ -73,6 +73,7 @@ steps:
       queue: windows
     plugins:
       - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
     env:
       CSC_FOR_PULL_REQUEST: true
