@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.23.3]
+
+### Fixes
+
+- Remove hanging indent support due to its detrimental effect on word-wrapped list items [#3302](https://github.com/Automattic/simplenote-electron/pull/3302)
+
 ## [v2.23.2]
 
 ### Other Changes
