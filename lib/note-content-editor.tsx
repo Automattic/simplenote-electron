@@ -688,12 +688,6 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.selectHighlights',
     ];
 
-    // let Electron menus trigger these on the Mac
-    // this breaks the shortcuts on Win/Linux -- not sure why
-    if (window.electron && isMac) {
-      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
-    }
-
     shortcutsToDisable.forEach(function (action) {
       monaco.editor.addKeybindingRule({
         keybinding: 0,
