@@ -715,7 +715,6 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 2,
-      // precondition: 'undo',
       run: () => {
         editor.trigger('contextMenu', 'undo', null);
       },
@@ -731,7 +730,6 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 3,
-      // precondition: 'redo',
       run: () => {
         editor.trigger('contextMenu', 'redo', null);
       },
@@ -742,17 +740,17 @@ class NoteContentEditor extends Component<Props> {
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,
         command: 'editor.action.clipboardCutAction',
-        when: 'allowBrowserKeybinding',
+        when: 'allowBrowserKeybinding && editorTextFocus',
       },
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC,
         command: 'editor.action.clipboardCopyAction',
-        when: 'allowBrowserKeybinding',
+        when: 'allowBrowserKeybinding && editorTextFocus',
       },
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV,
         command: 'editor.action.clipboardPasteAction',
-        when: 'allowBrowserKeybinding',
+        when: 'allowBrowserKeybinding && editorTextFocus',
       },
     ]);
 
@@ -771,7 +769,7 @@ class NoteContentEditor extends Component<Props> {
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 4,
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyA],
-      keybindingContext: 'allowBrowserKeybinding',
+      keybindingContext: 'allowBrowserKeybinding && editorTextFocus',
       run: () => {
         const range = editor.getModel()?.getFullModelRange();
         range && editor.setSelection(range);
@@ -785,7 +783,7 @@ class NoteContentEditor extends Component<Props> {
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
         monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
       ],
-      keybindingContext: 'allowBrowserKeybinding',
+      keybindingContext: 'allowBrowserKeybinding && editorTextFocus',
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
