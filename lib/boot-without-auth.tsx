@@ -54,10 +54,10 @@ class AppWithoutAuth extends Component<Props, State> {
     window.electron?.receive('appCommand', this.onAppCommand);
     document.body.dataset.theme = this.systemTheme;
 
-    window.electron?.receive('tokenLogin', (url) => {
+    window.electron?.receive('tokenLogin', (url: string) => {
       const { searchParams } = new URL(url);
       const simperiumToken = searchParams.get('token');
-      const email = atob(searchParams.get('email'));
+      const email = atob(searchParams.get('email') || '');
       this.tokenLogin(email, simperiumToken);
     });
   }

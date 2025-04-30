@@ -650,11 +650,8 @@ class NoteContentEditor extends Component<Props> {
 
     /* remove unwanted context menu items */
     // see https://github.com/Microsoft/monaco-editor/issues/1058#issuecomment-468681208
-    const removableIds = [
+    const idsToRemove = [
       'editor.action.changeAll',
-      'editor.action.clipboardCutAction',
-      'editor.action.clipboardCopyAction',
-      'editor.action.clipboardPasteAction',
       'editor.action.quickCommand',
     ];
 
@@ -669,8 +666,8 @@ class NoteContentEditor extends Component<Props> {
     contextmenu._getMenuActions = function (...args) {
       const items = realMethod.apply(contextmenu, args);
 
-      return items.filter(function (item) {
-        return !removableIds.includes(item.id);
+      return items.filter(function (item: Editor.IActionDescriptor) {
+        return !idsToRemove.includes(item.id);
       });
     };
 
@@ -690,11 +687,6 @@ class NoteContentEditor extends Component<Props> {
       'editor.action.nextMatchFindAction',
       'editor.action.selectHighlights',
     ];
-    // let Electron menus trigger these on the Mac
-    // this breaks the shortcuts on Win/Linux -- not sure why
-    if (window.electron && isMac) {
-      shortcutsToDisable.push('undo', 'redo', 'editor.action.selectAll');
-    }
 
     shortcutsToDisable.forEach(function (action) {
       monaco.editor.addKeybindingRule({
@@ -717,7 +709,6 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 2,
-      // precondition: 'undo',
       run: () => {
         editor.trigger('contextMenu', 'undo', null);
       },
@@ -733,41 +724,29 @@ class NoteContentEditor extends Component<Props> {
       keybindingContext: 'allowBrowserKeybinding',
       contextMenuGroupId: '1_modification',
       contextMenuOrder: 3,
-      // precondition: 'redo',
       run: () => {
         editor.trigger('contextMenu', 'redo', null);
       },
     });
 
-    // add a new Cut and Copy that show keyboard shortcuts
-    // Cut and Copy don't show keybindings
-    // @see https://github.com/microsoft/monaco-editor/issues/2882
-    editor.addAction({
-      id: 'context_cut',
-      label: 'Cut',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX],
-      keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 1,
-      run: () => {
-        editor.trigger('contextMenu', 'editor.action.clipboardCutAction', null);
+    // re-add keybindings for cut/copy/paste so they show labels
+    monaco.editor.addKeybindingRules([
+      {
+        keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,
+        command: 'editor.action.clipboardCutAction',
+        when: 'allowBrowserKeybinding && editorTextFocus',
       },
-    });
-    editor.addAction({
-      id: 'context_copy',
-      label: 'Copy',
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC],
-      keybindingContext: 'allowBrowserKeybinding',
-      contextMenuGroupId: '9_cutcopypaste',
-      contextMenuOrder: 2,
-      run: () => {
-        editor.trigger(
-          'contextMenu',
-          'editor.action.clipboardCopyAction',
-          null
-        );
+      {
+        keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyC,
+        command: 'editor.action.clipboardCopyAction',
+        when: 'allowBrowserKeybinding && editorTextFocus',
       },
-    });
+      {
+        keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV,
+        command: 'editor.action.clipboardPasteAction',
+        when: 'allowBrowserKeybinding && editorTextFocus',
+      },
+    ]);
 
     // cancel selection that bubbles up to clear any search terms
     editor.addAction({
@@ -778,28 +757,13 @@ class NoteContentEditor extends Component<Props> {
       run: this.cancelSelectionOrSearch,
     });
 
-    /* paste doesn't work in the browser due to security issues */
-    if (window.electron) {
-      editor.addAction({
-        id: 'paste',
-        label: 'Paste',
-        contextMenuGroupId: '9_cutcopypaste',
-        contextMenuOrder: 3,
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV],
-        keybindingContext: 'allowBrowserKeybinding',
-        run: () => {
-          document.execCommand('paste');
-        },
-      });
-    }
-
     editor.addAction({
       id: 'select_all',
       label: 'Select All',
       contextMenuGroupId: '9_cutcopypaste',
       contextMenuOrder: 4,
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyA],
-      keybindingContext: 'allowBrowserKeybinding',
+      keybindingContext: 'allowBrowserKeybinding && editorTextFocus',
       run: () => {
         const range = editor.getModel()?.getFullModelRange();
         range && editor.setSelection(range);
@@ -813,7 +777,7 @@ class NoteContentEditor extends Component<Props> {
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
         monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
       ],
-      keybindingContext: 'allowBrowserKeybinding',
+      keybindingContext: 'allowBrowserKeybinding && editorTextFocus',
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
