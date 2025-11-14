@@ -1,7 +1,7 @@
 # Stop script execution when a non-terminating error occurs
 $ErrorActionPreference = "Stop"
 
-& "prepare_windows_host_for_app_distribution.ps1" # via CI toolkit Buildkite plugin
+& "setup_windows_code_signing.ps1" # via CI toolkit Buildkite plugin
 
 # First try to get the env var from the process environment
 $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Process)
