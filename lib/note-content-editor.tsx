@@ -26,7 +26,7 @@ import {
   getNotePosition,
   setNotePosition,
 } from './utils/note-scroll-position';
-import { isMac, isSafari } from './utils/platform';
+import { useMonacoPasteShortcut } from './utils/platform';
 import {
   withCheckboxCharacters,
   withCheckboxSyntax,
@@ -729,8 +729,9 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // re-add keybindings for cut/copy/paste so they show labels
-    monaco.editor.addKeybindingRules([
+    // Firefox fails to resolve `editor.action.clipboardPasteAction` in web mode.
+    // Let the browser handle Ctrl+V natively there.
+    const clipboardKeybindingRules = [
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,
         command: 'editor.action.clipboardCutAction',
@@ -741,12 +742,15 @@ class NoteContentEditor extends Component<Props> {
         command: 'editor.action.clipboardCopyAction',
         when: 'allowBrowserKeybinding && editorTextFocus',
       },
-      {
+    ];
+    if (useMonacoPasteShortcut) {
+      clipboardKeybindingRules.push({
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV,
         command: 'editor.action.clipboardPasteAction',
         when: 'allowBrowserKeybinding && editorTextFocus',
-      },
-    ]);
+      });
+    }
+    monaco.editor.addKeybindingRules(clipboardKeybindingRules);
 
     // cancel selection that bubbles up to clear any search terms
     editor.addAction({
