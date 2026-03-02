@@ -748,6 +748,31 @@ class NoteContentEditor extends Component<Props> {
       },
     ]);
 
+    // Some browsers (e.g., Firefox) do not register editor.action.clipboardPasteAction
+    // because they fail Monaco's internal clipboard-support detection. When that happens,
+    // the Ctrl+V keybinding above silently fails. Register a fallback paste action so
+    // that pasting works in those browsers.
+    if (!window.electron && !editor.getAction('editor.action.clipboardPasteAction')) {
+      editor.addAction({
+        id: 'editor.action.clipboardPasteAction',
+        label: 'Paste',
+        contextMenuGroupId: '9_cutcopypaste',
+        contextMenuOrder: 2,
+        run: () => {
+          navigator.clipboard.readText().then((text) => {
+            const selection = editor.getSelection();
+            if (selection) {
+              editor.executeEdits('paste', [
+                { range: selection, text, forceMoveMarkers: true },
+              ]);
+            }
+          }).catch(() => {
+            // clipboard read failed (e.g., permission denied); nothing to paste
+          });
+        },
+      });
+    }
+
     // cancel selection that bubbles up to clear any search terms
     editor.addAction({
       id: 'cancel_selection',
