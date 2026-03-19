@@ -32,7 +32,6 @@ const Keys = ({
         </Fragment>
       ))}
     </div>
-    {'\u2000-\u2000'}
     <div className="keybindings__key-description">{children}</div>
   </div>
 );

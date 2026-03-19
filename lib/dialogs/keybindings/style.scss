@@ -36,17 +36,18 @@
 .keybindings__key-item {
   display: flex;
   align-items: baseline;
+  gap: 8px;
 }
 
 .keybindings__key-list {
   min-width: 180px;
-  display: inline-block;
+  flex-shrink: 0;
   text-align: right;
 }
 
 .keybindings__key-description {
-  display: inline-block;
-  margin-left: 4px;
+  flex: 1;
+  min-width: 0;
 }
 
 .keybindings__sections {
