@@ -1,4 +1,5 @@
 import {
+  canUseMonacoContextMenu,
   canUseMonacoPasteShortcut,
   isFirefoxUserAgent,
   isSafariUserAgent,
@@ -63,6 +64,33 @@ describe('platform user-agent detection', () => {
   it('keeps Monaco paste shortcut enabled outside Firefox web mode', () => {
     expect(
       canUseMonacoPasteShortcut(
+        false,
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
+      )
+    ).toBe(true);
+  });
+
+  it('disables Monaco context menu in Firefox web mode', () => {
+    expect(
+      canUseMonacoContextMenu(
+        false,
+        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0'
+      )
+    ).toBe(false);
+  });
+
+  it('keeps Monaco context menu enabled in Electron mode', () => {
+    expect(
+      canUseMonacoContextMenu(
+        true,
+        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0'
+      )
+    ).toBe(true);
+  });
+
+  it('keeps Monaco context menu enabled outside Firefox web mode', () => {
+    expect(
+      canUseMonacoContextMenu(
         false,
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
       )

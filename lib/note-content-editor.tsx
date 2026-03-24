@@ -26,7 +26,7 @@ import {
   getNotePosition,
   setNotePosition,
 } from './utils/note-scroll-position';
-import { useMonacoPasteShortcut } from './utils/platform';
+import { useMonacoContextMenu, useMonacoPasteShortcut } from './utils/platform';
 import {
   withCheckboxCharacters,
   withCheckboxSyntax,
@@ -648,28 +648,30 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    /* remove unwanted context menu items */
-    // see https://github.com/Microsoft/monaco-editor/issues/1058#issuecomment-468681208
-    const idsToRemove = [
-      'editor.action.changeAll',
-      'editor.action.quickCommand',
-    ];
+    if (useMonacoContextMenu) {
+      /* remove unwanted context menu items */
+      // see https://github.com/Microsoft/monaco-editor/issues/1058#issuecomment-468681208
+      const idsToRemove = [
+        'editor.action.changeAll',
+        'editor.action.quickCommand',
+      ];
 
-    const contextmenu = this.editor.getContribution(
-      'editor.contrib.contextmenu'
-    );
+      const contextmenu = this.editor.getContribution(
+        'editor.contrib.contextmenu'
+      );
 
-    // @ts-ignore undocumented internals
-    const realMethod = contextmenu._getMenuActions;
+      // @ts-ignore undocumented internals
+      const realMethod = contextmenu._getMenuActions;
 
-    // @ts-ignore undocumented internals
-    contextmenu._getMenuActions = function (...args) {
-      const items = realMethod.apply(contextmenu, args);
+      // @ts-ignore undocumented internals
+      contextmenu._getMenuActions = function (...args) {
+        const items = realMethod.apply(contextmenu, args);
 
-      return items.filter(function (item: Editor.IActionDescriptor) {
-        return !idsToRemove.includes(item.id);
-      });
-    };
+        return items.filter(function (item: Editor.IActionDescriptor) {
+          return !idsToRemove.includes(item.id);
+        });
+      };
+    }
 
     // remove some default keybindings
     // @see https://github.com/microsoft/monaco-editor/issues/3623#issuecomment-1472578786
@@ -1215,6 +1217,7 @@ class NoteContentEditor extends Component<Props> {
               // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
               'bracketPairColorization.enabled': false,
               codeLens: false,
+              contextmenu: useMonacoContextMenu,
               folding: false,
               fontFamily:
                 '"Simplenote Tasks", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif',
