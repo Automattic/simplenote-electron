@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.24.1]
+
+### Fixes
+
+- Fixed Firefox web paste to use the browser's native clipboard shortcuts and context menu [#3349](https://github.com/Automattic/simplenote-electron/pull/3349)
+
 ## [v2.24.0]
 
 ### New Features
