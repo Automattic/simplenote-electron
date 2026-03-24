@@ -17,17 +17,22 @@ export const isSafari = isSafariUserAgent(window.navigator.userAgent);
 
 export const isFirefox = isFirefoxUserAgent(window.navigator.userAgent);
 
-const canUseMonacoClipboardUi = (useElectron: boolean, userAgent: string) =>
-  useElectron || !isFirefoxUserAgent(userAgent);
+const shouldUseNativeBrowserClipboardUi = (
+  useElectron: boolean,
+  userAgent: string
+) => !useElectron && isFirefoxUserAgent(userAgent);
 
-export const canUseMonacoPasteShortcut = canUseMonacoClipboardUi;
+export const canUseMonacoPasteShortcut = (
+  useElectron: boolean,
+  userAgent: string
+) => !shouldUseNativeBrowserClipboardUi(useElectron, userAgent);
 
 export const useMonacoPasteShortcut = canUseMonacoPasteShortcut(
   isElectron,
   window.navigator.userAgent
 );
 
-export const canUseMonacoContextMenu = canUseMonacoClipboardUi;
+export const canUseMonacoContextMenu = canUseMonacoPasteShortcut;
 
 export const useMonacoContextMenu = canUseMonacoContextMenu(
   isElectron,

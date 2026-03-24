@@ -699,10 +699,8 @@ class NoteContentEditor extends Component<Props> {
 
     // disable editor keybindings for Electron since it is handled by editorCommand
     // doing it this way will always show the keyboard hint in the context menu!
-    editor.createContextKey(
-      'allowBrowserKeybinding',
-      window.electron ? false : true
-    );
+    const allowBrowserKeybinding = !window.electron;
+    editor.createContextKey('allowBrowserKeybinding', allowBrowserKeybinding);
 
     editor.addAction({
       id: 'context_undo',
@@ -731,7 +729,7 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // Firefox web is more reliable when the browser handles Ctrl+V natively.
+    // Firefox web is more reliable when the browser handles clipboard UI natively.
     const clipboardKeybindingRules = [
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,
