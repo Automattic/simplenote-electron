@@ -46,9 +46,7 @@ describe('platform user-agent detection', () => {
     expect(
       canUseMonacoPasteShortcut(
         false,
-        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0',
-        true,
-        false
+        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0'
       )
     ).toBe(false);
   });
@@ -57,29 +55,17 @@ describe('platform user-agent detection', () => {
     expect(
       canUseMonacoPasteShortcut(
         true,
-        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0',
-        true,
-        false
+        'Mozilla/5.0 (X11; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0'
       )
     ).toBe(true);
   });
 
-  it('uses queryCommandSupported result when clipboard API is missing', () => {
+  it('keeps Monaco paste shortcut enabled outside Firefox web mode', () => {
     expect(
       canUseMonacoPasteShortcut(
         false,
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-        false,
-        true
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
       )
     ).toBe(true);
-    expect(
-      canUseMonacoPasteShortcut(
-        false,
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-        false,
-        false
-      )
-    ).toBe(false);
   });
 });

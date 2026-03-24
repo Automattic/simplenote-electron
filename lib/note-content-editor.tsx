@@ -729,8 +729,7 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // Firefox fails to resolve `editor.action.clipboardPasteAction` in web mode.
-    // Let the browser handle Ctrl+V natively there.
+    // Firefox web is more reliable when the browser handles Ctrl+V natively.
     const clipboardKeybindingRules = [
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,

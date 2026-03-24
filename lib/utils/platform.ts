@@ -19,27 +19,12 @@ export const isFirefox = isFirefoxUserAgent(window.navigator.userAgent);
 
 export const canUseMonacoPasteShortcut = (
   useElectron: boolean,
-  userAgent: string,
-  clipboardApiAvailable: boolean,
-  pasteCommandSupported: boolean
-) => {
-  if (useElectron) {
-    return true;
-  }
-
-  if (!clipboardApiAvailable || isFirefoxUserAgent(userAgent)) {
-    return pasteCommandSupported;
-  }
-
-  return true;
-};
+  userAgent: string
+) => useElectron || !isFirefoxUserAgent(userAgent);
 
 export const useMonacoPasteShortcut = canUseMonacoPasteShortcut(
   isElectron,
-  window.navigator.userAgent,
-  typeof navigator.clipboard !== 'undefined',
-  typeof document.queryCommandSupported === 'function' &&
-    document.queryCommandSupported('paste')
+  window.navigator.userAgent
 );
 
 export const isLinux = isElectron
