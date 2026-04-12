@@ -29,10 +29,20 @@ export const renderNoteToHtml = (content: string) => {
       markdownConverter.setOption('strikethrough', true); // ~~strikethrough~~
       markdownConverter.setOption('tables', true); // table syntax
 
-      const transformedContent = content.replace(
+      let transformedContent = content.replace(
         /([ \t\u2000-\u200a]*)\u2022(\s)/gm,
         '$1-$2'
       ); // normalized bullets
+
+      // remove tab indentation on paragraphs
+      // TODO this is very naive and fragile and will break in a lot of cases, such as:
+      // - different size indentations
+      // - paragraphs that begin with a number or a list character
+      // - list characters other than - and *
+      transformedContent = content.replace(
+        /\n {4}(([^-*\d]))/g,
+        '\n&nbsp;&nbsp;&nbsp;$1'
+      );
 
       return sanitizeHtml(markdownConverter.makeHtml(transformedContent));
     }
