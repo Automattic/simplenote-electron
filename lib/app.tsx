@@ -158,7 +158,8 @@ class AppComponent extends Component<Props> {
 
     if (
       (cmdOrCtrl && shiftKey && 's' === key) ||
-      (cmdOrCtrl && !shiftKey && 'f' === key)
+      (cmdOrCtrl && !shiftKey && 'f' === key) ||
+      (cmdOrCtrl && !shiftKey && 'k' === key)
     ) {
       this.props.focusSearchField();
 

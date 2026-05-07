@@ -62,6 +62,9 @@ export class AboutDialog extends Component<DispatchProps> {
                   </Keys>
                 </li>
                 <li>
+                  <Keys keys={[CmdOrCtrl, 'K']}>Focus search field</Keys>
+                </li>
+                <li>
                   <Keys keys={[CmdOrCtrl, 'G']}>
                     Jump to next match in note
                   </Keys>

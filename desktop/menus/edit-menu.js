@@ -54,6 +54,11 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
         accelerator: 'CommandOrControl+Shift+S',
       },
       {
+        label: 'Search Notes…',
+        click: appCommandSender({ action: 'focusSearchField' }),
+        accelerator: 'CommandOrControl+K',
+      },
+      {
         label: '&Find in Note',
         click: appCommandSender({ action: 'focusSearchField' }),
         accelerator: 'CommandOrControl+F',
