@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.25.0]
+
+### New Features
+
+- Added support for selecting and copying text from older versions of notes in History [#3358](https://github.com/Automattic/simplenote-electron/pull/3358)
+
+### Enhancements
+
+- Improved Markdown copy and paste support so copied notes include rich HTML for external apps and pasted HTML is converted into readable Markdown [#3358](https://github.com/Automattic/simplenote-electron/pull/3358)
+
 ## [v2.24.0]
 
 ### New Features

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import MenuBar from '../menu-bar';
 import NoteToolbar from '../note-toolbar';
-import RevisionSelector from '../revision-selector';
 import SearchField from '../search-field';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 import NoteRevisions from '../note-revisions';
@@ -29,7 +28,6 @@ const NotePreview = React.lazy(
 );
 
 type StateProps = {
-  hasRevisions: boolean;
   isFocusMode: boolean;
   isNavigationOpen: boolean;
   isNoteInfoOpen: boolean;
@@ -86,7 +84,6 @@ export class AppLayout extends Component<Props> {
   render = () => {
     const {
       showNoteList,
-      hasRevisions,
       isFocusMode = false,
       isNavigationOpen,
       isNoteInfoOpen,
@@ -114,36 +111,25 @@ export class AppLayout extends Component<Props> {
       </TransitionDelayEnter>
     );
 
-    const hiddenByRevisions = showRevisions ? true : undefined;
-
     return (
       <div
         className={mainClasses}
         aria-hidden={isNavigationOpen ? true : undefined}
       >
         <Suspense fallback={placeholder}>
-          <aside
-            aria-hidden={hiddenByRevisions}
-            aria-label="Notes list"
-            className="app-layout__source-column"
-          >
+          <aside aria-label="Notes list" className="app-layout__source-column">
             <MenuBar />
             <SearchField />
             <NoteList />
           </aside>
           {editorVisible && (
             <main aria-label="Note editor" className="app-layout__note-column">
-              <NoteToolbar aria-hidden={hiddenByRevisions} />
+              <NoteToolbar />
               {showRevisions ? (
-                <NoteRevisions
-                  aria-hidden={hiddenByRevisions}
-                  noteId={openedNote}
-                  note={openedRevision}
-                />
+                <NoteRevisions noteId={openedNote} note={openedRevision} />
               ) : (
                 <NoteEditor />
               )}
-              {hasRevisions && <RevisionSelector />}
             </main>
           )}
         </Suspense>
@@ -153,8 +139,6 @@ export class AppLayout extends Component<Props> {
 }
 
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
-  hasRevisions:
-    state.ui.showRevisions && state.data.noteRevisions.has(state.ui.openedNote),
   keyboardShortcutsAreOpen: selectors.isDialogOpen(state, 'KEYBINDINGS'),
   keyboardShortcuts: state.settings.keyboardShortcuts,
   isFocusMode: state.settings.focusModeEnabled,

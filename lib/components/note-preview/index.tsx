@@ -2,9 +2,19 @@ import React, { FunctionComponent, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { checkboxRegex } from '../../utils/task-transform';
+import {
+  buildPreviewClipboardPayload,
+  shouldCopyWholePreview,
+  writeClipboardPayload,
+} from '../../utils/clipboard/copy';
 import renderToNode from '../../note-detail/render-to-node';
 import { viewExternalUrl } from '../../utils/url-utils';
 import { withCheckboxCharacters } from '../../utils/task-transform';
+import {
+  isSameDocumentLink,
+  normalizeSafeLinkHref,
+} from '../../utils/url-safety';
+import { warmMarkdownRenderer } from '../../utils/render-note-to-html';
 
 import actions from '../../state/actions';
 
@@ -12,8 +22,7 @@ import * as S from '../../state';
 import * as T from '../../types';
 
 type OwnProps = {
-  noteId: T.EntityId;
-  note?: T.Note;
+  noteId?: T.EntityId | null;
 };
 
 type StateProps = {
@@ -42,39 +51,56 @@ export const NotePreview: FunctionComponent<Props> = ({
   searchQuery,
   showRenderedView,
 }) => {
-  const previewNode = useRef<HTMLDivElement>();
+  const previewNode = useRef<HTMLDivElement | null>(null);
+  const renderVersion = useRef(0);
   useEffect(() => {
     const copyRenderedNote = (event: ClipboardEvent) => {
-      if (!isFocused) {
-        return true;
+      const preview = previewNode.current;
+
+      if (
+        !isFocused ||
+        !note ||
+        !preview ||
+        !event.clipboardData ||
+        !shouldCopyWholePreview(
+          preview,
+          document.getSelection(),
+          document.activeElement
+        )
+      ) {
+        return;
       }
 
-      // Only copy the rendered content if nothing is selected
-      if (!document.getSelection().isCollapsed) {
-        return true;
+      const didWrite = writeClipboardPayload(
+        event.clipboardData,
+        buildPreviewClipboardPayload(
+          note.content,
+          showRenderedView,
+          preview.textContent ?? ''
+        )
+      );
+
+      if (didWrite) {
+        event.preventDefault();
       }
-
-      const div = document.createElement('div');
-      renderToNode(div, note.content, searchQuery).then(() => {
-        try {
-          // this works in Chrome and Safari but not Firefox
-          event.clipboardData.setData('text/plain', div.innerHTML);
-        } catch (DOMException) {
-          // try it the Firefox way - this works in Firefox and Chrome
-          navigator.clipboard.writeText(div.innerHTML);
-        }
-      });
-
-      event.preventDefault();
     };
 
     document.addEventListener('copy', copyRenderedNote, false);
     return () => document.removeEventListener('copy', copyRenderedNote, false);
-  }, [isFocused, searchQuery]);
+  }, [isFocused, note?.content, showRenderedView]);
 
   useEffect(() => {
+    const preview = previewNode.current;
     const handleClick = (event: MouseEvent) => {
-      for (let node = event.target; node !== null; node = node.parentNode) {
+      for (
+        let node = event.target as Node | null;
+        node !== null;
+        node = node.parentNode
+      ) {
+        if (!(node instanceof HTMLElement)) {
+          continue;
+        }
+
         if (node.tagName === 'A') {
           event.preventDefault();
           event.stopPropagation();
@@ -99,8 +125,12 @@ export const NotePreview: FunctionComponent<Props> = ({
           }
 
           // skip internal note links (e.g. anchor links, footnotes)
-          if (!tag.href.startsWith('http://localhost')) {
-            viewExternalUrl(tag.href);
+          if (!isSameDocumentLink(tag.href)) {
+            const href = normalizeSafeLinkHref(tag.href);
+
+            if (href) {
+              viewExternalUrl(href);
+            }
           }
 
           return;
@@ -110,15 +140,22 @@ export const NotePreview: FunctionComponent<Props> = ({
       // There are times when showdown will put lists inside of the same
       // UL as a tasklist. This causes those lists to look like they are
       // checkboxes. This insures that we are only getting true checkboxes.
+      const target = event.target;
       const element =
-        event?.target?.tagName === 'INPUT'
-          ? event.target.parentElement
-          : event.target;
+        target instanceof HTMLInputElement
+          ? target.parentElement
+          : target instanceof HTMLElement
+            ? target
+            : null;
       if (element?.children[0]?.tagName === 'INPUT') {
+        if (!note || !noteId) {
+          return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
 
-        const allTasks = previewNode!.current.querySelectorAll(
+        const allTasks = preview!.querySelectorAll(
           '[data-markdown-root] .task-list-item'
         );
         const taskIndex = Array.prototype.indexOf.call(allTasks, element);
@@ -143,21 +180,30 @@ export const NotePreview: FunctionComponent<Props> = ({
         return;
       }
     };
-    previewNode.current?.addEventListener('click', handleClick, true);
-    return () =>
-      previewNode.current?.removeEventListener('click', handleClick, true);
-  }, [note.content]);
+    preview?.addEventListener('click', handleClick, true);
+    return () => preview?.removeEventListener('click', handleClick, true);
+  }, [editNote, note?.content, noteId, notes, openNote]);
 
   useEffect(() => {
     if (!previewNode.current) {
       return;
     }
+
+    const renderTarget = previewNode.current;
+    const version = ++renderVersion.current;
+
     if (note?.content && showRenderedView) {
-      renderToNode(previewNode.current, note!.content, searchQuery);
+      warmMarkdownRenderer();
+
+      const nextPreview = document.createElement('div');
+      renderTarget.textContent = '';
+      renderToNode(nextPreview, note!.content, searchQuery).then(() => {
+        if (version === renderVersion.current) {
+          renderTarget.innerHTML = nextPreview.innerHTML;
+        }
+      });
     } else {
-      previewNode.current.innerText = withCheckboxCharacters(
-        note?.content ?? ''
-      );
+      renderTarget.innerText = withCheckboxCharacters(note?.content ?? '');
     }
   }, [note?.content, searchQuery, showRenderedView]);
 
@@ -166,8 +212,10 @@ export const NotePreview: FunctionComponent<Props> = ({
       <div className="note-detail note-detail-preview">
         <div
           ref={previewNode}
+          aria-label="Note preview"
           className="note-detail-markdown note-preview"
           data-markdown-root
+          tabIndex={0}
         >
           {!showRenderedView && withCheckboxCharacters(note?.content ?? '')}
         </div>
@@ -178,7 +226,7 @@ export const NotePreview: FunctionComponent<Props> = ({
 
 const mapStateToProps: S.MapState<StateProps, OwnProps> = (state, props) => {
   const noteId = props.noteId ?? state.ui.openedNote;
-  const note = props.note ?? state.data.notes.get(noteId);
+  const note = (noteId ? state.data.notes.get(noteId) : null) ?? null;
 
   return {
     isFocused: state.ui.dialogs.length === 0 && !state.ui.showNoteActions,

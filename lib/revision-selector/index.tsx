@@ -1,6 +1,5 @@
-import React, { CSSProperties, Component, ChangeEventHandler } from 'react';
+import React, { Component, ChangeEventHandler } from 'react';
 import { connect } from 'react-redux';
-import FocusTrap from 'focus-trap-react';
 import { format } from 'date-fns/format';
 import classNames from 'classnames';
 import IconButton from '../icon-button';
@@ -13,16 +12,9 @@ import { getRevision } from '../state/selectors';
 import * as S from '../state';
 import * as T from '../types';
 
-type OwnProps = {
-  onUpdateContent: Function;
-  resetIsViewingRevisions: Function;
-  cancelRevision: Function;
-  updateNoteTags: Function;
-};
-
 type StateProps = {
   isViewingRevisions: boolean;
-  noteId: T.EntityId;
+  noteId: T.EntityId | null;
   note: T.Note | null;
   openedRevision: number | null;
   revision: T.Note | null;
@@ -37,13 +29,13 @@ type DispatchProps = {
   toggleRestoringDeletedTags: () => any;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 export class RevisionSelector extends Component<Props> {
   onAcceptRevision = () => {
     const { noteId, revision, restoreRevision } = this.props;
 
-    if (!revision) {
+    if (!noteId || !revision) {
       return;
     }
 
@@ -53,12 +45,16 @@ export class RevisionSelector extends Component<Props> {
   onSelectRevision: ChangeEventHandler<HTMLInputElement> = ({
     target: { value },
   }) => {
-    const { revisions } = this.props;
+    const { noteId, revisions } = this.props;
 
     const selection = parseInt(value, 10);
-    const revision = [...revisions.keys()][selection];
+    const revision = revisions ? [...revisions.keys()][selection] : null;
 
-    this.props.openRevision(this.props.noteId, revision);
+    if (!noteId || !revision) {
+      return;
+    }
+
+    this.props.openRevision(noteId, revision);
   };
 
   onCancelRevision = () => {
@@ -75,33 +71,33 @@ export class RevisionSelector extends Component<Props> {
       toggleRestoringDeletedTags,
     } = this.props;
 
-    if (!isViewingRevisions) {
+    if (!isViewingRevisions || !revisions) {
       return null;
     }
 
-    const selectedIndex =
-      revisions && openedRevision
-        ? [...revisions.keys()].indexOf(openedRevision)
-        : -1;
+    const revisionKeys = [...revisions.keys()];
+    const selectedIndex = openedRevision
+      ? revisionKeys.indexOf(openedRevision)
+      : -1;
+    const maxIndex = Math.max(revisionKeys.length - 1, 1);
+    const sliderValue = selectedIndex > -1 ? selectedIndex : maxIndex;
     const isNewest =
-      !openedRevision ||
-      (openedRevision && selectedIndex === revisions?.size - 1);
+      !openedRevision || revisionKeys.length <= 1 || selectedIndex === maxIndex;
 
     const leftPos = Number(
       // Based on ((selected - min) * 100) / (max - min);
       // min is equal to 1
       // max is the number of size of revisions -1.
-      (((selectedIndex === -1 ? revisions?.size - 1 : selectedIndex) - 1) *
-        100) /
-        (revisions?.size - 2)
+      revisionKeys.length > 2
+        ? (((sliderValue - 1) * 100) / (revisionKeys.length - 2)).toFixed(2)
+        : 100
     );
 
     const datePos = `calc(${leftPos}% + (${8 - leftPos * 0.15}px))`;
 
+    const revisionNote = openedRevision ? revisions.get(openedRevision) : note;
     const revisionDate = format(
-      (openedRevision
-        ? revisions.get(openedRevision).modificationDate
-        : note.modificationDate) * 1000,
+      (revisionNote?.modificationDate ?? note?.modificationDate ?? 0) * 1000,
       'MMM d, yyyy h:mm a'
     );
 
@@ -110,84 +106,66 @@ export class RevisionSelector extends Component<Props> {
     });
 
     return (
-      <FocusTrap
-        focusTrapOptions={{
-          clickOutsideDeactivates: true,
-          // Fallback required due to RevisionSelect's placement within
-          // Suspsense, which hides elements preventing focus. https://git.io/Jqep9
-          fallbackFocus: 'body',
-          onDeactivate: this.onCancelRevision,
-        }}
-      >
-        <div
-          className={mainClasses}
-          role="dialog"
-          aria-labelledby="revision-slider-title"
-        >
-          <div className="revision-selector-inner">
-            <div id="revision-slider-title" className="revision-slider-title">
-              History
-            </div>
-            <div
-              aria-hidden
-              className="revision-date"
-              style={{ left: datePos }}
-            >
-              {revisionDate}
-            </div>
-            <div className="revision-slider">
-              <Slider
-                aria-valuetext={`Revision from ${revisionDate}`}
-                disabled={!revisions || revisions.size === 0}
-                min={
-                  1 /* don't allow reverting to the very first version because that's a blank note */
-                }
-                max={revisions?.size - 1}
-                value={selectedIndex > -1 ? selectedIndex : revisions?.size - 1}
-                onChange={this.onSelectRevision}
-              />
-            </div>
-            <section className="revision-actions">
-              <label
-                className="revision-deleted-tags-label"
-                htmlFor="revision-deleted-tags-checkbox"
-              >
-                <CheckboxControl
-                  id="revision-deleted-tags-checkbox"
-                  checked={restoreDeletedTags}
-                  isStandard
-                  onChange={toggleRestoringDeletedTags}
-                />
-                <span className="revision-deleted-tags-text">
-                  Restore deleted tags
-                </span>
-                <span>
-                  <IconButton
-                    icon={<SmallHelpIcon />}
-                    title="Any deleted tags associated with the restored version of this note will be re-added to your list of tags."
-                  />
-                </span>
-              </label>
-              <div className="revision-buttons">
-                <button
-                  className="button button-secondary button-compact"
-                  onClick={this.onCancelRevision}
-                >
-                  Cancel
-                </button>
-                <button
-                  aria-label={`Restore revision from ${revisionDate}`}
-                  disabled={!!isNewest}
-                  className="button button-primary button-compact"
-                  onClick={this.onAcceptRevision}
-                >
-                  Restore
-                </button>
-              </div>
-            </section>
+      <div className={mainClasses} role="group" aria-label="History controls">
+        <div className="revision-selector-inner">
+          <div id="revision-slider-title" className="revision-slider-title">
+            History
           </div>
+          <div aria-hidden className="revision-date" style={{ left: datePos }}>
+            {revisionDate}
+          </div>
+          <div className="revision-slider">
+            <Slider
+              aria-valuetext={`Revision from ${revisionDate}`}
+              disabled={revisionKeys.length <= 1}
+              min={
+                1 /* don't allow reverting to the very first version because that's a blank note */
+              }
+              max={maxIndex}
+              value={sliderValue}
+              onChange={this.onSelectRevision}
+            />
+          </div>
+          <section className="revision-actions">
+            <label
+              className="revision-deleted-tags-label"
+              htmlFor="revision-deleted-tags-checkbox"
+            >
+              <CheckboxControl
+                id="revision-deleted-tags-checkbox"
+                checked={restoreDeletedTags}
+                isStandard
+                onChange={toggleRestoringDeletedTags}
+              />
+              <span className="revision-deleted-tags-text">
+                Restore deleted tags
+              </span>
+              <span>
+                <IconButton
+                  icon={<SmallHelpIcon />}
+                  title="Any deleted tags associated with the restored version of this note will be re-added to your list of tags."
+                />
+              </span>
+            </label>
+            <div className="revision-buttons">
+              <button
+                className="button button-secondary button-compact"
+                onClick={this.onCancelRevision}
+              >
+                Cancel
+              </button>
+              <button
+                aria-label={`Restore revision from ${revisionDate}`}
+                disabled={!!isNewest}
+                className="button button-primary button-compact"
+                onClick={this.onAcceptRevision}
+              >
+                Restore
+              </button>
+            </div>
+          </section>
         </div>
-      </FocusTrap>
+      </div>
     );
   }
 }

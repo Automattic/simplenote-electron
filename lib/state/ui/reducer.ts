@@ -383,6 +383,7 @@ const showRevisions: A.Reducer<boolean> = (state = false, action) => {
     case 'REVISIONS_TOGGLE':
       return !state;
     case 'CLOSE_REVISION':
+    case 'NAVIGATION_TOGGLE':
     case 'OPEN_NOTE':
     case 'SELECT_NOTE':
     case 'CREATE_NOTE_WITH_ID':

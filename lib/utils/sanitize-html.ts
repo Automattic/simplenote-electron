@@ -1,6 +1,6 @@
-import isemail from 'isemail';
-import validUrl from 'valid-url';
 import { filter } from 'lodash';
+
+import { normalizeSafeImageSrc, normalizeSafeLinkHref } from './url-safety';
 
 /**
  * Determine if a given tag is allowed
@@ -81,10 +81,7 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
     case 'a':
       switch (attrName) {
         case 'href':
-          // disallow any protocol except for http://, https://, and simplenote://
-          return ['http', 'https', 'simplenote'].includes(
-            value.toLowerCase().trim().split('://')[0]
-          );
+          return !!normalizeSafeLinkHref(value);
         case 'alt':
         case 'rel':
         case 'title':
@@ -96,10 +93,11 @@ const isAllowedAttr = (tagName: string, attrName: string, value: string) => {
     case 'img':
       switch (attrName) {
         case 'alt':
-        case 'src':
         case 'title':
         case 'width':
           return true;
+        case 'src':
+          return !!normalizeSafeImageSrc(value);
         default:
           return false;
       }
@@ -182,6 +180,10 @@ const isForbidden = (node: Element) => {
   }
 };
 
+const replaceNodeWithText = (node: Element, text: string) => {
+  node.parentNode?.replaceChild(document.createTextNode(text), node);
+};
+
 /**
  * Sanitizes input HTML for security and styling
  *
@@ -193,12 +195,7 @@ export const sanitizeHtml = (content: string) => {
   const doc = parser.parseFromString(content, 'text/html');
 
   // this will let us visit every single DOM node programmatically
-  const walker = doc.createTreeWalker(
-    doc.body,
-    NodeFilter.SHOW_ALL,
-    null,
-    false // IE11 requires this last argument
-  );
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ALL, null);
 
   /**
    * we don't want to remove nodes while walking the tree
@@ -249,33 +246,31 @@ export const sanitizeHtml = (content: string) => {
         return false;
       }
 
-      // only valid http(s) URLs are allowed
-      if (('href' === name || 'src' === name) && validUrl.isWebUri(value)) {
-        return false;
-      }
-
-      // emails must be reasonably-verifiable email addresses
-      if (
-        'href' === name &&
-        value.startsWith('mailto:') &&
-        isemail.validate(value.slice(7))
-      ) {
-        return false;
-      }
-
       return true;
     }).forEach(({ name }) => node.removeAttribute(name));
 
+    if ('img' === tagName) {
+      const src = normalizeSafeImageSrc(node.getAttribute('src'));
+
+      if (!src) {
+        replaceNodeWithText(node, node.getAttribute('alt') ?? '');
+        continue;
+      }
+
+      node.setAttribute('src', src);
+    }
+
     // of course, all links need to be normalized since
     // they now exist inside of our new context
-    const hrefAttribute = 'a' === tagName && node.getAttribute('href');
-    if (
-      'a' === tagName &&
-      'string' === typeof hrefAttribute &&
-      !hrefAttribute.startsWith('mailto:')
-    ) {
-      node.setAttribute('target', '_blank');
-      node.setAttribute('rel', 'external noopener noreferrer');
+    const hrefAttribute =
+      'a' === tagName && normalizeSafeLinkHref(node.getAttribute('href'));
+    if ('a' === tagName && 'string' === typeof hrefAttribute) {
+      node.setAttribute('href', hrefAttribute);
+
+      if (!hrefAttribute.startsWith('mailto:')) {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'external noopener noreferrer');
+      }
     }
 
     // add `list-style:none` for 'task-list-item's

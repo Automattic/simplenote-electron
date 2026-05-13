@@ -19,6 +19,15 @@ import {
 import { searchNotes, tagsFromSearch } from './search';
 import actions from './state/actions';
 import * as selectors from './state/selectors';
+import {
+  clipboardHtmlToMarkdown,
+  clipboardItemsHtmlToMarkdown,
+  insertMarkdownPaste,
+} from './utils/clipboard/html-to-markdown';
+import {
+  buildSourceClipboardPayload,
+  writeClipboardPayload,
+} from './utils/clipboard/copy';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
 import {
@@ -31,6 +40,7 @@ import {
   withCheckboxCharacters,
   withCheckboxSyntax,
 } from './utils/task-transform';
+import { warmMarkdownRenderer } from './utils/render-note-to-html';
 
 import * as S from './state';
 import * as T from './types';
@@ -205,7 +215,10 @@ class NoteContentEditor extends Component<Props> {
     this.props.storeHasFocus(this.hasFocus);
     window.addEventListener('resize', clearNotePositions);
     window.addEventListener('toggleChecklist', this.handleChecklist, true);
+    document.addEventListener('copy', this.handleCopy);
+    document.addEventListener('paste', this.handlePaste, true);
     this.toggleShortcuts(true);
+    this.warmMarkdownRendererIfNeeded();
   }
 
   componentWillUnmount() {
@@ -216,6 +229,8 @@ class NoteContentEditor extends Component<Props> {
     }
     window.electron?.removeListener('editorCommand');
     window.removeEventListener('input', this.handleUndoRedo, true);
+    document.removeEventListener('copy', this.handleCopy);
+    document.removeEventListener('paste', this.handlePaste, true);
     window.removeEventListener('toggleChecklist', this.handleChecklist, true);
     window.removeEventListener('resize', clearNotePositions, true);
     this.toggleShortcuts(false);
@@ -398,7 +413,20 @@ class NoteContentEditor extends Component<Props> {
     ) {
       this.setSearchSelection(this.props.selectedSearchMatchIndex);
     }
+
+    if (
+      prevProps.noteId !== this.props.noteId ||
+      prevProps.note.systemTags !== this.props.note.systemTags
+    ) {
+      this.warmMarkdownRendererIfNeeded();
+    }
   }
+
+  warmMarkdownRendererIfNeeded = () => {
+    if (this.props.note.systemTags.includes('markdown')) {
+      warmMarkdownRenderer();
+    }
+  };
 
   setDecorators = () => {
     // special styling for title (first line)
@@ -492,6 +520,90 @@ class NoteContentEditor extends Component<Props> {
 
   handleChecklist = (event: Event) => {
     this.editor?.trigger('editorCommand', 'insertChecklist', null);
+  };
+
+  handleCopy = (event: ClipboardEvent) => {
+    if (!this.editor?.hasTextFocus() || !event.clipboardData) {
+      return;
+    }
+
+    const plainText = event.clipboardData.getData('text/plain');
+
+    if (!plainText) {
+      return;
+    }
+
+    const didWrite = writeClipboardPayload(
+      event.clipboardData,
+      buildSourceClipboardPayload(
+        plainText,
+        this.props.note.systemTags.includes('markdown')
+      )
+    );
+
+    if (didWrite) {
+      event.preventDefault();
+    }
+  };
+
+  handlePaste = (event: ClipboardEvent) => {
+    if (event.defaultPrevented || !this.editor?.hasTextFocus()) {
+      return;
+    }
+
+    const markdown = clipboardHtmlToMarkdown(event.clipboardData);
+
+    if (!markdown) {
+      return;
+    }
+
+    if (insertMarkdownPaste(this.editor, markdown)) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  };
+
+  pasteFromClipboard = async () => {
+    const editor = this.editor;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.focus();
+
+    const markdown = await this.readClipboardMarkdown();
+
+    if (markdown && insertMarkdownPaste(editor, markdown)) {
+      return;
+    }
+
+    const text = await this.readClipboardText();
+
+    if (text !== null && insertMarkdownPaste(editor, text)) {
+      return;
+    }
+
+    editor.trigger('contextMenu', 'editor.action.clipboardPasteAction', null);
+  };
+
+  readClipboardMarkdown = async (): Promise<string | null> => {
+    try {
+      return await clipboardItemsHtmlToMarkdown(
+        await navigator.clipboard?.read?.()
+      );
+    } catch {
+      return null;
+    }
+  };
+
+  readClipboardText = async (): Promise<string | null> => {
+    try {
+      return (await navigator.clipboard?.readText?.()) ?? null;
+    } catch {
+      return null;
+    }
   };
 
   handleUndoRedo = (e: Event) => {
@@ -652,6 +764,7 @@ class NoteContentEditor extends Component<Props> {
     // see https://github.com/Microsoft/monaco-editor/issues/1058#issuecomment-468681208
     const idsToRemove = [
       'editor.action.changeAll',
+      'editor.action.clipboardPasteAction',
       'editor.action.quickCommand',
     ];
 
@@ -729,7 +842,8 @@ class NoteContentEditor extends Component<Props> {
       },
     });
 
-    // re-add keybindings for cut/copy/paste so they show labels
+    // re-add keybindings for cut/copy so they show labels. Paste needs the
+    // browser paste event so rich clipboard HTML can be converted first.
     monaco.editor.addKeybindingRules([
       {
         keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyX,
@@ -741,11 +855,6 @@ class NoteContentEditor extends Component<Props> {
         command: 'editor.action.clipboardCopyAction',
         when: 'allowBrowserKeybinding && editorTextFocus',
       },
-      {
-        keybinding: monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV,
-        command: 'editor.action.clipboardPasteAction',
-        when: 'allowBrowserKeybinding && editorTextFocus',
-      },
     ]);
 
     // cancel selection that bubbles up to clear any search terms
@@ -755,6 +864,14 @@ class NoteContentEditor extends Component<Props> {
       keybindings: [monaco.KeyCode.Escape],
       keybindingContext: '!suggestWidgetVisible',
       run: this.cancelSelectionOrSearch,
+    });
+
+    editor.addAction({
+      id: 'context_paste',
+      label: 'Paste',
+      contextMenuGroupId: '9_cutcopypaste',
+      contextMenuOrder: 3,
+      run: this.pasteFromClipboard,
     });
 
     editor.addAction({
@@ -849,15 +966,6 @@ class NoteContentEditor extends Component<Props> {
         this.completionProvider(this.state.noteId, editor)
       );
     editor.onDidDispose(() => completionProviderHandle?.dispose());
-
-    document.oncopy = (event) => {
-      // @TODO: This is selecting everything in the app but we should only
-      //        need to intercept copy events coming from the editor
-      event.clipboardData?.setData(
-        'text/plain',
-        withCheckboxSyntax(event.clipboardData.getData('text/plain'))
-      );
-    };
 
     const [startOffset, endOffset, direction] = this.props.editorSelection;
     const start = this.editor.getModel()?.getPositionAt(startOffset);
@@ -1209,6 +1317,7 @@ class NoteContentEditor extends Component<Props> {
               autoIndent: 'keep',
               autoSurround: 'never',
               automaticLayout: true,
+              copyWithSyntaxHighlighting: false,
               // @ts-ignore, @see https://github.com/microsoft/monaco-editor/issues/3829
               'bracketPairColorization.enabled': false,
               codeLens: false,

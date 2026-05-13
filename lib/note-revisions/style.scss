@@ -1,12 +1,44 @@
+@use '../../scss/variables' as *;
+
 .note-revisions {
   background-color: var(--background-color);
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  padding-top: 20px;
+  min-height: 0;
+  user-select: text;
+
+  .note-revisions-content {
+    background-color: var(--background-color);
+    border: 0;
+    color: var(--primary-color);
+    cursor: text;
+    display: block;
+    flex: 1 1 auto;
+    font: 16px/1.5 $sans;
+    margin: 0;
+    min-height: 0;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    padding: 20px calc((100% - #{$max-content-width}) / 2);
+    resize: none;
+    user-select: text;
+    white-space: pre-wrap;
+    word-break: normal;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: -2px;
+    }
+  }
 
   .note-revisions-tag-list {
     display: flex;
+    flex: 0 0 auto;
     justify-content: flex-start;
     flex-wrap: wrap;
     line-height: 1.75em;
@@ -14,5 +46,19 @@
     overflow: auto;
     max-height: calc(2.5 * 1.75em + 16px); // about 2.5 rows
     padding: 8px 12px;
+  }
+
+  @media only screen and (width <= 1400px) {
+    .note-revisions-content {
+      padding: 20px 10%;
+    }
+  }
+}
+
+.is-line-length-full {
+  .note-revisions {
+    .note-revisions-content {
+      padding: 20px 25px;
+    }
   }
 }

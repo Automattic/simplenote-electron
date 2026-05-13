@@ -1,9 +1,16 @@
 import { TKQItem, TracksAPI } from './analytics/types';
 import { compose } from 'redux';
 
-import { electronAPI } from './preload';
-
 import * as S from './state';
+
+type ElectronAPI = {
+  confirmLogout: (changes: string) => 'export' | 'reconsider' | 'logout';
+  send: (channel: string, data?: unknown) => void;
+  receive: (channel: string, callback: (data: any) => void) => void;
+  removeListener: (channel: string) => void;
+  isMac: boolean;
+  isLinux: boolean;
+};
 
 declare global {
   const __TEST__: boolean;
@@ -21,7 +28,7 @@ declare global {
   interface Window {
     __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
     analyticsEnabled: boolean;
-    electron: typeof electronAPI;
+    electron: ElectronAPI;
     location: Location;
     testEvents: (string | [string, ...any[]])[];
     _tkq: TKQItem[] & { a: unknown };
