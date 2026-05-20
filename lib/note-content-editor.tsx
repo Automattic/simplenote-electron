@@ -8,7 +8,6 @@ import Monaco, {
 import {
   editor as Editor,
   CancellationToken,
-  IKeyboardEvent,
   languages,
   IRange,
   Position,
@@ -32,16 +31,12 @@ import {
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
 import {
-  getNextSlashCommandIndex,
-  getSlashCommandKeyAction,
-  getSlashCommandSuggestions,
-  getSlashCommandTrigger,
-  isSlashCommandPaletteShortcut,
-  shouldRemoveSlashCommandToken,
-  SlashCommandId,
-  SlashCommandSuggestion,
-  SlashCommandSource,
-  SlashCommandTrigger,
+  CommandPaletteCommandId,
+  CommandPaletteSuggestion,
+  getCommandPaletteKeyAction,
+  getCommandPaletteSuggestions,
+  getNextCommandPaletteIndex,
+  isCommandPaletteShortcut,
 } from './slash-commands';
 import {
   clearNotePositions,
@@ -101,8 +96,8 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
   }
 };
 
-const getSlashCommandOptionId = (commandId: SlashCommandId) =>
-  `slash-command-option-${commandId}`;
+const getCommandPaletteOptionId = (commandId: CommandPaletteCommandId) =>
+  `command-palette-option-${commandId}`;
 
 const getTextAfterBracket = (line: string, column: number) => {
   const precedingOpener = line.lastIndexOf('[', column);
@@ -170,54 +165,37 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 type OwnState = {
   content: string;
+  commandPalette: CommandPaletteState | null;
   editor: 'fast' | 'full';
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
-  slashCommand: SlashCommandPaletteState | null;
 };
 
-type SlashCommandPaletteState = {
-  lineNumber: number;
-  source: SlashCommandSource;
-  trigger: SlashCommandTrigger;
-  suggestions: SlashCommandSuggestion[];
+type CommandPaletteState = {
+  query: string;
+  suggestions: CommandPaletteSuggestion[];
   selectedIndex: number;
-  top: number;
-  left: number;
-  ghostText: string;
-};
-
-type SlashCommandTokenRange = {
-  lineNumber: number;
-  source: SlashCommandSource;
-  trigger: SlashCommandTrigger;
 };
 
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   contentDiv = createRef<HTMLDivElement>();
-  slashCommandPalette = createRef<HTMLDivElement>();
-  selectedSlashCommandItem = createRef<HTMLButtonElement>();
+  commandPaletteInput = createRef<HTMLInputElement>();
+  selectedCommandPaletteItem = createRef<HTMLButtonElement>();
   decorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
-  slashCommandDecoration: Editor.IEditorDecorationsCollection | undefined;
-  slashCommandShortcutAnchor: {
-    lineNumber: number;
-    startColumn: number;
-  } | null = null;
-  isRemovingShortcutSlashCommand = false;
-  isPreservingSlashCommandText = false;
+  focusBeforeCommandPalette: HTMLElement | null = null;
 
   state: OwnState = {
     content: '',
+    commandPalette: null,
     editor: 'fast',
     noteId: null,
     overTodo: false,
     searchQuery: '',
-    slashCommand: null,
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
@@ -277,7 +255,6 @@ class NoteContentEditor extends Component<Props> {
 
   componentWillUnmount() {
     setNotePosition(this.props.noteId, this.editor?.getScrollTop() ?? 0);
-    this.updateSlashCommandActiveDescendant(null);
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
@@ -384,8 +361,8 @@ class NoteContentEditor extends Component<Props> {
   };
 
   handleShortcut = (event: KeyboardEvent) => {
-    if (this.props.keyboardShortcuts && isSlashCommandPaletteShortcut(event)) {
-      this.openSlashCommandPaletteFromShortcut();
+    if (this.props.keyboardShortcuts && isCommandPaletteShortcut(event)) {
+      this.openCommandPalette();
       event.stopPropagation();
       event.preventDefault();
       return false;
@@ -580,356 +557,101 @@ class NoteContentEditor extends Component<Props> {
 
   hasFocus = () => this.editor?.hasTextFocus() || false;
 
-  clearSlashCommand = ({
-    removeShortcutToken = false,
-    tokenRange = this.state.slashCommand,
-  }: {
-    removeShortcutToken?: boolean;
-    tokenRange?: SlashCommandTokenRange | null;
-  } = {}) => {
-    const slashCommand = this.state.slashCommand;
-    this.slashCommandDecoration?.clear();
-    this.updateSlashCommandActiveDescendant(null);
-    this.slashCommandShortcutAnchor = null;
+  openCommandPalette = () => {
+    const suggestions = getCommandPaletteSuggestions('');
 
-    if (
-      tokenRange &&
-      !this.isPreservingSlashCommandText &&
-      shouldRemoveSlashCommandToken(removeShortcutToken, tokenRange.source)
-    ) {
-      this.removeSlashCommandToken(tokenRange);
+    if (!this.state.commandPalette) {
+      this.focusBeforeCommandPalette = document.activeElement as HTMLElement;
     }
 
-    if (slashCommand) {
-      this.setState({ slashCommand: null });
-    }
-  };
-
-  getSlashCommandSource = (
-    lineNumber: number,
-    trigger: SlashCommandTrigger
-  ): SlashCommandPaletteState['source'] => {
-    const previous = this.state.slashCommand;
-
-    if (
-      this.slashCommandShortcutAnchor?.lineNumber === lineNumber &&
-      this.slashCommandShortcutAnchor.startColumn === trigger.startColumn
-    ) {
-      return 'shortcut';
-    }
-
-    if (
-      previous?.source === 'shortcut' &&
-      previous.lineNumber === lineNumber &&
-      previous.trigger.startColumn === trigger.startColumn
-    ) {
-      return 'shortcut';
-    }
-
-    return 'typed';
-  };
-
-  updateSlashCommand = () => {
-    if (this.isRemovingShortcutSlashCommand) {
-      return;
-    }
-
-    const editor = this.editor;
-    const model = editor?.getModel();
-    const position = editor?.getPosition();
-    const selection = editor?.getSelection();
-
-    if (!editor || !model || !position || !selection?.isEmpty()) {
-      this.clearSlashCommand({ removeShortcutToken: true });
-      return;
-    }
-
-    const line = model.getLineContent(position.lineNumber);
-    const trigger = getSlashCommandTrigger(line, position.column);
-
-    if (!trigger) {
-      this.clearSlashCommand({ removeShortcutToken: true });
-      return;
-    }
-
-    const source = this.getSlashCommandSource(position.lineNumber, trigger);
-
-    const suggestions = getSlashCommandSuggestions(trigger.query);
-    if (suggestions.length === 0) {
-      this.clearSlashCommand({
-        removeShortcutToken: source === 'shortcut',
-        tokenRange: { lineNumber: position.lineNumber, source, trigger },
-      });
-      return;
-    }
-
-    const visiblePosition = editor.getScrolledVisiblePosition(position);
-    if (!visiblePosition) {
-      this.clearSlashCommand({ removeShortcutToken: true });
-      return;
-    }
-
-    const layout = editor.getLayoutInfo();
-    const paletteWidth = this.slashCommandPalette.current?.offsetWidth ?? 280;
-    const paletteHeight = this.slashCommandPalette.current?.offsetHeight ?? 180;
-    const left = Math.max(
-      8,
-      Math.min(visiblePosition.left, layout.width - paletteWidth - 8)
-    );
-    const top =
-      visiblePosition.top + paletteHeight > layout.height
-        ? Math.max(8, visiblePosition.top - paletteHeight)
-        : visiblePosition.top + visiblePosition.height + 6;
-
-    const previous = this.state.slashCommand;
-    if (source === 'typed') {
-      this.slashCommandShortcutAnchor = null;
-    }
-
-    const previousCommandId =
-      previous?.suggestions[previous.selectedIndex]?.command.id;
-    const selectedIndex = Math.max(
-      0,
-      suggestions.findIndex(({ command }) => command.id === previousCommandId)
-    );
-    const selected = suggestions[selectedIndex] ?? suggestions[0];
-    const nextSlashCommand = {
-      lineNumber: position.lineNumber,
-      source,
-      trigger,
-      suggestions,
-      selectedIndex,
-      top,
-      left,
-      ghostText: selected?.completion ?? '',
-    };
-
-    this.setState({ slashCommand: nextSlashCommand }, () =>
-      this.updateSlashCommandSelection(nextSlashCommand)
-    );
-  };
-
-  openSlashCommandPaletteFromShortcut = () => {
-    const editor = this.editor;
-    const position = editor?.getPosition();
-
-    if (!editor || !position) {
-      return;
-    }
-
-    editor.focus();
-
-    this.slashCommandShortcutAnchor = {
-      lineNumber: position.lineNumber,
-      startColumn: position.column,
-    };
-
-    editor.executeEdits('slash-command-shortcut', [
+    this.setState(
       {
-        range: new Range(
-          position.lineNumber,
-          position.column,
-          position.lineNumber,
-          position.column
-        ),
-        text: '/',
-        forceMoveMarkers: true,
-      },
-    ]);
-
-    editor.setPosition({
-      lineNumber: position.lineNumber,
-      column: position.column + 1,
-    });
-
-    this.updateSlashCommand();
-  };
-
-  updateSlashCommandGhostText = (slashCommand = this.state.slashCommand) => {
-    this.slashCommandDecoration?.clear();
-
-    if (!this.editor || !slashCommand?.ghostText) {
-      return;
-    }
-
-    const model = this.editor.getModel();
-    const position = this.editor.getPosition();
-
-    if (!model || !position) {
-      return;
-    }
-
-    const range = new Range(
-      slashCommand.lineNumber,
-      slashCommand.trigger.endColumn,
-      slashCommand.lineNumber,
-      slashCommand.trigger.endColumn
-    );
-
-    this.slashCommandDecoration = this.editor.createDecorationsCollection([
-      {
-        range,
-        options: {
-          showIfCollapsed: true,
-          after: {
-            content: slashCommand.ghostText,
-            inlineClassName: 'slash-command-ghost',
-            cursorStops: Editor.InjectedTextCursorStops.None,
-          },
+        commandPalette: {
+          query: '',
+          suggestions,
+          selectedIndex: 0,
         },
       },
-    ]);
+      () => this.commandPaletteInput.current?.focus()
+    );
   };
 
-  scrollSelectedSlashCommandIntoView = () =>
-    this.selectedSlashCommandItem.current?.scrollIntoView({
+  closeCommandPalette = ({ restoreFocus = true } = {}) => {
+    if (!this.state.commandPalette) {
+      return;
+    }
+
+    this.setState({ commandPalette: null }, () => {
+      if (restoreFocus) {
+        this.focusBeforeCommandPalette?.focus();
+      }
+      this.focusBeforeCommandPalette = null;
+    });
+  };
+
+  updateCommandPaletteQuery = (query: string) => {
+    const suggestions = getCommandPaletteSuggestions(query);
+
+    this.setState({
+      commandPalette: {
+        query,
+        suggestions,
+        selectedIndex: 0,
+      },
+    });
+  };
+
+  scrollSelectedCommandPaletteItemIntoView = () =>
+    this.selectedCommandPaletteItem.current?.scrollIntoView({
       block: 'nearest',
       inline: 'nearest',
     });
 
-  getSlashCommandInputArea = () =>
-    this.editor
-      ?.getDomNode()
-      ?.querySelector<HTMLTextAreaElement>('textarea.inputarea') ?? null;
+  selectCommandPaletteItem = (selectedIndex: number) => {
+    const { commandPalette } = this.state;
 
-  updateSlashCommandActiveDescendant = (
-    slashCommand: SlashCommandPaletteState | null = this.state.slashCommand
-  ) => {
-    const inputArea = this.getSlashCommandInputArea();
-
-    if (!inputArea) {
+    if (!commandPalette?.suggestions[selectedIndex]) {
       return;
     }
 
-    const selectedCommand =
-      slashCommand?.suggestions[slashCommand.selectedIndex]?.command;
-
-    if (!selectedCommand) {
-      inputArea.removeAttribute('aria-activedescendant');
-      inputArea.removeAttribute('aria-controls');
-      return;
-    }
-
-    inputArea.setAttribute('aria-controls', 'slash-command-palette');
-    inputArea.setAttribute(
-      'aria-activedescendant',
-      getSlashCommandOptionId(selectedCommand.id)
-    );
-  };
-
-  updateSlashCommandSelection = (slashCommand: SlashCommandPaletteState) => {
-    this.updateSlashCommandGhostText(slashCommand);
-    this.scrollSelectedSlashCommandIntoView();
-    this.updateSlashCommandActiveDescendant(slashCommand);
-  };
-
-  selectSlashCommand = (selectedIndex: number) => {
-    const { slashCommand } = this.state;
-    const selected = slashCommand?.suggestions[selectedIndex];
-
-    if (!slashCommand || !selected) {
-      return;
-    }
-
-    const nextSlashCommand = {
-      ...slashCommand,
-      selectedIndex,
-      ghostText: selected.completion,
-    };
-
-    this.setState({ slashCommand: nextSlashCommand }, () =>
-      this.updateSlashCommandSelection(nextSlashCommand)
-    );
-  };
-
-  selectNextSlashCommand = (offset: number) => {
-    const { slashCommand } = this.state;
-    if (!slashCommand) {
-      return;
-    }
-
-    const nextIndex = getNextSlashCommandIndex(
-      slashCommand.suggestions.length,
-      slashCommand.selectedIndex,
-      offset
-    );
-
-    this.selectSlashCommand(nextIndex);
-  };
-
-  replaceSlashCommandToken = (
-    text: string,
-    slashCommand: SlashCommandTokenRange | null = this.state.slashCommand
-  ) => {
-    const editor = this.editor;
-
-    if (!slashCommand || !editor) {
-      return;
-    }
-
-    const range = new Range(
-      slashCommand.lineNumber,
-      slashCommand.trigger.startColumn,
-      slashCommand.lineNumber,
-      slashCommand.trigger.endColumn
-    );
-
-    editor.executeEdits('slash-command', [
+    this.setState(
       {
-        range,
-        text,
-        forceMoveMarkers: true,
+        commandPalette: {
+          ...commandPalette,
+          selectedIndex,
+        },
       },
-    ]);
-
-    editor.setPosition({
-      lineNumber: slashCommand.lineNumber,
-      column: slashCommand.trigger.startColumn + text.length,
-    });
+      this.scrollSelectedCommandPaletteItemIntoView
+    );
   };
 
-  removeSlashCommandToken = (tokenRange: SlashCommandTokenRange) => {
-    this.isRemovingShortcutSlashCommand = true;
-    try {
-      this.replaceSlashCommandToken('', tokenRange);
-    } finally {
-      this.isRemovingShortcutSlashCommand = false;
-    }
-  };
+  selectNextCommandPaletteItem = (offset: number) => {
+    const { commandPalette } = this.state;
 
-  completeSlashCommand = () => {
-    const { slashCommand } = this.state;
-    const suggestion = slashCommand?.suggestions[slashCommand.selectedIndex];
-
-    if (!slashCommand || !suggestion) {
+    if (!commandPalette?.suggestions.length) {
       return;
     }
 
-    this.replaceSlashCommandToken(`/${suggestion.command.name}`);
+    this.selectCommandPaletteItem(
+      getNextCommandPaletteIndex(
+        commandPalette.suggestions.length,
+        commandPalette.selectedIndex,
+        offset
+      )
+    );
   };
 
-  typeThroughSlashCommand = (text: string) => {
-    this.isPreservingSlashCommandText = true;
-    try {
-      this.clearSlashCommand();
-      this.editor?.trigger('slash-command', 'type', { text });
-    } finally {
-      this.isPreservingSlashCommandText = false;
-    }
-  };
-
-  executeSlashCommand = (commandId?: SlashCommandId) => {
-    const { slashCommand } = this.state;
+  executeCommandPaletteCommand = (commandId?: CommandPaletteCommandId) => {
+    const { commandPalette } = this.state;
     const command =
       commandId ??
-      slashCommand?.suggestions[slashCommand.selectedIndex]?.command.id;
+      commandPalette?.suggestions[commandPalette.selectedIndex]?.command.id;
 
     if (!command) {
       return;
     }
 
-    this.replaceSlashCommandToken('');
-    this.clearSlashCommand();
+    this.closeCommandPalette({ restoreFocus: false });
 
     switch (command) {
       case 'new':
@@ -968,49 +690,40 @@ class NoteContentEditor extends Component<Props> {
     }
   };
 
-  handleEditorKeyDown = (event: IKeyboardEvent) => {
-    const { slashCommand } = this.state;
-    const browserEvent = event.browserEvent as KeyboardEvent;
-    const action = getSlashCommandKeyAction(
-      browserEvent.key,
-      browserEvent.isComposing,
-      !!slashCommand
+  handleCommandPaletteKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    const { commandPalette } = this.state;
+    const action = getCommandPaletteKeyAction(
+      event.key,
+      event.nativeEvent.isComposing,
+      !!commandPalette
     );
 
-    if (!slashCommand || !action) {
+    if (!commandPalette || !action) {
       return;
     }
 
     switch (action) {
-      case 'complete':
-        event.preventDefault();
-        event.stopPropagation();
-        this.completeSlashCommand();
-        return;
       case 'execute':
         event.preventDefault();
         event.stopPropagation();
-        this.executeSlashCommand();
+        this.executeCommandPaletteCommand();
         return;
       case 'next':
         event.preventDefault();
         event.stopPropagation();
-        this.selectNextSlashCommand(1);
+        this.selectNextCommandPaletteItem(1);
         return;
       case 'previous':
         event.preventDefault();
         event.stopPropagation();
-        this.selectNextSlashCommand(-1);
+        this.selectNextCommandPaletteItem(-1);
         return;
-      case 'cancel':
+      case 'close':
         event.preventDefault();
         event.stopPropagation();
-        this.clearSlashCommand({ removeShortcutToken: true });
-        return;
-      case 'cancel-and-type':
-        event.preventDefault();
-        event.stopPropagation();
-        this.typeThroughSlashCommand(' ');
+        this.closeCommandPalette();
         return;
     }
   };
@@ -1451,15 +1164,12 @@ class NoteContentEditor extends Component<Props> {
       window.addEventListener('input', this.handleUndoRedo, true);
     }
 
-    editor.onKeyDown(this.handleEditorKeyDown);
     this.setDecorators();
     // make component rerender after the decorators are set.
     this.setState({});
     editor.onDidChangeModelContent(() => {
       this.setDecorators();
-      this.updateSlashCommand();
     });
-    editor.onDidScrollChange(() => this.updateSlashCommand());
 
     // register completion provider for internal links
     const completionProviderHandle =
@@ -1494,7 +1204,6 @@ class NoteContentEditor extends Component<Props> {
           e.reason === Editor.CursorChangeReason.Redo
         ) {
           // @TODO: Adjust selection in Undo/Redo
-          this.clearSlashCommand();
           return;
         }
 
@@ -1515,8 +1224,6 @@ class NoteContentEditor extends Component<Props> {
             newEnd,
             newDirection
           );
-
-        this.updateSlashCommand();
       }
     );
 
@@ -1768,54 +1475,101 @@ class NoteContentEditor extends Component<Props> {
     });
   };
 
-  renderSlashCommandPalette = () => {
-    const { slashCommand } = this.state;
+  renderCommandPalette = () => {
+    const { commandPalette } = this.state;
 
-    if (!slashCommand) {
+    if (!commandPalette) {
       return null;
     }
 
+    const selectedCommand =
+      commandPalette.suggestions[commandPalette.selectedIndex]?.command;
+
     return (
       <div
-        aria-label="Slash commands"
-        className="slash-command-palette"
-        id="slash-command-palette"
-        ref={this.slashCommandPalette}
-        role="listbox"
-        style={{
-          top: slashCommand.top,
-          left: slashCommand.left,
+        className="command-palette-modal"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) {
+            this.closeCommandPalette();
+          }
+          event.stopPropagation();
         }}
-        onMouseDown={(event) => event.preventDefault()}
+        onMouseDown={(event) => event.stopPropagation()}
       >
-        {slashCommand.suggestions.map(({ command }, index) => {
-          const isSelected = index === slashCommand.selectedIndex;
-          return (
-            <button
-              aria-selected={isSelected}
-              className={`slash-command-palette__item${
-                isSelected ? ' is-selected' : ''
-              }`}
-              id={getSlashCommandOptionId(command.id)}
-              key={command.id}
-              onMouseDown={(event) => {
-                event.preventDefault();
-                this.executeSlashCommand(command.id);
-              }}
-              onMouseEnter={() => this.selectSlashCommand(index)}
-              ref={isSelected ? this.selectedSlashCommandItem : null}
-              role="option"
-              type="button"
-            >
-              <span className="slash-command-palette__command">
-                /{command.name}
-              </span>
-              <span className="slash-command-palette__title">
-                {command.title}
-              </span>
-            </button>
-          );
-        })}
+        <div
+          aria-label="Command palette"
+          aria-modal="true"
+          className="command-palette"
+          role="dialog"
+        >
+          <input
+            aria-activedescendant={
+              selectedCommand
+                ? getCommandPaletteOptionId(selectedCommand.id)
+                : undefined
+            }
+            aria-controls="command-palette-list"
+            aria-expanded="true"
+            aria-label="Command"
+            autoComplete="off"
+            className="command-palette__input"
+            onChange={(event) =>
+              this.updateCommandPaletteQuery(event.target.value)
+            }
+            onKeyDown={this.handleCommandPaletteKeyDown}
+            placeholder="Search commands"
+            ref={this.commandPaletteInput}
+            role="combobox"
+            spellCheck={false}
+            type="text"
+            value={commandPalette.query}
+          />
+          <div
+            className="command-palette__list"
+            id="command-palette-list"
+            role="listbox"
+          >
+            {commandPalette.suggestions.length === 0 && (
+              <div className="command-palette__empty">No commands found</div>
+            )}
+            {commandPalette.suggestions.map(({ command }, index) => {
+              const isSelected = index === commandPalette.selectedIndex;
+              return (
+                <button
+                  aria-selected={isSelected}
+                  className={`command-palette__item${
+                    isSelected ? ' is-selected' : ''
+                  }`}
+                  id={getCommandPaletteOptionId(command.id)}
+                  key={command.id}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    this.executeCommandPaletteCommand(command.id);
+                  }}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                  }}
+                  onMouseEnter={() => this.selectCommandPaletteItem(index)}
+                  ref={isSelected ? this.selectedCommandPaletteItem : null}
+                  role="option"
+                  type="button"
+                >
+                  <span className="command-palette__item-copy">
+                    <span className="command-palette__title">
+                      {command.title}
+                    </span>
+                    <span className="command-palette__detail">
+                      {command.detail}
+                    </span>
+                  </span>
+                  <span className="command-palette__command">
+                    {command.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   };
@@ -1922,7 +1676,7 @@ class NoteContentEditor extends Component<Props> {
             value={content}
           />
         )}
-        {this.renderSlashCommandPalette()}
+        {this.renderCommandPalette()}
       </div>
     );
   }

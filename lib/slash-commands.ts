@@ -1,4 +1,4 @@
-export type SlashCommandId =
+export type CommandPaletteCommandId =
   | 'new'
   | 'search'
   | 'all-notes'
@@ -11,38 +11,21 @@ export type SlashCommandId =
   | 'focus'
   | 'export';
 
-export type SlashCommand = {
-  id: SlashCommandId;
+export type CommandPaletteCommand = {
+  id: CommandPaletteCommandId;
   name: string;
   aliases: string[];
   title: string;
   detail: string;
 };
 
-export type SlashCommandTrigger = {
-  token: string;
-  query: string;
-  startColumn: number;
-  endColumn: number;
+export type CommandPaletteSuggestion = {
+  command: CommandPaletteCommand;
 };
 
-export type SlashCommandSuggestion = {
-  command: SlashCommand;
-  completion: string;
-  exactMatch: boolean;
-};
+export type CommandPaletteKeyAction = 'execute' | 'next' | 'previous' | 'close';
 
-export type SlashCommandSource = 'typed' | 'shortcut';
-
-export type SlashCommandKeyAction =
-  | 'complete'
-  | 'execute'
-  | 'next'
-  | 'previous'
-  | 'cancel'
-  | 'cancel-and-type';
-
-export const slashCommands: SlashCommand[] = [
+export const commandPaletteCommands: CommandPaletteCommand[] = [
   {
     id: 'new',
     name: 'new',
@@ -122,37 +105,12 @@ export const slashCommands: SlashCommand[] = [
   },
 ];
 
-export const getSlashCommandTrigger = (
-  line: string,
-  column: number
-): SlashCommandTrigger | null => {
-  const textBeforeCursor = line.slice(0, column - 1);
-  const token = /\S*$/.exec(textBeforeCursor)?.[0] ?? '';
-  const startIndex = textBeforeCursor.length - token.length;
-  const nextCharacter = line[column - 1];
+const normalizeQuery = (query: string) => query.trim().toLowerCase();
 
-  if (
-    !token.startsWith('/') ||
-    ('undefined' !== typeof nextCharacter && !/\s/.test(nextCharacter))
-  ) {
-    return null;
-  }
-
-  const query = token.slice(1).toLowerCase();
-
-  if (!/^[a-z]*$/.test(query)) {
-    return null;
-  }
-
-  return {
-    token,
-    query,
-    startColumn: startIndex + 1,
-    endColumn: column,
-  };
-};
-
-const scoreCommand = (command: SlashCommand, query: string): number | null => {
+const scoreCommand = (
+  command: CommandPaletteCommand,
+  query: string
+): number | null => {
   if (query.length === 0) {
     return 10;
   }
@@ -180,62 +138,46 @@ const scoreCommand = (command: SlashCommand, query: string): number | null => {
   return null;
 };
 
-export const getSlashCommandSuggestions = (
+export const getCommandPaletteSuggestions = (
   query: string
-): SlashCommandSuggestion[] =>
-  slashCommands
+): CommandPaletteSuggestion[] => {
+  const normalizedQuery = normalizeQuery(query);
+
+  return commandPaletteCommands
     .map((command, index) => ({
       command,
       index,
-      score: scoreCommand(command, query),
+      score: scoreCommand(command, normalizedQuery),
     }))
     .filter(
       (
         result
       ): result is {
-        command: SlashCommand;
+        command: CommandPaletteCommand;
         index: number;
         score: number;
       } => result.score !== null
     )
     .sort((a, b) => a.score - b.score || a.index - b.index)
-    .map(({ command }) => {
-      const exactMatch =
-        command.name === query || command.aliases.includes(query);
-      const completion = command.name.startsWith(query)
-        ? command.name.slice(query.length)
-        : command.name;
+    .map(({ command }) => ({ command }));
+};
 
-      return {
-        command,
-        completion,
-        exactMatch,
-      };
-    });
-
-export const getNextSlashCommandIndex = (
+export const getNextCommandPaletteIndex = (
   suggestionsLength: number,
   selectedIndex: number,
   offset: number
 ) => (suggestionsLength + selectedIndex + offset) % suggestionsLength;
 
-export const shouldRemoveSlashCommandToken = (
-  removeShortcutToken: boolean,
-  source?: SlashCommandSource
-) => removeShortcutToken && source === 'shortcut';
-
-export const getSlashCommandKeyAction = (
+export const getCommandPaletteKeyAction = (
   key: string,
   isComposing: boolean,
   isActive: boolean
-): SlashCommandKeyAction | null => {
+): CommandPaletteKeyAction | null => {
   if (!isActive || isComposing) {
     return null;
   }
 
   switch (key) {
-    case 'Tab':
-      return 'complete';
     case 'Enter':
       return 'execute';
     case 'ArrowDown':
@@ -243,16 +185,13 @@ export const getSlashCommandKeyAction = (
     case 'ArrowUp':
       return 'previous';
     case 'Escape':
-      return 'cancel';
-    case ' ':
-    case 'Spacebar':
-      return 'cancel-and-type';
+      return 'close';
     default:
       return null;
   }
 };
 
-export const isSlashCommandPaletteShortcut = ({
+export const isCommandPaletteShortcut = ({
   altKey,
   ctrlKey,
   isComposing,
