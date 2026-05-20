@@ -4,6 +4,7 @@ import {
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
   isSlashCommandPaletteShortcut,
+  shouldRemoveSlashCommandToken,
 } from './slash-commands';
 
 describe('slash commands', () => {
@@ -126,6 +127,15 @@ describe('slash commands', () => {
 
     it('ignores unrelated keys', () => {
       expect(getSlashCommandKeyAction('a', false, true)).toBeNull();
+    });
+  });
+
+  describe('shouldRemoveSlashCommandToken', () => {
+    it('only removes slash command text that was inserted by the shortcut', () => {
+      expect(shouldRemoveSlashCommandToken(true, 'shortcut')).toBe(true);
+      expect(shouldRemoveSlashCommandToken(true, 'typed')).toBe(false);
+      expect(shouldRemoveSlashCommandToken(false, 'shortcut')).toBe(false);
+      expect(shouldRemoveSlashCommandToken(true)).toBe(false);
     });
   });
 

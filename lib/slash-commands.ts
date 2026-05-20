@@ -32,6 +32,8 @@ export type SlashCommandSuggestion = {
   exactMatch: boolean;
 };
 
+export type SlashCommandSource = 'typed' | 'shortcut';
+
 export type SlashCommandKeyAction =
   | 'complete'
   | 'execute'
@@ -216,6 +218,11 @@ export const getNextSlashCommandIndex = (
   selectedIndex: number,
   offset: number
 ) => (suggestionsLength + selectedIndex + offset) % suggestionsLength;
+
+export const shouldRemoveSlashCommandToken = (
+  removeShortcutToken: boolean,
+  source?: SlashCommandSource
+) => removeShortcutToken && source === 'shortcut';
 
 export const getSlashCommandKeyAction = (
   key: string,

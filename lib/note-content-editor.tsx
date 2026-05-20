@@ -37,8 +37,10 @@ import {
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
   isSlashCommandPaletteShortcut,
+  shouldRemoveSlashCommandToken,
   SlashCommandId,
   SlashCommandSuggestion,
+  SlashCommandSource,
   SlashCommandTrigger,
 } from './slash-commands';
 import {
@@ -174,7 +176,7 @@ type OwnState = {
 
 type SlashCommandPaletteState = {
   lineNumber: number;
-  source: 'typed' | 'shortcut';
+  source: SlashCommandSource;
   trigger: SlashCommandTrigger;
   suggestions: SlashCommandSuggestion[];
   selectedIndex: number;
@@ -185,6 +187,7 @@ type SlashCommandPaletteState = {
 
 type SlashCommandTokenRange = {
   lineNumber: number;
+  source: SlashCommandSource;
   trigger: SlashCommandTrigger;
 };
 
@@ -202,6 +205,7 @@ class NoteContentEditor extends Component<Props> {
     startColumn: number;
   } | null = null;
   isRemovingShortcutSlashCommand = false;
+  isPreservingSlashCommandText = false;
 
   state: OwnState = {
     content: '',
@@ -582,7 +586,11 @@ class NoteContentEditor extends Component<Props> {
     this.slashCommandDecoration?.clear();
     this.slashCommandShortcutAnchor = null;
 
-    if (removeShortcutToken && tokenRange) {
+    if (
+      tokenRange &&
+      !this.isPreservingSlashCommandText &&
+      shouldRemoveSlashCommandToken(removeShortcutToken, tokenRange.source)
+    ) {
       this.removeSlashCommandToken(tokenRange);
     }
 
@@ -644,7 +652,7 @@ class NoteContentEditor extends Component<Props> {
     if (suggestions.length === 0) {
       this.clearSlashCommand({
         removeShortcutToken: source === 'shortcut',
-        tokenRange: { lineNumber: position.lineNumber, trigger },
+        tokenRange: { lineNumber: position.lineNumber, source, trigger },
       });
       return;
     }
@@ -852,6 +860,16 @@ class NoteContentEditor extends Component<Props> {
     this.replaceSlashCommandToken(`/${suggestion.command.name}`);
   };
 
+  typeThroughSlashCommand = (text: string) => {
+    this.isPreservingSlashCommandText = true;
+    try {
+      this.clearSlashCommand();
+      this.editor?.trigger('slash-command', 'type', { text });
+    } finally {
+      this.isPreservingSlashCommandText = false;
+    }
+  };
+
   executeSlashCommand = (commandId?: SlashCommandId) => {
     const { slashCommand } = this.state;
     const command =
@@ -942,7 +960,9 @@ class NoteContentEditor extends Component<Props> {
         this.clearSlashCommand({ removeShortcutToken: true });
         return;
       case 'cancel-and-type':
-        this.clearSlashCommand({ removeShortcutToken: true });
+        event.preventDefault();
+        event.stopPropagation();
+        this.typeThroughSlashCommand(' ');
         return;
     }
   };
