@@ -101,6 +101,9 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
   }
 };
 
+const getSlashCommandOptionId = (commandId: SlashCommandId) =>
+  `slash-command-option-${commandId}`;
+
 const getTextAfterBracket = (line: string, column: number) => {
   const precedingOpener = line.lastIndexOf('[', column);
   if (-1 === precedingOpener) {
@@ -274,6 +277,7 @@ class NoteContentEditor extends Component<Props> {
 
   componentWillUnmount() {
     setNotePosition(this.props.noteId, this.editor?.getScrollTop() ?? 0);
+    this.updateSlashCommandActiveDescendant(null);
 
     if (this.bootTimer) {
       clearTimeout(this.bootTimer);
@@ -585,6 +589,7 @@ class NoteContentEditor extends Component<Props> {
   } = {}) => {
     const slashCommand = this.state.slashCommand;
     this.slashCommandDecoration?.clear();
+    this.updateSlashCommandActiveDescendant(null);
     this.slashCommandShortcutAnchor = null;
 
     if (
@@ -782,9 +787,40 @@ class NoteContentEditor extends Component<Props> {
       inline: 'nearest',
     });
 
+  getSlashCommandInputArea = () =>
+    this.editor
+      ?.getDomNode()
+      ?.querySelector<HTMLTextAreaElement>('textarea.inputarea') ?? null;
+
+  updateSlashCommandActiveDescendant = (
+    slashCommand: SlashCommandPaletteState | null = this.state.slashCommand
+  ) => {
+    const inputArea = this.getSlashCommandInputArea();
+
+    if (!inputArea) {
+      return;
+    }
+
+    const selectedCommand =
+      slashCommand?.suggestions[slashCommand.selectedIndex]?.command;
+
+    if (!selectedCommand) {
+      inputArea.removeAttribute('aria-activedescendant');
+      inputArea.removeAttribute('aria-controls');
+      return;
+    }
+
+    inputArea.setAttribute('aria-controls', 'slash-command-palette');
+    inputArea.setAttribute(
+      'aria-activedescendant',
+      getSlashCommandOptionId(selectedCommand.id)
+    );
+  };
+
   updateSlashCommandSelection = (slashCommand: SlashCommandPaletteState) => {
     this.updateSlashCommandGhostText(slashCommand);
     this.scrollSelectedSlashCommandIntoView();
+    this.updateSlashCommandActiveDescendant(slashCommand);
   };
 
   selectSlashCommand = (selectedIndex: number) => {
@@ -1743,6 +1779,7 @@ class NoteContentEditor extends Component<Props> {
       <div
         aria-label="Slash commands"
         className="slash-command-palette"
+        id="slash-command-palette"
         ref={this.slashCommandPalette}
         role="listbox"
         style={{
@@ -1759,6 +1796,7 @@ class NoteContentEditor extends Component<Props> {
               className={`slash-command-palette__item${
                 isSelected ? ' is-selected' : ''
               }`}
+              id={getSlashCommandOptionId(command.id)}
               key={command.id}
               onMouseDown={(event) => {
                 event.preventDefault();
