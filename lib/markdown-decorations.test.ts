@@ -72,6 +72,109 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('decorates inline spans inside unordered list items', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines([
+        '- **bold** and *italic* and ~~strike~~',
+        '  * _also italic_ and __bold__',
+        '+ ***both*** and ___also___',
+      ])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 1,
+          endLineNumber: 1,
+          endColumn: 2,
+        },
+        options: { inlineClassName: 'md-list-marker' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 3,
+          endLineNumber: 1,
+          endColumn: 11,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 16,
+          endLineNumber: 1,
+          endColumn: 24,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 29,
+          endLineNumber: 1,
+          endColumn: 39,
+        },
+        options: { inlineClassName: 'md-strikethrough' },
+      },
+      {
+        range: {
+          startLineNumber: 2,
+          startColumn: 3,
+          endLineNumber: 2,
+          endColumn: 4,
+        },
+        options: { inlineClassName: 'md-list-marker' },
+      },
+      {
+        range: {
+          startLineNumber: 2,
+          startColumn: 5,
+          endLineNumber: 2,
+          endColumn: 18,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
+      {
+        range: {
+          startLineNumber: 2,
+          startColumn: 23,
+          endLineNumber: 2,
+          endColumn: 31,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+      {
+        range: {
+          startLineNumber: 3,
+          startColumn: 1,
+          endLineNumber: 3,
+          endColumn: 2,
+        },
+        options: { inlineClassName: 'md-list-marker' },
+      },
+      {
+        range: {
+          startLineNumber: 3,
+          startColumn: 3,
+          endLineNumber: 3,
+          endColumn: 13,
+        },
+        options: { inlineClassName: 'md-bold md-italic' },
+      },
+      {
+        range: {
+          startLineNumber: 3,
+          startColumn: 18,
+          endLineNumber: 3,
+          endColumn: 28,
+        },
+        options: { inlineClassName: 'md-bold md-italic' },
+      },
+    ]);
+  });
+
   it('decorates supported italic spans', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines(['A *simple span* here'])

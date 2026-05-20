@@ -171,10 +171,17 @@ export const getMarkdownDecorations = (
       decorations.push(
         decoration(lineNumber, markerColumn, markerColumn + 1, 'md-list-marker')
       );
-      continue;
     }
 
     const skippedSpans = [
+      ...(listMatch
+        ? [
+            {
+              start: listMatch[1].length,
+              end: listMatch[1].length + listMatch[2].length,
+            },
+          ]
+        : []),
       ...spansForPattern(line, urlPattern),
       ...codeSpansForLine(line),
     ];
