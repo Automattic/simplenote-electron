@@ -1,10 +1,14 @@
 import { editor as Editor } from 'monaco-editor';
 
 const urlPattern = /https?:\/\/\S+/g;
-const boldPattern = /\*\*([^\s*][^*]*[^\s*]|[^\s*])\*\*/g;
-const italicPattern = /\*([^\s*][^*]*[^\s*]|[^\s*])\*/g;
-const underscoreItalicPattern = /_([^\s_][^_]*[^\s_]|[^\s_])_/g;
+const boldItalicPattern = /\*\*\*(\S[\s\S]*?)\*\*\*/g;
+const boldPattern = /\*\*(\S[\s\S]*?)\*\*/g;
+const italicPattern = /\*([^\s*][\s\S]*?)\*/g;
+const underscoreBoldItalicPattern = /\b___(\S[\s\S]*?)___\b/g;
+const underscoreBoldPattern = /\b__(\S[\s\S]*?)__\b/g;
+const underscoreItalicPattern = /\b_(\S[\s\S]*?)_\b/g;
 const strikethroughPattern = /~~([^\s~][^~]*[^\s~]|[^\s~])~~/g;
+const codeFencePattern = /^ {0,3}(`{3,}|~{3,})/;
 
 type Span = {
   start: number;
@@ -45,20 +49,34 @@ const spansForPattern = (line: string, pattern: RegExp): Span[] => {
   return spans;
 };
 
+const codeSpansForLine = (line: string): Span[] => {
+  const spans: Span[] = [];
+  let index = 0;
+
+  while (index < line.length) {
+    const start = line.indexOf('`', index);
+    if (start === -1) {
+      break;
+    }
+
+    const delimiterLength = line.slice(start).match(/^`+/)?.[0].length ?? 0;
+    const end = line.indexOf(
+      '`'.repeat(delimiterLength),
+      start + delimiterLength
+    );
+    if (end === -1) {
+      break;
+    }
+
+    spans.push({ start, end: end + delimiterLength });
+    index = end + delimiterLength;
+  }
+
+  return spans;
+};
+
 const overlapsSpan = (start: number, end: number, spans: Span[]) =>
   spans.some((span) => start < span.end && end > span.start);
-
-const isPartOfAsteriskRun = (line: string, start: number, end: number) =>
-  line[start - 1] === '*' || line[end] === '*';
-
-const isPartOfUnderscoreRun = (line: string, start: number, end: number) =>
-  line[start - 1] === '_' || line[end] === '_';
-
-const isWordCharacter = (character: string | undefined) =>
-  typeof character === 'string' && /\w/.test(character);
-
-const isInsideWord = (line: string, start: number, end: number) =>
-  isWordCharacter(line[start - 1]) || isWordCharacter(line[end]);
 
 const isEscaped = (line: string, index: number) => {
   let slashCount = 0;
@@ -66,6 +84,37 @@ const isEscaped = (line: string, index: number) => {
     slashCount++;
   }
   return slashCount % 2 === 1;
+};
+
+const hasTextBeforeClosingMarker = (text: string) => /\S$/.test(text);
+
+const addInlineSpansForPattern = (
+  line: string,
+  pattern: RegExp,
+  markerLength: number,
+  inlineClassName: string,
+  skippedSpans: Span[],
+  inlineSpans: InlineSpan[]
+) => {
+  let match;
+
+  pattern.lastIndex = 0;
+  while ((match = pattern.exec(line))) {
+    const start = match.index;
+    const end = start + match[0].length;
+
+    if (
+      !hasTextBeforeClosingMarker(match[1]) ||
+      isEscaped(line, start) ||
+      isEscaped(line, end - markerLength) ||
+      overlapsSpan(start, end, skippedSpans) ||
+      overlapsSpan(start, end, inlineSpans)
+    ) {
+      continue;
+    }
+
+    inlineSpans.push({ start, end, inlineClassName });
+  }
 };
 
 export const getMarkdownDecorations = (
@@ -76,9 +125,31 @@ export const getMarkdownDecorations = (
   }
 
   const decorations: Editor.IModelDeltaDecoration[] = [];
+  let codeFence: { character: string; length: number } | null = null;
 
   for (let lineNumber = 1; lineNumber <= model.getLineCount(); lineNumber++) {
     const line = model.getLineContent(lineNumber);
+    const codeFenceMatch = codeFencePattern.exec(line);
+
+    if (codeFence) {
+      if (
+        codeFenceMatch &&
+        codeFenceMatch[1][0] === codeFence.character &&
+        codeFenceMatch[1].length >= codeFence.length
+      ) {
+        codeFence = null;
+      }
+      continue;
+    }
+
+    if (codeFenceMatch) {
+      codeFence = {
+        character: codeFenceMatch[1][0],
+        length: codeFenceMatch[1].length,
+      };
+      continue;
+    }
+
     const headingMatch = /^(#{1,6})\s+(.+)$/.exec(line);
 
     if (headingMatch) {
@@ -103,79 +174,68 @@ export const getMarkdownDecorations = (
       continue;
     }
 
-    const urlSpans = spansForPattern(line, urlPattern);
+    const skippedSpans = [
+      ...spansForPattern(line, urlPattern),
+      ...codeSpansForLine(line),
+    ];
     const inlineSpans: InlineSpan[] = [];
 
-    let match;
-    boldPattern.lastIndex = 0;
-    while ((match = boldPattern.exec(line))) {
-      const start = match.index;
-      const end = start + match[0].length;
-
-      if (
-        isEscaped(line, start) ||
-        isEscaped(line, end - 2) ||
-        overlapsSpan(start, end, urlSpans)
-      ) {
-        continue;
-      }
-
-      inlineSpans.push({ start, end, inlineClassName: 'md-bold' });
-    }
-
-    italicPattern.lastIndex = 0;
-    while ((match = italicPattern.exec(line))) {
-      const start = match.index;
-      const end = start + match[0].length;
-
-      if (
-        isEscaped(line, start) ||
-        isEscaped(line, end - 1) ||
-        isPartOfAsteriskRun(line, start, end) ||
-        overlapsSpan(start, end, urlSpans) ||
-        overlapsSpan(start, end, inlineSpans)
-      ) {
-        continue;
-      }
-
-      inlineSpans.push({ start, end, inlineClassName: 'md-italic' });
-    }
-
-    underscoreItalicPattern.lastIndex = 0;
-    while ((match = underscoreItalicPattern.exec(line))) {
-      const start = match.index;
-      const end = start + match[0].length;
-
-      if (
-        isEscaped(line, start) ||
-        isEscaped(line, end - 1) ||
-        isPartOfUnderscoreRun(line, start, end) ||
-        isInsideWord(line, start, end) ||
-        overlapsSpan(start, end, urlSpans) ||
-        overlapsSpan(start, end, inlineSpans)
-      ) {
-        continue;
-      }
-
-      inlineSpans.push({ start, end, inlineClassName: 'md-italic' });
-    }
-
-    strikethroughPattern.lastIndex = 0;
-    while ((match = strikethroughPattern.exec(line))) {
-      const start = match.index;
-      const end = start + match[0].length;
-
-      if (
-        isEscaped(line, start) ||
-        isEscaped(line, end - 2) ||
-        overlapsSpan(start, end, urlSpans) ||
-        overlapsSpan(start, end, inlineSpans)
-      ) {
-        continue;
-      }
-
-      inlineSpans.push({ start, end, inlineClassName: 'md-strikethrough' });
-    }
+    addInlineSpansForPattern(
+      line,
+      boldItalicPattern,
+      3,
+      'md-bold md-italic',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      boldPattern,
+      2,
+      'md-bold',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      italicPattern,
+      1,
+      'md-italic',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      underscoreBoldItalicPattern,
+      3,
+      'md-bold md-italic',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      underscoreBoldPattern,
+      2,
+      'md-bold',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      underscoreItalicPattern,
+      1,
+      'md-italic',
+      skippedSpans,
+      inlineSpans
+    );
+    addInlineSpansForPattern(
+      line,
+      strikethroughPattern,
+      2,
+      'md-strikethrough',
+      skippedSpans,
+      inlineSpans
+    );
 
     inlineSpans
       .sort((a, b) => a.start - b.start)

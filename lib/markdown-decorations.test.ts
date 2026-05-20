@@ -108,6 +108,33 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('decorates renderer-compatible underscore spans', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['Decorate _foo_bar_ and __bold__'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 10,
+          endLineNumber: 1,
+          endColumn: 19,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 24,
+          endLineNumber: 1,
+          endColumn: 32,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+    ]);
+  });
+
   it('decorates double-asterisk spans as bold instead of italic', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines(['A **bold span** here'])
@@ -122,6 +149,33 @@ describe('getMarkdownDecorations', () => {
           endColumn: 16,
         },
         options: { inlineClassName: 'md-bold' },
+      },
+    ]);
+  });
+
+  it('decorates combined bold and italic spans', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['***both*** and ___also___'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 1,
+          endLineNumber: 1,
+          endColumn: 11,
+        },
+        options: { inlineClassName: 'md-bold md-italic' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 16,
+          endLineNumber: 1,
+          endColumn: 26,
+        },
+        options: { inlineClassName: 'md-bold md-italic' },
       },
     ]);
   });
@@ -189,6 +243,31 @@ describe('getMarkdownDecorations', () => {
     );
 
     expect(decorations).toEqual([]);
+  });
+
+  it('does not decorate inline markers inside code spans or fenced code blocks', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines([
+        'Inline `**literal**` and `*literal*`',
+        '```',
+        '# Literal heading',
+        '**literal**',
+        '```',
+        'After **bold**',
+      ])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 6,
+          startColumn: 7,
+          endLineNumber: 6,
+          endColumn: 15,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+    ]);
   });
 
   it('does not decorate whitespace-padded italic markers', () => {
