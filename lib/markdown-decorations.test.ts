@@ -36,9 +36,9 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
-  it('decorates only the asterisk marker for supported unordered lists', () => {
+  it('decorates supported unordered list markers', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['* list item', '- out of scope'])
+      modelFromLines(['* list item', '- second item', '  + nested item'])
     );
 
     expect(decorations).toEqual([
@@ -48,6 +48,24 @@ describe('getMarkdownDecorations', () => {
           startColumn: 1,
           endLineNumber: 1,
           endColumn: 2,
+        },
+        options: { inlineClassName: 'md-list-marker' },
+      },
+      {
+        range: {
+          startLineNumber: 2,
+          startColumn: 1,
+          endLineNumber: 2,
+          endColumn: 2,
+        },
+        options: { inlineClassName: 'md-list-marker' },
+      },
+      {
+        range: {
+          startLineNumber: 3,
+          startColumn: 3,
+          endLineNumber: 3,
+          endColumn: 4,
         },
         options: { inlineClassName: 'md-list-marker' },
       },
@@ -144,9 +162,30 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('decorates supported strikethrough spans', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['A ~~struck span~~ here'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 3,
+          endLineNumber: 1,
+          endColumn: 18,
+        },
+        options: { inlineClassName: 'md-strikethrough' },
+      },
+    ]);
+  });
+
   it('does not decorate escaped markers or URL-like spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Skip \\*escaped\\* and https://example.com/*path*'])
+      modelFromLines([
+        'Skip \\*escaped\\* and https://example.com/*path*',
+        'Skip \\~~escaped~~ and https://example.com/~~path~~',
+      ])
     );
 
     expect(decorations).toEqual([]);
@@ -154,7 +193,9 @@ describe('getMarkdownDecorations', () => {
 
   it('does not decorate whitespace-padded italic markers', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Skip * padded* and *padded * and _ padded_'])
+      modelFromLines([
+        'Skip * padded* and *padded * and _ padded_ and ~~ nope~~',
+      ])
     );
 
     expect(decorations).toEqual([]);

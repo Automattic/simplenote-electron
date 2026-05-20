@@ -4,6 +4,7 @@ const urlPattern = /https?:\/\/\S+/g;
 const boldPattern = /\*\*([^\s*][^*]*[^\s*]|[^\s*])\*\*/g;
 const italicPattern = /\*([^\s*][^*]*[^\s*]|[^\s*])\*/g;
 const underscoreItalicPattern = /_([^\s_][^_]*[^\s_]|[^\s_])_/g;
+const strikethroughPattern = /~~([^\s~][^~]*[^\s~]|[^\s~])~~/g;
 
 type Span = {
   start: number;
@@ -93,8 +94,12 @@ export const getMarkdownDecorations = (
       continue;
     }
 
-    if (/^\*\s+/.test(line)) {
-      decorations.push(decoration(lineNumber, 1, 2, 'md-list-marker'));
+    const listMatch = /^(\s*)([-*+])\s+/.exec(line);
+    if (listMatch) {
+      const markerColumn = listMatch[1].length + 1;
+      decorations.push(
+        decoration(lineNumber, markerColumn, markerColumn + 1, 'md-list-marker')
+      );
       continue;
     }
 
@@ -153,6 +158,23 @@ export const getMarkdownDecorations = (
       }
 
       inlineSpans.push({ start, end, inlineClassName: 'md-italic' });
+    }
+
+    strikethroughPattern.lastIndex = 0;
+    while ((match = strikethroughPattern.exec(line))) {
+      const start = match.index;
+      const end = start + match[0].length;
+
+      if (
+        isEscaped(line, start) ||
+        isEscaped(line, end - 2) ||
+        overlapsSpan(start, end, urlSpans) ||
+        overlapsSpan(start, end, inlineSpans)
+      ) {
+        continue;
+      }
+
+      inlineSpans.push({ start, end, inlineClassName: 'md-strikethrough' });
     }
 
     inlineSpans
