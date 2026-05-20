@@ -31,11 +31,20 @@ import {
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
 import {
+  CommandPaletteCommandId,
+  CommandPaletteSuggestion,
+  getCommandPaletteKeyAction,
+  getCommandPaletteSuggestions,
+  getNextCommandPaletteIndex,
+  isCommandPaletteShortcut,
+} from './slash-commands';
+import {
   clearNotePositions,
   getNotePosition,
   setNotePosition,
 } from './utils/note-scroll-position';
 import { getMarkdownDecorations } from './markdown-decorations';
+import { viewExternalUrl } from './utils/url-utils';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -88,6 +97,9 @@ const getEditorPadding = (lineLength: T.LineLength, width?: number) => {
   }
 };
 
+const getCommandPaletteOptionId = (commandId: CommandPaletteCommandId) =>
+  `command-palette-option-${commandId}`;
+
 const getTextAfterBracket = (line: string, column: number) => {
   const precedingOpener = line.lastIndexOf('[', column);
   if (-1 === precedingOpener) {
@@ -127,9 +139,18 @@ type StateProps = {
 
 type DispatchProps = {
   clearSearch: () => any;
+  createNote: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  exportNotes: () => any;
+  focusSearchField: () => any;
   insertTask: () => any;
   openNote: (noteId: T.EntityId) => any;
+  selectTrash: () => any;
+  showAbout: () => any;
+  showAllNotes: () => any;
+  showKeyboardShortcuts: () => any;
+  showPreferences: () => any;
+  showUntaggedNotes: () => any;
   storeEditorSelection: (
     noteId: T.EntityId,
     start: number,
@@ -138,31 +159,42 @@ type DispatchProps = {
   ) => any;
   storeNumberOfMatchesInNote: (matches: number) => any;
   storeSearchSelection: (index: number | null) => any;
+  toggleFocusMode: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 type OwnState = {
   content: string;
+  commandPalette: CommandPaletteState | null;
   editor: 'fast' | 'full';
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
 };
 
+type CommandPaletteState = {
+  query: string;
+  suggestions: CommandPaletteSuggestion[];
+  selectedIndex: number;
+};
+
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
-  monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
+  commandPaletteInput = createRef<HTMLInputElement>();
+  selectedCommandPaletteItem = createRef<HTMLButtonElement>();
   decorations: Editor.IEditorDecorationsCollection | undefined;
   markdownDecorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
+  focusBeforeCommandPalette: HTMLElement | null = null;
   isComposing = false;
 
   state: OwnState = {
     content: '',
+    commandPalette: null,
     editor: 'fast',
     noteId: null,
     overTodo: false,
@@ -332,6 +364,13 @@ class NoteContentEditor extends Component<Props> {
   };
 
   handleShortcut = (event: KeyboardEvent) => {
+    if (this.props.keyboardShortcuts && isCommandPaletteShortcut(event)) {
+      this.openCommandPalette();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
     const { ctrlKey, metaKey, shiftKey } = event;
     const key = event.key.toLowerCase();
 
@@ -531,6 +570,177 @@ class NoteContentEditor extends Component<Props> {
   focusEditor = () => this.editor?.focus();
 
   hasFocus = () => this.editor?.hasTextFocus() || false;
+
+  openCommandPalette = () => {
+    const suggestions = getCommandPaletteSuggestions('');
+
+    if (!this.state.commandPalette) {
+      this.focusBeforeCommandPalette = document.activeElement as HTMLElement;
+    }
+
+    this.setState(
+      {
+        commandPalette: {
+          query: '',
+          suggestions,
+          selectedIndex: 0,
+        },
+      },
+      () => this.commandPaletteInput.current?.focus()
+    );
+  };
+
+  closeCommandPalette = ({ restoreFocus = true } = {}) => {
+    if (!this.state.commandPalette) {
+      return;
+    }
+
+    this.setState({ commandPalette: null }, () => {
+      if (restoreFocus) {
+        this.focusBeforeCommandPalette?.focus();
+      }
+      this.focusBeforeCommandPalette = null;
+    });
+  };
+
+  updateCommandPaletteQuery = (query: string) => {
+    const suggestions = getCommandPaletteSuggestions(query);
+
+    this.setState({
+      commandPalette: {
+        query,
+        suggestions,
+        selectedIndex: 0,
+      },
+    });
+  };
+
+  scrollSelectedCommandPaletteItemIntoView = () =>
+    this.selectedCommandPaletteItem.current?.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    });
+
+  selectCommandPaletteItem = (selectedIndex: number) => {
+    const { commandPalette } = this.state;
+
+    if (!commandPalette?.suggestions[selectedIndex]) {
+      return;
+    }
+
+    this.setState(
+      {
+        commandPalette: {
+          ...commandPalette,
+          selectedIndex,
+        },
+      },
+      this.scrollSelectedCommandPaletteItemIntoView
+    );
+  };
+
+  selectNextCommandPaletteItem = (offset: number) => {
+    const { commandPalette } = this.state;
+
+    if (!commandPalette?.suggestions.length) {
+      return;
+    }
+
+    this.selectCommandPaletteItem(
+      getNextCommandPaletteIndex(
+        commandPalette.suggestions.length,
+        commandPalette.selectedIndex,
+        offset
+      )
+    );
+  };
+
+  executeCommandPaletteCommand = (commandId?: CommandPaletteCommandId) => {
+    const { commandPalette } = this.state;
+    const command =
+      commandId ??
+      commandPalette?.suggestions[commandPalette.selectedIndex]?.command.id;
+
+    if (!command) {
+      return;
+    }
+
+    this.closeCommandPalette({ restoreFocus: false });
+
+    switch (command) {
+      case 'new':
+        this.props.createNote();
+        return;
+      case 'search':
+        this.props.focusSearchField();
+        return;
+      case 'all-notes':
+        this.props.showAllNotes();
+        return;
+      case 'untagged-notes':
+        this.props.showUntaggedNotes();
+        return;
+      case 'trash':
+        this.props.selectTrash();
+        return;
+      case 'settings':
+        this.props.showPreferences();
+        return;
+      case 'shortcuts':
+        this.props.showKeyboardShortcuts();
+        return;
+      case 'help':
+        viewExternalUrl('http://simplenote.com/help');
+        return;
+      case 'about':
+        this.props.showAbout();
+        return;
+      case 'focus':
+        this.props.toggleFocusMode();
+        return;
+      case 'export':
+        this.props.exportNotes();
+        return;
+    }
+  };
+
+  handleCommandPaletteKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    const { commandPalette } = this.state;
+    const action = getCommandPaletteKeyAction(
+      event.key,
+      event.nativeEvent.isComposing,
+      !!commandPalette
+    );
+
+    if (!commandPalette || !action) {
+      return;
+    }
+
+    switch (action) {
+      case 'execute':
+        event.preventDefault();
+        event.stopPropagation();
+        this.executeCommandPaletteCommand();
+        return;
+      case 'next':
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectNextCommandPaletteItem(1);
+        return;
+      case 'previous':
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectNextCommandPaletteItem(-1);
+        return;
+      case 'close':
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeCommandPalette();
+        return;
+    }
+  };
 
   handleChecklist = (event: Event) => {
     this.editor?.trigger('editorCommand', 'insertChecklist', null);
@@ -1284,6 +1494,105 @@ class NoteContentEditor extends Component<Props> {
     });
   };
 
+  renderCommandPalette = () => {
+    const { commandPalette } = this.state;
+
+    if (!commandPalette) {
+      return null;
+    }
+
+    const selectedCommand =
+      commandPalette.suggestions[commandPalette.selectedIndex]?.command;
+
+    return (
+      <div
+        className="command-palette-modal"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) {
+            this.closeCommandPalette();
+          }
+          event.stopPropagation();
+        }}
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div
+          aria-label="Command palette"
+          aria-modal="true"
+          className="command-palette"
+          role="dialog"
+        >
+          <input
+            aria-activedescendant={
+              selectedCommand
+                ? getCommandPaletteOptionId(selectedCommand.id)
+                : undefined
+            }
+            aria-controls="command-palette-list"
+            aria-expanded="true"
+            aria-label="Command"
+            autoComplete="off"
+            className="command-palette__input"
+            onChange={(event) =>
+              this.updateCommandPaletteQuery(event.target.value)
+            }
+            onKeyDown={this.handleCommandPaletteKeyDown}
+            placeholder="Search commands"
+            ref={this.commandPaletteInput}
+            role="combobox"
+            spellCheck={false}
+            type="text"
+            value={commandPalette.query}
+          />
+          <div
+            className="command-palette__list"
+            id="command-palette-list"
+            role="listbox"
+          >
+            {commandPalette.suggestions.length === 0 && (
+              <div className="command-palette__empty">No commands found</div>
+            )}
+            {commandPalette.suggestions.map(({ command }, index) => {
+              const isSelected = index === commandPalette.selectedIndex;
+              return (
+                <button
+                  aria-selected={isSelected}
+                  className={`command-palette__item${
+                    isSelected ? ' is-selected' : ''
+                  }`}
+                  id={getCommandPaletteOptionId(command.id)}
+                  key={command.id}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    this.executeCommandPaletteCommand(command.id);
+                  }}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                  }}
+                  onMouseEnter={() => this.selectCommandPaletteItem(index)}
+                  ref={isSelected ? this.selectedCommandPaletteItem : null}
+                  role="option"
+                  type="button"
+                >
+                  <span className="command-palette__item-copy">
+                    <span className="command-palette__title">
+                      {command.title}
+                    </span>
+                    <span className="command-palette__detail">
+                      {command.detail}
+                    </span>
+                  </span>
+                  <span className="command-palette__command">
+                    {command.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo } = this.state;
@@ -1386,6 +1695,7 @@ class NoteContentEditor extends Component<Props> {
             value={content}
           />
         )}
+        {this.renderCommandPalette()}
       </div>
     );
   }
@@ -1411,9 +1721,18 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   clearSearch: () => actions.ui.search(''),
+  createNote: actions.ui.createNote,
   editNote: actions.data.editNote,
+  exportNotes: actions.data.exportNotes,
+  focusSearchField: actions.ui.focusSearchField,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   openNote: actions.ui.selectNote,
+  selectTrash: actions.ui.selectTrash,
+  showAbout: () => actions.ui.showDialog('ABOUT'),
+  showAllNotes: actions.ui.showAllNotes,
+  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
+  showPreferences: () => actions.ui.showDialog('SETTINGS'),
+  showUntaggedNotes: actions.ui.showUntaggedNotes,
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
     noteId,
@@ -1429,6 +1748,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     type: 'STORE_SEARCH_SELECTION',
     index,
   }),
+  toggleFocusMode: actions.settings.toggleFocusMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteContentEditor);

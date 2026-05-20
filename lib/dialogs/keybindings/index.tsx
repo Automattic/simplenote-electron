@@ -52,6 +52,9 @@ export class AboutDialog extends Component<DispatchProps> {
                   <Keys keys={[CmdOrCtrl, '/']}>Show keyboard shortcuts</Keys>
                 </li>
                 <li>
+                  <Keys keys={[CmdOrCtrl, 'K']}>Show command palette</Keys>
+                </li>
+                <li>
                   <Keys keys={[CmdOrCtrl, 'Shift', 'F']}>
                     Toggle focus mode
                   </Keys>
