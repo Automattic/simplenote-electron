@@ -3,6 +3,7 @@ import { editor as Editor } from 'monaco-editor';
 const urlPattern = /https?:\/\/\S+/g;
 const boldPattern = /\*\*([^\s*][^*]*[^\s*]|[^\s*])\*\*/g;
 const italicPattern = /\*([^\s*][^*]*[^\s*]|[^\s*])\*/g;
+const underscoreItalicPattern = /_([^\s_][^_]*[^\s_]|[^\s_])_/g;
 
 type Span = {
   start: number;
@@ -48,6 +49,15 @@ const overlapsSpan = (start: number, end: number, spans: Span[]) =>
 
 const isPartOfAsteriskRun = (line: string, start: number, end: number) =>
   line[start - 1] === '*' || line[end] === '*';
+
+const isPartOfUnderscoreRun = (line: string, start: number, end: number) =>
+  line[start - 1] === '_' || line[end] === '_';
+
+const isWordCharacter = (character: string | undefined) =>
+  typeof character === 'string' && /\w/.test(character);
+
+const isInsideWord = (line: string, start: number, end: number) =>
+  isWordCharacter(line[start - 1]) || isWordCharacter(line[end]);
 
 const isEscaped = (line: string, index: number) => {
   let slashCount = 0;
@@ -117,6 +127,25 @@ export const getMarkdownDecorations = (
         isEscaped(line, start) ||
         isEscaped(line, end - 1) ||
         isPartOfAsteriskRun(line, start, end) ||
+        overlapsSpan(start, end, urlSpans) ||
+        overlapsSpan(start, end, inlineSpans)
+      ) {
+        continue;
+      }
+
+      inlineSpans.push({ start, end, inlineClassName: 'md-italic' });
+    }
+
+    underscoreItalicPattern.lastIndex = 0;
+    while ((match = underscoreItalicPattern.exec(line))) {
+      const start = match.index;
+      const end = start + match[0].length;
+
+      if (
+        isEscaped(line, start) ||
+        isEscaped(line, end - 1) ||
+        isPartOfUnderscoreRun(line, start, end) ||
+        isInsideWord(line, start, end) ||
         overlapsSpan(start, end, urlSpans) ||
         overlapsSpan(start, end, inlineSpans)
       ) {

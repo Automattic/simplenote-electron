@@ -72,6 +72,24 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('decorates supported underscore italic spans', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['A _simple span_ here'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 3,
+          endLineNumber: 1,
+          endColumn: 16,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
+    ]);
+  });
+
   it('decorates double-asterisk spans as bold instead of italic', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines(['A **bold span** here'])
@@ -92,7 +110,7 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates bold and italic spans independently', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Use **bold** and *italic*'])
+      modelFromLines(['Use **bold** and *italic* and _also italic_'])
     );
 
     expect(decorations).toEqual([
@@ -114,6 +132,15 @@ describe('getMarkdownDecorations', () => {
         },
         options: { inlineClassName: 'md-italic' },
       },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 31,
+          endLineNumber: 1,
+          endColumn: 44,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
     ]);
   });
 
@@ -127,7 +154,15 @@ describe('getMarkdownDecorations', () => {
 
   it('does not decorate whitespace-padded italic markers', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Skip * padded* and *padded *'])
+      modelFromLines(['Skip * padded* and *padded * and _ padded_'])
+    );
+
+    expect(decorations).toEqual([]);
+  });
+
+  it('does not decorate underscores inside words', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['Keep snake_case_text literal'])
     );
 
     expect(decorations).toEqual([]);
