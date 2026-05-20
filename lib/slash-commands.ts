@@ -1,8 +1,14 @@
 export type SlashCommandId =
+  | 'new'
   | 'search'
+  | 'all-notes'
+  | 'untagged-notes'
+  | 'trash'
+  | 'settings'
   | 'shortcuts'
+  | 'help'
+  | 'about'
   | 'focus'
-  | 'pref'
   | 'export';
 
 export type SlashCommand = {
@@ -36,11 +42,46 @@ export type SlashCommandKeyAction =
 
 export const slashCommands: SlashCommand[] = [
   {
+    id: 'new',
+    name: 'new',
+    aliases: ['create'],
+    title: 'New note',
+    detail: 'Create a new note',
+  },
+  {
     id: 'search',
     name: 'search',
     aliases: ['s'],
     title: 'Search notes',
     detail: 'Focus the notes search field',
+  },
+  {
+    id: 'all-notes',
+    name: 'all',
+    aliases: ['allnotes'],
+    title: 'All notes',
+    detail: 'Show all notes',
+  },
+  {
+    id: 'untagged-notes',
+    name: 'untagged',
+    aliases: ['untaggednotes'],
+    title: 'Untagged notes',
+    detail: 'Show notes without tags',
+  },
+  {
+    id: 'trash',
+    name: 'trash',
+    aliases: [],
+    title: 'Trash',
+    detail: 'Show trashed notes',
+  },
+  {
+    id: 'settings',
+    name: 'settings',
+    aliases: ['pref', 'preferences'],
+    title: 'Settings',
+    detail: 'Open app settings',
   },
   {
     id: 'shortcuts',
@@ -50,18 +91,25 @@ export const slashCommands: SlashCommand[] = [
     detail: 'Show available keyboard shortcuts',
   },
   {
+    id: 'help',
+    name: 'help',
+    aliases: ['support'],
+    title: 'Help & Support',
+    detail: 'Open Simplenote help',
+  },
+  {
+    id: 'about',
+    name: 'about',
+    aliases: [],
+    title: 'About',
+    detail: 'Show app information',
+  },
+  {
     id: 'focus',
     name: 'focus',
     aliases: [],
     title: 'Focus mode',
     detail: 'Toggle focus mode',
-  },
-  {
-    id: 'pref',
-    name: 'pref',
-    aliases: [],
-    title: 'Preferences',
-    detail: 'Open app preferences',
   },
   {
     id: 'export',

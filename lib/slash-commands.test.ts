@@ -48,7 +48,19 @@ describe('slash commands', () => {
     it('returns all commands for an empty query', () => {
       expect(
         getSlashCommandSuggestions('').map(({ command }) => command.id)
-      ).toEqual(['search', 'shortcuts', 'focus', 'pref', 'export']);
+      ).toEqual([
+        'new',
+        'search',
+        'all-notes',
+        'untagged-notes',
+        'trash',
+        'settings',
+        'shortcuts',
+        'help',
+        'about',
+        'focus',
+        'export',
+      ]);
     });
 
     it('ranks exact aliases ahead of prefix matches', () => {
@@ -65,6 +77,11 @@ describe('slash commands', () => {
       expect(first.command.id).toBe('shortcuts');
       expect(first.completion).toBe('ortcuts');
       expect(first.exactMatch).toBe(false);
+    });
+
+    it('matches command aliases for settings and new notes', () => {
+      expect(getSlashCommandSuggestions('pref')[0].command.id).toBe('settings');
+      expect(getSlashCommandSuggestions('create')[0].command.id).toBe('new');
     });
 
     it('does not show ghost text for an exact command', () => {

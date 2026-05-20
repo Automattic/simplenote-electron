@@ -46,6 +46,7 @@ import {
   getNotePosition,
   setNotePosition,
 } from './utils/note-scroll-position';
+import { viewExternalUrl } from './utils/url-utils';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -137,13 +138,18 @@ type StateProps = {
 
 type DispatchProps = {
   clearSearch: () => any;
+  createNote: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
   exportNotes: () => any;
   focusSearchField: () => any;
   insertTask: () => any;
   openNote: (noteId: T.EntityId) => any;
+  selectTrash: () => any;
+  showAbout: () => any;
+  showAllNotes: () => any;
   showKeyboardShortcuts: () => any;
   showPreferences: () => any;
+  showUntaggedNotes: () => any;
   storeEditorSelection: (
     noteId: T.EntityId,
     start: number,
@@ -860,17 +866,35 @@ class NoteContentEditor extends Component<Props> {
     this.clearSlashCommand();
 
     switch (command) {
+      case 'new':
+        this.props.createNote();
+        return;
       case 'search':
         this.props.focusSearchField();
+        return;
+      case 'all-notes':
+        this.props.showAllNotes();
+        return;
+      case 'untagged-notes':
+        this.props.showUntaggedNotes();
+        return;
+      case 'trash':
+        this.props.selectTrash();
+        return;
+      case 'settings':
+        this.props.showPreferences();
         return;
       case 'shortcuts':
         this.props.showKeyboardShortcuts();
         return;
+      case 'help':
+        viewExternalUrl('http://simplenote.com/help');
+        return;
+      case 'about':
+        this.props.showAbout();
+        return;
       case 'focus':
         this.props.toggleFocusMode();
-        return;
-      case 'pref':
-        this.props.showPreferences();
         return;
       case 'export':
         this.props.exportNotes();
@@ -1853,13 +1877,18 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   clearSearch: () => actions.ui.search(''),
+  createNote: actions.ui.createNote,
   editNote: actions.data.editNote,
   exportNotes: actions.data.exportNotes,
   focusSearchField: actions.ui.focusSearchField,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   openNote: actions.ui.selectNote,
+  selectTrash: actions.ui.selectTrash,
+  showAbout: () => actions.ui.showDialog('ABOUT'),
+  showAllNotes: actions.ui.showAllNotes,
   showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
   showPreferences: () => actions.ui.showDialog('SETTINGS'),
+  showUntaggedNotes: actions.ui.showUntaggedNotes,
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
     noteId,
