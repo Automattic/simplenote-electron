@@ -34,6 +34,10 @@ describe('slash commands', () => {
       expect(getSlashCommandTrigger('/search ', 9)).toBeNull();
     });
 
+    it('only detects a slash command at the end of the token', () => {
+      expect(getSlashCommandTrigger('/search', 3)).toBeNull();
+    });
+
     it('ignores command queries with punctuation', () => {
       expect(getSlashCommandTrigger('/search?', 9)).toBeNull();
     });

@@ -72,21 +72,19 @@ export const slashCommands: SlashCommand[] = [
   },
 ];
 
-const tokenStartPattern = /\s/;
-
 export const getSlashCommandTrigger = (
   line: string,
   column: number
 ): SlashCommandTrigger | null => {
   const textBeforeCursor = line.slice(0, column - 1);
-  const tokenStart = Math.max(
-    textBeforeCursor.lastIndexOf(' '),
-    textBeforeCursor.lastIndexOf('\t')
-  );
-  const startIndex = tokenStart + 1;
-  const token = textBeforeCursor.slice(startIndex);
+  const token = /\S*$/.exec(textBeforeCursor)?.[0] ?? '';
+  const startIndex = textBeforeCursor.length - token.length;
+  const nextCharacter = line[column - 1];
 
-  if (!token.startsWith('/') || tokenStartPattern.test(token)) {
+  if (
+    !token.startsWith('/') ||
+    ('undefined' !== typeof nextCharacter && !/\s/.test(nextCharacter))
+  ) {
     return null;
   }
 
