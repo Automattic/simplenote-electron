@@ -129,7 +129,7 @@ span[dir='ltr'] {
   color: var(--primary-color);
   max-height: 180px;
   min-width: 260px;
-  overflow: hidden;
+  overflow: hidden auto;
   padding: 4px;
   position: absolute;
   z-index: 20;

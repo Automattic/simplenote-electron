@@ -196,6 +196,7 @@ class NoteContentEditor extends Component<Props> {
   editor: Editor.IStandaloneCodeEditor | null = null;
   contentDiv = createRef<HTMLDivElement>();
   slashCommandPalette = createRef<HTMLDivElement>();
+  selectedSlashCommandItem = createRef<HTMLButtonElement>();
   decorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
@@ -699,7 +700,7 @@ class NoteContentEditor extends Component<Props> {
     };
 
     this.setState({ slashCommand: nextSlashCommand }, () =>
-      this.updateSlashCommandGhostText(nextSlashCommand)
+      this.updateSlashCommandSelection(nextSlashCommand)
     );
   };
 
@@ -775,6 +776,17 @@ class NoteContentEditor extends Component<Props> {
     ]);
   };
 
+  scrollSelectedSlashCommandIntoView = () =>
+    this.selectedSlashCommandItem.current?.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    });
+
+  updateSlashCommandSelection = (slashCommand: SlashCommandPaletteState) => {
+    this.updateSlashCommandGhostText(slashCommand);
+    this.scrollSelectedSlashCommandIntoView();
+  };
+
   selectSlashCommand = (selectedIndex: number) => {
     const { slashCommand } = this.state;
     const selected = slashCommand?.suggestions[selectedIndex];
@@ -790,7 +802,7 @@ class NoteContentEditor extends Component<Props> {
     };
 
     this.setState({ slashCommand: nextSlashCommand }, () =>
-      this.updateSlashCommandGhostText(nextSlashCommand)
+      this.updateSlashCommandSelection(nextSlashCommand)
     );
   };
 
@@ -1753,6 +1765,7 @@ class NoteContentEditor extends Component<Props> {
                 this.executeSlashCommand(command.id);
               }}
               onMouseEnter={() => this.selectSlashCommand(index)}
+              ref={isSelected ? this.selectedSlashCommandItem : null}
               role="option"
               type="button"
             >
