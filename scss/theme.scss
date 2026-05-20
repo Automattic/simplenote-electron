@@ -104,6 +104,11 @@ span[dir='ltr'] {
     background-color: var(--search-selection-color);
     padding: 2px 0;
   }
+
+  .slash-command-ghost {
+    color: var(--placeholder-color);
+    opacity: 0.75;
+  }
 }
 
 /* Safari requires that it be displayed absolute so that it takes the full height
@@ -114,6 +119,54 @@ span[dir='ltr'] {
   position: absolute;
   top: 0;
   width: 100%;
+}
+
+.slash-command-palette {
+  background: var(--background-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px var(--overlay-color);
+  color: var(--primary-color);
+  max-height: 180px;
+  min-width: 260px;
+  overflow: hidden;
+  padding: 4px;
+  position: absolute;
+  z-index: 20;
+}
+
+.slash-command-palette__item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 12px;
+  line-height: 20px;
+  min-height: 32px;
+  padding: 6px 8px;
+  text-align: left;
+  width: 100%;
+
+  &.is-selected {
+    background: var(--highlight-color);
+  }
+}
+
+.slash-command-palette__command {
+  color: var(--accent-color);
+  flex: 0 0 88px;
+  font-weight: 600;
+}
+
+.slash-command-palette__title {
+  color: var(--primary-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .note-detail-textarea .note-content-editor-shell.cursor-pointer div {

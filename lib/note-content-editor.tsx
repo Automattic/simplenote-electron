@@ -8,6 +8,7 @@ import Monaco, {
 import {
   editor as Editor,
   CancellationToken,
+  IKeyboardEvent,
   languages,
   IRange,
   Position,
@@ -30,6 +31,13 @@ import {
 } from './utils/clipboard/copy';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
+import {
+  getSlashCommandSuggestions,
+  getSlashCommandTrigger,
+  SlashCommandId,
+  SlashCommandSuggestion,
+  SlashCommandTrigger,
+} from './slash-commands';
 import {
   clearNotePositions,
   getNotePosition,
@@ -127,8 +135,12 @@ type StateProps = {
 type DispatchProps = {
   clearSearch: () => any;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => any;
+  exportNotes: () => any;
+  focusSearchField: () => any;
   insertTask: () => any;
   openNote: (noteId: T.EntityId) => any;
+  showKeyboardShortcuts: () => any;
+  showPreferences: () => any;
   storeEditorSelection: (
     noteId: T.EntityId,
     start: number,
@@ -137,6 +149,7 @@ type DispatchProps = {
   ) => any;
   storeNumberOfMatchesInNote: (matches: number) => any;
   storeSearchSelection: (index: number | null) => any;
+  toggleFocusMode: () => any;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -147,6 +160,16 @@ type OwnState = {
   noteId: T.EntityId | null;
   overTodo: boolean;
   searchQuery: string;
+  slashCommand: SlashCommandPaletteState | null;
+};
+
+type SlashCommandPaletteState = {
+  trigger: SlashCommandTrigger;
+  suggestions: SlashCommandSuggestion[];
+  selectedIndex: number;
+  top: number;
+  left: number;
+  ghostText: string;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -157,6 +180,7 @@ class NoteContentEditor extends Component<Props> {
   decorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
+  slashCommandDecoration: Editor.IEditorDecorationsCollection | undefined;
 
   state: OwnState = {
     content: '',
@@ -164,6 +188,7 @@ class NoteContentEditor extends Component<Props> {
     noteId: null,
     overTodo: false,
     searchQuery: '',
+    slashCommand: null,
   };
 
   static getDerivedStateFromProps(props: Props, state: OwnState) {
@@ -518,6 +543,261 @@ class NoteContentEditor extends Component<Props> {
 
   hasFocus = () => this.editor?.hasTextFocus() || false;
 
+  clearSlashCommand = () => {
+    this.slashCommandDecoration?.clear();
+    if (this.state.slashCommand) {
+      this.setState({ slashCommand: null });
+    }
+  };
+
+  updateSlashCommand = () => {
+    const editor = this.editor;
+    const model = editor?.getModel();
+    const position = editor?.getPosition();
+    const selection = editor?.getSelection();
+
+    if (!editor || !model || !position || !selection?.isEmpty()) {
+      this.clearSlashCommand();
+      return;
+    }
+
+    const line = model.getLineContent(position.lineNumber);
+    const trigger = getSlashCommandTrigger(line, position.column);
+
+    if (!trigger) {
+      this.clearSlashCommand();
+      return;
+    }
+
+    const suggestions = getSlashCommandSuggestions(trigger.query);
+    if (suggestions.length === 0) {
+      this.clearSlashCommand();
+      return;
+    }
+
+    const visiblePosition = editor.getScrolledVisiblePosition(position);
+    if (!visiblePosition) {
+      this.clearSlashCommand();
+      return;
+    }
+
+    const layout = editor.getLayoutInfo();
+    const paletteWidth = 280;
+    const paletteHeight = 190;
+    const left = Math.max(
+      8,
+      Math.min(visiblePosition.left, layout.width - paletteWidth - 8)
+    );
+    const top =
+      visiblePosition.top + paletteHeight > layout.height
+        ? Math.max(8, visiblePosition.top - paletteHeight)
+        : visiblePosition.top + visiblePosition.height + 6;
+
+    const previous = this.state.slashCommand;
+    const previousCommandId =
+      previous?.suggestions[previous.selectedIndex]?.command.id;
+    const selectedIndex = Math.max(
+      0,
+      suggestions.findIndex(({ command }) => command.id === previousCommandId)
+    );
+    const selected = suggestions[selectedIndex] ?? suggestions[0];
+    const nextSlashCommand = {
+      trigger,
+      suggestions,
+      selectedIndex,
+      top,
+      left,
+      ghostText: selected?.completion ?? '',
+    };
+
+    this.setState({ slashCommand: nextSlashCommand }, () =>
+      this.updateSlashCommandGhostText(nextSlashCommand)
+    );
+  };
+
+  updateSlashCommandGhostText = (slashCommand = this.state.slashCommand) => {
+    this.slashCommandDecoration?.clear();
+
+    if (!this.editor || !slashCommand?.ghostText) {
+      return;
+    }
+
+    const model = this.editor.getModel();
+    const position = this.editor.getPosition();
+
+    if (!model || !position) {
+      return;
+    }
+
+    const range = new Range(
+      position.lineNumber,
+      slashCommand.trigger.endColumn,
+      position.lineNumber,
+      slashCommand.trigger.endColumn
+    );
+
+    this.slashCommandDecoration = this.editor.createDecorationsCollection([
+      {
+        range,
+        options: {
+          showIfCollapsed: true,
+          after: {
+            content: slashCommand.ghostText,
+            inlineClassName: 'slash-command-ghost',
+            cursorStops: Editor.InjectedTextCursorStops.None,
+          },
+        },
+      },
+    ]);
+  };
+
+  selectSlashCommand = (selectedIndex: number) => {
+    const { slashCommand } = this.state;
+    const selected = slashCommand?.suggestions[selectedIndex];
+
+    if (!slashCommand || !selected) {
+      return;
+    }
+
+    const nextSlashCommand = {
+      ...slashCommand,
+      selectedIndex,
+      ghostText: selected.completion,
+    };
+
+    this.setState({ slashCommand: nextSlashCommand }, () =>
+      this.updateSlashCommandGhostText(nextSlashCommand)
+    );
+  };
+
+  selectNextSlashCommand = (offset: number) => {
+    const { slashCommand } = this.state;
+    if (!slashCommand) {
+      return;
+    }
+
+    const nextIndex =
+      (slashCommand.suggestions.length + slashCommand.selectedIndex + offset) %
+      slashCommand.suggestions.length;
+
+    this.selectSlashCommand(nextIndex);
+  };
+
+  replaceSlashCommandToken = (text: string) => {
+    const { slashCommand } = this.state;
+    const editor = this.editor;
+    const position = editor?.getPosition();
+
+    if (!slashCommand || !editor || !position) {
+      return;
+    }
+
+    const range = new Range(
+      position.lineNumber,
+      slashCommand.trigger.startColumn,
+      position.lineNumber,
+      slashCommand.trigger.endColumn
+    );
+
+    editor.executeEdits('slash-command', [
+      {
+        range,
+        text,
+        forceMoveMarkers: true,
+      },
+    ]);
+
+    editor.setPosition({
+      lineNumber: position.lineNumber,
+      column: slashCommand.trigger.startColumn + text.length,
+    });
+  };
+
+  completeSlashCommand = () => {
+    const { slashCommand } = this.state;
+    const suggestion = slashCommand?.suggestions[slashCommand.selectedIndex];
+
+    if (!slashCommand || !suggestion) {
+      return;
+    }
+
+    this.replaceSlashCommandToken(`/${suggestion.command.name}`);
+    Promise.resolve().then(this.updateSlashCommand);
+  };
+
+  executeSlashCommand = (commandId?: SlashCommandId) => {
+    const { slashCommand } = this.state;
+    const command =
+      commandId ??
+      slashCommand?.suggestions[slashCommand.selectedIndex]?.command.id;
+
+    if (!command) {
+      return;
+    }
+
+    this.replaceSlashCommandToken('');
+    this.clearSlashCommand();
+
+    switch (command) {
+      case 'search':
+        this.props.focusSearchField();
+        return;
+      case 'shortcuts':
+        this.props.showKeyboardShortcuts();
+        return;
+      case 'focus':
+        this.props.toggleFocusMode();
+        return;
+      case 'pref':
+        this.props.showPreferences();
+        return;
+      case 'export':
+        this.props.exportNotes();
+        return;
+    }
+  };
+
+  handleEditorKeyDown = (event: IKeyboardEvent) => {
+    const { slashCommand } = this.state;
+    const browserEvent = event.browserEvent as KeyboardEvent;
+
+    if (!slashCommand || browserEvent.isComposing) {
+      return;
+    }
+
+    switch (browserEvent.key) {
+      case 'Tab':
+        event.preventDefault();
+        event.stopPropagation();
+        this.completeSlashCommand();
+        return;
+      case 'Enter':
+        event.preventDefault();
+        event.stopPropagation();
+        this.executeSlashCommand();
+        return;
+      case 'ArrowDown':
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectNextSlashCommand(1);
+        return;
+      case 'ArrowUp':
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectNextSlashCommand(-1);
+        return;
+      case 'Escape':
+        event.preventDefault();
+        event.stopPropagation();
+        this.clearSlashCommand();
+        return;
+      case ' ':
+      case 'Spacebar':
+        this.clearSlashCommand();
+        return;
+    }
+  };
+
   handleChecklist = (event: Event) => {
     this.editor?.trigger('editorCommand', 'insertChecklist', null);
   };
@@ -724,6 +1004,7 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
+    this.monaco = monaco;
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -902,6 +1183,11 @@ class NoteContentEditor extends Component<Props> {
 
     // Tab to indent lists and tasks
     editor.addCommand(monaco.KeyCode.Tab, () => {
+      if (this.state.slashCommand) {
+        this.completeSlashCommand();
+        return;
+      }
+
       const lineNumber = editor.getPosition()?.lineNumber;
       if (!lineNumber) {
         return;
@@ -954,10 +1240,15 @@ class NoteContentEditor extends Component<Props> {
       window.addEventListener('input', this.handleUndoRedo, true);
     }
 
+    editor.onKeyDown(this.handleEditorKeyDown);
     this.setDecorators();
     // make component rerender after the decorators are set.
     this.setState({});
-    editor.onDidChangeModelContent(() => this.setDecorators());
+    editor.onDidChangeModelContent(() => {
+      this.setDecorators();
+      this.updateSlashCommand();
+    });
+    editor.onDidScrollChange(() => this.updateSlashCommand());
 
     // register completion provider for internal links
     const completionProviderHandle =
@@ -992,6 +1283,7 @@ class NoteContentEditor extends Component<Props> {
           e.reason === Editor.CursorChangeReason.Redo
         ) {
           // @TODO: Adjust selection in Undo/Redo
+          this.clearSlashCommand();
           return;
         }
 
@@ -1012,6 +1304,8 @@ class NoteContentEditor extends Component<Props> {
             newEnd,
             newDirection
           );
+
+        this.updateSlashCommand();
       }
     );
 
@@ -1263,6 +1557,54 @@ class NoteContentEditor extends Component<Props> {
     });
   };
 
+  renderSlashCommandPalette = () => {
+    const { slashCommand } = this.state;
+
+    if (!slashCommand) {
+      return null;
+    }
+
+    return (
+      <div
+        aria-label="Slash commands"
+        className="slash-command-palette"
+        role="listbox"
+        style={{
+          top: slashCommand.top,
+          left: slashCommand.left,
+        }}
+        onMouseDown={(event) => event.preventDefault()}
+      >
+        {slashCommand.suggestions.map(({ command }, index) => {
+          const isSelected = index === slashCommand.selectedIndex;
+          return (
+            <button
+              aria-selected={isSelected}
+              className={`slash-command-palette__item${
+                isSelected ? ' is-selected' : ''
+              }`}
+              key={command.id}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                this.executeSlashCommand(command.id);
+              }}
+              onMouseEnter={() => this.selectSlashCommand(index)}
+              role="option"
+              type="button"
+            >
+              <span className="slash-command-palette__command">
+                /{command.name}
+              </span>
+              <span className="slash-command-palette__title">
+                {command.title}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
   render() {
     const { lineLength, noteId, searchQuery, theme } = this.props;
     const { content, editor, overTodo } = this.state;
@@ -1365,6 +1707,7 @@ class NoteContentEditor extends Component<Props> {
             value={content}
           />
         )}
+        {this.renderSlashCommandPalette()}
       </div>
     );
   }
@@ -1391,8 +1734,12 @@ const mapStateToProps: S.MapState<StateProps> = (state) => ({
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   clearSearch: () => actions.ui.search(''),
   editNote: actions.data.editNote,
+  exportNotes: actions.data.exportNotes,
+  focusSearchField: actions.ui.focusSearchField,
   insertTask: () => ({ type: 'INSERT_TASK' }),
   openNote: actions.ui.selectNote,
+  showKeyboardShortcuts: () => actions.ui.showDialog('KEYBINDINGS'),
+  showPreferences: () => actions.ui.showDialog('SETTINGS'),
   storeEditorSelection: (noteId, start, end, direction) => ({
     type: 'STORE_EDITOR_SELECTION',
     noteId,
@@ -1408,6 +1755,7 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
     type: 'STORE_SEARCH_SELECTION',
     index,
   }),
+  toggleFocusMode: actions.settings.toggleFocusMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteContentEditor);
