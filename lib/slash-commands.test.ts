@@ -3,6 +3,7 @@ import {
   getSlashCommandKeyAction,
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
+  isSlashCommandPaletteShortcut,
 } from './slash-commands';
 
 describe('slash commands', () => {
@@ -108,6 +109,50 @@ describe('slash commands', () => {
 
     it('ignores unrelated keys', () => {
       expect(getSlashCommandKeyAction('a', false, true)).toBeNull();
+    });
+  });
+
+  describe('isSlashCommandPaletteShortcut', () => {
+    const event = {
+      altKey: false,
+      ctrlKey: false,
+      isComposing: false,
+      key: 'k',
+      metaKey: false,
+      shiftKey: false,
+    };
+
+    it('matches Cmd+K and Ctrl+K', () => {
+      expect(isSlashCommandPaletteShortcut({ ...event, metaKey: true })).toBe(
+        true
+      );
+      expect(isSlashCommandPaletteShortcut({ ...event, ctrlKey: true })).toBe(
+        true
+      );
+    });
+
+    it('ignores modified, composing, and mixed modifier events', () => {
+      expect(
+        isSlashCommandPaletteShortcut({
+          ...event,
+          metaKey: true,
+          shiftKey: true,
+        })
+      ).toBe(false);
+      expect(
+        isSlashCommandPaletteShortcut({
+          ...event,
+          ctrlKey: true,
+          isComposing: true,
+        })
+      ).toBe(false);
+      expect(
+        isSlashCommandPaletteShortcut({
+          ...event,
+          ctrlKey: true,
+          metaKey: true,
+        })
+      ).toBe(false);
     });
   });
 });

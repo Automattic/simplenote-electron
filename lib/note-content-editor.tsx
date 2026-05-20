@@ -36,6 +36,7 @@ import {
   getSlashCommandKeyAction,
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
+  isSlashCommandPaletteShortcut,
   SlashCommandId,
   SlashCommandSuggestion,
   SlashCommandTrigger,
@@ -166,12 +167,19 @@ type OwnState = {
 };
 
 type SlashCommandPaletteState = {
+  lineNumber: number;
+  source: 'typed' | 'shortcut';
   trigger: SlashCommandTrigger;
   suggestions: SlashCommandSuggestion[];
   selectedIndex: number;
   top: number;
   left: number;
   ghostText: string;
+};
+
+type SlashCommandTokenRange = {
+  lineNumber: number;
+  trigger: SlashCommandTrigger;
 };
 
 class NoteContentEditor extends Component<Props> {
@@ -183,6 +191,11 @@ class NoteContentEditor extends Component<Props> {
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
   slashCommandDecoration: Editor.IEditorDecorationsCollection | undefined;
+  slashCommandShortcutAnchor: {
+    lineNumber: number;
+    startColumn: number;
+  } | null = null;
+  isRemovingShortcutSlashCommand = false;
 
   state: OwnState = {
     content: '',
@@ -356,6 +369,13 @@ class NoteContentEditor extends Component<Props> {
   };
 
   handleShortcut = (event: KeyboardEvent) => {
+    if (this.props.keyboardShortcuts && isSlashCommandPaletteShortcut(event)) {
+      this.openSlashCommandPaletteFromShortcut();
+      event.stopPropagation();
+      event.preventDefault();
+      return false;
+    }
+
     const { ctrlKey, metaKey, shiftKey } = event;
     const key = event.key.toLowerCase();
 
@@ -545,21 +565,62 @@ class NoteContentEditor extends Component<Props> {
 
   hasFocus = () => this.editor?.hasTextFocus() || false;
 
-  clearSlashCommand = () => {
+  clearSlashCommand = ({
+    removeShortcutToken = false,
+    tokenRange = this.state.slashCommand,
+  }: {
+    removeShortcutToken?: boolean;
+    tokenRange?: SlashCommandTokenRange | null;
+  } = {}) => {
+    const slashCommand = this.state.slashCommand;
     this.slashCommandDecoration?.clear();
-    if (this.state.slashCommand) {
+    this.slashCommandShortcutAnchor = null;
+
+    if (removeShortcutToken && tokenRange) {
+      this.removeSlashCommandToken(tokenRange);
+    }
+
+    if (slashCommand) {
       this.setState({ slashCommand: null });
     }
   };
 
+  getSlashCommandSource = (
+    lineNumber: number,
+    trigger: SlashCommandTrigger
+  ): SlashCommandPaletteState['source'] => {
+    const previous = this.state.slashCommand;
+
+    if (
+      this.slashCommandShortcutAnchor?.lineNumber === lineNumber &&
+      this.slashCommandShortcutAnchor.startColumn === trigger.startColumn
+    ) {
+      return 'shortcut';
+    }
+
+    if (
+      previous?.source === 'shortcut' &&
+      previous.lineNumber === lineNumber &&
+      previous.trigger.startColumn === trigger.startColumn
+    ) {
+      return 'shortcut';
+    }
+
+    return 'typed';
+  };
+
   updateSlashCommand = () => {
+    if (this.isRemovingShortcutSlashCommand) {
+      return;
+    }
+
     const editor = this.editor;
     const model = editor?.getModel();
     const position = editor?.getPosition();
     const selection = editor?.getSelection();
 
     if (!editor || !model || !position || !selection?.isEmpty()) {
-      this.clearSlashCommand();
+      this.clearSlashCommand({ removeShortcutToken: true });
       return;
     }
 
@@ -567,19 +628,24 @@ class NoteContentEditor extends Component<Props> {
     const trigger = getSlashCommandTrigger(line, position.column);
 
     if (!trigger) {
-      this.clearSlashCommand();
+      this.clearSlashCommand({ removeShortcutToken: true });
       return;
     }
 
+    const source = this.getSlashCommandSource(position.lineNumber, trigger);
+
     const suggestions = getSlashCommandSuggestions(trigger.query);
     if (suggestions.length === 0) {
-      this.clearSlashCommand();
+      this.clearSlashCommand({
+        removeShortcutToken: source === 'shortcut',
+        tokenRange: { lineNumber: position.lineNumber, trigger },
+      });
       return;
     }
 
     const visiblePosition = editor.getScrolledVisiblePosition(position);
     if (!visiblePosition) {
-      this.clearSlashCommand();
+      this.clearSlashCommand({ removeShortcutToken: true });
       return;
     }
 
@@ -596,6 +662,10 @@ class NoteContentEditor extends Component<Props> {
         : visiblePosition.top + visiblePosition.height + 6;
 
     const previous = this.state.slashCommand;
+    if (source === 'typed') {
+      this.slashCommandShortcutAnchor = null;
+    }
+
     const previousCommandId =
       previous?.suggestions[previous.selectedIndex]?.command.id;
     const selectedIndex = Math.max(
@@ -604,6 +674,8 @@ class NoteContentEditor extends Component<Props> {
     );
     const selected = suggestions[selectedIndex] ?? suggestions[0];
     const nextSlashCommand = {
+      lineNumber: position.lineNumber,
+      source,
       trigger,
       suggestions,
       selectedIndex,
@@ -615,6 +687,42 @@ class NoteContentEditor extends Component<Props> {
     this.setState({ slashCommand: nextSlashCommand }, () =>
       this.updateSlashCommandGhostText(nextSlashCommand)
     );
+  };
+
+  openSlashCommandPaletteFromShortcut = () => {
+    const editor = this.editor;
+    const position = editor?.getPosition();
+
+    if (!editor || !position) {
+      return;
+    }
+
+    editor.focus();
+
+    this.slashCommandShortcutAnchor = {
+      lineNumber: position.lineNumber,
+      startColumn: position.column,
+    };
+
+    editor.executeEdits('slash-command-shortcut', [
+      {
+        range: new Range(
+          position.lineNumber,
+          position.column,
+          position.lineNumber,
+          position.column
+        ),
+        text: '/',
+        forceMoveMarkers: true,
+      },
+    ]);
+
+    editor.setPosition({
+      lineNumber: position.lineNumber,
+      column: position.column + 1,
+    });
+
+    this.updateSlashCommand();
   };
 
   updateSlashCommandGhostText = (slashCommand = this.state.slashCommand) => {
@@ -632,9 +740,9 @@ class NoteContentEditor extends Component<Props> {
     }
 
     const range = new Range(
-      position.lineNumber,
+      slashCommand.lineNumber,
       slashCommand.trigger.endColumn,
-      position.lineNumber,
+      slashCommand.lineNumber,
       slashCommand.trigger.endColumn
     );
 
@@ -687,19 +795,20 @@ class NoteContentEditor extends Component<Props> {
     this.selectSlashCommand(nextIndex);
   };
 
-  replaceSlashCommandToken = (text: string) => {
-    const { slashCommand } = this.state;
+  replaceSlashCommandToken = (
+    text: string,
+    slashCommand: SlashCommandTokenRange | null = this.state.slashCommand
+  ) => {
     const editor = this.editor;
-    const position = editor?.getPosition();
 
-    if (!slashCommand || !editor || !position) {
+    if (!slashCommand || !editor) {
       return;
     }
 
     const range = new Range(
-      position.lineNumber,
+      slashCommand.lineNumber,
       slashCommand.trigger.startColumn,
-      position.lineNumber,
+      slashCommand.lineNumber,
       slashCommand.trigger.endColumn
     );
 
@@ -712,9 +821,18 @@ class NoteContentEditor extends Component<Props> {
     ]);
 
     editor.setPosition({
-      lineNumber: position.lineNumber,
+      lineNumber: slashCommand.lineNumber,
       column: slashCommand.trigger.startColumn + text.length,
     });
+  };
+
+  removeSlashCommandToken = (tokenRange: SlashCommandTokenRange) => {
+    this.isRemovingShortcutSlashCommand = true;
+    try {
+      this.replaceSlashCommandToken('', tokenRange);
+    } finally {
+      this.isRemovingShortcutSlashCommand = false;
+    }
   };
 
   completeSlashCommand = () => {
@@ -797,10 +915,10 @@ class NoteContentEditor extends Component<Props> {
       case 'cancel':
         event.preventDefault();
         event.stopPropagation();
-        this.clearSlashCommand();
+        this.clearSlashCommand({ removeShortcutToken: true });
         return;
       case 'cancel-and-type':
-        this.clearSlashCommand();
+        this.clearSlashCommand({ removeShortcutToken: true });
         return;
     }
   };

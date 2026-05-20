@@ -196,3 +196,25 @@ export const getSlashCommandKeyAction = (
       return null;
   }
 };
+
+export const isSlashCommandPaletteShortcut = ({
+  altKey,
+  ctrlKey,
+  isComposing,
+  key,
+  metaKey,
+  shiftKey,
+}: Pick<
+  KeyboardEvent,
+  'altKey' | 'ctrlKey' | 'isComposing' | 'key' | 'metaKey' | 'shiftKey'
+>) => {
+  const cmdOrCtrl = (ctrlKey || metaKey) && ctrlKey !== metaKey;
+
+  return (
+    cmdOrCtrl &&
+    !altKey &&
+    !shiftKey &&
+    !isComposing &&
+    key.toLowerCase() === 'k'
+  );
+};
