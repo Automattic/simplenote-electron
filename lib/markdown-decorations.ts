@@ -1,11 +1,16 @@
 import { editor as Editor } from 'monaco-editor';
 
 const urlPattern = /https?:\/\/\S+/g;
+const boldPattern = /\*\*([^\s*][^*]*[^\s*]|[^\s*])\*\*/g;
 const italicPattern = /\*([^\s*][^*]*[^\s*]|[^\s*])\*/g;
 
 type Span = {
   start: number;
   end: number;
+};
+
+type InlineSpan = Span & {
+  inlineClassName: string;
 };
 
 const decoration = (
@@ -40,6 +45,9 @@ const spansForPattern = (line: string, pattern: RegExp): Span[] => {
 
 const overlapsSpan = (start: number, end: number, spans: Span[]) =>
   spans.some((span) => start < span.end && end > span.start);
+
+const isPartOfAsteriskRun = (line: string, start: number, end: number) =>
+  line[start - 1] === '*' || line[end] === '*';
 
 const isEscaped = (line: string, index: number) => {
   let slashCount = 0;
@@ -81,9 +89,26 @@ export const getMarkdownDecorations = (
     }
 
     const urlSpans = spansForPattern(line, urlPattern);
-    italicPattern.lastIndex = 0;
+    const inlineSpans: InlineSpan[] = [];
 
     let match;
+    boldPattern.lastIndex = 0;
+    while ((match = boldPattern.exec(line))) {
+      const start = match.index;
+      const end = start + match[0].length;
+
+      if (
+        isEscaped(line, start) ||
+        isEscaped(line, end - 2) ||
+        overlapsSpan(start, end, urlSpans)
+      ) {
+        continue;
+      }
+
+      inlineSpans.push({ start, end, inlineClassName: 'md-bold' });
+    }
+
+    italicPattern.lastIndex = 0;
     while ((match = italicPattern.exec(line))) {
       const start = match.index;
       const end = start + match[0].length;
@@ -91,13 +116,28 @@ export const getMarkdownDecorations = (
       if (
         isEscaped(line, start) ||
         isEscaped(line, end - 1) ||
-        overlapsSpan(start, end, urlSpans)
+        isPartOfAsteriskRun(line, start, end) ||
+        overlapsSpan(start, end, urlSpans) ||
+        overlapsSpan(start, end, inlineSpans)
       ) {
         continue;
       }
 
-      decorations.push(decoration(lineNumber, start + 1, end + 1, 'md-italic'));
+      inlineSpans.push({ start, end, inlineClassName: 'md-italic' });
     }
+
+    inlineSpans
+      .sort((a, b) => a.start - b.start)
+      .forEach((span) => {
+        decorations.push(
+          decoration(
+            lineNumber,
+            span.start + 1,
+            span.end + 1,
+            span.inlineClassName
+          )
+        );
+      });
   }
 
   return decorations;

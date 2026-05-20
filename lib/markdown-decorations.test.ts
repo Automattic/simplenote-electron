@@ -72,6 +72,51 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('decorates double-asterisk spans as bold instead of italic', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['A **bold span** here'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 3,
+          endLineNumber: 1,
+          endColumn: 16,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+    ]);
+  });
+
+  it('decorates bold and italic spans independently', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['Use **bold** and *italic*'])
+    );
+
+    expect(decorations).toEqual([
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 5,
+          endLineNumber: 1,
+          endColumn: 13,
+        },
+        options: { inlineClassName: 'md-bold' },
+      },
+      {
+        range: {
+          startLineNumber: 1,
+          startColumn: 18,
+          endLineNumber: 1,
+          endColumn: 26,
+        },
+        options: { inlineClassName: 'md-italic' },
+      },
+    ]);
+  });
+
   it('does not decorate escaped markers or URL-like spans', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines(['Skip \\*escaped\\* and https://example.com/*path*'])
