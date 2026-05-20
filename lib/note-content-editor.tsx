@@ -35,6 +35,7 @@ import {
   getNotePosition,
   setNotePosition,
 } from './utils/note-scroll-position';
+import { getMarkdownDecorations } from './markdown-decorations';
 import { isMac, isSafari } from './utils/platform';
 import {
   withCheckboxCharacters,
@@ -155,8 +156,10 @@ class NoteContentEditor extends Component<Props> {
   monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
   decorations: Editor.IEditorDecorationsCollection | undefined;
+  markdownDecorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
+  isComposing = false;
 
   state: OwnState = {
     content: '',
@@ -433,6 +436,17 @@ class NoteContentEditor extends Component<Props> {
     const titleDecoration = this.getTitleDecoration();
     titleDecoration &&
       this.editor?.createDecorationsCollection([titleDecoration]);
+
+    if (!this.isComposing) {
+      this.markdownDecorations?.clear();
+      const markdownDecorations = getMarkdownDecorations(
+        this.editor?.getModel()
+      );
+      if (markdownDecorations.length > 0) {
+        this.markdownDecorations =
+          this.editor?.createDecorationsCollection(markdownDecorations);
+      }
+    }
 
     // search highlights
     this.matchesInNote = this.searchMatches() ?? [];
@@ -958,6 +972,13 @@ class NoteContentEditor extends Component<Props> {
     // make component rerender after the decorators are set.
     this.setState({});
     editor.onDidChangeModelContent(() => this.setDecorators());
+    editor.onDidCompositionStart(() => {
+      this.isComposing = true;
+    });
+    editor.onDidCompositionEnd(() => {
+      this.isComposing = false;
+      this.setDecorators();
+    });
 
     // register completion provider for internal links
     const completionProviderHandle =

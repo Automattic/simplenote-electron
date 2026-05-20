@@ -104,6 +104,51 @@ span[dir='ltr'] {
     background-color: var(--search-selection-color);
     padding: 2px 0;
   }
+
+  .md-heading-1 {
+    font-size: 1.6em;
+    font-weight: 600;
+  }
+
+  .md-heading-2 {
+    font-size: 1.4em;
+    font-weight: 600;
+  }
+
+  .md-heading-3 {
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  .md-heading-4 {
+    font-weight: 600;
+  }
+
+  .md-heading-5 {
+    font-weight: 600;
+    opacity: 0.9;
+  }
+
+  .md-heading-6 {
+    font-weight: 600;
+    opacity: 0.85;
+  }
+
+  .md-italic {
+    font-style: italic;
+  }
+
+  .md-bold {
+    font-weight: 600;
+  }
+
+  .md-strikethrough {
+    text-decoration: line-through;
+  }
+
+  .md-list-marker {
+    opacity: 0.6;
+  }
 }
 
 /* Safari requires that it be displayed absolute so that it takes the full height
