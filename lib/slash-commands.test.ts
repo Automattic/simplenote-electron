@@ -1,4 +1,6 @@
 import {
+  getNextSlashCommandIndex,
+  getSlashCommandKeyAction,
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
 } from './slash-commands';
@@ -66,6 +68,42 @@ describe('slash commands', () => {
       expect(first.command.id).toBe('export');
       expect(first.completion).toBe('');
       expect(first.exactMatch).toBe(true);
+    });
+  });
+
+  describe('getNextSlashCommandIndex', () => {
+    it('wraps forward through the available suggestions', () => {
+      expect(getNextSlashCommandIndex(5, 4, 1)).toBe(0);
+    });
+
+    it('wraps backward through the available suggestions', () => {
+      expect(getNextSlashCommandIndex(5, 0, -1)).toBe(4);
+    });
+  });
+
+  describe('getSlashCommandKeyAction', () => {
+    it.each([
+      ['Tab', 'complete'],
+      ['Enter', 'execute'],
+      ['ArrowDown', 'next'],
+      ['ArrowUp', 'previous'],
+      ['Escape', 'cancel'],
+      [' ', 'cancel-and-type'],
+      ['Spacebar', 'cancel-and-type'],
+    ])('maps %s to %s while slash commands are active', (key, action) => {
+      expect(getSlashCommandKeyAction(key, false, true)).toBe(action);
+    });
+
+    it('does not intercept keys when slash commands are inactive', () => {
+      expect(getSlashCommandKeyAction('Enter', false, false)).toBeNull();
+    });
+
+    it('does not intercept keys during IME composition', () => {
+      expect(getSlashCommandKeyAction('Enter', true, true)).toBeNull();
+    });
+
+    it('ignores unrelated keys', () => {
+      expect(getSlashCommandKeyAction('a', false, true)).toBeNull();
     });
   });
 });

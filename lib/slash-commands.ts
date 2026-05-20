@@ -26,6 +26,14 @@ export type SlashCommandSuggestion = {
   exactMatch: boolean;
 };
 
+export type SlashCommandKeyAction =
+  | 'complete'
+  | 'execute'
+  | 'next'
+  | 'previous'
+  | 'cancel'
+  | 'cancel-and-type';
+
 export const slashCommands: SlashCommand[] = [
   {
     id: 'search',
@@ -156,3 +164,37 @@ export const getSlashCommandSuggestions = (
         exactMatch,
       };
     });
+
+export const getNextSlashCommandIndex = (
+  suggestionsLength: number,
+  selectedIndex: number,
+  offset: number
+) => (suggestionsLength + selectedIndex + offset) % suggestionsLength;
+
+export const getSlashCommandKeyAction = (
+  key: string,
+  isComposing: boolean,
+  isActive: boolean
+): SlashCommandKeyAction | null => {
+  if (!isActive || isComposing) {
+    return null;
+  }
+
+  switch (key) {
+    case 'Tab':
+      return 'complete';
+    case 'Enter':
+      return 'execute';
+    case 'ArrowDown':
+      return 'next';
+    case 'ArrowUp':
+      return 'previous';
+    case 'Escape':
+      return 'cancel';
+    case ' ':
+    case 'Spacebar':
+      return 'cancel-and-type';
+    default:
+      return null;
+  }
+};

@@ -32,6 +32,8 @@ import {
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
 import {
+  getNextSlashCommandIndex,
+  getSlashCommandKeyAction,
   getSlashCommandSuggestions,
   getSlashCommandTrigger,
   SlashCommandId,
@@ -175,8 +177,8 @@ type SlashCommandPaletteState = {
 class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
-  monaco: Monaco | null = null;
   contentDiv = createRef<HTMLDivElement>();
+  slashCommandPalette = createRef<HTMLDivElement>();
   decorations: Editor.IEditorDecorationsCollection | undefined;
   matchesInNote: Editor.IModelDeltaDecoration[] = [];
   selectedDecoration: Editor.IEditorDecorationsCollection | undefined;
@@ -582,8 +584,8 @@ class NoteContentEditor extends Component<Props> {
     }
 
     const layout = editor.getLayoutInfo();
-    const paletteWidth = 280;
-    const paletteHeight = 190;
+    const paletteWidth = this.slashCommandPalette.current?.offsetWidth ?? 280;
+    const paletteHeight = this.slashCommandPalette.current?.offsetHeight ?? 180;
     const left = Math.max(
       8,
       Math.min(visiblePosition.left, layout.width - paletteWidth - 8)
@@ -676,9 +678,11 @@ class NoteContentEditor extends Component<Props> {
       return;
     }
 
-    const nextIndex =
-      (slashCommand.suggestions.length + slashCommand.selectedIndex + offset) %
-      slashCommand.suggestions.length;
+    const nextIndex = getNextSlashCommandIndex(
+      slashCommand.suggestions.length,
+      slashCommand.selectedIndex,
+      offset
+    );
 
     this.selectSlashCommand(nextIndex);
   };
@@ -722,7 +726,6 @@ class NoteContentEditor extends Component<Props> {
     }
 
     this.replaceSlashCommandToken(`/${suggestion.command.name}`);
-    Promise.resolve().then(this.updateSlashCommand);
   };
 
   executeSlashCommand = (commandId?: SlashCommandId) => {
@@ -760,39 +763,43 @@ class NoteContentEditor extends Component<Props> {
   handleEditorKeyDown = (event: IKeyboardEvent) => {
     const { slashCommand } = this.state;
     const browserEvent = event.browserEvent as KeyboardEvent;
+    const action = getSlashCommandKeyAction(
+      browserEvent.key,
+      browserEvent.isComposing,
+      !!slashCommand
+    );
 
-    if (!slashCommand || browserEvent.isComposing) {
+    if (!slashCommand || !action) {
       return;
     }
 
-    switch (browserEvent.key) {
-      case 'Tab':
+    switch (action) {
+      case 'complete':
         event.preventDefault();
         event.stopPropagation();
         this.completeSlashCommand();
         return;
-      case 'Enter':
+      case 'execute':
         event.preventDefault();
         event.stopPropagation();
         this.executeSlashCommand();
         return;
-      case 'ArrowDown':
+      case 'next':
         event.preventDefault();
         event.stopPropagation();
         this.selectNextSlashCommand(1);
         return;
-      case 'ArrowUp':
+      case 'previous':
         event.preventDefault();
         event.stopPropagation();
         this.selectNextSlashCommand(-1);
         return;
-      case 'Escape':
+      case 'cancel':
         event.preventDefault();
         event.stopPropagation();
         this.clearSlashCommand();
         return;
-      case ' ':
-      case 'Spacebar':
+      case 'cancel-and-type':
         this.clearSlashCommand();
         return;
     }
@@ -1004,7 +1011,6 @@ class NoteContentEditor extends Component<Props> {
 
   editorReady: EditorDidMount = (editor, monaco) => {
     this.editor = editor;
-    this.monaco = monaco;
 
     monaco.languages.registerLinkProvider('plaintext', {
       provideLinks: (model) => {
@@ -1183,11 +1189,6 @@ class NoteContentEditor extends Component<Props> {
 
     // Tab to indent lists and tasks
     editor.addCommand(monaco.KeyCode.Tab, () => {
-      if (this.state.slashCommand) {
-        this.completeSlashCommand();
-        return;
-      }
-
       const lineNumber = editor.getPosition()?.lineNumber;
       if (!lineNumber) {
         return;
@@ -1568,6 +1569,7 @@ class NoteContentEditor extends Component<Props> {
       <div
         aria-label="Slash commands"
         className="slash-command-palette"
+        ref={this.slashCommandPalette}
         role="listbox"
         style={{
           top: slashCommand.top,
