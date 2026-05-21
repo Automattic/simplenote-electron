@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.26.0]
+
+### New Features
+
+- Added a `Cmd+K` / `Ctrl+K` command palette modal for quick access to search, navigation, and app actions [#3360](https://github.com/Automattic/simplenote-electron/pull/3360)
+- Added source-visible Markdown decorations in the note editor for headings, bold, italic, strikethrough, and list markers [#3357](https://github.com/Automattic/simplenote-electron/pull/3357)
+
 ## [v2.25.0]
 
 ### New Features
