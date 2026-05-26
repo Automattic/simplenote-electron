@@ -23,6 +23,10 @@
 
 - Implemented support for importing ZIP files [#3328](https://github.com/Automattic/simplenote-electron/pull/3328)
 
+### Other Changes
+
+- Updated dependencies [#3317](https://github.com/Automattic/simplenote-electron/pull/3317)
+
 ### Fixes
 
 - Fixed paste not working in context menu and enabled it in browsers [#3316](https://github.com/Automattic/simplenote-electron/pull/3316)
