@@ -48,7 +48,8 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
-    "certificateSubjectName": "Automattic, Inc.",
+    "sign": "./scripts/azure-sign.cjs",
+    "signingHashAlgorithms": ["sha256"],
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [
       {

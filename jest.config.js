@@ -5,7 +5,7 @@ module.exports = {
       appVersion: 'foo',
     },
   },
-  roots: ['desktop', 'lib'],
+  roots: ['desktop', 'lib', 'scripts'],
   testEnvironment: 'jsdom',
   testRegex: '(/test/.*\\.[jt]sx?)|(test\\.[jt]sx?)$',
 };
