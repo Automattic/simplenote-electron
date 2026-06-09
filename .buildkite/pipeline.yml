@@ -99,7 +99,6 @@ steps:
       - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
     env:
-      CSC_FOR_PULL_REQUEST: true
       USE_AZURE_TRUSTED_SIGNING: 1
     artifact_paths:
       - release\*.exe
