@@ -143,12 +143,13 @@ package: build-if-changed
 package-win32:
 	@echo "Packaging exe..."
 	@npx electron-builder --win -p $(PUBLISH)
-	# Note: the configuration required to generate a code signed exe via the `nsis` target will conflict with the `appx` configuration.
-	# In practice, "certificateSubjectName": "Automattic, Inc." is required to sign the exe, but if that setting is present and so are the `appx` settings, there will be a failure.
-	# Hence the need for a separate configuration here.
-	# See also in https://github.com/electron-userland/electron-builder/issues/6698
-	@echo "Packaging appx — with dedicated configuration to work around code signing conflicts..."
-	@npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
+	# The Store AppX ships unsigned (the Store re-signs it), so it uses a dedicated config with no
+	# signing (see https://github.com/electron-userland/electron-builder/issues/6698). Clear the PFX
+	# env for this invocation: with CSC_LINK set, electron-builder's built-in signer signs the inner
+	# exe via the modern signtool, which fails the legacy /fd-less call it makes. The NSIS exe is
+	# signed separately through win.sign in electron-builder.json.
+	@echo "Packaging appx — Store build, unsigned..."
+	@CSC_LINK= CSC_KEY_PASSWORD= npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 
 .PHONY: package-osx
 package-osx: build-if-changed
