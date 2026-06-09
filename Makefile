@@ -139,17 +139,25 @@ win32: config-release build-if-changed
 .PHONY: package
 package: build-if-changed
 
+# Windows signing: PFX by default (electron-builder's native certificateSubjectName), or Azure
+# Trusted Signing when USE_AZURE_TRUSTED_SIGNING is set. In Azure mode the NSIS exe signs through
+# the win.sign callback, and the Store AppX builds unsigned — `env -u` removes the PFX cert vars so
+# electron-builder skips signing its inner exe, which would otherwise fail: the modern signtool
+# Azure installs rejects electron-builder's built-in /fd-less PFX call. The Store re-signs the AppX
+# regardless. In PFX mode both keep their native cert signing, unchanged.
+ifdef USE_AZURE_TRUSTED_SIGNING
+WIN_NSIS_SIGN := -c.win.sign=./scripts/azure-sign.cjs
+APPX_NO_SIGN := env -u CSC_LINK -u CSC_KEY_PASSWORD -u WIN_CSC_LINK -u WIN_CSC_KEY_PASSWORD
+endif
+
 .PHONY: package-win32
 package-win32:
 	@echo "Packaging exe..."
-	@npx electron-builder --win -p $(PUBLISH)
-	# The Store AppX ships unsigned (the Store re-signs it), so it uses a dedicated config with no
-	# signing (see https://github.com/electron-userland/electron-builder/issues/6698). Clear the PFX
-	# env for this invocation: with CSC_LINK set, electron-builder's built-in signer signs the inner
-	# exe via the modern signtool, which fails the legacy /fd-less call it makes. The NSIS exe is
-	# signed separately through win.sign in electron-builder.json.
-	@echo "Packaging appx — Store build, unsigned..."
-	@CSC_LINK= CSC_KEY_PASSWORD= npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
+	@npx electron-builder --win -p $(PUBLISH) $(WIN_NSIS_SIGN)
+	# Dedicated config because the appx target conflicts with exe code signing.
+	# See https://github.com/electron-userland/electron-builder/issues/6698
+	@echo "Packaging appx..."
+	@$(APPX_NO_SIGN) npx electron-builder --win -p $(PUBLISH) --config=./electron-builder-appx.json
 
 .PHONY: package-osx
 package-osx: build-if-changed

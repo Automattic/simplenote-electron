@@ -133,6 +133,26 @@ describe('sign callback dispatch', () => {
     );
   });
 
+  it('skips the sha1 pass (Azure is SHA256-only)', async () => {
+    setPlatform('win32');
+    process.env = { ...AZURE_ENV };
+    await expect(
+      signer({ path: 'app.exe', hash: 'sha1' })
+    ).resolves.toBeUndefined();
+    expect(spawn).not.toHaveBeenCalled();
+  });
+
+  it('signs on the sha256 pass', async () => {
+    setPlatform('win32');
+    process.env = { ...AZURE_ENV };
+    await signer({ path: 'app.exe', hash: 'sha256' });
+    expect(spawn).toHaveBeenCalledWith(
+      AZURE_ENV.SIGNTOOL_PATH,
+      expect.arrayContaining(['/dlib']),
+      expect.anything()
+    );
+  });
+
   it('falls back to PFX in CI on Windows when Azure is absent', async () => {
     setPlatform('win32');
     process.env = { CI: 'true', ...PFX_ENV };
