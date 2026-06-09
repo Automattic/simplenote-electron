@@ -154,8 +154,17 @@ body[data-theme='dark'] .note-detail-markdown {
 
   $ul-padding-left: 1.4em;
 
-  ul {
+  ul,
+  ol {
     padding-left: $ul-padding-left;
+  }
+
+  // Lexical indents by wrapping sublists in an empty parent <li>, which would
+  // otherwise show two markers (e.g. "2. 1."). Hide the wrapper marker.
+  li:has(> ol:only-child),
+  li:has(> ul:only-child),
+  .lexical-nested-list-item {
+    list-style: none;
   }
 
   // Remove unneeded margin on root-level tasklist items
@@ -163,11 +172,16 @@ body[data-theme='dark'] .note-detail-markdown {
     margin-left: -#{$ul-padding-left};
   }
 
+  ul:has(> .task-list-item[role='checkbox']) {
+    list-style: none;
+  }
+
   .task-list-item {
     // It's good to have immediate CSS feedback on click since
     // there will be a slight delay until the checkbox actually toggles
     &:active {
-      input {
+      input,
+      &[role='checkbox']::before {
         transform: scale(0.9);
       }
     }
@@ -178,6 +192,32 @@ body[data-theme='dark'] .note-detail-markdown {
       margin-right: 4px;
       height: 1em;
       vertical-align: middle;
+    }
+
+    // Lexical checklists use role="checkbox" on <li> (no <input>); reuse task
+    // icon font from .note-detail-markdown in theme.scss.
+    &[role='checkbox'] {
+      list-style: none;
+      margin-left: -#{$ul-padding-left};
+      outline: none;
+
+      &::before {
+        display: inline-block;
+        position: relative;
+        bottom: 0.0625em;
+        margin-right: 4px;
+        height: 1em;
+        vertical-align: middle;
+        cursor: pointer;
+      }
+
+      &[aria-checked='true']::before {
+        content: '\e001';
+      }
+
+      &[aria-checked='false']::before {
+        content: '\e000';
+      }
     }
   }
 

@@ -1,5 +1,6 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { MarkdownNoteEditor } from '../markdown-editor';
 import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
 
@@ -14,6 +15,7 @@ type OwnProps = {
 type StateProps = {
   isDialogOpen: boolean;
   keyboardShortcuts: boolean;
+  note: T.Note | null;
   openedNote: T.EntityId | null;
 };
 
@@ -36,7 +38,10 @@ export class NoteDetail extends Component<Props> {
   storeFocusContentEditor = (f) => (this.focusContentEditor = f);
 
   render() {
-    const { openedNote } = this.props;
+    const { note, openedNote } = this.props;
+    const isMarkdown = note?.systemTags.includes('markdown') ?? false;
+    const Editor = isMarkdown ? MarkdownNoteEditor : NoteContentEditor;
+
     return (
       <div className="note-detail-wrapper">
         {!openedNote ? (
@@ -44,7 +49,7 @@ export class NoteDetail extends Component<Props> {
             <SimplenoteCompactLogo />
           </div>
         ) : (
-          <NoteContentEditor
+          <Editor
             key={openedNote}
             storeFocusEditor={this.storeFocusContentEditor}
             storeHasFocus={this.storeEditorHasFocus}
@@ -58,6 +63,7 @@ export class NoteDetail extends Component<Props> {
 const mapStateToProps: S.MapState<StateProps> = (state) => ({
   isDialogOpen: state.ui.dialogs.length > 0,
   keyboardShortcuts: state.settings.keyboardShortcuts,
+  note: state.data.notes.get(state.ui.openedNote) ?? null,
   openedNote: state.ui.openedNote,
 });
 

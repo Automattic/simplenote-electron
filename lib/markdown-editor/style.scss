@@ -1,0 +1,11 @@
+.lexical-md-editor {
+  position: relative;
+  min-height: 100%;
+}
+
+.lexical-md-editor__input {
+  min-height: 100%;
+  padding: 40px 25px 20px;
+  outline: none;
+  caret-color: var(--primary-color);
+}
