@@ -30,19 +30,27 @@ If ([string]::IsNullOrEmpty($windowsCertPassword)) {
     Write-Host "[!] WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set in either process or machine environments."
     Exit 1
 }
-$env:CSC_KEY_PASSWORD = $windowsCertPassword
 
 $certPath = (Convert-Path .\certificate.pfx)
 If (-not (Test-Path $certPath)) {
     Write-Host "[!] Certificate file does not exist at given path $certPath."
     Exit 1
 }
-$env:CSC_LINK = $certPath
-Write-Host "CSC_LINK set to $certPath"
 
-# Workaround for CI not finding the certificate for the certificateSubjectName store lookup.
+# Import the cert so electron-builder's certificateSubjectName lookup finds it (the PFX default
+# path signs the NSIS exe from the store).
 # See https://buildkite.com/automattic/simplenote-electron/builds/71#01900b28-9508-4bfe-bc80-63464afeaa3e/292-567
 Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $windowsCertPassword -AsPlainText -Force)
+
+If ($useAzure) {
+    # Azure mode signs the exe via the win.sign callback, which reads these from the process env for
+    # its PFX fallback. In PFX mode we deliberately do NOT export them: the exe signs via
+    # certificateSubjectName + the store import above, and exporting CSC_LINK would make
+    # electron-builder also sign the Store AppX with the PFX, whose publisher does not match the cert
+    # ("SignTool Error: An unexpected internal error has occurred").
+    $env:CSC_KEY_PASSWORD = $windowsCertPassword
+    $env:CSC_LINK = $certPath
+}
 
 Write-Host "--- :windows: Installing make"
 choco install make
