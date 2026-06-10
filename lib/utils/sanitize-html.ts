@@ -215,6 +215,14 @@ export const sanitizeHtml = (content: string) => {
    */
   const forbiddenList = [];
 
+  /**
+   * nodes to replace in-place with a plain text node (e.g. an image
+   * whose src we rejected, swapped for its alt text).
+   *
+   * @type {Array<{ node: Element; text: string }>} List of nodes to textify
+   */
+  const replaceWithTextList = [];
+
   // walk over every DOM node
   while (walker.nextNode()) {
     const node = walker.currentNode as Element;
@@ -253,7 +261,10 @@ export const sanitizeHtml = (content: string) => {
       const src = normalizeSafeImageSrc(node.getAttribute('src'));
 
       if (!src) {
-        replaceNodeWithText(node, node.getAttribute('alt') ?? '');
+        replaceWithTextList.push({
+          node,
+          text: node.getAttribute('alt') ?? '',
+        });
         continue;
       }
 
@@ -308,6 +319,16 @@ export const sanitizeHtml = (content: string) => {
       // under a node that we already removed,
       // which would lead to a failure right now
       // this is fine, just continue along
+    }
+  });
+
+  // textify nodes
+  replaceWithTextList.forEach(({ node, text }) => {
+    try {
+      replaceNodeWithText(node, text);
+    } catch (e) {
+      // the node may have lived under a forbidden/removed ancestor
+      // that no longer exists; if so there's nothing left to replace
     }
   });
 
