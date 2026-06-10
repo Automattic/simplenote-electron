@@ -8,8 +8,6 @@ import EllipsisOutlineIcon from '../icons/ellipsis-outline';
 import IconButton from '../icon-button';
 import InfoIcon from '../icons/info';
 import NewNoteIcon from '../icons/new-note';
-import PreviewIcon from '../icons/preview';
-import PreviewStopIcon from '../icons/preview-stop';
 import SidebarIcon from '../icons/sidebar';
 import actions from '../state/actions';
 
@@ -17,9 +15,7 @@ import * as S from '../state';
 import * as T from '../types';
 
 type StateProps = {
-  editMode: boolean;
   isOffline: boolean;
-  markdownEnabled: boolean;
   note: T.Note | null;
 };
 
@@ -27,7 +23,6 @@ type DispatchProps = {
   deleteNoteForever: () => any;
   newNote: () => any;
   restoreNote: () => any;
-  toggleEditMode: () => any;
   toggleFocusMode: () => any;
   toggleNoteActions: () => any;
   toggleNoteInfo: () => any;
@@ -49,15 +44,8 @@ export class NoteToolbar extends Component<Props> {
   }
 
   renderNormal = () => {
-    const {
-      editMode,
-      newNote,
-      isOffline,
-      markdownEnabled,
-      note,
-      toggleNoteActions,
-      toggleNoteInfo,
-    } = this.props;
+    const { newNote, isOffline, note, toggleNoteActions, toggleNoteInfo } =
+      this.props;
 
     return !note ? (
       <div className="note-toolbar-placeholder" />
@@ -88,15 +76,6 @@ export class NoteToolbar extends Component<Props> {
         </div>
         {isOffline && <div className="offline-badge">OFFLINE</div>}
         <div className="note-toolbar__column-right">
-          {markdownEnabled && (
-            <div className="note-toolbar__button">
-              <IconButton
-                icon={!editMode ? <PreviewStopIcon /> : <PreviewIcon />}
-                onClick={this.props.toggleEditMode}
-                title={`Preview • ${CmdOrCtrl}+Shift+P`}
-              />
-            </div>
-          )}
           <div className="note-toolbar__button">
             <IconButton
               icon={<ChecklistIcon />}
@@ -163,15 +142,13 @@ export class NoteToolbar extends Component<Props> {
 
 const mapStateToProps: S.MapState<StateProps> = ({
   data,
-  ui: { editMode, openedNote },
+  ui: { openedNote },
   simperium: { connectionStatus },
 }) => {
   const note = openedNote ? (data.notes.get(openedNote) ?? null) : null;
 
   return {
-    editMode,
     isOffline: connectionStatus === 'offline',
-    markdownEnabled: note?.systemTags.includes('markdown') || false,
     note,
   };
 };
@@ -180,7 +157,6 @@ const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   deleteNoteForever: actions.ui.deleteOpenNoteForever,
   newNote: actions.ui.createNote,
   restoreNote: actions.ui.restoreOpenNote,
-  toggleEditMode: actions.ui.toggleEditMode,
   toggleFocusMode: actions.settings.toggleFocusMode,
   toggleNoteActions: actions.ui.toggleNoteActions,
   toggleNoteInfo: actions.ui.toggleNoteInfo,
