@@ -3,7 +3,6 @@ import {
   $createListNode,
   $isListItemNode,
   $isListNode,
-  type ListItemNode,
   type ListNode,
   type ListType,
 } from '@lexical/list';
@@ -14,12 +13,7 @@ import {
   type ElementTransformer,
   type Transformer,
 } from '@lexical/markdown';
-import {
-  $createParagraphNode,
-  $createTextNode,
-  type ElementNode,
-  type LexicalNode,
-} from 'lexical';
+import { $createTextNode, type ElementNode, type LexicalNode } from 'lexical';
 
 // GFM commonly uses 2-space list indents; 4 spaces still parse as depth 2.
 const LIST_INDENT_SIZE = 2;
@@ -27,6 +21,30 @@ const LIST_INDENT_SIZE = 2;
 const ORDERED_LIST_REGEX = /^(\s*)(\d{1,})\.\s+(.*)$/;
 const UNORDERED_LIST_REGEX = /^(\s*)[-*+]\s+(.*)$/;
 const CHECK_LIST_REGEX = /^(\s*)[-*+]\s?\[(\s|x|X)?\]\s+(.*)$/;
+
+// Mirrors @lexical/markdown importTextTransformers escape handling so list
+// item text round-trips with exportTextFormat (which escapes \ * _ ` ~).
+const MARKDOWN_ESCAPE_IN_TEXT = /\\[!-/:-@[-`{-~]|&#\d+;/;
+
+function unescapeMarkdownText(value: string): string {
+  return value
+    .replace(/\\([!-/:-@[-`{-~])/g, '$1')
+    .replace(/&#(\d+);/g, (_, codePoint) =>
+      String.fromCodePoint(Number(codePoint))
+    );
+}
+
+function importListItemText(
+  listItem: ReturnType<typeof $createListItemNode>,
+  text: string
+): void {
+  const content = MARKDOWN_ESCAPE_IN_TEXT.test(text)
+    ? unescapeMarkdownText(text)
+    : text;
+  if (content.length > 0) {
+    listItem.append($createTextNode(content));
+  }
+}
 
 type ParsedListLine = {
   checked?: boolean;
@@ -190,7 +208,7 @@ function appendTreeItems(list: ListNode, nodes: ListTreeNode[]): void {
   for (const node of nodes) {
     const listItem = $createListItemNode(node.checked);
     if (node.text.length > 0) {
-      listItem.append($createTextNode(node.text));
+      importListItemText(listItem, node.text);
     }
     list.append(listItem);
 

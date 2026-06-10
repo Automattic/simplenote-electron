@@ -1,6 +1,9 @@
 import { GetClipboardDataExtension } from '@lexical/clipboard';
 import { $isCodeNode, CodeExtension } from '@lexical/code-core';
-import { TabIndentationExtension } from '@lexical/extension';
+import {
+  InitialStateExtension,
+  TabIndentationExtension,
+} from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
 import { LinkExtension } from '@lexical/link';
 import {
@@ -344,6 +347,9 @@ export function createMarkdownEditorExtension(
   onChange?: (markdown: string) => void
 ) {
   const dependencies: AnyLexicalExtensionArgument[] = [
+    configExtension(InitialStateExtension, {
+      updateOptions: { tag: REMOTE_CONTENT_TAG },
+    }),
     RichTextExtension,
     HistoryExtension,
     listExtension,

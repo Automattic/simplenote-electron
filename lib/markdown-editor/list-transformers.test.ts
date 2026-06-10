@@ -61,4 +61,21 @@ describe('mixed nested list markdown import', () => {
       expect(nestedCheck?.getListType()).toBe('check');
     });
   });
+
+  it('round-trips escaped asterisks in checklist item text', () => {
+    const markdown = '- [ ] Pending with \\* label';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+    });
+  });
+
+  it('round-trips long backslash runs before asterisks in checklist items', () => {
+    const backslashes = '\\'.repeat(64);
+    const markdown = `- [ ] Pending with ${backslashes}\\* label`;
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+    });
+  });
 });
