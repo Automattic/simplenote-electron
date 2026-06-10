@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 import './style';
 
-const BootWarning: FunctionComponent = ({ children }) => (
+const BootWarning: FunctionComponent<PropsWithChildren> = ({ children }) => (
   <h3 className="boot-warning__message">{children}</h3>
 );
 
