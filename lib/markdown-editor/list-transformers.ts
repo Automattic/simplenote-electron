@@ -7,13 +7,21 @@ import {
   type ListType,
 } from '@lexical/list';
 import {
+  $convertFromMarkdownString,
   CHECK_LIST,
   ORDERED_LIST,
   UNORDERED_LIST,
   type ElementTransformer,
+  type TextFormatTransformer,
+  type TextMatchTransformer,
   type Transformer,
 } from '@lexical/markdown';
-import { $createTextNode, type ElementNode, type LexicalNode } from 'lexical';
+import {
+  $createParagraphNode,
+  $isParagraphNode,
+  type ElementNode,
+  type LexicalNode,
+} from 'lexical';
 
 // GFM commonly uses 2-space list indents; 4 spaces still parse as depth 2.
 const LIST_INDENT_SIZE = 2;
@@ -22,27 +30,24 @@ const ORDERED_LIST_REGEX = /^(\s*)(\d{1,})\.\s+(.*)$/;
 const UNORDERED_LIST_REGEX = /^(\s*)[-*+]\s+(.*)$/;
 const CHECK_LIST_REGEX = /^(\s*)[-*+]\s?\[(\s|x|X)?\]\s+(.*)$/;
 
-// Mirrors @lexical/markdown importTextTransformers escape handling so list
-// item text round-trips with exportTextFormat (which escapes \ * _ ` ~).
-const MARKDOWN_ESCAPE_IN_TEXT = /\\[!-/:-@[-`{-~]|&#\d+;/;
-
-function unescapeMarkdownText(value: string): string {
-  return value
-    .replace(/\\([!-/:-@[-`{-~])/g, '$1')
-    .replace(/&#(\d+);/g, (_, codePoint) =>
-      String.fromCodePoint(Number(codePoint))
-    );
-}
-
 function importListItemText(
   listItem: ReturnType<typeof $createListItemNode>,
-  text: string
+  text: string,
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
 ): void {
-  const content = MARKDOWN_ESCAPE_IN_TEXT.test(text)
-    ? unescapeMarkdownText(text)
-    : text;
-  if (content.length > 0) {
-    listItem.append($createTextNode(content));
+  if (text.length === 0) {
+    return;
+  }
+
+  const container = $createParagraphNode();
+  $convertFromMarkdownString(text, inlineTransformers, container);
+
+  for (const block of container.getChildren()) {
+    if ($isParagraphNode(block)) {
+      for (const child of block.getChildren()) {
+        listItem.append(child);
+      }
+    }
   }
 }
 
@@ -183,7 +188,11 @@ function groupListBlocks(
   return blocks;
 }
 
-function appendNestedLevel(parentList: ListNode, nodes: ListTreeNode[]): void {
+function appendNestedLevel(
+  parentList: ListNode,
+  nodes: ListTreeNode[],
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
+): void {
   if (nodes.length === 0) {
     return;
   }
@@ -198,38 +207,50 @@ function appendNestedLevel(parentList: ListNode, nodes: ListTreeNode[]): void {
   for (const [listType, typedNodes] of nodesByType) {
     const wrapperItem = $createListItemNode();
     const nestedList = $createListNode(listType);
-    appendTreeItems(nestedList, typedNodes);
+    appendTreeItems(nestedList, typedNodes, inlineTransformers);
     wrapperItem.append(nestedList);
     parentList.append(wrapperItem);
   }
 }
 
-function appendTreeItems(list: ListNode, nodes: ListTreeNode[]): void {
+function appendTreeItems(
+  list: ListNode,
+  nodes: ListTreeNode[],
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
+): void {
   for (const node of nodes) {
     const listItem = $createListItemNode(node.checked);
     if (node.text.length > 0) {
-      importListItemText(listItem, node.text);
+      importListItemText(listItem, node.text, inlineTransformers);
     }
     list.append(listItem);
 
     if (node.children.length > 0) {
-      appendNestedLevel(list, node.children);
+      appendNestedLevel(list, node.children, inlineTransformers);
     }
   }
 }
 
-function appendTreeToList(list: ListNode, nodes: ListTreeNode[]): void {
-  appendTreeItems(list, nodes);
+function appendTreeToList(
+  list: ListNode,
+  nodes: ListTreeNode[],
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
+): void {
+  appendTreeItems(list, nodes, inlineTransformers);
 }
 
-function importListBlock(lines: ParsedListLine[], root: ElementNode): void {
+function importListBlock(
+  lines: ParsedListLine[],
+  root: ElementNode,
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
+): void {
   const tree = buildListTree(lines);
   const rootTypes = new Set(tree.map((node) => node.listType));
 
   for (const listType of rootTypes) {
     const nodes = tree.filter((node) => node.listType === listType);
     const list = $createListNode(listType);
-    appendTreeToList(list, nodes);
+    appendTreeToList(list, nodes, inlineTransformers);
     root.append(list);
   }
 }
@@ -237,11 +258,12 @@ function importListBlock(lines: ParsedListLine[], root: ElementNode): void {
 export function importMixedNestedListMarkdown(
   markdown: string,
   root: ElementNode,
-  importMarkdownChunk: (chunk: string, node: ElementNode) => void
+  importMarkdownChunk: (chunk: string, node: ElementNode) => void,
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
 ): void {
   for (const block of groupListBlocks(markdown)) {
     if (block.kind === 'list') {
-      importListBlock(block.lines, root);
+      importListBlock(block.lines, root, inlineTransformers);
     } else if (block.text.trim().length > 0) {
       importMarkdownChunk(block.text, root);
     }

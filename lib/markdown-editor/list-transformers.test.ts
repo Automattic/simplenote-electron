@@ -1,12 +1,18 @@
 import { createEditor, $getRoot } from 'lexical';
-import { ListNode, ListItemNode, $isListNode } from '@lexical/list';
+import {
+  ListNode,
+  ListItemNode,
+  $isListItemNode,
+  $isListNode,
+} from '@lexical/list';
+import { $isLinkNode, LinkNode } from '@lexical/link';
 import { $convertToMarkdownString } from '@lexical/markdown';
 
 import { MARKDOWN_TRANSFORMERS, $importMarkdownString } from './extensions';
 import { describeListTree } from './list-transformers';
 
 function importMarkdown(markdown: string) {
-  const editor = createEditor({ nodes: [ListNode, ListItemNode] });
+  const editor = createEditor({ nodes: [ListNode, ListItemNode, LinkNode] });
   editor.update(() => $importMarkdownString(markdown), { discrete: true });
   return editor;
 }
@@ -76,6 +82,21 @@ describe('mixed nested list markdown import', () => {
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
       expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+    });
+  });
+
+  it('parses inline links in list item text', () => {
+    const editor = importMarkdown('- [test in list](#link)');
+    editor.getEditorState().read(() => {
+      const listItem = $getRoot().getFirstChild()?.getFirstChild();
+      expect($isListItemNode(listItem)).toBe(true);
+
+      const link = listItem
+        ?.getChildren()
+        .find((child) => !$isListNode(child) && $isLinkNode(child));
+      expect(link).toBeDefined();
+      expect(link?.getTextContent()).toBe('test in list');
+      expect(link?.getURL()).toBe('#link');
     });
   });
 });

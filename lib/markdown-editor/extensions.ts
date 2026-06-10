@@ -29,6 +29,8 @@ import {
   QUOTE,
   registerMarkdownShortcuts,
   STRIKETHROUGH,
+  type TextFormatTransformer,
+  type TextMatchTransformer,
   type Transformer,
 } from '@lexical/markdown';
 import { RichTextExtension } from '@lexical/rich-text';
@@ -79,6 +81,11 @@ export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
 
 export const TRANSFORMERS = MARKDOWN_TRANSFORMERS;
 
+const INLINE_MARKDOWN_TRANSFORMERS = MARKDOWN_TRANSFORMERS.filter(
+  (transformer): transformer is TextFormatTransformer | TextMatchTransformer =>
+    transformer.type === 'text-format' || transformer.type === 'text-match'
+);
+
 // $convertFromMarkdownString clears its target node, so each chunk is
 // imported into a temporary container first, then the resulting blocks
 // are hoisted out. Leaving blocks nested inside the container paragraph
@@ -99,7 +106,12 @@ function $importChunk(chunk: string, target: ElementNode): void {
 export function $importMarkdownString(markdown: string): void {
   const root = $getRoot();
   root.clear();
-  importMixedNestedListMarkdown(markdown, root, $importChunk);
+  importMixedNestedListMarkdown(
+    markdown,
+    root,
+    $importChunk,
+    INLINE_MARKDOWN_TRANSFORMERS
+  );
 }
 
 /**
@@ -112,7 +124,12 @@ export function $markdownToNodes(markdown: string): LexicalNode[] {
   const previousSelection = $getSelection()?.clone() ?? null;
 
   const holder = $createParagraphNode();
-  importMixedNestedListMarkdown(markdown, holder, $importChunk);
+  importMixedNestedListMarkdown(
+    markdown,
+    holder,
+    $importChunk,
+    INLINE_MARKDOWN_TRANSFORMERS
+  );
   const children = holder.getChildren();
   for (const child of children) {
     child.remove();
