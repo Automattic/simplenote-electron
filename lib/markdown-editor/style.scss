@@ -1,3 +1,12 @@
+@use '../../scss/variables' as *;
+
+// Unlike Monaco (which has an internal virtual scroller), the Lexical
+// contenteditable needs a scrollable ancestor. The shell is absolutely
+// positioned at 100% height, so it is the natural scroll container.
+.lexical-md-editor-shell {
+  overflow-y: auto;
+}
+
 .lexical-md-editor {
   position: relative;
   min-height: 100%;
@@ -8,4 +17,31 @@
   padding: 40px 25px 20px;
   outline: none;
   caret-color: var(--primary-color);
+}
+
+// Fenced code blocks. Lexical's CodeNode renders a bare <code> element (no
+// wrapping <pre>), so it needs explicit block display and whitespace handling
+// to match the preview's `pre` styling in lib/note-detail/style.scss.
+.lexical-md-editor__code-block {
+  display: block;
+  margin: 0 0 1.5em;
+  padding: 1em;
+  border: 1px solid var(--tertiary-color);
+  border-radius: $border-radius;
+  font-size: 85%;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+// Applied by LargeDocumentExtension above a size threshold: off-screen
+// top-level blocks skip layout and paint. The extension sets a per-block
+// content-derived `contain-intrinsic-size` inline (keeping scrollbar drift
+// small), and the `auto` keyword remembers each block's real height after
+// first render. The 1.5em here is only a fallback for blocks the extension
+// has not estimated yet.
+.lexical-md-editor__input--large > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1.5em;
 }

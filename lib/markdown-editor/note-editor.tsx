@@ -4,6 +4,7 @@ import { $convertToMarkdownString } from '@lexical/markdown';
 import type { LexicalEditor } from 'lexical';
 
 import MarkdownEditor, { $importMarkdownString, TRANSFORMERS } from './editor';
+import { REMOTE_CONTENT_TAG } from './extensions';
 import actions from '../state/actions';
 import { withCheckboxSyntax } from '../utils/task-transform';
 
@@ -35,7 +36,6 @@ function MarkdownNoteEditorComponent({
 }: Props) {
   const editorRef = useRef<LexicalEditor | null>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
-  const isApplyingRemoteRef = useRef(false);
   const initialMarkdown = withCheckboxSyntax(noteContent);
 
   useEffect(() => {
@@ -67,15 +67,16 @@ function MarkdownNoteEditorComponent({
         return;
       }
 
-      isApplyingRemoteRef.current = true;
       editor.update(
         () => {
           $importMarkdownString(remote);
         },
         {
+          // The tag stops the on-change serializer from echoing this
+          // content back to the store as a local edit.
+          tag: REMOTE_CONTENT_TAG,
           onUpdate: () => {
             lastPushedRef.current = remote;
-            isApplyingRemoteRef.current = false;
           },
         }
       );
@@ -102,10 +103,6 @@ function MarkdownNoteEditorComponent({
 
   const handleChange = useCallback(
     (content: string) => {
-      if (isApplyingRemoteRef.current) {
-        return;
-      }
-
       if (content === lastPushedRef.current) {
         return;
       }
@@ -118,7 +115,7 @@ function MarkdownNoteEditorComponent({
 
   return (
     <div
-      className="note-content-editor-shell"
+      className="note-content-editor-shell lexical-md-editor-shell"
       onClick={(event) => {
         const target = event.target as HTMLElement;
         if (target.closest('.lexical-md-editor__input')) {
