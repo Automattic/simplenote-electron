@@ -167,15 +167,6 @@ body[data-theme='dark'] .note-detail-markdown {
     list-style: none;
   }
 
-  // Remove unneeded margin on root-level tasklist items
-  & > ul > .task-list-item {
-    margin-left: -#{$ul-padding-left};
-  }
-
-  ul:has(> .task-list-item[role='checkbox']) {
-    list-style: none;
-  }
-
   .task-list-item {
     // It's good to have immediate CSS feedback on click since
     // there will be a slight delay until the checkbox actually toggles
@@ -186,14 +177,6 @@ body[data-theme='dark'] .note-detail-markdown {
       }
     }
 
-    input {
-      position: relative;
-      bottom: 0.0625em;
-      margin-right: 4px;
-      height: 1em;
-      vertical-align: middle;
-    }
-
     // Lexical checklists use role="checkbox" on <li> (no <input>); reuse task
     // icon font from .note-detail-markdown in theme.scss.
     &[role='checkbox'] {
@@ -202,12 +185,7 @@ body[data-theme='dark'] .note-detail-markdown {
       outline: none;
 
       &::before {
-        display: inline-block;
-        position: relative;
-        bottom: 0.0625em;
         margin-right: 4px;
-        height: 1em;
-        vertical-align: middle;
         cursor: pointer;
       }
 
