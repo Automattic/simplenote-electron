@@ -34,14 +34,3 @@
   overflow-x: auto;
   tab-size: 2;
 }
-
-// Applied by LargeDocumentExtension above a size threshold: off-screen
-// top-level blocks skip layout and paint. The extension sets a per-block
-// content-derived `contain-intrinsic-size` inline (keeping scrollbar drift
-// small), and the `auto` keyword remembers each block's real height after
-// first render. The 1.5em here is only a fallback for blocks the extension
-// has not estimated yet.
-.lexical-md-editor__input--large > * {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1.5em;
-}

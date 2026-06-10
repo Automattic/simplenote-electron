@@ -47,8 +47,6 @@ import {
   type LexicalNode,
 } from 'lexical';
 
-import { LargeDocumentExtension } from './large-document-extension';
-
 import {
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_ORDERED_LIST,
@@ -356,7 +354,6 @@ export function createMarkdownEditorExtension(
     MarkdownShortcutExtension,
     MarkdownPasteExtension,
     MarkdownCopyExtension,
-    LargeDocumentExtension,
   ];
 
   if (onChange) {
