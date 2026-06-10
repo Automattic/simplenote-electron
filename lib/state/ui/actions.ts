@@ -149,10 +149,6 @@ export const selectNote: A.ActionCreator<A.SelectNote> = (
   noteId: T.EntityId
 ) => ({ type: 'SELECT_NOTE', noteId });
 
-export const toggleEditMode: A.ActionCreator<A.ToggleEditMode> = () => ({
-  type: 'TOGGLE_EDIT_MODE',
-});
-
 export const toggleNavigation: A.ActionCreator<A.ToggleNavigation> = () => ({
   type: 'NAVIGATION_TOGGLE',
 });

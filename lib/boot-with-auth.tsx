@@ -38,7 +38,6 @@ export const bootWithToken = (
 
     window.electron?.send('appStateUpdate', {
       settings: store.getState().settings,
-      editMode: store.getState().ui.editMode,
     });
 
     getAppRoot().render(

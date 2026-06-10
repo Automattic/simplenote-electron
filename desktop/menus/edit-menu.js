@@ -1,42 +1,32 @@
 const { appCommandSender, editorCommandSender } = require('./utils');
 
-const buildEditMenu = (settings, isAuthenticated, editMode) => {
+const buildEditMenu = (settings, isAuthenticated) => {
   settings = settings || {};
   isAuthenticated = isAuthenticated || false;
-  editMode = editMode || false;
 
-  let undo = {
+  const undo = {
     label: '&Undo',
     click: editorCommandSender({ action: 'undo' }),
     accelerator: 'CommandOrControl+Z',
-    visible: editMode,
   };
-  let redo = {
+  const redo = {
     label: '&Redo',
     click: editorCommandSender({ action: 'redo' }),
     accelerator: 'CommandOrControl+Shift+Z',
-    visible: editMode,
   };
-  let selectAll = {
+  const selectAll = {
     label: '&Select All',
     click: editorCommandSender({ action: 'selectAll' }),
     accelerator: 'CommandOrControl+A',
   };
 
-  const editModeMenuOptions = editMode
-    ? [
-        undo,
-        redo,
-        {
-          type: 'separator',
-        },
-      ]
-    : [];
-
-  // menu items with roles don't respect visibility, so we have to do this the hard way
-  if (!editMode) {
-    selectAll['role'] = 'selectAll';
-  }
+  const editMenuOptions = [
+    undo,
+    redo,
+    {
+      type: 'separator',
+    },
+  ];
 
   let authenticatedMenuOptions = [];
 
@@ -83,7 +73,7 @@ const buildEditMenu = (settings, isAuthenticated, editMode) => {
     { type: 'separator' },
   ];
 
-  const submenu = editModeMenuOptions
+  const submenu = editMenuOptions
     .concat(defaultSubmenuAdditions)
     .concat(authenticatedMenuOptions);
 

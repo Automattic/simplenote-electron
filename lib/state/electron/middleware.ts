@@ -92,7 +92,6 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
 
   window.electron.send('appStateUpdate', {
     settings: getState().settings,
-    editMode: getState().ui.editMode,
   });
 
   return (next) => (action) => {
@@ -106,13 +105,9 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         return result;
     }
 
-    if (
-      prevState.settings !== nextState.settings ||
-      prevState.ui.editMode !== nextState.ui.editMode
-    ) {
+    if (prevState.settings !== nextState.settings) {
       window.electron.send('appStateUpdate', {
         settings: nextState.settings,
-        editMode: nextState.ui.editMode,
       });
     }
 

@@ -22,11 +22,6 @@ const NoteEditor = React.lazy(
   () => import(/* webpackChunkName: 'note-editor' */ '../note-editor')
 );
 
-const NotePreview = React.lazy(
-  () =>
-    import(/* webpackChunkName: 'note-preview' */ '../components/note-preview')
-);
-
 type StateProps = {
   isFocusMode: boolean;
   isNavigationOpen: boolean;

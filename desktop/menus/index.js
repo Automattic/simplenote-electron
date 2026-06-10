@@ -11,7 +11,6 @@ function createMenuTemplate(args, mainWindow) {
   args = args || {};
   const settings = args['settings'] || {};
   const isAuthenticated = settings && 'accountName' in settings;
-  const editMode = args['editMode'] || false;
   const windowMenu = {
     role: 'window',
     submenu: [
@@ -25,9 +24,9 @@ function createMenuTemplate(args, mainWindow) {
   return [
     platform.isOSX() ? buildMacAppMenu(isAuthenticated) : null,
     buildFileMenu(isAuthenticated),
-    buildEditMenu(settings, isAuthenticated, editMode),
+    buildEditMenu(settings, isAuthenticated),
     buildViewMenu(settings, isAuthenticated),
-    buildFormatMenu(isAuthenticated, editMode),
+    buildFormatMenu(isAuthenticated),
     platform.isOSX() ? windowMenu : null,
     buildHelpMenu(mainWindow, isAuthenticated),
   ].filter((menu) => menu !== null);

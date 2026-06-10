@@ -167,18 +167,6 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   }
 };
 
-const editMode: A.Reducer<boolean> = (state = true, action) => {
-  switch (action.type) {
-    case 'TOGGLE_EDIT_MODE': {
-      return !state;
-    }
-    case 'CREATE_NOTE_WITH_ID':
-      return true;
-    default:
-      return state;
-  }
-};
-
 const editingTags: A.Reducer<boolean> = (state = false, action) => {
   switch (action.type) {
     case 'TAG_EDITING_TOGGLE':
@@ -420,7 +408,6 @@ export default combineReducers({
   collection,
   alternateLoginEmail,
   dialogs,
-  editMode,
   editorSelection,
   editingTags,
   filteredNotes,
