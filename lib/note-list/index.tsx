@@ -91,7 +91,9 @@ const renderNote =
           parent={parent}
           rowIndex={index}
         >
-          <TagSuggestions style={{ ...style }} />
+          <div style={style}>
+            <TagSuggestions />
+          </div>
         </CellMeasurer>
       ) : (
         <CellMeasurer
@@ -116,11 +118,12 @@ const renderNote =
         parent={parent}
         rowIndex={index}
       >
-        <NoteCell
-          invalidateHeight={() => heightCache.clear(index, 0)}
-          noteId={note}
-          style={style}
-        />
+        <div style={style}>
+          <NoteCell
+            invalidateHeight={() => heightCache.clear(index, 0)}
+            noteId={note}
+          />
+        </div>
       </CellMeasurer>
     );
   };

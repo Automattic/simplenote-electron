@@ -3,3 +3,8 @@
 .transition-delay-enter {
   @include mixins.react-transition-fade-in;
 }
+
+.transition-delay-enter-wrapper {
+  display: flex;
+  flex: 1 0 auto;
+}

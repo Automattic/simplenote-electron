@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { getAppRoot } from '../app-root';
 
 import BootWarning from '../components/boot-warning';
 
@@ -18,7 +18,7 @@ const deps = [['localStorage', hasLocalStorage()]] as const;
 const missingDeps = deps.filter(([, hasIt]) => !hasIt).map(([name]) => name);
 
 if (missingDeps.length) {
-  render(
+  getAppRoot().render(
     <BootWarning>
       <p>
         Simplenote depends on a few web technologies to operate. Please make
@@ -35,8 +35,7 @@ if (missingDeps.length) {
         Many browsers disable some of these features in Private Mode. Simplenote
         does not currently support running in Private Mode.
       </p>
-    </BootWarning>,
-    document.getElementById('root')
+    </BootWarning>
   );
   throw new Error(
     `Simplenote is missing required dependencies: ${missingDeps.join(', ')}`

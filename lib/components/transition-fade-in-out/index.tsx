@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode } from 'react';
+import React, { FunctionComponent, ReactNode, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 type OwnProps = {
@@ -12,15 +12,20 @@ const TransitionFadeInOut: FunctionComponent<OwnProps> = ({
   shouldMount,
   wrapperClassName = '',
 }) => {
+  const nodeRef = useRef<HTMLDivElement>(null);
+
   return (
     <CSSTransition
+      nodeRef={nodeRef}
       in={shouldMount}
       classNames="transition-fade-in-out"
       mountOnEnter
       timeout={200}
       unmountOnExit
     >
-      <div className={wrapperClassName}>{children}</div>
+      <div ref={nodeRef} className={wrapperClassName}>
+        {children}
+      </div>
     </CSSTransition>
   );
 };
