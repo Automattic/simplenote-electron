@@ -29,6 +29,7 @@ import {
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_ORDERED_LIST,
   MIXED_NESTED_UNORDERED_LIST,
+  registerTaskListItemShortcuts,
   withMixedNestedListTransformers,
 } from './list-transformers';
 
@@ -55,7 +56,24 @@ function makeEditorWithShortcuts() {
     MIXED_NESTED_UNORDERED_LIST,
     MIXED_NESTED_ORDERED_LIST,
   ]);
+  registerTaskListItemShortcuts(editor);
   return editor;
+}
+
+async function typeText(editor: ReturnType<typeof createEditor>, text: string) {
+  for (const char of text) {
+    editor.update(
+      () => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          selection.insertText(char);
+        }
+      },
+      { discrete: true }
+    );
+  }
+
+  await Promise.resolve();
 }
 
 async function typeAtLineStart(
@@ -298,6 +316,48 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
     expectReplaceCreatesList(MIXED_NESTED_CHECK_LIST, '- [ ] todo', 'check');
     expectReplaceSkipsImport(MIXED_NESTED_CHECK_LIST, '- [ ] todo');
   });
+});
+
+describe('task list item shortcuts', () => {
+  async function startListThenTypeMarker(
+    editor: ReturnType<typeof makeEditorWithShortcuts>,
+    listShortcut: string,
+    marker: string
+  ) {
+    await typeAtLineStart(editor, listShortcut);
+    await typeText(editor, marker);
+  }
+
+  it.each([
+    ['- ', '[] '],
+    ['- ', '[ ] '],
+    ['1. ', '[] '],
+    ['1. ', '[ ] '],
+  ])(
+    'converts a list started with %j into a task list when typing %j',
+    async (listShortcut, marker) => {
+      const editor = makeEditorWithShortcuts();
+      await startListThenTypeMarker(editor, listShortcut, marker);
+
+      editor.getEditorState().read(() => {
+        const list = $getRoot().getFirstChild();
+        expect($isListNode(list)).toBe(true);
+        if (!$isListNode(list)) {
+          return;
+        }
+        expect(list.getListType()).toBe('check');
+
+        const listItem = list.getFirstChild();
+        expect($isListItemNode(listItem)).toBe(true);
+        if ($isListItemNode(listItem)) {
+          expect(listItem.getChecked()).toBe(false);
+          expect(listItem.getTextContent()).toBe('');
+        }
+
+        expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe('- [ ] ');
+      });
+    }
+  );
 });
 
 describe('withMixedNestedListTransformers', () => {

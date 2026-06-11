@@ -67,6 +67,7 @@ import {
   MIXED_NESTED_ORDERED_LIST,
   MIXED_NESTED_UNORDERED_LIST,
   importMixedNestedListMarkdown,
+  registerTaskListItemShortcuts,
 } from './list-transformers';
 
 const autoLinkExtension = configExtension(AutoLinkExtension, {
@@ -218,7 +219,16 @@ const markdownEditorTheme = {
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
   register(editor) {
-    return registerMarkdownShortcuts(editor, MARKDOWN_TRANSFORMERS);
+    const unregisterMarkdownShortcuts = registerMarkdownShortcuts(
+      editor,
+      MARKDOWN_TRANSFORMERS
+    );
+    const unregisterTaskListItemShortcuts =
+      registerTaskListItemShortcuts(editor);
+    return () => {
+      unregisterMarkdownShortcuts();
+      unregisterTaskListItemShortcuts();
+    };
   },
 });
 

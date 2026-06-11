@@ -4,6 +4,7 @@ import {
   $isListItemNode,
   $isListNode,
   type ListNode,
+  type ListItemNode,
   type ListType,
 } from '@lexical/list';
 import {
@@ -18,9 +19,19 @@ import {
 } from '@lexical/markdown';
 import {
   $createParagraphNode,
+  $findMatchingParent,
+  $getSelection,
   $isParagraphNode,
+  $isRangeSelection,
+  $isTextNode,
+  COLLABORATION_TAG,
+  HISTORIC_TAG,
+  HISTORY_PUSH_TAG,
+  $addUpdateTag,
   type ElementNode,
+  type LexicalEditor,
   type LexicalNode,
+  type TextNode,
 } from 'lexical';
 
 // GFM commonly uses 2-space list indents; 4 spaces still parse as depth 2.
@@ -29,6 +40,112 @@ const LIST_INDENT_SIZE = 2;
 const ORDERED_LIST_REGEX = /^(\s*)(\d{1,})\.\s+(.*)$/;
 const UNORDERED_LIST_REGEX = /^(\s*)[-*+]\s+(.*)$/;
 const CHECK_LIST_REGEX = /^(\s*)[-*+]\s?\[(\s|x|X)?\]\s+(.*)$/;
+const TASK_LIST_ITEM_MARKER_REGEX = /^\[\s?\]\s$/;
+
+function $getListItemLeadingTextNode(listItem: ListItemNode): TextNode | null {
+  for (const child of listItem.getChildren()) {
+    if ($isListNode(child)) {
+      continue;
+    }
+    if ($isTextNode(child)) {
+      return child;
+    }
+    if ($isParagraphNode(child)) {
+      const firstChild = child.getFirstChild();
+      if ($isTextNode(firstChild)) {
+        return firstChild;
+      }
+    }
+  }
+  return null;
+}
+
+function $tryConvertListItemToTaskList(
+  anchorNode: TextNode,
+  anchorOffset: number
+): boolean {
+  const listItem = $findMatchingParent(anchorNode, $isListItemNode);
+  if (!listItem) {
+    return false;
+  }
+
+  const listNode = listItem.getParent();
+  if (!$isListNode(listNode)) {
+    return false;
+  }
+
+  const listType = listNode.getListType();
+  if (listType !== 'bullet' && listType !== 'number') {
+    return false;
+  }
+
+  const leadingTextNode = $getListItemLeadingTextNode(listItem);
+  if (
+    leadingTextNode === null ||
+    leadingTextNode.getKey() !== anchorNode.getKey()
+  ) {
+    return false;
+  }
+
+  const textContent = anchorNode.getTextContent();
+  if (
+    textContent[anchorOffset - 1] !== ' ' ||
+    textContent.length !== anchorOffset ||
+    !TASK_LIST_ITEM_MARKER_REGEX.test(textContent)
+  ) {
+    return false;
+  }
+
+  listNode.setListType('check');
+
+  for (const item of listNode.getChildren()) {
+    if ($isListItemNode(item)) {
+      item.setChecked(false);
+    }
+  }
+
+  anchorNode.setTextContent('');
+  listItem.selectStart();
+  return true;
+}
+
+export function registerTaskListItemShortcuts(
+  editor: LexicalEditor
+): () => void {
+  return editor.registerUpdateListener(
+    ({ dirtyLeaves, editorState, prevEditorState, tags }) => {
+      if (tags.has(COLLABORATION_TAG) || tags.has(HISTORIC_TAG)) {
+        return;
+      }
+      if (editor.isComposing()) {
+        return;
+      }
+
+      const selection = editorState.read($getSelection);
+      const prevSelection = prevEditorState.read($getSelection);
+      if (
+        !$isRangeSelection(prevSelection) ||
+        !$isRangeSelection(selection) ||
+        !selection.isCollapsed()
+      ) {
+        return;
+      }
+
+      const anchorKey = selection.anchor.key;
+      const anchorOffset = selection.anchor.offset;
+      const anchorNode = editorState._nodeMap.get(anchorKey);
+      if (!$isTextNode(anchorNode) || !dirtyLeaves.has(anchorKey)) {
+        return;
+      }
+
+      editor.update(() => {
+        if ($tryConvertListItemToTaskList(anchorNode, anchorOffset)) {
+          $addUpdateTag(HISTORY_PUSH_TAG);
+        }
+      });
+    }
+  );
+}
 
 function importListItemText(
   listItem: ReturnType<typeof $createListItemNode>,
