@@ -105,31 +105,39 @@ span[dir='ltr'] {
     padding: 2px 0;
   }
 
-  .md-heading-1 {
+  // Monaco applies .md-heading-* as inline decorations; Lexical renders native
+  // h1–h6. Pair selectors so both editors share the same heading scale.
+  .md-heading-1,
+  h1 {
     font-size: 1.6em;
     font-weight: 600;
   }
 
-  .md-heading-2 {
+  .md-heading-2,
+  h2 {
     font-size: 1.4em;
     font-weight: 600;
   }
 
-  .md-heading-3 {
+  .md-heading-3,
+  h3 {
     font-size: 1.2em;
     font-weight: 600;
   }
 
-  .md-heading-4 {
+  .md-heading-4,
+  h4 {
     font-weight: 600;
   }
 
-  .md-heading-5 {
+  .md-heading-5,
+  h5 {
     font-weight: 600;
     opacity: 0.9;
   }
 
-  .md-heading-6 {
+  .md-heading-6,
+  h6 {
     font-weight: 600;
     opacity: 0.85;
   }

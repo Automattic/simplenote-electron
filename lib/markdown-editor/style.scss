@@ -27,6 +27,24 @@
   h6 {
     scroll-margin-top: 40px;
   }
+
+  // Title styling for the first line (presentation-only; stored content
+  // unchanged). Matches h1 / .md-heading-1 in scss/theme.scss.
+  > p:first-child {
+    font-size: 1.6em;
+    font-weight: 600;
+  }
+}
+
+.lexical-md-editor__placeholder {
+  position: absolute;
+  top: 40px;
+  left: 25px;
+  color: var(--placeholder-color);
+  font-size: 1.6em;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
 }
 
 // Fenced code blocks. Lexical's CodeNode renders a bare <code> element (no
