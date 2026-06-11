@@ -1,6 +1,10 @@
 # Changelog
 
-## [v2.26.0]
+## [v2.26.1]
+
+### Enhancements
+
+- Service release to prepare for Windows code signing mode change without breaking auto update [#3383](https://github.com/Automattic/simplenote-electron/pull/3383)
 
 ### New Features
 
