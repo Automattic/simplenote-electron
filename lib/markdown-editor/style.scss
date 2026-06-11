@@ -76,3 +76,33 @@
   font-family: monospace;
   font-size: 85%;
 }
+
+// Floating note-link completion menu, portaled to <body> and positioned
+// at the caret.
+.internal-link-suggestions {
+  position: fixed;
+  z-index: 1000;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  min-width: 180px;
+  max-width: 320px;
+  overflow: hidden;
+  background: var(--background-color);
+  border: 1px solid var(--tertiary-color);
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.internal-link-suggestion {
+  padding: 6px 12px;
+  color: var(--primary-color);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.is-selected {
+    background: var(--highlight-color);
+  }
+}

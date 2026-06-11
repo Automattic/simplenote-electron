@@ -16,6 +16,7 @@ import {
   TRANSFORMERS,
   withMixedNestedListTransformers,
 } from './extensions';
+import { InternalLinkPlugin } from './internal-link-menu';
 import EditorPlaceholder from './placeholder';
 
 import './style.scss';
@@ -28,6 +29,7 @@ export type MarkdownEditorProps = {
   initialMarkdown?: string;
   noteId: EntityId;
   onChange?: (markdown: string) => void;
+  onOpenInternalLink?: (noteId: EntityId) => void;
   placeholder?: string;
 };
 
@@ -41,6 +43,7 @@ export default function MarkdownEditor({
   initialMarkdown = '',
   noteId,
   onChange,
+  onOpenInternalLink,
   placeholder = 'Start typing…',
 }: MarkdownEditorProps) {
   const onChangeRef = useRef(onChange);
@@ -62,6 +65,7 @@ export default function MarkdownEditor({
       >
         {editorRef && <EditorRefPlugin editorRef={editorRef} />}
         <EditorPlaceholder text={placeholder} />
+        <InternalLinkPlugin noteId={noteId} onOpenNote={onOpenInternalLink} />
       </LexicalExtensionComposer>
     </div>
   );

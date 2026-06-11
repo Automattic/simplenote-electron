@@ -20,10 +20,12 @@ type OwnProps = {
 type StateProps = {
   noteContent: string;
   noteId: T.EntityId;
+  notes: Map<T.EntityId, T.Note>;
 };
 
 type DispatchProps = {
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => void;
+  openNote: (noteId: T.EntityId) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -32,6 +34,8 @@ function MarkdownNoteEditorComponent({
   editNote,
   noteContent,
   noteId,
+  notes,
+  openNote,
   storeFocusEditor,
   storeHasFocus,
 }: Props) {
@@ -105,6 +109,17 @@ function MarkdownNoteEditorComponent({
     storeHasFocus(hasFocus);
   }, [focusEditor, hasFocus, storeFocusEditor, storeHasFocus]);
 
+  // Opening a note that isn't in local state would close the current note
+  // without opening anything else, so dead links do nothing (as in Monaco).
+  const handleOpenInternalLink = useCallback(
+    (linkedNoteId: T.EntityId) => {
+      if (notes.has(linkedNoteId)) {
+        openNote(linkedNoteId);
+      }
+    },
+    [notes, openNote]
+  );
+
   const handleChange = useCallback(
     (content: string) => {
       if (content === lastPushedRef.current) {
@@ -137,6 +152,7 @@ function MarkdownNoteEditorComponent({
         initialMarkdown={initialMarkdown}
         noteId={noteId}
         onChange={handleChange}
+        onOpenInternalLink={handleOpenInternalLink}
       />
     </div>
   );
@@ -149,11 +165,13 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   return {
     noteId,
     noteContent: note.content,
+    notes: state.data.notes,
   };
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
   editNote: actions.data.editNote,
+  openNote: actions.ui.selectNote,
 };
 
 export const MarkdownNoteEditor = connect(
