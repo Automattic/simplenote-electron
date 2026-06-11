@@ -17,6 +17,16 @@
   padding: 40px 25px 20px;
   outline: none;
   caret-color: var(--primary-color);
+
+  // Keep anchor-scroll targets clear of the input's top padding.
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    scroll-margin-top: 40px;
+  }
 }
 
 // Fenced code blocks. Lexical's CodeNode renders a bare <code> element (no

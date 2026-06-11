@@ -11,9 +11,10 @@ import {
   findLinkableNotes,
   getLinkCompletionMatch,
   noteIdFromUrl,
-  registerInternalLinkClick,
+  registerLinkClick,
 } from './internal-link';
 import { searchNotes } from '../search';
+import { viewExternalUrl } from '../utils/url-utils';
 
 import type * as T from '../types';
 
@@ -22,7 +23,12 @@ jest.mock('../search', () => ({
   searchNotes: jest.fn(() => []),
 }));
 
+jest.mock('../utils/url-utils', () => ({
+  viewExternalUrl: jest.fn(),
+}));
+
 const mockSearchNotes = searchNotes as jest.Mock;
+const mockViewExternalUrl = viewExternalUrl as jest.Mock;
 
 const makeNote = (content: string, systemTags: T.SystemTag[] = []): T.Note => ({
   content,
@@ -35,6 +41,7 @@ const makeNote = (content: string, systemTags: T.SystemTag[] = []): T.Note => ({
 
 beforeEach(() => {
   mockSearchNotes.mockReset().mockReturnValue([]);
+  mockViewExternalUrl.mockReset();
 });
 
 describe('getLinkCompletionMatch', () => {
@@ -172,7 +179,7 @@ describe('$insertInternalLink', () => {
   });
 });
 
-describe('registerInternalLinkClick', () => {
+describe('registerLinkClick', () => {
   function mountEditor(markdown: string) {
     const editor = buildEditorFromExtensions(
       createMarkdownEditorExtension(markdown)
@@ -195,26 +202,76 @@ describe('registerInternalLinkClick', () => {
       '[Note](simplenote://note/target-1) and text'
     );
     const onOpenNote = jest.fn();
-    registerInternalLinkClick(editor, onOpenNote);
+    registerLinkClick(editor, onOpenNote);
 
     const anchor = root.querySelector('a');
     expect(anchor).not.toBeNull();
     const event = click(anchor!);
 
     expect(onOpenNote).toHaveBeenCalledWith('target-1');
+    expect(mockViewExternalUrl).not.toHaveBeenCalled();
     expect(event.defaultPrevented).toBe(true);
     editor.dispose();
     root.remove();
   });
 
-  it('ignores external links', () => {
+  it('opens external links externally', () => {
     const { editor, root } = mountEditor('[site](https://example.com)');
     const onOpenNote = jest.fn();
-    registerInternalLinkClick(editor, onOpenNote);
+    registerLinkClick(editor, onOpenNote);
+
+    const event = click(root.querySelector('a')!);
+
+    expect(onOpenNote).not.toHaveBeenCalled();
+    expect(mockViewExternalUrl).toHaveBeenCalledWith('https://example.com');
+    expect(event.defaultPrevented).toBe(true);
+    editor.dispose();
+    root.remove();
+  });
+
+  it('scrolls to the matching heading for anchor links', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    const { editor, root } = mountEditor(
+      '## My Section\n\n[jump](#my-section)'
+    );
+    const onOpenNote = jest.fn();
+    registerLinkClick(editor, onOpenNote);
+
+    const event = click(root.querySelector('a')!);
+
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView.mock.instances[0]).toBe(root.querySelector('h2'));
+    expect(onOpenNote).not.toHaveBeenCalled();
+    expect(mockViewExternalUrl).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(true);
+    editor.dispose();
+    root.remove();
+  });
+
+  it('does nothing for anchor links without a matching heading', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    const { editor, root } = mountEditor('[jump](#missing)');
+    registerLinkClick(editor, jest.fn());
 
     click(root.querySelector('a')!);
 
-    expect(onOpenNote).not.toHaveBeenCalled();
+    expect(scrollIntoView).not.toHaveBeenCalled();
+    expect(mockViewExternalUrl).not.toHaveBeenCalled();
+    editor.dispose();
+    root.remove();
+  });
+
+  it('assumes https for scheme-less link URLs', () => {
+    const { editor, root } = mountEditor('[site](www.example.com)');
+    registerLinkClick(editor, jest.fn());
+
+    click(root.querySelector('a')!);
+
+    expect(mockViewExternalUrl).toHaveBeenCalledWith('https://www.example.com');
     editor.dispose();
     root.remove();
   });
@@ -222,11 +279,13 @@ describe('registerInternalLinkClick', () => {
   it('ignores clicks on plain text', () => {
     const { editor, root } = mountEditor('plain text');
     const onOpenNote = jest.fn();
-    registerInternalLinkClick(editor, onOpenNote);
+    registerLinkClick(editor, onOpenNote);
 
-    click(root.querySelector('p') ?? root);
+    const event = click(root.querySelector('p') ?? root);
 
     expect(onOpenNote).not.toHaveBeenCalled();
+    expect(mockViewExternalUrl).not.toHaveBeenCalled();
+    expect(event.defaultPrevented).toBe(false);
     editor.dispose();
     root.remove();
   });
@@ -234,7 +293,7 @@ describe('registerInternalLinkClick', () => {
   it('stops listening after cleanup', () => {
     const { editor, root } = mountEditor('[Note](simplenote://note/target-1)');
     const onOpenNote = jest.fn();
-    const unregister = registerInternalLinkClick(editor, onOpenNote);
+    const unregister = registerLinkClick(editor, onOpenNote);
     unregister();
 
     click(root.querySelector('a')!);

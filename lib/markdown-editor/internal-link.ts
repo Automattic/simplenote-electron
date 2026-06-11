@@ -11,9 +11,11 @@ import {
   type LexicalEditor,
 } from 'lexical';
 
+import { $findAnchorHeadingKey } from './heading-anchor';
 import { searchNotes, tagsFromSearch } from '../search';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
+import { viewExternalUrl } from '../utils/url-utils';
 
 import type * as T from '../types';
 
@@ -143,14 +145,38 @@ export function $insertInternalLink(note: { noteId: T.EntityId }): boolean {
   return true;
 }
 
+// Markdown links like [site](www.example.com) carry no scheme; assume
+// https so they open instead of failing URL parsing in viewExternalUrl.
+function withScheme(url: string): string {
+  return /^[a-z][a-z0-9+.-]*:/i.test(url) ? url : `https://${url}`;
+}
+
+// Scrolls to the heading matching `#slug`, e.g. `[link](#my-section)`.
+function scrollToAnchor(editor: LexicalEditor, hash: string): void {
+  let slug = hash.slice(1);
+  try {
+    slug = decodeURIComponent(slug);
+  } catch {
+    // Malformed escape sequence; match against the raw slug.
+  }
+
+  const key = editor.read(() => $findAnchorHeadingKey(slug));
+  const heading = key === null ? null : editor.getElementByKey(key);
+  // Scrolls the editor shell (the nearest scrollable ancestor), not the page.
+  heading?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 /**
- * Opens internal `simplenote://note/…` links on click. The rendered DOM
- * href is `about:blank` (Lexical sanitizes unknown protocols), so the URL
- * is read from the LinkNode itself.
+ * Opens links on click: internal `simplenote://note/…` links via
+ * `onOpenNote`, `#anchor` links by scrolling to the matching heading, and
+ * anything else externally. The rendered DOM href for internal links is
+ * `about:blank` (Lexical sanitizes unknown protocols), so the URL is read
+ * from the LinkNode itself. The browser never follows anchors inside a
+ * contenteditable, so external links are opened here too.
  */
-export function registerInternalLinkClick(
+export function registerLinkClick(
   editor: LexicalEditor,
-  onOpenNote: (noteId: T.EntityId) => void
+  onOpenNote?: (noteId: T.EntityId) => void
 ): () => void {
   const onClick = (event: MouseEvent) => {
     const url = editor.read(() => {
@@ -162,13 +188,21 @@ export function registerInternalLinkClick(
       return link ? link.getURL() : null;
     });
 
-    const noteId = url === null ? null : noteIdFromUrl(url);
-    if (!noteId) {
+    if (url === null) {
       return;
     }
 
     event.preventDefault();
-    onOpenNote(noteId);
+
+    const noteId = noteIdFromUrl(url);
+    if (noteId) {
+      onOpenNote?.(noteId);
+    } else if (url.startsWith('#')) {
+      scrollToAnchor(editor, url);
+    } else {
+      // Ignores anything that isn't http(s) or mailto.
+      viewExternalUrl(withScheme(url));
+    }
   };
 
   return editor.registerRootListener((root, prevRoot) => {

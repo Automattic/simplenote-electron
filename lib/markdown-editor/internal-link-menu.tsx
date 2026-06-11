@@ -15,7 +15,7 @@ import {
   $getSelectionCompletionMatch,
   $insertInternalLink,
   findLinkableNotes,
-  registerInternalLinkClick,
+  registerLinkClick,
   type LinkableNote,
 } from './internal-link';
 
@@ -75,10 +75,7 @@ export function InternalLinkPlugin({ noteId, onOpenNote }: Props) {
   }, [editor, noteId]);
 
   useEffect(() => {
-    if (!onOpenNote) {
-      return;
-    }
-    return registerInternalLinkClick(editor, onOpenNote);
+    return registerLinkClick(editor, onOpenNote);
   }, [editor, onOpenNote]);
 
   useEffect(() => {
