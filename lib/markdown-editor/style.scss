@@ -8,7 +8,6 @@
 }
 
 .lexical-md-editor {
-  position: relative;
   min-height: 100%;
 }
 
@@ -34,17 +33,6 @@
     font-size: 1.6em;
     font-weight: 600;
   }
-}
-
-.lexical-md-editor__placeholder {
-  position: absolute;
-  top: 40px;
-  left: 25px;
-  color: var(--placeholder-color);
-  font-size: 1.6em;
-  font-weight: 600;
-  pointer-events: none;
-  user-select: none;
 }
 
 // Fenced code blocks. Lexical's CodeNode renders a bare <code> element (no
