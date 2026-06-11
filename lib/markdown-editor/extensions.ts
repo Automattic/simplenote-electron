@@ -158,6 +158,9 @@ const markdownEditorTheme = {
       listitem: 'lexical-nested-list-item',
     },
   },
+  text: {
+    strikethrough: 'md-strikethrough',
+  },
 };
 
 export const MarkdownShortcutExtension = defineExtension({
