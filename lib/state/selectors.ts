@@ -44,6 +44,21 @@ export const noteHasPendingChanges: S.Selector<boolean> = (
     state.simperium.ghosts[1].get('note')?.get(noteId)?.data
   );
 
+export const noteShowSyncSpinner: S.Selector<boolean> = (
+  state,
+  noteId: T.EntityId
+) => {
+  if (!noteHasPendingChanges(state, noteId)) {
+    return false;
+  }
+
+  if (state.simperium.syncErrors.has(noteId)) {
+    return state.simperium.syncRetrying.has(noteId);
+  }
+
+  return true;
+};
+
 export const shouldShowEmailVerification: S.Selector<boolean> = ({
   data: { accountVerification: status },
 }) => status === 'unverified' || status === 'pending';

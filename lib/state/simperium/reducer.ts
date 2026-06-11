@@ -60,6 +60,60 @@ const lastSync: A.Reducer<Map<T.EntityId, number>> = (
   }
 };
 
+const syncErrorNoteId = (action: A.ActionType): T.EntityId | undefined => {
+  switch (action.type) {
+    case 'ACKNOWLEDGE_PENDING_CHANGE':
+      return action.entityId;
+
+    case 'REMOTE_NOTE_UPDATE':
+    case 'REMOTE_NOTE_DELETE_FOREVER':
+    case 'DELETE_NOTE_FOREVER':
+    case 'NOTE_BUCKET_REMOVE':
+      return action.noteId;
+
+    default:
+      return undefined;
+  }
+};
+
+const syncErrors: A.Reducer<Map<T.EntityId, number>> = (
+  state = emptyMap as Map<T.EntityId, number>,
+  action
+) => {
+  if (action.type === 'NOTE_SYNC_ERROR') {
+    return new Map(state).set(action.noteId, action.errorCode);
+  }
+
+  const noteId = syncErrorNoteId(action);
+  if (!noteId || !state.has(noteId)) {
+    return state;
+  }
+
+  const next = new Map(state);
+  next.delete(noteId);
+  return next;
+};
+
+const syncRetrying: A.Reducer<Map<T.EntityId, true>> = (
+  state = emptyMap as Map<T.EntityId, true>,
+  action
+) => {
+  if (action.type === 'NOTE_SYNC_RETRY') {
+    return new Map(state).set(action.noteId, true);
+  }
+
+  const noteId =
+    action.type === 'NOTE_SYNC_ERROR' ? action.noteId : syncErrorNoteId(action);
+
+  if (!noteId || !state.has(noteId)) {
+    return state;
+  }
+
+  const next = new Map(state);
+  next.delete(noteId);
+  return next;
+};
+
 const lastRemoteUpdate: A.Reducer<Map<T.EntityId, number>> = (
   state = emptyMap as Map<T.EntityId, number>,
   action
@@ -80,4 +134,6 @@ export default combineReducers({
   ghosts,
   lastSync,
   lastRemoteUpdate,
+  syncErrors,
+  syncRetrying,
 });

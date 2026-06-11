@@ -76,6 +76,17 @@ export const initSimperium =
     }
 
     const noteBucket = client.bucket('note');
+
+    // A rejected change stays in localQueue.sent because simperium only clears
+    // it on acknowledge. Release it so subsequent edits can sync.
+    const releaseStuckNoteChange = (noteId: T.EntityId) => {
+      const localQueue = (noteBucket.channel as any).localQueue;
+      if (localQueue.sent[noteId]) {
+        delete localQueue.sent[noteId];
+        localQueue.processQueue(noteId);
+      }
+    };
+
     noteBucket.channel.on(
       'update',
       (entityId, updatedEntity, original, patch, isIndexing) => {
@@ -128,6 +139,27 @@ export const initSimperium =
         entityId: entityId as T.EntityId,
         ccid: change.ccid,
       });
+    });
+
+    // fires when the server rejects a change with an error code the client
+    // can't recover from on its own, e.g. 413 when a note is too large.
+    // NB: must listen on the bucket, not the channel: the bucket forwards
+    // channel errors, and emitting 'error' on the listenerless bucket throws
+    noteBucket.on('error', (error, change) => {
+      const noteId = change?.id as T.EntityId | undefined;
+      const errorCode = (error as { code?: unknown })?.code;
+
+      debug(`sync error for note ${noteId}: ${errorCode}`);
+
+      if (noteId && 'number' === typeof errorCode) {
+        releaseStuckNoteChange(noteId);
+
+        dispatch({
+          type: 'NOTE_SYNC_ERROR',
+          noteId,
+          errorCode,
+        });
+      }
     });
 
     const tagBucket = client.bucket('tag');
@@ -230,8 +262,18 @@ export const initSimperium =
     });
 
     const noteQueue = new BucketQueue(noteBucket);
-    const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
+    const queueNoteUpdate = (
+      noteId: T.EntityId,
+      delay = 2000,
+      state: S.State = getState()
+    ) => {
+      if (state.simperium.syncErrors.has(noteId)) {
+        releaseStuckNoteChange(noteId);
+        dispatch({ type: 'NOTE_SYNC_RETRY', noteId });
+      }
+
       noteQueue.add(noteId, Date.now() + delay);
+    };
 
     const hasRequestedRevisions = new Set<T.EntityId>();
 
@@ -281,19 +323,19 @@ export const initSimperium =
             queueTagUpdate(tagHash);
           }
 
-          queueNoteUpdate(action.noteId);
+          queueNoteUpdate(action.noteId, 2000, prevState);
           return result;
         }
 
         case 'REMOVE_COLLABORATOR':
         case 'REMOVE_NOTE_TAG':
-          queueNoteUpdate(action.noteId);
+          queueNoteUpdate(action.noteId, 2000, prevState);
           return result;
 
         case 'CREATE_NOTE_WITH_ID':
         case 'INSERT_TASK_INTO_NOTE':
         case 'EDIT_NOTE':
-          queueNoteUpdate(action.noteId);
+          queueNoteUpdate(action.noteId, 2000, prevState);
           return result;
 
         case 'FILTER_NOTES':
@@ -357,7 +399,7 @@ export const initSimperium =
             }
           });
 
-          queueNoteUpdate(action.noteId, 10);
+          queueNoteUpdate(action.noteId, 10, prevState);
           return result;
         }
 
@@ -368,7 +410,7 @@ export const initSimperium =
         case 'PUBLISH_NOTE':
         case 'RESTORE_NOTE':
         case 'TRASH_NOTE':
-          queueNoteUpdate(action.noteId, 10);
+          queueNoteUpdate(action.noteId, 10, prevState);
           return result;
 
         case 'IMPORT_NOTE_WITH_ID': {
@@ -378,7 +420,7 @@ export const initSimperium =
               queueTagUpdate(tagHash, 10);
             }
           });
-          queueNoteUpdate(action.noteId, 10);
+          queueNoteUpdate(action.noteId, 10, prevState);
           return result;
         }
 
@@ -398,7 +440,7 @@ export const initSimperium =
 
           nextState.data.notes.forEach((note, noteId) => {
             if (prevState.data.notes.get(noteId) !== note) {
-              queueNoteUpdate(noteId);
+              queueNoteUpdate(noteId, 2000, prevState);
             }
           });
 
@@ -421,7 +463,7 @@ export const initSimperium =
           tagBucket.remove(t(action.tagName));
           nextState.data.notes.forEach((note, noteId) => {
             if (prevState.data.notes.get(noteId) !== note) {
-              queueNoteUpdate(noteId);
+              queueNoteUpdate(noteId, 2000, prevState);
             }
           });
           return result;

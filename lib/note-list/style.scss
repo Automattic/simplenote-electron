@@ -199,6 +199,7 @@
   }
 
   .note-list-item-pending-changes,
+  .note-list-item-sync-error,
   .note-list-item-published-icon {
     padding: 0 4px;
     color: var(--foreground-color);
@@ -207,6 +208,10 @@
       height: 16px;
       width: 16px;
     }
+  }
+
+  .note-list-item-sync-error {
+    color: var(--tertiary-highlight-color);
   }
 
   .note-list-item-pending-changes {

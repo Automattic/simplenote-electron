@@ -275,6 +275,14 @@ export type NoteBucketRemove = Action<
   'NOTE_BUCKET_REMOVE',
   { noteId: T.EntityId }
 >;
+export type NoteSyncError = Action<
+  'NOTE_SYNC_ERROR',
+  {
+    noteId: T.EntityId;
+    errorCode: number;
+  }
+>;
+export type NoteSyncRetry = Action<'NOTE_SYNC_RETRY', { noteId: T.EntityId }>;
 export type NoteBucketUpdate = Action<
   'NOTE_BUCKET_UPDATE',
   { noteId: T.EntityId; note: T.Note; isIndexing: boolean }
@@ -370,6 +378,8 @@ export type ActionType =
   | MarkdownNote
   | NoteBucketRemove
   | NoteBucketUpdate
+  | NoteSyncError
+  | NoteSyncRetry
   | OpenNote
   | OpenRevision
   | OpenTag
