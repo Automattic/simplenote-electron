@@ -34,3 +34,45 @@
   overflow-x: auto;
   tab-size: 2;
 }
+
+.lexical-md-editor__hr {
+  border: none;
+  border-top: 1px solid var(--tertiary-color);
+  margin: 1.5em 0;
+}
+
+.lexical-md-editor__table {
+  border-collapse: collapse;
+  margin: 0 0 1.5em;
+  width: 100%;
+}
+
+.lexical-md-editor__table-cell,
+.lexical-md-editor__table-cell-header {
+  border: 1px solid var(--tertiary-color);
+  min-width: 4em;
+  padding: 0.4em 0.6em;
+  vertical-align: top;
+}
+
+.lexical-md-editor__table-cell-header {
+  font-weight: 600;
+}
+
+.lexical-md-editor__image-wrapper {
+  display: inline-block;
+  margin: 0.5em 0;
+  max-width: 100%;
+}
+
+.lexical-md-editor__image {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.lexical-md-editor__image-fallback {
+  color: var(--secondary-color);
+  font-family: monospace;
+  font-size: 85%;
+}

@@ -1,11 +1,16 @@
 import { GetClipboardDataExtension } from '@lexical/clipboard';
 import { $isCodeNode, CodeExtension } from '@lexical/code-core';
 import {
+  HorizontalRuleExtension,
   InitialStateExtension,
   TabIndentationExtension,
 } from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
-import { LinkExtension } from '@lexical/link';
+import {
+  AutoLinkExtension,
+  createLinkMatcherWithRegExp,
+  LinkExtension,
+} from '@lexical/link';
 import {
   $isListItemNode,
   CheckListExtension,
@@ -34,24 +39,29 @@ import {
   type Transformer,
 } from '@lexical/markdown';
 import { RichTextExtension } from '@lexical/rich-text';
+import { TableExtension } from '@lexical/table';
 import {
   $createParagraphNode,
+  $getNodeByKey,
   $getRoot,
   $getSelection,
   $isElementNode,
   $isParagraphNode,
   $isRangeSelection,
   $setSelection,
-  COMMAND_PRIORITY_LOW,
+  COMMAND_PRIORITY_HIGH,
   configExtension,
   defineExtension,
   PASTE_COMMAND,
+  TextNode,
   type AnyLexicalExtensionArgument,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
 } from 'lexical';
 
+import { AUTOLINK, HR, IMAGE, TABLE, TILDE_CODE } from './gfm-transformers';
+import { ImageNode } from './image-node';
 import {
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_ORDERED_LIST,
@@ -59,14 +69,48 @@ import {
   importMixedNestedListMarkdown,
 } from './list-transformers';
 
+const autoLinkExtension = configExtension(AutoLinkExtension, {
+  excludeParents: [$isCodeNode],
+  matchers: [
+    createLinkMatcherWithRegExp(
+      /((https?:\/\/(www\.)?)[^\s/$.?#][^\s]*)/i,
+      (text) => text
+    ),
+    createLinkMatcherWithRegExp(
+      /(([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/i,
+      (text) => `mailto:${text}`
+    ),
+  ],
+});
+
+const ImageExtension = defineExtension({
+  name: '@simplenote/image-node',
+  nodes: [ImageNode],
+});
+
+const AutoLinkInlineCodeGuardExtension = defineExtension({
+  name: '@simplenote/autolink-inline-code-guard',
+  register(editor) {
+    return editor.registerNodeTransform(TextNode, (textNode) => {
+      if (textNode.hasFormat('code') && textNode.getMode() === 'normal') {
+        textNode.setMode('token');
+      }
+    });
+  },
+});
+
 // CHECK_LIST must precede UNORDERED_LIST so `- [ ]` is parsed as a task item.
+// HR before lists (`---` ambiguity). TABLE before CODE (multiline blocks).
 export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
   HEADING,
   QUOTE,
+  HR,
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_UNORDERED_LIST,
   MIXED_NESTED_ORDERED_LIST,
+  TABLE,
   CODE,
+  TILDE_CODE,
   INLINE_CODE,
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,
@@ -76,7 +120,9 @@ export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
   ITALIC_STAR,
   ITALIC_UNDERSCORE,
   STRIKETHROUGH,
+  IMAGE,
   LINK,
+  AUTOLINK,
 ];
 
 export const TRANSFORMERS = MARKDOWN_TRANSFORMERS;
@@ -151,6 +197,7 @@ const listExtension = configExtension(ListExtension, {
 
 const markdownEditorTheme = {
   code: 'lexical-md-editor__code-block',
+  hr: 'lexical-md-editor__hr',
   list: {
     listitemChecked: 'task-list-item',
     listitemUnchecked: 'task-list-item',
@@ -158,6 +205,11 @@ const markdownEditorTheme = {
       listitem: 'lexical-nested-list-item',
     },
   },
+  table: 'lexical-md-editor__table',
+  tableCell: 'lexical-md-editor__table-cell',
+  tableCellHeader: 'lexical-md-editor__table-cell-header',
+  tableRow: 'lexical-md-editor__table-row',
+  tableScrollableWrapper: 'lexical-md-editor__table-scrollable-wrapper',
   text: {
     strikethrough: 'md-strikethrough',
   },
@@ -174,7 +226,99 @@ export const MarkdownShortcutExtension = defineExtension({
 // inline syntax (bold, links, code, strikethrough). Plain prose without any of
 // these falls through to Lexical's default paste.
 const MARKDOWN_PASTE_HINT =
-  /(^|\n)\s{0,3}(#{1,6} |> |```|[-*+] |\d+\. )|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
+  /(^|\n)\s{0,3}(#{1,6}\s|>\s|```|~~~|[-*+]\s|\d+\.\s|---|\*\*\*|___|\|[^\n]+\|)|!\[[^\]\n]*\]\([^)\n]+\)|https?:\/\/[^\s<>\[\]()]+|(?:<[a-z]+:[^>\n]+>)|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
+
+export function $insertMarkdownPasteNodes(
+  text: string,
+  pasteAnchorBlock: ElementNode | null
+): boolean {
+  const nodes = $markdownToNodes(text);
+  if (nodes.length === 0) {
+    return false;
+  }
+
+  const insertionSelection = $getSelection();
+  if (!$isRangeSelection(insertionSelection)) {
+    return false;
+  }
+
+  if (nodes.length === 1 && $isParagraphNode(nodes[0])) {
+    insertionSelection.insertNodes(nodes[0].getChildren());
+    return true;
+  }
+
+  if (
+    $isParagraphNode(pasteAnchorBlock) &&
+    pasteAnchorBlock.isEmpty() &&
+    nodes.some((node) => !$isParagraphNode(node))
+  ) {
+    const root = $getRoot();
+    pasteAnchorBlock.remove();
+    for (const node of nodes) {
+      root.append(node);
+    }
+    nodes[nodes.length - 1].selectEnd();
+    return true;
+  }
+
+  const anchor = insertionSelection.anchor;
+  const anchorBlock =
+    $getNodeByKey(pasteAnchorBlock?.getKey() ?? '') ??
+    anchor.getNode().getTopLevelElement();
+
+  if (
+    $isParagraphNode(anchorBlock) &&
+    anchorBlock.isEmpty() &&
+    (nodes.length !== 1 || !$isParagraphNode(nodes[0]))
+  ) {
+    const root = $getRoot();
+    anchorBlock.remove();
+    for (const node of nodes) {
+      root.append(node);
+    }
+    nodes[nodes.length - 1].selectEnd();
+    return true;
+  }
+
+  const atBlockStart =
+    insertionSelection.isCollapsed() &&
+    anchor.offset === 0 &&
+    $isElementNode(anchorBlock) &&
+    (anchor.getNode().is(anchorBlock) ||
+      anchor.getNode().is(anchorBlock.getFirstDescendant()));
+  if (atBlockStart && !anchorBlock.isEmpty()) {
+    for (const node of nodes) {
+      anchorBlock.insertBefore(node);
+    }
+    nodes[nodes.length - 1].selectEnd();
+    return true;
+  }
+
+  if (
+    !$isParagraphNode(nodes[0]) &&
+    $isElementNode(anchorBlock) &&
+    !anchorBlock.isEmpty()
+  ) {
+    insertionSelection.insertParagraph();
+    const splitSelection = $getSelection();
+    const secondHalf = $isRangeSelection(splitSelection)
+      ? splitSelection.anchor.getNode().getTopLevelElement()
+      : null;
+    if (secondHalf !== null) {
+      for (const node of nodes) {
+        secondHalf.insertBefore(node);
+      }
+      if ($isParagraphNode(secondHalf) && secondHalf.isEmpty()) {
+        secondHalf.remove();
+      }
+      nodes[nodes.length - 1].selectEnd();
+      return true;
+    }
+  }
+
+  insertionSelection.insertNodes(nodes);
+  return true;
+}
 
 export function registerMarkdownPaste(editor: LexicalEditor): () => void {
   return editor.registerCommand(
@@ -212,85 +356,21 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
         return false;
       }
 
+      const pasteAnchorBlock = selection.anchor.getNode().getTopLevelElement();
+
       // Inside code blocks paste stays raw.
-      if ($isCodeNode(selection.anchor.getNode().getTopLevelElement())) {
+      if ($isCodeNode(pasteAnchorBlock)) {
         return false;
       }
 
-      const nodes = $markdownToNodes(text);
-      if (nodes.length === 0) {
-        return false;
-      }
-
-      // The conversion replaced the active selection object; re-read the
-      // restored one so the nodes land at the cursor position.
-      const insertionSelection = $getSelection();
-      if (!$isRangeSelection(insertionSelection)) {
+      if (!$insertMarkdownPasteNodes(text, pasteAnchorBlock)) {
         return false;
       }
 
       event.preventDefault();
-
-      // A single pasted paragraph (e.g. a link) merges inline at the caret,
-      // like a plain-text paste would.
-      if (nodes.length === 1 && $isParagraphNode(nodes[0])) {
-        insertionSelection.insertNodes(nodes[0].getChildren());
-        return true;
-      }
-
-      const anchor = insertionSelection.anchor;
-      const anchorBlock = anchor.getNode().getTopLevelElement();
-
-      // At the start of a non-empty block, insert the pasted blocks above the
-      // current line. Besides being the expected result, this avoids a Lexical
-      // bug: insertNodes calls insertParagraph, and HeadingNode.insertNewAfter
-      // replaces the heading when the caret sits at its start, leaving
-      // insertNodes holding a detached block reference (it then throws
-      // "Expected node N to have a parent").
-      const atBlockStart =
-        insertionSelection.isCollapsed() &&
-        anchor.offset === 0 &&
-        $isElementNode(anchorBlock) &&
-        (anchor.getNode().is(anchorBlock) ||
-          anchor.getNode().is(anchorBlock.getFirstDescendant()));
-      if (atBlockStart && !anchorBlock.isEmpty()) {
-        for (const node of nodes) {
-          anchorBlock.insertBefore(node);
-        }
-        nodes[nodes.length - 1].selectEnd();
-        return true;
-      }
-
-      // insertNodes merges the first pasted block into the current block,
-      // which would strip the formatting of a leading heading/list/quote.
-      // When the paste starts with such a block and the current block has
-      // content, split at the caret and insert the blocks between the halves.
-      if (
-        !$isParagraphNode(nodes[0]) &&
-        $isElementNode(anchorBlock) &&
-        !anchorBlock.isEmpty()
-      ) {
-        insertionSelection.insertParagraph();
-        const splitSelection = $getSelection();
-        const secondHalf = $isRangeSelection(splitSelection)
-          ? splitSelection.anchor.getNode().getTopLevelElement()
-          : null;
-        if (secondHalf !== null) {
-          for (const node of nodes) {
-            secondHalf.insertBefore(node);
-          }
-          if ($isParagraphNode(secondHalf) && secondHalf.isEmpty()) {
-            secondHalf.remove();
-          }
-          nodes[nodes.length - 1].selectEnd();
-          return true;
-        }
-      }
-
-      insertionSelection.insertNodes(nodes);
       return true;
     },
-    COMMAND_PRIORITY_LOW
+    COMMAND_PRIORITY_HIGH
   );
 }
 
@@ -376,7 +456,12 @@ export function createMarkdownEditorExtension(
     CheckListExtension,
     listTabIndentationExtension,
     LinkExtension,
+    AutoLinkInlineCodeGuardExtension,
+    autoLinkExtension,
     CodeExtension,
+    TableExtension,
+    HorizontalRuleExtension,
+    ImageExtension,
     MarkdownShortcutExtension,
     MarkdownPasteExtension,
     MarkdownCopyExtension,

@@ -119,6 +119,7 @@
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.0",
     "@lexical/react": "^0.45.0",
+    "@lexical/table": "^0.45.0",
     "@mui/material": "6.4.6",
     "@mui/styles": "6.4.6",
     "@sentry/react": "7.120.3",

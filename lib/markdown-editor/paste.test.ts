@@ -11,9 +11,14 @@ import { CodeNode } from '@lexical/code-core';
 import { LinkNode } from '@lexical/link';
 import { $convertToMarkdownString } from '@lexical/markdown';
 
+import { buildEditorFromExtensions } from '@lexical/extension';
+import { $isTableNode } from '@lexical/table';
+import { $isHorizontalRuleNode } from '@lexical/extension';
 import {
   $importMarkdownString,
+  $insertMarkdownPasteNodes,
   $markdownToNodes,
+  createMarkdownEditorExtension,
   MARKDOWN_TRANSFORMERS,
   registerMarkdownPaste,
 } from './extensions';
@@ -252,5 +257,77 @@ describe('registerMarkdownPaste', () => {
     expect(roundtrip.indexOf('intro paragraph')).toBeLessThan(
       roundtrip.indexOf('# Title')
     );
+  });
+
+  function makeProductionEditor() {
+    const editor = buildEditorFromExtensions(createMarkdownEditorExtension(''));
+    registerMarkdownPaste(editor);
+    return editor;
+  }
+
+  it('$markdownToNodes parses a table with production extensions', () => {
+    const editor = makeProductionEditor();
+    editor.update(
+      () => {
+        const nodes = $markdownToNodes(
+          ['| City | Days |', '| --- | --- |', '| Kyoto | 3 |'].join('\n')
+        );
+        expect(nodes).toHaveLength(1);
+        expect($isTableNode(nodes[0])).toBe(true);
+      },
+      { discrete: true }
+    );
+    editor.dispose();
+  });
+
+  it('parses pasted pipe-table markdown into a TableNode', () => {
+    const editor = makeProductionEditor();
+    const tableMarkdown = [
+      '| City | Days |',
+      '| --- | --- |',
+      '| Kyoto | 3 |',
+    ].join('\n');
+
+    editor.update(
+      () => {
+        const root = $getRoot();
+        root.clear();
+        const paragraph = $createParagraphNode();
+        root.append(paragraph);
+        paragraph.select();
+        expect($insertMarkdownPasteNodes(tableMarkdown, paragraph)).toBe(true);
+      },
+      { discrete: true }
+    );
+
+    editor.getEditorState().read(() => {
+      expect($isTableNode($getRoot().getFirstChild())).toBe(true);
+    });
+    editor.dispose();
+  });
+
+  it('parses pasted horizontal rule markdown into a HorizontalRuleNode', () => {
+    const editor = makeProductionEditor();
+
+    editor.update(
+      () => {
+        const root = $getRoot();
+        root.clear();
+        const paragraph = $createParagraphNode();
+        root.append(paragraph);
+        paragraph.select();
+        expect(
+          $insertMarkdownPasteNodes('---\n\nnext paragraph', paragraph)
+        ).toBe(true);
+      },
+      { discrete: true }
+    );
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect($isHorizontalRuleNode(children[0])).toBe(true);
+      expect(children[1]?.getTextContent()).toBe('next paragraph');
+    });
+    editor.dispose();
   });
 });

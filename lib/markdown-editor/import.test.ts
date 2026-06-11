@@ -3,31 +3,16 @@ import {
   $getSelection,
   $isParagraphNode,
   $isRangeSelection,
-  createEditor,
 } from 'lexical';
-import { ListNode, ListItemNode } from '@lexical/list';
-import { HeadingNode, QuoteNode, $isHeadingNode } from '@lexical/rich-text';
-import { CodeNode } from '@lexical/code-core';
-import { LinkNode } from '@lexical/link';
 import {
   $convertToMarkdownString,
   registerMarkdownShortcuts,
 } from '@lexical/markdown';
 
 import { $importMarkdownString, MARKDOWN_TRANSFORMERS } from './extensions';
+import { makeGfmTestEditor } from './gfm-test-helpers';
 
-function makeEditor() {
-  const editor = createEditor({
-    nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, CodeNode, LinkNode],
-    onError: (error) => {
-      throw error;
-    },
-  });
-  registerMarkdownShortcuts(editor, MARKDOWN_TRANSFORMERS);
-  return editor;
-}
-
-function typeAtEnd(editor: ReturnType<typeof createEditor>, text: string) {
+function typeAtEnd(editor: ReturnType<typeof makeGfmTestEditor>, text: string) {
   for (const char of text) {
     editor.update(
       () => {
@@ -49,7 +34,7 @@ function typeAtEnd(editor: ReturnType<typeof createEditor>, text: string) {
 
 describe('$importMarkdownString', () => {
   it('imports non-list blocks as direct children of the root', () => {
-    const editor = makeEditor();
+    const editor = makeGfmTestEditor();
     editor.update(() => $importMarkdownString('# title\n\nhello\n\nworld'), {
       discrete: true,
     });
@@ -57,15 +42,16 @@ describe('$importMarkdownString', () => {
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
       expect(children).toHaveLength(3);
-      expect($isHeadingNode(children[0])).toBe(true);
+      expect(children[0].getType()).toBe('heading');
       expect($isParagraphNode(children[1])).toBe(true);
       expect(children[1].getTextContent()).toBe('hello');
       expect(children[2].getTextContent()).toBe('world');
     });
+    editor.dispose();
   });
 
   it('round-trips imported paragraphs without merging them', () => {
-    const editor = makeEditor();
+    const editor = makeGfmTestEditor();
     editor.update(() => $importMarkdownString('hello\n\nworld'), {
       discrete: true,
     });
@@ -74,13 +60,14 @@ describe('$importMarkdownString', () => {
       .getEditorState()
       .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
     expect(roundtrip).toBe('hello\n\nworld');
+    editor.dispose();
   });
 
   it('keeps element markdown shortcuts working inside imported notes', async () => {
-    const editor = makeEditor();
+    const editor = makeGfmTestEditor();
+    registerMarkdownShortcuts(editor, MARKDOWN_TRANSFORMERS);
     editor.update(() => $importMarkdownString('hello'), { discrete: true });
 
-    // Simulate pressing Enter at the end of the note, then typing "# ".
     editor.update(
       () => {
         $getRoot().getLastDescendant()!.selectEnd();
@@ -92,12 +79,12 @@ describe('$importMarkdownString', () => {
       { discrete: true }
     );
     typeAtEnd(editor, '# ');
-    // The shortcut transform runs in a follow-up microtask.
     await Promise.resolve();
 
     editor.getEditorState().read(() => {
       const lastBlock = $getRoot().getLastChild();
-      expect($isHeadingNode(lastBlock)).toBe(true);
+      expect(lastBlock?.getType()).toBe('heading');
     });
+    editor.dispose();
   });
 });
