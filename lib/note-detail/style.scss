@@ -168,25 +168,25 @@ body[data-theme='dark'] .note-detail-markdown {
   }
 
   .task-list-item {
-    // It's good to have immediate CSS feedback on click since
-    // there will be a slight delay until the checkbox actually toggles
-    &:active {
-      input,
-      &[role='checkbox']::before {
-        transform: scale(0.9);
-      }
-    }
-
     // Lexical checklists use role="checkbox" on <li> (no <input>); reuse task
-    // icon font from .note-detail-markdown in theme.scss.
+    // icon font from .note-detail-markdown in theme.scss. CheckListExtension
+    // toggles on click only within getComputedStyle(li, '::before').width from
+    // the left edge of the <li>, so the marker needs an explicit box (see
+    // Lexical PlaygroundEditorTheme listItemChecked/Unchecked styles).
     &[role='checkbox'] {
+      display: block;
       list-style: none;
       margin-left: -#{$ul-padding-left};
       outline: none;
+      padding-left: 1.4em;
+      position: relative;
 
       &::before {
-        margin-right: 4px;
+        content: '\e000';
         cursor: pointer;
+        display: block;
+        left: 0;
+        position: absolute;
       }
 
       &[aria-checked='true']::before {
