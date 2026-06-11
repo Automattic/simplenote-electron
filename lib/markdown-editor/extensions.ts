@@ -477,6 +477,10 @@ export function createMarkdownEditorExtension(
   return defineExtension({
     $initialEditorState() {
       $importMarkdownString(markdown);
+      // Leave the caret at the start: with no selection, Lexical's focus
+      // handling falls back to selectEnd(), which scrolls long notes to the
+      // bottom the first time the editor gains focus.
+      $getRoot().selectStart();
     },
     dependencies,
     name: '@simplenote/markdown-editor',

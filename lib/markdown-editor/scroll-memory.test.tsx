@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { useScrollMemory } from './scroll-memory';
@@ -8,9 +8,11 @@ import {
 } from '../utils/note-scroll-position';
 
 // jsdom has no layout, so scrollTop is inert. Simulate a real scroll
-// container: scrollTop clamps to [0, maxScrollTop], and scrollHeight /
-// clientHeight are derived so that scrollHeight - clientHeight ===
-// maxScrollTop (the browser invariant for max scroll).
+// container: scrollTop clamps to [0, maxScrollTop] and rounds to whole
+// pixels (browsers round assignments to device pixels, so a fractional
+// write can read back differently). scrollHeight / clientHeight are derived
+// so that scrollHeight - clientHeight === maxScrollTop (the browser
+// invariant for max scroll).
 const CLIENT_HEIGHT = 100;
 let maxScrollTop = 0;
 const scrollTops = new WeakMap<Element, number>();
@@ -22,7 +24,10 @@ const elementOverrides: PropertyDescriptorMap = {
       return scrollTops.get(this) ?? 0;
     },
     set(this: Element, value: number) {
-      scrollTops.set(this, Math.max(0, Math.min(value, maxScrollTop)));
+      scrollTops.set(
+        this,
+        Math.round(Math.max(0, Math.min(value, maxScrollTop)))
+      );
     },
   },
   scrollHeight: {
@@ -76,22 +81,53 @@ class MockResizeObserver implements ResizeObserver {
   }
 }
 
-function Harness({ noteId }: { noteId: string }) {
+// Mirrors the production DOM: the wrapper div is pinned to the shell's
+// height by `.note-detail-markdown { height: 100% }`, and only the inner
+// contenteditable grows with content.
+function Harness({
+  noteId,
+  children,
+}: {
+  noteId: string;
+  children?: ReactNode;
+}) {
   const shellRef = useRef<HTMLDivElement>(null);
   useScrollMemory(shellRef, noteId);
 
   return (
     <div data-testid="shell" ref={shellRef}>
-      <div data-testid="content" />
+      <div className="lexical-md-editor">
+        <div className="lexical-md-editor__input" data-testid="input">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }
 
-function renderShell(noteId: string) {
-  const result = render(<Harness noteId={noteId} />);
+// Simulates Lexical scrolling the caret into view while attaching content:
+// a child layout effect, which runs before the hook's restore effect.
+function ScrollsShellOnMount({ scrollTo }: { scrollTo: number }) {
+  const markerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const shell = markerRef.current?.closest(
+      '[data-testid="shell"]'
+    ) as HTMLElement | null;
+    if (!shell) {
+      throw new Error('Expected the marker to be rendered inside the shell');
+    }
+    shell.scrollTop = scrollTo;
+  }, [scrollTo]);
+
+  return <div ref={markerRef} />;
+}
+
+function renderShell(noteId: string, children?: ReactNode) {
+  const result = render(<Harness noteId={noteId}>{children}</Harness>);
   return {
     shell: result.getByTestId('shell'),
-    content: result.getByTestId('content'),
+    input: result.getByTestId('input'),
     unmount: result.unmount,
   };
 }
@@ -116,7 +152,9 @@ afterAll(() => {
     if (descriptor) {
       Object.defineProperty(Element.prototype, property, descriptor);
     } else {
-      delete (Element.prototype as Record<string, unknown>)[property];
+      delete (Element.prototype as unknown as Record<string, unknown>)[
+        property
+      ];
     }
   }
 });
@@ -138,7 +176,7 @@ describe('useScrollMemory', () => {
       expect(MockResizeObserver.instances).toHaveLength(0);
     });
 
-    it('leaves scroll alone when no position is saved', () => {
+    it('leaves scroll at the top when no position is saved', () => {
       const { shell } = renderShell('note-1');
 
       expect(shell.scrollTop).toBe(0);
@@ -152,17 +190,59 @@ describe('useScrollMemory', () => {
 
       expect(shell.scrollTop).toBe(0);
     });
+
+    it('treats sub-pixel rounding as a successful restore', () => {
+      setNotePosition('note-1', 300.25);
+
+      const { shell } = renderShell('note-1');
+
+      expect(shell.scrollTop).toBe(300);
+      expect(MockResizeObserver.instances).toHaveLength(0);
+    });
+  });
+
+  describe('mount-time scrolls from the editor (caret into view)', () => {
+    it('resets to the top when nothing is saved', () => {
+      const { shell } = renderShell(
+        'note-1',
+        <ScrollsShellOnMount scrollTo={500} />
+      );
+
+      expect(shell.scrollTop).toBe(0);
+    });
+
+    it('resets to the top when the saved position is zero', () => {
+      setNotePosition('note-1', 0);
+
+      const { shell } = renderShell(
+        'note-1',
+        <ScrollsShellOnMount scrollTo={500} />
+      );
+
+      expect(shell.scrollTop).toBe(0);
+    });
+
+    it('restores the saved position over the mount-time scroll', () => {
+      setNotePosition('note-1', 300);
+
+      const { shell } = renderShell(
+        'note-1',
+        <ScrollsShellOnMount scrollTo={500} />
+      );
+
+      expect(shell.scrollTop).toBe(300);
+    });
   });
 
   describe('restore deferred until content is ready', () => {
-    it('watches content size when the saved position is not yet reachable', () => {
+    it('watches the growing input element when the saved position is not yet reachable', () => {
       setNotePosition('note-1', 800);
       maxScrollTop = 100;
 
-      const { content } = renderShell('note-1');
+      const { input } = renderShell('note-1');
 
       expect(MockResizeObserver.instances).toHaveLength(1);
-      expect(lastObserver().observed).toContain(content);
+      expect(lastObserver().observed).toContain(input);
     });
 
     it('jumps to the saved position once content grows enough', () => {

@@ -87,4 +87,30 @@ describe('$importMarkdownString', () => {
     });
     editor.dispose();
   });
+
+  // Without an initial selection, Lexical's focus handling falls back to
+  // selectEnd(), which scrolls long notes to the bottom on first focus.
+  it('places the caret at the document start after the initial import', async () => {
+    const editor = makeGfmTestEditor('# title\n\nhello\n\nworld');
+    // The init update commits asynchronously while no root element is
+    // attached; flush the microtask queue before reading.
+    await Promise.resolve();
+
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      expect($isRangeSelection(selection)).toBe(true);
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+
+      expect(selection.isCollapsed()).toBe(true);
+      expect(selection.anchor.offset).toBe(0);
+
+      const anchorBlock = selection.anchor
+        .getNode()
+        .getTopLevelElementOrThrow();
+      expect(anchorBlock.is($getRoot().getFirstChild())).toBe(true);
+    });
+    editor.dispose();
+  });
 });
