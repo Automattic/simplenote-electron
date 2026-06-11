@@ -23,12 +23,6 @@ import {
   type TextMatchTransformer,
 } from '@lexical/markdown';
 import {
-  $createAutoLinkNode,
-  $isAutoLinkNode,
-  $isLinkNode,
-  AutoLinkNode,
-} from '@lexical/link';
-import {
   $createTableCellNode,
   $createTableNode,
   $createTableRowNode,
@@ -40,10 +34,7 @@ import {
   TableNode,
   TableRowNode,
 } from '@lexical/table';
-import { $isCodeNode } from '@lexical/code-core';
 import {
-  $createTextNode,
-  $findMatchingParent,
   $getState,
   $isParagraphNode,
   $isTextNode,
@@ -145,7 +136,6 @@ function getTableCellInlineTransformers(): Array<
     STRIKETHROUGH,
     LINK,
     IMAGE,
-    AUTOLINK,
   ];
 }
 
@@ -244,66 +234,6 @@ export const IMAGE: TextMatchTransformer = {
     );
   },
   trigger: ')',
-  type: 'text-match',
-};
-
-const URL_IN_PARENS = /(?:https?:\/\/[^\s<>\[\]()]+)/;
-const ANGLE_AUTOLINK = /<((?:https?:\/\/|mailto:)[^>\s]+)>/;
-
-export const AUTOLINK: TextMatchTransformer = {
-  dependencies: [AutoLinkNode],
-  export: (node, exportChildren) => {
-    if (!$isAutoLinkNode(node)) {
-      return null;
-    }
-
-    return exportChildren(node);
-  },
-  importRegExp: new RegExp(
-    `${ANGLE_AUTOLINK.source}|(${URL_IN_PARENS.source})`
-  ),
-  regExp: new RegExp(`${ANGLE_AUTOLINK.source}|(${URL_IN_PARENS.source})$`),
-  replace: (textNode, match) => {
-    if ($findMatchingParent(textNode, $isLinkNode)) {
-      return;
-    }
-    if ($findMatchingParent(textNode, $isCodeNode)) {
-      return;
-    }
-    if (textNode.hasFormat('code')) {
-      return;
-    }
-
-    const matchIndex = match.index ?? 0;
-    const before = textNode.getTextContent().slice(0, matchIndex);
-    if ((before.match(/`/g) ?? []).length % 2 === 1) {
-      return;
-    }
-
-    const url = match[1] ?? match[2];
-    if (!url) {
-      return;
-    }
-
-    const parent = textNode.getParent();
-    if ($isParagraphNode(parent)) {
-      const content = parent.getTextContent();
-      const urlIndex = content.indexOf(url);
-      if (
-        urlIndex >= 0 &&
-        (content.slice(0, urlIndex).match(/`/g) ?? []).length % 2 === 1
-      ) {
-        return;
-      }
-    }
-
-    const linkNode = $createAutoLinkNode(url, { rel: 'noreferrer' });
-    const linkText = $createTextNode(url);
-    linkText.setFormat(textNode.getFormat());
-    linkNode.append(linkText);
-    textNode.replace(linkNode);
-    return linkText;
-  },
   type: 'text-match',
 };
 

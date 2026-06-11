@@ -138,7 +138,10 @@ function MarkdownNoteEditorComponent({
       className="note-content-editor-shell lexical-md-editor-shell"
       onClick={(event) => {
         const target = event.target as HTMLElement;
-        if (target.closest('.lexical-md-editor__input')) {
+        if (
+          target.closest('.lexical-md-editor__input') ||
+          target.closest('.markdown-editor-toolbar')
+        ) {
           return;
         }
 

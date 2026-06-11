@@ -10,7 +10,7 @@ import {
   KEY_ENTER_COMMAND,
   type LexicalNode,
 } from 'lexical';
-import { $isAutoLinkNode, $isLinkNode, LinkNode } from '@lexical/link';
+import { $isLinkNode, LinkNode } from '@lexical/link';
 import { $isCodeNode } from '@lexical/code-core';
 import { $isHorizontalRuleNode } from '@lexical/extension';
 import {
@@ -330,64 +330,35 @@ describe('images', () => {
   });
 });
 
-describe('autolinks', () => {
-  it('imports bare https URL as AutoLinkNode', () => {
+describe('bare URLs', () => {
+  it('imports a bare https URL as plain text', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, 'Visit https://example.com today');
 
     editor.getEditorState().read(() => {
       const paragraph = rootChildren(editor)[0];
-      const autoLink = paragraph
-        .getChildren()
-        .find((child) => $isAutoLinkNode(child));
-      expect(autoLink).toBeDefined();
-      expect(autoLink!.getURL()).toBe('https://example.com');
+      expect(paragraph.getChildren().some($isLinkNode)).toBe(false);
+      expect(paragraph.getTextContent()).toBe(
+        'Visit https://example.com today'
+      );
     });
     editor.dispose();
   });
 
-  it('imports <https://example.com> autolink syntax', () => {
-    const editor = makeGfmTestEditor();
-    importMarkdown(editor, 'See <https://example.org> here');
-
-    editor.getEditorState().read(() => {
-      const paragraph = rootChildren(editor)[0];
-      const autoLink = paragraph
-        .getChildren()
-        .find((child) => $isAutoLinkNode(child));
-      expect(autoLink).toBeDefined();
-      expect(autoLink!.getURL()).toBe('https://example.org');
-    });
-    editor.dispose();
-  });
-
-  it('exports autolink as bare URL text', () => {
+  it('round-trips a bare URL unchanged', () => {
     const markdown = 'Visit https://example.com today';
     const editor = makeGfmTestEditor();
     expect(roundtrip(editor, markdown)).toBe(markdown);
     editor.dispose();
   });
 
-  it('does not autolink URL inside inline code', () => {
-    const editor = makeGfmTestEditor();
-    importMarkdown(editor, 'Use `https://example.com` literally');
-
-    editor.getEditorState().read(() => {
-      const paragraph = rootChildren(editor)[0];
-      expect(paragraph.getChildren().some($isAutoLinkNode)).toBe(false);
-      expect(paragraph.getTextContent()).toContain('https://example.com');
-    });
-    editor.dispose();
-  });
-
-  it('does not double-linkify [text](https://example.com)', () => {
+  it('imports [text](https://example.com) as a single LinkNode', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '[text](https://example.com)');
 
     editor.getEditorState().read(() => {
       const paragraph = rootChildren(editor)[0];
       expect(paragraph.getChildren().filter($isLinkNode)).toHaveLength(1);
-      expect(paragraph.getChildren().filter($isAutoLinkNode)).toHaveLength(0);
     });
     editor.dispose();
   });
@@ -487,7 +458,7 @@ describe('gfm fixture parity', () => {
         '| Porto | 2 |',
       ].join('\n'),
     ],
-    ['bare autolink URL', 'Visit https://example.com today'],
+    ['bare URL as plain text', 'Visit https://example.com today'],
     [
       'inline code with URL not linkified',
       'Use `https://example.com` literally',

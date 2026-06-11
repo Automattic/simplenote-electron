@@ -17,6 +17,7 @@ import {
   withMixedNestedListTransformers,
 } from './extensions';
 import { InternalLinkPlugin } from './internal-link-menu';
+import { MarkdownEditorToolbar } from './toolbar';
 
 import './style.scss';
 
@@ -30,10 +31,6 @@ export type MarkdownEditorProps = {
   onChange?: (markdown: string) => void;
   onOpenInternalLink?: (noteId: EntityId) => void;
 };
-
-const contentEditable = (
-  <ContentEditable className="lexical-md-editor__input" placeholder={null} />
-);
 
 export default function MarkdownEditor({
   className,
@@ -56,10 +53,14 @@ export default function MarkdownEditor({
 
   return (
     <div className={['lexical-md-editor', className].filter(Boolean).join(' ')}>
-      <LexicalExtensionComposer
-        contentEditable={contentEditable}
-        extension={extension}
-      >
+      {/* contentEditable={null} so the input can be placed below the toolbar;
+          the composer otherwise renders it before any children. */}
+      <LexicalExtensionComposer contentEditable={null} extension={extension}>
+        <MarkdownEditorToolbar />
+        <ContentEditable
+          className="lexical-md-editor__input"
+          placeholder={null}
+        />
         {editorRef && <EditorRefPlugin editorRef={editorRef} />}
         <InternalLinkPlugin noteId={noteId} onOpenNote={onOpenInternalLink} />
       </LexicalExtensionComposer>

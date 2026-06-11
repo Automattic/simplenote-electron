@@ -5,11 +5,7 @@ import {
   InitialStateExtension,
 } from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
-import {
-  AutoLinkExtension,
-  createLinkMatcherWithRegExp,
-  LinkExtension,
-} from '@lexical/link';
+import { LinkExtension } from '@lexical/link';
 import { CheckListExtension, ListExtension } from '@lexical/list';
 import {
   $convertFromMarkdownString,
@@ -48,14 +44,14 @@ import {
   configExtension,
   defineExtension,
   PASTE_COMMAND,
-  TextNode,
   type AnyLexicalExtensionArgument,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
 } from 'lexical';
 
-import { AUTOLINK, HR, IMAGE, TABLE, TILDE_CODE } from './gfm-transformers';
+import { registerFormatEscape } from './format-escape';
+import { HR, IMAGE, TABLE, TILDE_CODE } from './gfm-transformers';
 import { ImageNode } from './image-node';
 import {
   MIXED_NESTED_CHECK_LIST,
@@ -66,34 +62,9 @@ import {
 } from './list-transformers';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 
-const autoLinkExtension = configExtension(AutoLinkExtension, {
-  excludeParents: [$isCodeNode],
-  matchers: [
-    createLinkMatcherWithRegExp(
-      /((https?:\/\/(www\.)?)[^\s/$.?#][^\s]*)/i,
-      (text) => text
-    ),
-    createLinkMatcherWithRegExp(
-      /(([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+))/i,
-      (text) => `mailto:${text}`
-    ),
-  ],
-});
-
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
   nodes: [ImageNode],
-});
-
-const AutoLinkInlineCodeGuardExtension = defineExtension({
-  name: '@simplenote/autolink-inline-code-guard',
-  register(editor) {
-    return editor.registerNodeTransform(TextNode, (textNode) => {
-      if (textNode.hasFormat('code') && textNode.getMode() === 'normal') {
-        textNode.setMode('token');
-      }
-    });
-  },
 });
 
 // CHECK_LIST must precede UNORDERED_LIST so `- [ ]` is parsed as a task item.
@@ -119,7 +90,6 @@ export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
   STRIKETHROUGH,
   IMAGE,
   LINK,
-  AUTOLINK,
 ];
 
 export const TRANSFORMERS = MARKDOWN_TRANSFORMERS;
@@ -186,6 +156,28 @@ export { withMixedNestedListTransformers } from './list-transformers';
 
 const listExtension = configExtension(ListExtension, {
   hasStrictIndent: true,
+});
+
+// Inline code escapes on Enter and click since there is no other way out of
+// it at the end of a line. Arrow-key escape is handled by
+// FormatEscapeExtension instead: the built-in `arrow` trigger lets the caret
+// move anyway, which discards the escaped format everywhere except the end
+// of the document. Merges with the defaults (capitalize/lowercase/uppercase
+// escape on enter/space/tab).
+const richTextExtension = configExtension(RichTextExtension, {
+  escapeFormatTriggers: {
+    code: { onlyAtBoundary: true, enter: true, click: true },
+  },
+});
+
+// Pressing ArrowLeft/ArrowRight at the edge of formatted text clears that
+// format from the selection without moving the caret, so typing continues
+// unformatted ("trailing edge escape").
+const FormatEscapeExtension = defineExtension({
+  name: '@simplenote/format-escape',
+  register(editor) {
+    return registerFormatEscape(editor);
+  },
 });
 
 const markdownEditorTheme = {
@@ -454,13 +446,12 @@ export function createMarkdownEditorExtension(
     configExtension(InitialStateExtension, {
       updateOptions: { tag: REMOTE_CONTENT_TAG },
     }),
-    RichTextExtension,
+    richTextExtension,
+    FormatEscapeExtension,
     HistoryExtension,
     listExtension,
     CheckListExtension,
     LinkExtension,
-    AutoLinkInlineCodeGuardExtension,
-    autoLinkExtension,
     CodeExtension,
     TableExtension,
     HorizontalRuleExtension,

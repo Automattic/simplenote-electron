@@ -8,23 +8,169 @@
 }
 
 .lexical-md-editor {
+  --me-toolbar-height: 2.75rem;
+  --me-toolbar-bg-color: var(--background-color);
+  --me-toolbar-border-color: var(--secondary-color);
+  --me-button-default-bg-color: transparent;
+  --me-button-hover-bg-color: var(--highlight-color, rgba(0, 0, 0, 0.06));
+  --me-button-active-bg-color: var(--highlight-color, rgba(0, 0, 0, 0.1));
+  --me-button-default-text-color: var(--foreground-color);
+  --me-button-hover-text-color: var(--foreground-color);
+  --me-button-active-text-color: var(--foreground-color);
+  --me-button-default-icon-color: var(--foreground-color);
+  --me-button-active-icon-color: var(--foreground-color);
+  --me-radius-md: 4px;
+  --me-radius-lg: 4px;
+
+  display: flex;
+  flex-direction: column;
   min-height: 100%;
+
+  // .note-detail-markdown sets height: 100%, capping this container at one
+  // viewport; content then overflows the box and the sticky toolbar stops at
+  // the container's bottom edge (i.e. disappears after scrolling one screen).
+  // The doubled class beats it regardless of stylesheet order.
+  &.lexical-md-editor {
+    height: auto;
+  }
+}
+
+// The toolbar sticks to the top of the scrolling shell
+// (.lexical-md-editor-shell); the input scrolls beneath it.
+.markdown-editor-toolbar[data-variant='fixed'] {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 100%;
+  min-height: var(--me-toolbar-height);
+  background: var(--me-toolbar-bg-color);
+  border-bottom: 1px solid var(--me-toolbar-border-color);
+  padding: 0 0.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.markdown-editor-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.markdown-editor-separator {
+  width: 1px;
+  height: 1.5rem;
+  margin: 0 0.25rem;
+  background: var(--me-toolbar-border-color);
+  flex-shrink: 0;
+}
+
+.markdown-editor-button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.15;
+  height: 2rem;
+  min-width: 2rem;
+  border: none;
+  padding: 0.5rem;
+  gap: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--me-radius-lg);
+  background-color: var(--me-button-default-bg-color);
+  color: var(--me-button-default-text-color);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 1px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--me-button-hover-bg-color);
+    color: var(--me-button-hover-text-color);
+  }
+
+  &[data-active-state='on'],
+  &.is-active {
+    background-color: var(--me-button-active-bg-color);
+    color: var(--me-button-active-text-color);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &[data-size='small'] {
+    height: 1.75rem;
+    min-width: 1.75rem;
+    padding: 0.25rem;
+    border-radius: var(--me-radius-md);
+  }
+}
+
+.markdown-editor-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  color: var(--me-button-default-icon-color);
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: currentcolor;
+  }
+
+  .markdown-editor-button[data-active-state='on'] &,
+  .markdown-editor-button.is-active & {
+    color: var(--me-button-active-icon-color);
+  }
 }
 
 .lexical-md-editor__input {
-  min-height: 100%;
+  // flex-basis must stay `auto` (not `flex: 1`, which means basis 0):
+  // otherwise the flex column ignores the input's intrinsic height, the
+  // container stays at viewport height, and the sticky toolbar scrolls away
+  // once the caret passes the first viewport of content.
+  flex: 1 1 auto;
   padding: 40px 25px 20px;
   outline: none;
   caret-color: var(--primary-color);
 
-  // Keep anchor-scroll targets clear of the input's top padding.
+  // Keep anchor-scroll targets clear of the input's top padding and the
+  // sticky toolbar.
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    scroll-margin-top: 40px;
+    scroll-margin-top: calc(40px + var(--me-toolbar-height));
   }
 
   // Title styling for the first line (presentation-only; stored content
