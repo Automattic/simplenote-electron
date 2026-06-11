@@ -3,7 +3,6 @@ import { $isCodeNode, CodeExtension } from '@lexical/code-core';
 import {
   HorizontalRuleExtension,
   InitialStateExtension,
-  TabIndentationExtension,
 } from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
 import {
@@ -11,11 +10,7 @@ import {
   createLinkMatcherWithRegExp,
   LinkExtension,
 } from '@lexical/link';
-import {
-  $isListItemNode,
-  CheckListExtension,
-  ListExtension,
-} from '@lexical/list';
+import { CheckListExtension, ListExtension } from '@lexical/list';
 import {
   $convertFromMarkdownString,
   $convertSelectionToMarkdownString,
@@ -69,6 +64,7 @@ import {
   importMixedNestedListMarkdown,
   registerTaskListItemShortcuts,
 } from './list-transformers';
+import { registerMarkdownTabIndentation } from './tab-indentation';
 
 const autoLinkExtension = configExtension(AutoLinkExtension, {
   excludeParents: [$isCodeNode],
@@ -188,10 +184,6 @@ export function $markdownToNodes(markdown: string): LexicalNode[] {
 
 export { withMixedNestedListTransformers } from './list-transformers';
 
-const listTabIndentationExtension = configExtension(TabIndentationExtension, {
-  $canIndent: (node) => $isListItemNode(node),
-});
-
 const listExtension = configExtension(ListExtension, {
   hasStrictIndent: true,
 });
@@ -225,9 +217,11 @@ export const MarkdownShortcutExtension = defineExtension({
     );
     const unregisterTaskListItemShortcuts =
       registerTaskListItemShortcuts(editor);
+    const unregisterTabIndentation = registerMarkdownTabIndentation(editor);
     return () => {
       unregisterMarkdownShortcuts();
       unregisterTaskListItemShortcuts();
+      unregisterTabIndentation();
     };
   },
 });
@@ -464,7 +458,6 @@ export function createMarkdownEditorExtension(
     HistoryExtension,
     listExtension,
     CheckListExtension,
-    listTabIndentationExtension,
     LinkExtension,
     AutoLinkInlineCodeGuardExtension,
     autoLinkExtension,
