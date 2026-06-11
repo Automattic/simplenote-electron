@@ -5,6 +5,7 @@ import type { LexicalEditor } from 'lexical';
 
 import MarkdownEditor, { $importMarkdownString, TRANSFORMERS } from './editor';
 import { REMOTE_CONTENT_TAG } from './extensions';
+import { useScrollMemory } from './scroll-memory';
 import actions from '../state/actions';
 import { withCheckboxSyntax } from '../utils/task-transform';
 
@@ -35,8 +36,11 @@ function MarkdownNoteEditorComponent({
   storeHasFocus,
 }: Props) {
   const editorRef = useRef<LexicalEditor | null>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
   const initialMarkdown = withCheckboxSyntax(noteContent);
+
+  useScrollMemory(shellRef, noteId);
 
   useEffect(() => {
     lastPushedRef.current = withCheckboxSyntax(noteContent);
@@ -115,6 +119,7 @@ function MarkdownNoteEditorComponent({
 
   return (
     <div
+      ref={shellRef}
       className="note-content-editor-shell lexical-md-editor-shell"
       onClick={(event) => {
         const target = event.target as HTMLElement;
