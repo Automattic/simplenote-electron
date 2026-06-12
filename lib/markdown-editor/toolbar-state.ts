@@ -15,6 +15,7 @@ import {
 } from '@lexical/rich-text';
 
 import type { ActiveListType } from './list-toggle';
+import { $isSelectionInTable } from './table-controls';
 
 export type ToolbarState = {
   inTitle: boolean;
@@ -29,6 +30,7 @@ export type ToolbarState = {
   activeList: ActiveListType | null;
   blockquote: boolean;
   codeBlock: boolean;
+  inTable: boolean;
 };
 
 const $getTopLevelBlock = () => {
@@ -77,6 +79,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     activeList: null,
     blockquote: false,
     codeBlock: false,
+    inTable: false,
   };
 
   editor.read(() => {
@@ -123,6 +126,17 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     state.h4 = isHeadingTagActive('h4', block);
     state.blockquote = !!block && $isQuoteNode(block);
     state.codeBlock = !!block && $isCodeNode(block);
+    state.inTable = $isSelectionInTable();
+
+    if (state.inTable) {
+      // Block-level toggles do not apply inside table cells.
+      state.h2 = false;
+      state.h3 = false;
+      state.h4 = false;
+      state.activeList = null;
+      state.blockquote = false;
+      state.codeBlock = false;
+    }
   });
 
   return state;
@@ -140,4 +154,5 @@ export const toolbarStateEqual = (a: ToolbarState, b: ToolbarState) =>
   a.h4 === b.h4 &&
   a.activeList === b.activeList &&
   a.blockquote === b.blockquote &&
-  a.codeBlock === b.codeBlock;
+  a.codeBlock === b.codeBlock &&
+  a.inTable === b.inTable;

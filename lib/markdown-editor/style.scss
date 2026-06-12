@@ -146,6 +146,27 @@
     fill: currentcolor;
   }
 
+  // Stroke-based table toolbar glyphs
+  svg.toolbar-icon-stroke {
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+
+    .toolbar-icon-delete-shape {
+      stroke-width: 1.75;
+    }
+
+    .toolbar-icon-delete-ring {
+      stroke-width: 2;
+    }
+
+    .toolbar-icon-delete-mark {
+      stroke-width: 1.35;
+    }
+  }
+
   .markdown-editor-button[data-active-state='on'] &,
   .markdown-editor-button.is-active & {
     color: var(--me-button-active-icon-color);

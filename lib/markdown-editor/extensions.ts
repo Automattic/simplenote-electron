@@ -61,6 +61,7 @@ import {
   registerTaskListItemShortcuts,
 } from './list-transformers';
 import { registerMarkdownTabIndentation } from './tab-indentation';
+import { TableControlsExtension } from './table-controls';
 
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
@@ -466,6 +467,7 @@ export function createMarkdownEditorExtension(
     LinkExtension,
     CodeExtension,
     TableExtension,
+    TableControlsExtension,
     HorizontalRuleExtension,
     ImageExtension,
     MarkdownShortcutExtension,

@@ -5,9 +5,16 @@ import { Tooltip } from '@mui/material';
 
 import ChecklistIcon from '../icons/check-list';
 import {
+  deleteTableColumn,
+  deleteTableRow,
   dispatchFormatText,
   getLinkHrefFromSelection,
   insertHorizontalRule,
+  insertTable,
+  insertTableColumnAfter,
+  insertTableColumnBefore,
+  insertTableRowAbove,
+  insertTableRowBelow,
   redo,
   setLink,
   toggleBlockquote,
@@ -26,12 +33,19 @@ import {
   CodeBlockIcon,
   CodeIcon,
   HeadingIcon,
+  DeleteTableColumnIcon,
+  DeleteTableRowIcon,
   HorizontalRuleIcon,
+  InsertTableColumnAfterIcon,
+  InsertTableColumnBeforeIcon,
+  InsertTableRowAboveIcon,
+  InsertTableRowBelowIcon,
   ItalicIcon,
   LinkIcon,
   OrderedListIcon,
   RedoIcon,
   StrikeIcon,
+  TableIcon,
   UndoIcon,
 } from './toolbar-icons';
 
@@ -308,7 +322,52 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
           onClick={() => insertHorizontalRule(editor)}
           title="Horizontal rule"
         />
+        <ToolbarButton
+          active={state.inTable}
+          disabled={blockDisabled || state.inTable}
+          icon={TableIcon}
+          onClick={() => insertTable(editor)}
+          title="Insert table"
+        />
       </ToolbarGroup>
+
+      {state.inTable && (
+        <>
+          <ToolbarSeparator />
+          <ToolbarGroup>
+            <ToolbarButton
+              icon={InsertTableRowAboveIcon}
+              onClick={() => insertTableRowAbove(editor)}
+              title="Insert row above"
+            />
+            <ToolbarButton
+              icon={InsertTableRowBelowIcon}
+              onClick={() => insertTableRowBelow(editor)}
+              title="Insert row below"
+            />
+            <ToolbarButton
+              icon={DeleteTableRowIcon}
+              onClick={() => deleteTableRow(editor)}
+              title="Delete row"
+            />
+            <ToolbarButton
+              icon={InsertTableColumnBeforeIcon}
+              onClick={() => insertTableColumnBefore(editor)}
+              title="Insert column before"
+            />
+            <ToolbarButton
+              icon={InsertTableColumnAfterIcon}
+              onClick={() => insertTableColumnAfter(editor)}
+              title="Insert column after"
+            />
+            <ToolbarButton
+              icon={DeleteTableColumnIcon}
+              onClick={() => deleteTableColumn(editor)}
+              title="Delete column"
+            />
+          </ToolbarGroup>
+        </>
+      )}
     </div>
   );
 };

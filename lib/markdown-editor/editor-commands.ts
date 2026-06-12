@@ -21,7 +21,18 @@ import {
   HeadingTagType,
 } from '@lexical/rich-text';
 
+import { INSERT_TABLE_COMMAND } from '@lexical/table';
+
 import { normalizeLinkHref, urlFromText } from './link-validator';
+import {
+  DEFAULT_INSERT_TABLE_PAYLOAD,
+  DELETE_TABLE_COLUMN_COMMAND,
+  DELETE_TABLE_ROW_COMMAND,
+  INSERT_TABLE_COLUMN_AFTER_COMMAND,
+  INSERT_TABLE_COLUMN_BEFORE_COMMAND,
+  INSERT_TABLE_ROW_ABOVE_COMMAND,
+  INSERT_TABLE_ROW_BELOW_COMMAND,
+} from './table-controls';
 
 export const dispatchFormatText = (
   editor: LexicalEditor,
@@ -146,6 +157,34 @@ export const toggleCodeBlock = (editor: LexicalEditor): void => {
 
 export const insertHorizontalRule = (editor: LexicalEditor): void => {
   editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
+};
+
+export const insertTable = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(INSERT_TABLE_COMMAND, DEFAULT_INSERT_TABLE_PAYLOAD);
+};
+
+export const insertTableRowAbove = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(INSERT_TABLE_ROW_ABOVE_COMMAND, undefined);
+};
+
+export const insertTableRowBelow = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(INSERT_TABLE_ROW_BELOW_COMMAND, undefined);
+};
+
+export const deleteTableRow = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(DELETE_TABLE_ROW_COMMAND, undefined);
+};
+
+export const insertTableColumnBefore = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(INSERT_TABLE_COLUMN_BEFORE_COMMAND, undefined);
+};
+
+export const insertTableColumnAfter = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(INSERT_TABLE_COLUMN_AFTER_COMMAND, undefined);
+};
+
+export const deleteTableColumn = (editor: LexicalEditor): void => {
+  editor.dispatchCommand(DELETE_TABLE_COLUMN_COMMAND, undefined);
 };
 
 export const setLink = (editor: LexicalEditor, url: string): void => {
