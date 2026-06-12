@@ -108,7 +108,17 @@ function $importChunk(chunk: string, target: ElementNode): void {
   const container = $createParagraphNode();
   target.append(container);
   $convertFromMarkdownString(chunk, MARKDOWN_TRANSFORMERS, container);
-  if (container.getParent() !== null) {
+  if (container.getParent() === null) {
+    return;
+  }
+  if (container.getNextSibling() === null) {
+    // The container is the last child of `target`, so hoisting is a plain
+    // append. (insertBefore would recompute the container's child index — an
+    // O(siblings) walk — per block, going quadratic over large documents.)
+    const children = container.getChildren();
+    container.remove();
+    target.append(...children);
+  } else {
     for (const child of container.getChildren()) {
       container.insertBefore(child);
     }
