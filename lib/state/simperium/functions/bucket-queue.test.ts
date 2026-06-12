@@ -113,6 +113,9 @@ describe('BucketQueue', () => {
 
     queue.add('note-1', Date.now());
 
+    jest.advanceTimersByTime(9999);
+    expect(bucket.touch).not.toHaveBeenCalled();
+
     bucket.isIndexing = false;
     bucket.emit('index');
 
