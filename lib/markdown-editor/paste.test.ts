@@ -330,4 +330,54 @@ describe('registerMarkdownPaste', () => {
     });
     editor.dispose();
   });
+
+  it('inserts pasted list at the empty line, not at document end', () => {
+    // Document:
+    //   # Header
+    //   <empty>
+    //   ---
+    // Pasting "- test" into <empty> should yield the list between the heading
+    // and the rule, not appended after the rule at document end.
+    const editor = makeProductionEditor();
+
+    editor.update(
+      () => {
+        const root = $getRoot();
+        root.clear();
+        for (const node of $markdownToNodes('# Header')) {
+          root.append(node);
+        }
+        const emptyParagraph = $createParagraphNode();
+        root.append(emptyParagraph);
+        for (const node of $markdownToNodes('---')) {
+          root.append(node);
+        }
+        emptyParagraph.select();
+      },
+      { discrete: true }
+    );
+
+    const { event } = makePasteEvent('- test');
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+    expect(handled).toBe(true);
+
+    const roundtrip = editor.read(() =>
+      $convertToMarkdownString(MARKDOWN_TRANSFORMERS)
+    );
+    expect(roundtrip.indexOf('# Header')).toBeLessThan(
+      roundtrip.indexOf('- test')
+    );
+    expect(roundtrip.indexOf('- test')).toBeLessThan(roundtrip.indexOf('---'));
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(3);
+      expect($isHeadingNode(children[0])).toBe(true);
+      expect($isListNode(children[1])).toBe(true);
+      expect($isHorizontalRuleNode(children[2])).toBe(true);
+      expect(children[1]?.getTextContent()).toBe('test');
+    });
+
+    editor.dispose();
+  });
 });

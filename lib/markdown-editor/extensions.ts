@@ -53,6 +53,7 @@ import {
   $isRangeSelection,
   $isTextNode,
   $setSelection,
+  type ParagraphNode,
   type TextNode,
   $getEditor,
   COMMAND_PRIORITY_HIGH,
@@ -342,6 +343,27 @@ function $isCollapsedAtListItemStart(
   );
 }
 
+function $insertBlockNodesBefore(
+  anchorBlock: ElementNode,
+  nodes: LexicalNode[],
+  { removeAnchorBlock = false }: { removeAnchorBlock?: boolean } = {}
+): void {
+  for (const node of nodes) {
+    anchorBlock.insertBefore(node);
+  }
+  if (removeAnchorBlock) {
+    anchorBlock.remove();
+  }
+  nodes[nodes.length - 1].selectEnd();
+}
+
+function $shouldReplaceEmptyParagraphWithPaste(
+  block: ParagraphNode,
+  nodes: LexicalNode[]
+): boolean {
+  return block.isEmpty() && (nodes.length !== 1 || !$isParagraphNode(nodes[0]));
+}
+
 export function $insertMarkdownPasteNodes(
   text: string,
   pasteAnchorBlock: ElementNode | null
@@ -361,24 +383,13 @@ export function $insertMarkdownPasteNodes(
     return true;
   }
 
-  if (
-    $isParagraphNode(pasteAnchorBlock) &&
-    pasteAnchorBlock.isEmpty() &&
-    nodes.some((node) => !$isParagraphNode(node))
-  ) {
-    const root = $getRoot();
-    pasteAnchorBlock.remove();
-    for (const node of nodes) {
-      root.append(node);
-    }
-    nodes[nodes.length - 1].selectEnd();
-    return true;
-  }
-
   const anchor = insertionSelection.anchor;
-  const anchorBlock =
+  const resolvedAnchorBlock =
     $getNodeByKey(pasteAnchorBlock?.getKey() ?? '') ??
     anchor.getNode().getTopLevelElement();
+  const anchorBlock = $isElementNode(resolvedAnchorBlock)
+    ? resolvedAnchorBlock
+    : null;
 
   const listItem = $findMatchingParent(anchor.getNode(), $isListItemNode);
   if (
@@ -403,15 +414,9 @@ export function $insertMarkdownPasteNodes(
 
   if (
     $isParagraphNode(anchorBlock) &&
-    anchorBlock.isEmpty() &&
-    (nodes.length !== 1 || !$isParagraphNode(nodes[0]))
+    $shouldReplaceEmptyParagraphWithPaste(anchorBlock, nodes)
   ) {
-    const root = $getRoot();
-    anchorBlock.remove();
-    for (const node of nodes) {
-      root.append(node);
-    }
-    nodes[nodes.length - 1].selectEnd();
+    $insertBlockNodesBefore(anchorBlock, nodes, { removeAnchorBlock: true });
     return true;
   }
 
@@ -422,10 +427,7 @@ export function $insertMarkdownPasteNodes(
     (anchor.getNode().is(anchorBlock) ||
       anchor.getNode().is(anchorBlock.getFirstDescendant()));
   if (atBlockStart && !anchorBlock.isEmpty()) {
-    for (const node of nodes) {
-      anchorBlock.insertBefore(node);
-    }
-    nodes[nodes.length - 1].selectEnd();
+    $insertBlockNodesBefore(anchorBlock, nodes);
     return true;
   }
 
@@ -440,13 +442,9 @@ export function $insertMarkdownPasteNodes(
       ? splitSelection.anchor.getNode().getTopLevelElement()
       : null;
     if (secondHalf !== null) {
-      for (const node of nodes) {
-        secondHalf.insertBefore(node);
-      }
-      if ($isParagraphNode(secondHalf) && secondHalf.isEmpty()) {
-        secondHalf.remove();
-      }
-      nodes[nodes.length - 1].selectEnd();
+      $insertBlockNodesBefore(secondHalf, nodes, {
+        removeAnchorBlock: $isParagraphNode(secondHalf) && secondHalf.isEmpty(),
+      });
       return true;
     }
   }
