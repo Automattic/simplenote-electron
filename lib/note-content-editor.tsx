@@ -1118,7 +1118,7 @@ class NoteContentEditor extends Component<Props> {
         monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
         monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.KeyC,
       ],
-      keybindingContext: 'allowBrowserKeybinding && editorTextFocus',
+      keybindingContext: 'editorTextFocus',
       contextMenuGroupId: '10_checklist',
       contextMenuOrder: 1,
       run: this.insertOrRemoveCheckboxes,
@@ -1144,9 +1144,6 @@ class NoteContentEditor extends Component<Props> {
       switch (command.action) {
         case 'findAgain':
           this.setNextSearchSelection();
-          return;
-        case 'insertChecklist':
-          editor.trigger('editorCommand', 'insertChecklist', null);
           return;
         case 'redo':
           if (editor.hasTextFocus()) {

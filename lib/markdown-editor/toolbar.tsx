@@ -4,6 +4,7 @@ import { CAN_REDO_COMMAND, CAN_UNDO_COMMAND } from 'lexical';
 import { Tooltip } from '@mui/material';
 
 import ChecklistIcon from '../icons/check-list';
+import { CmdOrCtrl } from '../utils/platform';
 import {
   deleteTableColumn,
   deleteTableRow,
@@ -302,7 +303,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
           disabled={blockDisabled}
           icon={ChecklistIcon}
           onClick={() => toggleListAtSelection(editor, 'taskList')}
-          title="Task list"
+          title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
         />
       </ToolbarGroup>
 

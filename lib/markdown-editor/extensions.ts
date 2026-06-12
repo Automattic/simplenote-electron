@@ -60,6 +60,7 @@ import {
   importMixedNestedListMarkdown,
   registerTaskListItemShortcuts,
 } from './list-transformers';
+import { registerTaskListShortcut } from './list-toggle';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension } from './table-controls';
 
@@ -222,10 +223,12 @@ export const MarkdownShortcutExtension = defineExtension({
     );
     const unregisterTaskListItemShortcuts =
       registerTaskListItemShortcuts(editor);
+    const unregisterTaskListShortcut = registerTaskListShortcut(editor);
     const unregisterTabIndentation = registerMarkdownTabIndentation(editor);
     return () => {
       unregisterMarkdownShortcuts();
       unregisterTaskListItemShortcuts();
+      unregisterTaskListShortcut();
       unregisterTabIndentation();
     };
   },

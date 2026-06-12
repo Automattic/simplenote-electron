@@ -10,6 +10,8 @@ import {
   $isRangeSelection,
   $isTextNode,
   $setSelection,
+  COMMAND_PRIORITY_HIGH,
+  KEY_DOWN_COMMAND,
   LexicalNode,
 } from 'lexical';
 import {
@@ -447,6 +449,28 @@ const unwrapSubList = (info: SubListInfo): boolean => {
 
   return true;
 };
+
+const isTaskListShortcut = (event: KeyboardEvent): boolean => {
+  const cmdOrCtrl =
+    (event.ctrlKey || event.metaKey) && event.ctrlKey !== event.metaKey;
+
+  return cmdOrCtrl && event.shiftKey && event.key.toLowerCase() === 'c';
+};
+
+export function registerTaskListShortcut(editor: LexicalEditor): () => void {
+  return editor.registerCommand<KeyboardEvent>(
+    KEY_DOWN_COMMAND,
+    (event) => {
+      if (!isTaskListShortcut(event)) {
+        return false;
+      }
+
+      event.preventDefault();
+      return toggleListAtSelection(editor, 'taskList');
+    },
+    COMMAND_PRIORITY_HIGH
+  );
+}
 
 export const toggleListAtSelection = (
   editor: LexicalEditor,
