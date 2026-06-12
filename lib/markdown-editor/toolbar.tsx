@@ -8,13 +8,14 @@ import {
   dispatchFormatText,
   getLinkHrefFromSelection,
   insertHorizontalRule,
-  promptAndSetLink,
   redo,
+  setLink,
   toggleBlockquote,
   toggleCodeBlock,
   toggleHeading,
   undo,
 } from './editor-commands';
+import { LinkUrlInput } from './link-url-input';
 import { toggleListAtSelection } from './list-toggle';
 import { readToolbarState, toolbarStateEqual } from './toolbar-state';
 
@@ -93,6 +94,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [state, setState] = useState(() => readToolbarState(editor));
+  const [linkInputUrl, setLinkInputUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -153,8 +155,17 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
 
   const blockDisabled = state.inTitle;
 
-  const setLink = () => {
-    promptAndSetLink(editor, getLinkHrefFromSelection(editor));
+  const openLinkInput = () => {
+    setLinkInputUrl(getLinkHrefFromSelection(editor) ?? 'https://');
+  };
+
+  const closeLinkInput = () => {
+    setLinkInputUrl(null);
+  };
+
+  const applyLink = (url: string) => {
+    setLink(editor, url);
+    closeLinkInput();
   };
 
   return (
@@ -208,11 +219,18 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
           title="Inline code"
         />
         <ToolbarButton
-          active={state.link}
+          active={state.link || linkInputUrl !== null}
           icon={LinkIcon}
-          onClick={setLink}
+          onClick={openLinkInput}
           title="Link"
         />
+        {linkInputUrl !== null && (
+          <LinkUrlInput
+            initialUrl={linkInputUrl}
+            onCancel={closeLinkInput}
+            onSubmit={applyLink}
+          />
+        )}
       </ToolbarGroup>
 
       <ToolbarSeparator />

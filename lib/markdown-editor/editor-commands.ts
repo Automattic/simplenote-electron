@@ -181,16 +181,6 @@ export const setLink = (editor: LexicalEditor, url: string): void => {
   });
 };
 
-export const promptAndSetLink = (editor: LexicalEditor, previous?: string) => {
-  const url = window.prompt('URL', previous ?? 'https://');
-
-  if (url === null) {
-    return;
-  }
-
-  setLink(editor, url);
-};
-
 export const undo = (editor: LexicalEditor) => {
   editor.dispatchCommand(UNDO_COMMAND, undefined);
 };

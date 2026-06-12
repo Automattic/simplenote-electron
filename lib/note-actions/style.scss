@@ -6,6 +6,7 @@
   position: absolute;
   right: 16px;
   top: $toolbar-height + 16px;
+  z-index: 10;
   border: 1px solid var(--secondary-color);
   border-radius: 6px;
   box-shadow: 0 3px 6px 0 var(--overlay-color);
@@ -82,4 +83,9 @@
   svg .spinner__circle {
     color: var(--disabled-text-color);
   }
+}
+
+// Lexical markdown editor adds a second sticky toolbar below the note toolbar.
+.simplenote-app:has(.lexical-md-editor) .note-actions {
+  top: $toolbar-height + $markdown-editor-toolbar-height + 16px;
 }
