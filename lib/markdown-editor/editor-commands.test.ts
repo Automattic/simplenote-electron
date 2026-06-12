@@ -1,6 +1,11 @@
 import { $convertToMarkdownString } from '@lexical/markdown';
 import { $isLinkNode } from '@lexical/link';
 import {
+  $isTableCellNode,
+  $isTableNode,
+  $isTableRowNode,
+} from '@lexical/table';
+import {
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -85,6 +90,56 @@ function exportMarkdown(editor: LexicalEditorWithDispose): string {
 async function flushEditor(): Promise<void> {
   await Promise.resolve();
 }
+
+function selectTableCell(
+  editor: LexicalEditorWithDispose,
+  rowIndex: number,
+  columnIndex: number
+): void {
+  editor.update(
+    () => {
+      const table = $getRoot().getFirstChild();
+      if (!table || !$isTableNode(table)) {
+        throw new Error('Expected table at root');
+      }
+      const row = table.getChildAtIndex(rowIndex);
+      if (!$isTableRowNode(row)) {
+        throw new Error('Expected table row');
+      }
+      const cell = row.getChildAtIndex(columnIndex);
+      if (!$isTableCellNode(cell)) {
+        throw new Error('Expected table cell');
+      }
+      cell.selectStart();
+    },
+    { discrete: true }
+  );
+}
+
+describe('block commands in tables', () => {
+  it('does not apply heading, blockquote, or code block toggles inside a cell', async () => {
+    const editor = makeGfmTestEditor();
+    const tableMarkdown = ['| City |', '| --- |', '| Kyoto |'].join('\n');
+    importMarkdown(editor, tableMarkdown);
+    selectTableCell(editor, 1, 0);
+
+    const before = exportMarkdown(editor);
+
+    toggleHeading(editor, 1);
+    await flushEditor();
+    expect(exportMarkdown(editor)).toBe(before);
+
+    toggleBlockquote(editor);
+    await flushEditor();
+    expect(exportMarkdown(editor)).toBe(before);
+
+    toggleCodeBlock(editor);
+    await flushEditor();
+    expect(exportMarkdown(editor)).toBe(before);
+
+    editor.dispose();
+  });
+});
 
 describe('toggleHeading', () => {
   it('converts a paragraph to heading 1', async () => {
@@ -219,6 +274,18 @@ describe('setLink', () => {
           })
       ).toBe(false);
     });
+    editor.dispose();
+  });
+
+  it('ignores invalid urls', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'visit site today');
+    selectTextRange(editor, 'visit site today', 6, 10);
+
+    setLink(editor, 'javascript:alert(1)');
+    await flushEditor();
+
+    expect(exportMarkdown(editor)).toBe('visit site today');
     editor.dispose();
   });
 });

@@ -3,10 +3,17 @@ import {
   $isElementNode,
   $isRangeSelection,
   $isTextNode,
+  $createTextNode,
   type LexicalEditorWithDispose,
   type LexicalNode,
   type TextNode,
 } from 'lexical';
+import { $createListItemNode, $createListNode } from '@lexical/list';
+import {
+  $isTableCellNode,
+  $isTableNode,
+  $isTableRowNode,
+} from '@lexical/table';
 
 import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
 import {
@@ -199,6 +206,44 @@ describe('readToolbarState', () => {
       activeList: null,
       blockquote: false,
       codeBlock: false,
+    });
+
+    editor.dispose();
+  });
+
+  it('suppresses block toggles inside table cells that contain block nodes', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, ['| Cell |', '| --- |', '| text |'].join('\n'));
+
+    editor.update(
+      () => {
+        const table = $getRoot().getFirstChild();
+        if (!table || !$isTableNode(table)) {
+          throw new Error('Expected table at root');
+        }
+        const row = table.getChildAtIndex(1);
+        if (!$isTableRowNode(row)) {
+          throw new Error('Expected table row');
+        }
+        const cell = row.getChildAtIndex(0);
+        if (!$isTableCellNode(cell)) {
+          throw new Error('Expected table cell');
+        }
+
+        cell.clear();
+        const list = $createListNode('bullet');
+        const item = $createListItemNode();
+        item.append($createTextNode('item'));
+        list.append(item);
+        cell.append(list);
+        item.selectStart();
+      },
+      { discrete: true }
+    );
+
+    expect(readToolbarState(editor)).toMatchObject({
+      inTable: true,
+      activeList: null,
     });
 
     editor.dispose();

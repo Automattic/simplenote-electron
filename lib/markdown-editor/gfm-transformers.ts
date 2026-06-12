@@ -122,7 +122,7 @@ function getTableColumnsSize(table: TableNode): number {
   return $isTableRowNode(row) ? row.getChildrenSize() : 0;
 }
 
-function getTableCellInlineTransformers(): Array<
+export function getTableCellInlineTransformers(): Array<
   TextFormatTransformer | TextMatchTransformer
 > {
   return [

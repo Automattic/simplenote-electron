@@ -168,7 +168,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     };
   }, [editor]);
 
-  const blockDisabled = state.inTitle;
+  const blockDisabled = state.inTitle || state.inTable;
 
   const openLinkInput = () => {
     setLinkInputUrl(getLinkHrefFromSelection(editor) ?? 'https://');
@@ -332,7 +332,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         />
         <ToolbarButton
           active={state.inTable}
-          disabled={blockDisabled || state.inTable}
+          disabled={blockDisabled}
           icon={TableIcon}
           onClick={() => insertTable(editor)}
           title="Insert table"

@@ -26,6 +26,8 @@ import {
   ListType,
 } from '@lexical/list';
 
+import { $isSelectionInTable } from './table-controls';
+
 export type ActiveListType = 'bulletList' | 'orderedList' | 'taskList';
 export type ToolbarListType = ActiveListType;
 
@@ -465,6 +467,10 @@ export function registerTaskListShortcut(editor: LexicalEditor): () => void {
         return false;
       }
 
+      if (editor.getEditorState().read(() => $isSelectionInTable())) {
+        return false;
+      }
+
       event.preventDefault();
       return toggleListAtSelection(editor, 'taskList');
     },
@@ -479,6 +485,10 @@ export const toggleListAtSelection = (
   let ran = false;
 
   editor.update(() => {
+    if ($isSelectionInTable()) {
+      return;
+    }
+
     const nested = findNestedSubList();
 
     if (nested) {

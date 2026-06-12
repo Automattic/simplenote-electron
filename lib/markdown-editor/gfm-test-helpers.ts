@@ -4,10 +4,7 @@ import {
   type LexicalEditorWithDispose,
   type LexicalNode,
 } from 'lexical';
-import {
-  $convertToMarkdownString,
-  registerMarkdownShortcuts,
-} from '@lexical/markdown';
+import { $convertToMarkdownString } from '@lexical/markdown';
 
 import {
   $importMarkdownString,
@@ -18,11 +15,9 @@ import {
 export function makeGfmTestEditor(
   initialMarkdown = ''
 ): LexicalEditorWithDispose {
-  const editor = buildEditorFromExtensions(
+  return buildEditorFromExtensions(
     createMarkdownEditorExtension(initialMarkdown)
   );
-  registerMarkdownShortcuts(editor, MARKDOWN_TRANSFORMERS);
-  return editor;
 }
 
 export function importMarkdown(

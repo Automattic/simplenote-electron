@@ -9,10 +9,17 @@ import {
 import {
   ListNode,
   ListItemNode,
+  $createListItemNode,
+  $createListNode,
   $isListItemNode,
   $isListNode,
 } from '@lexical/list';
 import { $isLinkNode, LinkNode } from '@lexical/link';
+import {
+  $isTableCellNode,
+  $isTableNode,
+  $isTableRowNode,
+} from '@lexical/table';
 import {
   $convertToMarkdownString,
   CHECK_LIST,
@@ -24,6 +31,10 @@ import {
 } from '@lexical/markdown';
 
 import { MARKDOWN_TRANSFORMERS, $importMarkdownString } from './extensions';
+import {
+  importMarkdown as importGfmMarkdown,
+  makeGfmTestEditor,
+} from './gfm-test-helpers';
 import {
   describeListTree,
   MIXED_NESTED_CHECK_LIST,
@@ -365,6 +376,55 @@ describe('task list item shortcuts', () => {
       });
     }
   );
+
+  it('does not convert list items to task lists inside table cells', async () => {
+    const editor = makeGfmTestEditor();
+    importGfmMarkdown(editor, ['| Cell |', '| --- |', '| text |'].join('\n'));
+    editor.update(
+      () => {
+        const table = $getRoot().getFirstChild();
+        if (!table || !$isTableNode(table)) {
+          throw new Error('Expected table at root');
+        }
+        const row = table.getChildAtIndex(1);
+        if (!$isTableRowNode(row)) {
+          throw new Error('Expected table row');
+        }
+        const cell = row.getChildAtIndex(0);
+        if (!$isTableCellNode(cell)) {
+          throw new Error('Expected table cell');
+        }
+
+        cell.clear();
+        const list = $createListNode('bullet');
+        const item = $createListItemNode();
+        item.append($createParagraphNode());
+        list.append(item);
+        cell.append(list);
+        item.selectStart();
+      },
+      { discrete: true }
+    );
+
+    await typeText(editor, '[ ] ');
+
+    editor.getEditorState().read(() => {
+      const table = $getRoot().getFirstChild();
+      if (!$isTableNode(table)) {
+        throw new Error('Expected table at root');
+      }
+      const row = table.getChildAtIndex(1);
+      const cell = row?.getChildAtIndex(0);
+      const list = cell?.getChildren().find($isListNode);
+      expect($isListNode(list)).toBe(true);
+      if (!$isListNode(list)) {
+        return;
+      }
+      expect(list.getListType()).toBe('bullet');
+    });
+
+    editor.dispose();
+  });
 });
 
 describe('withMixedNestedListTransformers', () => {

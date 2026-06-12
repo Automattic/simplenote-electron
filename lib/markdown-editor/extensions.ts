@@ -71,7 +71,14 @@ import {
   stripLexicalClipboardJsonPrefix,
   wrapLexicalClipboardJsonPrefix,
 } from './clipboard-lexical-json';
-import { HR, IMAGE, TABLE, TILDE_CODE } from './gfm-transformers';
+import {
+  HR,
+  IMAGE,
+  TABLE,
+  TILDE_CODE,
+  getTableCellInlineTransformers,
+} from './gfm-transformers';
+import { withTableSafeBlockShortcuts } from './markdown-table-shortcuts';
 import { ImageNode } from './image-node';
 import {
   MIXED_NESTED_CHECK_LIST,
@@ -86,7 +93,7 @@ import {
 } from './list-deletion';
 import { registerTaskListShortcut } from './list-toggle';
 import { registerMarkdownTabIndentation } from './tab-indentation';
-import { TableControlsExtension } from './table-controls';
+import { TableControlsExtension, $isSelectionInTable } from './table-controls';
 
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
@@ -250,7 +257,7 @@ export const MarkdownShortcutExtension = defineExtension({
   register(editor) {
     const unregisterMarkdownShortcuts = registerMarkdownShortcuts(
       editor,
-      MARKDOWN_TRANSFORMERS
+      withTableSafeBlockShortcuts(MARKDOWN_TRANSFORMERS)
     );
     const unregisterTaskListItemShortcuts =
       registerTaskListItemShortcuts(editor);
@@ -448,6 +455,23 @@ export function $insertMarkdownPasteNodes(
   return true;
 }
 
+function $insertInlineMarkdownPasteInTable(text: string): boolean {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+
+  const paragraph = $createParagraphNode();
+  $convertFromMarkdownString(text, getTableCellInlineTransformers(), paragraph);
+  const children = paragraph.getChildren();
+  if (children.length === 0) {
+    return false;
+  }
+
+  selection.insertNodes(children);
+  return true;
+}
+
 export function registerMarkdownPaste(editor: LexicalEditor): () => void {
   return editor.registerCommand(
     PASTE_COMMAND,
@@ -481,6 +505,24 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
         } catch {
           // Not valid JSON; treat as absent.
         }
+      }
+
+      if (
+        editor
+          .getEditorState()
+          .read(
+            () => $isRangeSelection($getSelection()) && $isSelectionInTable()
+          )
+      ) {
+        let inserted = false;
+        editor.update(() => {
+          inserted = $insertInlineMarkdownPasteInTable(text);
+        });
+        if (inserted) {
+          event.preventDefault();
+          return true;
+        }
+        return false;
       }
 
       const selection = $getSelection();

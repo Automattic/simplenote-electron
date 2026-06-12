@@ -1,6 +1,11 @@
 import { $convertToMarkdownString } from '@lexical/markdown';
 import { $isListItemNode, $isListNode } from '@lexical/list';
 import {
+  $isTableCellNode,
+  $isTableNode,
+  $isTableRowNode,
+} from '@lexical/table';
+import {
   $createParagraphNode,
   $getRoot,
   $getSelection,
@@ -115,6 +120,45 @@ describe('task list keyboard shortcut', () => {
 
       expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe('- [ ] ');
     });
+
+    editor.dispose();
+  });
+
+  it('does not create a task list inside a table cell', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, ['| Cell |', '| --- |', '| text |'].join('\n'));
+    editor.update(
+      () => {
+        const table = $getRoot().getFirstChild();
+        if (!table || !$isTableNode(table)) {
+          throw new Error('Expected table at root');
+        }
+        const row = table.getChildAtIndex(1);
+        if (!$isTableRowNode(row)) {
+          throw new Error('Expected table row');
+        }
+        const cell = row.getChildAtIndex(0);
+        if (!$isTableCellNode(cell)) {
+          throw new Error('Expected table cell');
+        }
+        cell.selectStart();
+      },
+      { discrete: true }
+    );
+
+    await dispatchTaskListShortcut(editor, { ctrlKey: true });
+
+    editor.getEditorState().read(() => {
+      const table = $getRoot().getFirstChild();
+      expect($isTableNode(table)).toBe(true);
+      if (!$isTableNode(table)) {
+        return;
+      }
+      const row = table.getChildAtIndex(1);
+      const cell = row?.getChildAtIndex(0);
+      expect(cell?.getChildren().some($isListNode)).toBe(false);
+    });
+    expect(exportMarkdown(editor)).toBe('| Cell |\n| --- |\n| text |');
 
     editor.dispose();
   });
@@ -235,6 +279,34 @@ describe('toggleListAtSelection', () => {
       expect(selection.anchor.getNode().getTextContent()).toBe('beta');
       expect(selection.anchor.offset).toBe(0);
     });
+
+    editor.dispose();
+  });
+
+  it('does not toggle lists inside a table cell', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, ['| Cell |', '| --- |', '| text |'].join('\n'));
+    editor.update(
+      () => {
+        const table = $getRoot().getFirstChild();
+        if (!table || !$isTableNode(table)) {
+          throw new Error('Expected table at root');
+        }
+        const row = table.getChildAtIndex(1);
+        if (!$isTableRowNode(row)) {
+          throw new Error('Expected table row');
+        }
+        const cell = row.getChildAtIndex(0);
+        if (!$isTableCellNode(cell)) {
+          throw new Error('Expected table cell');
+        }
+        cell.selectStart();
+      },
+      { discrete: true }
+    );
+
+    expect(await flushToggleList(editor, 'bulletList')).toBe(false);
+    expect(exportMarkdown(editor)).toBe('| Cell |\n| --- |\n| text |');
 
     editor.dispose();
   });

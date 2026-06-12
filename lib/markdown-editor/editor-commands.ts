@@ -25,6 +25,7 @@ import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
 import { normalizeLinkHref, urlFromText } from './link-validator';
 import {
+  $isSelectionInTable,
   DEFAULT_INSERT_TABLE_PAYLOAD,
   DELETE_TABLE_COLUMN_COMMAND,
   DELETE_TABLE_ROW_COMMAND,
@@ -61,7 +62,7 @@ export const toggleHeading = (
   editor.update(() => {
     const selection = $getSelection();
 
-    if (!$isRangeSelection(selection)) {
+    if (!$isRangeSelection(selection) || $isSelectionInTable()) {
       return;
     }
 
@@ -93,7 +94,7 @@ export const toggleBlockquote = (editor: LexicalEditor): void => {
   editor.update(() => {
     const selection = $getSelection();
 
-    if (!$isRangeSelection(selection)) {
+    if (!$isRangeSelection(selection) || $isSelectionInTable()) {
       return;
     }
 
@@ -124,7 +125,7 @@ export const toggleCodeBlock = (editor: LexicalEditor): void => {
   editor.update(() => {
     const selection = $getSelection();
 
-    if (!$isRangeSelection(selection)) {
+    if (!$isRangeSelection(selection) || $isSelectionInTable()) {
       return;
     }
 
@@ -156,10 +157,18 @@ export const toggleCodeBlock = (editor: LexicalEditor): void => {
 };
 
 export const insertHorizontalRule = (editor: LexicalEditor): void => {
+  if (editor.getEditorState().read(() => $isSelectionInTable())) {
+    return;
+  }
+
   editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
 };
 
 export const insertTable = (editor: LexicalEditor): void => {
+  if (editor.getEditorState().read(() => $isSelectionInTable())) {
+    return;
+  }
+
   editor.dispatchCommand(INSERT_TABLE_COMMAND, DEFAULT_INSERT_TABLE_PAYLOAD);
 };
 

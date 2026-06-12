@@ -34,6 +34,8 @@ import {
   type TextNode,
 } from 'lexical';
 
+import { $isSelectionInTable } from './table-controls';
+
 // GFM commonly uses 2-space list indents; 4 spaces still parse as depth 2.
 const LIST_INDENT_SIZE = 2;
 
@@ -139,6 +141,10 @@ export function registerTaskListItemShortcuts(
       }
 
       editor.update(() => {
+        if ($isSelectionInTable()) {
+          return;
+        }
+
         if ($tryConvertListItemToTaskList(anchorNode, anchorOffset)) {
           $addUpdateTag(HISTORY_PUSH_TAG);
         }
