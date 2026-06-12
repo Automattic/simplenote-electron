@@ -31,7 +31,7 @@ export const HorizontalRuleIcon = makeIcon('minus');
 export const HeadingIcon = ({
   className,
   level,
-}: IconProps & { level: 2 | 3 | 4 }) => (
+}: IconProps & { level: 1 | 2 | 3 | 4 }) => (
   <Gridicon icon={`heading-h${level}`} size={ICON_SIZE} className={className} />
 );
 

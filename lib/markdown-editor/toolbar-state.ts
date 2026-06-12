@@ -24,6 +24,7 @@ export type ToolbarState = {
   strike: boolean;
   code: boolean;
   link: boolean;
+  h1: boolean;
   h2: boolean;
   h3: boolean;
   h4: boolean;
@@ -73,6 +74,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     strike: false,
     code: false,
     link: false,
+    h1: false,
     h2: false,
     h3: false,
     h4: false,
@@ -121,6 +123,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
       }
     }
 
+    state.h1 = isHeadingTagActive('h1', block);
     state.h2 = isHeadingTagActive('h2', block);
     state.h3 = isHeadingTagActive('h3', block);
     state.h4 = isHeadingTagActive('h4', block);
@@ -130,6 +133,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
 
     if (state.inTable) {
       // Block-level toggles do not apply inside table cells.
+      state.h1 = false;
       state.h2 = false;
       state.h3 = false;
       state.h4 = false;
@@ -149,6 +153,7 @@ export const toolbarStateEqual = (a: ToolbarState, b: ToolbarState) =>
   a.strike === b.strike &&
   a.code === b.code &&
   a.link === b.link &&
+  a.h1 === b.h1 &&
   a.h2 === b.h2 &&
   a.h3 === b.h3 &&
   a.h4 === b.h4 &&

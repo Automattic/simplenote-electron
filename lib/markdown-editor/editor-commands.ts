@@ -56,7 +56,7 @@ const $getTopLevelBlock = () => {
 
 export const toggleHeading = (
   editor: LexicalEditor,
-  level: 2 | 3 | 4
+  level: 1 | 2 | 3 | 4
 ): void => {
   editor.update(() => {
     const selection = $getSelection();

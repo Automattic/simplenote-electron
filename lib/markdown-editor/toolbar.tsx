@@ -251,6 +251,13 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
 
       <ToolbarGroup>
         <ToolbarButton
+          active={state.h1}
+          disabled={blockDisabled}
+          icon={() => <HeadingIcon level={1} />}
+          onClick={() => toggleHeading(editor, 1)}
+          title="Heading 1"
+        />
+        <ToolbarButton
           active={state.h2}
           disabled={blockDisabled}
           icon={() => <HeadingIcon level={2} />}
