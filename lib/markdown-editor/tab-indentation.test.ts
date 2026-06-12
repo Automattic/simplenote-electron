@@ -2,6 +2,7 @@ import { $convertToMarkdownString } from '@lexical/markdown';
 import {
   $createParagraphNode,
   $createTabNode,
+  $getNodeByKey,
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -209,6 +210,33 @@ describe('tab indentation', () => {
 
     expect(await dispatchTab(editor, true)).toBe(true);
     expect(exportMarkdown(editor)).toBe('');
+
+    editor.dispose();
+  });
+
+  it('Shift+Tab between adjacent tabs removes the preceding tab', async () => {
+    const editor = makeGfmTestEditor();
+    let trailingTabKey = '';
+    editor.update(
+      () => {
+        $getRoot().clear();
+        const paragraph = $createParagraphNode();
+        paragraph.append($createTabNode());
+        const trailingTab = $createTabNode();
+        trailingTabKey = trailingTab.getKey();
+        paragraph.append(trailingTab);
+        $getRoot().append(paragraph);
+        paragraph.select(1, 1);
+      },
+      { discrete: true }
+    );
+    expect(exportMarkdown(editor)).toBe('\t\t');
+
+    expect(await dispatchTab(editor, true)).toBe(true);
+    expect(exportMarkdown(editor)).toBe('\t');
+    editor.getEditorState().read(() => {
+      expect($getNodeByKey(trailingTabKey)?.isAttached()).toBe(true);
+    });
 
     editor.dispose();
   });

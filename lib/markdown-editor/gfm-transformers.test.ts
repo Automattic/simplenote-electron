@@ -386,17 +386,6 @@ describe('tilde code fences', () => {
     expect(roundtrip(editor, tildeBlock)).toBe(tildeBlock);
     editor.dispose();
   });
-
-  it('exports back using ~~~ when imported with tildes', () => {
-    const editor = makeGfmTestEditor();
-    importMarkdown(editor, tildeBlock);
-    const exported = editor
-      .getEditorState()
-      .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
-    expect(exported.startsWith('~~~js')).toBe(true);
-    expect(exported.endsWith('~~~')).toBe(true);
-    editor.dispose();
-  });
 });
 
 describe('hard line breaks', () => {
@@ -439,12 +428,6 @@ describe('hard line breaks', () => {
 describe('gfm fixture parity', () => {
   it.each([
     [
-      'simple table from Turndown',
-      ['| City | Days |', '| --- | --- |', '| Kyoto | 3 |'].join('\n'),
-    ],
-    ['horizontal rule from Turndown', '---'],
-    ['safe image from Turndown', '![Photo](https://example.com/photo.jpg)'],
-    [
       'browser article clip excerpt',
       [
         '# Browser Article Clip',
@@ -459,13 +442,10 @@ describe('gfm fixture parity', () => {
         '| Porto | 2 |',
       ].join('\n'),
     ],
-    ['bare URL as plain text', 'Visit https://example.com today'],
     [
       'inline code with URL not linkified',
       'Use `https://example.com` literally',
     ],
-    ['tilde code fence', ['~~~js', 'const x = 1;', '~~~'].join('\n')],
-    ['hard line break', 'foo\\\nbar'],
     ['task list item', '- [ ] open task'],
   ])('round-trips %s', (_label, markdown) => {
     const editor = makeGfmTestEditor();

@@ -1,5 +1,6 @@
 import { buildEditorFromExtensions } from '@lexical/extension';
-import type { LexicalEditorWithDispose } from 'lexical';
+import { $getNodeByKey, type LexicalEditorWithDispose } from 'lexical';
+import { $isHeadingNode } from '@lexical/rich-text';
 
 import { createMarkdownEditorExtension } from './extensions';
 import { $findAnchorHeadingKey, slugifyHeading } from './heading-anchor';
@@ -40,6 +41,11 @@ describe('$findAnchorHeadingKey', () => {
       'my-section'
     );
     expect(key).not.toBeNull();
+    editor.getEditorState().read(() => {
+      const node = $getNodeByKey(key!);
+      expect($isHeadingNode(node)).toBe(true);
+      expect(node?.getTextContent()).toBe('My Section');
+    });
     editor.dispose();
   });
 

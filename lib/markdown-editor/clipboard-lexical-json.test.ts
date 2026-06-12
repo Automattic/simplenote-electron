@@ -12,6 +12,10 @@ describe('clipboard Lexical JSON prefix', () => {
   };
   const json = JSON.stringify(payload);
 
+  it('uses the PREFIX marker so VS Code/Cursor ignore clipboard JSON', () => {
+    expect(LEXICAL_CLIPBOARD_JSON_PREFIX).toBe('PREFIX');
+  });
+
   it('wraps and strips the export prefix', () => {
     expect(wrapLexicalClipboardJsonPrefix(json)).toBe(
       `${LEXICAL_CLIPBOARD_JSON_PREFIX}${json}`

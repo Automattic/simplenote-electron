@@ -140,6 +140,72 @@ describe('list deletion', () => {
     editor.dispose();
   });
 
+  it('restores selection to the next item after deleting multiple list items', async () => {
+    const editor = makeGfmTestEditor('- one\n- two\n- three');
+    editor.update(
+      () => {
+        const first = findTextNode($getRoot(), 'one');
+        const last = findTextNode($getRoot(), 'two');
+        if (!first || !last) {
+          throw new Error('Expected list item text nodes');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(first.getKey(), 0, 'text');
+        selection.focus.set(last.getKey(), last.getTextContentSize(), 'text');
+      },
+      { discrete: true }
+    );
+
+    await dispatchDelete(editor);
+
+    expect(exportMarkdown(editor)).toBe('- three');
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected range selection');
+      }
+      expect(selection.anchor.getNode().getTextContent()).toBe('three');
+      expect(selection.anchor.offset).toBe(0);
+    });
+    editor.dispose();
+  });
+
+  it('restores selection to the previous item when deleting trailing list items', async () => {
+    const editor = makeGfmTestEditor('- one\n- two\n- three');
+    editor.update(
+      () => {
+        const first = findTextNode($getRoot(), 'two');
+        const last = findTextNode($getRoot(), 'three');
+        if (!first || !last) {
+          throw new Error('Expected list item text nodes');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(first.getKey(), 0, 'text');
+        selection.focus.set(last.getKey(), last.getTextContentSize(), 'text');
+      },
+      { discrete: true }
+    );
+
+    await dispatchDelete(editor);
+
+    expect(exportMarkdown(editor)).toBe('- one');
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected range selection');
+      }
+      expect(selection.anchor.getNode().getTextContent()).toBe('one');
+      expect(selection.anchor.offset).toBe(3);
+    });
+    editor.dispose();
+  });
+
   it('keeps nested list items when only their parent item is deleted', async () => {
     const editor = makeGfmTestEditor('- parent\n  - child');
     selectText(editor, 'parent');

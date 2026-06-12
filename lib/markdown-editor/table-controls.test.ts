@@ -74,6 +74,23 @@ function tableDimensions(editor: ReturnType<typeof makeGfmTestEditor>) {
   return editor.getEditorState().read(() => $getTableDimensionsAtSelection());
 }
 
+function rowCellTexts(
+  editor: ReturnType<typeof makeGfmTestEditor>,
+  rowIndex: number
+): string[] {
+  return editor.getEditorState().read(() => {
+    const table = rootChildren(editor).find($isTableNode);
+    if (!table) {
+      throw new Error('expected table at root');
+    }
+    const row = table.getChildAtIndex(rowIndex);
+    if (!$isTableRowNode(row)) {
+      throw new Error('expected table row');
+    }
+    return row.getChildren().map((cell) => cell.getTextContent());
+  });
+}
+
 describe('table controls', () => {
   it('inserts a 3×3 table with a header row via INSERT_TABLE_COMMAND', async () => {
     const editor = makeGfmTestEditor();
@@ -107,6 +124,8 @@ describe('table controls', () => {
     await dispatchTableCommand(editor, INSERT_TABLE_ROW_BELOW_COMMAND);
 
     expect(tableDimensions(editor)).toEqual({ columnCount: 2, rowCount: 3 });
+    expect(rowCellTexts(editor, 1)).toEqual(['Kyoto', '3']);
+    expect(rowCellTexts(editor, 2)).toEqual(['', '']);
     editor.dispose();
   });
 
@@ -118,6 +137,8 @@ describe('table controls', () => {
     await dispatchTableCommand(editor, INSERT_TABLE_ROW_ABOVE_COMMAND);
 
     expect(tableDimensions(editor)).toEqual({ columnCount: 2, rowCount: 3 });
+    expect(rowCellTexts(editor, 1)).toEqual(['', '']);
+    expect(rowCellTexts(editor, 2)).toEqual(['Kyoto', '3']);
     editor.dispose();
   });
 
