@@ -80,6 +80,13 @@ export const normalizeSafeLinkHref = (href: string | null): string | null => {
     return trimmed;
   }
 
+  // Reject anything else with an explicit scheme (javascript:, data:, ...)
+  // rather than prefixing it into a bogus https URL. A colon followed by
+  // digits is a port (example.com:8080), not a scheme.
+  if (/^[a-z][a-z0-9+.-]*:(?!\d)/i.test(trimmed)) {
+    return null;
+  }
+
   return 'https://' + trimmed;
 };
 
