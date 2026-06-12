@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
 import { $convertToMarkdownString } from '@lexical/markdown';
 import type { LexicalEditor } from 'lexical';
@@ -42,15 +42,33 @@ function MarkdownNoteEditorComponent({
   const editorRef = useRef<LexicalEditor | null>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
-  const initialMarkdown = withCheckboxSyntax(noteContent);
+  // The exact string instance last dispatched to the store, so our own
+  // edits echoing back through redux can be recognized by reference alone.
+  const lastDispatchedRef = useRef<string | null>(null);
+  // Only consumed when MarkdownEditor (keyed by noteId) mounts, so don't
+  // recompute the O(document) transform on every keystroke re-render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialMarkdown = useMemo(
+    () => withCheckboxSyntax(noteContent),
+    [noteId]
+  );
 
   useScrollMemory(shellRef, noteId);
 
   useEffect(() => {
     lastPushedRef.current = withCheckboxSyntax(noteContent);
+    lastDispatchedRef.current = null;
   }, [noteId]);
 
   useEffect(() => {
+    // Local edits round-trip through the store as the same string instance,
+    // so this O(1) check skips the O(document) checkbox transform (and any
+    // further comparison) on every keystroke. Only genuinely external
+    // content changes (remote sync, revision restore, ...) fall through.
+    if (noteContent === lastDispatchedRef.current) {
+      return;
+    }
+
     const remote = withCheckboxSyntax(noteContent);
 
     if (remote === lastPushedRef.current) {
@@ -127,6 +145,7 @@ function MarkdownNoteEditorComponent({
       }
 
       lastPushedRef.current = content;
+      lastDispatchedRef.current = content;
       editNote(noteId, { content });
     },
     [editNote, noteId]
