@@ -206,6 +206,8 @@ const markdownEditorTheme = {
   tableRow: 'lexical-md-editor__table-row',
   tableScrollableWrapper: 'lexical-md-editor__table-scrollable-wrapper',
   text: {
+    bold: 'md-bold',
+    italic: 'md-italic',
     strikethrough: 'md-strikethrough',
   },
 };
