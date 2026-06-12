@@ -1,4 +1,9 @@
-import { GetClipboardDataExtension } from '@lexical/clipboard';
+import {
+  ClipboardImportExtension,
+  GetClipboardDataExtension,
+  $generateNodesFromSerializedNodes,
+  $insertGeneratedNodes,
+} from '@lexical/clipboard';
 import { $isCodeNode, CodeExtension } from '@lexical/code-core';
 import {
   HorizontalRuleExtension,
@@ -40,6 +45,7 @@ import {
   $isParagraphNode,
   $isRangeSelection,
   $setSelection,
+  $getEditor,
   COMMAND_PRIORITY_HIGH,
   configExtension,
   defineExtension,
@@ -51,6 +57,11 @@ import {
 } from 'lexical';
 
 import { registerFormatEscape } from './format-escape';
+import {
+  parseNamespacedLexicalClipboardJson,
+  stripLexicalClipboardJsonPrefix,
+  wrapLexicalClipboardJsonPrefix,
+} from './clipboard-lexical-json';
 import { HR, IMAGE, TABLE, TILDE_CODE } from './gfm-transformers';
 import { ImageNode } from './image-node';
 import {
@@ -354,7 +365,9 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
       const lexicalJson = clipboardData.getData('application/x-lexical-editor');
       if (lexicalJson) {
         try {
-          const payload = JSON.parse(lexicalJson);
+          const payload = JSON.parse(
+            stripLexicalClipboardJsonPrefix(lexicalJson)
+          );
           if (payload && payload.namespace === editor._config.namespace) {
             return false;
           }
@@ -393,13 +406,14 @@ export const MarkdownPasteExtension = defineExtension({
   },
 });
 
-// Lexical's default copy writes the selection's plain text content into
-// text/plain, which strips markdown structure (code fences, quote markers,
-// list bullets, ...). Layer a serializer on the clipboard-export stack that
-// emits the selection's markdown instead, matching what this note stores.
-// The default text/html and application/x-lexical-editor payloads stay
-// intact for rich-text targets and lossless editor-internal pastes, and the
-// same config covers copy, cut, and drag out of the editor.
+const $exportSelectionMarkdown = (
+  selection: NonNullable<ReturnType<typeof $getSelection>>
+) =>
+  $convertSelectionToMarkdownString(MARKDOWN_TRANSFORMERS, selection).replace(
+    /^\n+/,
+    ''
+  );
+
 export const MarkdownCopyExtension = defineExtension({
   name: '@simplenote/markdown-copy',
   dependencies: [
@@ -407,12 +421,36 @@ export const MarkdownCopyExtension = defineExtension({
       $exportMimeType: {
         'text/plain': [
           (selection, next) =>
-            selection
-              ? $convertSelectionToMarkdownString(
-                  MARKDOWN_TRANSFORMERS,
-                  selection
-                )
-              : next(),
+            selection ? $exportSelectionMarkdown(selection) : next(),
+        ],
+        // Prefix Lexical JSON so Cursor IDE ignores it; stripped on import below.
+        'application/x-lexical-editor': [
+          (selection, next) => {
+            if (!selection) {
+              return next();
+            }
+            const json = next();
+            return json ? wrapLexicalClipboardJsonPrefix(json) : null;
+          },
+        ],
+      },
+    }),
+    configExtension(ClipboardImportExtension, {
+      $importMimeType: {
+        'application/x-lexical-editor': [
+          (data, selection, $next) => {
+            const payload = parseNamespacedLexicalClipboardJson(
+              data,
+              $getEditor()._config.namespace
+            );
+            if (!payload) {
+              return $next();
+            }
+
+            const nodes = $generateNodesFromSerializedNodes(payload.nodes);
+            $insertGeneratedNodes($getEditor(), nodes, selection);
+            return true;
+          },
         ],
       },
     }),

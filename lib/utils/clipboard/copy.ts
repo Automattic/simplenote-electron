@@ -207,6 +207,22 @@ export const sanitizeClipboardHtml = (html: string): string => {
   return doc.body.innerHTML;
 };
 
+const escapeHtmlForClipboard = (text: string): string =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// Preview HTML for outbound clipboard: standard tags (checkbox inputs in
+// lists, not Lexical's role="checkbox" on <li>) so paste targets like
+// Cursor/VS Code chat can read the selection.
+export const buildMarkdownClipboardHtml = (markdown: string): string => {
+  const payload = buildSourceClipboardPayload(markdown, true);
+
+  if (payload.html) {
+    return payload.html;
+  }
+
+  return `<p>${escapeHtmlForClipboard(payload.plain).replace(/\n/g, '<br>')}</p>`;
+};
+
 export const buildSourceClipboardPayload = (
   plainText: string,
   markdownEnabled: boolean
@@ -248,6 +264,21 @@ export const buildPreviewClipboardPayload = (
     html,
     plain: htmlToMarkdown(html) ?? textFromHtml(html) ?? fallbackText,
   };
+};
+
+export const writePlainTextOnlyClipboard = (
+  clipboardData: ClipboardWriter & Pick<DataTransfer, 'types'>,
+  plain: string
+): boolean => {
+  try {
+    for (const type of [...clipboardData.types]) {
+      clipboardData.clearData?.(type);
+    }
+    clipboardData.setData('text/plain', plain);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const writeClipboardPayload = (

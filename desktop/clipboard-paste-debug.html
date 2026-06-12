@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Simplenote → Cursor clipboard HTML debug</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 2rem auto;
+        max-width: 52rem;
+        line-height: 1.45;
+      }
+      h1 {
+        font-size: 1.35rem;
+      }
+      ol {
+        padding-left: 1.25rem;
+      }
+      li {
+        margin: 0.75rem 0;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        margin-right: 0.5rem;
+      }
+      .status {
+        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        background: #eef6ff;
+      }
+      .status.error {
+        background: #ffecec;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.85rem;
+        background: #f6f6f6;
+        padding: 0.75rem;
+        border-radius: 6px;
+      }
+      .hint {
+        color: #444;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simplenote → Cursor clipboard HTML debug</h1>
+    <p class="hint">
+      Each button copies the <strong>same</strong> <code>text/plain</code> plus
+      a different <code>text/html</code>. Paste into Cursor agent chat (normal
+      paste, not plain-text). Record which variants appear vs disappear.
+    </p>
+    <p><strong>text/plain (all variants):</strong></p>
+    <pre id="plain-preview"></pre>
+    <p class="status" id="status">Click a variant to copy both MIME types.</p>
+    <ol id="variants"></ol>
+
+    <script>
+      const PLAIN = '- [ ] Sample task text for Cursor paste debugging';
+      const taskText = PLAIN.replace(/^- \[ \] /, '');
+
+      const variants = [
+        {
+          id: 'lexical-native',
+          label: 'Lexical native (broken in Cursor)',
+          description:
+            'role=checkbox on li, __lexicallisttype, tabindex, value, inline style.',
+          html:
+            '<meta charset="utf-8"><ul __lexicallisttype="check"><li role="checkbox" tabindex="-1" aria-checked="false" value="2" class="task-list-item"><span style="white-space: pre-wrap;">' +
+            taskText +
+            '</span></li></ul>',
+        },
+        {
+          id: 'lexical-no-role',
+          label: 'Lexical without role=checkbox',
+          description: 'Drops role/tabindex/aria/value from li.',
+          html:
+            '<meta charset="utf-8"><ul __lexicallisttype="check"><li class="task-list-item"><span style="white-space: pre-wrap;">' +
+            taskText +
+            '</span></li></ul>',
+        },
+        {
+          id: 'lexical-no-listtype-attr',
+          label: 'Lexical without __lexicallisttype',
+          description: 'Keeps role=checkbox, drops custom ul attribute.',
+          html:
+            '<meta charset="utf-8"><ul><li role="checkbox" tabindex="-1" aria-checked="false" class="task-list-item"><span style="white-space: pre-wrap;">' +
+            taskText +
+            '</span></li></ul>',
+        },
+        {
+          id: 'lexical-role-only',
+          label: 'Minimal role=checkbox',
+          description: 'Only role=checkbox on a plain li.',
+          html: '<ul><li role="checkbox">' + taskText + '</li></ul>',
+        },
+        {
+          id: 'lexical-listtype-only',
+          label: 'Minimal __lexicallisttype only',
+          description: 'Only custom ul attribute.',
+          html: '<ul __lexicallisttype="check"><li>' + taskText + '</li></ul>',
+        },
+        {
+          id: 'plain-ul-li',
+          label: 'Plain ul/li',
+          description: 'Standard list, markdown prefix in text.',
+          html: '<ul><li>' + PLAIN + '</li></ul>',
+        },
+        {
+          id: 'plain-ol-li',
+          label: 'Plain ol/li',
+          description: 'Ordered list baseline.',
+          html: '<ol><li>' + taskText + '</li></ol>',
+        },
+        {
+          id: 'showdown-checkbox-enabled',
+          label: 'input checkbox (enabled)',
+          description: 'GFM-style enabled checkbox in li.',
+          html: '<ul><li><input type="checkbox">' + taskText + '</li></ul>',
+        },
+        {
+          id: 'showdown-checkbox-disabled',
+          label: 'input checkbox (disabled)',
+          description: 'Sanitized Simplenote outbound shape.',
+          html:
+            '<ul><li><input type="checkbox" disabled>' +
+            taskText +
+            '</li></ul>',
+        },
+        {
+          id: 'paragraph-literal-markdown',
+          label: 'Paragraph with literal markdown',
+          description: 'No list tags; includes "- [ ]" in text.',
+          html: '<p>' + PLAIN + '</p>',
+        },
+        {
+          id: 'meta-charset-wrapper',
+          label: 'meta charset + plain ul/li',
+          description: 'Tests meta prefix alone.',
+          html: '<meta charset="utf-8"><ul><li>' + taskText + '</li></ul>',
+        },
+        {
+          id: 'span-pre-wrap-only',
+          label: 'span white-space:pre-wrap only',
+          description: 'Inline style without ARIA.',
+          html:
+            '<ul><li><span style="white-space: pre-wrap;">' +
+            taskText +
+            '</span></li></ul>',
+        },
+        {
+          id: 'showdown-simplenote-sanitized',
+          label: 'Simplenote Showdown export (actual)',
+          description:
+            'Real sanitized outbound HTML: source marker + disabled checkbox.',
+          html: '<!--simplenote-clipboard-source:v1--><ul><li><input type="checkbox" disabled=""> Sample task text for Cursor paste debugging</li></ul>',
+        },
+      ];
+
+      function writeDualMimeClipboard(plain, html) {
+        const listener = (event) => {
+          event.clipboardData.setData('text/plain', plain);
+          event.clipboardData.setData('text/html', html);
+          event.preventDefault();
+        };
+        document.addEventListener('copy', listener);
+        const copied = document.execCommand('copy');
+        document.removeEventListener('copy', listener);
+        return copied;
+      }
+
+      function setStatus(message, isError) {
+        const el = document.getElementById('status');
+        el.textContent = message;
+        el.className = isError ? 'status error' : 'status';
+      }
+
+      document.getElementById('plain-preview').textContent = PLAIN;
+
+      const list = document.getElementById('variants');
+      for (const variant of variants) {
+        const item = document.createElement('li');
+        const copyButton = document.createElement('button');
+        copyButton.type = 'button';
+        copyButton.textContent = 'Copy';
+        copyButton.addEventListener('click', () => {
+          const ok = writeDualMimeClipboard(PLAIN, variant.html);
+          if (!ok) {
+            setStatus(
+              'Copy failed — try focusing this page and use Cmd+C after selecting text, or open in Electron.',
+              true
+            );
+            return;
+          }
+          setStatus(
+            'Copied "' +
+              variant.id +
+              '". Paste into Cursor agent chat and note whether text appears.'
+          );
+        });
+
+        const title = document.createElement('strong');
+        title.textContent = variant.label;
+
+        const desc = document.createElement('div');
+        desc.className = 'hint';
+        desc.textContent = variant.description;
+
+        const htmlPreview = document.createElement('pre');
+        htmlPreview.textContent = variant.html;
+
+        item.append(copyButton, title, desc, htmlPreview);
+        list.append(item);
+      }
+    </script>
+  </body>
+</html>

@@ -1,11 +1,13 @@
 import { renderNoteToHtmlIfReady } from '../render-note-to-html';
 
 import {
+  buildMarkdownClipboardHtml,
   buildPreviewClipboardPayload,
   buildSourceClipboardPayload,
   sanitizeClipboardHtml,
   shouldCopyWholePreview,
   writeClipboardPayload,
+  writePlainTextOnlyClipboard,
 } from './copy';
 import { SIMPLENOTE_SOURCE_HTML_MARKER } from './html-to-markdown';
 
@@ -33,6 +35,52 @@ const createClipboardData = () => {
 describe('clipboard copy helpers', () => {
   beforeEach(() => {
     mockedRenderNoteToHtmlIfReady.mockReset();
+  });
+
+  it('builds standard checklist HTML for outbound clipboard', () => {
+    mockedRenderNoteToHtmlIfReady.mockReturnValue(
+      '<ul><li><input type="checkbox" disabled>Pack adapter</li></ul>'
+    );
+
+    const html = buildMarkdownClipboardHtml('- [ ] Pack adapter');
+
+    expect(html).toContain(SIMPLENOTE_SOURCE_HTML_MARKER);
+    expect(html).toContain('checkbox');
+    expect(html).not.toContain('role="checkbox"');
+  });
+
+  it('falls back to escaped plain HTML when the renderer is cold', () => {
+    mockedRenderNoteToHtmlIfReady.mockReturnValue(null);
+
+    expect(buildMarkdownClipboardHtml('- [ ] task')).toBe('<p>- [ ] task</p>');
+  });
+
+  it('writes plain text as the only clipboard type', () => {
+    const clipboardData = {
+      types: ['text/plain', 'text/html', 'application/x-lexical-editor'],
+      clearData: jest.fn(function (this: { types: string[] }, format: string) {
+        this.types = this.types.filter((type) => type !== format);
+      }),
+      setData: jest.fn(function (this: { types: string[] }, format: string) {
+        if (!this.types.includes(format)) {
+          this.types.push(format);
+        }
+      }),
+      getData: jest.fn(),
+    };
+
+    expect(
+      writePlainTextOnlyClipboard(
+        clipboardData as unknown as DataTransfer,
+        '- [ ] task'
+      )
+    ).toBe(true);
+    expect(clipboardData.types).toEqual(['text/plain']);
+    expect(clipboardData.setData).toHaveBeenCalledWith(
+      'text/plain',
+      '- [ ] task'
+    );
+    expect(clipboardData.clearData).toHaveBeenCalledTimes(3);
   });
 
   it('writes exact source text and clears Monaco HTML metadata', () => {
