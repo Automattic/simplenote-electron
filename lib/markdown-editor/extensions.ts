@@ -11,7 +11,14 @@ import {
 } from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
 import { LinkExtension } from '@lexical/link';
-import { CheckListExtension, ListExtension } from '@lexical/list';
+import {
+  CheckListExtension,
+  ListExtension,
+  $isListItemNode,
+  $isListNode,
+  type ListItemNode,
+} from '@lexical/list';
+import { $findMatchingParent } from '@lexical/utils';
 import {
   $convertFromMarkdownString,
   $convertSelectionToMarkdownString,
@@ -44,7 +51,9 @@ import {
   $isElementNode,
   $isParagraphNode,
   $isRangeSelection,
+  $isTextNode,
   $setSelection,
+  type TextNode,
   $getEditor,
   COMMAND_PRIORITY_HIGH,
   configExtension,
@@ -71,6 +80,10 @@ import {
   importMixedNestedListMarkdown,
   registerTaskListItemShortcuts,
 } from './list-transformers';
+import {
+  $shouldAppendTrailingLinebreakToClipboardMarkdown,
+  registerListDeletion,
+} from './list-deletion';
 import { registerTaskListShortcut } from './list-toggle';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension } from './table-controls';
@@ -203,6 +216,13 @@ const FormatEscapeExtension = defineExtension({
   },
 });
 
+const ListDeletionExtension = defineExtension({
+  name: '@simplenote/list-deletion',
+  register(editor) {
+    return registerListDeletion(editor);
+  },
+});
+
 const markdownEditorTheme = {
   code: 'lexical-md-editor__code-block',
   hr: 'lexical-md-editor__hr',
@@ -251,6 +271,70 @@ export const MarkdownShortcutExtension = defineExtension({
 const MARKDOWN_PASTE_HINT =
   /(^|\n)\s{0,3}(#{1,6}\s|>\s|```|~~~|[-*+]\s|\d+\.\s|---|\*\*\*|___|\|[^\n]+\|)|!\[[^\]\n]*\]\([^)\n]+\)|https?:\/\/[^\s<>\[\]()]+|(?:<[a-z]+:[^>\n]+>)|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
 
+// Cut/copy of one full list line ends with a linebreak; prefer markdown paste
+// over Lexical JSON so the item is reinserted as its own bullet, not merged.
+const SINGLE_COMPLETE_LIST_LINE =
+  /^\s{0,3}(?:[-*+]\s(?:\[[ xX]\]\s)?|\d+\.\s).+\n$/;
+
+function $isNestedListWrapperItem(listItem: ListItemNode): boolean {
+  const children = listItem.getChildren();
+  return children.length === 1 && $isListNode(children[0]);
+}
+
+function $getListItemTrailingTextNode(listItem: ListItemNode): TextNode | null {
+  let trailingText: TextNode | null = null;
+
+  for (const child of listItem.getChildren()) {
+    if ($isListNode(child)) {
+      continue;
+    }
+    if ($isTextNode(child)) {
+      trailingText = child;
+      continue;
+    }
+    if ($isElementNode(child)) {
+      for (const textNode of child.getAllTextNodes()) {
+        trailingText = textNode;
+      }
+    }
+  }
+
+  return trailingText;
+}
+
+// Lexical's ElementNode.selectEnd() advances to the next sibling; for list
+// items that lands on the following bullet instead of the pasted line's end.
+function $selectEndOfListItemContent(listItem: ListItemNode): void {
+  const trailingText = $getListItemTrailingTextNode(listItem);
+  if (trailingText !== null) {
+    const offset = trailingText.getTextContentSize();
+    trailingText.select(offset, offset);
+    return;
+  }
+
+  listItem.select(0, 0);
+}
+
+function $isCollapsedAtListItemStart(
+  listItem: ListItemNode,
+  selection: ReturnType<typeof $getSelection>
+): boolean {
+  if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+    return false;
+  }
+
+  const anchor = selection.anchor;
+  if (anchor.offset !== 0) {
+    return false;
+  }
+
+  const firstDescendant = listItem.getFirstDescendant();
+  return (
+    anchor.getNode().is(listItem) ||
+    (firstDescendant !== null && anchor.getNode().is(firstDescendant))
+  );
+}
+
 export function $insertMarkdownPasteNodes(
   text: string,
   pasteAnchorBlock: ElementNode | null
@@ -288,6 +372,27 @@ export function $insertMarkdownPasteNodes(
   const anchorBlock =
     $getNodeByKey(pasteAnchorBlock?.getKey() ?? '') ??
     anchor.getNode().getTopLevelElement();
+
+  const listItem = $findMatchingParent(anchor.getNode(), $isListItemNode);
+  if (
+    listItem !== null &&
+    !$isNestedListWrapperItem(listItem) &&
+    nodes.length === 1 &&
+    $isListNode(nodes[0]) &&
+    $isCollapsedAtListItemStart(listItem, insertionSelection)
+  ) {
+    const pastedList = nodes[0];
+    const pastedItems = pastedList.getChildren();
+    for (const item of pastedItems) {
+      listItem.insertBefore(item);
+    }
+    pastedList.remove();
+    const lastItem = pastedItems[pastedItems.length - 1];
+    if (lastItem !== undefined && $isListItemNode(lastItem)) {
+      $selectEndOfListItemContent(lastItem);
+    }
+    return true;
+  }
 
   if (
     $isParagraphNode(anchorBlock) &&
@@ -369,7 +474,9 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
             stripLexicalClipboardJsonPrefix(lexicalJson)
           );
           if (payload && payload.namespace === editor._config.namespace) {
-            return false;
+            if (!SINGLE_COMPLETE_LIST_LINE.test(text)) {
+              return false;
+            }
           }
         } catch {
           // Not valid JSON; treat as absent.
@@ -408,11 +515,25 @@ export const MarkdownPasteExtension = defineExtension({
 
 const $exportSelectionMarkdown = (
   selection: NonNullable<ReturnType<typeof $getSelection>>
-) =>
-  $convertSelectionToMarkdownString(MARKDOWN_TRANSFORMERS, selection).replace(
-    /^\n+/,
-    ''
-  );
+) => {
+  let markdown = $convertSelectionToMarkdownString(
+    MARKDOWN_TRANSFORMERS,
+    selection
+  ).replace(/^\n+/, '');
+
+  // A trailing linebreak keeps pasted list lines as separate items instead of
+  // merging with the following line when cut/copy text/plain is reused.
+  if (
+    $isRangeSelection(selection) &&
+    $shouldAppendTrailingLinebreakToClipboardMarkdown(selection) &&
+    markdown.length > 0 &&
+    !markdown.endsWith('\n')
+  ) {
+    markdown += '\n';
+  }
+
+  return markdown;
+};
 
 export const MarkdownCopyExtension = defineExtension({
   name: '@simplenote/markdown-copy',
@@ -438,7 +559,12 @@ export const MarkdownCopyExtension = defineExtension({
     configExtension(ClipboardImportExtension, {
       $importMimeType: {
         'application/x-lexical-editor': [
-          (data, selection, $next) => {
+          (data, selection, $next, dataTransfer) => {
+            const text = dataTransfer.getData('text/plain');
+            if (SINGLE_COMPLETE_LIST_LINE.test(text)) {
+              return false;
+            }
+
             const payload = parseNamespacedLexicalClipboardJson(
               data,
               $getEditor()._config.namespace
@@ -504,6 +630,7 @@ export function createMarkdownEditorExtension(
     FormatEscapeExtension,
     HistoryExtension,
     listExtension,
+    ListDeletionExtension,
     CheckListExtension,
     LinkExtension,
     CodeExtension,

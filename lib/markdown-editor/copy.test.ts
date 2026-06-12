@@ -4,7 +4,15 @@ import {
 } from '@lexical/clipboard';
 import { buildEditorFromExtensions } from '@lexical/extension';
 import { $convertToMarkdownString } from '@lexical/markdown';
-import { $getRoot, $getSelection, $isRangeSelection } from 'lexical';
+import {
+  $getRoot,
+  $getSelection,
+  $isElementNode,
+  $isRangeSelection,
+  $isTextNode,
+  type LexicalNode,
+  type TextNode,
+} from 'lexical';
 import { $isListItemNode, $isListNode } from '@lexical/list';
 
 import {
@@ -15,6 +23,21 @@ import { LEXICAL_CLIPBOARD_JSON_PREFIX } from './clipboard-lexical-json';
 
 function makeEditor(markdown: string) {
   return buildEditorFromExtensions(createMarkdownEditorExtension(markdown));
+}
+
+function findTextNode(node: LexicalNode, text: string): TextNode | undefined {
+  if ($isTextNode(node) && node.getTextContent() === text) {
+    return node;
+  }
+  if ($isElementNode(node)) {
+    for (const child of node.getChildren()) {
+      const found = findTextNode(child, text);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return undefined;
 }
 
 function getClipboardDataForAll(editor: ReturnType<typeof makeEditor>) {
@@ -107,7 +130,7 @@ describe('markdown clipboard export', () => {
     const editor = makeEditor('- [ ] open task');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toBe('- [ ] open task');
+    expect(data['text/plain']).toBe('- [ ] open task\n');
     expect(data['text/html']).toContain('open task');
     expect(data['application/x-lexical-editor']).toMatch(
       new RegExp(`^${LEXICAL_CLIPBOARD_JSON_PREFIX}`)
@@ -163,7 +186,7 @@ describe('markdown clipboard export', () => {
     const editor = makeEditor('- [ ] task one\n- two\n- [ ] task three');
     const data = getClipboardDataForFirstListItem(editor);
 
-    expect(data['text/plain']).toBe('- [ ] task one');
+    expect(data['text/plain']).toBe('- [ ] task one\n');
     editor.dispose();
   });
 
@@ -181,8 +204,23 @@ describe('markdown clipboard export', () => {
       item.select(0, item.getChildrenSize());
     });
 
-    expect(data['text/plain']).toBe('- [ ] task one');
+    expect(data['text/plain']).toBe('- [ ] task one\n');
     expect(data['text/plain']).not.toMatch(/^\n/);
+    editor.dispose();
+  });
+
+  it('does not append a trailing linebreak when only part of a list item is copied', () => {
+    const editor = makeEditor('- alpha\n- beta');
+    const data = getClipboardDataForSelection(editor, () => {
+      const textNode = findTextNode($getRoot(), 'alpha');
+      if (!textNode) {
+        throw new Error('Expected alpha text node');
+      }
+      textNode.select(0, 3);
+    });
+
+    expect(data['text/plain']).toBe('- alp');
+    expect(data['text/plain']).not.toMatch(/\n$/);
     editor.dispose();
   });
 });
