@@ -199,13 +199,15 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
     editor.getEditorState().read(() => {
       const list = $getRoot().getFirstChild();
       expect($isListNode(list)).toBe(true);
-      if ($isListNode(list)) {
-        expect(list.getListType()).toBe('bullet');
+      if (!$isListNode(list)) {
+        throw new Error('Expected list node');
       }
+      expect(list.getListType()).toBe('bullet');
     });
   });
 
   it('delegates replace when typing and skips replace during import', () => {
+    expect.hasAssertions();
     expectReplaceCreatesList(MIXED_NESTED_UNORDERED_LIST, '- item', 'bullet');
     expectReplaceSkipsImport(MIXED_NESTED_UNORDERED_LIST, '- item');
   });
@@ -251,13 +253,15 @@ describe('MIXED_NESTED_ORDERED_LIST', () => {
     editor.getEditorState().read(() => {
       const list = $getRoot().getFirstChild();
       expect($isListNode(list)).toBe(true);
-      if ($isListNode(list)) {
-        expect(list.getListType()).toBe('number');
+      if (!$isListNode(list)) {
+        throw new Error('Expected list node');
       }
+      expect(list.getListType()).toBe('number');
     });
   });
 
   it('delegates replace when typing and skips replace during import', () => {
+    expect.hasAssertions();
     expectReplaceCreatesList(MIXED_NESTED_ORDERED_LIST, '1. item', 'number');
     expectReplaceSkipsImport(MIXED_NESTED_ORDERED_LIST, '1. item');
   });
@@ -280,10 +284,11 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
       const secondItem = items[1];
       expect($isListItemNode(firstItem)).toBe(true);
       expect($isListItemNode(secondItem)).toBe(true);
-      if ($isListItemNode(firstItem) && $isListItemNode(secondItem)) {
-        expect(firstItem.getChecked()).toBe(false);
-        expect(secondItem.getChecked()).toBe(true);
+      if (!$isListItemNode(firstItem) || !$isListItemNode(secondItem)) {
+        throw new Error('Expected list item nodes');
       }
+      expect(firstItem.getChecked()).toBe(false);
+      expect(secondItem.getChecked()).toBe(true);
     });
   });
 
@@ -313,6 +318,7 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
   });
 
   it('delegates replace when typing and skips replace during import', () => {
+    expect.hasAssertions();
     expectReplaceCreatesList(MIXED_NESTED_CHECK_LIST, '- [ ] todo', 'check');
     expectReplaceSkipsImport(MIXED_NESTED_CHECK_LIST, '- [ ] todo');
   });
@@ -349,10 +355,11 @@ describe('task list item shortcuts', () => {
 
         const listItem = list.getFirstChild();
         expect($isListItemNode(listItem)).toBe(true);
-        if ($isListItemNode(listItem)) {
-          expect(listItem.getChecked()).toBe(false);
-          expect(listItem.getTextContent()).toBe('');
+        if (!$isListItemNode(listItem)) {
+          throw new Error('Expected list item node');
         }
+        expect(listItem.getChecked()).toBe(false);
+        expect(listItem.getTextContent()).toBe('');
 
         expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe('- [ ] ');
       });

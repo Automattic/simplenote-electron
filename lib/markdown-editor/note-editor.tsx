@@ -47,7 +47,6 @@ function MarkdownNoteEditorComponent({
   const lastDispatchedRef = useRef<string | null>(null);
   // Only consumed when MarkdownEditor (keyed by noteId) mounts, so don't
   // recompute the O(document) transform on every keystroke re-render.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const initialMarkdown = useMemo(
     () => withCheckboxSyntax(noteContent),
     [noteId]

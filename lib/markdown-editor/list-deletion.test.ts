@@ -240,9 +240,9 @@ describe('list deletion', () => {
     await dispatchDelete(editor);
 
     const types = editor.getEditorState().read(() => {
-      const types: string[] = [];
+      const nodeTypes: string[] = [];
       const walk = (node: LexicalNode) => {
-        types.push(node.getType());
+        nodeTypes.push(node.getType());
         if ($isElementNode(node)) {
           for (const child of node.getChildren()) {
             walk(child);
@@ -252,7 +252,7 @@ describe('list deletion', () => {
       for (const child of $getRoot().getChildren()) {
         walk(child);
       }
-      return types;
+      return nodeTypes;
     });
 
     expect(types).not.toContain('list');

@@ -60,9 +60,10 @@ describe('task list keyboard shortcut', () => {
 
       const listItem = list.getFirstChild();
       expect($isListItemNode(listItem)).toBe(true);
-      if ($isListItemNode(listItem)) {
-        expect(listItem.getChecked()).toBe(false);
+      if (!$isListItemNode(listItem)) {
+        throw new Error('Expected list item node');
       }
+      expect(listItem.getChecked()).toBe(false);
 
       expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe('- [ ] ');
     });

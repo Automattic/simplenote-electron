@@ -60,7 +60,7 @@ async function typeAtLineStart(
 
 function findDescendant(
   node: LexicalNode,
-  predicate: (node: LexicalNode) => boolean
+  predicate: (candidate: LexicalNode) => boolean
 ): LexicalNode | undefined {
   if (predicate(node)) {
     return node;
@@ -171,6 +171,7 @@ describe('tables', () => {
   });
 
   it('leaves default-alignment tables with unformatted cell paragraphs', () => {
+    expect.hasAssertions();
     const editor = makeGfmTestEditor();
     importMarkdown(editor, simpleTable);
 

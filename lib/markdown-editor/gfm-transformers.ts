@@ -300,7 +300,7 @@ export const TABLE: ElementTransformer = {
     }
 
     const matchCells = mapToTableCells(match[0]);
-    if (matchCells == null) {
+    if (matchCells === null) {
       return;
     }
 
@@ -324,7 +324,7 @@ export const TABLE: ElementTransformer = {
       }
 
       const cells = mapToTableCells(siblingText);
-      if (cells == null) {
+      if (cells === null) {
         break;
       }
 
@@ -372,7 +372,7 @@ export const HR: ElementTransformer = {
   replace: (parentNode, _children, _match, isImport) => {
     const line = $createHorizontalRuleNode();
 
-    if (isImport || parentNode.getNextSibling() != null) {
+    if (isImport || parentNode.getNextSibling() !== null) {
       parentNode.replace(line);
     } else {
       parentNode.insertBefore(line);

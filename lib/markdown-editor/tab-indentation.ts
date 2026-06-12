@@ -22,9 +22,9 @@ function $getListItemAncestor(node: LexicalNode): ListItemNode | null {
   return $findMatchingParent(node, $isListItemNode);
 }
 
-// Finds a tab node touching the collapsed cursor, preferring the one before
-// it (so Shift+Tab undoes the Tab that was just typed) and falling back to
-// the one after it (cursor sitting in front of a leading tab).
+// Finds a tab node touching the collapsed cursor, preferring the sibling
+// before the caret (so Shift+Tab undoes the Tab that was just typed) and
+// falling back to the sibling after (cursor sitting in front of a leading tab).
 function $getAdjacentTab(selection: RangeSelection): TabNode | null {
   if (!selection.isCollapsed()) {
     return null;

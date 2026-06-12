@@ -269,7 +269,7 @@ export const MarkdownShortcutExtension = defineExtension({
 // inline syntax (bold, links, code, strikethrough). Plain prose without any of
 // these falls through to Lexical's default paste.
 const MARKDOWN_PASTE_HINT =
-  /(^|\n)\s{0,3}(#{1,6}\s|>\s|```|~~~|[-*+]\s|\d+\.\s|---|\*\*\*|___|\|[^\n]+\|)|!\[[^\]\n]*\]\([^)\n]+\)|https?:\/\/[^\s<>\[\]()]+|(?:<[a-z]+:[^>\n]+>)|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
+  /(^|\n)\s{0,3}(#{1,6}\s|>\s|```|~~~|[-*+]\s|\d+\.\s|---|\*\*\*|___|\|[^\n]+\|)|!\[[^\]\n]*\]\([^)\n]+\)|https?:\/\/[^\s<>[\]()]+|(?:<[a-z]+:[^>\n]+>)|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
 
 // Cut/copy of one full list line ends with a linebreak; prefer markdown paste
 // over Lexical JSON so the item is reinserted as its own bullet, not merged.
@@ -620,7 +620,7 @@ function createMarkdownOnChangeExtension(onChange: (markdown: string) => void) {
 
 export function createMarkdownEditorExtension(
   markdown: string,
-  onChange?: (markdown: string) => void
+  onChange?: (nextMarkdown: string) => void
 ) {
   const dependencies: AnyLexicalExtensionArgument[] = [
     configExtension(InitialStateExtension, {
