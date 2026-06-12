@@ -1,8 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
-import { MarkdownNoteEditor } from '../markdown-editor';
-import NoteContentEditor from '../note-content-editor';
 import SimplenoteCompactLogo from '../icons/simplenote-compact';
+
+const MarkdownNoteEditor = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'markdown-note-editor' */ '../markdown-editor/note-editor'
+  ).then((module) => ({ default: module.MarkdownNoteEditor }))
+);
+
+const PlainTextNoteEditor = React.lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'note-content-editor' */ '../note-content-editor'
+    )
+);
 
 import * as S from '../state';
 import * as T from '../types';
@@ -40,20 +51,32 @@ export class NoteDetail extends Component<Props> {
   render() {
     const { note, openedNote } = this.props;
     const isMarkdown = note?.systemTags.includes('markdown') ?? false;
-    const Editor = isMarkdown ? MarkdownNoteEditor : NoteContentEditor;
+    const editorPlaceholder = (
+      <div className="note-detail-placeholder">
+        <SimplenoteCompactLogo />
+      </div>
+    );
 
     return (
       <div className="note-detail-wrapper">
         {!openedNote ? (
-          <div className="note-detail-placeholder">
-            <SimplenoteCompactLogo />
-          </div>
+          editorPlaceholder
         ) : (
-          <Editor
-            key={openedNote}
-            storeFocusEditor={this.storeFocusContentEditor}
-            storeHasFocus={this.storeEditorHasFocus}
-          />
+          <Suspense fallback={editorPlaceholder}>
+            {isMarkdown ? (
+              <MarkdownNoteEditor
+                key={openedNote}
+                storeFocusEditor={this.storeFocusContentEditor}
+                storeHasFocus={this.storeEditorHasFocus}
+              />
+            ) : (
+              <PlainTextNoteEditor
+                key={openedNote}
+                storeFocusEditor={this.storeFocusContentEditor}
+                storeHasFocus={this.storeEditorHasFocus}
+              />
+            )}
+          </Suspense>
         )}
       </div>
     );

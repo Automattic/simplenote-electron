@@ -271,7 +271,11 @@ module.exports = function main() {
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
-  app.on('ready', activateWindow);
-  app.on('ready', () => app.setAppUserModelId('com.automattic.simplenote'));
-  app.on('activate', activateWindow);
+  app.on('ready', () => {
+    activateWindow();
+    app.setAppUserModelId('com.automattic.simplenote');
+    // On macOS, `activate` can fire before `ready`. Register only after ready
+    // so electron-window-state can safely use the `screen` module.
+    app.on('activate', activateWindow);
+  });
 };
