@@ -128,8 +128,18 @@ export const toggleCodeBlock = (editor: LexicalEditor): void => {
     }
 
     const code = $createCodeNode();
-    code.append($createTextNode(selection.getTextContent()));
-    selection.insertNodes([code]);
+    const textContent =
+      block && $isElementNode(block)
+        ? block.getTextContent()
+        : selection.getTextContent();
+    code.append($createTextNode(textContent));
+
+    if (block && $isElementNode(block)) {
+      block.replace(code);
+    } else {
+      selection.insertNodes([code]);
+    }
+
     code.selectEnd();
   });
 };
