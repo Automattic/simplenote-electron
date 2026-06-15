@@ -105,6 +105,9 @@ export class NoteCell extends Component<Props> {
       'note-list-item-pinned': isPinned,
     });
     const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
+    const pendingChangesLabel = isOffline
+      ? 'Pending changes while offline'
+      : 'Pending changes';
 
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
@@ -155,23 +158,31 @@ export class NoteCell extends Component<Props> {
           <div className="note-list-item-status-right">
             {showSyncSpinner && (
               <span
+                aria-label={pendingChangesLabel}
                 className={classNames('note-list-item-pending-changes', {
                   'is-offline': isOffline,
                 })}
+                role="img"
               >
                 <SmallSyncIcon />
               </span>
             )}
             {null !== syncErrorCode && (
               <span
+                aria-label="Sync failed"
                 className="note-list-item-sync-error"
+                role="img"
                 title={getSyncErrorMessage(syncErrorCode)}
               >
                 <AlertIcon />
               </span>
             )}
             {isPublished && (
-              <span className="note-list-item-published-icon">
+              <span
+                aria-label="Published note"
+                className="note-list-item-published-icon"
+                role="img"
+              >
                 <PublishIcon />
               </span>
             )}
