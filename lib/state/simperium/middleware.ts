@@ -78,12 +78,11 @@ export const initSimperium =
     const noteBucket = client.bucket('note');
 
     // A rejected change stays in localQueue.sent because simperium only clears
-    // it on acknowledge. Release it so subsequent edits can sync.
+    // it on acknowledge. Clear it so later edits can sync a fresh change.
     const releaseStuckNoteChange = (noteId: T.EntityId) => {
       const localQueue = (noteBucket.channel as any).localQueue;
       if (localQueue.sent[noteId]) {
         delete localQueue.sent[noteId];
-        localQueue.processQueue(noteId);
       }
     };
 
@@ -141,10 +140,9 @@ export const initSimperium =
       });
     });
 
-    // fires when the server rejects a change with an error code the client
-    // can't recover from on its own, e.g. 413 when a note is too large.
-    // NB: must listen on the bucket, not the channel: the bucket forwards
-    // channel errors, and emitting 'error' on the listenerless bucket throws
+    // Server rejections leave the failed change in Simperium's sent queue.
+    // Handle the bucket error so the note can show a sync failure and later
+    // edits can send a fresh change.
     noteBucket.on('error', (error, change) => {
       const noteId = change?.id as T.EntityId | undefined;
       const errorCode = (error as { code?: unknown })?.code;
@@ -262,15 +260,7 @@ export const initSimperium =
     });
 
     const noteQueue = new BucketQueue(noteBucket);
-    const queueNoteUpdate = (
-      noteId: T.EntityId,
-      delay = 2000,
-      state: S.State = getState()
-    ) => {
-      if (state.simperium.syncErrors.has(noteId)) {
-        releaseStuckNoteChange(noteId);
-      }
-
+    const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) => {
       noteQueue.add(noteId, Date.now() + delay);
     };
 
@@ -322,19 +312,19 @@ export const initSimperium =
             queueTagUpdate(tagHash);
           }
 
-          queueNoteUpdate(action.noteId, 2000, prevState);
+          queueNoteUpdate(action.noteId);
           return result;
         }
 
         case 'REMOVE_COLLABORATOR':
         case 'REMOVE_NOTE_TAG':
-          queueNoteUpdate(action.noteId, 2000, prevState);
+          queueNoteUpdate(action.noteId);
           return result;
 
         case 'CREATE_NOTE_WITH_ID':
         case 'INSERT_TASK_INTO_NOTE':
         case 'EDIT_NOTE':
-          queueNoteUpdate(action.noteId, 2000, prevState);
+          queueNoteUpdate(action.noteId);
           return result;
 
         case 'FILTER_NOTES':
@@ -398,7 +388,7 @@ export const initSimperium =
             }
           });
 
-          queueNoteUpdate(action.noteId, 10, prevState);
+          queueNoteUpdate(action.noteId, 10);
           return result;
         }
 
@@ -409,7 +399,7 @@ export const initSimperium =
         case 'PUBLISH_NOTE':
         case 'RESTORE_NOTE':
         case 'TRASH_NOTE':
-          queueNoteUpdate(action.noteId, 10, prevState);
+          queueNoteUpdate(action.noteId, 10);
           return result;
 
         case 'IMPORT_NOTE_WITH_ID': {
@@ -419,7 +409,7 @@ export const initSimperium =
               queueTagUpdate(tagHash, 10);
             }
           });
-          queueNoteUpdate(action.noteId, 10, prevState);
+          queueNoteUpdate(action.noteId, 10);
           return result;
         }
 
@@ -439,7 +429,7 @@ export const initSimperium =
 
           nextState.data.notes.forEach((note, noteId) => {
             if (prevState.data.notes.get(noteId) !== note) {
-              queueNoteUpdate(noteId, 2000, prevState);
+              queueNoteUpdate(noteId);
             }
           });
 
@@ -462,7 +452,7 @@ export const initSimperium =
           tagBucket.remove(t(action.tagName));
           nextState.data.notes.forEach((note, noteId) => {
             if (prevState.data.notes.get(noteId) !== note) {
-              queueNoteUpdate(noteId, 2000, prevState);
+              queueNoteUpdate(noteId);
             }
           });
           return result;
