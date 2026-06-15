@@ -60,7 +60,13 @@ const lastSync: A.Reducer<Map<T.EntityId, number>> = (
   }
 };
 
-const syncErrorNoteId = (action: A.ActionType): T.EntityId | undefined => {
+/**
+ * Actions that resolve a note's pending sync — a successful acknowledge, an
+ * incoming remote update, etc.
+ *
+ * Note, this excludes NOTE_SYNC_ERROR itself, as that requires reducer specific handling.
+ */
+const resolvedSyncNoteId = (action: A.ActionType): T.EntityId | undefined => {
   switch (action.type) {
     case 'ACKNOWLEDGE_PENDING_CHANGE':
       return action.entityId;
@@ -84,7 +90,7 @@ const syncErrors: A.Reducer<Map<T.EntityId, number>> = (
     return new Map(state).set(action.noteId, action.errorCode);
   }
 
-  const noteId = syncErrorNoteId(action);
+  const noteId = resolvedSyncNoteId(action);
   if (!noteId || !state.has(noteId)) {
     return state;
   }
@@ -113,7 +119,9 @@ const syncingNotes: A.Reducer<Map<T.EntityId, string>> = (
   }
 
   const noteId =
-    action.type === 'NOTE_SYNC_ERROR' ? action.noteId : syncErrorNoteId(action);
+    action.type === 'NOTE_SYNC_ERROR'
+      ? action.noteId
+      : resolvedSyncNoteId(action);
 
   if (!noteId || !state.has(noteId)) {
     return state;
