@@ -94,12 +94,22 @@ const syncErrors: A.Reducer<Map<T.EntityId, number>> = (
   return next;
 };
 
-const syncRetrying: A.Reducer<Map<T.EntityId, true>> = (
-  state = emptyMap as Map<T.EntityId, true>,
+const syncingNotes: A.Reducer<Map<T.EntityId, string>> = (
+  state = emptyMap as Map<T.EntityId, string>,
   action
 ) => {
-  if (action.type === 'NOTE_SYNC_RETRY') {
-    return new Map(state).set(action.noteId, true);
+  if (action.type === 'SUBMIT_PENDING_CHANGE') {
+    return new Map(state).set(action.entityId, action.ccid);
+  }
+
+  if (action.type === 'ACKNOWLEDGE_PENDING_CHANGE') {
+    if (state.get(action.entityId) !== action.ccid) {
+      return state;
+    }
+
+    const next = new Map(state);
+    next.delete(action.entityId);
+    return next;
   }
 
   const noteId =
@@ -135,5 +145,5 @@ export default combineReducers({
   lastSync,
   lastRemoteUpdate,
   syncErrors,
-  syncRetrying,
+  syncingNotes,
 });

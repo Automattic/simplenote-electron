@@ -28,10 +28,11 @@ type StateProps = {
   displayMode: T.ListDisplayMode;
   isOffline: boolean;
   isOpened: boolean;
+  isSyncing: boolean;
   lastUpdated: number;
   note?: T.Note;
   searchQuery: string;
-  showSyncSpinner: boolean;
+  hasPendingChanges: boolean;
   syncErrorCode: number | null;
 };
 
@@ -74,13 +75,14 @@ export class NoteCell extends Component<Props> {
       displayMode,
       isOffline,
       isOpened,
+      isSyncing,
       lastUpdated,
       noteId,
       note,
       openNote,
       pinNote,
       searchQuery,
-      showSyncSpinner,
+      hasPendingChanges,
       style,
       syncErrorCode,
     } = this.props;
@@ -106,8 +108,10 @@ export class NoteCell extends Component<Props> {
     });
     const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
     const pendingChangesLabel = isOffline
-      ? 'Pending changes while offline'
+      ? 'Pending changes (waiting for network connection)'
       : 'Pending changes';
+    const shouldShowPendingChanges =
+      hasPendingChanges && (null === syncErrorCode || isSyncing);
 
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
@@ -156,7 +160,7 @@ export class NoteCell extends Component<Props> {
             )}
           </button>
           <div className="note-list-item-status-right">
-            {showSyncSpinner && (
+            {shouldShowPendingChanges && (
               <span
                 aria-label={pendingChangesLabel}
                 className={classNames('note-list-item-pending-changes', {
@@ -200,10 +204,11 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
   displayMode: state.settings.noteDisplay,
   isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
+  isSyncing: state.simperium.syncingNotes.has(noteId),
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
   searchQuery: state.ui.searchQuery,
-  showSyncSpinner: selectors.noteShowSyncSpinner(state, noteId),
+  hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
   syncErrorCode: state.simperium.syncErrors.get(noteId) ?? null,
 });
 

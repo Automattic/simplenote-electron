@@ -21,13 +21,14 @@ const baseProps = {
   invalidateHeight: jest.fn(),
   isOffline: false,
   isOpened: false,
+  isSyncing: false,
   lastUpdated: -Infinity,
   note: minimalNote,
   noteId,
   openNote: jest.fn(),
   pinNote: jest.fn(),
   searchQuery: '',
-  showSyncSpinner: false,
+  hasPendingChanges: false,
   style: {},
   syncErrorCode: null as number | null,
 };
@@ -53,12 +54,27 @@ describe('NoteCell status icons', () => {
       ).not.toBeNull();
     });
 
-    it('shows both pending and sync error icons during a retry', () => {
-      const { getByRole } = render(
-        <NoteCell {...baseProps} showSyncSpinner syncErrorCode={413} />
+    it('shows only the sync error icon after a failed sync that is not retrying', () => {
+      const { getByRole, queryByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges syncErrorCode={413} />
       );
 
-      expect(getByRole('img', { name: 'Pending changes' })).not.toBeNull();
+      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
+      expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
+    });
+
+    it('shows pending changes and sync error while retrying a failed sync', () => {
+      const { getByRole } = render(
+        <NoteCell
+          {...baseProps}
+          hasPendingChanges
+          isSyncing
+          syncErrorCode={413}
+        />
+      );
+      const pendingChanges = getByRole('img', { name: 'Pending changes' });
+
+      expect(pendingChanges).not.toBeNull();
       expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
     });
 
@@ -73,26 +89,52 @@ describe('NoteCell status icons', () => {
   });
 
   describe('pending changes', () => {
-    it('does not render a pending changes icon when showSyncSpinner is false', () => {
+    it('does not render a pending changes icon when hasPendingChanges is false', () => {
       const { queryByRole } = render(<NoteCell {...baseProps} />);
 
       expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
     });
 
-    it('renders a pending changes icon when showSyncSpinner is true', () => {
-      const { getByRole } = render(<NoteCell {...baseProps} showSyncSpinner />);
+    it('renders a pending changes icon when hasPendingChanges is true', () => {
+      const { getByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges />
+      );
+      const pendingChanges = getByRole('img', { name: 'Pending changes' });
 
-      expect(getByRole('img', { name: 'Pending changes' })).not.toBeNull();
+      expect(pendingChanges).not.toBeNull();
     });
 
-    it('marks pending changes as offline when isOffline is true', () => {
+    it('renders a pending changes icon when isSyncing is true', () => {
       const { getByRole } = render(
-        <NoteCell {...baseProps} showSyncSpinner isOffline />
+        <NoteCell {...baseProps} hasPendingChanges isSyncing />
+      );
+      const pendingChanges = getByRole('img', { name: 'Pending changes' });
+
+      expect(pendingChanges).not.toBeNull();
+    });
+
+    it('marks pending changes as waiting for a connection when isOffline is true', () => {
+      const { getByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges isOffline />
+      );
+      const pendingChanges = getByRole('img', {
+        name: 'Pending changes (waiting for network connection)',
+      });
+
+      expect(pendingChanges).not.toBeNull();
+    });
+
+    it('does not announce syncing while waiting for a connection', () => {
+      const { getByRole, queryByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges isOffline isSyncing />
       );
 
       expect(
-        getByRole('img', { name: 'Pending changes while offline' })
+        getByRole('img', {
+          name: 'Pending changes (waiting for network connection)',
+        })
       ).not.toBeNull();
+      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
     });
   });
 

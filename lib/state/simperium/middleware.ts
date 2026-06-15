@@ -269,7 +269,6 @@ export const initSimperium =
     ) => {
       if (state.simperium.syncErrors.has(noteId)) {
         releaseStuckNoteChange(noteId);
-        dispatch({ type: 'NOTE_SYNC_RETRY', noteId });
       }
 
       noteQueue.add(noteId, Date.now() + delay);

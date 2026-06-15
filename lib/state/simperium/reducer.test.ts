@@ -107,19 +107,52 @@ describe('simperium reducer syncErrors', () => {
     expect(state.syncErrors.get(noteId)).toBe(413);
   });
 
-  it('sets syncRetrying on NOTE_SYNC_RETRY', () => {
-    const state = simperiumReducer(stateWithSyncError(), {
-      type: 'NOTE_SYNC_RETRY',
-      noteId,
+  it('sets syncingNotes on SUBMIT_PENDING_CHANGE', () => {
+    const state = simperiumReducer(undefined, {
+      type: 'SUBMIT_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-1',
     });
 
-    expect(state.syncRetrying.get(noteId)).toBe(true);
+    expect(state.syncingNotes.get(noteId)).toBe('ccid-1');
   });
 
-  it('clears syncRetrying on NOTE_SYNC_ERROR', () => {
-    const previousState = simperiumReducer(stateWithSyncError(), {
-      type: 'NOTE_SYNC_RETRY',
-      noteId,
+  it('clears syncingNotes on matching ACKNOWLEDGE_PENDING_CHANGE', () => {
+    const previousState = simperiumReducer(undefined, {
+      type: 'SUBMIT_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-1',
+    });
+    const state = simperiumReducer(previousState, {
+      type: 'ACKNOWLEDGE_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-1',
+    });
+
+    expect(state.syncingNotes.has(noteId)).toBe(false);
+  });
+
+  it('keeps syncingNotes on stale ACKNOWLEDGE_PENDING_CHANGE', () => {
+    const previousState = simperiumReducer(undefined, {
+      type: 'SUBMIT_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-2',
+    });
+    const state = simperiumReducer(previousState, {
+      type: 'ACKNOWLEDGE_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-1',
+    });
+
+    expect(state.syncingNotes).toBe(previousState.syncingNotes);
+    expect(state.syncingNotes.get(noteId)).toBe('ccid-2');
+  });
+
+  it('clears syncingNotes on NOTE_SYNC_ERROR', () => {
+    const previousState = simperiumReducer(undefined, {
+      type: 'SUBMIT_PENDING_CHANGE',
+      entityId: noteId,
+      ccid: 'ccid-1',
     });
     const state = simperiumReducer(previousState, {
       type: 'NOTE_SYNC_ERROR',
@@ -127,7 +160,7 @@ describe('simperium reducer syncErrors', () => {
       errorCode: 413,
     });
 
-    expect(state.syncRetrying.has(noteId)).toBe(false);
+    expect(state.syncingNotes.has(noteId)).toBe(false);
     expect(state.syncErrors.get(noteId)).toBe(413);
   });
 
