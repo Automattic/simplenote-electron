@@ -24,6 +24,8 @@ import type * as T from '../../types';
 
 const debug = debugFactory('simperium-middleware');
 
+const NOTE_TOO_LARGE_ERROR_CODE = 413;
+
 type Buckets = {
   account: T.JSONSerializable;
   note: T.Note;
@@ -140,9 +142,8 @@ export const initSimperium =
       });
     });
 
-    // Server rejections leave the failed change in Simperium's sent queue.
-    // Handle the bucket error so the note can show a sync failure and later
-    // edits can send a fresh change.
+    // Server rejections can leave the failed change in Simperium's sent queue.
+    // Handle the bucket error so the note can show a sync failure.
     noteBucket.on('error', (error, change) => {
       const noteId = change?.id as T.EntityId | undefined;
       const errorCode = (error as { code?: unknown })?.code;
@@ -150,7 +151,10 @@ export const initSimperium =
       debug(`sync error for note ${noteId}: ${errorCode}`);
 
       if (noteId && 'number' === typeof errorCode) {
-        releaseStuckNoteChange(noteId);
+        // We consider 413 to be unrecoverable because it requires user edits. There may be more unrecoverable errors in the future we may want to add here.
+        if (NOTE_TOO_LARGE_ERROR_CODE === errorCode) {
+          releaseStuckNoteChange(noteId);
+        }
 
         dispatch({
           type: 'NOTE_SYNC_ERROR',
