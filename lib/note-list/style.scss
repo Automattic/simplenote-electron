@@ -199,7 +199,6 @@
   }
 
   .note-list-item-pending-changes,
-  .note-list-item-sync-error,
   .note-list-item-published-icon {
     padding: 0 4px;
     color: var(--foreground-color);
@@ -210,18 +209,22 @@
     }
   }
 
-  .note-list-item-sync-error {
-    color: var(--tertiary-highlight-color);
-  }
-
   .note-list-item-pending-changes {
-    & svg {
+    &.is-syncing svg {
       animation: 2s spin infinite linear;
     }
 
     &.is-offline svg {
       animation: none;
       fill: var(--tertiary-color);
+    }
+
+    &.has-sync-error {
+      color: var(--tertiary-highlight-color);
+
+      svg {
+        animation: none;
+      }
     }
   }
 
@@ -251,7 +254,7 @@
       color: var(--primary-color);
     }
 
-    .note-list-item-pending-changes,
+    .note-list-item-pending-changes:not(.has-sync-error),
     .note-list-item-published-icon {
       color: var(--primary-color);
     }

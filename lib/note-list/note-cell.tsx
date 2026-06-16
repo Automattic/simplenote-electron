@@ -2,7 +2,6 @@ import React, { Component, CSSProperties } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
-import AlertIcon from '../icons/attention';
 import PublishIcon from '../icons/published-small';
 import SmallPinnedIcon from '../icons/pinned-small';
 import SmallSyncIcon from '../icons/sync-small';
@@ -107,11 +106,20 @@ export class NoteCell extends Component<Props> {
       'note-list-item-pinned': isPinned,
     });
     const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
+    const hasSyncError = null !== syncErrorCode;
+    const isSyncErrorState = hasSyncError && !isSyncing;
+    const shouldShowStatusIcon = hasPendingChanges || hasSyncError;
+    const isSpinning =
+      isSyncing || (hasPendingChanges && !hasSyncError && !isOffline);
     const pendingChangesLabel = isOffline
       ? 'Pending changes (waiting for network connection)'
       : 'Pending changes';
-    const shouldShowPendingChanges =
-      hasPendingChanges && (null === syncErrorCode || isSyncing);
+    const statusIconLabel = isSyncErrorState
+      ? 'Sync failed'
+      : pendingChangesLabel;
+    const statusIconTooltip = isSyncErrorState
+      ? getSyncErrorMessage(syncErrorCode)
+      : undefined;
 
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
@@ -160,25 +168,18 @@ export class NoteCell extends Component<Props> {
             )}
           </button>
           <div className="note-list-item-status-right">
-            {shouldShowPendingChanges && (
+            {shouldShowStatusIcon && (
               <span
-                aria-label={pendingChangesLabel}
+                aria-label={statusIconLabel}
                 className={classNames('note-list-item-pending-changes', {
-                  'is-offline': isOffline,
+                  'has-sync-error': isSyncErrorState,
+                  'is-offline': isOffline && !isSyncErrorState,
+                  'is-syncing': isSpinning,
                 })}
                 role="img"
+                title={statusIconTooltip}
               >
                 <SmallSyncIcon />
-              </span>
-            )}
-            {null !== syncErrorCode && (
-              <span
-                aria-label="Sync failed"
-                className="note-list-item-sync-error"
-                role="img"
-                title={getSyncErrorMessage(syncErrorCode)}
-              >
-                <AlertIcon />
               </span>
             )}
             {isPublished && (

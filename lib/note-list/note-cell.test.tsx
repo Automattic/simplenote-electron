@@ -41,7 +41,7 @@ describe('NoteCell status icons', () => {
       expect(queryByRole('img', { name: 'Sync failed' })).toBeNull();
     });
 
-    it('renders a sync error icon with tooltip when syncErrorCode is set', () => {
+    it('renders a red sync icon with tooltip when syncErrorCode is set', () => {
       const { getByRole } = render(
         <NoteCell {...baseProps} syncErrorCode={413} />
       );
@@ -54,7 +54,7 @@ describe('NoteCell status icons', () => {
       ).not.toBeNull();
     });
 
-    it('shows only the sync error icon after a failed sync that is not retrying', () => {
+    it('shows a static red sync icon after a failed sync that is not retrying', () => {
       const { getByRole, queryByRole } = render(
         <NoteCell {...baseProps} hasPendingChanges syncErrorCode={413} />
       );
@@ -63,8 +63,8 @@ describe('NoteCell status icons', () => {
       expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
     });
 
-    it('shows pending changes and sync error while retrying a failed sync', () => {
-      const { getByRole } = render(
+    it('shows a spinning sync icon while retrying a failed sync', () => {
+      const { getByRole, queryByRole } = render(
         <NoteCell
           {...baseProps}
           hasPendingChanges
@@ -75,10 +75,10 @@ describe('NoteCell status icons', () => {
       const pendingChanges = getByRole('img', { name: 'Pending changes' });
 
       expect(pendingChanges).not.toBeNull();
-      expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
+      expect(queryByRole('img', { name: 'Sync failed' })).toBeNull();
     });
 
-    it('shows only the sync error icon after a failed sync', () => {
+    it('shows a static red sync icon after a failed sync', () => {
       const { getByRole, queryByRole } = render(
         <NoteCell {...baseProps} syncErrorCode={413} />
       );
