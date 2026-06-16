@@ -210,7 +210,7 @@
   }
 
   .note-list-item-pending-changes {
-    &.is-syncing svg {
+    & svg {
       animation: 2s spin infinite linear;
     }
 
@@ -221,10 +221,6 @@
 
     &.has-sync-error {
       color: var(--tertiary-highlight-color);
-
-      svg {
-        animation: none;
-      }
     }
   }
 

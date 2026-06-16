@@ -27,7 +27,6 @@ type StateProps = {
   displayMode: T.ListDisplayMode;
   isOffline: boolean;
   isOpened: boolean;
-  isSyncing: boolean;
   lastUpdated: number;
   note?: T.Note;
   searchQuery: string;
@@ -74,7 +73,6 @@ export class NoteCell extends Component<Props> {
       displayMode,
       isOffline,
       isOpened,
-      isSyncing,
       lastUpdated,
       noteId,
       note,
@@ -107,17 +105,12 @@ export class NoteCell extends Component<Props> {
     });
     const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
     const hasSyncError = null !== syncErrorCode;
-    const isSyncErrorState = hasSyncError && !isSyncing;
     const shouldShowStatusIcon = hasPendingChanges || hasSyncError;
-    const isSpinning =
-      isSyncing || (hasPendingChanges && !hasSyncError && !isOffline);
     const pendingChangesLabel = isOffline
       ? 'Pending changes (waiting for network connection)'
       : 'Pending changes';
-    const statusIconLabel = isSyncErrorState
-      ? 'Sync failed'
-      : pendingChangesLabel;
-    const statusIconTooltip = isSyncErrorState
+    const statusIconLabel = hasSyncError ? 'Sync failed' : pendingChangesLabel;
+    const statusIconTooltip = hasSyncError
       ? getSyncErrorMessage(syncErrorCode)
       : undefined;
 
@@ -172,9 +165,8 @@ export class NoteCell extends Component<Props> {
               <span
                 aria-label={statusIconLabel}
                 className={classNames('note-list-item-pending-changes', {
-                  'has-sync-error': isSyncErrorState,
-                  'is-offline': isOffline && !isSyncErrorState,
-                  'is-syncing': isSpinning,
+                  'has-sync-error': hasSyncError,
+                  'is-offline': isOffline,
                 })}
                 role="img"
                 title={statusIconTooltip}
@@ -205,7 +197,6 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
   displayMode: state.settings.noteDisplay,
   isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
-  isSyncing: state.simperium.syncingNotes.has(noteId),
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
   searchQuery: state.ui.searchQuery,
