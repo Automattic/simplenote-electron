@@ -87,6 +87,25 @@ steps:
       - release\*.blockmap
       - release\*.yml
 
+  # Validates the Azure Trusted Signing path alongside the default PFX build above. The PFX build
+  # remains what ships until the auto-update publisher-name handover lands (AINFRA-2472); this step
+  # signs the exe with Azure and verifies it with `signtool verify /pa`.
+  - label: Package on Windows (Azure Trusted Signing)
+    key: package-windows-azure
+    agents:
+      queue: windows
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+      - $NVM_PLUGIN
+    command: .buildkite/commands/package_windows.ps1
+    env:
+      USE_AZURE_TRUSTED_SIGNING: 1
+    artifact_paths:
+      - release\*.exe
+      - release\*.appx
+      - release\*.blockmap
+      - release\*.yml
+
   - label: Package on Linux
     key: package-linux
     plugins:
