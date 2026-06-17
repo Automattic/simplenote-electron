@@ -3,17 +3,15 @@
 // PFX is the default Windows signing path (electron-builder's native `certificateSubjectName`).
 // This callback is wired in only when `USE_AZURE_TRUSTED_SIGNING` is set, via
 // `-c.win.sign=./scripts/azure-sign.cjs` in the `package-win32` Make target — so reaching it
-// means Azure is the intended path. It prefers Azure and falls back to the PFX cert (signtool
-// `/f`) if the Azure env is somehow absent, throwing in CI when neither is available.
+// means Azure is the intended path. In CI, missing Azure env is a failure so validation cannot pass
+// with a PFX signature by mistake.
 //
 // electron-builder calls this once per file per signing-hash algorithm, after `rcedit` rewrites
 // the PE resource directory (so signatures are not orphaned). Azure Trusted Signing is
 // SHA256-only, so the SHA1 iteration is skipped here rather than signed twice.
 //
-// Azure env vars come from a8c-ci-toolkit's `setup_azure_trusted_signing.ps1`; the PFX inputs
-// (`CSC_LINK`, `CSC_KEY_PASSWORD`) from `setup_windows_code_signing.ps1`.
+// Azure env vars come from a8c-ci-toolkit's `setup_azure_trusted_signing.ps1`.
 
-const fs = require('node:fs');
 const childProcess = require('node:child_process');
 
 const AZURE_ENV_VARS = [
@@ -30,15 +28,7 @@ function nonBlank(value) {
 }
 
 function hasAzureEnv(env) {
-  return AZURE_ENV_VARS.every((name) => nonBlank(env[name]) !== undefined);
-}
-
-function pfxInputs(env) {
-  const file = nonBlank(env.CSC_LINK);
-  return {
-    file: file && fs.existsSync(file) ? file : undefined,
-    password: nonBlank(env.CSC_KEY_PASSWORD),
-  };
+  return missingAzureEnv(env).length === 0;
 }
 
 function buildAzureArgs(file, env) {
@@ -61,22 +51,8 @@ function buildAzureArgs(file, env) {
   ];
 }
 
-function buildPfxArgs(file, env, pfx) {
-  return [
-    'sign',
-    '/v',
-    '/fd',
-    'SHA256',
-    '/f',
-    pfx.file,
-    '/p',
-    pfx.password,
-    '/tr',
-    nonBlank(env.AZURE_TIMESTAMP_SERVER) || DEFAULT_TIMESTAMP_SERVER,
-    '/td',
-    'SHA256',
-    file,
-  ];
+function missingAzureEnv(env) {
+  return AZURE_ENV_VARS.filter((name) => nonBlank(env[name]) === undefined);
 }
 
 function runSigntool(signtool, args, file, method) {
@@ -108,7 +84,8 @@ module.exports = async function sign(configuration) {
     return;
   }
 
-  if (hasAzureEnv(env)) {
+  const missingAzureVars = missingAzureEnv(env);
+  if (missingAzureVars.length === 0) {
     runSigntool(
       nonBlank(env.SIGNTOOL_PATH),
       buildAzureArgs(file, env),
@@ -118,23 +95,10 @@ module.exports = async function sign(configuration) {
     return;
   }
 
-  const pfx = pfxInputs(env);
   if (env.CI && process.platform === 'win32') {
-    if (pfx.file && pfx.password) {
-      const signtool = nonBlank(env.SIGNTOOL_PATH) || 'signtool';
-      runSigntool(
-        signtool,
-        buildPfxArgs(file, env, pfx),
-        file,
-        'PFX certificate'
-      );
-      return;
-    }
     throw new Error(
-      `[azure-sign] No Windows signing credentials in CI for ${file}. ` +
-        `Azure not configured (${AZURE_ENV_VARS.join(', ')}); ` +
-        `PFX fallback unavailable (CSC_LINK ${pfx.file ? 'present' : 'missing'}, ` +
-        `CSC_KEY_PASSWORD ${pfx.password ? 'set' : 'missing'}).`
+      `[azure-sign] Azure Trusted Signing requested in CI for ${file}, ` +
+        `but setup did not provide: ${missingAzureVars.join(', ')}.`
     );
   }
 
@@ -145,7 +109,6 @@ module.exports = async function sign(configuration) {
 };
 
 module.exports.hasAzureEnv = hasAzureEnv;
-module.exports.pfxInputs = pfxInputs;
+module.exports.missingAzureEnv = missingAzureEnv;
 module.exports.buildAzureArgs = buildAzureArgs;
-module.exports.buildPfxArgs = buildPfxArgs;
 module.exports.AZURE_ENV_VARS = AZURE_ENV_VARS;

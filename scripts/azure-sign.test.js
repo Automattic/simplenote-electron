@@ -1,4 +1,3 @@
-const fs = require('node:fs');
 const childProcess = require('node:child_process');
 const signer = require('./azure-sign.cjs');
 
@@ -6,11 +5,6 @@ const AZURE_ENV = {
   SIGNTOOL_PATH: 'C:\\sdk\\signtool.exe',
   AZURE_CODE_SIGNING_DLIB: 'C:\\azure\\Azure.CodeSigning.Dlib.dll',
   AZURE_METADATA_JSON: 'C:\\azure\\metadata.json',
-};
-
-const PFX_ENV = {
-  CSC_LINK: 'C:\\repo\\certificate.pfx',
-  CSC_KEY_PASSWORD: 's3cret',
 };
 
 describe('hasAzureEnv', () => {
@@ -29,16 +23,15 @@ describe('hasAzureEnv', () => {
   });
 });
 
-describe('pfxInputs', () => {
-  it('reports the file present only when CSC_LINK exists on disk', () => {
-    const spy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    expect(signer.pfxInputs(PFX_ENV)).toEqual({
-      file: PFX_ENV.CSC_LINK,
-      password: 's3cret',
-    });
-    spy.mockReturnValue(false);
-    expect(signer.pfxInputs(PFX_ENV).file).toBeUndefined();
-    spy.mockRestore();
+describe('missingAzureEnv', () => {
+  it('lists the missing or blank Azure vars', () => {
+    expect(
+      signer.missingAzureEnv({
+        ...AZURE_ENV,
+        SIGNTOOL_PATH: '',
+        AZURE_METADATA_JSON: '   ',
+      })
+    ).toEqual(['SIGNTOOL_PATH', 'AZURE_METADATA_JSON']);
   });
 });
 
@@ -69,28 +62,6 @@ describe('buildAzureArgs', () => {
       AZURE_TIMESTAMP_SERVER: 'http://ts.example',
     });
     expect(args[args.indexOf('/tr') + 1]).toBe('http://ts.example');
-  });
-});
-
-describe('buildPfxArgs', () => {
-  it('signs SHA256-only via /f + /p', () => {
-    const pfx = { file: PFX_ENV.CSC_LINK, password: 's3cret' };
-    const args = signer.buildPfxArgs('app.exe', PFX_ENV, pfx);
-    expect(args).toEqual([
-      'sign',
-      '/v',
-      '/fd',
-      'SHA256',
-      '/f',
-      PFX_ENV.CSC_LINK,
-      '/p',
-      's3cret',
-      '/tr',
-      'http://timestamp.acs.microsoft.com',
-      '/td',
-      'SHA256',
-      'app.exe',
-    ]);
   });
 });
 
@@ -153,23 +124,16 @@ describe('sign callback dispatch', () => {
     );
   });
 
-  it('falls back to PFX in CI on Windows when Azure is absent', async () => {
+  it('fails in CI on Windows when Azure env is incomplete', async () => {
     setPlatform('win32');
-    process.env = { CI: 'true', ...PFX_ENV };
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    await signer({ path: 'app.exe' });
-    expect(spawn).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.arrayContaining(['/f', PFX_ENV.CSC_LINK]),
-      expect.anything()
-    );
-  });
-
-  it('throws naming missing inputs in CI on Windows with no credentials', async () => {
-    setPlatform('win32');
-    process.env = { CI: 'true' };
+    process.env = {
+      CI: 'true',
+      USE_AZURE_TRUSTED_SIGNING: '1',
+      CSC_LINK: 'C:\\repo\\certificate.pfx',
+      CSC_KEY_PASSWORD: 's3cret',
+    };
     await expect(signer({ path: 'app.exe' })).rejects.toThrow(
-      /CSC_LINK missing.*CSC_KEY_PASSWORD missing/s
+      /SIGNTOOL_PATH.*AZURE_CODE_SIGNING_DLIB.*AZURE_METADATA_JSON/s
     );
     expect(spawn).not.toHaveBeenCalled();
   });

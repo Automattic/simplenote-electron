@@ -100,6 +100,8 @@ steps:
     command: .buildkite/commands/package_windows.ps1
     env:
       USE_AZURE_TRUSTED_SIGNING: 1
+      # PFX remains the release path; keep validation artifacts out of releases.
+      PUBLISH: never
     artifact_paths:
       - release\*.exe
       - release\*.appx
