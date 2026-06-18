@@ -23,6 +23,8 @@ import {
 
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
+import { normalizeSafeImageSrc } from '../utils/url-safety';
+import { $createImageNode } from './image-node';
 import { normalizeLinkHref, urlFromText } from './link-validator';
 import {
   $isSelectionInTable,
@@ -194,6 +196,47 @@ export const insertTableColumnAfter = (editor: LexicalEditor): void => {
 
 export const deleteTableColumn = (editor: LexicalEditor): void => {
   editor.dispatchCommand(DELETE_TABLE_COLUMN_COMMAND, undefined);
+};
+
+const hasExplicitScheme = /^[a-z][a-z0-9+.-]*:(?!\d)/i;
+
+export function normalizeImageSourceInput(src: string): string | null {
+  const trimmed = src.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return normalizeSafeImageSrc(
+    hasExplicitScheme.test(trimmed) ? trimmed : `https://${trimmed}`
+  );
+}
+
+export const insertImage = (
+  editor: LexicalEditor,
+  src: string,
+  altText?: string
+): boolean => {
+  let inserted = false;
+
+  editor.update(() => {
+    const safeSrc = normalizeImageSourceInput(src);
+    const selection = $getSelection();
+
+    if (!safeSrc || !$isRangeSelection(selection)) {
+      return;
+    }
+
+    const selectedText = selection.getTextContent().replace(/\s+/g, ' ').trim();
+    selection.insertNodes([
+      $createImageNode({
+        altText: altText ?? selectedText,
+        src: safeSrc,
+      }),
+    ]);
+    inserted = true;
+  });
+
+  return inserted;
 };
 
 export const setLink = (editor: LexicalEditor, url: string): void => {

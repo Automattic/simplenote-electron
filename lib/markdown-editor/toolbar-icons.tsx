@@ -42,6 +42,7 @@ export const ItalicIcon = makeIcon('italic');
 export const StrikeIcon = makeIcon('strikethrough');
 export const CodeIcon = makeIcon('code');
 export const LinkIcon = makeIcon('link');
+export const ImageIcon = makeIcon('image');
 export const BulletListIcon = makeIcon('list-unordered');
 export const OrderedListIcon = makeIcon('list-ordered');
 export const BlockquoteIcon = makeIcon('quote');

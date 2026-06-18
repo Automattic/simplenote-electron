@@ -10,6 +10,7 @@ import {
   deleteTableRow,
   dispatchFormatText,
   getLinkHrefFromSelection,
+  insertImage,
   insertHorizontalRule,
   insertTable,
   insertTableColumnAfter,
@@ -22,6 +23,7 @@ import {
   toggleCodeBlock,
   toggleHeading,
   undo,
+  normalizeImageSourceInput,
 } from './editor-commands';
 import { LinkUrlInput } from './link-url-input';
 import { toggleListAtSelection } from './list-toggle';
@@ -37,6 +39,7 @@ import {
   DeleteTableColumnIcon,
   DeleteTableRowIcon,
   HorizontalRuleIcon,
+  ImageIcon,
   InsertTableColumnAfterIcon,
   InsertTableColumnBeforeIcon,
   InsertTableRowAboveIcon,
@@ -110,6 +113,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const [canRedo, setCanRedo] = useState(false);
   const [state, setState] = useState(() => readToolbarState(editor));
   const [linkInputUrl, setLinkInputUrl] = useState<string | null>(null);
+  const [imageInputUrl, setImageInputUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -171,6 +175,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const blockDisabled = state.inTitle || state.inTable;
 
   const openLinkInput = () => {
+    setImageInputUrl(null);
     setLinkInputUrl(getLinkHrefFromSelection(editor) ?? 'https://');
   };
 
@@ -178,9 +183,24 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     setLinkInputUrl(null);
   };
 
+  const openImageInput = () => {
+    setLinkInputUrl(null);
+    setImageInputUrl('https://');
+  };
+
+  const closeImageInput = () => {
+    setImageInputUrl(null);
+  };
+
   const applyLink = (url: string) => {
     setLink(editor, url);
     closeLinkInput();
+  };
+
+  const applyImage = (url: string) => {
+    if (insertImage(editor, url)) {
+      closeImageInput();
+    }
   };
 
   return (
@@ -239,11 +259,28 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
           onClick={openLinkInput}
           title="Link"
         />
+        <ToolbarButton
+          active={imageInputUrl !== null}
+          icon={ImageIcon}
+          onClick={openImageInput}
+          title="Image"
+        />
         {linkInputUrl !== null && (
           <LinkUrlInput
             initialUrl={linkInputUrl}
             onCancel={closeLinkInput}
             onSubmit={applyLink}
+          />
+        )}
+        {imageInputUrl !== null && (
+          <LinkUrlInput
+            ariaLabel="Image URL"
+            initialUrl={imageInputUrl}
+            onCancel={closeImageInput}
+            onSubmit={applyImage}
+            placeholder="Paste or type an image URL"
+            validate={(url) => normalizeImageSourceInput(url) !== null}
+            validationMessage="Use a public HTTPS image URL."
           />
         )}
       </ToolbarGroup>

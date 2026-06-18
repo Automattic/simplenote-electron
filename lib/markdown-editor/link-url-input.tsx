@@ -1,15 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
 import CrossSmallIcon from '../icons/cross-small';
 
 type Props = {
+  ariaLabel?: string;
   initialUrl: string;
   onCancel: () => void;
   onSubmit: (url: string) => void;
+  placeholder?: string;
+  validate?: (url: string) => boolean;
+  validationMessage?: string;
 };
 
-export function LinkUrlInput({ initialUrl, onCancel, onSubmit }: Props) {
+// Inline URL editing avoids a blocking browser prompt and preserves the
+// editor selection while the toolbar asks for the destination.
+export function LinkUrlInput({
+  ariaLabel = 'Link URL',
+  initialUrl,
+  onCancel,
+  onSubmit,
+  placeholder = 'Paste or type a URL',
+  validate,
+  validationMessage = 'Enter a valid URL.',
+}: Props) {
+  const errorId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showError, setShowError] = useState(false);
   const [url, setUrl] = useState(initialUrl);
 
   useEffect(() => {
@@ -18,15 +34,27 @@ export function LinkUrlInput({ initialUrl, onCancel, onSubmit }: Props) {
   }, []);
 
   const submit = () => {
-    onSubmit(url.trim());
+    const trimmed = url.trim();
+
+    if (validate && !validate(trimmed)) {
+      setShowError(true);
+      return;
+    }
+
+    onSubmit(trimmed);
   };
 
   return (
     <div className="markdown-editor-link-input">
       <input
-        aria-label="Link URL"
+        aria-describedby={showError ? errorId : undefined}
+        aria-label={ariaLabel}
+        aria-invalid={showError || undefined}
         className="markdown-editor-link-input__field"
-        onChange={(event) => setUrl(event.target.value)}
+        onChange={(event) => {
+          setUrl(event.target.value);
+          setShowError(false);
+        }}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             event.preventDefault();
@@ -36,7 +64,7 @@ export function LinkUrlInput({ initialUrl, onCancel, onSubmit }: Props) {
             onCancel();
           }
         }}
-        placeholder="Paste or type a URL"
+        placeholder={placeholder}
         ref={inputRef}
         spellCheck={false}
         type="text"
@@ -51,6 +79,15 @@ export function LinkUrlInput({ initialUrl, onCancel, onSubmit }: Props) {
       >
         <CrossSmallIcon />
       </button>
+      {showError && (
+        <span
+          className="markdown-editor-link-input__error"
+          id={errorId}
+          role="alert"
+        >
+          {validationMessage}
+        </span>
+      )}
     </div>
   );
 }

@@ -13,11 +13,17 @@ import {
 import React from 'react';
 
 import { normalizeSafeImageSrc } from '../utils/url-safety';
+import {
+  escapeImageAltText,
+  escapeImageSrc,
+  escapeImageTitleText,
+} from './image-markdown';
 
 export type SerializedImageNode = Spread<
   {
     altText: string;
     src: string;
+    titleText?: string;
   },
   SerializedLexicalNode
 >;
@@ -25,19 +31,26 @@ export type SerializedImageNode = Spread<
 export class ImageNode extends DecoratorNode<React.JSX.Element> {
   __src: string;
   __altText: string;
+  __titleText: string;
 
   static getType(): string {
     return 'image';
   }
 
   static clone(node: ImageNode): ImageNode {
-    return new ImageNode(node.__src, node.__altText, node.__key);
+    return new ImageNode(
+      node.__src,
+      node.__altText,
+      node.__titleText,
+      node.__key
+    );
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
     return $createImageNode({
       altText: serializedNode.altText,
       src: serializedNode.src,
+      titleText: serializedNode.titleText ?? '',
     });
   }
 
@@ -54,6 +67,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
             node: $createImageNode({
               altText: img.getAttribute('alt') ?? '',
               src,
+              titleText: img.getAttribute('title') ?? '',
             }),
           };
         },
@@ -62,16 +76,18 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     };
   }
 
-  constructor(src: string, altText: string, key?: NodeKey) {
+  constructor(src: string, altText: string, titleText = '', key?: NodeKey) {
     super(key);
     this.__src = src;
     this.__altText = altText;
+    this.__titleText = titleText;
   }
 
   exportJSON(): SerializedImageNode {
     return {
       altText: this.__altText,
       src: this.__src,
+      ...(this.__titleText ? { titleText: this.__titleText } : {}),
       type: 'image',
       version: 1,
     };
@@ -86,6 +102,9 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     const img = document.createElement('img');
     img.setAttribute('src', safeSrc);
     img.setAttribute('alt', this.__altText);
+    if (this.__titleText) {
+      img.setAttribute('title', this.__titleText);
+    }
     return { element: img };
   }
 
@@ -107,8 +126,16 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     return this.__altText;
   }
 
+  getTitleText(): string {
+    return this.__titleText;
+  }
+
   getMarkdownSyntax(): string {
-    return `![${this.__altText}](${this.__src})`;
+    const src = escapeImageSrc(this.__src);
+    const title = this.__titleText
+      ? ` "${escapeImageTitleText(this.__titleText)}"`
+      : '';
+    return `![${escapeImageAltText(this.__altText)}](${src}${title})`;
   }
 
   decorate(): React.JSX.Element {
@@ -126,6 +153,7 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
         alt={this.__altText}
         className="lexical-md-editor__image"
         src={safeSrc}
+        title={this.__titleText || undefined}
       />
     );
   }
@@ -134,11 +162,13 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
 export function $createImageNode({
   altText,
   src,
+  titleText,
 }: {
   altText: string;
   src: string;
+  titleText?: string;
 }): ImageNode {
-  return $applyNodeReplacement(new ImageNode(src, altText));
+  return $applyNodeReplacement(new ImageNode(src, altText, titleText));
 }
 
 export function $isImageNode(

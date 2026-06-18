@@ -45,10 +45,14 @@ import {
 } from 'lexical';
 
 import { $createImageNode, $isImageNode, ImageNode } from './image-node';
+import { unescapeMarkdown } from './image-markdown';
 
 const TABLE_ROW_REG_EXP = /^(?:\|)(.+)(?:\|)\s?$/;
 const TABLE_ROW_DIVIDER_REG_EXP =
   /^\|(?:\s*:?\s*-+\s*:?\s*(?:\|\s*:?\s*-+\s*:?\s*)*)\|?\s?$/;
+const IMAGE_REG_EXP =
+  /!\[((?:\\.|[^\]\\\n])*)\]\(((?:\\[()]|[^()\s])+)(?:\s+"((?:\\"|[^"])*)")?\)/;
+const IMAGE_SHORTCUT_REG_EXP = new RegExp(`${IMAGE_REG_EXP.source}$`);
 
 type ColumnAlignment = 'left' | 'center' | 'right';
 
@@ -221,16 +225,17 @@ export const IMAGE: TextMatchTransformer = {
       return null;
     }
 
-    return `![${node.getAltText()}](${node.getSrc()})`;
+    return node.getMarkdownSyntax();
   },
-  importRegExp: /!\[([^[]*)\]\(([^)]+)\)/,
-  regExp: /!\[([^[]*)\]\(([^)]+)\)$/,
+  importRegExp: IMAGE_REG_EXP,
+  regExp: IMAGE_SHORTCUT_REG_EXP,
   replace: (textNode, match) => {
-    const [, altText, src] = match;
+    const [, altText, src, titleText] = match;
     textNode.replace(
       $createImageNode({
-        altText,
-        src,
+        altText: unescapeMarkdown(altText),
+        src: unescapeMarkdown(src),
+        titleText: titleText ? unescapeMarkdown(titleText) : '',
       })
     );
   },

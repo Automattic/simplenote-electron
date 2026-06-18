@@ -278,7 +278,8 @@
 }
 
 .markdown-editor-link-input {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   flex: 1 1 12rem;
   min-width: 8rem;
@@ -301,6 +302,10 @@
   &::placeholder {
     color: var(--placeholder-color);
     opacity: 1;
+  }
+
+  &[aria-invalid='true'] {
+    box-shadow: inset 0 -1px 0 var(--error-color, #d63638);
   }
 }
 
@@ -331,4 +336,12 @@
     height: 1rem;
     fill: currentcolor;
   }
+}
+
+.markdown-editor-link-input__error {
+  grid-column: 1 / -1;
+  color: var(--error-color, #d63638);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  padding: 0 0.25rem 0.125rem;
 }

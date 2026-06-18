@@ -20,6 +20,7 @@ import { MARKDOWN_TRANSFORMERS } from './extensions';
 import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
 import {
   getLinkHrefFromSelection,
+  insertImage,
   setLink,
   toggleBlockquote,
   toggleCodeBlock,
@@ -286,6 +287,52 @@ describe('setLink', () => {
     await flushEditor();
 
     expect(exportMarkdown(editor)).toBe('visit site today');
+    editor.dispose();
+  });
+});
+
+describe('insertImage', () => {
+  it('inserts an image at a collapsed caret', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'see ');
+    selectTextNode(editor, 'see ');
+
+    expect(insertImage(editor, 'https://example.com/photo.jpg', 'Photo')).toBe(
+      true
+    );
+    await flushEditor();
+
+    expect(exportMarkdown(editor)).toBe(
+      'see ![Photo](https://example.com/photo.jpg)'
+    );
+    editor.dispose();
+  });
+
+  it('uses selected text as the alt text', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'Photo caption');
+    selectTextRange(editor, 'Photo caption', 0, 5);
+
+    expect(insertImage(editor, 'example.com/photo.jpg')).toBe(true);
+    await flushEditor();
+
+    expect(exportMarkdown(editor)).toBe(
+      '![Photo](https://example.com/photo.jpg) caption'
+    );
+    editor.dispose();
+  });
+
+  it('ignores unsafe image sources', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'see ');
+    selectTextNode(editor, 'see ');
+
+    expect(insertImage(editor, 'http://127.0.0.1/photo.jpg', 'Local')).toBe(
+      false
+    );
+    await flushEditor();
+
+    expect(exportMarkdown(editor)).toBe('see ');
     editor.dispose();
   });
 });

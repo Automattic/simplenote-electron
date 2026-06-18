@@ -295,10 +295,66 @@ describe('images', () => {
     editor.dispose();
   });
 
+  it('imports and exports image URLs with escaped parentheses', () => {
+    const markdown = '![Photo](https://example.com/photo\\(1\\).jpg)';
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, markdown);
+
+    editor.getEditorState().read(() => {
+      const image = rootChildren(editor)[0]
+        .getChildren()
+        .find($isImageNode) as ImageNode;
+      expect(image.getSrc()).toBe('https://example.com/photo(1).jpg');
+    });
+    expect(
+      editor
+        .getEditorState()
+        .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS))
+    ).toBe(markdown);
+    editor.dispose();
+  });
+
+  it('round-trips image title text', () => {
+    const markdown =
+      '![Photo](https://example.com/photo.jpg "Cover \\"shot\\"")';
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, markdown);
+
+    editor.getEditorState().read(() => {
+      const image = rootChildren(editor)[0]
+        .getChildren()
+        .find($isImageNode) as ImageNode;
+      expect(image.getTitleText()).toBe('Cover "shot"');
+      expect(image.decorate().props.title).toBe('Cover "shot"');
+    });
+    expect(
+      editor
+        .getEditorState()
+        .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS))
+    ).toBe(markdown);
+    editor.dispose();
+  });
+
   it('exports unsafe image src preserving original markdown syntax', () => {
     const unsafe = '![Local](http://127.0.0.1/photo.jpg)';
     const editor = makeGfmTestEditor();
     expect(roundtrip(editor, unsafe)).toBe(unsafe);
+    editor.dispose();
+  });
+
+  it('renders unsafe image src as markdown fallback text', () => {
+    const unsafe = '![Local](http://127.0.0.1/photo.jpg "Private")';
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, unsafe);
+
+    editor.getEditorState().read(() => {
+      const image = rootChildren(editor)[0]
+        .getChildren()
+        .find($isImageNode) as ImageNode;
+      const element = image.decorate();
+      expect(element.type).toBe('span');
+      expect(element.props.children).toBe(unsafe);
+    });
     editor.dispose();
   });
 
