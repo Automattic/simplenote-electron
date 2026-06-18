@@ -105,6 +105,14 @@ span[dir='ltr'] {
     padding: 2px 0;
   }
 
+  ::highlight(search-decoration) {
+    background-color: var(--search-highlight-color);
+  }
+
+  ::highlight(selected-search) {
+    background-color: var(--search-selection-color);
+  }
+
   // Monaco applies .md-heading-* as inline decorations; Lexical renders native
   // h1–h6. Pair selectors so both editors share the same heading scale.
   .md-heading-1,

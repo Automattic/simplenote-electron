@@ -17,6 +17,7 @@ import {
   withMixedNestedListTransformers,
 } from './extensions';
 import { InternalLinkPlugin } from './internal-link-menu';
+import { SearchHighlightPlugin } from './search-highlight-plugin';
 import { MarkdownEditorToolbar } from './toolbar';
 
 import './style.scss';
@@ -25,20 +26,30 @@ import type { EntityId } from '../types';
 
 export type MarkdownEditorProps = {
   className?: string;
+  clearSearch?: () => void;
   editorRef?: RefObject<LexicalEditor | null>;
   initialMarkdown?: string;
   noteId: EntityId;
   onChange?: (markdown: string) => void;
+  onMatchCountChange?: (count: number) => void;
   onOpenInternalLink?: (noteId: EntityId) => void;
+  scrollContainerRef?: RefObject<HTMLElement | null>;
+  searchQuery?: string;
+  selectedSearchMatchIndex?: number | null;
 };
 
 export default function MarkdownEditor({
   className,
+  clearSearch,
   editorRef,
   initialMarkdown = '',
   noteId,
   onChange,
+  onMatchCountChange,
   onOpenInternalLink,
+  scrollContainerRef,
+  searchQuery = '',
+  selectedSearchMatchIndex = null,
 }: MarkdownEditorProps) {
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -63,6 +74,15 @@ export default function MarkdownEditor({
         />
         {editorRef && <EditorRefPlugin editorRef={editorRef} />}
         <InternalLinkPlugin noteId={noteId} onOpenNote={onOpenInternalLink} />
+        {onMatchCountChange && clearSearch && scrollContainerRef && (
+          <SearchHighlightPlugin
+            clearSearch={clearSearch}
+            onMatchCountChange={onMatchCountChange}
+            scrollContainerRef={scrollContainerRef}
+            searchQuery={searchQuery}
+            selectedSearchMatchIndex={selectedSearchMatchIndex}
+          />
+        )}
       </LexicalExtensionComposer>
     </div>
   );

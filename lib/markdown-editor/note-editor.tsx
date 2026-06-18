@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { connect } from 'react-redux';
 import { $convertToMarkdownString } from '@lexical/markdown';
 import type { LexicalEditor } from 'lexical';
@@ -7,6 +13,14 @@ import MarkdownEditor, { $importMarkdownString, TRANSFORMERS } from './editor';
 import { REMOTE_CONTENT_TAG } from './extensions';
 import { useScrollMemory } from './scroll-memory';
 import actions from '../state/actions';
+import {
+  getNextSearchMatchIndex,
+  getPrevSearchMatchIndex,
+} from '../search/in-note-search';
+import {
+  useElectronFindAgain,
+  useInNoteSearchShortcuts,
+} from '../search/use-in-note-search-shortcuts';
 import { withCheckboxSyntax } from '../utils/task-transform';
 
 import * as S from '../state';
@@ -18,35 +32,47 @@ type OwnProps = {
 };
 
 type StateProps = {
+  keyboardShortcuts: boolean;
   noteContent: string;
   noteId: T.EntityId;
   notes: Map<T.EntityId, T.Note>;
+  searchQuery: string;
+  selectedSearchMatchIndex: number | null;
 };
 
 type DispatchProps = {
+  clearSearch: () => void;
   editNote: (noteId: T.EntityId, changes: Partial<T.Note>) => void;
   openNote: (noteId: T.EntityId) => void;
+  storeNumberOfMatchesInNote: (matches: number) => void;
+  storeSearchSelection: (index: number | null) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 function MarkdownNoteEditorComponent({
+  clearSearch,
   editNote,
+  keyboardShortcuts,
   noteContent,
   noteId,
   notes,
   openNote,
+  searchQuery,
+  selectedSearchMatchIndex,
   storeFocusEditor,
   storeHasFocus,
+  storeNumberOfMatchesInNote,
+  storeSearchSelection,
 }: Props) {
   const editorRef = useRef<LexicalEditor | null>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
-  // The exact string instance last dispatched to the store, so our own
-  // edits echoing back through redux can be recognized by reference alone.
   const lastDispatchedRef = useRef<string | null>(null);
-  // Only consumed when MarkdownEditor (keyed by noteId) mounts, so don't
-  // recompute the O(document) transform on every keystroke re-render.
+  const matchCountRef = useRef(0);
+  const [matchCount, setMatchCount] = useState(0);
+  const previousNoteIdRef = useRef(noteId);
+  const previousSearchQueryRef = useRef(searchQuery);
   const initialMarkdown = useMemo(
     () => withCheckboxSyntax(noteContent),
     [noteId]
@@ -60,10 +86,26 @@ function MarkdownNoteEditorComponent({
   }, [noteId]);
 
   useEffect(() => {
-    // Local edits round-trip through the store as the same string instance,
-    // so this O(1) check skips the O(document) checkbox transform (and any
-    // further comparison) on every keystroke. Only genuinely external
-    // content changes (remote sync, revision restore, ...) fall through.
+    const noteChanged = previousNoteIdRef.current !== noteId;
+    const searchChanged = previousSearchQueryRef.current !== searchQuery;
+
+    if (noteChanged || searchChanged) {
+      storeSearchSelection(null);
+    }
+
+    previousNoteIdRef.current = noteId;
+    previousSearchQueryRef.current = searchQuery;
+  }, [noteId, searchQuery, storeSearchSelection]);
+
+  useEffect(() => {
+    if ('' === searchQuery) {
+      storeNumberOfMatchesInNote(0);
+      matchCountRef.current = 0;
+      setMatchCount(0);
+    }
+  }, [searchQuery, storeNumberOfMatchesInNote]);
+
+  useEffect(() => {
     if (noteContent === lastDispatchedRef.current) {
       return;
     }
@@ -97,8 +139,6 @@ function MarkdownNoteEditorComponent({
           $importMarkdownString(remote);
         },
         {
-          // The tag stops the on-change serializer from echoing this
-          // content back to the store as a local edit.
           tag: REMOTE_CONTENT_TAG,
           onUpdate: () => {
             lastPushedRef.current = remote;
@@ -126,8 +166,6 @@ function MarkdownNoteEditorComponent({
     storeHasFocus(hasFocus);
   }, [focusEditor, hasFocus, storeFocusEditor, storeHasFocus]);
 
-  // Opening a note that isn't in local state would close the current note
-  // without opening anything else, so dead links do nothing (as in Monaco).
   const handleOpenInternalLink = useCallback(
     (linkedNoteId: T.EntityId) => {
       if (notes.has(linkedNoteId)) {
@@ -150,6 +188,46 @@ function MarkdownNoteEditorComponent({
     [editNote, noteId]
   );
 
+  const handleMatchCountChange = useCallback(
+    (count: number) => {
+      matchCountRef.current = count;
+      setMatchCount(count);
+      storeNumberOfMatchesInNote(count);
+    },
+    [storeNumberOfMatchesInNote]
+  );
+
+  const setNextSearchSelection = useCallback(() => {
+    const total = matchCountRef.current;
+    if (0 === total) {
+      return;
+    }
+
+    const newIndex = getNextSearchMatchIndex(selectedSearchMatchIndex, total);
+    storeSearchSelection(newIndex);
+    focusEditor();
+  }, [focusEditor, selectedSearchMatchIndex, storeSearchSelection]);
+
+  const setPrevSearchSelection = useCallback(() => {
+    const total = matchCountRef.current;
+    if (0 === total) {
+      return;
+    }
+
+    const newIndex = getPrevSearchMatchIndex(selectedSearchMatchIndex, total);
+    storeSearchSelection(newIndex);
+    focusEditor();
+  }, [focusEditor, selectedSearchMatchIndex, storeSearchSelection]);
+
+  useInNoteSearchShortcuts({
+    enabled: keyboardShortcuts,
+    matchCount,
+    onNext: setNextSearchSelection,
+    onPrev: setPrevSearchSelection,
+  });
+
+  useElectronFindAgain(setNextSearchSelection, matchCount);
+
   return (
     <div
       ref={shellRef}
@@ -169,11 +247,16 @@ function MarkdownNoteEditorComponent({
       <MarkdownEditor
         key={noteId}
         className="note-detail-textarea note-detail-markdown"
+        clearSearch={clearSearch}
         editorRef={editorRef}
         initialMarkdown={initialMarkdown}
         noteId={noteId}
         onChange={handleChange}
+        onMatchCountChange={handleMatchCountChange}
         onOpenInternalLink={handleOpenInternalLink}
+        scrollContainerRef={shellRef}
+        searchQuery={searchQuery}
+        selectedSearchMatchIndex={selectedSearchMatchIndex}
       />
     </div>
   );
@@ -184,15 +267,27 @@ const mapStateToProps: S.MapState<StateProps> = (state) => {
   const note = state.data.notes.get(noteId)!;
 
   return {
+    keyboardShortcuts: state.settings.keyboardShortcuts,
     noteId,
     noteContent: note.content,
     notes: state.data.notes,
+    searchQuery: state.ui.searchQuery,
+    selectedSearchMatchIndex: state.ui.selectedSearchMatchIndex,
   };
 };
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
+  clearSearch: () => actions.ui.search(''),
   editNote: actions.data.editNote,
   openNote: actions.ui.selectNote,
+  storeNumberOfMatchesInNote: (matches) => ({
+    type: 'STORE_NUMBER_OF_MATCHES_IN_NOTE',
+    matches,
+  }),
+  storeSearchSelection: (index) => ({
+    type: 'STORE_SEARCH_SELECTION',
+    index,
+  }),
 };
 
 export const MarkdownNoteEditor = connect(

@@ -28,6 +28,7 @@ import {
   buildSourceClipboardPayload,
   writeClipboardPayload,
 } from './utils/clipboard/copy';
+import { getSearchTerms } from './search/in-note-search';
 import { getTerms } from './utils/filter-notes';
 import { noteTitleAndPreview } from './utils/note-utils';
 import {
@@ -533,9 +534,7 @@ class NoteContentEditor extends Component<Props> {
       return;
     }
     const model = this.editor.getModel();
-    const terms = getTerms(this.props.searchQuery)
-      .map((term) => term.normalize().toLowerCase())
-      .filter((term) => term.trim().length > 0);
+    const terms = getSearchTerms(this.props.searchQuery);
 
     if (terms.length === 0) {
       return [];
