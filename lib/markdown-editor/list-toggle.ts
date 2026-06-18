@@ -225,13 +225,27 @@ const convertListNodeType = (
       return;
     }
 
-    nextList.append(
-      createListItemWithContent(targetType, listItemContentBlocks(child))
+    const item = createListItemWithContent(
+      targetType,
+      listItemContentBlocks(child)
     );
+
+    child.getChildren().forEach((grandchild) => {
+      if ($isListNode(grandchild)) {
+        item.append(grandchild);
+      }
+    });
+
+    nextList.append(item);
   });
 
   return nextList;
 };
+
+const getListItemDirectTextContent = (listItem: ListItemNode): string =>
+  listItemContentBlocks(listItem)
+    .map((block) => block.getTextContent())
+    .join('');
 
 const getSelectedListItemLabel = (): string => {
   const selection = $getSelection();
@@ -245,13 +259,15 @@ const getSelectedListItemLabel = (): string => {
     $isListItemNode
   );
 
-  return listItem?.getTextContent() ?? '';
+  return listItem ? getListItemDirectTextContent(listItem) : '';
 };
 
 const selectInListItemByLabel = (list: ListNode, label: string) => {
   const items = list.getChildren().filter($isListItemNode);
   const item =
-    items.find((candidate) => candidate.getTextContent() === label) ?? items[0];
+    items.find(
+      (candidate) => getListItemDirectTextContent(candidate) === label
+    ) ?? items[0];
 
   if (!item) {
     return;
@@ -301,55 +317,11 @@ export const findNestedSubList = (): SubListInfo | null => {
 
   const listNode = $findMatchingParent(selection.anchor.getNode(), $isListNode);
 
-  if (listNode) {
-    const parent = listNode.getParent();
-
-    if ($isListItemNode(parent)) {
-      return { node: listNode, key: listNode.getKey() };
-    }
-  }
-
-  const container = $findMatchingParent(
-    selection.anchor.getNode(),
-    $isListItemNode
-  );
-
-  if (!container) {
+  if (!listNode || !$isListItemNode(listNode.getParent())) {
     return null;
   }
 
-  for (const child of container.getChildren()) {
-    if ($isListNode(child)) {
-      return { node: child, key: child.getKey() };
-    }
-  }
-
-  const parentList = container.getParent();
-
-  if (!$isListNode(parentList)) {
-    return null;
-  }
-
-  const items = parentList.getChildren().filter($isListItemNode);
-  const containerIndex = items.findIndex(
-    (item) => item.getKey() === container.getKey()
-  );
-
-  if (containerIndex === -1) {
-    return null;
-  }
-
-  for (let index = containerIndex + 1; index < items.length; index += 1) {
-    const sibling = items[index];
-
-    for (const child of sibling.getChildren()) {
-      if ($isListNode(child)) {
-        return { node: child, key: child.getKey() };
-      }
-    }
-  }
-
-  return null;
+  return { node: listNode, key: listNode.getKey() };
 };
 
 const findInnermostListAtSelection = (): SubListInfo | null => {

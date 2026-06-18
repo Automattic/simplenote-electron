@@ -7,12 +7,14 @@ import {
 } from '@lexical/table';
 import {
   $createParagraphNode,
+  $createRangeSelection,
   $getRoot,
   $getSelection,
   $isElementNode,
   $isParagraphNode,
   $isRangeSelection,
   $isTextNode,
+  $setSelection,
   KEY_DOWN_COMMAND,
   type LexicalEditorWithDispose,
   type LexicalNode,
@@ -66,6 +68,35 @@ function selectTextNode(
         );
       }
       textNode.select(offset, offset);
+    },
+    { discrete: true }
+  );
+}
+
+function selectTextRange(
+  editor: LexicalEditorWithDispose,
+  anchorText: string,
+  focusText: string,
+  anchorOffset = 0,
+  focusOffset?: number
+): void {
+  editor.update(
+    () => {
+      const anchorNode = findTextNode($getRoot(), anchorText);
+      const focusNode = findTextNode($getRoot(), focusText);
+      if (!anchorNode || !focusNode) {
+        throw new Error(
+          `Expected text nodes with content ${JSON.stringify(anchorText)} and ${JSON.stringify(focusText)}`
+        );
+      }
+      const selection = $createRangeSelection();
+      selection.anchor.set(anchorNode.getKey(), anchorOffset, 'text');
+      selection.focus.set(
+        focusNode.getKey(),
+        focusOffset ?? focusNode.getTextContentSize(),
+        'text'
+      );
+      $setSelection(selection);
     },
     { discrete: true }
   );
@@ -260,6 +291,46 @@ describe('toggleListAtSelection', () => {
 
     expect(await flushToggleList(editor, 'bulletList')).toBe(true);
     expect(exportMarkdown(editor)).toBe('- parent\n- nested');
+
+    editor.dispose();
+  });
+
+  it('converts the outer list when the cursor is in outer item content', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '- parent\n  - nested');
+    selectTextNode(editor, 'parent', 2);
+
+    expect(await flushToggleList(editor, 'orderedList')).toBe(true);
+    expect(exportMarkdown(editor)).toBe('1. parent\n    - nested');
+
+    editor.dispose();
+  });
+
+  it('converts the outer list when outer items are selected across a nested sublist', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '- parent\n  - nested\n- sibling');
+    selectTextRange(editor, 'parent', 'sibling');
+
+    expect(await flushToggleList(editor, 'orderedList')).toBe(true);
+    expect(exportMarkdown(editor)).toBe('1. parent\n    - nested\n2. sibling');
+
+    editor.dispose();
+  });
+
+  it('keeps the cursor in outer item content after converting the outer list type', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '- parent\n  - nested');
+    selectTextNode(editor, 'parent', 2);
+
+    expect(await flushToggleList(editor, 'orderedList')).toBe(true);
+
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected range selection');
+      }
+      expect(selection.anchor.getNode().getTextContent()).toBe('parent');
+    });
 
     editor.dispose();
   });
