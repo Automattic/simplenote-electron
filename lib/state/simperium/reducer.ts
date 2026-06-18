@@ -60,6 +60,78 @@ const lastSync: A.Reducer<Map<T.EntityId, number>> = (
   }
 };
 
+/**
+ * Actions that resolve a note's pending sync — a successful acknowledge, an
+ * incoming remote update, etc.
+ *
+ * Note, this excludes NOTE_SYNC_ERROR itself, as that requires reducer specific handling.
+ */
+const resolvedSyncNoteId = (action: A.ActionType): T.EntityId | undefined => {
+  switch (action.type) {
+    case 'ACKNOWLEDGE_PENDING_CHANGE':
+      return action.entityId;
+
+    case 'REMOTE_NOTE_UPDATE':
+    case 'REMOTE_NOTE_DELETE_FOREVER':
+    case 'DELETE_NOTE_FOREVER':
+    case 'NOTE_BUCKET_REMOVE':
+      return action.noteId;
+
+    default:
+      return undefined;
+  }
+};
+
+const syncErrors: A.Reducer<Map<T.EntityId, number>> = (
+  state = emptyMap as Map<T.EntityId, number>,
+  action
+) => {
+  if (action.type === 'NOTE_SYNC_ERROR') {
+    return new Map(state).set(action.noteId, action.errorCode);
+  }
+
+  const noteId = resolvedSyncNoteId(action);
+  if (!noteId || !state.has(noteId)) {
+    return state;
+  }
+
+  const next = new Map(state);
+  next.delete(noteId);
+  return next;
+};
+
+const syncingNotes: A.Reducer<Map<T.EntityId, string>> = (
+  state = emptyMap as Map<T.EntityId, string>,
+  action
+) => {
+  if (action.type === 'SUBMIT_PENDING_CHANGE') {
+    return new Map(state).set(action.entityId, action.ccid);
+  }
+
+  if (action.type === 'ACKNOWLEDGE_PENDING_CHANGE') {
+    if (state.get(action.entityId) !== action.ccid) {
+      return state;
+    }
+
+    const next = new Map(state);
+    next.delete(action.entityId);
+    return next;
+  }
+
+  const noteId =
+    action.type === 'NOTE_SYNC_ERROR'
+      ? action.noteId
+      : resolvedSyncNoteId(action);
+
+  if (!noteId || !state.has(noteId)) {
+    return state;
+  }
+
+  const next = new Map(state);
+  next.delete(noteId);
+  return next;
+};
+
 const lastRemoteUpdate: A.Reducer<Map<T.EntityId, number>> = (
   state = emptyMap as Map<T.EntityId, number>,
   action
@@ -80,4 +152,6 @@ export default combineReducers({
   ghosts,
   lastSync,
   lastRemoteUpdate,
+  syncErrors,
+  syncingNotes,
 });

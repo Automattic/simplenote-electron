@@ -85,6 +85,7 @@ export const loadState = (
                   ghosts: [new Map(state.cvs), new Map(state.ghosts)],
                   lastRemoteUpdate: new Map(state.lastRemoteUpdate),
                   lastSync: new Map(state.lastSync),
+                  syncErrors: new Map(state.syncErrors ?? []),
                 },
               };
 
@@ -175,6 +176,7 @@ export const saveState = (state: S.State) => {
   const ghosts = Array.from(state.simperium.ghosts[1]);
   const lastRemoteUpdate = Array.from(state.simperium.lastRemoteUpdate);
   const lastSync = Array.from(state.simperium.lastSync);
+  const syncErrors = Array.from(state.simperium.syncErrors);
 
   const data = {
     accountName: state.settings.accountName,
@@ -187,6 +189,7 @@ export const saveState = (state: S.State) => {
     ghosts,
     lastRemoteUpdate,
     lastSync,
+    syncErrors,
   };
 
   return openDB().then((db) => {

@@ -24,6 +24,8 @@ import type * as T from '../../types';
 
 const debug = debugFactory('simperium-middleware');
 
+const NOTE_TOO_LARGE_ERROR_CODE = 413;
+
 type Buckets = {
   account: T.JSONSerializable;
   note: T.Note;
@@ -76,6 +78,16 @@ export const initSimperium =
     }
 
     const noteBucket = client.bucket('note');
+
+    // A rejected change stays in localQueue.sent because simperium only clears
+    // it on acknowledge. Clear it so later edits can sync a fresh change.
+    const releaseStuckNoteChange = (noteId: T.EntityId) => {
+      const localQueue = (noteBucket.channel as any).localQueue;
+      if (localQueue.sent[noteId]) {
+        delete localQueue.sent[noteId];
+      }
+    };
+
     noteBucket.channel.on(
       'update',
       (entityId, updatedEntity, original, patch, isIndexing) => {
@@ -128,6 +140,28 @@ export const initSimperium =
         entityId: entityId as T.EntityId,
         ccid: change.ccid,
       });
+    });
+
+    // Server rejections can leave the failed change in Simperium's sent queue.
+    // Handle the bucket error so the note can show a sync failure.
+    noteBucket.on('error', (error, change) => {
+      const noteId = change?.id as T.EntityId | undefined;
+      const errorCode = (error as { code?: unknown })?.code;
+
+      debug(`sync error for note ${noteId}: ${errorCode}`);
+
+      if (noteId && 'number' === typeof errorCode) {
+        // We consider 413 to be unrecoverable because it requires user edits. There may be more unrecoverable errors in the future we may want to add here.
+        if (NOTE_TOO_LARGE_ERROR_CODE === errorCode) {
+          releaseStuckNoteChange(noteId);
+        }
+
+        dispatch({
+          type: 'NOTE_SYNC_ERROR',
+          noteId,
+          errorCode,
+        });
+      }
     });
 
     const tagBucket = client.bucket('tag');
@@ -230,8 +264,9 @@ export const initSimperium =
     });
 
     const noteQueue = new BucketQueue(noteBucket);
-    const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) =>
+    const queueNoteUpdate = (noteId: T.EntityId, delay = 2000) => {
       noteQueue.add(noteId, Date.now() + delay);
+    };
 
     const hasRequestedRevisions = new Set<T.EntityId>();
 

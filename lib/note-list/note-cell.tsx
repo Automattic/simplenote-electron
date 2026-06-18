@@ -2,12 +2,14 @@ import React, { Component, CSSProperties } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
+import AlertIcon from '../icons/attention';
 import PublishIcon from '../icons/published-small';
 import SmallPinnedIcon from '../icons/pinned-small';
 import SmallSyncIcon from '../icons/sync-small';
 import { decorateWith, makeFilterDecorator } from './decorators';
 import { getTerms } from '../utils/filter-notes';
 import { noteTitleAndPreview } from '../utils/note-utils';
+import { getSyncErrorMessage } from '../utils/sync-error-message';
 import { withCheckboxCharacters } from '../utils/task-transform';
 
 import actions from '../state/actions';
@@ -24,12 +26,14 @@ type OwnProps = {
 
 type StateProps = {
   displayMode: T.ListDisplayMode;
-  hasPendingChanges: boolean;
   isOffline: boolean;
   isOpened: boolean;
+  isSyncing: boolean;
   lastUpdated: number;
   note?: T.Note;
   searchQuery: string;
+  hasPendingChanges: boolean;
+  syncErrorCode: number | null;
 };
 
 type DispatchProps = {
@@ -69,16 +73,18 @@ export class NoteCell extends Component<Props> {
   render() {
     const {
       displayMode,
-      hasPendingChanges,
       isOffline,
       isOpened,
+      isSyncing,
       lastUpdated,
       noteId,
       note,
       openNote,
       pinNote,
       searchQuery,
+      hasPendingChanges,
       style,
+      syncErrorCode,
     } = this.props;
 
     if (!note) {
@@ -101,6 +107,11 @@ export class NoteCell extends Component<Props> {
       'note-list-item-pinned': isPinned,
     });
     const pinnerLabel = isPinned ? `Unpin note ${title}` : `Pin note ${title}`;
+    const pendingChangesLabel = isOffline
+      ? 'Pending changes (waiting for network connection)'
+      : 'Pending changes';
+    const shouldShowPendingChanges =
+      hasPendingChanges && (null === syncErrorCode || isSyncing);
 
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
@@ -149,17 +160,33 @@ export class NoteCell extends Component<Props> {
             )}
           </button>
           <div className="note-list-item-status-right">
-            {hasPendingChanges && (
+            {shouldShowPendingChanges && (
               <span
+                aria-label={pendingChangesLabel}
                 className={classNames('note-list-item-pending-changes', {
                   'is-offline': isOffline,
                 })}
+                role="img"
               >
                 <SmallSyncIcon />
               </span>
             )}
+            {null !== syncErrorCode && (
+              <span
+                aria-label="Sync failed"
+                className="note-list-item-sync-error"
+                role="img"
+                title={getSyncErrorMessage(syncErrorCode)}
+              >
+                <AlertIcon />
+              </span>
+            )}
             {isPublished && (
-              <span className="note-list-item-published-icon">
+              <span
+                aria-label="Published note"
+                className="note-list-item-published-icon"
+                role="img"
+              >
                 <PublishIcon />
               </span>
             )}
@@ -175,12 +202,14 @@ const mapStateToProps: S.MapState<StateProps, OwnProps> = (
   { noteId }
 ) => ({
   displayMode: state.settings.noteDisplay,
-  hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
   isOffline: state.simperium.connectionStatus === 'offline',
   isOpened: state.ui.openedNote === noteId,
+  isSyncing: state.simperium.syncingNotes.has(noteId),
   lastUpdated: state.simperium.lastRemoteUpdate.get(noteId) ?? -Infinity,
   note: state.data.notes.get(noteId),
   searchQuery: state.ui.searchQuery,
+  hasPendingChanges: selectors.noteHasPendingChanges(state, noteId),
+  syncErrorCode: state.simperium.syncErrors.get(noteId) ?? null,
 });
 
 const mapDispatchToProps: S.MapDispatch<DispatchProps> = {
