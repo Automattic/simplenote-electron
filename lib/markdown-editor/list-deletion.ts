@@ -169,7 +169,7 @@ export function $shouldAppendTrailingLinebreakToClipboardMarkdown(
   return true;
 }
 
-function $collectFullySelectedListItems(
+export function $collectFullySelectedListItems(
   selection: RangeSelection
 ): ListItemNode[] {
   const items = new Map<string, ListItemNode>();

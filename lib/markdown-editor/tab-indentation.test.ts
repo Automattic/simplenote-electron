@@ -1,8 +1,6 @@
+import { $isCodeNode, $plainifyCodeContent } from '@lexical/code-core';
 import { $convertToMarkdownString } from '@lexical/markdown';
 import {
-  $createParagraphNode,
-  $createTabNode,
-  $getNodeByKey,
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -60,36 +58,6 @@ function exportMarkdown(editor: LexicalEditorWithDispose): string {
     .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
 }
 
-function textContent(editor: LexicalEditorWithDispose): string {
-  return editor.getEditorState().read(() => $getRoot().getTextContent());
-}
-
-function makeEmptyParagraphEditor(): LexicalEditorWithDispose {
-  const editor = makeGfmTestEditor();
-  editor.update(
-    () => {
-      $getRoot().clear();
-      const paragraph = $createParagraphNode();
-      $getRoot().append(paragraph);
-      paragraph.selectStart();
-    },
-    { discrete: true }
-  );
-  return editor;
-}
-
-function typeText(editor: LexicalEditorWithDispose, text: string): void {
-  editor.update(
-    () => {
-      const selection = $getSelection();
-      if ($isRangeSelection(selection)) {
-        selection.insertText(text);
-      }
-    },
-    { discrete: true }
-  );
-}
-
 // The DOM reconciler only runs against a mounted root element; structural
 // list bugs (e.g. "DOMSlot.insertChild: before is not in element") are
 // invisible in headless tests.
@@ -102,6 +70,50 @@ function mountEditor(editor: LexicalEditorWithDispose): () => void {
     editor.setRootElement(null);
     container.remove();
   };
+}
+
+function selectText(
+  editor: LexicalEditorWithDispose,
+  text: string,
+  start = 0,
+  end?: number
+): void {
+  editor.update(
+    () => {
+      const textNode = findTextNode($getRoot(), text);
+      if (!textNode) {
+        throw new Error(
+          `Expected text node with content ${JSON.stringify(text)}`
+        );
+      }
+      const size = textNode.getTextContentSize();
+      textNode.select(start, end ?? size);
+    },
+    { discrete: true }
+  );
+}
+
+function selectTextRange(
+  editor: LexicalEditorWithDispose,
+  startText: string,
+  endText: string
+): void {
+  editor.update(
+    () => {
+      const first = findTextNode($getRoot(), startText);
+      const last = findTextNode($getRoot(), endText);
+      if (!first || !last) {
+        throw new Error('Expected text nodes for range selection');
+      }
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected range selection');
+      }
+      selection.anchor.set(first.getKey(), 0, 'text');
+      selection.focus.set(last.getKey(), last.getTextContentSize(), 'text');
+    },
+    { discrete: true }
+  );
 }
 
 function selectTextNode(
@@ -124,119 +136,32 @@ function selectTextNode(
 }
 
 describe('tab indentation', () => {
-  it('inserts a tab character in an empty paragraph', async () => {
-    const editor = makeEmptyParagraphEditor();
+  it('does not handle Tab in a plain paragraph', async () => {
+    const editor = makeGfmTestEditor('hello');
+    selectTextNode(editor, 'hello', 2);
 
-    expect(await dispatchTab(editor)).toBe(true);
-    expect(exportMarkdown(editor)).toBe('\t');
-
-    editor.dispose();
-  });
-
-  it('Tab then Shift+Tab returns to an empty paragraph', async () => {
-    const editor = makeEmptyParagraphEditor();
-
-    await dispatchTab(editor);
-    expect(textContent(editor)).toBe('\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(textContent(editor)).toBe('');
-    expect(exportMarkdown(editor)).toBe('');
+    expect(await dispatchTab(editor)).toBe(false);
+    expect(exportMarkdown(editor)).toBe('hello');
 
     editor.dispose();
   });
 
-  it('Tab twice then Shift+Tab leaves a single tab', async () => {
-    const editor = makeEmptyParagraphEditor();
+  it('does not handle Tab inside a blockquote', async () => {
+    const editor = makeGfmTestEditor('> quoted');
+    selectText(editor, 'quoted');
 
-    await dispatchTab(editor);
-    await dispatchTab(editor);
-    expect(textContent(editor)).toBe('\t\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(textContent(editor)).toBe('\t');
+    expect(await dispatchTab(editor)).toBe(false);
+    expect(exportMarkdown(editor)).toBe('> quoted');
 
     editor.dispose();
   });
 
-  it('typed text then Tab then Shift+Tab leaves just the text', async () => {
-    const editor = makeEmptyParagraphEditor();
-    typeText(editor, 'test');
+  it('does not handle Tab inside a heading', async () => {
+    const editor = makeGfmTestEditor('# Title');
+    selectTextNode(editor, 'Title', 0);
 
-    await dispatchTab(editor);
-    expect(textContent(editor)).toBe('test\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(textContent(editor)).toBe('test');
-    expect(exportMarkdown(editor)).toBe('test');
-
-    editor.dispose();
-  });
-
-  it('removes a leading tab when pressing Shift+Tab with the cursor after it', async () => {
-    const editor = makeGfmTestEditor();
-    editor.update(
-      () => {
-        $getRoot().clear();
-        const paragraph = $createParagraphNode();
-        const tabNode = $createTabNode();
-        paragraph.append(tabNode);
-        $getRoot().append(paragraph);
-        tabNode.selectNext(0, 0);
-      },
-      { discrete: true }
-    );
-    expect(exportMarkdown(editor)).toBe('\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(exportMarkdown(editor)).toBe('');
-
-    editor.dispose();
-  });
-
-  it('removes a leading tab when pressing Shift+Tab with the cursor before it', async () => {
-    const editor = makeGfmTestEditor();
-    editor.update(
-      () => {
-        $getRoot().clear();
-        const paragraph = $createParagraphNode();
-        paragraph.append($createTabNode());
-        $getRoot().append(paragraph);
-        paragraph.selectStart();
-      },
-      { discrete: true }
-    );
-    expect(exportMarkdown(editor)).toBe('\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(exportMarkdown(editor)).toBe('');
-
-    editor.dispose();
-  });
-
-  it('Shift+Tab between adjacent tabs removes the preceding tab', async () => {
-    const editor = makeGfmTestEditor();
-    let trailingTabKey = '';
-    editor.update(
-      () => {
-        $getRoot().clear();
-        const paragraph = $createParagraphNode();
-        paragraph.append($createTabNode());
-        const trailingTab = $createTabNode();
-        trailingTabKey = trailingTab.getKey();
-        paragraph.append(trailingTab);
-        $getRoot().append(paragraph);
-        paragraph.select(1, 1);
-      },
-      { discrete: true }
-    );
-    expect(exportMarkdown(editor)).toBe('\t\t');
-
-    expect(await dispatchTab(editor, true)).toBe(true);
-    expect(exportMarkdown(editor)).toBe('\t');
-    editor.getEditorState().read(() => {
-      expect($getNodeByKey(trailingTabKey)?.isAttached()).toBe(true);
-    });
+    expect(await dispatchTab(editor)).toBe(false);
+    expect(exportMarkdown(editor)).toBe('# Title');
 
     editor.dispose();
   });
@@ -348,6 +273,273 @@ describe('tab indentation', () => {
         ['bullet', '  item: "one"', '  item: "two"'].join('\n')
       );
     });
+
+    editor.dispose();
+  });
+
+  it('indents multiple fully selected list items together', async () => {
+    const editor = makeGfmTestEditor();
+    const unmount = mountEditor(editor);
+    importMarkdown(editor, '- one\n- two\n- three');
+    selectTextRange(editor, 'two', 'three');
+
+    expect(await dispatchTab(editor)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toBe(
+        [
+          'bullet',
+          '  item: "one"',
+          '  item: ""',
+          '    bullet',
+          '      item: "two"',
+          '      item: "three"',
+        ].join('\n')
+      );
+    });
+
+    unmount();
+    editor.dispose();
+  });
+
+  it('outdents multiple fully selected list items together', async () => {
+    const editor = makeGfmTestEditor();
+    const unmount = mountEditor(editor);
+    importMarkdown(editor, '- one\n  - two\n  - three');
+    selectTextRange(editor, 'two', 'three');
+
+    expect(await dispatchTab(editor, true)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toBe(
+        ['bullet', '  item: "one"', '  item: "two"', '  item: "three"'].join(
+          '\n'
+        )
+      );
+    });
+
+    unmount();
+    editor.dispose();
+  });
+
+  it('indents multiple list items when the first and last lines are only partly selected', async () => {
+    const editor = makeGfmTestEditor();
+    const unmount = mountEditor(editor);
+    importMarkdown(editor, '- one\n- two\n- three');
+    editor.update(
+      () => {
+        const two = findTextNode($getRoot(), 'two');
+        const three = findTextNode($getRoot(), 'three');
+        if (!two || !three) {
+          throw new Error('Expected list item text nodes');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(two.getKey(), 1, 'text');
+        selection.focus.set(three.getKey(), 2, 'text');
+      },
+      { discrete: true }
+    );
+
+    expect(await dispatchTab(editor)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toBe(
+        [
+          'bullet',
+          '  item: "one"',
+          '  item: ""',
+          '    bullet',
+          '      item: "two"',
+          '      item: "three"',
+        ].join('\n')
+      );
+    });
+
+    unmount();
+    editor.dispose();
+  });
+
+  it('indents a list item when only part of a single item is selected', async () => {
+    const editor = makeGfmTestEditor('- one\n- hello\n- three');
+    selectText(editor, 'hello', 0, 3);
+
+    expect(await dispatchTab(editor)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toBe(
+        [
+          'bullet',
+          '  item: "one"',
+          '  item: ""',
+          '    bullet',
+          '      item: "hello"',
+          '  item: "three"',
+        ].join('\n')
+      );
+    });
+
+    editor.dispose();
+  });
+
+  it('indents a list item when its text is fully selected', async () => {
+    const editor = makeGfmTestEditor('- one\n- hello\n- three');
+    selectText(editor, 'hello');
+
+    expect(await dispatchTab(editor)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toBe(
+        [
+          'bullet',
+          '  item: "one"',
+          '  item: ""',
+          '    bullet',
+          '      item: "hello"',
+          '  item: "three"',
+        ].join('\n')
+      );
+    });
+
+    editor.dispose();
+  });
+
+  it('outdents a list item when its text is fully selected', async () => {
+    const editor = makeGfmTestEditor('- one\n  - hello\n- three');
+    selectText(editor, 'hello');
+
+    expect(await dispatchTab(editor, true)).toBe(true);
+    expect(exportMarkdown(editor)).toBe('- one\n- hello\n- three');
+
+    editor.dispose();
+  });
+
+  it('inserts a tab on an empty line without moving the caret to the end', async () => {
+    const editor = makeGfmTestEditor('```\na\n\nb\n```');
+    const unmount = mountEditor(editor);
+    editor.update(
+      () => {
+        const code = $getRoot().getFirstChild();
+        if (!code || !$isCodeNode(code)) {
+          throw new Error('Expected a code block');
+        }
+        code.splice(0, code.getChildrenSize(), $plainifyCodeContent('a\n\nb'));
+      },
+      { discrete: true }
+    );
+
+    editor.update(
+      () => {
+        const code = $getRoot().getFirstChild();
+        if (!code || !$isCodeNode(code)) {
+          throw new Error('Expected a code block');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(code.getKey(), 2, 'element');
+        selection.focus.set(code.getKey(), 2, 'element');
+      },
+      { discrete: true }
+    );
+
+    expect(await dispatchTab(editor)).toBe(true);
+    expect(exportMarkdown(editor)).toContain('a\n\t\nb');
+
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected range selection');
+      }
+      const code = $getRoot().getFirstChild();
+      if (!code || !$isCodeNode(code)) {
+        throw new Error('Expected a code block');
+      }
+      expect(code.getTextContent()).toBe('a\n\t\nb');
+      expect(selection.focus.getNode().getTextContent()).not.toBe('b');
+
+      let flatOffset = 0;
+      for (const child of code.getChildren()) {
+        if (child.getKey() === selection.focus.getNode().getKey()) {
+          flatOffset += selection.focus.offset;
+          break;
+        }
+        flatOffset += child.getTextContent().length;
+      }
+      expect(flatOffset).toBe(3);
+    });
+
+    unmount();
+    editor.dispose();
+  });
+
+  it('inserts a tab in a code block', async () => {
+    const editor = makeGfmTestEditor('```\nconst x = 1;\n```');
+    selectTextNode(editor, 'const x = 1;', 5);
+
+    expect(await dispatchTab(editor)).toBe(true);
+    expect(exportMarkdown(editor)).toBe('```\nconst\t x = 1;\n```');
+
+    editor.dispose();
+  });
+
+  it('indents multiple selected lines in a code block with highlight nodes', async () => {
+    const editor = makeGfmTestEditor('```\na\nb\n```');
+    editor.update(
+      () => {
+        const code = $getRoot().getFirstChild();
+        if (!code || !$isCodeNode(code)) {
+          throw new Error('Expected a code block');
+        }
+        code.splice(0, code.getChildrenSize(), $plainifyCodeContent('a\nb'));
+        const firstLine = code.getFirstChild();
+        const lastLine = code.getLastChild();
+        if (!firstLine || !lastLine) {
+          throw new Error('Expected plainified code children');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(firstLine.getKey(), 1, 'text');
+        selection.focus.set(lastLine.getKey(), 0, 'text');
+      },
+      { discrete: true }
+    );
+
+    expect(await dispatchTab(editor)).toBe(true);
+    expect(exportMarkdown(editor)).toBe('```\n\ta\n\tb\n```');
+
+    editor.dispose();
+  });
+
+  it('indents multiple selected lines in a code block', async () => {
+    const editor = makeGfmTestEditor('```\nconst a = 1;\nconst b = 2;\n```');
+    editor.update(
+      () => {
+        const code = $getRoot().getFirstChild();
+        if (!code || !$isElementNode(code)) {
+          throw new Error('Expected a code block');
+        }
+        const textNode = code.getFirstChild();
+        if (!$isTextNode(textNode)) {
+          throw new Error('Expected code text node');
+        }
+        textNode.select(0, textNode.getTextContentSize());
+      },
+      { discrete: true }
+    );
+
+    expect(await dispatchTab(editor)).toBe(true);
+    expect(exportMarkdown(editor)).toBe(
+      '```\n\tconst a = 1;\n\tconst b = 2;\n```'
+    );
+
+    expect(await dispatchTab(editor, true)).toBe(true);
+    expect(exportMarkdown(editor)).toBe('```\nconst a = 1;\nconst b = 2;\n```');
 
     editor.dispose();
   });

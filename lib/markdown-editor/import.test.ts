@@ -4,6 +4,7 @@ import {
   $isParagraphNode,
   $isRangeSelection,
 } from 'lexical';
+import { $isCodeNode } from '@lexical/code-core';
 import { registerMarkdownShortcuts } from '@lexical/markdown';
 
 import {
@@ -130,6 +131,38 @@ describe('$importMarkdownString', () => {
       const lastBlock = $getRoot().getLastChild();
       expect(lastBlock?.getType()).toBe('heading');
     });
+    editor.dispose();
+  });
+
+  it('round-trips a code block with empty lines', () => {
+    const markdown = '```\ntest\n\n\n\n```';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children.map((child) => child.getType())).toEqual(['code']);
+      const code = children[0];
+      expect($isCodeNode(code)).toBe(true);
+      expect(code.getTextContent()).toBe('test\n\n\n');
+    });
+
+    const roundtrip = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(roundtrip).toBe(markdown);
+    editor.dispose();
+  });
+
+  it('round-trips a paragraph followed by a code block with empty lines', () => {
+    const markdown = 'hello\n\n```\ntest\n\n\n\n```';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    const roundtrip = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(roundtrip).toBe(markdown);
     editor.dispose();
   });
 

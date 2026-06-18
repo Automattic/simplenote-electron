@@ -4,7 +4,7 @@ import {
   HorizontalRuleExtension,
   HorizontalRuleNode,
 } from '@lexical/extension';
-import { $isCodeNode } from '@lexical/code-core';
+import { $isCodeNode, $plainifyCodeContent } from '@lexical/code-core';
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
@@ -41,6 +41,7 @@ import {
   $isTextNode,
   $setState,
   createState,
+  type ElementNode,
   type LexicalNode,
 } from 'lexical';
 
@@ -393,6 +394,147 @@ export const HR: ElementTransformer = {
 const TILDE_CODE_START_REGEX = /^([ \t]*~{3,})([\w-]+)?[ \t]?/;
 const TILDE_CODE_END_REGEX = /^[ \t]*~{3,}$/;
 
+function $countTrailingEmptyCodeLines(lines: string[]): number {
+  let count = 0;
+  for (let index = lines.length - 1; index >= 0; index--) {
+    if (lines[index].length !== 0) {
+      break;
+    }
+    count++;
+  }
+  return count;
+}
+
+function $restoreCodeBlockText(codeNode: LexicalNode, text: string): void {
+  if (!$isCodeNode(codeNode)) {
+    return;
+  }
+  codeNode.splice(0, codeNode.getChildrenSize(), $plainifyCodeContent(text));
+}
+
+function $importCodeBlockPreservingEmptyLines(
+  rootNode: ElementNode,
+  children: LexicalNode[] | null,
+  startMatch: string[],
+  endMatch: string[] | null,
+  linesInBetween: string[] | null,
+  isImport: boolean
+): void {
+  if (!linesInBetween || linesInBetween.length <= 1) {
+    CODE.replace(
+      rootNode,
+      children,
+      startMatch,
+      endMatch,
+      linesInBetween,
+      isImport
+    );
+    return;
+  }
+
+  const trailingEmptyLineCount = $countTrailingEmptyCodeLines(linesInBetween);
+  const contentLines = linesInBetween.slice(
+    0,
+    linesInBetween.length - trailingEmptyLineCount
+  );
+
+  CODE.replace(
+    rootNode,
+    children,
+    startMatch,
+    endMatch,
+    contentLines.length > 0 ? contentLines : [''],
+    isImport
+  );
+
+  if (trailingEmptyLineCount === 0) {
+    return;
+  }
+
+  const codeNode = rootNode.getLastChild();
+  if (codeNode === null) {
+    return;
+  }
+
+  const trailingNewlines = '\n'.repeat(trailingEmptyLineCount);
+  $restoreCodeBlockText(
+    codeNode,
+    `${codeNode.getTextContent()}${trailingNewlines}`
+  );
+}
+
+function $handleBacktickCodeImportAfterStartMatch({
+  lines,
+  rootNode,
+  startLineIndex,
+  startMatch,
+}: {
+  lines: string[];
+  rootNode: ElementNode;
+  startLineIndex: number;
+  startMatch: RegExpMatchArray;
+}): [boolean, number] {
+  const fence = startMatch[1];
+  const fenceLength = fence.trim().length;
+  const currentLine = lines[startLineIndex];
+  const afterFenceIndex = startMatch.index! + fence.length;
+  const afterFence = currentLine.slice(afterFenceIndex);
+  const singleLineEndRegex = new RegExp(`\`{${fenceLength},}$`);
+  const multilineEndRegex = new RegExp(`^[ \\t]*\`{${fenceLength},}$`);
+
+  if (singleLineEndRegex.test(afterFence)) {
+    const endMatch = afterFence.match(singleLineEndRegex);
+    const content = afterFence.slice(0, afterFence.lastIndexOf(endMatch![0]));
+    const fakeStartMatch = [...startMatch] as RegExpMatchArray;
+    fakeStartMatch[2] = '';
+    $importCodeBlockPreservingEmptyLines(
+      rootNode,
+      null,
+      fakeStartMatch,
+      endMatch,
+      [content],
+      true
+    );
+    return [true, startLineIndex];
+  }
+
+  for (let index = startLineIndex + 1; index < lines.length; index++) {
+    const line = lines[index];
+    if (multilineEndRegex.test(line)) {
+      const endMatch = line.match(multilineEndRegex);
+      const linesInBetween = lines.slice(startLineIndex + 1, index);
+      const afterFullMatch = currentLine.slice(startMatch[0].length);
+      if (afterFullMatch.length > 0) {
+        linesInBetween.unshift(afterFullMatch);
+      }
+      $importCodeBlockPreservingEmptyLines(
+        rootNode,
+        null,
+        startMatch,
+        endMatch,
+        linesInBetween,
+        true
+      );
+      return [true, index];
+    }
+  }
+
+  const linesInBetween = lines.slice(startLineIndex + 1);
+  const afterFullMatch = currentLine.slice(startMatch[0].length);
+  if (afterFullMatch.length > 0) {
+    linesInBetween.unshift(afterFullMatch);
+  }
+  $importCodeBlockPreservingEmptyLines(
+    rootNode,
+    null,
+    startMatch,
+    null,
+    linesInBetween,
+    true
+  );
+  return [true, lines.length - 1];
+}
+
 // Lexical's CODE.export ignores the selection callback and always emits fences
 // around the full block. Partial in-block copies should stay raw source text.
 export const SELECTION_AWARE_CODE: MultilineElementTransformer = {
@@ -409,6 +551,8 @@ export const SELECTION_AWARE_CODE: MultilineElementTransformer = {
     }
     return CODE.export!(node, traverseChildren, selection);
   },
+  handleImportAfterStartMatch: $handleBacktickCodeImportAfterStartMatch,
+  replace: $importCodeBlockPreservingEmptyLines,
 };
 
 export const TILDE_CODE: MultilineElementTransformer = {
@@ -431,7 +575,14 @@ export const TILDE_CODE: MultilineElementTransformer = {
       endMatch: RegExpMatchArray | null,
       linesInBetween: string[]
     ) => {
-      CODE.replace(rootNode, null, startMatch, endMatch, linesInBetween, true);
+      $importCodeBlockPreservingEmptyLines(
+        rootNode,
+        null,
+        startMatch,
+        endMatch,
+        linesInBetween,
+        true
+      );
     };
 
     for (let i = startLineIndex + 1; i < lines.length; i++) {
@@ -461,7 +612,7 @@ export const TILDE_CODE: MultilineElementTransformer = {
     regExp: TILDE_CODE_END_REGEX,
   },
   regExpStart: TILDE_CODE_START_REGEX,
-  replace: CODE.replace,
+  replace: $importCodeBlockPreservingEmptyLines,
   type: 'multiline-element',
 };
 

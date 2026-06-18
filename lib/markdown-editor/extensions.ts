@@ -4,7 +4,11 @@ import {
   $generateNodesFromSerializedNodes,
   $insertGeneratedNodes,
 } from '@lexical/clipboard';
-import { $isCodeNode, CodeExtension } from '@lexical/code-core';
+import {
+  $isCodeNode,
+  CodeExtension,
+  CodeIndentExtension,
+} from '@lexical/code-core';
 import {
   HorizontalRuleExtension,
   InitialStateExtension,
@@ -142,6 +146,84 @@ function extraEmptyParagraphsInGap(gap: string): number {
   return newlineCount >= 3 ? newlineCount - 1 : 0;
 }
 
+type ImportChunkPart =
+  | { kind: 'gap'; text: string }
+  | { kind: 'markdown'; text: string };
+
+function $tryFenceStart(
+  chunk: string,
+  index: number
+): { headerLength: number; marker: '```' | '~~~' } | null {
+  if (index > 0 && chunk[index - 1] !== '\n') {
+    return null;
+  }
+
+  const match = chunk.slice(index).match(/^(```|~~~)([^\n]*)\n/);
+  if (match === null) {
+    return null;
+  }
+
+  return {
+    headerLength: match[0].length,
+    marker: match[1] as '```' | '~~~',
+  };
+}
+
+function $findFencedCodeBlockEnd(
+  chunk: string,
+  contentStart: number,
+  marker: '```' | '~~~'
+): number | null {
+  const endFenceRegex = new RegExp(`\\n${marker}\\s*(?:\\n|$)`);
+  const match = endFenceRegex.exec(chunk.slice(contentStart));
+  if (match === null) {
+    return null;
+  }
+
+  return contentStart + match.index + match[0].length;
+}
+
+function $splitImportChunkParts(chunk: string): ImportChunkPart[] {
+  const parts: ImportChunkPart[] = [];
+  let index = 0;
+
+  while (index < chunk.length) {
+    const fenceStart = $tryFenceStart(chunk, index);
+    if (fenceStart !== null) {
+      const contentStart = index + fenceStart.headerLength;
+      const blockEnd =
+        $findFencedCodeBlockEnd(chunk, contentStart, fenceStart.marker) ??
+        chunk.length;
+      parts.push({ kind: 'markdown', text: chunk.slice(index, blockEnd) });
+      index = blockEnd;
+      continue;
+    }
+
+    const gapMatch = chunk.slice(index).match(/^\n{2,}/);
+    if (gapMatch !== null) {
+      parts.push({ kind: 'gap', text: gapMatch[0] });
+      index += gapMatch[0].length;
+      continue;
+    }
+
+    let nextIndex = chunk.length;
+    const gapIndex = chunk.slice(index).search(/\n{2,}/);
+    if (gapIndex > 0) {
+      nextIndex = index + gapIndex;
+    }
+
+    const fenceMatch = chunk.slice(index).match(/\n(```|~~~)[^\n]*\n/);
+    if (fenceMatch?.index !== undefined) {
+      nextIndex = Math.min(nextIndex, index + fenceMatch.index + 1);
+    }
+
+    parts.push({ kind: 'markdown', text: chunk.slice(index, nextIndex) });
+    index = nextIndex;
+  }
+
+  return parts;
+}
+
 function importMarkdownSegment(segment: string, target: ElementNode): void {
   const container = $createParagraphNode();
   target.append(container);
@@ -184,16 +266,16 @@ function $importChunk(chunk: string, target: ElementNode): void {
     return;
   }
 
-  const parts = chunk.split(/(\n{2,})/);
-  for (let i = 0; i < parts.length; i++) {
-    if (i % 2 === 0) {
-      if (parts[i].length > 0) {
-        importMarkdownSegment(parts[i], target);
+  const parts = $splitImportChunkParts(chunk);
+  for (const part of parts) {
+    if (part.kind === 'markdown') {
+      if (part.text.length > 0) {
+        importMarkdownSegment(part.text, target);
       }
       continue;
     }
 
-    for (let j = 0; j < extraEmptyParagraphsInGap(parts[i]); j++) {
+    for (let j = 0; j < extraEmptyParagraphsInGap(part.text); j++) {
       target.append($createParagraphNode());
     }
   }
@@ -722,6 +804,10 @@ export function createMarkdownEditorExtension(
     CheckListExtension,
     LinkExtension,
     CodeExtension,
+    configExtension(CodeIndentExtension, {
+      disabled: true,
+      tabSize: undefined,
+    }),
     TableExtension,
     TableControlsExtension,
     HorizontalRuleExtension,
