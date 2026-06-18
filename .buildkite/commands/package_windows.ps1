@@ -2,9 +2,8 @@
 $ErrorActionPreference = "Stop"
 
 # Windows code signing defaults to the PFX cert. Setting USE_AZURE_TRUSTED_SIGNING switches the NSIS
-# exe to Azure Trusted Signing (via the win.sign callback wired in by `make package-win32`); the PFX
-# is still provisioned so it stays available as a fallback. See AINFRA-2472 for the auto-update
-# publisher-name handover that gates a full cutover.
+# exe to Azure Trusted Signing (via the win.sign callback wired in by `make package-win32`). See
+# AINFRA-2472 for the auto-update publisher-name handover that gates a full cutover.
 $useAzure = -not [string]::IsNullOrEmpty($env:USE_AZURE_TRUSTED_SIGNING)
 
 If ($useAzure) {
@@ -41,16 +40,6 @@ If (-not (Test-Path $certPath)) {
 # path signs the NSIS exe from the store).
 # See https://buildkite.com/automattic/simplenote-electron/builds/71#01900b28-9508-4bfe-bc80-63464afeaa3e/292-567
 Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $windowsCertPassword -AsPlainText -Force)
-
-If ($useAzure) {
-    # Azure mode signs the exe via the win.sign callback, which reads these from the process env for
-    # its PFX fallback. In PFX mode we deliberately do NOT export them: the exe signs via
-    # certificateSubjectName + the store import above, and exporting CSC_LINK would make
-    # electron-builder also sign the Store AppX with the PFX, whose publisher does not match the cert
-    # ("SignTool Error: An unexpected internal error has occurred").
-    $env:CSC_KEY_PASSWORD = $windowsCertPassword
-    $env:CSC_LINK = $certPath
-}
 
 Write-Host "--- :windows: Installing make"
 choco install make
