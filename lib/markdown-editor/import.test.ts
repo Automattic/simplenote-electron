@@ -4,12 +4,13 @@ import {
   $isParagraphNode,
   $isRangeSelection,
 } from 'lexical';
-import {
-  $convertToMarkdownString,
-  registerMarkdownShortcuts,
-} from '@lexical/markdown';
+import { registerMarkdownShortcuts } from '@lexical/markdown';
 
-import { $importMarkdownString, MARKDOWN_TRANSFORMERS } from './extensions';
+import {
+  $exportMarkdownString,
+  $importMarkdownString,
+  MARKDOWN_TRANSFORMERS,
+} from './extensions';
 import { makeGfmTestEditor } from './gfm-test-helpers';
 
 function typeAtEnd(editor: ReturnType<typeof makeGfmTestEditor>, text: string) {
@@ -58,8 +59,52 @@ describe('$importMarkdownString', () => {
 
     const roundtrip = editor
       .getEditorState()
-      .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
+      .read(() => $exportMarkdownString());
     expect(roundtrip).toBe('hello\n\nworld');
+    editor.dispose();
+  });
+
+  it('round-trips empty paragraphs between content blocks', () => {
+    const markdown = 'hello\n\n\nworld';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(4);
+      expect(children[0].getTextContent()).toBe('hello');
+      expect($isParagraphNode(children[1])).toBe(true);
+      expect(children[1].getTextContent()).toBe('');
+      expect($isParagraphNode(children[2])).toBe(true);
+      expect(children[2].getTextContent()).toBe('');
+      expect(children[3].getTextContent()).toBe('world');
+    });
+
+    const roundtrip = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(roundtrip).toBe(markdown);
+    editor.dispose();
+  });
+
+  it('imports a whitespace-only note as empty paragraphs', () => {
+    const markdown = '\n\n\n';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(4);
+      for (const child of children) {
+        expect($isParagraphNode(child)).toBe(true);
+        expect(child.getTextContent()).toBe('');
+      }
+    });
+
+    const roundtrip = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(roundtrip).toBe(markdown);
     editor.dispose();
   });
 

@@ -133,22 +133,23 @@ const INLINE_MARKDOWN_TRANSFORMERS = MARKDOWN_TRANSFORMERS.filter(
     transformer.type === 'text-format' || transformer.type === 'text-match'
 );
 
-// $convertFromMarkdownString clears its target node, so each chunk is
-// imported into a temporary container first, then the resulting blocks
-// are hoisted out. Leaving blocks nested inside the container paragraph
-// breaks element-level markdown shortcuts (they require blocks to be
-// direct children of the root) and corrupts markdown export.
-function $importChunk(chunk: string, target: ElementNode): void {
+// Import with Lexical's default merge/strip behavior, then re-insert empty
+// paragraphs that standard \n\n export cannot distinguish from block breaks.
+function extraEmptyParagraphsInGap(gap: string): number {
+  const newlineCount = (gap.match(/\n/g) || []).length;
+  // \n\n is a standard block delimiter (0 empty paragraphs). Each additional
+  // newline beyond that encodes one intentional empty paragraph in export.
+  return newlineCount >= 3 ? newlineCount - 1 : 0;
+}
+
+function importMarkdownSegment(segment: string, target: ElementNode): void {
   const container = $createParagraphNode();
   target.append(container);
-  $convertFromMarkdownString(chunk, MARKDOWN_TRANSFORMERS, container);
+  $convertFromMarkdownString(segment, MARKDOWN_TRANSFORMERS, container);
   if (container.getParent() === null) {
     return;
   }
   if (container.getNextSibling() === null) {
-    // The container is the last child of `target`, so hoisting is a plain
-    // append. (insertBefore would recompute the container's child index — an
-    // O(siblings) walk — per block, going quadratic over large documents.)
     const children = container.getChildren();
     container.remove();
     target.append(...children);
@@ -157,6 +158,44 @@ function $importChunk(chunk: string, target: ElementNode): void {
       container.insertBefore(child);
     }
     container.remove();
+  }
+}
+
+export function $exportMarkdownString(): string {
+  return $convertToMarkdownString(MARKDOWN_TRANSFORMERS);
+}
+
+// $convertFromMarkdownString clears its target node, so each chunk is
+// imported into a temporary container first, then the resulting blocks
+// are hoisted out. Leaving blocks nested inside the container paragraph
+// breaks element-level markdown shortcuts (they require blocks to be
+// direct children of the root) and corrupts markdown export.
+function $importChunk(chunk: string, target: ElementNode): void {
+  if (/^\s*$/.test(chunk)) {
+    const lineCount = chunk.length === 0 ? 1 : chunk.split('\n').length;
+    for (let i = 0; i < lineCount; i++) {
+      target.append($createParagraphNode());
+    }
+    return;
+  }
+
+  if (!chunk.includes('\n\n')) {
+    importMarkdownSegment(chunk, target);
+    return;
+  }
+
+  const parts = chunk.split(/(\n{2,})/);
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 0) {
+      if (parts[i].length > 0) {
+        importMarkdownSegment(parts[i], target);
+      }
+      continue;
+    }
+
+    for (let j = 0; j < extraEmptyParagraphsInGap(parts[i]); j++) {
+      target.append($createParagraphNode());
+    }
   }
 }
 
@@ -652,7 +691,7 @@ export function registerMarkdownOnChange(
         return;
       }
       editorState.read(() => {
-        onChange($convertToMarkdownString(MARKDOWN_TRANSFORMERS));
+        onChange($exportMarkdownString());
       });
     }
   );

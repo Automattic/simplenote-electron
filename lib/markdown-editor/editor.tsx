@@ -10,6 +10,7 @@ import type { LexicalEditor } from 'lexical';
 
 import {
   createMarkdownEditorExtension,
+  $exportMarkdownString,
   $importMarkdownString,
   MARKDOWN_TRANSFORMERS,
   MarkdownShortcutExtension,
@@ -91,6 +92,7 @@ export default function MarkdownEditor({
 export {
   $convertFromMarkdownString,
   $convertToMarkdownString,
+  $exportMarkdownString,
   $importMarkdownString,
   createMarkdownEditorExtension,
   MARKDOWN_TRANSFORMERS,

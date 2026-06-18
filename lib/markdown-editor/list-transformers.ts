@@ -387,7 +387,7 @@ export function importMixedNestedListMarkdown(
   for (const block of groupListBlocks(markdown)) {
     if (block.kind === 'list') {
       importListBlock(block.lines, root, inlineTransformers);
-    } else if (block.text.trim().length > 0) {
+    } else if (block.text.length > 0) {
       importMarkdownChunk(block.text, root);
     }
   }

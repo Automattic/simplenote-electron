@@ -6,11 +6,10 @@ import React, {
   useState,
 } from 'react';
 import { connect } from 'react-redux';
-import { $convertToMarkdownString } from '@lexical/markdown';
 import type { LexicalEditor } from 'lexical';
 
-import MarkdownEditor, { $importMarkdownString, TRANSFORMERS } from './editor';
-import { REMOTE_CONTENT_TAG } from './extensions';
+import MarkdownEditor, { $importMarkdownString } from './editor';
+import { $exportMarkdownString, REMOTE_CONTENT_TAG } from './extensions';
 import { useScrollMemory } from './scroll-memory';
 import actions from '../state/actions';
 import {
@@ -128,7 +127,7 @@ function MarkdownNoteEditorComponent({
         return;
       }
 
-      const local = $convertToMarkdownString(TRANSFORMERS);
+      const local = $exportMarkdownString();
       if (remote === local) {
         lastPushedRef.current = remote;
         return;
