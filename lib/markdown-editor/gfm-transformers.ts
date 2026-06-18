@@ -4,6 +4,7 @@ import {
   HorizontalRuleExtension,
   HorizontalRuleNode,
 } from '@lexical/extension';
+import { $isCodeNode } from '@lexical/code-core';
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
@@ -387,9 +388,27 @@ export const HR: ElementTransformer = {
 const TILDE_CODE_START_REGEX = /^([ \t]*~{3,})([\w-]+)?[ \t]?/;
 const TILDE_CODE_END_REGEX = /^[ \t]*~{3,}$/;
 
+// Lexical's CODE.export ignores the selection callback and always emits fences
+// around the full block. Partial in-block copies should stay raw source text.
+export const SELECTION_AWARE_CODE: MultilineElementTransformer = {
+  ...CODE,
+  export: (node, traverseChildren, selection) => {
+    if (!$isCodeNode(node)) {
+      return null;
+    }
+    if (selection) {
+      const selectedText = traverseChildren(node);
+      if (selectedText !== node.getTextContent()) {
+        return selectedText;
+      }
+    }
+    return CODE.export!(node, traverseChildren, selection);
+  },
+};
+
 export const TILDE_CODE: MultilineElementTransformer = {
   dependencies: CODE.dependencies,
-  export: CODE.export,
+  export: SELECTION_AWARE_CODE.export,
   handleImportAfterStartMatch: ({
     lines,
     rootNode,

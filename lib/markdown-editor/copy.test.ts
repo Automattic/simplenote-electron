@@ -13,13 +13,15 @@ import {
   type LexicalNode,
   type TextNode,
 } from 'lexical';
+import { $isCodeNode } from '@lexical/code-core';
 import { $isListItemNode, $isListNode } from '@lexical/list';
 
+import { LEXICAL_CLIPBOARD_JSON_PREFIX } from './clipboard-lexical-json';
 import {
   createMarkdownEditorExtension,
+  MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
 } from './extensions';
-import { LEXICAL_CLIPBOARD_JSON_PREFIX } from './clipboard-lexical-json';
 
 function makeEditor(markdown: string) {
   return buildEditorFromExtensions(createMarkdownEditorExtension(markdown));
@@ -76,32 +78,41 @@ function getClipboardDataForFirstListItem(
 }
 
 describe('markdown clipboard export', () => {
-  it('serializes code blocks as fenced markdown in text/plain', () => {
+  it('exports raw code in text/plain and fenced markdown in text/markdown', () => {
     const editor = makeEditor('```\nconst a = 1;\nconst b = 2;\n```');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toContain('```');
-    expect(data['text/plain']).toContain('const a = 1;');
-    expect(data['text/plain']).toContain('const b = 2;');
+    expect(data['text/plain']).toBe('const a = 1;\nconst b = 2;');
+    expect(data['text/plain']).not.toContain('```');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('```');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('const a = 1;');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('const b = 2;');
     editor.dispose();
   });
 
-  it('serializes quotes with their markers', () => {
+  it('exports visible text in text/plain and markdown markers in text/markdown', () => {
     const editor = makeEditor('> first quoted line\n\nplain paragraph');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toContain('> first quoted line');
+    expect(data['text/plain']).toContain('first quoted line');
     expect(data['text/plain']).toContain('plain paragraph');
+    expect(data['text/plain']).not.toContain('>');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('> first quoted line');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('plain paragraph');
     editor.dispose();
   });
 
-  it('serializes lists with bullets and headings with hashes', () => {
+  it('exports list and heading plain text separately from markdown', () => {
     const editor = makeEditor('# Title\n\n- one\n- two');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toContain('# Title');
-    expect(data['text/plain']).toContain('- one');
-    expect(data['text/plain']).toContain('- two');
+    expect(data['text/plain']).toContain('Title');
+    expect(data['text/plain']).toContain('one');
+    expect(data['text/plain']).toContain('two');
+    expect(data['text/plain']).not.toContain('#');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('# Title');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('- one');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('- two');
     editor.dispose();
   });
 
@@ -109,7 +120,9 @@ describe('markdown clipboard export', () => {
     const editor = makeEditor('# Title\n\n> quoted');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toContain('# Title');
+    expect(data['text/plain']).toContain('Title');
+    expect(data['text/plain']).toContain('quoted');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toContain('# Title');
     expect(data['text/html']).toContain('<h1');
     expect(data['text/html']).toContain('<blockquote');
     expect(data['application/x-lexical-editor']).toMatch(
@@ -130,7 +143,8 @@ describe('markdown clipboard export', () => {
     const editor = makeEditor('- [ ] open task');
     const data = getClipboardDataForAll(editor);
 
-    expect(data['text/plain']).toBe('- [ ] open task\n');
+    expect(data['text/plain']).toBe('open task');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- [ ] open task\n');
     expect(data['text/html']).toContain('open task');
     expect(data['application/x-lexical-editor']).toMatch(
       new RegExp(`^${LEXICAL_CLIPBOARD_JSON_PREFIX}`)
@@ -186,7 +200,8 @@ describe('markdown clipboard export', () => {
     const editor = makeEditor('- [ ] task one\n- two\n- [ ] task three');
     const data = getClipboardDataForFirstListItem(editor);
 
-    expect(data['text/plain']).toBe('- [ ] task one\n');
+    expect(data['text/plain']).toBe('task one');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- [ ] task one\n');
     editor.dispose();
   });
 
@@ -204,8 +219,9 @@ describe('markdown clipboard export', () => {
       item.select(0, item.getChildrenSize());
     });
 
-    expect(data['text/plain']).toBe('- [ ] task one\n');
-    expect(data['text/plain']).not.toMatch(/^\n/);
+    expect(data['text/plain']).toBe('task one');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- [ ] task one\n');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).not.toMatch(/^\n/);
     editor.dispose();
   });
 
@@ -219,8 +235,51 @@ describe('markdown clipboard export', () => {
       textNode.select(0, 3);
     });
 
-    expect(data['text/plain']).toBe('- alp');
-    expect(data['text/plain']).not.toMatch(/\n$/);
+    expect(data['text/plain']).toBe('alp');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- alp');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).not.toMatch(/\n$/);
+    editor.dispose();
+  });
+
+  it('copies only the selected line from a multiline code block across all mime types', () => {
+    const editor = makeEditor('```\nconst a = 1;\nconst b = 2;\n```');
+    const selectedLine = 'const a = 1;';
+    const data = getClipboardDataForSelection(editor, () => {
+      const code = $getRoot().getFirstChild();
+      if (!$isCodeNode(code)) {
+        throw new Error('Expected a code block');
+      }
+      const textNode = code.getFirstChild();
+      if (!$isTextNode(textNode)) {
+        throw new Error('Expected code text node');
+      }
+      textNode.select(0, selectedLine.length);
+    });
+
+    expect(data['text/plain']).toBe(selectedLine);
+    expect(data['text/plain']).not.toContain('const b = 2;');
+    expect(data['text/plain']).not.toContain('```');
+
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe(selectedLine);
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).not.toContain('const b = 2;');
+    expect(data[MARKDOWN_CLIPBOARD_MIME_TYPE]).not.toContain('```');
+
+    expect(data['text/html']).toContain(selectedLine);
+    expect(data['text/html']).not.toContain('const b = 2;');
+    expect(data['text/html']).not.toContain('```');
+
+    expect(data['application/x-lexical-editor']).toMatch(
+      new RegExp(`^${LEXICAL_CLIPBOARD_JSON_PREFIX}`)
+    );
+    const payload = JSON.parse(
+      data['application/x-lexical-editor']!.slice(
+        LEXICAL_CLIPBOARD_JSON_PREFIX.length
+      )
+    );
+    expect(payload.namespace).toBe('SimplenoteMarkdownEditor');
+    expect(JSON.stringify(payload.nodes)).toContain(selectedLine);
+    expect(JSON.stringify(payload.nodes)).not.toContain('const b = 2;');
+
     editor.dispose();
   });
 });

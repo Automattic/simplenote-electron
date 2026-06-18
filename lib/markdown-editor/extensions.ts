@@ -23,7 +23,6 @@ import {
   $convertFromMarkdownString,
   $convertSelectionToMarkdownString,
   $convertToMarkdownString,
-  CODE,
   HEADING,
   INLINE_CODE,
   BOLD_ITALIC_STAR,
@@ -75,6 +74,7 @@ import {
 import {
   HR,
   IMAGE,
+  SELECTION_AWARE_CODE,
   TABLE,
   TILDE_CODE,
   getTableCellInlineTransformers,
@@ -111,7 +111,7 @@ export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
   MIXED_NESTED_UNORDERED_LIST,
   MIXED_NESTED_ORDERED_LIST,
   TABLE,
-  CODE,
+  SELECTION_AWARE_CODE,
   TILDE_CODE,
   INLINE_CODE,
   BOLD_ITALIC_STAR,
@@ -283,6 +283,15 @@ const MARKDOWN_PASTE_HINT =
 // over Lexical JSON so the item is reinserted as its own bullet, not merged.
 const SINGLE_COMPLETE_LIST_LINE =
   /^\s{0,3}(?:[-*+]\s(?:\[[ xX]\]\s)?|\d+\.\s).+\n$/;
+
+export const MARKDOWN_CLIPBOARD_MIME_TYPE = 'text/markdown';
+
+export function $getClipboardMarkdownFromDataTransfer(
+  clipboardData: Pick<DataTransfer, 'getData'>
+): string {
+  const markdown = clipboardData.getData(MARKDOWN_CLIPBOARD_MIME_TYPE);
+  return markdown || clipboardData.getData('text/plain');
+}
 
 function $isNestedListWrapperItem(listItem: ListItemNode): boolean {
   const children = listItem.getChildren();
@@ -480,8 +489,8 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
         return false;
       }
 
-      const text = clipboardData.getData('text/plain');
-      if (!text || !MARKDOWN_PASTE_HINT.test(text)) {
+      const markdownText = $getClipboardMarkdownFromDataTransfer(clipboardData);
+      if (!markdownText || !MARKDOWN_PASTE_HINT.test(markdownText)) {
         return false;
       }
 
@@ -496,7 +505,7 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
             stripLexicalClipboardJsonPrefix(lexicalJson)
           );
           if (payload && payload.namespace === editor._config.namespace) {
-            if (!SINGLE_COMPLETE_LIST_LINE.test(text)) {
+            if (!SINGLE_COMPLETE_LIST_LINE.test(markdownText)) {
               return false;
             }
           }
@@ -514,7 +523,7 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
       ) {
         let inserted = false;
         editor.update(() => {
-          inserted = $insertInlineMarkdownPasteInTable(text);
+          inserted = $insertInlineMarkdownPasteInTable(markdownText);
         });
         if (inserted) {
           event.preventDefault();
@@ -535,7 +544,7 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
         return false;
       }
 
-      if (!$insertMarkdownPasteNodes(text, pasteAnchorBlock)) {
+      if (!$insertMarkdownPasteNodes(markdownText, pasteAnchorBlock)) {
         return false;
       }
 
@@ -562,7 +571,7 @@ const $exportSelectionMarkdown = (
   ).replace(/^\n+/, '');
 
   // A trailing linebreak keeps pasted list lines as separate items instead of
-  // merging with the following line when cut/copy text/plain is reused.
+  // merging with the following line when cut/copy markdown is reused.
   if (
     $isRangeSelection(selection) &&
     $shouldAppendTrailingLinebreakToClipboardMarkdown(selection) &&
@@ -580,9 +589,9 @@ export const MarkdownCopyExtension = defineExtension({
   dependencies: [
     configExtension(GetClipboardDataExtension, {
       $exportMimeType: {
-        'text/plain': [
-          (selection, next) =>
-            selection ? $exportSelectionMarkdown(selection) : next(),
+        [MARKDOWN_CLIPBOARD_MIME_TYPE]: [
+          (selection) =>
+            selection ? $exportSelectionMarkdown(selection) : null,
         ],
         // Prefix Lexical JSON so Cursor IDE ignores it; stripped on import below.
         'application/x-lexical-editor': [
@@ -600,7 +609,7 @@ export const MarkdownCopyExtension = defineExtension({
       $importMimeType: {
         'application/x-lexical-editor': [
           (data, selection, $next, dataTransfer) => {
-            const text = dataTransfer.getData('text/plain');
+            const text = $getClipboardMarkdownFromDataTransfer(dataTransfer);
             if (SINGLE_COMPLETE_LIST_LINE.test(text)) {
               return false;
             }

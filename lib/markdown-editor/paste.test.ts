@@ -135,6 +135,23 @@ describe('registerMarkdownPaste', () => {
     expect(roundtrip).toContain('# markdown heading');
   });
 
+  it('prefers text/markdown over plain text when both are present', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    const { event } = makePasteEvent('plain only', {
+      'text/markdown': '# markdown heading',
+    });
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    const roundtrip = editor.read(() =>
+      $convertToMarkdownString(MARKDOWN_TRANSFORMERS)
+    );
+    expect(roundtrip).toContain('# markdown heading');
+    expect(roundtrip).not.toContain('plain only');
+  });
+
   it('leaves plain prose to the default paste handling', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);

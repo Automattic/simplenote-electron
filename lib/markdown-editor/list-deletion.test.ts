@@ -14,7 +14,11 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { $insertMarkdownPasteNodes, MARKDOWN_TRANSFORMERS } from './extensions';
+import {
+  $insertMarkdownPasteNodes,
+  MARKDOWN_CLIPBOARD_MIME_TYPE,
+  MARKDOWN_TRANSFORMERS,
+} from './extensions';
 import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
 import { describeListTree } from './list-transformers';
 
@@ -221,14 +225,15 @@ describe('list deletion', () => {
     editor.dispose();
   });
 
-  it('cut and paste a middle list item round-trips via markdown text/plain', async () => {
+  it('cut and paste a middle list item round-trips via markdown clipboard', async () => {
     const editor = makeGfmTestEditor('- one\n- two\n- three');
     selectText(editor, 'two');
 
     const clipboardData = editor.read(() =>
       $getClipboardDataFromSelection($getSelection())
     );
-    expect(clipboardData['text/plain']).toBe('- two\n');
+    expect(clipboardData['text/plain']).toBe('two');
+    expect(clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- two\n');
 
     await dispatchDelete(editor);
     expect(exportMarkdown(editor)).toBe('- one\n- three');
@@ -236,7 +241,7 @@ describe('list deletion', () => {
     editor.update(
       () => {
         const pasted = $insertMarkdownPasteNodes(
-          clipboardData['text/plain'] ?? '',
+          clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE] ?? '',
           $getSelection()?.anchor.getNode().getTopLevelElement() ?? null
         );
         if (!pasted) {
