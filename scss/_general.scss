@@ -51,7 +51,12 @@ optgroup {
   font-weight: $bold;
 }
 
+// Note bodies must stay selectable. The app disables both globally so chrome
+// does not highlight like a web page. Monaco paints its own selection; Lexical
+// depends on native contenteditable selection and iOS touch callouts.
 [contenteditable] {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
   user-select: text; // Safari (https://stackoverflow.com/questions/20435166)
 }
 

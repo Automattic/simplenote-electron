@@ -43,6 +43,7 @@ import {
   registerTaskListItemShortcuts,
   withMixedNestedListTransformers,
 } from './list-transformers';
+import { installDeferredNestedUpdates } from './deferred-nested-updates';
 
 function importMarkdown(markdown: string) {
   const editor = createEditor({
@@ -62,6 +63,7 @@ function makeEditorWithShortcuts() {
       throw error;
     },
   });
+  installDeferredNestedUpdates(editor);
   registerMarkdownShortcuts(editor, [
     MIXED_NESTED_CHECK_LIST,
     MIXED_NESTED_UNORDERED_LIST,
@@ -376,6 +378,66 @@ describe('task list item shortcuts', () => {
       });
     }
   );
+
+  it('does not enqueue a nested update when typing in a plain paragraph', () => {
+    const editor = makeEditorWithShortcuts();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        paragraph.append($createTextNode('hello world'));
+        $getRoot().append(paragraph);
+        paragraph.selectEnd();
+      },
+      { discrete: true }
+    );
+
+    let listenerCalls = 0;
+    const unregister = editor.registerUpdateListener(() => {
+      listenerCalls += 1;
+    });
+
+    editor.update(
+      () => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          selection.insertText('!');
+        }
+      },
+      { discrete: true }
+    );
+
+    unregister();
+    expect(listenerCalls).toBeGreaterThanOrEqual(1);
+  });
+
+  it('does not hit the update cascade guard when typing quickly without discrete updates', async () => {
+    const editor = makeEditorWithShortcuts();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        paragraph.append($createTextNode('hello '));
+        $getRoot().append(paragraph);
+        paragraph.selectEnd();
+      },
+      { discrete: true }
+    );
+
+    const text = 'world typing fast without discrete ';
+    for (const char of text) {
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          selection.insertText(char);
+        }
+      });
+    }
+
+    await Promise.resolve();
+
+    editor.getEditorState().read(() => {
+      expect($getRoot().getTextContent()).toBe(`hello ${text}`);
+    });
+  });
 
   it('does not convert list items to task lists inside table cells', async () => {
     const editor = makeGfmTestEditor();

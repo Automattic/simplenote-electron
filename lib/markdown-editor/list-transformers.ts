@@ -28,6 +28,7 @@ import {
   HISTORIC_TAG,
   HISTORY_PUSH_TAG,
   $addUpdateTag,
+  $getNodeByKey,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
@@ -62,23 +63,34 @@ function $getListItemLeadingTextNode(listItem: ListItemNode): TextNode | null {
   return null;
 }
 
-function $tryConvertListItemToTaskList(
+function $matchesTaskListItemMarker(
   anchorNode: TextNode,
   anchorOffset: number
 ): boolean {
+  const textContent = anchorNode.getTextContent();
+  return (
+    textContent[anchorOffset - 1] === ' ' &&
+    textContent.length === anchorOffset &&
+    TASK_LIST_ITEM_MARKER_REGEX.test(textContent)
+  );
+}
+
+function $getTaskListConversionContext(
+  anchorNode: TextNode
+): { listItem: ListItemNode; listNode: ListNode } | null {
   const listItem = $findMatchingParent(anchorNode, $isListItemNode);
   if (!listItem) {
-    return false;
+    return null;
   }
 
   const listNode = listItem.getParent();
   if (!$isListNode(listNode)) {
-    return false;
+    return null;
   }
 
   const listType = listNode.getListType();
   if (listType !== 'bullet' && listType !== 'number') {
-    return false;
+    return null;
   }
 
   const leadingTextNode = $getListItemLeadingTextNode(listItem);
@@ -86,17 +98,34 @@ function $tryConvertListItemToTaskList(
     leadingTextNode === null ||
     leadingTextNode.getKey() !== anchorNode.getKey()
   ) {
+    return null;
+  }
+
+  return { listItem, listNode };
+}
+
+function $couldConvertListItemToTaskList(
+  anchorNode: TextNode,
+  anchorOffset: number
+): boolean {
+  const context = $getTaskListConversionContext(anchorNode);
+  if (!context) {
     return false;
   }
 
-  const textContent = anchorNode.getTextContent();
-  if (
-    textContent[anchorOffset - 1] !== ' ' ||
-    textContent.length !== anchorOffset ||
-    !TASK_LIST_ITEM_MARKER_REGEX.test(textContent)
-  ) {
+  return $matchesTaskListItemMarker(anchorNode, anchorOffset);
+}
+
+function $tryConvertListItemToTaskList(
+  anchorNode: TextNode,
+  anchorOffset: number
+): boolean {
+  const context = $getTaskListConversionContext(anchorNode);
+  if (!context || !$matchesTaskListItemMarker(anchorNode, anchorOffset)) {
     return false;
   }
+
+  const { listItem, listNode } = context;
 
   listNode.setListType('check');
 
@@ -140,12 +169,24 @@ export function registerTaskListItemShortcuts(
         return;
       }
 
+      const shouldConvert = editorState.read(() =>
+        $couldConvertListItemToTaskList(anchorNode, anchorOffset)
+      );
+      if (!shouldConvert) {
+        return;
+      }
+
       editor.update(() => {
         if ($isSelectionInTable()) {
           return;
         }
 
-        if ($tryConvertListItemToTaskList(anchorNode, anchorOffset)) {
+        const node = $getNodeByKey(anchorKey);
+        if (!$isTextNode(node)) {
+          return;
+        }
+
+        if ($tryConvertListItemToTaskList(node, anchorOffset)) {
           $addUpdateTag(HISTORY_PUSH_TAG);
         }
       });

@@ -1,4 +1,6 @@
 import type { LexicalEditor } from 'lexical';
+import { useEffect, useState } from 'react';
+import { CAN_REDO_COMMAND, CAN_UNDO_COMMAND } from 'lexical';
 import {
   $findMatchingParent,
   $getRoot,
@@ -161,3 +163,68 @@ export const toolbarStateEqual = (a: ToolbarState, b: ToolbarState) =>
   a.blockquote === b.blockquote &&
   a.codeBlock === b.codeBlock &&
   a.inTable === b.inTable;
+
+export const useToolbarState = (editor: LexicalEditor) => {
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const [state, setState] = useState(() => readToolbarState(editor));
+
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const updateToolbar = () => {
+      const nextState = readToolbarState(editor);
+
+      setState((current) =>
+        toolbarStateEqual(current, nextState) ? current : nextState
+      );
+    };
+
+    const scheduleToolbarUpdate = () => {
+      if (rafId !== null) {
+        return;
+      }
+
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        updateToolbar();
+      });
+    };
+
+    const unregisterUpdate = editor.registerUpdateListener(() => {
+      scheduleToolbarUpdate();
+    });
+
+    const unregisterCanUndo = editor.registerCommand(
+      CAN_UNDO_COMMAND,
+      (payload) => {
+        setCanUndo(payload);
+        return false;
+      },
+      1
+    );
+
+    const unregisterCanRedo = editor.registerCommand(
+      CAN_REDO_COMMAND,
+      (payload) => {
+        setCanRedo(payload);
+        return false;
+      },
+      1
+    );
+
+    updateToolbar();
+
+    return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+
+      unregisterUpdate();
+      unregisterCanUndo();
+      unregisterCanRedo();
+    };
+  }, [editor]);
+
+  return { canRedo, canUndo, state };
+};

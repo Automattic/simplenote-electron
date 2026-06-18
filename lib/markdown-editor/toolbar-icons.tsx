@@ -122,6 +122,16 @@ export const DeleteTableColumnIcon = makeTablerStrokeIcon(
 // Gridicons has no dedicated code-block glyph, so we draw one in the same visual
 // language: the `</>` chevrons inside a rounded container to distinguish it from
 // the inline-code button.
+export const TabIndentIcon = makeTablerStrokeIcon(
+  ['M11 6h10', 'M11 12h10', 'M11 18h10', 'M3 8l4 4', 'M7 12l-4 4'],
+  'TabIndentIcon'
+);
+
+export const TabOutdentIcon = makeTablerStrokeIcon(
+  ['M11 6h10', 'M11 12h10', 'M11 18h10', 'M7 8l-4 4', 'M3 12l4 4'],
+  'TabOutdentIcon'
+);
+
 export const CodeBlockIcon = ({ className }: IconProps) => (
   <svg
     className={className}

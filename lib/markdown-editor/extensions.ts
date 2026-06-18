@@ -70,6 +70,7 @@ import {
 } from 'lexical';
 
 import { registerFormatEscape } from './format-escape';
+import { installDeferredNestedUpdates } from './deferred-nested-updates';
 import {
   parseNamespacedLexicalClipboardJson,
   stripLexicalClipboardJsonPrefix,
@@ -374,8 +375,16 @@ const markdownEditorTheme = {
   },
 };
 
+const DeferredNestedUpdatesExtension = defineExtension({
+  name: '@simplenote/deferred-nested-updates',
+  register(editor) {
+    return installDeferredNestedUpdates(editor);
+  },
+});
+
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
+  dependencies: [DeferredNestedUpdatesExtension],
   register(editor) {
     const unregisterMarkdownShortcuts = registerMarkdownShortcuts(
       editor,
@@ -773,7 +782,8 @@ export function registerMarkdownOnChange(
         return;
       }
       editorState.read(() => {
-        onChange($exportMarkdownString());
+        const markdown = $exportMarkdownString();
+        queueMicrotask(() => onChange(markdown));
       });
     }
   );

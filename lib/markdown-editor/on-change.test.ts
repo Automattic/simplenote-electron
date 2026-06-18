@@ -7,6 +7,10 @@ import {
 
 import { registerMarkdownOnChange, REMOTE_CONTENT_TAG } from './extensions';
 
+async function flushMicrotasks(): Promise<void> {
+  await Promise.resolve();
+}
+
 function appendParagraph(
   editor: ReturnType<typeof createEditor>,
   text: string
@@ -35,12 +39,14 @@ describe('registerMarkdownOnChange', () => {
     registerMarkdownOnChange(editor, onChange);
   });
 
-  it('serializes the document on content updates', () => {
+  it('serializes the document on content updates', async () => {
     appendParagraph(editor, 'hello');
+    await flushMicrotasks();
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith('hello');
 
     appendParagraph(editor, 'world');
+    await flushMicrotasks();
     expect(onChange).toHaveBeenCalledTimes(2);
     expect(onChange).toHaveBeenLastCalledWith('hello\n\nworld');
   });

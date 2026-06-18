@@ -7,6 +7,7 @@ import {
   $isElementNode,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
+  KEY_TAB_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
@@ -301,4 +302,19 @@ export const getLinkHrefFromSelection = (editor: LexicalEditor) => {
   });
 
   return href;
+};
+
+export const dispatchToolbarTab = (
+  editor: LexicalEditor,
+  outdent: boolean
+): void => {
+  editor.dispatchCommand(
+    KEY_TAB_COMMAND,
+    new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      key: 'Tab',
+      shiftKey: outdent,
+    })
+  );
 };

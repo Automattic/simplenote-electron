@@ -64,6 +64,79 @@
     opacity: 0.5;
     pointer-events: none;
   }
+
+  &.is-compact {
+    flex-wrap: nowrap;
+  }
+
+  &.is-url-input-open {
+    .markdown-editor-toolbar__main {
+      display: none;
+    }
+  }
+}
+
+.markdown-editor-toolbar__main {
+  display: flex;
+  align-items: center;
+  flex-wrap: inherit;
+  gap: inherit;
+  min-width: min-content;
+}
+
+.markdown-editor-toolbar__url-input {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+
+  .markdown-editor-link-input {
+    flex: 1 1 auto;
+    margin-left: 0;
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+.markdown-editor-toolbar-overflow {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.markdown-editor-toolbar-overflow__trigger {
+  min-width: auto;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
+.markdown-editor-toolbar-overflow__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.markdown-editor-toolbar-overflow__menu {
+  background: var(--background-color);
+  border: 1px solid var(--me-toolbar-border-color);
+  border-radius: var(--me-radius-lg);
+  box-shadow: 0 4px 12px var(--overlay-color, rgba(0, 0, 0, 0.12));
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  left: 0;
+  min-width: 2.75rem;
+  padding: 0.25rem;
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 5;
+
+  .markdown-editor-button {
+    justify-content: flex-start;
+    width: 100%;
+  }
 }
 
 .markdown-editor-toolbar-group {
