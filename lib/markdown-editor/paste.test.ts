@@ -5,7 +5,6 @@ import {
   $getSelection,
   $isRangeSelection,
   createEditor,
-  KEY_DOWN_COMMAND,
   PASTE_COMMAND,
 } from 'lexical';
 import { ListNode, ListItemNode, $isListNode } from '@lexical/list';
@@ -403,56 +402,6 @@ describe('registerMarkdownPaste', () => {
     expect(handled).toBe(true);
     expect(preventDefault).toHaveBeenCalled();
     expectMultilineQuote(editor);
-  });
-
-  const armPlainPaste = (editor: ReturnType<typeof makeEditor>) => {
-    editor.dispatchCommand(KEY_DOWN_COMMAND, {
-      metaKey: true,
-      shiftKey: true,
-      code: 'KeyV',
-    } as unknown as KeyboardEvent);
-  };
-
-  it('pastes as plain text after Cmd+Shift+V, ignoring HTML formatting', () => {
-    const editor = makeEditor();
-    selectEmptyParagraph(editor);
-
-    armPlainPaste(editor);
-    const { event, preventDefault } = makePasteEvent('## not a heading', {
-      'text/html': '<h2>not a heading</h2>',
-    });
-    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
-
-    expect(handled).toBe(true);
-    expect(preventDefault).toHaveBeenCalled();
-    editor.read(() => {
-      expect($isHeadingNode($getRoot().getFirstChild())).toBe(false);
-      expect($getRoot().getTextContent()).toContain('## not a heading');
-    });
-  });
-
-  it('disarms after one paste: the next plain Cmd+V parses formatting again', () => {
-    const editor = makeEditor();
-    selectEmptyParagraph(editor);
-
-    armPlainPaste(editor);
-    editor.dispatchCommand(
-      PASTE_COMMAND,
-      makePasteEvent('first', { 'text/html': '<h2>first</h2>' }).event
-    );
-
-    // No re-arm: a normal paste of rich HTML should be parsed as a heading.
-    editor.dispatchCommand(
-      PASTE_COMMAND,
-      makePasteEvent('## second', { 'text/html': '<h2>second</h2>' }).event
-    );
-
-    editor.read(() => {
-      const roundtrip = $convertToMarkdownString(MARKDOWN_TRANSFORMERS);
-      expect(roundtrip).toContain('## second');
-      expect(roundtrip).toContain('first');
-      expect(roundtrip).not.toContain('## first');
-    });
   });
 
   it('inserts pasted markdown at the selection, after existing content', () => {

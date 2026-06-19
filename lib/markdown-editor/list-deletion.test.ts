@@ -1,4 +1,5 @@
 import { $getClipboardDataFromSelection } from '@lexical/clipboard';
+import { $isCodeNode } from '@lexical/code-core';
 import { $convertToMarkdownString } from '@lexical/markdown';
 import { $isListNode } from '@lexical/list';
 import {
@@ -58,6 +59,30 @@ function selectText(
   );
 }
 
+function selectAllCodeBlockText(editor: LexicalEditorWithDispose): void {
+  editor.update(
+    () => {
+      const code = $getRoot().getFirstChild();
+      if (!$isCodeNode(code)) {
+        throw new Error('Expected a code block');
+      }
+      const leaves = code.getAllTextNodes();
+      if (leaves.length === 0) {
+        throw new Error('Expected code text');
+      }
+      const first = leaves[0];
+      const last = leaves[leaves.length - 1];
+      first.select(0, 0);
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected a range selection');
+      }
+      selection.focus.set(last.getKey(), last.getTextContentSize(), 'text');
+    },
+    { discrete: true }
+  );
+}
+
 async function dispatchDelete(
   editor: LexicalEditorWithDispose,
   backward = true
@@ -106,6 +131,54 @@ describe('list deletion', () => {
     await dispatchDelete(editor);
 
     expect(exportMarkdown(editor)).toBe('- [x] done');
+    editor.dispose();
+  });
+
+  it('removes a fully selected code block', async () => {
+    const editor = makeGfmTestEditor('```\nconst a = 1;\n```');
+    selectAllCodeBlockText(editor);
+    await dispatchDelete(editor);
+
+    expect(rootChildTypes(editor)).not.toContain('code');
+    editor.dispose();
+  });
+
+  it('cut and paste a whole code block round-trips as a fenced block', async () => {
+    const editor = makeGfmTestEditor('```\nconst a = 1;\n```\n\nPaste here');
+    selectAllCodeBlockText(editor);
+
+    const clipboardData = editor.read(() =>
+      $getClipboardDataFromSelection($getSelection())
+    );
+    await dispatchDelete(editor);
+    expect(rootChildTypes(editor)).not.toContain('code');
+
+    editor.update(
+      () => {
+        $getRoot().getLastChild()?.selectStart();
+      },
+      { discrete: true }
+    );
+
+    const pasteEvent = {
+      clipboardData: {
+        getData: (type: string) => clipboardData[type] ?? '',
+      },
+      preventDefault: jest.fn(),
+    } as unknown as ClipboardEvent;
+
+    editor.update(
+      () => {
+        const handled = editor.dispatchCommand(PASTE_COMMAND, pasteEvent);
+        if (!handled) {
+          throw new Error('Expected markdown paste to restore the code block');
+        }
+      },
+      { discrete: true }
+    );
+
+    expect(exportMarkdown(editor)).toContain('const a = 1');
+    expect(rootChildTypes(editor)).toContain('code');
     editor.dispose();
   });
 

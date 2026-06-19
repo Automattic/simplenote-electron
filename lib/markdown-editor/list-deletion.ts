@@ -1,5 +1,10 @@
 import { copyToClipboard } from '@lexical/clipboard';
 import {
+  $isCodeNode,
+  CodeNode,
+  type CodeNode as CodeNodeType,
+} from '@lexical/code-core';
+import {
   $isListItemNode,
   $isListNode,
   ListItemNode,
@@ -189,6 +194,98 @@ export function $collectFullySelectedListItems(
   }
 
   return [...items.values()];
+}
+
+function $isCodeBlockContentFullySelected(
+  codeNode: CodeNodeType,
+  selection: RangeSelection
+): boolean {
+  const leaves = codeNode.getAllTextNodes();
+  if (leaves.length === 0) {
+    const [selStart, selEnd] = selection.getStartEndPoints();
+    return (
+      $pointCoversNodeStart(selStart, codeNode, 0) &&
+      $pointCoversNodeEnd(selEnd, codeNode)
+    );
+  }
+
+  const [selStart, selEnd] = selection.getStartEndPoints();
+  const firstLeaf = leaves[0];
+  const lastLeaf = leaves[leaves.length - 1];
+
+  if (
+    !$pointCoversNodeStart(selStart, firstLeaf, 0) ||
+    !$pointCoversNodeEnd(selEnd, lastLeaf)
+  ) {
+    return false;
+  }
+
+  const selectedKeys = new Set(
+    selection.getNodes().map((node) => node.getKey())
+  );
+  return leaves.every((leaf) => selectedKeys.has(leaf.getKey()));
+}
+
+export function $collectFullySelectedCodeBlocks(
+  selection: RangeSelection
+): CodeNodeType[] {
+  const blocks = new Map<string, CodeNodeType>();
+
+  for (const node of selection.getNodes()) {
+    const codeNode = $findMatchingParent(node, $isCodeNode);
+    if (codeNode === null || blocks.has(codeNode.getKey())) {
+      continue;
+    }
+    if ($isCodeBlockContentFullySelected(codeNode, selection)) {
+      blocks.set(codeNode.getKey(), codeNode);
+    }
+  }
+
+  return [...blocks.values()];
+}
+
+export function $removeFullySelectedCodeBlocks(
+  selection: RangeSelection
+): boolean {
+  if (selection.isCollapsed()) {
+    return false;
+  }
+
+  const blocks = $collectFullySelectedCodeBlocks(selection);
+  if (blocks.length === 0) {
+    return false;
+  }
+
+  const positions = new Map(
+    $nodesOfType(CodeNode).map((block, index) => [block.getKey(), index])
+  );
+  const sortedBlocks = [...blocks].sort(
+    (left, right) =>
+      (positions.get(right.getKey()) ?? 0) - (positions.get(left.getKey()) ?? 0)
+  );
+  const firstRemoved = sortedBlocks[sortedBlocks.length - 1];
+  const previousSibling = firstRemoved.getPreviousSibling();
+
+  for (const block of sortedBlocks) {
+    block.remove();
+  }
+
+  if (previousSibling !== null && $isElementNode(previousSibling)) {
+    previousSibling.selectEnd();
+  } else {
+    $getRoot().selectStart();
+  }
+
+  return true;
+}
+
+function $tryRemoveFullySelectedCodeBlocks(): boolean {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+
+  return $removeFullySelectedCodeBlocks(selection);
 }
 
 function $removeListItemWithSublist(listItem: ListItemNode): void {
@@ -402,12 +499,16 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
   return mergeRegister(
     editor.registerCommand(
       DELETE_CHARACTER_COMMAND,
-      () => $tryRemoveFullySelectedListItems(),
+      () =>
+        $tryRemoveFullySelectedListItems() ||
+        $tryRemoveFullySelectedCodeBlocks(),
       COMMAND_PRIORITY_HIGH
     ),
     editor.registerCommand(
       DELETE_LINE_COMMAND,
-      () => $tryRemoveFullySelectedListItems(),
+      () =>
+        $tryRemoveFullySelectedListItems() ||
+        $tryRemoveFullySelectedCodeBlocks(),
       COMMAND_PRIORITY_HIGH
     ),
     editor.registerCommand(
@@ -419,7 +520,8 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
         }
 
         const items = $collectFullySelectedListItems(selection);
-        if (items.length === 0) {
+        const codeBlocks = $collectFullySelectedCodeBlocks(selection);
+        if (items.length === 0 && codeBlocks.length === 0) {
           return false;
         }
 
@@ -432,7 +534,11 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
         ).then((copied) => {
           if (copied) {
             editor.update(() => {
-              $tryRemoveFullySelectedListItems();
+              if (items.length > 0) {
+                $tryRemoveFullySelectedListItems();
+                return;
+              }
+              $tryRemoveFullySelectedCodeBlocks();
             });
           }
         });

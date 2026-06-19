@@ -62,7 +62,6 @@ import {
   COMMAND_PRIORITY_HIGH,
   configExtension,
   defineExtension,
-  KEY_DOWN_COMMAND,
   PASTE_COMMAND,
   type AnyLexicalExtensionArgument,
   type ElementNode,
@@ -409,6 +408,20 @@ export const MarkdownShortcutExtension = defineExtension({
 const SINGLE_COMPLETE_LIST_LINE =
   /^\s{0,3}(?:[-*+]\s(?:\[[ xX]\]\s)?|\d+\.\s).+\n$/;
 
+// Full code-block copies put fences in text/markdown but Lexical JSON only
+// carries the inner text nodes. Prefer markdown paste so the block is restored.
+const COMPLETE_FENCED_CODE_BLOCK =
+  /^(`{3,}|~{3,})([^\n]*)\n[\s\S]*?\n\1(?:\n|$)/;
+
+export function $shouldPreferMarkdownPasteOverLexicalJson(
+  markdown: string
+): boolean {
+  return (
+    SINGLE_COMPLETE_LIST_LINE.test(markdown) ||
+    COMPLETE_FENCED_CODE_BLOCK.test(markdown)
+  );
+}
+
 export const MARKDOWN_CLIPBOARD_MIME_TYPE = 'text/markdown';
 
 export type ClipboardMarkdownSource =
@@ -680,8 +693,7 @@ function $parseSameEditorClipboardJson(
 
 function $handleMarkdownPaste(
   editor: LexicalEditor,
-  event: PasteCommandType,
-  forcePlainText: boolean
+  event: PasteCommandType
 ): boolean {
   const clipboardData = 'clipboardData' in event ? event.clipboardData : null;
   const selection = $getSelection();
@@ -689,17 +701,6 @@ function $handleMarkdownPaste(
     return false;
   }
   const anchorNode = selection.anchor.getNode();
-
-  // Cmd/Ctrl+Shift+V: paste as plain text, ignoring HTML/markdown formatting.
-  if (forcePlainText) {
-    const plain = clipboardData.getData('text/plain');
-    if (!plain) {
-      return false;
-    }
-    event.preventDefault();
-    $insertPlainText(selection, plain);
-    return true;
-  }
 
   // Code blocks never markdown-parse: insert the raw text verbatim.
   if ($findMatchingParent(anchorNode, $isCodeNode) !== null) {
@@ -733,9 +734,10 @@ function $handleMarkdownPaste(
     return true;
   }
 
-  // Same-editor copies carry lossless Lexical JSON: insert it verbatim. A single
-  // list line is left to markdown below so list semantics survive.
-  if (!SINGLE_COMPLETE_LIST_LINE.test(markdown)) {
+  // Same-editor copies carry lossless Lexical JSON: insert it verbatim. Some
+  // shapes (a single list line, a full fenced code block) are lossy in JSON and
+  // are left to markdown paste below.
+  if (!$shouldPreferMarkdownPasteOverLexicalJson(markdown)) {
     const sameEditorNodes = $parseSameEditorClipboardJson(
       editor,
       clipboardData
@@ -774,37 +776,11 @@ function $handleMarkdownPaste(
 }
 
 export function registerMarkdownPaste(editor: LexicalEditor): () => void {
-  // Cmd/Ctrl+Shift+V arms a one-shot "paste as plain text" for the next paste.
-  // The paste event itself carries no modifier info, so we track the shortcut
-  // on key down; any other key disarms it.
-  let plainPasteArmed = false;
-
-  const unregisterKeyDown = editor.registerCommand(
-    KEY_DOWN_COMMAND,
-    (event) => {
-      plainPasteArmed =
-        (event.metaKey || event.ctrlKey) &&
-        event.shiftKey &&
-        event.code === 'KeyV';
-      return false;
-    },
-    COMMAND_PRIORITY_HIGH
-  );
-
-  const unregisterPaste = editor.registerCommand(
+  return editor.registerCommand(
     PASTE_COMMAND,
-    (event) => {
-      const forcePlainText = plainPasteArmed;
-      plainPasteArmed = false;
-      return $handleMarkdownPaste(editor, event, forcePlainText);
-    },
+    (event) => $handleMarkdownPaste(editor, event),
     COMMAND_PRIORITY_HIGH
   );
-
-  return () => {
-    unregisterKeyDown();
-    unregisterPaste();
-  };
 }
 
 export const MarkdownPasteExtension = defineExtension({
@@ -865,7 +841,9 @@ export const MarkdownCopyExtension = defineExtension({
               $getClipboardMarkdownFromDataTransfer(dataTransfer);
             if (
               clipboardMarkdown &&
-              SINGLE_COMPLETE_LIST_LINE.test(clipboardMarkdown.markdown)
+              $shouldPreferMarkdownPasteOverLexicalJson(
+                clipboardMarkdown.markdown
+              )
             ) {
               return false;
             }
