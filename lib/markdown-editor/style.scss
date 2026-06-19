@@ -1,10 +1,20 @@
 @use '../../scss/variables' as *;
 
+// Extra scroll room on narrow viewports when the on-screen keyboard is open.
+$mobile-keyboard-padding: 5rem;
+
 // Unlike Monaco (which has an internal virtual scroller), the Lexical
 // contenteditable needs a scrollable ancestor. The shell is absolutely
 // positioned at 100% height, so it is the natural scroll container.
 .lexical-md-editor-shell {
   overflow-y: auto;
+
+  @media only screen and (max-width: $single-column) {
+    -webkit-overflow-scrolling: touch;
+    // Room above the on-screen keyboard and iOS accessory bar when the
+    // viewport resizes (interactive-widget=resizes-content in index.ejs).
+    scroll-padding-bottom: $mobile-keyboard-padding;
+  }
 }
 
 .lexical-md-editor {
@@ -33,6 +43,10 @@
   &.lexical-md-editor {
     height: auto;
   }
+}
+
+.lexical-md-editor__form {
+  display: contents;
 }
 
 // The toolbar sticks to the top of the scrolling shell
@@ -292,6 +306,10 @@
   padding: 40px 25px 20px;
   outline: none;
   caret-color: var(--primary-color);
+
+  @media only screen and (max-width: $single-column) {
+    padding-bottom: $mobile-keyboard-padding;
+  }
 
   // Keep anchor-scroll targets clear of the input's top padding and the
   // sticky toolbar.

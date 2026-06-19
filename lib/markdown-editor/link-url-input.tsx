@@ -50,6 +50,7 @@ export function LinkUrlInput({
         aria-describedby={showError ? errorId : undefined}
         aria-label={ariaLabel}
         aria-invalid={showError || undefined}
+        autoComplete="off"
         className="markdown-editor-link-input__field"
         onChange={(event) => {
           setUrl(event.target.value);

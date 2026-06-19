@@ -69,10 +69,29 @@ export default function MarkdownEditor({
           the composer otherwise renders it before any children. */}
       <LexicalExtensionComposer contentEditable={null} extension={extension}>
         <MarkdownToolbar />
-        <ContentEditable
-          className="lexical-md-editor__input"
-          placeholder={null}
-        />
+        {/* autocomplete=off on a display:contents form plus editor hints reduce
+            password-manager / AutoFill bars on mobile; iOS may still show them. */}
+        <form
+          autoComplete="off"
+          className="lexical-md-editor__form"
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <ContentEditable
+            aria-autocomplete="none"
+            aria-label="Note content"
+            autoCapitalize="sentences"
+            autoComplete="off"
+            autoCorrect="on"
+            className="lexical-md-editor__input"
+            data-1p-ignore
+            data-form-type="other"
+            data-lpignore="true"
+            inputMode="text"
+            placeholder={null}
+            role="textbox"
+            spellCheck
+          />
+        </form>
         {editorRef && <EditorRefPlugin editorRef={editorRef} />}
         <InternalLinkPlugin noteId={noteId} onOpenNote={onOpenInternalLink} />
         {onMatchCountChange && clearSearch && scrollContainerRef && (
