@@ -4,13 +4,15 @@ import {
   type DOMConversionMap,
   type DOMConversionOutput,
   type DOMExportOutput,
-  type EditorConfig,
   type LexicalNode,
   type NodeKey,
   type SerializedLexicalNode,
   type Spread,
+  $getSelection,
+  $isNodeSelection,
 } from 'lexical';
-import React from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import React, { useEffect, useState } from 'react';
 
 import { normalizeSafeImageSrc } from '../utils/url-safety';
 import {
@@ -27,6 +29,114 @@ export type SerializedImageNode = Spread<
   },
   SerializedLexicalNode
 >;
+
+function EditorImage({
+  alt,
+  className,
+  src,
+  title,
+}: {
+  alt: string;
+  className?: string;
+  src: string;
+  title?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (failed) {
+    const label = alt.trim() || 'Image could not be loaded';
+
+    return (
+      <span
+        aria-label={label}
+        className="lexical-md-editor__image-broken"
+        role="img"
+      >
+        {label}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      alt={alt}
+      className={className}
+      onError={() => setFailed(true)}
+      src={src}
+      title={title}
+    />
+  );
+}
+
+function ImageDecorator({
+  alt,
+  brokenMarkdown,
+  nodeKey,
+  src,
+  titleText,
+}: {
+  alt: string;
+  brokenMarkdown?: string;
+  nodeKey: NodeKey;
+  src?: string;
+  titleText: string;
+}) {
+  const [editor] = useLexicalComposerContext();
+  const [isSelected, setIsSelected] = useState(false);
+
+  useEffect(() => {
+    const updateSelected = () => {
+      editor.getEditorState().read(() => {
+        const selection = $getSelection();
+        if (!$isNodeSelection(selection)) {
+          setIsSelected(false);
+          return;
+        }
+
+        setIsSelected(
+          selection.getNodes().some((node) => node.getKey() === nodeKey)
+        );
+      });
+    };
+
+    updateSelected();
+    return editor.registerUpdateListener(() => {
+      updateSelected();
+    });
+  }, [editor, nodeKey]);
+
+  const shellClassName = [
+    'lexical-md-editor__image-shell',
+    isSelected ? 'is-selected' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  if (brokenMarkdown) {
+    return (
+      <span className={shellClassName}>
+        <span className="lexical-md-editor__image-fallback">
+          {brokenMarkdown}
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={shellClassName}>
+      <EditorImage
+        alt={alt}
+        className="lexical-md-editor__image"
+        src={src!}
+        title={titleText || undefined}
+      />
+    </span>
+  );
+}
 
 export class ImageNode extends DecoratorNode<React.JSX.Element> {
   __src: string;
@@ -122,6 +232,12 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     return this.__src;
   }
 
+  setSrc(src: string): this {
+    const writable = this.getWritable();
+    writable.__src = src;
+    return writable;
+  }
+
   getAltText(): string {
     return this.__altText;
   }
@@ -142,18 +258,21 @@ export class ImageNode extends DecoratorNode<React.JSX.Element> {
     const safeSrc = normalizeSafeImageSrc(this.__src);
     if (!safeSrc) {
       return (
-        <span className="lexical-md-editor__image-fallback">
-          {this.getMarkdownSyntax()}
-        </span>
+        <ImageDecorator
+          alt={this.__altText}
+          brokenMarkdown={this.getMarkdownSyntax()}
+          nodeKey={this.getKey()}
+          titleText={this.__titleText}
+        />
       );
     }
 
     return (
-      <img
+      <ImageDecorator
         alt={this.__altText}
-        className="lexical-md-editor__image"
+        nodeKey={this.getKey()}
         src={safeSrc}
-        title={this.__titleText || undefined}
+        titleText={this.__titleText}
       />
     );
   }

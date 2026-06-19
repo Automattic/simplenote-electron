@@ -48,6 +48,16 @@ export const OrderedListIcon = makeIcon('list-ordered');
 export const BlockquoteIcon = makeIcon('quote');
 export const HorizontalRuleIcon = makeIcon('minus');
 
+export const TextFormatIcon = makeTablerStrokeIcon(
+  ['M4 6l16 0', 'M4 12l10 0', 'M4 18l16 0'],
+  'TextFormatIcon'
+);
+
+export const ChevronDownIcon = makeTablerStrokeIcon(
+  ['M6 9l6 6l6 -6'],
+  'ChevronDownIcon'
+);
+
 export const HeadingIcon = ({
   className,
   level,

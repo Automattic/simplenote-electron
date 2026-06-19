@@ -325,7 +325,7 @@ describe('images', () => {
         .getChildren()
         .find($isImageNode) as ImageNode;
       expect(image.getTitleText()).toBe('Cover "shot"');
-      expect(image.decorate().props.title).toBe('Cover "shot"');
+      expect(image.decorate().props.titleText).toBe('Cover "shot"');
     });
     expect(
       editor
@@ -352,8 +352,8 @@ describe('images', () => {
         .getChildren()
         .find($isImageNode) as ImageNode;
       const element = image.decorate();
-      expect(element.type).toBe('span');
-      expect(element.props.children).toBe(unsafe);
+      expect(element.type.name).toBe('ImageDecorator');
+      expect(element.props.brokenMarkdown).toBe(unsafe);
     });
     editor.dispose();
   });
@@ -370,7 +370,7 @@ describe('images', () => {
     editor.dispose();
   });
 
-  it('decorate renders img element for safe sources', () => {
+  it('decorate renders EditorImage for safe sources', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, safeImage);
 
@@ -379,7 +379,7 @@ describe('images', () => {
         .getChildren()
         .find($isImageNode) as ImageNode;
       const element = image.decorate();
-      expect(element.type).toBe('img');
+      expect(element.type.name).toBe('ImageDecorator');
       expect(element.props.src).toBe('https://example.com/photo.jpg');
       expect(element.props.alt).toBe('Photo');
     });

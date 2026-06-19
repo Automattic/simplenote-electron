@@ -11,6 +11,8 @@ import {
   $isElementNode,
   $isRangeSelection,
   $isTextNode,
+  $createNodeSelection,
+  $setSelection,
   type LexicalEditorWithDispose,
   type LexicalNode,
   type TextNode,
@@ -18,7 +20,9 @@ import {
 
 import { MARKDOWN_TRANSFORMERS } from './extensions';
 import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
+import { $isImageNode } from './image-node';
 import {
+  getImageSrcFromSelection,
   getLinkHrefFromSelection,
   insertImage,
   setLink,
@@ -333,6 +337,38 @@ describe('insertImage', () => {
     await flushEditor();
 
     expect(exportMarkdown(editor)).toBe('see ');
+    editor.dispose();
+  });
+
+  it('updates the src of a selected image node', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '![Photo](https://example.com/old.jpg)');
+
+    editor.update(
+      () => {
+        const image = $getRoot()
+          .getFirstChild()
+          ?.getChildren()
+          .find($isImageNode);
+        if (!image) {
+          throw new Error('Expected image node');
+        }
+        const selection = $createNodeSelection();
+        selection.add(image.getKey());
+        $setSelection(selection);
+      },
+      { discrete: true }
+    );
+
+    expect(getImageSrcFromSelection(editor)).toBe(
+      'https://example.com/old.jpg'
+    );
+    expect(insertImage(editor, 'https://example.com/new.jpg')).toBe(true);
+    await flushEditor();
+
+    expect(exportMarkdown(editor)).toBe(
+      '![Photo](https://example.com/new.jpg)'
+    );
     editor.dispose();
   });
 });

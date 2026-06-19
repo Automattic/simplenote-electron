@@ -5,6 +5,7 @@ import {
   $findMatchingParent,
   $getRoot,
   $getSelection,
+  $isNodeSelection,
   $isRangeSelection,
 } from 'lexical';
 import { $isCodeNode } from '@lexical/code-core';
@@ -17,6 +18,7 @@ import {
 } from '@lexical/rich-text';
 
 import type { ActiveListType } from './list-toggle';
+import { $isImageNode } from './image-node';
 import { $isSelectionInTable } from './table-controls';
 
 export type ToolbarState = {
@@ -26,6 +28,7 @@ export type ToolbarState = {
   strike: boolean;
   code: boolean;
   link: boolean;
+  inImage: boolean;
   h1: boolean;
   h2: boolean;
   h3: boolean;
@@ -76,6 +79,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     strike: false,
     code: false,
     link: false,
+    inImage: false,
     h1: false,
     h2: false,
     h3: false,
@@ -93,13 +97,22 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     const block = $getTopLevelBlock();
 
     if ($isRangeSelection(selection)) {
+      const anchorInLink = $findMatchingParent(
+        selection.anchor.getNode(),
+        $isLinkNode
+      );
+      const focusInLink = $findMatchingParent(
+        selection.focus.getNode(),
+        $isLinkNode
+      );
+
       state = {
         ...state,
         bold: selection.hasFormat('bold'),
         italic: selection.hasFormat('italic'),
         strike: selection.hasFormat('strikethrough'),
         code: selection.hasFormat('code'),
-        link: !!$findMatchingParent(selection.anchor.getNode(), $isLinkNode),
+        link: !!(anchorInLink || focusInLink),
       };
 
       const listNode = $findMatchingParent(
@@ -123,6 +136,8 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
 
         state.inTitle = titleBlock.getKey() === firstChild.getKey();
       }
+    } else if ($isNodeSelection(selection)) {
+      state.inImage = selection.getNodes().some($isImageNode);
     }
 
     state.h1 = isHeadingTagActive('h1', block);
@@ -155,6 +170,7 @@ export const toolbarStateEqual = (a: ToolbarState, b: ToolbarState) =>
   a.strike === b.strike &&
   a.code === b.code &&
   a.link === b.link &&
+  a.inImage === b.inImage &&
   a.h1 === b.h1 &&
   a.h2 === b.h2 &&
   a.h3 === b.h3 &&

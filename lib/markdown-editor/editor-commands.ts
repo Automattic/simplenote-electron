@@ -5,6 +5,7 @@ import {
   $findMatchingParent,
   $getSelection,
   $isElementNode,
+  $isNodeSelection,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
   KEY_TAB_COMMAND,
@@ -25,7 +26,7 @@ import {
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
 import { normalizeSafeImageSrc } from '../utils/url-safety';
-import { $createImageNode } from './image-node';
+import { $createImageNode, $isImageNode } from './image-node';
 import { normalizeLinkHref, urlFromText } from './link-validator';
 import {
   $isSelectionInTable,
@@ -217,13 +218,30 @@ export const insertImage = (
   src: string,
   altText?: string
 ): boolean => {
-  let inserted = false;
+  let applied = false;
 
   editor.update(() => {
     const safeSrc = normalizeImageSourceInput(src);
+    if (!safeSrc) {
+      return;
+    }
+
     const selection = $getSelection();
 
-    if (!safeSrc || !$isRangeSelection(selection)) {
+    if ($isNodeSelection(selection)) {
+      const images = selection.getNodes().filter($isImageNode);
+      if (images.length === 0) {
+        return;
+      }
+
+      for (const image of images) {
+        image.setSrc(safeSrc);
+      }
+      applied = true;
+      return;
+    }
+
+    if (!$isRangeSelection(selection)) {
       return;
     }
 
@@ -234,10 +252,28 @@ export const insertImage = (
         src: safeSrc,
       }),
     ]);
-    inserted = true;
+    applied = true;
   });
 
-  return inserted;
+  return applied;
+};
+
+export const getImageSrcFromSelection = (editor: LexicalEditor) => {
+  let src: string | undefined;
+
+  editor.read(() => {
+    const selection = $getSelection();
+    if (!$isNodeSelection(selection)) {
+      return;
+    }
+
+    const image = selection.getNodes().find($isImageNode);
+    if (image) {
+      src = image.getSrc();
+    }
+  });
+
+  return src;
 };
 
 export const setLink = (editor: LexicalEditor, url: string): void => {

@@ -89,6 +89,7 @@ const emptyToolbarState = (): ToolbarState => ({
   strike: false,
   code: false,
   link: false,
+  inImage: false,
   h1: false,
   h2: false,
   h3: false,

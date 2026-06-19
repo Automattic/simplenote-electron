@@ -64,32 +64,15 @@
     opacity: 0.5;
     pointer-events: none;
   }
-
-  &.is-compact {
-    flex-wrap: nowrap;
-  }
-
-  &.is-url-input-open {
-    .markdown-editor-toolbar__main {
-      display: none;
-    }
-  }
-}
-
-.markdown-editor-toolbar__main {
-  display: flex;
-  align-items: center;
-  flex-wrap: inherit;
-  gap: inherit;
-  min-width: min-content;
 }
 
 .markdown-editor-toolbar__url-input {
   display: flex;
   align-items: center;
-  flex: 1 1 auto;
+  flex: 1 1 100%;
   min-width: 0;
   width: 100%;
+  padding-bottom: 0.375rem;
 
   .markdown-editor-link-input {
     flex: 1 1 auto;
@@ -100,43 +83,110 @@
   }
 }
 
-.markdown-editor-toolbar-overflow {
+.markdown-editor-toolbar-dropdown {
   position: relative;
   flex-shrink: 0;
 }
 
-.markdown-editor-toolbar-overflow__trigger {
-  min-width: auto;
-  padding-left: 0.625rem;
-  padding-right: 0.625rem;
+.markdown-editor-toolbar-dropdown__trigger {
+  gap: 0.125rem;
+  padding-right: 0.375rem;
 }
 
-.markdown-editor-toolbar-overflow__label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
+.markdown-editor-toolbar-dropdown__chevron {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
-.markdown-editor-toolbar-overflow__menu {
+.markdown-editor-toolbar-dropdown__menu {
   background: var(--background-color);
-  border: 1px solid var(--me-toolbar-border-color);
-  border-radius: var(--me-radius-lg);
-  box-shadow: 0 4px 12px var(--overlay-color, rgba(0, 0, 0, 0.12));
+  border: 1px solid var(--tertiary-color);
+  border-radius: $border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-  left: 0;
-  min-width: 2.75rem;
+  min-width: 10rem;
   padding: 0.25rem;
-  position: absolute;
-  top: calc(100% + 4px);
-  z-index: 5;
+  position: fixed;
+  z-index: 1000;
+}
 
-  .markdown-editor-button {
-    justify-content: flex-start;
-    width: 100%;
+.markdown-editor-toolbar-dropdown__item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--me-radius-md, 4px);
+  color: var(--foreground-color);
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  text-align: left;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    background-color: var(--highlight-color);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 1px;
+  }
+
+  &.is-active {
+    background-color: var(--highlight-color);
+    color: var(--foreground-color);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.markdown-editor-toolbar-dropdown__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  color: var(--foreground-color);
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: currentcolor;
+  }
+
+  svg.toolbar-icon-stroke {
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .markdown-editor-toolbar-dropdown__item.is-active & {
+    color: var(--foreground-color);
+  }
+}
+
+.markdown-editor-toolbar-dropdown__item-label {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+
+.markdown-editor-toolbar__main {
+  display: flex;
+  align-items: center;
+  flex-wrap: inherit;
+  gap: inherit;
+  min-width: min-content;
 }
 
 .markdown-editor-toolbar-group {
@@ -260,6 +310,12 @@
     font-size: 1.6em;
     font-weight: 600;
   }
+
+  a.lexical-md-editor__link {
+    color: var(--primary-color);
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
 }
 
 // Fenced code blocks. Lexical's CodeNode renders a bare <code> element (no
@@ -308,6 +364,17 @@
   max-width: 100%;
 }
 
+.lexical-md-editor__image-shell {
+  display: inline-block;
+  max-width: 100%;
+  border-radius: $border-radius;
+
+  &.is-selected {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
 .lexical-md-editor__image {
   display: block;
   height: auto;
@@ -318,6 +385,22 @@
   color: var(--secondary-color);
   font-family: monospace;
   font-size: 85%;
+}
+
+.lexical-md-editor__image-broken {
+  border: 1px solid var(--secondary-color);
+  border-radius: $border-radius;
+  box-sizing: border-box;
+  color: var(--secondary-color);
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  max-width: 100%;
+  min-height: 2.5rem;
+  min-width: 8rem;
+  overflow-wrap: anywhere;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
 }
 
 // Floating note-link completion menu, portaled to <body> and positioned

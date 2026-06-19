@@ -1,6 +1,13 @@
-import React, { ElementType, useState } from 'react';
+import React, { ElementType, useEffect, useRef, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { CAN_REDO_COMMAND, CAN_UNDO_COMMAND } from 'lexical';
+import {
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  $getSelection,
+  $isRangeSelection,
+  type EditorState,
+  type LexicalEditor,
+} from 'lexical';
 import { Tooltip } from '@mui/material';
 
 import ChecklistIcon from '../icons/check-list';
@@ -11,6 +18,7 @@ import {
   dispatchFormatText,
   dispatchToolbarTab,
   getLinkHrefFromSelection,
+  getImageSrcFromSelection,
   insertImage,
   insertHorizontalRule,
   insertTable,
@@ -28,7 +36,7 @@ import {
 } from './editor-commands';
 import { LinkUrlInput } from './link-url-input';
 import { toggleListAtSelection } from './list-toggle';
-import { ToolbarOverflowGroup } from './toolbar-overflow-group';
+import { ToolbarDropdown, ToolbarDropdownItem } from './toolbar-dropdown';
 import { useCompactToolbar } from './toolbar-hooks';
 import { useToolbarState } from './toolbar-state';
 
@@ -55,6 +63,7 @@ import {
   TabIndentIcon,
   TabOutdentIcon,
   TableIcon,
+  TextFormatIcon,
   UndoIcon,
 } from './toolbar-icons';
 
@@ -124,6 +133,48 @@ const ToolbarGroup = ({ children }: { children: React.ReactNode }) => (
   <div className="markdown-editor-toolbar-group">{children}</div>
 );
 
+type UrlPanelSelectionSnapshot = {
+  anchorKey: string;
+  anchorOffset: number;
+  focusKey: string;
+  focusOffset: number;
+};
+
+const snapshotSelection = (
+  editor: LexicalEditor
+): UrlPanelSelectionSnapshot | null =>
+  editor.getEditorState().read(() => {
+    const selection = $getSelection();
+    if (!$isRangeSelection(selection)) {
+      return null;
+    }
+
+    return {
+      anchorKey: selection.anchor.key,
+      anchorOffset: selection.anchor.offset,
+      focusKey: selection.focus.key,
+      focusOffset: selection.focus.offset,
+    };
+  });
+
+const selectionChangedSinceSnapshot = (
+  editorState: EditorState,
+  snapshot: UrlPanelSelectionSnapshot
+) =>
+  editorState.read(() => {
+    const selection = $getSelection();
+    if (!$isRangeSelection(selection)) {
+      return true;
+    }
+
+    return (
+      selection.anchor.key !== snapshot.anchorKey ||
+      selection.anchor.offset !== snapshot.anchorOffset ||
+      selection.focus.key !== snapshot.focusKey ||
+      selection.focus.offset !== snapshot.focusOffset
+    );
+  });
+
 type Props = {
   disabled?: boolean;
 };
@@ -137,28 +188,51 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const compact = useCompactToolbar(toolbarEl);
   const [linkInputUrl, setLinkInputUrl] = useState<string | null>(null);
   const [imageInputUrl, setImageInputUrl] = useState<string | null>(null);
+  const urlPanelSelectionRef = useRef<UrlPanelSelectionSnapshot | null>(null);
 
   const blockDisabled = state.inTitle || state.inTable;
   const urlInputOpen = linkInputUrl !== null || imageInputUrl !== null;
-  const showUrlPanel = compact && urlInputOpen;
+
+  const clearUrlPanelSelection = () => {
+    urlPanelSelectionRef.current = null;
+  };
 
   const openLinkInput = () => {
+    urlPanelSelectionRef.current = snapshotSelection(editor);
     setImageInputUrl(null);
     setLinkInputUrl(getLinkHrefFromSelection(editor) ?? 'https://');
   };
 
   const closeLinkInput = () => {
     setLinkInputUrl(null);
+    clearUrlPanelSelection();
   };
 
   const openImageInput = () => {
+    urlPanelSelectionRef.current = snapshotSelection(editor);
     setLinkInputUrl(null);
-    setImageInputUrl('https://');
+    setImageInputUrl(getImageSrcFromSelection(editor) ?? 'https://');
   };
 
   const closeImageInput = () => {
     setImageInputUrl(null);
+    clearUrlPanelSelection();
   };
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      const snapshot = urlPanelSelectionRef.current;
+      if (!snapshot) {
+        return;
+      }
+
+      if (selectionChangedSinceSnapshot(editorState, snapshot)) {
+        setLinkInputUrl(null);
+        setImageInputUrl(null);
+        clearUrlPanelSelection();
+      }
+    });
+  }, [editor]);
 
   const applyLink = (url: string) => {
     setLink(editor, url);
@@ -257,13 +331,11 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         title="Link"
       />
       <ToolbarButton
-        active={imageInputUrl !== null}
+        active={state.inImage || imageInputUrl !== null}
         icon={ImageIcon}
         onClick={openImageInput}
         title="Image"
       />
-      {!compact && renderLinkInput()}
-      {!compact && renderImageInput()}
     </ToolbarGroup>
   );
 
@@ -324,41 +396,238 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     </>
   );
 
-  const renderHeadingMenuButtons = (close: () => void) => (
+  const renderTableDropdownItems = (close: () => void) => (
     <>
-      <ToolbarMenuButton
-        active={state.h1}
-        disabled={blockDisabled}
-        icon={() => <HeadingIcon level={1} />}
-        onClick={() => toggleHeading(editor, 1)}
-        onMenuClose={close}
-        title="Heading 1"
+      <ToolbarDropdownItem
+        icon={InsertTableRowAboveIcon}
+        label="Insert row above"
+        onClick={() => {
+          insertTableRowAbove(editor);
+          close();
+        }}
       />
-      <ToolbarMenuButton
-        active={state.h2}
-        disabled={blockDisabled}
-        icon={() => <HeadingIcon level={2} />}
-        onClick={() => toggleHeading(editor, 2)}
-        onMenuClose={close}
-        title="Heading 2"
+      <ToolbarDropdownItem
+        icon={InsertTableRowBelowIcon}
+        label="Insert row below"
+        onClick={() => {
+          insertTableRowBelow(editor);
+          close();
+        }}
       />
-      <ToolbarMenuButton
-        active={state.h3}
-        disabled={blockDisabled}
-        icon={() => <HeadingIcon level={3} />}
-        onClick={() => toggleHeading(editor, 3)}
-        onMenuClose={close}
-        title="Heading 3"
+      <ToolbarDropdownItem
+        icon={DeleteTableRowIcon}
+        label="Delete row"
+        onClick={() => {
+          deleteTableRow(editor);
+          close();
+        }}
       />
-      <ToolbarMenuButton
-        active={state.h4}
-        disabled={blockDisabled}
-        icon={() => <HeadingIcon level={4} />}
-        onClick={() => toggleHeading(editor, 4)}
-        onMenuClose={close}
-        title="Heading 4"
+      <ToolbarDropdownItem
+        icon={InsertTableColumnBeforeIcon}
+        label="Insert column before"
+        onClick={() => {
+          insertTableColumnBefore(editor);
+          close();
+        }}
+      />
+      <ToolbarDropdownItem
+        icon={InsertTableColumnAfterIcon}
+        label="Insert column after"
+        onClick={() => {
+          insertTableColumnAfter(editor);
+          close();
+        }}
+      />
+      <ToolbarDropdownItem
+        icon={DeleteTableColumnIcon}
+        label="Delete column"
+        onClick={() => {
+          deleteTableColumn(editor);
+          close();
+        }}
       />
     </>
+  );
+
+  const formatDropdownActive =
+    state.h1 ||
+    state.h2 ||
+    state.h3 ||
+    state.h4 ||
+    state.code ||
+    state.blockquote;
+
+  const listDropdownIcon =
+    state.activeList === 'orderedList'
+      ? OrderedListIcon
+      : state.activeList === 'taskList'
+        ? ChecklistIcon
+        : BulletListIcon;
+
+  const renderCompactToolbar = () => (
+    <div className="markdown-editor-toolbar__main">
+      {renderHistoryButtons()}
+      <ToolbarSeparator />
+      <ToolbarDropdown
+        active={formatDropdownActive}
+        disabled={blockDisabled}
+        icon={TextFormatIcon}
+        label="Formatting"
+        title="Block formatting"
+      >
+        {(close) => (
+          <>
+            <ToolbarDropdownItem
+              active={state.h1}
+              disabled={blockDisabled}
+              icon={() => <HeadingIcon level={1} />}
+              label="Heading 1"
+              onClick={() => {
+                toggleHeading(editor, 1);
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.h2}
+              disabled={blockDisabled}
+              icon={() => <HeadingIcon level={2} />}
+              label="Heading 2"
+              onClick={() => {
+                toggleHeading(editor, 2);
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.h3}
+              disabled={blockDisabled}
+              icon={() => <HeadingIcon level={3} />}
+              label="Heading 3"
+              onClick={() => {
+                toggleHeading(editor, 3);
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.h4}
+              disabled={blockDisabled}
+              icon={() => <HeadingIcon level={4} />}
+              label="Heading 4"
+              onClick={() => {
+                toggleHeading(editor, 4);
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.code}
+              icon={CodeIcon}
+              label="Inline code"
+              onClick={() => {
+                dispatchFormatText(editor, 'code');
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.blockquote}
+              disabled={blockDisabled}
+              icon={BlockquoteIcon}
+              label="Quote"
+              onClick={() => {
+                toggleBlockquote(editor);
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              disabled={blockDisabled}
+              icon={HorizontalRuleIcon}
+              label="Horizontal rule"
+              onClick={() => {
+                insertHorizontalRule(editor);
+                close();
+              }}
+            />
+          </>
+        )}
+      </ToolbarDropdown>
+      <ToolbarSeparator />
+      <ToolbarGroup>
+        <ToolbarButton
+          active={state.link || linkInputUrl !== null}
+          icon={LinkIcon}
+          onClick={openLinkInput}
+          title="Link"
+        />
+        <ToolbarButton
+          active={state.inImage || imageInputUrl !== null}
+          icon={ImageIcon}
+          onClick={openImageInput}
+          title="Image"
+        />
+      </ToolbarGroup>
+      <ToolbarSeparator />
+      <ToolbarDropdown
+        active={state.activeList !== null}
+        disabled={blockDisabled}
+        icon={listDropdownIcon}
+        label="Lists"
+        title="List formatting"
+      >
+        {(close) => (
+          <>
+            <ToolbarDropdownItem
+              active={state.activeList === 'bulletList'}
+              disabled={blockDisabled}
+              icon={BulletListIcon}
+              label="Bullet list"
+              onClick={() => {
+                toggleListAtSelection(editor, 'bulletList');
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.activeList === 'orderedList'}
+              disabled={blockDisabled}
+              icon={OrderedListIcon}
+              label="Numbered list"
+              onClick={() => {
+                toggleListAtSelection(editor, 'orderedList');
+                close();
+              }}
+            />
+            <ToolbarDropdownItem
+              active={state.activeList === 'taskList'}
+              disabled={blockDisabled}
+              icon={ChecklistIcon}
+              label="Task list"
+              onClick={() => {
+                toggleListAtSelection(editor, 'taskList');
+                close();
+              }}
+            />
+          </>
+        )}
+      </ToolbarDropdown>
+      <ToolbarSeparator />
+      <ToolbarButton
+        active={state.codeBlock}
+        disabled={blockDisabled}
+        icon={CodeBlockIcon}
+        onClick={() => toggleCodeBlock(editor)}
+        title="Code block"
+      />
+      {state.inTable ? (
+        <ToolbarDropdown active icon={TableIcon} label="Table" title="Table">
+          {(close) => renderTableDropdownItems(close)}
+        </ToolbarDropdown>
+      ) : (
+        <ToolbarButton
+          disabled={blockDisabled}
+          icon={TableIcon}
+          onClick={() => insertTable(editor)}
+          title="Insert table"
+        />
+      )}
+      {renderTouchTabButtons()}
+    </div>
   );
 
   const renderListButtons = () => (
@@ -382,35 +651,6 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         disabled={blockDisabled}
         icon={ChecklistIcon}
         onClick={() => toggleListAtSelection(editor, 'taskList')}
-        title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
-      />
-    </>
-  );
-
-  const renderListMenuButtons = (close: () => void) => (
-    <>
-      <ToolbarMenuButton
-        active={state.activeList === 'bulletList'}
-        disabled={blockDisabled}
-        icon={BulletListIcon}
-        onClick={() => toggleListAtSelection(editor, 'bulletList')}
-        onMenuClose={close}
-        title="Bullet list"
-      />
-      <ToolbarMenuButton
-        active={state.activeList === 'orderedList'}
-        disabled={blockDisabled}
-        icon={OrderedListIcon}
-        onClick={() => toggleListAtSelection(editor, 'orderedList')}
-        onMenuClose={close}
-        title="Numbered list"
-      />
-      <ToolbarMenuButton
-        active={state.activeList === 'taskList'}
-        disabled={blockDisabled}
-        icon={ChecklistIcon}
-        onClick={() => toggleListAtSelection(editor, 'taskList')}
-        onMenuClose={close}
         title={`Insert Checklist • ${CmdOrCtrl}+Shift+C`}
       />
     </>
@@ -443,42 +683,6 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         disabled={blockDisabled}
         icon={TableIcon}
         onClick={() => insertTable(editor)}
-        title="Insert table"
-      />
-    </>
-  );
-
-  const renderBlockMenuButtons = (close: () => void) => (
-    <>
-      <ToolbarMenuButton
-        active={state.blockquote}
-        disabled={blockDisabled}
-        icon={BlockquoteIcon}
-        onClick={() => toggleBlockquote(editor)}
-        onMenuClose={close}
-        title="Blockquote"
-      />
-      <ToolbarMenuButton
-        active={state.codeBlock}
-        disabled={blockDisabled}
-        icon={CodeBlockIcon}
-        onClick={() => toggleCodeBlock(editor)}
-        onMenuClose={close}
-        title="Code block"
-      />
-      <ToolbarMenuButton
-        disabled={blockDisabled}
-        icon={HorizontalRuleIcon}
-        onClick={() => insertHorizontalRule(editor)}
-        onMenuClose={close}
-        title="Horizontal rule"
-      />
-      <ToolbarMenuButton
-        active={state.inTable}
-        disabled={blockDisabled}
-        icon={TableIcon}
-        onClick={() => insertTable(editor)}
-        onMenuClose={close}
         title="Insert table"
       />
     </>
@@ -519,97 +723,6 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     </>
   );
 
-  const renderTableMenuButtons = (close: () => void) => (
-    <>
-      <ToolbarMenuButton
-        icon={InsertTableRowAboveIcon}
-        onClick={() => insertTableRowAbove(editor)}
-        onMenuClose={close}
-        title="Insert row above"
-      />
-      <ToolbarMenuButton
-        icon={InsertTableRowBelowIcon}
-        onClick={() => insertTableRowBelow(editor)}
-        onMenuClose={close}
-        title="Insert row below"
-      />
-      <ToolbarMenuButton
-        icon={DeleteTableRowIcon}
-        onClick={() => deleteTableRow(editor)}
-        onMenuClose={close}
-        title="Delete row"
-      />
-      <ToolbarMenuButton
-        icon={InsertTableColumnBeforeIcon}
-        onClick={() => insertTableColumnBefore(editor)}
-        onMenuClose={close}
-        title="Insert column before"
-      />
-      <ToolbarMenuButton
-        icon={InsertTableColumnAfterIcon}
-        onClick={() => insertTableColumnAfter(editor)}
-        onMenuClose={close}
-        title="Insert column after"
-      />
-      <ToolbarMenuButton
-        icon={DeleteTableColumnIcon}
-        onClick={() => deleteTableColumn(editor)}
-        onMenuClose={close}
-        title="Delete column"
-      />
-    </>
-  );
-
-  const renderCompactToolbar = () => (
-    <div className="markdown-editor-toolbar__main">
-      {renderHistoryButtons()}
-      <ToolbarSeparator />
-      {renderCoreFormatButtons()}
-      {renderTouchTabButtons()}
-      <ToolbarSeparator />
-      <ToolbarOverflowGroup active={state.strike || state.code} label="Style">
-        {(close) => (
-          <>
-            <ToolbarMenuButton
-              active={state.strike}
-              icon={StrikeIcon}
-              onClick={() => dispatchFormatText(editor, 'strikethrough')}
-              onMenuClose={close}
-              title="Strikethrough"
-            />
-            <ToolbarMenuButton
-              active={state.code}
-              icon={CodeIcon}
-              onClick={() => dispatchFormatText(editor, 'code')}
-              onMenuClose={close}
-              title="Inline code"
-            />
-          </>
-        )}
-      </ToolbarOverflowGroup>
-      <ToolbarOverflowGroup
-        active={state.h1 || state.h2 || state.h3 || state.h4}
-        label="Heading"
-      >
-        {(close) => renderHeadingMenuButtons(close)}
-      </ToolbarOverflowGroup>
-      <ToolbarOverflowGroup active={state.activeList !== null} label="List">
-        {(close) => renderListMenuButtons(close)}
-      </ToolbarOverflowGroup>
-      <ToolbarOverflowGroup
-        active={state.blockquote || state.codeBlock || state.inTable}
-        label="Block"
-      >
-        {(close) => renderBlockMenuButtons(close)}
-      </ToolbarOverflowGroup>
-      {state.inTable && (
-        <ToolbarOverflowGroup active label="Table">
-          {(close) => renderTableMenuButtons(close)}
-        </ToolbarOverflowGroup>
-      )}
-    </div>
-  );
-
   const renderFullToolbar = () => (
     <div className="markdown-editor-toolbar__main">
       {renderHistoryButtons()}
@@ -632,28 +745,28 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   );
 
   return (
-    <div
-      ref={setToolbarEl}
-      aria-disabled={disabled || undefined}
-      aria-label="Markdown formatting"
-      className={[
-        'markdown-editor-toolbar',
-        compact ? 'is-compact' : '',
-        showUrlPanel ? 'is-url-input-open' : '',
-        disabled ? 'is-disabled' : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      data-variant="fixed"
-      role="toolbar"
-    >
-      {compact ? renderCompactToolbar() : renderFullToolbar()}
-      {showUrlPanel && (
-        <div className="markdown-editor-toolbar__url-input">
-          {renderLinkInput()}
-          {renderImageInput()}
-        </div>
-      )}
-    </div>
+    <>
+      <div
+        ref={setToolbarEl}
+        aria-disabled={disabled || undefined}
+        aria-label="Markdown formatting"
+        className={[
+          'markdown-editor-toolbar',
+          compact ? 'is-compact' : '',
+          disabled ? 'is-disabled' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        data-variant="fixed"
+        role="toolbar"
+      >
+        {compact ? renderCompactToolbar() : renderFullToolbar()}
+        {urlInputOpen && (
+          <div className="markdown-editor-toolbar__url-input">
+            {linkInputUrl !== null ? renderLinkInput() : renderImageInput()}
+          </div>
+        )}
+      </div>
+    </>
   );
 };

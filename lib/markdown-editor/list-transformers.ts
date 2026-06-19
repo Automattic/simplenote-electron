@@ -28,11 +28,10 @@ import {
   HISTORIC_TAG,
   HISTORY_PUSH_TAG,
   $addUpdateTag,
-  $getNodeByKey,
+  TextNode,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
-  type TextNode,
 } from 'lexical';
 
 import { $isSelectionInTable } from './table-controls';
@@ -63,15 +62,22 @@ function $getListItemLeadingTextNode(listItem: ListItemNode): TextNode | null {
   return null;
 }
 
-function $matchesTaskListItemMarker(
-  anchorNode: TextNode,
-  anchorOffset: number
-): boolean {
-  const textContent = anchorNode.getTextContent();
+// The whole text node must be exactly the marker ("[] " or "[ ] ") and the
+// caret must sit at its end, i.e. the user just typed the trailing space. This
+// mirrors what a markdown shortcut feels like without depending on the typed
+// character, so it works the same when run inside a node transform.
+function $matchesTaskListItemMarkerAtCaret(node: TextNode): boolean {
+  const textContent = node.getTextContent();
+  if (!TASK_LIST_ITEM_MARKER_REGEX.test(textContent)) {
+    return false;
+  }
+
+  const selection = $getSelection();
   return (
-    textContent[anchorOffset - 1] === ' ' &&
-    textContent.length === anchorOffset &&
-    TASK_LIST_ITEM_MARKER_REGEX.test(textContent)
+    $isRangeSelection(selection) &&
+    selection.isCollapsed() &&
+    selection.anchor.key === node.getKey() &&
+    selection.anchor.offset === textContent.length
   );
 }
 
@@ -104,24 +110,9 @@ function $getTaskListConversionContext(
   return { listItem, listNode };
 }
 
-function $couldConvertListItemToTaskList(
-  anchorNode: TextNode,
-  anchorOffset: number
-): boolean {
-  const context = $getTaskListConversionContext(anchorNode);
-  if (!context) {
-    return false;
-  }
-
-  return $matchesTaskListItemMarker(anchorNode, anchorOffset);
-}
-
-function $tryConvertListItemToTaskList(
-  anchorNode: TextNode,
-  anchorOffset: number
-): boolean {
-  const context = $getTaskListConversionContext(anchorNode);
-  if (!context || !$matchesTaskListItemMarker(anchorNode, anchorOffset)) {
+function $tryConvertListItemToTaskList(node: TextNode): boolean {
+  const context = $getTaskListConversionContext(node);
+  if (!context || !$matchesTaskListItemMarkerAtCaret(node)) {
     return false;
   }
 
@@ -135,63 +126,45 @@ function $tryConvertListItemToTaskList(
     }
   }
 
-  anchorNode.setTextContent('');
+  node.setTextContent('');
   listItem.selectStart();
   return true;
 }
 
+// Update tags accumulated for the in-progress update. Reading these lets the
+// transform bail on remote (collab) and undo/redo edits, which would otherwise
+// re-fire the conversion and fight history.
+type EditorWithUpdateTags = LexicalEditor & { _updateTags: Set<string> };
+
+function isCollaborationOrHistoricUpdate(editor: LexicalEditor): boolean {
+  const tags = (editor as EditorWithUpdateTags)._updateTags;
+  return tags.has(COLLABORATION_TAG) || tags.has(HISTORIC_TAG);
+}
+
+// Typing "[] " / "[ ] " at the start of a bullet/ordered list item turns the
+// whole list into a checklist. `@lexical/markdown` has no transformer for this
+// (it only matches markers at paragraph start), so we react to the marker text
+// node directly.
 export function registerTaskListItemShortcuts(
   editor: LexicalEditor
 ): () => void {
-  return editor.registerUpdateListener(
-    ({ dirtyLeaves, editorState, prevEditorState, tags }) => {
-      if (tags.has(COLLABORATION_TAG) || tags.has(HISTORIC_TAG)) {
-        return;
-      }
-      if (editor.isComposing()) {
-        return;
-      }
-
-      const selection = editorState.read($getSelection);
-      const prevSelection = prevEditorState.read($getSelection);
-      if (
-        !$isRangeSelection(prevSelection) ||
-        !$isRangeSelection(selection) ||
-        !selection.isCollapsed()
-      ) {
-        return;
-      }
-
-      const anchorKey = selection.anchor.key;
-      const anchorOffset = selection.anchor.offset;
-      const anchorNode = editorState._nodeMap.get(anchorKey);
-      if (!$isTextNode(anchorNode) || !dirtyLeaves.has(anchorKey)) {
-        return;
-      }
-
-      const shouldConvert = editorState.read(() =>
-        $couldConvertListItemToTaskList(anchorNode, anchorOffset)
-      );
-      if (!shouldConvert) {
-        return;
-      }
-
-      editor.update(() => {
-        if ($isSelectionInTable()) {
-          return;
-        }
-
-        const node = $getNodeByKey(anchorKey);
-        if (!$isTextNode(node)) {
-          return;
-        }
-
-        if ($tryConvertListItemToTaskList(node, anchorOffset)) {
-          $addUpdateTag(HISTORY_PUSH_TAG);
-        }
-      });
+  return editor.registerNodeTransform(TextNode, (node) => {
+    if (editor.isComposing() || isCollaborationOrHistoricUpdate(editor)) {
+      return;
     }
-  );
+
+    if (!$matchesTaskListItemMarkerAtCaret(node)) {
+      return;
+    }
+
+    if ($isSelectionInTable()) {
+      return;
+    }
+
+    if ($tryConvertListItemToTaskList(node)) {
+      $addUpdateTag(HISTORY_PUSH_TAG);
+    }
+  });
 }
 
 function importListItemText(

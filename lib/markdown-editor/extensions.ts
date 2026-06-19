@@ -38,7 +38,6 @@ import {
   ITALIC_UNDERSCORE,
   LINK,
   QUOTE,
-  registerMarkdownShortcuts,
   STRIKETHROUGH,
   type TextFormatTransformer,
   type TextMatchTransformer,
@@ -70,7 +69,8 @@ import {
 } from 'lexical';
 
 import { registerFormatEscape } from './format-escape';
-import { installDeferredNestedUpdates } from './deferred-nested-updates';
+import { registerSafeMarkdownShortcuts } from './register-safe-markdown-shortcuts';
+import { MarkdownToolbarExtension } from './toolbar-extension';
 import {
   parseNamespacedLexicalClipboardJson,
   stripLexicalClipboardJsonPrefix,
@@ -356,6 +356,7 @@ const ListDeletionExtension = defineExtension({
 const markdownEditorTheme = {
   code: 'lexical-md-editor__code-block',
   hr: 'lexical-md-editor__hr',
+  link: 'lexical-md-editor__link',
   list: {
     listitemChecked: 'task-list-item',
     listitemUnchecked: 'task-list-item',
@@ -375,18 +376,10 @@ const markdownEditorTheme = {
   },
 };
 
-const DeferredNestedUpdatesExtension = defineExtension({
-  name: '@simplenote/deferred-nested-updates',
-  register(editor) {
-    return installDeferredNestedUpdates(editor);
-  },
-});
-
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
-  dependencies: [DeferredNestedUpdatesExtension],
   register(editor) {
-    const unregisterMarkdownShortcuts = registerMarkdownShortcuts(
+    const unregisterMarkdownShortcuts = registerSafeMarkdownShortcuts(
       editor,
       withTableSafeBlockShortcuts(MARKDOWN_TRANSFORMERS)
     );
@@ -825,6 +818,7 @@ export function createMarkdownEditorExtension(
     MarkdownShortcutExtension,
     MarkdownPasteExtension,
     MarkdownCopyExtension,
+    MarkdownToolbarExtension,
   ];
 
   if (onChange) {

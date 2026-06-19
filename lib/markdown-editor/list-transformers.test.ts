@@ -26,7 +26,6 @@ import {
   HEADING,
   LINK,
   ORDERED_LIST,
-  registerMarkdownShortcuts,
   UNORDERED_LIST,
 } from '@lexical/markdown';
 
@@ -43,7 +42,7 @@ import {
   registerTaskListItemShortcuts,
   withMixedNestedListTransformers,
 } from './list-transformers';
-import { installDeferredNestedUpdates } from './deferred-nested-updates';
+import { registerSafeMarkdownShortcuts } from './register-safe-markdown-shortcuts';
 
 function importMarkdown(markdown: string) {
   const editor = createEditor({
@@ -63,8 +62,7 @@ function makeEditorWithShortcuts() {
       throw error;
     },
   });
-  installDeferredNestedUpdates(editor);
-  registerMarkdownShortcuts(editor, [
+  registerSafeMarkdownShortcuts(editor, [
     MIXED_NESTED_CHECK_LIST,
     MIXED_NESTED_UNORDERED_LIST,
     MIXED_NESTED_ORDERED_LIST,
