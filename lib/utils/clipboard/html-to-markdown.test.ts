@@ -3,6 +3,7 @@ import {
   clipboardItemsHtmlToMarkdown,
   htmlToMarkdown,
   insertMarkdownPaste,
+  isFormattingFreeHtml,
   resolveClipboardPaste,
   SIMPLENOTE_SOURCE_HTML_MARKER,
 } from './html-to-markdown';
@@ -257,6 +258,15 @@ describe('resolveClipboardPaste', () => {
     expect(
       resolveClipboardPaste({ html: '<h2>Rich</h2>', plain: 'Plain' }, true)
     ).toBe('## Rich');
+  });
+
+  it('prefers plain text for formatting-free HTML such as terminal output', () => {
+    const plain = '[info] Done\n[error] Failed';
+    const html =
+      '<meta charset="utf-8"><div>[info] Done</div><div>[error] Failed</div>';
+
+    expect(isFormattingFreeHtml(html)).toBe(true);
+    expect(resolveClipboardPaste({ html, plain })).toBe(plain);
   });
 
   it('falls back to plain text when requested and rich HTML is unusable', () => {

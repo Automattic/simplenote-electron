@@ -390,6 +390,60 @@ export const hasSimplenoteSourceHtmlMarker = (
   html: string | null | undefined
 ): boolean => html?.includes(SIMPLENOTE_SOURCE_HTML_MARKER) ?? false;
 
+const FORMATTING_HTML_TAGS = new Set([
+  'a',
+  'b',
+  'blockquote',
+  'code',
+  'del',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'hr',
+  'i',
+  'img',
+  'input',
+  'li',
+  'ol',
+  'pre',
+  's',
+  'strike',
+  'strong',
+  'table',
+  'tbody',
+  'td',
+  'th',
+  'thead',
+  'tr',
+  'u',
+  'ul',
+]);
+
+export const isFormattingFreeHtml = (html: string): boolean => {
+  if (!html.trim()) {
+    return true;
+  }
+
+  const prepared = prepareHtmlForMarkdown(html);
+  const walker = prepared.ownerDocument.createTreeWalker(
+    prepared,
+    NodeFilter.SHOW_ELEMENT
+  );
+
+  while (walker.nextNode()) {
+    const tag = (walker.currentNode as Element).nodeName.toLowerCase();
+    if (FORMATTING_HTML_TAGS.has(tag)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 type ClipboardPastePayload = {
   html?: string | null;
   plain?: string | null;
@@ -406,6 +460,10 @@ export const resolveClipboardPaste = (
   }
 
   if (html) {
+    if (plainText && isFormattingFreeHtml(html)) {
+      return plainText;
+    }
+
     const markdown = htmlToMarkdown(html);
 
     if (markdown) {

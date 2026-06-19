@@ -2,12 +2,21 @@ import {
   $createParagraphNode,
   $createTextNode,
   $getRoot,
+  $getSelection,
+  $isRangeSelection,
   createEditor,
+  KEY_DOWN_COMMAND,
   PASTE_COMMAND,
 } from 'lexical';
 import { ListNode, ListItemNode, $isListNode } from '@lexical/list';
-import { HeadingNode, QuoteNode, $isHeadingNode } from '@lexical/rich-text';
-import { CodeNode } from '@lexical/code-core';
+import {
+  HeadingNode,
+  QuoteNode,
+  $isHeadingNode,
+  $isQuoteNode,
+  $createQuoteNode,
+} from '@lexical/rich-text';
+import { CodeNode, $createCodeNode } from '@lexical/code-core';
 import { LinkNode } from '@lexical/link';
 import { $convertToMarkdownString } from '@lexical/markdown';
 
@@ -20,6 +29,7 @@ import {
   $insertMarkdownPasteNodes,
   $markdownToNodes,
   createMarkdownEditorExtension,
+  MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
   registerMarkdownPaste,
 } from './extensions';
@@ -52,6 +62,26 @@ function makePasteEvent(
   } as unknown as ClipboardEvent;
   return { event, preventDefault };
 }
+
+function makeMarkdownPasteEvent(
+  markdown: string,
+  extraData: Record<string, string> = {}
+) {
+  return makePasteEvent(markdown, {
+    'text/markdown': markdown,
+    ...extraData,
+  });
+}
+
+const TERMINAL_LOG = `[info] Done packaging.
+[info] Running (fork) com.tumblr.firehose.probe.FirehoseDevReadProbe 
+[error] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+[error] SLF4J: Defaulting to no-operation (NOP) logger implementation
+[error] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+[error] Exception in thread "main" java.lang.IllegalStateException: failed connecting to host [jdbc:mysql://db1.platform.dca-tumblr.a8cblr.net:3306/firehose_staging?connectTimeout=5000&socketTimeout=10000&useSSL=false]
+[error]         at com.tumblr.stargate.jdbc.HikariDataSourceImplicits$HikariBackedDatabaseContext$.toDatabaseContext(jdbc.scala:59)
+[error]         at com.tumblr.firehose.probe.FirehoseDevReadProbe$.delayedEndpoint$com$tumblr$firehose$probe$FirehoseDevReadProbe$1(FirehoseDevReadProbe.scala:62)
+[error]         at com.tumblr.firehose.probe.FirehoseDevReadProbe$delayedInit$body.apply(FirehoseDevReadProbe.scala:17)`;
 
 function selectEmptyParagraph(editor: ReturnType<typeof createEditor>) {
   editor.update(
@@ -120,7 +150,7 @@ describe('registerMarkdownPaste', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);
 
-    const { event, preventDefault } = makePasteEvent(
+    const { event, preventDefault } = makeMarkdownPasteEvent(
       '# GFM Test\n\n> a quote\n\n- [ ] task'
     );
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
@@ -136,27 +166,49 @@ describe('registerMarkdownPaste', () => {
     expect(roundtrip).toContain('- [ ] task');
   });
 
-  it('defers to the default paste when same-editor Lexical JSON is present', () => {
+  it('inserts same-editor Lexical JSON losslessly instead of deferring', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);
 
-    const { event, preventDefault } = makePasteEvent('# markdown heading', {
+    const { event, preventDefault } = makePasteEvent('copied text', {
       'application/x-lexical-editor': JSON.stringify({
         namespace: editor._config.namespace,
-        nodes: [],
+        nodes: [
+          {
+            type: 'paragraph',
+            version: 1,
+            direction: null,
+            format: '',
+            indent: 0,
+            children: [
+              {
+                type: 'text',
+                version: 1,
+                text: 'copied text',
+                format: 0,
+                style: '',
+                mode: 'normal',
+                detail: 0,
+              },
+            ],
+          },
+        ],
       }),
     });
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
 
-    expect(handled).toBe(false);
-    expect(preventDefault).not.toHaveBeenCalled();
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      expect($getRoot().getTextContent()).toContain('copied text');
+    });
   });
 
   it('still parses markdown when the Lexical JSON is from another editor', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);
 
-    const { event } = makePasteEvent('# markdown heading', {
+    const { event } = makeMarkdownPasteEvent('# markdown heading', {
       'application/x-lexical-editor': JSON.stringify({
         namespace: 'SomeOtherEditor',
         nodes: [],
@@ -210,7 +262,7 @@ describe('registerMarkdownPaste', () => {
     expect(roundtrip).not.toContain('https://example.com');
   });
 
-  it('leaves plain prose to the default paste handling', () => {
+  it('inserts plain prose as plain text, split into paragraphs', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);
 
@@ -219,8 +271,188 @@ describe('registerMarkdownPaste', () => {
     );
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
 
-    expect(handled).toBe(false);
-    expect(preventDefault).not.toHaveBeenCalled();
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      const text = $getRoot().getTextContent();
+      expect(text).toContain('just a plain sentence');
+      expect(text).toContain('with a second line');
+    });
+  });
+
+  it('inserts plain-text markdown syntax verbatim, without parsing it', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    const { event, preventDefault } = makePasteEvent('## not a heading');
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      expect($isHeadingNode($getRoot().getFirstChild())).toBe(false);
+      expect($getRoot().getTextContent()).toContain('## not a heading');
+    });
+  });
+
+  it('inserts multiline terminal logs as plain text without markdown parsing', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    const { event, preventDefault } = makePasteEvent(TERMINAL_LOG);
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      const text = $getRoot().getTextContent();
+      expect(text).toContain('[info] Done packaging.');
+      expect(text).toContain('java.lang.IllegalStateException');
+      // No code block / heading parsing of the log lines.
+      expect(
+        $getRoot()
+          .getChildren()
+          .every((n) => n.getType() !== 'code')
+      ).toBe(true);
+    });
+  });
+
+  it('pastes terminal logs into code blocks as raw plain text', () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const code = $createCodeNode();
+        code.append($createTextNode(''));
+        $getRoot().append(code);
+        code.selectEnd();
+      },
+      { discrete: true }
+    );
+
+    const { event, preventDefault } = makePasteEvent(TERMINAL_LOG, {
+      'text/html':
+        '<meta charset="utf-8"><div>[info] Done packaging.</div><div>[error] SLF4J</div>',
+    });
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+
+    editor.read(() => {
+      const code = $getRoot().getFirstChild();
+      expect(code?.getTextContent()).toBe(TERMINAL_LOG);
+    });
+  });
+
+  const expectMultilineQuote = (editor: ReturnType<typeof makeEditor>) => {
+    editor.read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(1);
+      const quote = children[0];
+      expect($isQuoteNode(quote)).toBe(true);
+      // Real line-break nodes (not a text node with an embedded "\n", which the
+      // browser would collapse onto one line).
+      const quoteChildren = (quote as QuoteNode).getChildren();
+      expect(quoteChildren.map((n) => n.getType())).toEqual([
+        'text',
+        'linebreak',
+        'text',
+        'linebreak',
+        'text',
+      ]);
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(
+        '> existing line1\n> line2\n> line3'
+      );
+    });
+  };
+
+  const makeQuoteEditor = () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const quote = $createQuoteNode();
+        quote.append($createTextNode('existing '));
+        $getRoot().append(quote);
+        quote.selectEnd();
+      },
+      { discrete: true }
+    );
+    return editor;
+  };
+
+  it('keeps multiline plain text inside a quote as line breaks', () => {
+    const editor = makeQuoteEditor();
+
+    const { event, preventDefault } = makePasteEvent('line1\nline2\nline3');
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    expectMultilineQuote(editor);
+  });
+
+  it('keeps multiline formatting-free HTML inside a quote as line breaks', () => {
+    const editor = makeQuoteEditor();
+
+    const { event, preventDefault } = makePasteEvent('line1\nline2\nline3', {
+      'text/html':
+        '<meta charset="utf-8"><div>line1</div><div>line2</div><div>line3</div>',
+    });
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    expectMultilineQuote(editor);
+  });
+
+  const armPlainPaste = (editor: ReturnType<typeof makeEditor>) => {
+    editor.dispatchCommand(KEY_DOWN_COMMAND, {
+      metaKey: true,
+      shiftKey: true,
+      code: 'KeyV',
+    } as unknown as KeyboardEvent);
+  };
+
+  it('pastes as plain text after Cmd+Shift+V, ignoring HTML formatting', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    armPlainPaste(editor);
+    const { event, preventDefault } = makePasteEvent('## not a heading', {
+      'text/html': '<h2>not a heading</h2>',
+    });
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      expect($isHeadingNode($getRoot().getFirstChild())).toBe(false);
+      expect($getRoot().getTextContent()).toContain('## not a heading');
+    });
+  });
+
+  it('disarms after one paste: the next plain Cmd+V parses formatting again', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    armPlainPaste(editor);
+    editor.dispatchCommand(
+      PASTE_COMMAND,
+      makePasteEvent('first', { 'text/html': '<h2>first</h2>' }).event
+    );
+
+    // No re-arm: a normal paste of rich HTML should be parsed as a heading.
+    editor.dispatchCommand(
+      PASTE_COMMAND,
+      makePasteEvent('## second', { 'text/html': '<h2>second</h2>' }).event
+    );
+
+    editor.read(() => {
+      const roundtrip = $convertToMarkdownString(MARKDOWN_TRANSFORMERS);
+      expect(roundtrip).toContain('## second');
+      expect(roundtrip).toContain('first');
+      expect(roundtrip).not.toContain('## first');
+    });
   });
 
   it('inserts pasted markdown at the selection, after existing content', () => {
@@ -235,7 +467,7 @@ describe('registerMarkdownPaste', () => {
       { discrete: true }
     );
 
-    const { event } = makePasteEvent('## pasted heading');
+    const { event } = makeMarkdownPasteEvent('## pasted heading');
     editor.dispatchCommand(PASTE_COMMAND, event);
 
     const roundtrip = editor.read(() =>
@@ -262,7 +494,7 @@ describe('registerMarkdownPaste', () => {
       { discrete: true }
     );
 
-    const { event } = makePasteEvent('## middle');
+    const { event } = makeMarkdownPasteEvent('## middle');
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
     expect(handled).toBe(true);
 
@@ -295,7 +527,7 @@ describe('registerMarkdownPaste', () => {
       { discrete: true }
     );
 
-    const { event } = makePasteEvent('[site](https://example.com)');
+    const { event } = makeMarkdownPasteEvent('[site](https://example.com)');
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
     expect(handled).toBe(true);
 
@@ -319,7 +551,7 @@ describe('registerMarkdownPaste', () => {
       { discrete: true }
     );
 
-    const { event } = makePasteEvent('## above\n\nintro paragraph');
+    const { event } = makeMarkdownPasteEvent('## above\n\nintro paragraph');
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
     expect(handled).toBe(true);
 
@@ -432,7 +664,7 @@ describe('registerMarkdownPaste', () => {
       { discrete: true }
     );
 
-    const { event } = makePasteEvent('- test');
+    const { event } = makeMarkdownPasteEvent('- test');
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
     expect(handled).toBe(true);
 

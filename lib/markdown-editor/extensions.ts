@@ -2,6 +2,7 @@ import {
   ClipboardImportExtension,
   GetClipboardDataExtension,
   $generateNodesFromSerializedNodes,
+  $insertDataTransferForRichText,
   $insertGeneratedNodes,
 } from '@lexical/clipboard';
 import {
@@ -43,7 +44,7 @@ import {
   type TextMatchTransformer,
   type Transformer,
 } from '@lexical/markdown';
-import { RichTextExtension } from '@lexical/rich-text';
+import { RichTextExtension, $isQuoteNode } from '@lexical/rich-text';
 import { TableExtension } from '@lexical/table';
 import {
   $createParagraphNode,
@@ -61,11 +62,14 @@ import {
   COMMAND_PRIORITY_HIGH,
   configExtension,
   defineExtension,
+  KEY_DOWN_COMMAND,
   PASTE_COMMAND,
   type AnyLexicalExtensionArgument,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
+  type PasteCommandType,
+  type RangeSelection,
 } from 'lexical';
 
 import { registerFormatEscape } from './format-escape';
@@ -100,7 +104,10 @@ import {
 import { registerTaskListShortcut } from './list-toggle';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension, $isSelectionInTable } from './table-controls';
-import { resolveClipboardPaste } from '../utils/clipboard/html-to-markdown';
+import {
+  isFormattingFreeHtml,
+  resolveClipboardPaste,
+} from '../utils/clipboard/html-to-markdown';
 
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
@@ -397,12 +404,6 @@ export const MarkdownShortcutExtension = defineExtension({
   },
 });
 
-// Block constructs at line starts (headings, quotes, fences, lists) or common
-// inline syntax (bold, links, code, strikethrough). Plain prose without any of
-// these falls through to Lexical's default paste.
-const MARKDOWN_PASTE_HINT =
-  /(^|\n)\s{0,3}(#{1,6}\s|>\s|```|~~~|[-*+]\s|\d+\.\s|---|\*\*\*|___|\|[^\n]+\|)|!\[[^\]\n]*\]\([^)\n]+\)|https?:\/\/[^\s<>[\]()]+|(?:<[a-z]+:[^>\n]+>)|\*\*[^*\n]+\*\*|\[[^\]\n]+\]\([^)\n]+\)|`[^`\n]+`|~~[^~\n]+~~/;
-
 // Cut/copy of one full list line ends with a linebreak; prefer markdown paste
 // over Lexical JSON so the item is reinserted as its own bullet, not merged.
 const SINGLE_COMPLETE_LIST_LINE =
@@ -631,86 +632,179 @@ function $insertInlineMarkdownPasteInTable(text: string): boolean {
   return true;
 }
 
-export function registerMarkdownPaste(editor: LexicalEditor): () => void {
-  return editor.registerCommand(
-    PASTE_COMMAND,
-    (event) => {
-      const clipboardData =
-        'clipboardData' in event ? event.clipboardData : null;
-      if (!clipboardData) {
-        return false;
-      }
+// Inserts text at the selection, turning newlines into real line breaks instead
+// of paragraph splits. Keeps multi-line pastes contained in the current block
+// (code block, quote) instead of spilling into sibling paragraphs.
+function $insertPlainText(selection: RangeSelection, text: string): void {
+  text.split(/\r?\n/).forEach((line, index) => {
+    if (index > 0) {
+      selection.insertLineBreak();
+    }
+    if (line !== '') {
+      selection.insertText(line);
+    }
+  });
+}
 
-      const clipboardMarkdown =
-        $getClipboardMarkdownFromDataTransfer(clipboardData);
-      if (!clipboardMarkdown) {
-        return false;
-      }
+// Plain text and formatting-free HTML (e.g. terminal/browser copies that ship a
+// structural-only HTML mirror) carry no formatting worth parsing as markdown.
+function $isPlainTextPaste(
+  source: ClipboardMarkdownPayload['source'],
+  clipboardData: DataTransfer
+): boolean {
+  if (source === 'text/plain') {
+    return true;
+  }
+  const html = clipboardData.getData('text/html');
+  return html !== '' && isFormattingFreeHtml(html);
+}
 
-      const { markdown: markdownText, source } = clipboardMarkdown;
-      if (source === 'text/plain' && !MARKDOWN_PASTE_HINT.test(markdownText)) {
-        return false;
-      }
+// Editor-internal copies carry lossless Lexical JSON. Returns its nodes, or
+// null when the clipboard holds no JSON or it came from a different editor (the
+// namespace check mirrors Lexical's own importer). Shared by the paste handler
+// and the ClipboardImportExtension importer so the parse rule lives in one spot.
+function $parseSameEditorClipboardJson(
+  editor: LexicalEditor,
+  dataTransfer: DataTransfer
+): LexicalNode[] | null {
+  const json = dataTransfer.getData('application/x-lexical-editor');
+  if (!json) {
+    return null;
+  }
+  const payload = parseNamespacedLexicalClipboardJson(
+    json,
+    editor._config.namespace
+  );
+  return payload ? $generateNodesFromSerializedNodes(payload.nodes) : null;
+}
 
-      // Editor-internal copies carry lossless Lexical JSON; defer to the
-      // default rich-text paste rather than re-parsing our markdown export.
-      // Mirrors the namespace check of Lexical's own JSON importer so JSON
-      // from unrelated Lexical editors doesn't suppress markdown parsing.
-      const lexicalJson = clipboardData.getData('application/x-lexical-editor');
-      if (lexicalJson) {
-        try {
-          const payload = JSON.parse(
-            stripLexicalClipboardJsonPrefix(lexicalJson)
-          );
-          if (payload && payload.namespace === editor._config.namespace) {
-            if (!SINGLE_COMPLETE_LIST_LINE.test(markdownText)) {
-              return false;
-            }
-          }
-        } catch {
-          // Not valid JSON; treat as absent.
-        }
-      }
+function $handleMarkdownPaste(
+  editor: LexicalEditor,
+  event: PasteCommandType,
+  forcePlainText: boolean
+): boolean {
+  const clipboardData = 'clipboardData' in event ? event.clipboardData : null;
+  const selection = $getSelection();
+  if (!clipboardData || !$isRangeSelection(selection)) {
+    return false;
+  }
+  const anchorNode = selection.anchor.getNode();
 
-      if (
-        editor
-          .getEditorState()
-          .read(
-            () => $isRangeSelection($getSelection()) && $isSelectionInTable()
-          )
-      ) {
-        let inserted = false;
-        editor.update(() => {
-          inserted = $insertInlineMarkdownPasteInTable(markdownText);
-        });
-        if (inserted) {
-          event.preventDefault();
-          return true;
-        }
-        return false;
-      }
+  // Cmd/Ctrl+Shift+V: paste as plain text, ignoring HTML/markdown formatting.
+  if (forcePlainText) {
+    const plain = clipboardData.getData('text/plain');
+    if (!plain) {
+      return false;
+    }
+    event.preventDefault();
+    $insertPlainText(selection, plain);
+    return true;
+  }
 
-      const selection = $getSelection();
-      if (!$isRangeSelection(selection)) {
-        return false;
-      }
+  // Code blocks never markdown-parse: insert the raw text verbatim.
+  if ($findMatchingParent(anchorNode, $isCodeNode) !== null) {
+    const plain = clipboardData.getData('text/plain');
+    if (!plain) {
+      return false;
+    }
+    event.preventDefault();
+    $insertPlainText(selection, plain);
+    return true;
+  }
 
-      const pasteAnchorBlock = selection.anchor.getNode().getTopLevelElement();
+  const clipboardMarkdown =
+    $getClipboardMarkdownFromDataTransfer(clipboardData);
+  if (!clipboardMarkdown) {
+    return false;
+  }
+  const { markdown, source } = clipboardMarkdown;
 
-      // Inside code blocks paste stays raw.
-      if ($isCodeNode(pasteAnchorBlock)) {
-        return false;
-      }
+  // Plain content keeps its line structure inside a quote instead of escaping
+  // into sibling paragraphs.
+  if (
+    $isPlainTextPaste(source, clipboardData) &&
+    $findMatchingParent(anchorNode, $isQuoteNode) !== null
+  ) {
+    event.preventDefault();
+    $insertPlainText(
+      selection,
+      clipboardData.getData('text/plain') || markdown
+    );
+    return true;
+  }
 
-      if (!$insertMarkdownPasteNodes(markdownText, pasteAnchorBlock)) {
-        return false;
-      }
-
+  // Same-editor copies carry lossless Lexical JSON: insert it verbatim. A single
+  // list line is left to markdown below so list semantics survive.
+  if (!SINGLE_COMPLETE_LIST_LINE.test(markdown)) {
+    const sameEditorNodes = $parseSameEditorClipboardJson(
+      editor,
+      clipboardData
+    );
+    if (sameEditorNodes) {
       event.preventDefault();
+      $insertGeneratedNodes(editor, sameEditorNodes, selection);
       return true;
+    }
+  }
+
+  // External plain text has no markdown to parse: let Lexical's plain-text
+  // importer handle it, run inline so repeated pastes don't get stuck on nested
+  // update cycles.
+  if (source === 'text/plain') {
+    event.preventDefault();
+    $insertDataTransferForRichText(clipboardData, selection, editor);
+    return true;
+  }
+
+  // Everything else is markdown/HTML we parse into nodes ourselves.
+  if ($isSelectionInTable()) {
+    if (!$insertInlineMarkdownPasteInTable(markdown)) {
+      return false;
+    }
+    event.preventDefault();
+    return true;
+  }
+
+  const anchorBlock = anchorNode.getTopLevelElement();
+  if (!$insertMarkdownPasteNodes(markdown, anchorBlock)) {
+    return false;
+  }
+  event.preventDefault();
+  return true;
+}
+
+export function registerMarkdownPaste(editor: LexicalEditor): () => void {
+  // Cmd/Ctrl+Shift+V arms a one-shot "paste as plain text" for the next paste.
+  // The paste event itself carries no modifier info, so we track the shortcut
+  // on key down; any other key disarms it.
+  let plainPasteArmed = false;
+
+  const unregisterKeyDown = editor.registerCommand(
+    KEY_DOWN_COMMAND,
+    (event) => {
+      plainPasteArmed =
+        (event.metaKey || event.ctrlKey) &&
+        event.shiftKey &&
+        event.code === 'KeyV';
+      return false;
     },
     COMMAND_PRIORITY_HIGH
   );
+
+  const unregisterPaste = editor.registerCommand(
+    PASTE_COMMAND,
+    (event) => {
+      const forcePlainText = plainPasteArmed;
+      plainPasteArmed = false;
+      return $handleMarkdownPaste(editor, event, forcePlainText);
+    },
+    COMMAND_PRIORITY_HIGH
+  );
+
+  return () => {
+    unregisterKeyDown();
+    unregisterPaste();
+  };
 }
 
 export const MarkdownPasteExtension = defineExtension({
@@ -766,7 +860,7 @@ export const MarkdownCopyExtension = defineExtension({
     configExtension(ClipboardImportExtension, {
       $importMimeType: {
         'application/x-lexical-editor': [
-          (data, selection, $next, dataTransfer) => {
+          (_data, selection, $next, dataTransfer) => {
             const clipboardMarkdown =
               $getClipboardMarkdownFromDataTransfer(dataTransfer);
             if (
@@ -776,15 +870,14 @@ export const MarkdownCopyExtension = defineExtension({
               return false;
             }
 
-            const payload = parseNamespacedLexicalClipboardJson(
-              data,
-              $getEditor()._config.namespace
+            const nodes = $parseSameEditorClipboardJson(
+              $getEditor(),
+              dataTransfer
             );
-            if (!payload) {
+            if (!nodes) {
               return $next();
             }
 
-            const nodes = $generateNodesFromSerializedNodes(payload.nodes);
             $insertGeneratedNodes($getEditor(), nodes, selection);
             return true;
           },
