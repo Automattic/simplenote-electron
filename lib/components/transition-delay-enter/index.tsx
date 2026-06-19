@@ -1,6 +1,7 @@
 import React, {
   FunctionComponent,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from 'react';
@@ -22,6 +23,7 @@ const TransitionDelayEnter: FunctionComponent<OwnProps> = ({
   delay = 1000,
 }) => {
   const [shouldRender, setShouldRender] = useState(false);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -33,13 +35,16 @@ const TransitionDelayEnter: FunctionComponent<OwnProps> = ({
 
   return (
     <CSSTransition
+      nodeRef={nodeRef}
       classNames="transition-delay-enter"
       in={shouldRender}
       mountOnEnter={true}
       timeout={200 /* fade-in speed */}
       unmountOnExit={true}
     >
-      {children}
+      <div ref={nodeRef} className="transition-delay-enter-wrapper">
+        {children}
+      </div>
     </CSSTransition>
   );
 };

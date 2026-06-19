@@ -1,4 +1,4 @@
-import React, { Component, CSSProperties } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -19,7 +19,6 @@ import * as T from '../types';
 type OwnProps = {
   invalidateHeight: () => any;
   noteId: T.EntityId;
-  style: CSSProperties;
 };
 
 type StateProps = {
@@ -78,7 +77,6 @@ export class NoteCell extends Component<Props> {
       openNote,
       pinNote,
       searchQuery,
-      style,
     } = this.props;
 
     if (!note) {
@@ -105,7 +103,7 @@ export class NoteCell extends Component<Props> {
     const decorators = getTerms(searchQuery).map(makeFilterDecorator);
 
     return (
-      <div style={style} className={classes} role="row">
+      <div className={classes} role="row">
         <div className="note-list-item-content" role="cell">
           <div className="note-list-item-status">
             <button
