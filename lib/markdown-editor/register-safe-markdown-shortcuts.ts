@@ -3,29 +3,32 @@ import type { LexicalEditor } from 'lexical';
 
 type UpdatingEditor = LexicalEditor & { _updating?: boolean };
 
-const MAX_NESTED_UPDATES_PER_ROOT = 3;
+const MAX_NESTED_UPDATE_DEPTH = 3;
 
 /**
  * `@lexical/markdown` shortcuts call `editor.update()` from inside
  * `registerUpdateListener`. That must run synchronously so node references from
- * the listener closure stay valid. Cap nested updates per root commit so
- * listeners cannot recurse without bound.
+ * the listener closure stay valid. Limit nested update *depth* so listeners
+ * cannot recurse without bound.
  */
 function installNestedUpdateGuard(editor: LexicalEditor): () => void {
   const update = editor.update.bind(editor);
-  let nestedUpdateCount = 0;
+  let nestedUpdateDepth = 0;
 
   editor.update = (updateFn, options) => {
     if ((editor as UpdatingEditor)._updating) {
-      if (nestedUpdateCount >= MAX_NESTED_UPDATES_PER_ROOT) {
+      if (nestedUpdateDepth >= MAX_NESTED_UPDATE_DEPTH) {
         return;
       }
 
-      nestedUpdateCount++;
-      return update(updateFn, options);
+      nestedUpdateDepth++;
+      try {
+        return update(updateFn, options);
+      } finally {
+        nestedUpdateDepth--;
+      }
     }
 
-    nestedUpdateCount = 0;
     return update(updateFn, options);
   };
 
