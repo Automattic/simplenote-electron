@@ -413,12 +413,18 @@ const SINGLE_COMPLETE_LIST_LINE =
 const COMPLETE_FENCED_CODE_BLOCK =
   /^(`{3,}|~{3,})([^\n]*)\n[\s\S]*?\n\1(?:\n|$)/;
 
+// Full blockquote copies put `> ` prefixes in text/markdown but Lexical JSON
+// only carries the inner text nodes. Prefer markdown paste so the quote block
+// is restored.
+const COMPLETE_BLOCKQUOTE = /^(?:> .+(?:\n|$))+$/;
+
 export function $shouldPreferMarkdownPasteOverLexicalJson(
   markdown: string
 ): boolean {
   return (
     SINGLE_COMPLETE_LIST_LINE.test(markdown) ||
-    COMPLETE_FENCED_CODE_BLOCK.test(markdown)
+    COMPLETE_FENCED_CODE_BLOCK.test(markdown) ||
+    COMPLETE_BLOCKQUOTE.test(markdown)
   );
 }
 

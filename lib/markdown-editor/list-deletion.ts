@@ -5,6 +5,11 @@ import {
   type CodeNode as CodeNodeType,
 } from '@lexical/code-core';
 import {
+  $isQuoteNode,
+  QuoteNode,
+  type QuoteNode as QuoteNodeType,
+} from '@lexical/rich-text';
+import {
   $isListItemNode,
   $isListNode,
   ListItemNode,
@@ -288,6 +293,98 @@ function $tryRemoveFullySelectedCodeBlocks(): boolean {
   return $removeFullySelectedCodeBlocks(selection);
 }
 
+function $isQuoteContentFullySelected(
+  quoteNode: QuoteNodeType,
+  selection: RangeSelection
+): boolean {
+  const leaves = quoteNode.getAllTextNodes();
+  if (leaves.length === 0) {
+    const [selStart, selEnd] = selection.getStartEndPoints();
+    return (
+      $pointCoversNodeStart(selStart, quoteNode, 0) &&
+      $pointCoversNodeEnd(selEnd, quoteNode)
+    );
+  }
+
+  const [selStart, selEnd] = selection.getStartEndPoints();
+  const firstLeaf = leaves[0];
+  const lastLeaf = leaves[leaves.length - 1];
+
+  if (
+    !$pointCoversNodeStart(selStart, firstLeaf, 0) ||
+    !$pointCoversNodeEnd(selEnd, lastLeaf)
+  ) {
+    return false;
+  }
+
+  const selectedKeys = new Set(
+    selection.getNodes().map((node) => node.getKey())
+  );
+  return leaves.every((leaf) => selectedKeys.has(leaf.getKey()));
+}
+
+export function $collectFullySelectedBlockquotes(
+  selection: RangeSelection
+): QuoteNodeType[] {
+  const quotes = new Map<string, QuoteNodeType>();
+
+  for (const node of selection.getNodes()) {
+    const quoteNode = $findMatchingParent(node, $isQuoteNode);
+    if (quoteNode === null || quotes.has(quoteNode.getKey())) {
+      continue;
+    }
+    if ($isQuoteContentFullySelected(quoteNode, selection)) {
+      quotes.set(quoteNode.getKey(), quoteNode);
+    }
+  }
+
+  return [...quotes.values()];
+}
+
+export function $removeFullySelectedBlockquotes(
+  selection: RangeSelection
+): boolean {
+  if (selection.isCollapsed()) {
+    return false;
+  }
+
+  const quotes = $collectFullySelectedBlockquotes(selection);
+  if (quotes.length === 0) {
+    return false;
+  }
+
+  const positions = new Map(
+    $nodesOfType(QuoteNode).map((quote, index) => [quote.getKey(), index])
+  );
+  const sortedQuotes = [...quotes].sort(
+    (left, right) =>
+      (positions.get(right.getKey()) ?? 0) - (positions.get(left.getKey()) ?? 0)
+  );
+  const firstRemoved = sortedQuotes[sortedQuotes.length - 1];
+  const previousSibling = firstRemoved.getPreviousSibling();
+
+  for (const quote of sortedQuotes) {
+    quote.remove();
+  }
+
+  if (previousSibling !== null && $isElementNode(previousSibling)) {
+    previousSibling.selectEnd();
+  } else {
+    $getRoot().selectStart();
+  }
+
+  return true;
+}
+
+function $tryRemoveFullySelectedBlockquotes(): boolean {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+
+  return $removeFullySelectedBlockquotes(selection);
+}
+
 function $removeListItemWithSublist(listItem: ListItemNode): void {
   listItem.remove();
 }
@@ -501,14 +598,16 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
       DELETE_CHARACTER_COMMAND,
       () =>
         $tryRemoveFullySelectedListItems() ||
-        $tryRemoveFullySelectedCodeBlocks(),
+        $tryRemoveFullySelectedCodeBlocks() ||
+        $tryRemoveFullySelectedBlockquotes(),
       COMMAND_PRIORITY_HIGH
     ),
     editor.registerCommand(
       DELETE_LINE_COMMAND,
       () =>
         $tryRemoveFullySelectedListItems() ||
-        $tryRemoveFullySelectedCodeBlocks(),
+        $tryRemoveFullySelectedCodeBlocks() ||
+        $tryRemoveFullySelectedBlockquotes(),
       COMMAND_PRIORITY_HIGH
     ),
     editor.registerCommand(
@@ -521,7 +620,12 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
 
         const items = $collectFullySelectedListItems(selection);
         const codeBlocks = $collectFullySelectedCodeBlocks(selection);
-        if (items.length === 0 && codeBlocks.length === 0) {
+        const blockquotes = $collectFullySelectedBlockquotes(selection);
+        if (
+          items.length === 0 &&
+          codeBlocks.length === 0 &&
+          blockquotes.length === 0
+        ) {
           return false;
         }
 
@@ -538,7 +642,11 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
                 $tryRemoveFullySelectedListItems();
                 return;
               }
-              $tryRemoveFullySelectedCodeBlocks();
+              if (codeBlocks.length > 0) {
+                $tryRemoveFullySelectedCodeBlocks();
+                return;
+              }
+              $tryRemoveFullySelectedBlockquotes();
             });
           }
         });

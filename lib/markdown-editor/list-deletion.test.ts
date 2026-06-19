@@ -2,6 +2,7 @@ import { $getClipboardDataFromSelection } from '@lexical/clipboard';
 import { $isCodeNode } from '@lexical/code-core';
 import { $convertToMarkdownString } from '@lexical/markdown';
 import { $isListNode } from '@lexical/list';
+import { $isQuoteNode } from '@lexical/rich-text';
 import {
   $getRoot,
   $getSelection,
@@ -17,6 +18,7 @@ import {
 
 import {
   $insertMarkdownPasteNodes,
+  $shouldPreferMarkdownPasteOverLexicalJson,
   MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
 } from './extensions';
@@ -69,6 +71,30 @@ function selectAllCodeBlockText(editor: LexicalEditorWithDispose): void {
       const leaves = code.getAllTextNodes();
       if (leaves.length === 0) {
         throw new Error('Expected code text');
+      }
+      const first = leaves[0];
+      const last = leaves[leaves.length - 1];
+      first.select(0, 0);
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) {
+        throw new Error('Expected a range selection');
+      }
+      selection.focus.set(last.getKey(), last.getTextContentSize(), 'text');
+    },
+    { discrete: true }
+  );
+}
+
+function selectAllBlockquoteText(editor: LexicalEditorWithDispose): void {
+  editor.update(
+    () => {
+      const quote = $getRoot().getFirstChild();
+      if (!$isQuoteNode(quote)) {
+        throw new Error('Expected a blockquote');
+      }
+      const leaves = quote.getAllTextNodes();
+      if (leaves.length === 0) {
+        throw new Error('Expected quote text');
       }
       const first = leaves[0];
       const last = leaves[leaves.length - 1];
@@ -179,6 +205,69 @@ describe('list deletion', () => {
 
     expect(exportMarkdown(editor)).toContain('const a = 1');
     expect(rootChildTypes(editor)).toContain('code');
+    editor.dispose();
+  });
+
+  it('prefers markdown paste for a complete blockquote copy', () => {
+    expect($shouldPreferMarkdownPasteOverLexicalJson('> hjhj')).toBe(true);
+    expect($shouldPreferMarkdownPasteOverLexicalJson('> hjhj\n')).toBe(true);
+    expect(
+      $shouldPreferMarkdownPasteOverLexicalJson('> line one\n> line two\n')
+    ).toBe(true);
+    expect($shouldPreferMarkdownPasteOverLexicalJson('plain text')).toBe(false);
+  });
+
+  it('removes a fully selected blockquote', async () => {
+    const editor = makeGfmTestEditor('> quoted text');
+    selectAllBlockquoteText(editor);
+    await dispatchDelete(editor);
+
+    expect(rootChildTypes(editor)).not.toContain('quote');
+    editor.dispose();
+  });
+
+  it('cut and paste a whole blockquote round-trips as a quote block', async () => {
+    const editor = makeGfmTestEditor('> hjhj\n\nPaste here');
+    selectAllBlockquoteText(editor);
+
+    const clipboardData = editor.read(() =>
+      $getClipboardDataFromSelection($getSelection())
+    );
+    expect(clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('> hjhj');
+    expect(clipboardData['application/x-lexical-editor']).toContain('hjhj');
+    expect(clipboardData['application/x-lexical-editor']).not.toContain(
+      'quote'
+    );
+
+    await dispatchDelete(editor);
+    expect(rootChildTypes(editor)).not.toContain('quote');
+
+    editor.update(
+      () => {
+        $getRoot().getLastChild()?.selectStart();
+      },
+      { discrete: true }
+    );
+
+    const pasteEvent = {
+      clipboardData: {
+        getData: (type: string) => clipboardData[type] ?? '',
+      },
+      preventDefault: jest.fn(),
+    } as unknown as ClipboardEvent;
+
+    editor.update(
+      () => {
+        const handled = editor.dispatchCommand(PASTE_COMMAND, pasteEvent);
+        if (!handled) {
+          throw new Error('Expected markdown paste to restore the blockquote');
+        }
+      },
+      { discrete: true }
+    );
+
+    expect(exportMarkdown(editor)).toContain('> hjhj');
+    expect(rootChildTypes(editor)).toContain('quote');
     editor.dispose();
   });
 
