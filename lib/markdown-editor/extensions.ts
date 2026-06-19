@@ -100,6 +100,7 @@ import {
 import { registerTaskListShortcut } from './list-toggle';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension, $isSelectionInTable } from './table-controls';
+import { resolveClipboardPaste } from '../utils/clipboard/html-to-markdown';
 
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
@@ -409,11 +410,39 @@ const SINGLE_COMPLETE_LIST_LINE =
 
 export const MARKDOWN_CLIPBOARD_MIME_TYPE = 'text/markdown';
 
+export type ClipboardMarkdownSource =
+  | 'text/markdown'
+  | 'text/html'
+  | 'text/plain';
+
+export type ClipboardMarkdownPayload = {
+  markdown: string;
+  source: ClipboardMarkdownSource;
+};
+
 export function $getClipboardMarkdownFromDataTransfer(
   clipboardData: Pick<DataTransfer, 'getData'>
-): string {
-  const markdown = clipboardData.getData(MARKDOWN_CLIPBOARD_MIME_TYPE);
-  return markdown || clipboardData.getData('text/plain');
+): ClipboardMarkdownPayload | null {
+  const markdownMime = clipboardData.getData(MARKDOWN_CLIPBOARD_MIME_TYPE);
+  if (markdownMime) {
+    return { markdown: markdownMime, source: 'text/markdown' };
+  }
+
+  const html = clipboardData.getData('text/html');
+  const plain = clipboardData.getData('text/plain');
+
+  if (html) {
+    const fromHtml = resolveClipboardPaste({ html, plain });
+    if (fromHtml) {
+      return { markdown: fromHtml, source: 'text/html' };
+    }
+  }
+
+  if (plain) {
+    return { markdown: plain, source: 'text/plain' };
+  }
+
+  return null;
 }
 
 function $isNestedListWrapperItem(listItem: ListItemNode): boolean {
@@ -612,8 +641,14 @@ export function registerMarkdownPaste(editor: LexicalEditor): () => void {
         return false;
       }
 
-      const markdownText = $getClipboardMarkdownFromDataTransfer(clipboardData);
-      if (!markdownText || !MARKDOWN_PASTE_HINT.test(markdownText)) {
+      const clipboardMarkdown =
+        $getClipboardMarkdownFromDataTransfer(clipboardData);
+      if (!clipboardMarkdown) {
+        return false;
+      }
+
+      const { markdown: markdownText, source } = clipboardMarkdown;
+      if (source === 'text/plain' && !MARKDOWN_PASTE_HINT.test(markdownText)) {
         return false;
       }
 
@@ -732,8 +767,12 @@ export const MarkdownCopyExtension = defineExtension({
       $importMimeType: {
         'application/x-lexical-editor': [
           (data, selection, $next, dataTransfer) => {
-            const text = $getClipboardMarkdownFromDataTransfer(dataTransfer);
-            if (SINGLE_COMPLETE_LIST_LINE.test(text)) {
+            const clipboardMarkdown =
+              $getClipboardMarkdownFromDataTransfer(dataTransfer);
+            if (
+              clipboardMarkdown &&
+              SINGLE_COMPLETE_LIST_LINE.test(clipboardMarkdown.markdown)
+            ) {
               return false;
             }
 

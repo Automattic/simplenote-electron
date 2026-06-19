@@ -15,6 +15,7 @@ import { buildEditorFromExtensions } from '@lexical/extension';
 import { $isTableNode } from '@lexical/table';
 import { $isHorizontalRuleNode } from '@lexical/extension';
 import {
+  $getClipboardMarkdownFromDataTransfer,
   $importMarkdownString,
   $insertMarkdownPasteNodes,
   $markdownToNodes,
@@ -76,6 +77,41 @@ describe('$markdownToNodes', () => {
       },
       { discrete: true }
     );
+  });
+});
+
+describe('$getClipboardMarkdownFromDataTransfer', () => {
+  it('follows text/markdown, text/html, then text/plain priority', () => {
+    const getData = (type: string) =>
+      ({
+        'text/markdown': '# md',
+        'text/html': '<h1>html</h1>',
+        'text/plain': 'plain',
+      })[type] ?? '';
+
+    expect(
+      $getClipboardMarkdownFromDataTransfer({ getData } as DataTransfer)
+    ).toEqual({ markdown: '# md', source: 'text/markdown' });
+
+    const htmlOnly = (type: string) =>
+      ({
+        'text/html': '<h1>html</h1>',
+        'text/plain': 'plain',
+      })[type] ?? '';
+
+    expect(
+      $getClipboardMarkdownFromDataTransfer({
+        getData: htmlOnly,
+      } as DataTransfer)
+    ).toEqual({ markdown: '# html', source: 'text/html' });
+
+    const plainOnly = (type: string) => (type === 'text/plain' ? 'plain' : '');
+
+    expect(
+      $getClipboardMarkdownFromDataTransfer({
+        getData: plainOnly,
+      } as DataTransfer)
+    ).toEqual({ markdown: 'plain', source: 'text/plain' });
   });
 });
 
@@ -150,6 +186,28 @@ describe('registerMarkdownPaste', () => {
     );
     expect(roundtrip).toContain('# markdown heading');
     expect(roundtrip).not.toContain('plain only');
+  });
+
+  it('prefers text/html over plain text when both are present', () => {
+    const editor = makeEditor();
+    selectEmptyParagraph(editor);
+
+    const { event, preventDefault } = makePasteEvent(
+      'Visit https://example.com for details',
+      {
+        'text/html': '<h2>Rich heading</h2><p>From HTML</p>',
+      }
+    );
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    const roundtrip = editor.read(() =>
+      $convertToMarkdownString(MARKDOWN_TRANSFORMERS)
+    );
+    expect(roundtrip).toContain('## Rich heading');
+    expect(roundtrip).toContain('From HTML');
+    expect(roundtrip).not.toContain('https://example.com');
   });
 
   it('leaves plain prose to the default paste handling', () => {
