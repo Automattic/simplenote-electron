@@ -398,10 +398,25 @@ export function importMixedNestedListMarkdown(
   importMarkdownChunk: (chunk: string, node: ElementNode) => void,
   inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
 ): void {
-  for (const block of groupListBlocks(markdown)) {
+  const blocks = groupListBlocks(markdown);
+  for (let index = 0; index < blocks.length; index++) {
+    const block = blocks[index];
     if (block.kind === 'list') {
       importListBlock(block.lines, root, inlineTransformers);
-    } else if (block.text.length > 0) {
+      continue;
+    }
+
+    if (block.text.length > 0) {
+      importMarkdownChunk(block.text, root);
+      continue;
+    }
+
+    // A blank line between two list blocks must become an empty paragraph so
+    // adjacent lists do not merge. Trailing newlines (e.g. "- item\n" from the
+    // clipboard) also produce an empty markdown block but must stay skipped.
+    const previousBlock = blocks[index - 1];
+    const nextBlock = blocks[index + 1];
+    if (previousBlock?.kind === 'list' && nextBlock?.kind === 'list') {
       importMarkdownChunk(block.text, root);
     }
   }

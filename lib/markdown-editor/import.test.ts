@@ -13,6 +13,7 @@ import {
   MARKDOWN_TRANSFORMERS,
 } from './extensions';
 import { makeGfmTestEditor } from './gfm-test-helpers';
+import { describeListTree } from './list-transformers';
 
 function typeAtEnd(editor: ReturnType<typeof makeGfmTestEditor>, text: string) {
   for (const char of text) {
@@ -158,6 +159,27 @@ describe('$importMarkdownString', () => {
     const markdown = 'hello\n\n```\ntest\n\n\n\n```';
     const editor = makeGfmTestEditor();
     editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    const roundtrip = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(roundtrip).toBe(markdown);
+    editor.dispose();
+  });
+
+  it('imports list blocks separated by a blank line as separate lists', () => {
+    const markdown = '- [ ] test\n\n- [ ] test2';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
+        "check
+          item: "test"
+        check
+          item: "test2""
+      `);
+    });
 
     const roundtrip = editor
       .getEditorState()

@@ -203,6 +203,27 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
     });
   });
 
+  it('imports bullet list items separated by a blank line as two lists', () => {
+    const markdown = '- test\n\n- test2';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
+        "bullet
+          item: "test"
+        bullet
+          item: "test2""
+      `);
+    });
+  });
+
+  it('round-trips bullet list items separated by a blank line', () => {
+    const markdown = '- test\n\n- test2';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+    });
+  });
+
   it('creates a bullet list from the "- " markdown shortcut', async () => {
     const editor = makeEditorWithShortcuts();
     await typeAtLineStart(editor, '- ');
@@ -305,6 +326,40 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
 
   it('round-trips checked and unchecked checklist items', () => {
     const markdown = '- [ ] todo\n- [x] done';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+    });
+  });
+
+  it('imports checklist items separated by a blank line as two lists', () => {
+    const markdown = '- [ ] test\n\n- [ ] test2';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
+        "check
+          item: "test"
+        check
+          item: "test2""
+      `);
+    });
+  });
+
+  it('imports compact checklist markers separated by a blank line as two lists', () => {
+    const markdown = '- [] test\n\n- [] test2';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
+        "check
+          item: "test"
+        check
+          item: "test2""
+      `);
+    });
+  });
+
+  it('round-trips checklist items separated by a blank line', () => {
+    const markdown = '- [ ] test\n\n- [ ] test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
       expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
