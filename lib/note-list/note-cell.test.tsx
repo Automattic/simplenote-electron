@@ -33,15 +33,84 @@ const baseProps = {
   syncErrorCode: null as number | null,
 };
 
+const expectSpinning = (icon: HTMLElement, spinning: boolean) => {
+  expect(icon.classList.contains('is-syncing')).toBe(spinning);
+};
+
+const expectOfflineStyle = (icon: HTMLElement, offline: boolean) => {
+  expect(icon.classList.contains('is-offline')).toBe(offline);
+};
+
+const expectErrorStyle = (icon: HTMLElement, errored: boolean) => {
+  expect(icon.classList.contains('has-sync-error')).toBe(errored);
+};
+
 describe('NoteCell status icons', () => {
-  describe('sync error', () => {
-    it('does not render a sync error icon when syncErrorCode is null', () => {
+  describe('pending sync icon appearance', () => {
+    it('spinning spinner shows when pending changes regardless of syncing state', () => {
+      const { getByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges />
+      );
+      const icon = getByRole('img', { name: 'Pending changes' });
+
+      expectSpinning(icon, true);
+      expectOfflineStyle(icon, false);
+      expectErrorStyle(icon, false);
+    });
+
+    it('non-spinning spinner shows when pending changes and offline', () => {
+      const { getByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges isOffline />
+      );
+      const icon = getByRole('img', {
+        name: 'Pending changes (waiting for network connection)',
+      });
+
+      expectSpinning(icon, false);
+      expectOfflineStyle(icon, true);
+      expectErrorStyle(icon, false);
+    });
+
+    it('non-spinning spinner shows when we have a sync error and we are not actively syncing', () => {
+      const { getByRole, queryByRole } = render(
+        <NoteCell {...baseProps} hasPendingChanges syncErrorCode={413} />
+      );
+      const icon = getByRole('img', {
+        name: 'Sync failed',
+        description: getSyncErrorMessage(413),
+      });
+
+      expectSpinning(icon, false);
+      expectErrorStyle(icon, true);
+      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
+    });
+
+    it('spinning spinner shows when we are actively syncing and have a sync error', () => {
+      const { getByRole, queryByRole } = render(
+        <NoteCell
+          {...baseProps}
+          hasPendingChanges
+          isSyncing
+          syncErrorCode={413}
+        />
+      );
+      const icon = getByRole('img', { name: 'Pending changes' });
+
+      expectSpinning(icon, true);
+      expectErrorStyle(icon, false);
+      expect(queryByRole('img', { name: 'Sync failed' })).toBeNull();
+    });
+  });
+
+  describe('when the note is not pending', () => {
+    it('does not render a sync icon', () => {
       const { queryByRole } = render(<NoteCell {...baseProps} />);
 
       expect(queryByRole('img', { name: 'Sync failed' })).toBeNull();
+      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
     });
 
-    it('renders a red sync icon with tooltip when syncErrorCode is set', () => {
+    it('still renders a sync error icon when syncErrorCode is set', () => {
       const { getByRole } = render(
         <NoteCell {...baseProps} syncErrorCode={413} />
       );
@@ -52,89 +121,6 @@ describe('NoteCell status icons', () => {
           description: getSyncErrorMessage(413),
         })
       ).not.toBeNull();
-    });
-
-    it('shows a static red sync icon after a failed sync that is not retrying', () => {
-      const { getByRole, queryByRole } = render(
-        <NoteCell {...baseProps} hasPendingChanges syncErrorCode={413} />
-      );
-
-      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
-      expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
-    });
-
-    it('shows a spinning sync icon while retrying a failed sync', () => {
-      const { getByRole, queryByRole } = render(
-        <NoteCell
-          {...baseProps}
-          hasPendingChanges
-          isSyncing
-          syncErrorCode={413}
-        />
-      );
-      const pendingChanges = getByRole('img', { name: 'Pending changes' });
-
-      expect(pendingChanges).not.toBeNull();
-      expect(queryByRole('img', { name: 'Sync failed' })).toBeNull();
-    });
-
-    it('shows a static red sync icon after a failed sync', () => {
-      const { getByRole, queryByRole } = render(
-        <NoteCell {...baseProps} syncErrorCode={413} />
-      );
-
-      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
-      expect(getByRole('img', { name: 'Sync failed' })).not.toBeNull();
-    });
-  });
-
-  describe('pending changes', () => {
-    it('does not render a pending changes icon when hasPendingChanges is false', () => {
-      const { queryByRole } = render(<NoteCell {...baseProps} />);
-
-      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
-    });
-
-    it('renders a pending changes icon when hasPendingChanges is true', () => {
-      const { getByRole } = render(
-        <NoteCell {...baseProps} hasPendingChanges />
-      );
-      const pendingChanges = getByRole('img', { name: 'Pending changes' });
-
-      expect(pendingChanges).not.toBeNull();
-    });
-
-    it('renders a pending changes icon when isSyncing is true', () => {
-      const { getByRole } = render(
-        <NoteCell {...baseProps} hasPendingChanges isSyncing />
-      );
-      const pendingChanges = getByRole('img', { name: 'Pending changes' });
-
-      expect(pendingChanges).not.toBeNull();
-    });
-
-    it('marks pending changes as waiting for a connection when isOffline is true', () => {
-      const { getByRole } = render(
-        <NoteCell {...baseProps} hasPendingChanges isOffline />
-      );
-      const pendingChanges = getByRole('img', {
-        name: 'Pending changes (waiting for network connection)',
-      });
-
-      expect(pendingChanges).not.toBeNull();
-    });
-
-    it('does not announce syncing while waiting for a connection', () => {
-      const { getByRole, queryByRole } = render(
-        <NoteCell {...baseProps} hasPendingChanges isOffline isSyncing />
-      );
-
-      expect(
-        getByRole('img', {
-          name: 'Pending changes (waiting for network connection)',
-        })
-      ).not.toBeNull();
-      expect(queryByRole('img', { name: 'Pending changes' })).toBeNull();
     });
   });
 
