@@ -6,11 +6,11 @@ import React, {
   useState,
 } from 'react';
 import { connect } from 'react-redux';
-import type { LexicalEditor } from 'lexical';
+import { $getRoot, type LexicalEditor } from 'lexical';
 
 import MarkdownEditor, { $importMarkdownString } from './editor';
 import { $exportMarkdownString, REMOTE_CONTENT_TAG } from './extensions';
-import { useScrollMemory } from './scroll-memory';
+import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
 import actions from '../state/actions';
 import {
   getNextSearchMatchIndex,
@@ -120,7 +120,9 @@ function MarkdownNoteEditorComponent({
       return;
     }
 
+    const scrollTop = shellRef.current?.scrollTop ?? 0;
     let cancelled = false;
+    let cancelRestore: (() => void) | undefined;
 
     editor.getEditorState().read(() => {
       if (cancelled) {
@@ -136,10 +138,17 @@ function MarkdownNoteEditorComponent({
       editor.update(
         () => {
           $importMarkdownString(remote);
+          // Leave the caret at the start so a focused editor does not scroll
+          // the viewport to the document end after a remote replacement.
+          $getRoot().selectStart();
         },
         {
           tag: REMOTE_CONTENT_TAG,
           onUpdate: () => {
+            const shell = shellRef.current;
+            if (shell) {
+              cancelRestore = restoreScrollPosition(shell, scrollTop);
+            }
             lastPushedRef.current = remote;
           },
         }
@@ -148,6 +157,7 @@ function MarkdownNoteEditorComponent({
 
     return () => {
       cancelled = true;
+      cancelRestore?.();
     };
   }, [noteContent, noteId]);
 

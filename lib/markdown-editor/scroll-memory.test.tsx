@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { useScrollMemory } from './scroll-memory';
+import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
 import {
   getNotePosition,
   setNotePosition,
@@ -338,5 +338,32 @@ describe('useScrollMemory', () => {
 
       expect(getNotePosition('note-2')).toBe(500);
     });
+  });
+});
+
+describe('restoreScrollPosition', () => {
+  it('restores scroll after remote sync temporarily jumps to the bottom', () => {
+    const { shell, input } = renderShell('note-1');
+    MockResizeObserver.instances = [];
+
+    shell.scrollTop = 300;
+    maxScrollTop = 1000;
+
+    // Remote sync clears and re-imports content: layout shrinks briefly and
+    // Lexical scrolls the caret into view at the bottom of the short doc.
+    maxScrollTop = 100;
+    shell.scrollTop = 100;
+
+    const cancel = restoreScrollPosition(shell, 300);
+
+    expect(MockResizeObserver.instances).toHaveLength(1);
+    expect(lastObserver().observed).toContain(input);
+    expect(shell.scrollTop).toBeLessThan(300);
+
+    maxScrollTop = 1000;
+    lastObserver().resize();
+
+    expect(shell.scrollTop).toBe(300);
+    cancel();
   });
 });
