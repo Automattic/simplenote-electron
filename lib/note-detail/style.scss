@@ -103,7 +103,7 @@ body[data-theme='dark'] .note-detail-markdown {
   -webkit-overflow-scrolling: touch;
 
   p {
-    margin: 0 0 1.5em;
+    margin: 0 0 0.5em;
     unicode-bidi: plaintext;
   }
 
@@ -156,6 +156,7 @@ body[data-theme='dark'] .note-detail-markdown {
 
   ul,
   ol {
+    margin: 0 0 0.5em;
     padding-left: $ul-padding-left;
   }
 
