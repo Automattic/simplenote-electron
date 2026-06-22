@@ -15,7 +15,7 @@ import {
   InitialStateExtension,
 } from '@lexical/extension';
 import { HistoryExtension } from '@lexical/history';
-import { LinkExtension } from '@lexical/link';
+import { LinkExtension, $toggleLink } from '@lexical/link';
 import {
   CheckListExtension,
   ListExtension,
@@ -69,6 +69,8 @@ import {
   type LexicalNode,
   type PasteCommandType,
   type RangeSelection,
+  HISTORY_MERGE_TAG,
+  HISTORY_PUSH_TAG,
 } from 'lexical';
 
 import { registerFormatEscape } from './format-escape';
@@ -107,6 +109,7 @@ import {
   isFormattingFreeHtml,
   resolveClipboardPaste,
 } from '../utils/clipboard/html-to-markdown';
+import { normalizeLinkHref, urlFromText } from './link-validator';
 
 const ImageExtension = defineExtension({
   name: '@simplenote/image-node',
@@ -357,6 +360,32 @@ const ListDeletionExtension = defineExtension({
   name: '@simplenote/list-deletion',
   register(editor) {
     return registerListDeletion(editor);
+  },
+});
+
+// Markdown shortcut formatting can leave the serialized note unchanged, so merge it out of undo history.
+const MarkdownHistoryMergeExtension = defineExtension({
+  name: '@simplenote/markdown-history-merge',
+  register(editor) {
+    return editor.registerUpdateListener(
+      ({ editorState, prevEditorState, tags }) => {
+        if (!tags.has(HISTORY_PUSH_TAG)) {
+          return;
+        }
+
+        const previousMarkdown = prevEditorState.read(() =>
+          $exportMarkdownString()
+        );
+        const nextMarkdown = editorState.read(() => $exportMarkdownString());
+
+        if (previousMarkdown !== nextMarkdown) {
+          return;
+        }
+
+        tags.delete(HISTORY_PUSH_TAG);
+        tags.add(HISTORY_MERGE_TAG);
+      }
+    );
   },
 });
 
@@ -678,6 +707,21 @@ function $isPlainTextPaste(
   return html !== '' && isFormattingFreeHtml(html);
 }
 
+function $wrapSelectionInPastedLink(markdown: string): boolean {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+    return false;
+  }
+
+  const href = normalizeLinkHref(urlFromText(markdown) ?? markdown.trim());
+  if (!href) {
+    return false;
+  }
+
+  $toggleLink(href);
+  return true;
+}
+
 // Editor-internal copies carry lossless Lexical JSON. Returns its nodes, or
 // null when the clipboard holds no JSON or it came from a different editor (the
 // namespace check mirrors Lexical's own importer). Shared by the paste handler
@@ -725,6 +769,11 @@ function $handleMarkdownPaste(
     return false;
   }
   const { markdown, source } = clipboardMarkdown;
+
+  if (source === 'text/plain' && $wrapSelectionInPastedLink(markdown)) {
+    event.preventDefault();
+    return true;
+  }
 
   // Plain content keeps its line structure inside a quote instead of escaping
   // into sibling paragraphs.
@@ -917,6 +966,7 @@ export function createMarkdownEditorExtension(
     }),
     richTextExtension,
     FormatEscapeExtension,
+    MarkdownHistoryMergeExtension,
     HistoryExtension,
     listExtension,
     ListDeletionExtension,

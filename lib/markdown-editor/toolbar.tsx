@@ -1,10 +1,16 @@
 import React, { ElementType, useEffect, useRef, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
+  $createRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
+  $getNodeByKey,
   $getSelection,
+  $isElementNode,
   $isRangeSelection,
+  $isTextNode,
+  $setSelection,
+  SKIP_DOM_SELECTION_TAG,
   type EditorState,
   type LexicalEditor,
 } from 'lexical';
@@ -134,13 +140,29 @@ const ToolbarGroup = ({ children }: { children: React.ReactNode }) => (
 );
 
 type UrlPanelSelectionSnapshot = {
-  anchorKey: string;
-  anchorOffset: number;
-  focusKey: string;
-  focusOffset: number;
+  anchor: UrlPanelSelectionPointSnapshot;
+  focus: UrlPanelSelectionPointSnapshot;
+  format: number;
+  style: string;
 };
 
-const snapshotSelection = (
+type UrlPanelSelectionPointSnapshot = {
+  key: string;
+  offset: number;
+  type: 'text' | 'element';
+};
+
+const snapshotSelectionPoint = ({
+  key,
+  offset,
+  type,
+}: UrlPanelSelectionPointSnapshot): UrlPanelSelectionPointSnapshot => ({
+  key,
+  offset,
+  type,
+});
+
+export const snapshotSelection = (
   editor: LexicalEditor
 ): UrlPanelSelectionSnapshot | null =>
   editor.getEditorState().read(() => {
@@ -150,12 +172,52 @@ const snapshotSelection = (
     }
 
     return {
-      anchorKey: selection.anchor.key,
-      anchorOffset: selection.anchor.offset,
-      focusKey: selection.focus.key,
-      focusOffset: selection.focus.offset,
+      anchor: snapshotSelectionPoint(selection.anchor),
+      focus: snapshotSelectionPoint(selection.focus),
+      format: selection.format,
+      style: selection.style,
     };
   });
+
+const canRestoreSelectionPoint = ({
+  key,
+  offset,
+  type,
+}: UrlPanelSelectionPointSnapshot): boolean => {
+  const node = $getNodeByKey(key);
+  if (type === 'text') {
+    return $isTextNode(node) && offset <= node.getTextContentSize();
+  }
+
+  return $isElementNode(node) && offset <= node.getChildrenSize();
+};
+
+export const $restoreSelectionSnapshot = (
+  snapshot: UrlPanelSelectionSnapshot
+): boolean => {
+  if (
+    !canRestoreSelectionPoint(snapshot.anchor) ||
+    !canRestoreSelectionPoint(snapshot.focus)
+  ) {
+    return false;
+  }
+
+  const selection = $createRangeSelection();
+  selection.anchor.set(
+    snapshot.anchor.key,
+    snapshot.anchor.offset,
+    snapshot.anchor.type
+  );
+  selection.focus.set(
+    snapshot.focus.key,
+    snapshot.focus.offset,
+    snapshot.focus.type
+  );
+  selection.setFormat(snapshot.format);
+  selection.setStyle(snapshot.style);
+  $setSelection(selection);
+  return true;
+};
 
 const selectionChangedSinceSnapshot = (
   editorState: EditorState,
@@ -168,10 +230,12 @@ const selectionChangedSinceSnapshot = (
     }
 
     return (
-      selection.anchor.key !== snapshot.anchorKey ||
-      selection.anchor.offset !== snapshot.anchorOffset ||
-      selection.focus.key !== snapshot.focusKey ||
-      selection.focus.offset !== snapshot.focusOffset
+      selection.anchor.key !== snapshot.anchor.key ||
+      selection.anchor.offset !== snapshot.anchor.offset ||
+      selection.anchor.type !== snapshot.anchor.type ||
+      selection.focus.key !== snapshot.focus.key ||
+      selection.focus.offset !== snapshot.focus.offset ||
+      selection.focus.type !== snapshot.focus.type
     );
   });
 
@@ -197,6 +261,28 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     urlPanelSelectionRef.current = null;
   };
 
+  const restoreUrlPanelSelection = ({
+    skipDomSelection = true,
+  }: {
+    skipDomSelection?: boolean;
+  } = {}) => {
+    const snapshot = urlPanelSelectionRef.current;
+    if (!snapshot) {
+      return true;
+    }
+
+    let restored = false;
+    editor.update(
+      () => {
+        restored = $restoreSelectionSnapshot(snapshot);
+      },
+      skipDomSelection
+        ? { discrete: true, tag: SKIP_DOM_SELECTION_TAG }
+        : { discrete: true }
+    );
+    return restored;
+  };
+
   const openLinkInput = () => {
     urlPanelSelectionRef.current = snapshotSelection(editor);
     setImageInputUrl(null);
@@ -208,6 +294,11 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     clearUrlPanelSelection();
   };
 
+  const cancelLinkInput = () => {
+    restoreUrlPanelSelection({ skipDomSelection: false });
+    closeLinkInput();
+  };
+
   const openImageInput = () => {
     urlPanelSelectionRef.current = snapshotSelection(editor);
     setLinkInputUrl(null);
@@ -217,6 +308,11 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const closeImageInput = () => {
     setImageInputUrl(null);
     clearUrlPanelSelection();
+  };
+
+  const cancelImageInput = () => {
+    restoreUrlPanelSelection({ skipDomSelection: false });
+    closeImageInput();
   };
 
   useEffect(() => {
@@ -235,11 +331,21 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   }, [editor]);
 
   const applyLink = (url: string) => {
+    if (!restoreUrlPanelSelection()) {
+      closeLinkInput();
+      return;
+    }
+
     setLink(editor, url);
     closeLinkInput();
   };
 
   const applyImage = (url: string) => {
+    if (!restoreUrlPanelSelection()) {
+      closeImageInput();
+      return;
+    }
+
     if (insertImage(editor, url)) {
       closeImageInput();
     }
@@ -253,7 +359,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     return (
       <LinkUrlInput
         initialUrl={linkInputUrl}
-        onCancel={closeLinkInput}
+        onCancel={cancelLinkInput}
         onSubmit={applyLink}
       />
     );
@@ -268,7 +374,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
       <LinkUrlInput
         ariaLabel="Image URL"
         initialUrl={imageInputUrl}
-        onCancel={closeImageInput}
+        onCancel={cancelImageInput}
         onSubmit={applyImage}
         placeholder="Paste or type an image URL"
         validate={(url) => normalizeImageSourceInput(url) !== null}

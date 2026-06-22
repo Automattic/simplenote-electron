@@ -279,6 +279,30 @@ describe('registerMarkdownPaste', () => {
     });
   });
 
+  it('wraps selected text in a link when pasting a plain URL', () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        const text = $createTextNode('visit site today');
+        paragraph.append(text);
+        $getRoot().append(paragraph);
+        text.select(6, 10);
+      },
+      { discrete: true }
+    );
+
+    const { event, preventDefault } = makePasteEvent('https://example.com');
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    const roundtrip = editor.read(() =>
+      $convertToMarkdownString(MARKDOWN_TRANSFORMERS)
+    );
+    expect(roundtrip).toBe('visit [site](https://example.com) today');
+  });
+
   it('inserts plain-text markdown syntax verbatim, without parsing it', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);

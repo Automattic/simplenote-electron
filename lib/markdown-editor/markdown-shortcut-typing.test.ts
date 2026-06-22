@@ -1,11 +1,12 @@
 import { $convertToMarkdownString } from '@lexical/markdown';
-import { $isQuoteNode } from '@lexical/rich-text';
+import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text';
 import {
   $createParagraphNode,
   $getRoot,
   $getSelection,
   $isRangeSelection,
   CONTROLLED_TEXT_INSERTION_COMMAND,
+  UNDO_COMMAND,
   type LexicalEditorWithDispose,
 } from 'lexical';
 
@@ -34,6 +35,16 @@ function rootHasBlockquote(editor: LexicalEditorWithDispose): boolean {
   return editor.getEditorState().read(() => {
     const root = $getRoot();
     return root.getChildren().some((child) => $isQuoteNode(child));
+  });
+}
+
+function rootHasHeading(
+  editor: LexicalEditorWithDispose,
+  tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+): boolean {
+  return editor.getEditorState().read(() => {
+    const heading = $getRoot().getFirstChild();
+    return $isHeadingNode(heading) && heading.getTag() === tag;
   });
 }
 
@@ -118,6 +129,56 @@ describe('markdown shortcut typing', () => {
     expect(exportMarkdown(editor)).toBe('**bold**');
     expect(hasBold).toBe(true);
 
+    editor.dispose();
+  });
+
+  it('does not create a separate undo step for heading markdown formatting', async () => {
+    const editor = makeGfmTestEditor();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        $getRoot().append(paragraph);
+        paragraph.selectStart();
+      },
+      { discrete: true }
+    );
+
+    await typeTextViaCommand(editor, '## test');
+
+    expect(exportMarkdown(editor)).toBe('## test');
+    expect(rootHasHeading(editor, 'h2')).toBe(true);
+
+    editor.dispatchCommand(UNDO_COMMAND, undefined);
+    await Promise.resolve();
+
+    expect(exportMarkdown(editor)).toBe('## t');
+    expect(rootHasHeading(editor, 'h2')).toBe(true);
+    editor.dispose();
+  });
+
+  it('does not undo a heading shortcut into literal markdown syntax', async () => {
+    const editor = makeGfmTestEditor();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        $getRoot().append(paragraph);
+        paragraph.selectStart();
+      },
+      { discrete: true }
+    );
+
+    await typeTextViaCommand(editor, '## ');
+
+    expect(rootHasHeading(editor, 'h2')).toBe(true);
+
+    editor.dispatchCommand(UNDO_COMMAND, undefined);
+    await Promise.resolve();
+
+    const rootText = editor
+      .getEditorState()
+      .read(() => $getRoot().getTextContent());
+
+    expect(rootText).not.toBe('## ');
     editor.dispose();
   });
 });
