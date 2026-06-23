@@ -4,6 +4,9 @@ import {
   $isRangeSelection,
   $isTextNode,
   $createTextNode,
+  $createNodeSelection,
+  $createRangeSelection,
+  $setSelection,
   type LexicalEditorWithDispose,
   type LexicalNode,
   type TextNode,
@@ -16,6 +19,7 @@ import {
 } from '@lexical/table';
 
 import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
+import { $isImageNode } from '../image-node';
 import {
   readToolbarState,
   toolbarStateEqual,
@@ -128,6 +132,48 @@ describe('readToolbarState', () => {
 
     importMarkdown(editor, '[site](https://example.com)');
     selectTextNode(editor, 'site', 1);
+    expect(readToolbarState(editor).link).toBe(true);
+
+    importMarkdown(editor, 'before [site](https://example.com)');
+    editor.update(
+      () => {
+        const beforeNode = findTextNode($getRoot(), 'before ');
+        const siteNode = findTextNode($getRoot(), 'site');
+        if (!beforeNode || !siteNode) {
+          throw new Error('Expected before and site text nodes');
+        }
+        const selection = $createRangeSelection();
+        selection.anchor.set(
+          beforeNode.getKey(),
+          beforeNode.getTextContentSize(),
+          'text'
+        );
+        selection.focus.set(siteNode.getKey(), 0, 'text');
+        $setSelection(selection);
+      },
+      { discrete: true }
+    );
+    expect(readToolbarState(editor).link).toBe(true);
+
+    importMarkdown(editor, '[site](https://example.com) after');
+    editor.update(
+      () => {
+        const siteNode = findTextNode($getRoot(), 'site');
+        const afterNode = findTextNode($getRoot(), ' after');
+        if (!siteNode || !afterNode) {
+          throw new Error('Expected site and after text nodes');
+        }
+        const selection = $createRangeSelection();
+        selection.anchor.set(
+          siteNode.getKey(),
+          siteNode.getTextContentSize(),
+          'text'
+        );
+        selection.focus.set(afterNode.getKey(), 0, 'text');
+        $setSelection(selection);
+      },
+      { discrete: true }
+    );
     expect(readToolbarState(editor).link).toBe(true);
 
     editor.dispose();
@@ -247,6 +293,30 @@ describe('readToolbarState', () => {
       activeList: null,
     });
 
+    editor.dispose();
+  });
+
+  it('marks inImage when an image node is selected', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '![Photo](https://example.com/photo.jpg)');
+
+    editor.update(
+      () => {
+        const image = $getRoot()
+          .getFirstChild()
+          ?.getChildren()
+          .find($isImageNode);
+        if (!image) {
+          throw new Error('Expected image node');
+        }
+        const selection = $createNodeSelection();
+        selection.add(image.getKey());
+        $setSelection(selection);
+      },
+      { discrete: true }
+    );
+
+    expect(readToolbarState(editor).inImage).toBe(true);
     editor.dispose();
   });
 });

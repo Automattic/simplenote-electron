@@ -109,13 +109,6 @@ function $insertBlockNodesBefore(
   nodes[nodes.length - 1].selectEnd();
 }
 
-function $shouldReplaceEmptyParagraphWithPaste(
-  block: ParagraphNode,
-  nodes: LexicalNode[]
-): boolean {
-  return block.isEmpty() && (nodes.length !== 1 || !$isParagraphNode(nodes[0]));
-}
-
 export function $insertMarkdownPasteNodes(
   text: string,
   pasteAnchorBlock: ElementNode | null
@@ -161,14 +154,6 @@ export function $insertMarkdownPasteNodes(
     if (lastItem !== undefined && $isListItemNode(lastItem)) {
       $selectEndOfListItemContent(lastItem);
     }
-    return true;
-  }
-
-  if (
-    $isParagraphNode(anchorBlock) &&
-    $shouldReplaceEmptyParagraphWithPaste(anchorBlock, nodes)
-  ) {
-    $insertBlockNodesBefore(anchorBlock, nodes, { removeAnchorBlock: true });
     return true;
   }
 

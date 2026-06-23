@@ -72,4 +72,40 @@ describe('LinkUrlInput', () => {
 
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
+
+  it('calls onCancel when Escape is pressed', () => {
+    const onCancel = jest.fn();
+    const { getByLabelText } = render(
+      <LinkUrlInput
+        initialUrl="https://example.com"
+        onCancel={onCancel}
+        onSubmit={jest.fn()}
+      />
+    );
+
+    fireEvent.keyDown(getByLabelText('Link URL'), { key: 'Escape' });
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears validation errors while editing', () => {
+    const { getByLabelText } = render(
+      <LinkUrlInput
+        ariaLabel="Image URL"
+        initialUrl="http://127.0.0.1/photo.jpg"
+        onCancel={jest.fn()}
+        onSubmit={jest.fn()}
+        validate={() => false}
+        validationMessage="Use a public HTTPS image URL."
+      />
+    );
+    const input = getByLabelText('Image URL');
+
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+
+    fireEvent.change(input, { target: { value: 'https://example.com' } });
+
+    expect(input.getAttribute('aria-invalid')).toBeNull();
+  });
 });

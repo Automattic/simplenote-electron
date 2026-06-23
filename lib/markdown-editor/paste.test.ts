@@ -30,6 +30,7 @@ import {
   MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
 } from './extensions';
+import { $parseSameEditorClipboardJson } from './clipboard/shared';
 
 function makeEditor() {
   return buildEditorFromExtensions(createMarkdownEditorExtension(''));
@@ -145,6 +146,29 @@ describe('$getClipboardMarkdownFromDataTransfer', () => {
         getData: plainOnly,
       } as DataTransfer)
     ).toEqual({ markdown: 'plain', source: 'text/plain' });
+  });
+
+  it('returns null when no clipboard payload is available', () => {
+    expect(
+      $getClipboardMarkdownFromDataTransfer({
+        getData: () => '',
+      } as unknown as DataTransfer)
+    ).toBeNull();
+  });
+});
+
+describe('$parseSameEditorClipboardJson', () => {
+  it('returns null when the Lexical JSON slot is empty', () => {
+    const editor = makeEditor();
+
+    const result = editor.read(() =>
+      $parseSameEditorClipboardJson(editor, {
+        getData: (type: string) =>
+          type === 'application/x-lexical-editor' ? '' : '',
+      } as DataTransfer)
+    );
+
+    expect(result).toBeNull();
   });
 });
 

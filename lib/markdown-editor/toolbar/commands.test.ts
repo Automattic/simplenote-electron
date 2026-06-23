@@ -24,7 +24,9 @@ import { $isImageNode } from '../image-node';
 import {
   getImageSrcFromSelection,
   getLinkHrefFromSelection,
+  insertHorizontalRule,
   insertImage,
+  insertTable,
   setLink,
   toggleBlockquote,
   toggleCodeBlock,
@@ -139,6 +141,27 @@ describe('block commands in tables', () => {
     expect(exportMarkdown(editor)).toBe(before);
 
     toggleCodeBlock(editor);
+    await flushEditor();
+    expect(exportMarkdown(editor)).toBe(before);
+
+    editor.dispose();
+  });
+});
+
+describe('insertHorizontalRule and insertTable in tables', () => {
+  it('does not insert a horizontal rule or table inside a cell', async () => {
+    const editor = makeGfmTestEditor();
+    const tableMarkdown = ['| City |', '| --- |', '| Kyoto |'].join('\n');
+    importMarkdown(editor, tableMarkdown);
+    selectTableCell(editor, 1, 0);
+
+    const before = exportMarkdown(editor);
+
+    insertHorizontalRule(editor);
+    await flushEditor();
+    expect(exportMarkdown(editor)).toBe(before);
+
+    insertTable(editor);
     await flushEditor();
     expect(exportMarkdown(editor)).toBe(before);
 

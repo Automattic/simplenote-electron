@@ -2,7 +2,11 @@ import {
   $getRoot,
   $isRangeSelection,
   $getSelection,
+  $isElementNode,
+  $isTextNode,
   type LexicalEditorWithDispose,
+  type LexicalNode,
+  type TextNode,
 } from 'lexical';
 
 import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
@@ -12,6 +16,21 @@ import {
   snapshotSelection,
   type UrlPanelSelectionSnapshot,
 } from './url-panel-selection';
+
+function findTextNode(node: LexicalNode, text: string): TextNode | undefined {
+  if ($isTextNode(node) && node.getTextContent() === text) {
+    return node;
+  }
+  if ($isElementNode(node)) {
+    for (const child of node.getChildren()) {
+      const found = findTextNode(child, text);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return undefined;
+}
 
 function selectTextOffset(
   editor: LexicalEditorWithDispose,
@@ -127,6 +146,55 @@ describe('url-panel-selection', () => {
       { discrete: true }
     );
     expect(restored).toBe(false);
+    editor.dispose();
+  });
+
+  it('reports no change when the selection matches the snapshot', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'hello');
+    selectTextOffset(editor, 'hello', 3);
+
+    const snapshot = snapshotSelection(editor) as UrlPanelSelectionSnapshot;
+
+    expect(
+      selectionChangedSinceSnapshot(editor.getEditorState(), snapshot)
+    ).toBe(false);
+    editor.dispose();
+  });
+
+  it('restores inline format on the selection', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '**bold**\n\nplain');
+    editor.update(
+      () => {
+        const textNode = findTextNode($getRoot(), 'bold');
+        if (!textNode) {
+          throw new Error('Expected bold text node');
+        }
+        const selection = textNode.select(2, 2);
+        selection.format = textNode.getFormat();
+      },
+      { discrete: true }
+    );
+
+    const snapshot = snapshotSelection(editor) as UrlPanelSelectionSnapshot;
+    selectTextOffset(editor, 'plain', 0);
+
+    let restored = false;
+    editor.update(
+      () => {
+        restored = $restoreSelectionSnapshot(snapshot);
+      },
+      { discrete: true }
+    );
+    expect(restored).toBe(true);
+
+    expect(
+      editor.read(() => {
+        const selection = $getSelection();
+        return $isRangeSelection(selection) && selection.hasFormat('bold');
+      })
+    ).toBe(true);
     editor.dispose();
   });
 });
