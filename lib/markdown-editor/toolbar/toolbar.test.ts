@@ -59,12 +59,14 @@ function restoreSelectionSnapshot(
   editor: LexicalEditorWithDispose,
   snapshot: NonNullable<ReturnType<typeof snapshotSelection>>
 ): void {
+  let restored = false;
   editor.update(
     () => {
-      expect($restoreSelectionSnapshot(snapshot)).toBe(true);
+      restored = $restoreSelectionSnapshot(snapshot);
     },
     { discrete: true }
   );
+  expect(restored).toBe(true);
 }
 
 function exportMarkdown(editor: LexicalEditorWithDispose): string {

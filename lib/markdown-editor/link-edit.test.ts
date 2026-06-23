@@ -23,24 +23,27 @@ function selectTextNode(
   text: string,
   offset = 0
 ) {
-  editor.update(() => {
-    const root = $getRoot();
-    const walk = (node: typeof root): boolean => {
-      if (node.getType() === 'text' && node.getTextContent() === text) {
-        node.select(offset, offset);
-        return true;
-      }
-      if ('getChildren' in node) {
-        for (const child of node.getChildren()) {
-          if (walk(child as typeof root)) {
-            return true;
+  editor.update(
+    () => {
+      const root = $getRoot();
+      const walk = (node: typeof root): boolean => {
+        if (node.getType() === 'text' && node.getTextContent() === text) {
+          node.select(offset, offset);
+          return true;
+        }
+        if ('getChildren' in node) {
+          for (const child of node.getChildren()) {
+            if (walk(child as typeof root)) {
+              return true;
+            }
           }
         }
-      }
-      return false;
-    };
-    walk(root);
-  });
+        return false;
+      };
+      walk(root);
+    },
+    { discrete: true }
+  );
 }
 
 describe('normalizeEditableLinkUrl', () => {
@@ -71,15 +74,54 @@ describe('link edit helpers', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '[site](https://example.com)');
 
-    editor.update(() => {
-      const link = $getRoot().getChildren()[0].getChildren().find($isLinkNode);
-      expect(link).toBeDefined();
-      $selectLinkNode(link!);
-      const selection = $getSelection();
-      expect($isRangeSelection(selection) && selection.getTextContent()).toBe(
-        'site'
-      );
-    });
+    let selected = false;
+    editor.update(
+      () => {
+        const link = $getRoot()
+          .getChildren()[0]
+          .getChildren()
+          .find($isLinkNode);
+        if (link) {
+          $selectLinkNode(link);
+          selected = true;
+        }
+      },
+      { discrete: true }
+    );
+    expect(selected).toBe(true);
+
+    expect(
+      editor.read(() => {
+        const selection = $getSelection();
+        return $isRangeSelection(selection) ? selection.getTextContent() : null;
+      })
+    ).toBe('site');
+    editor.dispose();
+  });
+
+  it('returns false for an invalid url without changing the link', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '[site](https://example.com)');
+
+    let updated = false;
+    editor.update(
+      () => {
+        const link = $findMatchingParent(
+          $getRoot().getFirstDescendant()!,
+          $isLinkNode
+        )!;
+        updated = $updateLink(link, {
+          text: 'site',
+          url: 'javascript:alert(1)',
+        });
+      },
+      { discrete: true }
+    );
+
+    expect(updated).toBe(false);
+    expect(
+      editor.read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS))
+    ).toBe('[site](https://example.com)');
     editor.dispose();
   });
 
@@ -87,18 +129,21 @@ describe('link edit helpers', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '[site](https://example.com)');
 
-    editor.update(() => {
-      const link = $findMatchingParent(
-        $getRoot().getFirstDescendant()!,
-        $isLinkNode
-      )!;
-      expect(
-        $updateLink(link, {
+    let updated = false;
+    editor.update(
+      () => {
+        const link = $findMatchingParent(
+          $getRoot().getFirstDescendant()!,
+          $isLinkNode
+        )!;
+        updated = $updateLink(link, {
           text: 'Example',
           url: 'https://example.org',
-        })
-      ).toBe(true);
-    });
+        });
+      },
+      { discrete: true }
+    );
+    expect(updated).toBe(true);
 
     expect(
       editor.read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS))
@@ -110,13 +155,16 @@ describe('link edit helpers', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '[site](https://example.com)');
 
-    editor.update(() => {
-      const link = $findMatchingParent(
-        $getRoot().getFirstDescendant()!,
-        $isLinkNode
-      )!;
-      $removeLink(link);
-    });
+    editor.update(
+      () => {
+        const link = $findMatchingParent(
+          $getRoot().getFirstDescendant()!,
+          $isLinkNode
+        )!;
+        $removeLink(link);
+      },
+      { discrete: true }
+    );
 
     expect(
       editor.read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS))

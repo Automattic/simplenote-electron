@@ -87,16 +87,29 @@ function selectEmptyParagraph(editor: ReturnType<typeof makeEditor>) {
 describe('$markdownToNodes', () => {
   it('parses markdown into detached block nodes', () => {
     const editor = makeEditor();
+    let nodeInfo = {
+      length: 0,
+      firstIsHeading: false,
+      secondIsList: false,
+      firstHasNoParent: false,
+    };
     editor.update(
       () => {
         const nodes = $markdownToNodes('# title\n\n- one\n- two');
-        expect(nodes).toHaveLength(2);
-        expect($isHeadingNode(nodes[0])).toBe(true);
-        expect($isListNode(nodes[1])).toBe(true);
-        expect(nodes[0].getParent()).toBeNull();
+        nodeInfo = {
+          length: nodes.length,
+          firstIsHeading: $isHeadingNode(nodes[0]),
+          secondIsList: $isListNode(nodes[1]),
+          firstHasNoParent: nodes[0].getParent() === null,
+        };
       },
       { discrete: true }
     );
+
+    expect(nodeInfo.length).toBe(2);
+    expect(nodeInfo.firstIsHeading).toBe(true);
+    expect(nodeInfo.secondIsList).toBe(true);
+    expect(nodeInfo.firstHasNoParent).toBe(true);
   });
 });
 
@@ -542,6 +555,7 @@ describe('registerMarkdownPaste', () => {
       '| Kyoto | 3 |',
     ].join('\n');
 
+    let inserted = false;
     editor.update(
       () => {
         const root = $getRoot();
@@ -549,10 +563,11 @@ describe('registerMarkdownPaste', () => {
         const paragraph = $createParagraphNode();
         root.append(paragraph);
         paragraph.select();
-        expect($insertMarkdownPasteNodes(tableMarkdown, paragraph)).toBe(true);
+        inserted = $insertMarkdownPasteNodes(tableMarkdown, paragraph) === true;
       },
       { discrete: true }
     );
+    expect(inserted).toBe(true);
 
     editor.getEditorState().read(() => {
       expect($isTableNode($getRoot().getFirstChild())).toBe(true);
@@ -563,6 +578,7 @@ describe('registerMarkdownPaste', () => {
   it('parses pasted horizontal rule markdown into a HorizontalRuleNode', () => {
     const editor = makeProductionEditor();
 
+    let inserted = false;
     editor.update(
       () => {
         const root = $getRoot();
@@ -570,12 +586,13 @@ describe('registerMarkdownPaste', () => {
         const paragraph = $createParagraphNode();
         root.append(paragraph);
         paragraph.select();
-        expect(
-          $insertMarkdownPasteNodes('---\n\nnext paragraph', paragraph)
-        ).toBe(true);
+        inserted =
+          $insertMarkdownPasteNodes('---\n\nnext paragraph', paragraph) ===
+          true;
       },
       { discrete: true }
     );
+    expect(inserted).toBe(true);
 
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();

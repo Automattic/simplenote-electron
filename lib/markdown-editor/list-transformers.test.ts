@@ -129,25 +129,32 @@ function expectReplaceCreatesList(
     },
   });
 
-  editor.update(() => {
-    const parent = $createParagraphNode();
-    $getRoot().append(parent);
-    const textNode = $createTextNode(markdown);
-    parent.append(textNode);
+  const match = markdown.match(transformer.regExp);
+  expect(match).not.toBeNull();
 
-    const match = markdown.match(transformer.regExp);
-    expect(match).not.toBeNull();
-    expect(transformer.replace(parent, [textNode], match!, false)).not.toBe(
-      false
-    );
+  let replaceResult: boolean | void = undefined;
+  editor.update(
+    () => {
+      const parent = $createParagraphNode();
+      $getRoot().append(parent);
+      const textNode = $createTextNode(markdown);
+      parent.append(textNode);
 
+      replaceResult = transformer.replace(parent, [textNode], match!, false);
+    },
+    { discrete: true }
+  );
+  expect(replaceResult).not.toBe(false);
+
+  const listInfo = editor.getEditorState().read(() => {
     const list = $getRoot().getFirstChild();
-    expect($isListNode(list)).toBe(true);
-    if (!$isListNode(list)) {
-      return;
-    }
-    expect(list.getListType()).toBe(listType);
+    return {
+      isList: $isListNode(list),
+      listType: $isListNode(list) ? list.getListType() : null,
+    };
   });
+  expect(listInfo.isList).toBe(true);
+  expect(listInfo.listType).toBe(listType);
 }
 
 function expectReplaceSkipsImport(
@@ -161,13 +168,19 @@ function expectReplaceSkipsImport(
     },
   });
 
-  editor.update(() => {
-    const parent = $createParagraphNode();
-    $getRoot().append(parent);
-    const match = markdown.match(transformer.regExp);
-    expect(match).not.toBeNull();
-    expect(transformer.replace(parent, [], match!, true)).toBe(false);
-  });
+  const match = markdown.match(transformer.regExp);
+  expect(match).not.toBeNull();
+
+  let replaceResult: boolean | void = undefined;
+  editor.update(
+    () => {
+      const parent = $createParagraphNode();
+      $getRoot().append(parent);
+      replaceResult = transformer.replace(parent, [], match!, true);
+    },
+    { discrete: true }
+  );
+  expect(replaceResult).toBe(false);
 }
 
 describe('MIXED_NESTED_UNORDERED_LIST', () => {
