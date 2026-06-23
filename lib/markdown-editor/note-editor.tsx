@@ -6,10 +6,14 @@ import React, {
   useState,
 } from 'react';
 import { connect } from 'react-redux';
-import { $getRoot, type LexicalEditor } from 'lexical';
+import { SKIP_DOM_SELECTION_TAG, type LexicalEditor } from 'lexical';
 
-import MarkdownEditor, { $importMarkdownString } from './editor';
-import { $exportMarkdownString, REMOTE_CONTENT_TAG } from './extensions';
+import MarkdownEditor from './editor';
+import {
+  $exportMarkdownString,
+  $importRemoteMarkdown,
+  REMOTE_CONTENT_TAG,
+} from './extensions';
 import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
 import actions from '../state/actions';
 import {
@@ -79,6 +83,15 @@ function MarkdownNoteEditorComponent({
 
   useScrollMemory(shellRef, noteId);
 
+  const focusEditor = useCallback(() => {
+    editorRef.current?.focus();
+  }, []);
+
+  const hasFocus = useCallback(() => {
+    const root = editorRef.current?.getRootElement();
+    return root?.contains(document.activeElement) ?? false;
+  }, []);
+
   useEffect(() => {
     lastPushedRef.current = withCheckboxSyntax(noteContent);
     lastDispatchedRef.current = null;
@@ -121,10 +134,11 @@ function MarkdownNoteEditorComponent({
     }
 
     const scrollTop = shellRef.current?.scrollTop ?? 0;
+    const editorFocused = hasFocus();
     let cancelled = false;
     let cancelRestore: (() => void) | undefined;
 
-    editor.getEditorState().read(() => {
+    editor.read(() => {
       if (cancelled) {
         return;
       }
@@ -137,14 +151,13 @@ function MarkdownNoteEditorComponent({
 
       editor.update(
         () => {
-          $importMarkdownString(remote);
-          // Leave the caret at the start so a focused editor does not scroll
-          // the viewport to the document end after a remote replacement.
-          $getRoot().selectStart();
+          $importRemoteMarkdown(remote, local);
         },
         {
           discrete: true,
-          tag: REMOTE_CONTENT_TAG,
+          tag: editorFocused
+            ? REMOTE_CONTENT_TAG
+            : [REMOTE_CONTENT_TAG, SKIP_DOM_SELECTION_TAG],
           onUpdate: () => {
             const shell = shellRef.current;
             if (shell) {
@@ -160,16 +173,7 @@ function MarkdownNoteEditorComponent({
       cancelled = true;
       cancelRestore?.();
     };
-  }, [noteContent, noteId]);
-
-  const focusEditor = useCallback(() => {
-    editorRef.current?.focus();
-  }, []);
-
-  const hasFocus = useCallback(() => {
-    const root = editorRef.current?.getRootElement();
-    return root?.contains(document.activeElement) ?? false;
-  }, []);
+  }, [noteContent, noteId, hasFocus]);
 
   useEffect(() => {
     storeFocusEditor(focusEditor);

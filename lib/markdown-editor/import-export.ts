@@ -13,6 +13,11 @@ import {
 
 import { importMixedNestedListMarkdown } from './list-transformers';
 import {
+  $captureMarkdownSelectionOffsets,
+  $restoreMarkdownSelectionOffsets,
+  remapMarkdownSelectionOffsets,
+} from './selection-memory';
+import {
   INLINE_MARKDOWN_TRANSFORMERS,
   MARKDOWN_TRANSFORMERS,
 } from './transformers';
@@ -170,6 +175,28 @@ export function $importMarkdownString(markdown: string): void {
     $importChunk,
     INLINE_MARKDOWN_TRANSFORMERS
   );
+}
+
+/** Re-import remote markdown while keeping the caret in the same place. */
+export function $importRemoteMarkdown(
+  remote: string,
+  local: string = remote
+): void {
+  const saved = $captureMarkdownSelectionOffsets();
+  $importMarkdownString(remote);
+  if (!saved) {
+    $getRoot().selectStart();
+    return;
+  }
+
+  const remapped =
+    local === remote
+      ? saved
+      : remapMarkdownSelectionOffsets(local, remote, saved);
+
+  if (!$restoreMarkdownSelectionOffsets(remapped)) {
+    $getRoot().selectStart();
+  }
 }
 
 /**

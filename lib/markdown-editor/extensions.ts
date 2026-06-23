@@ -39,6 +39,7 @@ import { MARKDOWN_TRANSFORMERS } from './transformers';
 export {
   $exportMarkdownString,
   $importMarkdownString,
+  $importRemoteMarkdown,
   $markdownToNodes,
 } from './import-export';
 export {
