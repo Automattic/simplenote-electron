@@ -29,7 +29,7 @@ import { registerListDeletion } from './list-deletion';
 import { registerTaskListShortcut } from './list-toggle';
 import { withTableSafeBlockShortcuts } from './markdown-table-shortcuts';
 import { REMOTE_CONTENT_TAG, registerMarkdownOnChange } from './on-change';
-import { registerSafeMarkdownShortcuts } from './register-safe-markdown-shortcuts';
+import { registerMarkdownShortcutsWithHistory } from './register-markdown-shortcuts';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension } from './table-controls';
 import { markdownEditorTheme } from './theme';
@@ -99,7 +99,7 @@ const ListDeletionExtension = defineExtension({
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
   register(editor) {
-    const unregisterMarkdownShortcuts = registerSafeMarkdownShortcuts(
+    const unregisterMarkdownShortcuts = registerMarkdownShortcutsWithHistory(
       editor,
       withTableSafeBlockShortcuts(MARKDOWN_TRANSFORMERS)
     );

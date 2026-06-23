@@ -6,6 +6,13 @@ import { $reconcileShortcutHistoryFromMarkdown } from './markdown-history-tags';
 
 type UpdatingEditor = LexicalEditor & { _updating?: boolean };
 
+/**
+ * `@lexical/markdown` enqueues shortcut transforms in a nested `editor.update()`
+ * and always tags successful transforms with `HISTORY_PUSH_TAG`. Many shortcuts
+ * (`## `, `*italic*`, `> quote`, …) change the Lexical tree without changing
+ * serialized markdown, which would otherwise add spurious undo steps. Intercept
+ * nested updates so we can swap push → merge when export is unchanged.
+ */
 function installShortcutHistoryReconciliation(
   editor: LexicalEditor
 ): () => void {
@@ -29,7 +36,7 @@ function installShortcutHistoryReconciliation(
 }
 
 /** Simplenote entry point for `@lexical/markdown` block/inline shortcuts. */
-export function registerSafeMarkdownShortcuts(
+export function registerMarkdownShortcutsWithHistory(
   editor: LexicalEditor,
   transformers: Array<Transformer>
 ): () => void {

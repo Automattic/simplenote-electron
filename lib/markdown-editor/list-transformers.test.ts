@@ -42,7 +42,7 @@ import {
   registerTaskListItemShortcuts,
   withMixedNestedListTransformers,
 } from './list-transformers';
-import { registerSafeMarkdownShortcuts } from './register-safe-markdown-shortcuts';
+import { registerMarkdownShortcutsWithHistory } from './register-markdown-shortcuts';
 
 function importMarkdown(markdown: string) {
   const editor = createEditor({
@@ -62,7 +62,7 @@ function makeEditorWithShortcuts() {
       throw error;
     },
   });
-  registerSafeMarkdownShortcuts(editor, [
+  registerMarkdownShortcutsWithHistory(editor, [
     MIXED_NESTED_CHECK_LIST,
     MIXED_NESTED_UNORDERED_LIST,
     MIXED_NESTED_ORDERED_LIST,
