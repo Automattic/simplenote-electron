@@ -294,8 +294,8 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     </ToolbarGroup>
   );
 
-  const renderCoreFormatButtons = () => (
-    <ToolbarGroup>
+  const renderInlineFormatButtons = () => (
+    <>
       <ToolbarButton
         active={state.bold}
         icon={BoldIcon}
@@ -308,21 +308,25 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         onClick={() => dispatchFormatText(editor, 'italic')}
         title="Italic"
       />
+      <ToolbarButton
+        active={state.strike}
+        icon={StrikeIcon}
+        onClick={() => dispatchFormatText(editor, 'strikethrough')}
+        title="Strikethrough"
+      />
+    </>
+  );
+
+  const renderCoreFormatButtons = () => (
+    <ToolbarGroup>
+      {renderInlineFormatButtons()}
       {!compact && (
-        <>
-          <ToolbarButton
-            active={state.strike}
-            icon={StrikeIcon}
-            onClick={() => dispatchFormatText(editor, 'strikethrough')}
-            title="Strikethrough"
-          />
-          <ToolbarButton
-            active={state.code}
-            icon={CodeIcon}
-            onClick={() => dispatchFormatText(editor, 'code')}
-            title="Inline code"
-          />
-        </>
+        <ToolbarButton
+          active={state.code}
+          icon={CodeIcon}
+          onClick={() => dispatchFormatText(editor, 'code')}
+          title="Inline code"
+        />
       )}
       <ToolbarButton
         active={state.link || linkInputUrl !== null}
@@ -467,6 +471,8 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const renderCompactToolbar = () => (
     <div className="markdown-editor-toolbar__main">
       {renderHistoryButtons()}
+      <ToolbarSeparator />
+      <ToolbarGroup>{renderInlineFormatButtons()}</ToolbarGroup>
       <ToolbarSeparator />
       <ToolbarDropdown
         active={formatDropdownActive}
