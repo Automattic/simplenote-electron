@@ -1,6 +1,5 @@
 import type { LexicalEditor } from 'lexical';
 import { useEffect, useState } from 'react';
-import { CAN_REDO_COMMAND, CAN_UNDO_COMMAND } from 'lexical';
 import {
   $findMatchingParent,
   $getRoot,
@@ -20,6 +19,7 @@ import {
 import type { ActiveListType } from '../list-toggle';
 import { $isImageNode } from '../image-node';
 import { $isSelectionInTable } from '../table-controls';
+import { subscribeToolbarUndoRedo } from './register';
 
 export type ToolbarState = {
   inTitle: boolean;
@@ -211,22 +211,11 @@ export const useToolbarState = (editor: LexicalEditor) => {
       scheduleToolbarUpdate();
     });
 
-    const unregisterCanUndo = editor.registerCommand(
-      CAN_UNDO_COMMAND,
-      (payload) => {
-        setCanUndo(payload);
-        return false;
-      },
-      1
-    );
-
-    const unregisterCanRedo = editor.registerCommand(
-      CAN_REDO_COMMAND,
-      (payload) => {
-        setCanRedo(payload);
-        return false;
-      },
-      1
+    const unregisterUndoRedo = subscribeToolbarUndoRedo(
+      ({ canRedo: nextCanRedo, canUndo: nextCanUndo }) => {
+        setCanUndo(nextCanUndo);
+        setCanRedo(nextCanRedo);
+      }
     );
 
     updateToolbar();
@@ -237,8 +226,7 @@ export const useToolbarState = (editor: LexicalEditor) => {
       }
 
       unregisterUpdate();
-      unregisterCanUndo();
-      unregisterCanRedo();
+      unregisterUndoRedo();
     };
   }, [editor]);
 

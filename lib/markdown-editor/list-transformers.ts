@@ -21,19 +21,20 @@ import {
   $createParagraphNode,
   $findMatchingParent,
   $getSelection,
+  $hasUpdateTag,
   $isParagraphNode,
   $isRangeSelection,
   $isTextNode,
   COLLABORATION_TAG,
   HISTORIC_TAG,
-  HISTORY_PUSH_TAG,
-  $addUpdateTag,
   TextNode,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
 } from 'lexical';
 
+import { $exportMarkdownString } from './import-export';
+import { $tagShortcutHistoryFromMarkdown } from './markdown-history-tags';
 import { $isSelectionInTable } from './table-controls';
 
 // GFM commonly uses 2-space list indents; 4 spaces still parse as depth 2.
@@ -131,14 +132,8 @@ function $tryConvertListItemToTaskList(node: TextNode): boolean {
   return true;
 }
 
-// Update tags accumulated for the in-progress update. Reading these lets the
-// transform bail on remote (collab) and undo/redo edits, which would otherwise
-// re-fire the conversion and fight history.
-type EditorWithUpdateTags = LexicalEditor & { _updateTags: Set<string> };
-
-function isCollaborationOrHistoricUpdate(editor: LexicalEditor): boolean {
-  const tags = (editor as EditorWithUpdateTags)._updateTags;
-  return tags.has(COLLABORATION_TAG) || tags.has(HISTORIC_TAG);
+function isCollaborationOrHistoricUpdate(): boolean {
+  return $hasUpdateTag(COLLABORATION_TAG) || $hasUpdateTag(HISTORIC_TAG);
 }
 
 // Typing "[] " / "[ ] " at the start of a bullet/ordered list item turns the
@@ -149,7 +144,7 @@ export function registerTaskListItemShortcuts(
   editor: LexicalEditor
 ): () => void {
   return editor.registerNodeTransform(TextNode, (node) => {
-    if (editor.isComposing() || isCollaborationOrHistoricUpdate(editor)) {
+    if (editor.isComposing() || isCollaborationOrHistoricUpdate()) {
       return;
     }
 
@@ -162,7 +157,8 @@ export function registerTaskListItemShortcuts(
     }
 
     if ($tryConvertListItemToTaskList(node)) {
-      $addUpdateTag(HISTORY_PUSH_TAG);
+      const markdownBefore = $exportMarkdownString();
+      $tagShortcutHistoryFromMarkdown(markdownBefore);
     }
   });
 }

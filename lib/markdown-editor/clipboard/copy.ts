@@ -15,6 +15,7 @@ import {
 import { wrapLexicalClipboardJsonPrefix } from '../clipboard-lexical-json';
 import { $shouldAppendTrailingLinebreakToClipboardMarkdown } from '../list-deletion';
 import { MARKDOWN_TRANSFORMERS } from '../transformers';
+import { $importMarkdownClipboard } from './paste';
 import {
   $getClipboardMarkdownFromDataTransfer,
   $parseSameEditorClipboardJson,
@@ -66,7 +67,36 @@ export const MarkdownCopyExtension = defineExtension({
       },
     }),
     configExtension(ClipboardImportExtension, {
+      priority: {
+        [MARKDOWN_CLIPBOARD_MIME_TYPE]: 5,
+      },
       $importMimeType: {
+        [MARKDOWN_CLIPBOARD_MIME_TYPE]: [
+          (markdown, selection, $next) => {
+            if ($importMarkdownClipboard(markdown, selection)) {
+              return true;
+            }
+            return $next();
+          },
+        ],
+        'text/html': [
+          (_html, selection, $next, dataTransfer) => {
+            const clipboardMarkdown =
+              $getClipboardMarkdownFromDataTransfer(dataTransfer);
+            if (
+              !clipboardMarkdown ||
+              clipboardMarkdown.source !== 'text/html'
+            ) {
+              return $next();
+            }
+            if (
+              $importMarkdownClipboard(clipboardMarkdown.markdown, selection)
+            ) {
+              return true;
+            }
+            return $next();
+          },
+        ],
         'application/x-lexical-editor': [
           (_data, selection, $next, dataTransfer) => {
             const clipboardMarkdown =

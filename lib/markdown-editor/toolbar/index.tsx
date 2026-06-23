@@ -1,19 +1,6 @@
 import React, { ElementType, useEffect, useRef, useState } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {
-  $createRangeSelection,
-  CAN_REDO_COMMAND,
-  CAN_UNDO_COMMAND,
-  $getNodeByKey,
-  $getSelection,
-  $isElementNode,
-  $isRangeSelection,
-  $isTextNode,
-  $setSelection,
-  SKIP_DOM_SELECTION_TAG,
-  type EditorState,
-  type LexicalEditor,
-} from 'lexical';
+import { SKIP_DOM_SELECTION_TAG, type LexicalEditor } from 'lexical';
 import { Tooltip } from '@mui/material';
 
 import ChecklistIcon from '../../icons/check-list';
@@ -45,6 +32,17 @@ import { toggleListAtSelection } from '../list-toggle';
 import { ToolbarDropdown, ToolbarDropdownItem } from './dropdown';
 import { useCompactToolbar } from './hooks';
 import { useToolbarState } from './state';
+import { bindToolbarUrlPanel } from './register';
+import {
+  $restoreSelectionSnapshot,
+  snapshotSelection,
+  type UrlPanelSelectionSnapshot,
+} from './url-panel-selection';
+
+export {
+  $restoreSelectionSnapshot,
+  snapshotSelection,
+} from './url-panel-selection';
 
 import {
   BlockquoteIcon,
@@ -139,106 +137,6 @@ const ToolbarGroup = ({ children }: { children: React.ReactNode }) => (
   <div className="markdown-editor-toolbar-group">{children}</div>
 );
 
-type UrlPanelSelectionSnapshot = {
-  anchor: UrlPanelSelectionPointSnapshot;
-  focus: UrlPanelSelectionPointSnapshot;
-  format: number;
-  style: string;
-};
-
-type UrlPanelSelectionPointSnapshot = {
-  key: string;
-  offset: number;
-  type: 'text' | 'element';
-};
-
-const snapshotSelectionPoint = ({
-  key,
-  offset,
-  type,
-}: UrlPanelSelectionPointSnapshot): UrlPanelSelectionPointSnapshot => ({
-  key,
-  offset,
-  type,
-});
-
-export const snapshotSelection = (
-  editor: LexicalEditor
-): UrlPanelSelectionSnapshot | null =>
-  editor.getEditorState().read(() => {
-    const selection = $getSelection();
-    if (!$isRangeSelection(selection)) {
-      return null;
-    }
-
-    return {
-      anchor: snapshotSelectionPoint(selection.anchor),
-      focus: snapshotSelectionPoint(selection.focus),
-      format: selection.format,
-      style: selection.style,
-    };
-  });
-
-const canRestoreSelectionPoint = ({
-  key,
-  offset,
-  type,
-}: UrlPanelSelectionPointSnapshot): boolean => {
-  const node = $getNodeByKey(key);
-  if (type === 'text') {
-    return $isTextNode(node) && offset <= node.getTextContentSize();
-  }
-
-  return $isElementNode(node) && offset <= node.getChildrenSize();
-};
-
-export const $restoreSelectionSnapshot = (
-  snapshot: UrlPanelSelectionSnapshot
-): boolean => {
-  if (
-    !canRestoreSelectionPoint(snapshot.anchor) ||
-    !canRestoreSelectionPoint(snapshot.focus)
-  ) {
-    return false;
-  }
-
-  const selection = $createRangeSelection();
-  selection.anchor.set(
-    snapshot.anchor.key,
-    snapshot.anchor.offset,
-    snapshot.anchor.type
-  );
-  selection.focus.set(
-    snapshot.focus.key,
-    snapshot.focus.offset,
-    snapshot.focus.type
-  );
-  selection.setFormat(snapshot.format);
-  selection.setStyle(snapshot.style);
-  $setSelection(selection);
-  return true;
-};
-
-const selectionChangedSinceSnapshot = (
-  editorState: EditorState,
-  snapshot: UrlPanelSelectionSnapshot
-) =>
-  editorState.read(() => {
-    const selection = $getSelection();
-    if (!$isRangeSelection(selection)) {
-      return true;
-    }
-
-    return (
-      selection.anchor.key !== snapshot.anchor.key ||
-      selection.anchor.offset !== snapshot.anchor.offset ||
-      selection.anchor.type !== snapshot.anchor.type ||
-      selection.focus.key !== snapshot.focus.key ||
-      selection.focus.offset !== snapshot.focus.offset ||
-      selection.focus.type !== snapshot.focus.type
-    );
-  });
-
 type Props = {
   disabled?: boolean;
 };
@@ -316,17 +214,13 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   };
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
-      const snapshot = urlPanelSelectionRef.current;
-      if (!snapshot) {
-        return;
-      }
-
-      if (selectionChangedSinceSnapshot(editorState, snapshot)) {
+    return bindToolbarUrlPanel(editor, {
+      getSnapshot: () => urlPanelSelectionRef.current,
+      onSelectionChanged: () => {
         setLinkInputUrl(null);
         setImageInputUrl(null);
         clearUrlPanelSelection();
-      }
+      },
     });
   }, [editor]);
 

@@ -1,12 +1,9 @@
-import {
-  $insertDataTransferForRichText,
-  $insertGeneratedNodes,
-} from '@lexical/clipboard';
+import { $convertFromMarkdownString } from '@lexical/markdown';
+import { $insertDataTransferForRichText } from '@lexical/clipboard';
 import { $isCodeNode } from '@lexical/code-core';
 import { $toggleLink } from '@lexical/link';
 import { $isListItemNode, $isListNode, type ListItemNode } from '@lexical/list';
 import { $findMatchingParent } from '@lexical/utils';
-import { $convertFromMarkdownString } from '@lexical/markdown';
 import { $isQuoteNode } from '@lexical/rich-text';
 import {
   $createParagraphNode,
@@ -19,6 +16,7 @@ import {
   COMMAND_PRIORITY_HIGH,
   defineExtension,
   PASTE_COMMAND,
+  type BaseSelection,
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
@@ -35,8 +33,6 @@ import { $isSelectionInTable } from '../table-controls';
 import { isFormattingFreeHtml } from '../../utils/clipboard/html-to-markdown';
 import {
   $getClipboardMarkdownFromDataTransfer,
-  $parseSameEditorClipboardJson,
-  $shouldPreferMarkdownPasteOverLexicalJson,
   type ClipboardMarkdownPayload,
 } from './shared';
 
@@ -226,6 +222,22 @@ function $insertInlineMarkdownPasteInTable(text: string): boolean {
   return true;
 }
 
+export function $importMarkdownClipboard(
+  markdown: string,
+  selection: BaseSelection | null
+): boolean {
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+
+  if ($isSelectionInTable()) {
+    return $insertInlineMarkdownPasteInTable(markdown);
+  }
+
+  const anchorBlock = selection.anchor.getNode().getTopLevelElement();
+  return $insertMarkdownPasteNodes(markdown, anchorBlock);
+}
+
 // Inserts text at the selection, turning newlines into real line breaks instead
 // of paragraph splits. Keeps multi-line pastes contained in the current block
 // (code block, quote) instead of spilling into sibling paragraphs.
@@ -268,10 +280,10 @@ function $wrapSelectionInPastedLink(markdown: string): boolean {
   return true;
 }
 
-function $handleMarkdownPaste(
-  editor: LexicalEditor,
-  event: PasteCommandType
-): boolean {
+// ClipboardImportExtension handles markdown/HTML import and same-editor JSON.
+// PASTE_COMMAND only intercepts cases that need command-level control before
+// RichTextExtension delegates to the import pipeline.
+function $handleMarkdownPasteEdgeCases(event: PasteCommandType): boolean {
   const clipboardData = 'clipboardData' in event ? event.clipboardData : null;
   const selection = $getSelection();
   if (!clipboardData || !$isRangeSelection(selection)) {
@@ -316,51 +328,37 @@ function $handleMarkdownPaste(
     return true;
   }
 
-  // Same-editor copies carry lossless Lexical JSON: insert it verbatim. Some
-  // shapes (a single list line, a full fenced code block) are lossy in JSON and
-  // are left to markdown paste below.
-  if (!$shouldPreferMarkdownPasteOverLexicalJson(markdown)) {
-    const sameEditorNodes = $parseSameEditorClipboardJson(
-      editor,
-      clipboardData
-    );
-    if (sameEditorNodes) {
-      event.preventDefault();
-      $insertGeneratedNodes(editor, sameEditorNodes, selection);
-      return true;
-    }
-  }
+  return false;
+}
 
-  // External plain text has no markdown to parse: let Lexical's plain-text
-  // importer handle it, run inline so repeated pastes don't get stuck on nested
-  // update cycles.
-  if (source === 'text/plain') {
-    event.preventDefault();
-    $insertDataTransferForRichText(clipboardData, selection, editor);
+// ClipboardImportExtension handles markdown/HTML import and same-editor JSON.
+// PASTE_COMMAND intercepts edge cases that need command-level control, then
+// delegates everything else to the import pipeline directly (not via
+// RichTextExtension) so plain-text pastes run inline without nested updates.
+function $handleMarkdownPaste(event: PasteCommandType): boolean {
+  if ($handleMarkdownPasteEdgeCases(event)) {
     return true;
   }
 
-  // Everything else is markdown/HTML we parse into nodes ourselves.
-  if ($isSelectionInTable()) {
-    if (!$insertInlineMarkdownPasteInTable(markdown)) {
-      return false;
-    }
-    event.preventDefault();
-    return true;
-  }
-
-  const anchorBlock = anchorNode.getTopLevelElement();
-  if (!$insertMarkdownPasteNodes(markdown, anchorBlock)) {
+  const clipboardData = 'clipboardData' in event ? event.clipboardData : null;
+  const selection = $getSelection();
+  if (!clipboardData || !$isRangeSelection(selection)) {
     return false;
   }
+
+  if (!$getClipboardMarkdownFromDataTransfer(clipboardData)) {
+    return false;
+  }
+
   event.preventDefault();
+  $insertDataTransferForRichText(clipboardData, selection);
   return true;
 }
 
 export function registerMarkdownPaste(editor: LexicalEditor): () => void {
   return editor.registerCommand(
     PASTE_COMMAND,
-    (event) => $handleMarkdownPaste(editor, event),
+    (event) => $handleMarkdownPaste(event),
     COMMAND_PRIORITY_HIGH
   );
 }

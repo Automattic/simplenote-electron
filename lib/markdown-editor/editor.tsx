@@ -19,7 +19,7 @@ import {
 } from './extensions';
 import { InternalLinkPlugin } from './internal-link-menu';
 import { SearchHighlightPlugin } from './search-highlight-plugin';
-import { MarkdownToolbar } from './toolbar/extension';
+import { MarkdownToolbarPlugin } from './toolbar/extension';
 
 import './style.scss';
 
@@ -68,7 +68,7 @@ export default function MarkdownEditor({
       {/* contentEditable={null} so the input can be placed below the toolbar;
           the composer otherwise renders it before any children. */}
       <LexicalExtensionComposer contentEditable={null} extension={extension}>
-        <MarkdownToolbar />
+        <MarkdownToolbarPlugin />
         {/* autocomplete=off on a display:contents form plus editor hints reduce
             password-manager / AutoFill bars on mobile; iOS may still show them. */}
         <form

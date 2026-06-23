@@ -4,7 +4,6 @@ import {
   $getRoot,
   $getSelection,
   $isRangeSelection,
-  createEditor,
   PASTE_COMMAND,
 } from 'lexical';
 import { ListNode, ListItemNode, $isListNode } from '@lexical/list';
@@ -30,18 +29,10 @@ import {
   createMarkdownEditorExtension,
   MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
-  registerMarkdownPaste,
 } from './extensions';
 
 function makeEditor() {
-  const editor = createEditor({
-    nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, CodeNode, LinkNode],
-    onError: (error) => {
-      throw error;
-    },
-  });
-  registerMarkdownPaste(editor);
-  return editor;
+  return buildEditorFromExtensions(createMarkdownEditorExtension(''));
 }
 
 function makePasteEvent(
@@ -82,7 +73,7 @@ const TERMINAL_LOG = `[info] Done packaging.
 [error]         at com.tumblr.firehose.probe.FirehoseDevReadProbe$.delayedEndpoint$com$tumblr$firehose$probe$FirehoseDevReadProbe$1(FirehoseDevReadProbe.scala:62)
 [error]         at com.tumblr.firehose.probe.FirehoseDevReadProbe$delayedInit$body.apply(FirehoseDevReadProbe.scala:17)`;
 
-function selectEmptyParagraph(editor: ReturnType<typeof createEditor>) {
+function selectEmptyParagraph(editor: ReturnType<typeof makeEditor>) {
   editor.update(
     () => {
       const paragraph = $createParagraphNode();
@@ -540,9 +531,7 @@ describe('registerMarkdownPaste', () => {
   });
 
   function makeProductionEditor() {
-    const editor = buildEditorFromExtensions(createMarkdownEditorExtension(''));
-    registerMarkdownPaste(editor);
-    return editor;
+    return buildEditorFromExtensions(createMarkdownEditorExtension(''));
   }
 
   it('parses pasted pipe-table markdown into a TableNode', () => {

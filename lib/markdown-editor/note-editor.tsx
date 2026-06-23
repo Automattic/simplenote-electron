@@ -143,6 +143,7 @@ function MarkdownNoteEditorComponent({
           $getRoot().selectStart();
         },
         {
+          discrete: true,
           tag: REMOTE_CONTENT_TAG,
           onUpdate: () => {
             const shell = shellRef.current;

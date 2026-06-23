@@ -12,8 +12,6 @@ import {
   $getRoot,
   configExtension,
   defineExtension,
-  HISTORY_MERGE_TAG,
-  HISTORY_PUSH_TAG,
   type AnyLexicalExtensionArgument,
 } from 'lexical';
 
@@ -98,32 +96,6 @@ const ListDeletionExtension = defineExtension({
   },
 });
 
-// Markdown shortcut formatting can leave the serialized note unchanged, so merge it out of undo history.
-const MarkdownHistoryMergeExtension = defineExtension({
-  name: '@simplenote/markdown-history-merge',
-  register(editor) {
-    return editor.registerUpdateListener(
-      ({ editorState, prevEditorState, tags }) => {
-        if (!tags.has(HISTORY_PUSH_TAG)) {
-          return;
-        }
-
-        const previousMarkdown = prevEditorState.read(() =>
-          $exportMarkdownString()
-        );
-        const nextMarkdown = editorState.read(() => $exportMarkdownString());
-
-        if (previousMarkdown !== nextMarkdown) {
-          return;
-        }
-
-        tags.delete(HISTORY_PUSH_TAG);
-        tags.add(HISTORY_MERGE_TAG);
-      }
-    );
-  },
-});
-
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
   register(editor) {
@@ -163,7 +135,6 @@ export function createMarkdownEditorExtension(
     }),
     richTextExtension,
     FormatEscapeExtension,
-    MarkdownHistoryMergeExtension,
     HistoryExtension,
     listExtension,
     ListDeletionExtension,
@@ -200,7 +171,7 @@ export function createMarkdownEditorExtension(
     name: '@simplenote/markdown-editor',
     namespace: 'SimplenoteMarkdownEditor',
     onError(error: Error) {
-      throw error;
+      console.error(error);
     },
     theme: markdownEditorTheme,
   });
