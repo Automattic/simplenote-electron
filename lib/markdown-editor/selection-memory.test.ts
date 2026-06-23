@@ -8,7 +8,10 @@ import {
 
 import { $importRemoteMarkdown } from './import-export';
 import { makeGfmTestEditor } from './gfm-test-helpers';
-import { $captureMarkdownSelectionOffsets } from './selection-memory';
+import {
+  $captureMarkdownSelectionOffsets,
+  remapMarkdownOffset,
+} from './selection-memory';
 
 function selectTextNode(
   editor: ReturnType<typeof makeGfmTestEditor>,
@@ -32,6 +35,20 @@ function selectTextNode(
     { discrete: true }
   );
 }
+
+describe('remapMarkdownOffset', () => {
+  it('shifts the caret forward when text is inserted before it', () => {
+    expect(remapMarkdownOffset('hello world', 'NEW hello world', 5)).toBe(9);
+  });
+
+  it('shifts the caret backward when text before it is deleted', () => {
+    expect(remapMarkdownOffset('NEW hello world', 'hello world', 9)).toBe(5);
+  });
+
+  it('leaves the caret unchanged when the edit is after it', () => {
+    expect(remapMarkdownOffset('hello world', 'hello NEW world', 5)).toBe(5);
+  });
+});
 
 describe('selection memory', () => {
   it('restores the caret at the same markdown offset after a full re-import', () => {
