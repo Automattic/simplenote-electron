@@ -6,6 +6,7 @@ type Props = {
   ariaLabel?: string;
   initialUrl: string;
   onCancel: () => void;
+  onRemove?: () => void;
   onSubmit: (url: string) => void;
   placeholder?: string;
   validate?: (url: string) => boolean;
@@ -18,6 +19,7 @@ export function LinkUrlInput({
   ariaLabel = 'Link URL',
   initialUrl,
   onCancel,
+  onRemove,
   onSubmit,
   placeholder = 'Paste or type a URL',
   validate,
@@ -45,7 +47,14 @@ export function LinkUrlInput({
   };
 
   return (
-    <div className="markdown-editor-link-input">
+    <div
+      className={[
+        'markdown-editor-link-input',
+        onRemove ? 'markdown-editor-link-input--with-remove' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <input
         aria-describedby={showError ? errorId : undefined}
         aria-label={ariaLabel}
@@ -71,6 +80,24 @@ export function LinkUrlInput({
         type="text"
         value={url}
       />
+      {onRemove && (
+        <button
+          className="markdown-editor-link-input__remove"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={onRemove}
+          type="button"
+        >
+          Remove link
+        </button>
+      )}
+      <button
+        className="markdown-editor-link-input__done"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={submit}
+        type="button"
+      >
+        Done
+      </button>
       <button
         aria-label="Cancel"
         className="markdown-editor-link-input__cancel"

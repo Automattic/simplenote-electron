@@ -31,7 +31,7 @@ import { LinkUrlInput } from './link-url-input';
 import { toggleListAtSelection } from '../list-toggle';
 import { ToolbarDropdown, ToolbarDropdownItem } from './dropdown';
 import { useCompactToolbar } from './hooks';
-import { useToolbarState } from './state';
+import { readToolbarState, useToolbarState } from './state';
 import { bindToolbarUrlPanel } from './register';
 import {
   $restoreSelectionSnapshot,
@@ -151,6 +151,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const [linkInputUrl, setLinkInputUrl] = useState<string | null>(null);
   const [imageInputUrl, setImageInputUrl] = useState<string | null>(null);
   const urlPanelSelectionRef = useRef<UrlPanelSelectionSnapshot | null>(null);
+  const linkInputEditingRef = useRef(false);
 
   const blockDisabled = state.inTitle || state.inTable;
   const urlInputOpen = linkInputUrl !== null || imageInputUrl !== null;
@@ -184,10 +185,12 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
   const openLinkInput = () => {
     urlPanelSelectionRef.current = snapshotSelection(editor);
     setImageInputUrl(null);
+    linkInputEditingRef.current = readToolbarState(editor).link;
     setLinkInputUrl(getLinkHrefFromSelection(editor) ?? 'https://');
   };
 
   const closeLinkInput = () => {
+    linkInputEditingRef.current = false;
     setLinkInputUrl(null);
     clearUrlPanelSelection();
   };
@@ -234,6 +237,16 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
     closeLinkInput();
   };
 
+  const removeLink = () => {
+    if (!restoreUrlPanelSelection()) {
+      closeLinkInput();
+      return;
+    }
+
+    setLink(editor, '');
+    closeLinkInput();
+  };
+
   const applyImage = (url: string) => {
     if (!restoreUrlPanelSelection()) {
       closeImageInput();
@@ -254,6 +267,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
       <LinkUrlInput
         initialUrl={linkInputUrl}
         onCancel={cancelLinkInput}
+        onRemove={linkInputEditingRef.current ? removeLink : undefined}
         onSubmit={applyLink}
       />
     );

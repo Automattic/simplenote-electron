@@ -453,12 +453,16 @@ $mobile-keyboard-padding: 5rem;
 
 .markdown-editor-link-input {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   flex: 1 1 12rem;
   min-width: 8rem;
   max-width: 20rem;
   margin-left: 0.125rem;
+}
+
+.markdown-editor-link-input--with-remove {
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
 }
 
 .markdown-editor-link-input__field {
@@ -483,11 +487,51 @@ $mobile-keyboard-padding: 5rem;
   }
 }
 
+.markdown-editor-link-input__remove,
+.markdown-editor-link-input__done {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  padding: 0.25rem 0.375rem;
+  border-radius: var(--me-radius-md);
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--me-button-hover-bg-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 1px;
+  }
+}
+
+.markdown-editor-link-input__remove {
+  color: var(--foreground-color);
+
+  &:hover {
+    color: var(--foreground-color);
+  }
+}
+
+.markdown-editor-link-input__done {
+  color: var(--primary-color);
+  font-weight: 600;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
 .markdown-editor-link-input__cancel {
   align-items: center;
   background: transparent;
   border: 0;
-  color: var(--secondary-color);
+  color: var(--foreground-color);
   cursor: pointer;
   display: flex;
   flex: 0 0 auto;

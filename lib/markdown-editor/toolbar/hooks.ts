@@ -7,6 +7,13 @@ export function useCompactToolbar(toolbarEl: HTMLElement | null): boolean {
   const [compact, setCompact] = useState(false);
 
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') {
+      setCompact(
+        toolbarEl !== null && toolbarEl.clientWidth < NARROW_TOOLBAR_WIDTH
+      );
+      return;
+    }
+
     const media = window.matchMedia(COMPACT_MEDIA);
 
     const update = () => {

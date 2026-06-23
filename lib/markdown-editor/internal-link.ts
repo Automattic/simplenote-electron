@@ -147,12 +147,12 @@ export function $insertInternalLink(note: { noteId: T.EntityId }): boolean {
 
 // Markdown links like [site](www.example.com) carry no scheme; assume
 // https so they open instead of failing URL parsing in viewExternalUrl.
-function withScheme(url: string): string {
+export function withScheme(url: string): string {
   return /^[a-z][a-z0-9+.-]*:/i.test(url) ? url : `https://${url}`;
 }
 
 // Scrolls to the heading matching `#slug`, e.g. `[link](#my-section)`.
-function scrollToAnchor(editor: LexicalEditor, hash: string): void {
+export function scrollToAnchor(editor: LexicalEditor, hash: string): void {
   let slug = hash.slice(1);
   try {
     slug = decodeURIComponent(slug);
@@ -166,13 +166,31 @@ function scrollToAnchor(editor: LexicalEditor, hash: string): void {
   heading?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+export function openLinkUrl(
+  editor: LexicalEditor,
+  url: string,
+  onOpenNote?: (noteId: T.EntityId) => void
+): void {
+  const noteId = noteIdFromUrl(url);
+  if (noteId) {
+    onOpenNote?.(noteId);
+    return;
+  }
+
+  if (url.startsWith('#')) {
+    scrollToAnchor(editor, url);
+    return;
+  }
+
+  viewExternalUrl(withScheme(url));
+}
+
 /**
  * Opens links on click: internal `simplenote://note/…` links via
  * `onOpenNote`, `#anchor` links by scrolling to the matching heading, and
  * anything else externally. The rendered DOM href for internal links is
  * `about:blank` (Lexical sanitizes unknown protocols), so the URL is read
- * from the LinkNode itself. The browser never follows anchors inside a
- * contenteditable, so external links are opened here too.
+ * from the LinkNode itself.
  */
 export function registerLinkClick(
   editor: LexicalEditor,
@@ -193,16 +211,7 @@ export function registerLinkClick(
     }
 
     event.preventDefault();
-
-    const noteId = noteIdFromUrl(url);
-    if (noteId) {
-      onOpenNote?.(noteId);
-    } else if (url.startsWith('#')) {
-      scrollToAnchor(editor, url);
-    } else {
-      // Ignores anything that isn't http(s) or mailto.
-      viewExternalUrl(withScheme(url));
-    }
+    openLinkUrl(editor, url, onOpenNote);
   };
 
   return editor.registerRootListener((root, prevRoot) => {

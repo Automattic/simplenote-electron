@@ -41,4 +41,35 @@ describe('LinkUrlInput', () => {
       'Use a public HTTPS image URL.'
     );
   });
+
+  it('submits when Done is clicked', () => {
+    const onSubmit = jest.fn();
+    const { getByRole } = render(
+      <LinkUrlInput
+        initialUrl="https://example.com"
+        onCancel={jest.fn()}
+        onSubmit={onSubmit}
+      />
+    );
+
+    fireEvent.click(getByRole('button', { name: 'Done' }));
+
+    expect(onSubmit).toHaveBeenCalledWith('https://example.com');
+  });
+
+  it('calls onRemove when Remove link is clicked', () => {
+    const onRemove = jest.fn();
+    const { getByRole } = render(
+      <LinkUrlInput
+        initialUrl="https://example.com"
+        onCancel={jest.fn()}
+        onRemove={onRemove}
+        onSubmit={jest.fn()}
+      />
+    );
+
+    fireEvent.click(getByRole('button', { name: 'Remove link' }));
+
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
 });
