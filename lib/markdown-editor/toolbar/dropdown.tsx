@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-import { ChevronDownIcon } from './toolbar-icons';
+import { ChevronDownIcon } from './icons';
 
 type ToolbarDropdownItemProps = {
   active?: boolean;

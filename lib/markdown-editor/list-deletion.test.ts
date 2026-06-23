@@ -17,7 +17,6 @@ import {
 } from 'lexical';
 
 import {
-  $insertMarkdownPasteNodes,
   $shouldPreferMarkdownPasteOverLexicalJson,
   MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
@@ -387,7 +386,7 @@ describe('list deletion', () => {
     editor.dispose();
   });
 
-  it('cut and paste a middle list item round-trips via markdown clipboard', async () => {
+  it('cut and paste a middle list item round-trips via editor paste command', async () => {
     const editor = makeGfmTestEditor('- one\n- two\n- three');
     selectText(editor, 'two');
 
@@ -397,41 +396,6 @@ describe('list deletion', () => {
     expect(clipboardData['text/plain']).toBe('two');
     expect(clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- two\n');
 
-    await dispatchDelete(editor);
-    expect(exportMarkdown(editor)).toBe('- one\n- three');
-
-    editor.update(
-      () => {
-        const pasted = $insertMarkdownPasteNodes(
-          clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE] ?? '',
-          $getSelection()?.anchor.getNode().getTopLevelElement() ?? null
-        );
-        if (!pasted) {
-          throw new Error('Expected markdown paste to handle list item');
-        }
-      },
-      { discrete: true }
-    );
-
-    expect(exportMarkdown(editor)).toBe('- one\n- two\n- three');
-    editor.getEditorState().read(() => {
-      const selection = $getSelection();
-      if (!$isRangeSelection(selection)) {
-        throw new Error('Expected range selection');
-      }
-      expect(selection.anchor.getNode().getTextContent()).toBe('two');
-      expect(selection.anchor.offset).toBe(3);
-    });
-    editor.dispose();
-  });
-
-  it('cut and paste a middle list item round-trips via editor paste command', async () => {
-    const editor = makeGfmTestEditor('- one\n- two\n- three');
-    selectText(editor, 'two');
-
-    const clipboardData = editor.read(() =>
-      $getClipboardDataFromSelection($getSelection())
-    );
     await dispatchDelete(editor);
     expect(exportMarkdown(editor)).toBe('- one\n- three');
 

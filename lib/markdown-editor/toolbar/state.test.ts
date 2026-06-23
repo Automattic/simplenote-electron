@@ -15,12 +15,12 @@ import {
   $isTableRowNode,
 } from '@lexical/table';
 
-import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
+import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
 import {
   readToolbarState,
   toolbarStateEqual,
   type ToolbarState,
-} from './toolbar-state';
+} from './state';
 
 function findTextNode(node: LexicalNode, text: string): TextNode | undefined {
   if ($isTextNode(node) && node.getTextContent() === text) {

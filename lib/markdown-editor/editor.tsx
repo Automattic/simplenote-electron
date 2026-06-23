@@ -19,7 +19,7 @@ import {
 } from './extensions';
 import { InternalLinkPlugin } from './internal-link-menu';
 import { SearchHighlightPlugin } from './search-highlight-plugin';
-import { MarkdownToolbar } from './toolbar-extension';
+import { MarkdownToolbar } from './toolbar/extension';
 
 import './style.scss';
 

@@ -545,21 +545,6 @@ describe('registerMarkdownPaste', () => {
     return editor;
   }
 
-  it('$markdownToNodes parses a table with production extensions', () => {
-    const editor = makeProductionEditor();
-    editor.update(
-      () => {
-        const nodes = $markdownToNodes(
-          ['| City | Days |', '| --- | --- |', '| Kyoto | 3 |'].join('\n')
-        );
-        expect(nodes).toHaveLength(1);
-        expect($isTableNode(nodes[0])).toBe(true);
-      },
-      { discrete: true }
-    );
-    editor.dispose();
-  });
-
   it('parses pasted pipe-table markdown into a TableNode', () => {
     const editor = makeProductionEditor();
     const tableMarkdown = [

@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 
-import CrossSmallIcon from '../icons/cross-small';
+import CrossSmallIcon from '../../icons/cross-small';
 
 type Props = {
   ariaLabel?: string;

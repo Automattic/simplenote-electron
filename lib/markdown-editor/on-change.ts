@@ -1,0 +1,30 @@
+import type { LexicalEditor } from 'lexical';
+
+import { $exportMarkdownString } from './import-export';
+
+// Updates applied from remote/store content (as opposed to local typing) carry
+// this tag so the on-change serializer doesn't echo them back as edits.
+export const REMOTE_CONTENT_TAG = 'simplenote:remote-content';
+
+// Serializing the whole tree to markdown is O(document), which is noticeable
+// on very large notes. A debounced implementation exists but is shelved for
+// now; see .cursor/debounced-markdown-serialization.md before reintroducing.
+export function registerMarkdownOnChange(
+  editor: LexicalEditor,
+  onChange: (markdown: string) => void
+): () => void {
+  return editor.registerUpdateListener(
+    ({ dirtyElements, dirtyLeaves, editorState, tags }) => {
+      if (tags.has(REMOTE_CONTENT_TAG)) {
+        return;
+      }
+      if (dirtyElements.size === 0 && dirtyLeaves.size === 0) {
+        return;
+      }
+      editorState.read(() => {
+        const markdown = $exportMarkdownString();
+        queueMicrotask(() => onChange(markdown));
+      });
+    }
+  );
+}

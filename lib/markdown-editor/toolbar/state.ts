@@ -17,9 +17,9 @@ import {
   HeadingTagType,
 } from '@lexical/rich-text';
 
-import type { ActiveListType } from './list-toggle';
-import { $isImageNode } from './image-node';
-import { $isSelectionInTable } from './table-controls';
+import type { ActiveListType } from '../list-toggle';
+import { $isImageNode } from '../image-node';
+import { $isSelectionInTable } from '../table-controls';
 
 export type ToolbarState = {
   inTitle: boolean;

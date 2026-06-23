@@ -16,8 +16,8 @@ import {
 } from 'lexical';
 import { Tooltip } from '@mui/material';
 
-import ChecklistIcon from '../icons/check-list';
-import { CmdOrCtrl } from '../utils/platform';
+import ChecklistIcon from '../../icons/check-list';
+import { CmdOrCtrl } from '../../utils/platform';
 import {
   deleteTableColumn,
   deleteTableRow,
@@ -39,12 +39,12 @@ import {
   toggleHeading,
   undo,
   normalizeImageSourceInput,
-} from './editor-commands';
+} from './commands';
 import { LinkUrlInput } from './link-url-input';
-import { toggleListAtSelection } from './list-toggle';
-import { ToolbarDropdown, ToolbarDropdownItem } from './toolbar-dropdown';
-import { useCompactToolbar } from './toolbar-hooks';
-import { useToolbarState } from './toolbar-state';
+import { toggleListAtSelection } from '../list-toggle';
+import { ToolbarDropdown, ToolbarDropdownItem } from './dropdown';
+import { useCompactToolbar } from './hooks';
+import { useToolbarState } from './state';
 
 import {
   BlockquoteIcon,
@@ -71,7 +71,7 @@ import {
   TableIcon,
   TextFormatIcon,
   UndoIcon,
-} from './toolbar-icons';
+} from './icons';
 
 type ToolbarButtonProps = {
   active?: boolean;

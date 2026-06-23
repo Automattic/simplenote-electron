@@ -25,9 +25,9 @@ import {
 
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 
-import { normalizeSafeImageSrc } from '../utils/url-safety';
-import { $createImageNode, $isImageNode } from './image-node';
-import { normalizeLinkHref, urlFromText } from './link-validator';
+import { normalizeSafeImageSrc } from '../../utils/url-safety';
+import { $createImageNode, $isImageNode } from '../image-node';
+import { normalizeLinkHref, urlFromText } from '../link-validator';
 import {
   $isSelectionInTable,
   DEFAULT_INSERT_TABLE_PAYLOAD,
@@ -37,7 +37,7 @@ import {
   INSERT_TABLE_COLUMN_BEFORE_COMMAND,
   INSERT_TABLE_ROW_ABOVE_COMMAND,
   INSERT_TABLE_ROW_BELOW_COMMAND,
-} from './table-controls';
+} from '../table-controls';
 
 export const dispatchFormatText = (
   editor: LexicalEditor,

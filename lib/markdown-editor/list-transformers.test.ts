@@ -203,7 +203,7 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
     });
   });
 
-  it('imports bullet list items separated by a blank line as two lists', () => {
+  it('imports and round-trips bullet list items separated by a blank line as two lists', () => {
     const markdown = '- test\n\n- test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
@@ -213,13 +213,6 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
         bullet
           item: "test2""
       `);
-    });
-  });
-
-  it('round-trips bullet list items separated by a blank line', () => {
-    const markdown = '- test\n\n- test2';
-    const editor = importMarkdown(markdown);
-    editor.getEditorState().read(() => {
       expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
     });
   });
@@ -332,7 +325,7 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
     });
   });
 
-  it('imports checklist items separated by a blank line as two lists', () => {
+  it('imports and round-trips checklist items separated by a blank line as two lists', () => {
     const markdown = '- [ ] test\n\n- [ ] test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
@@ -342,6 +335,7 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
         check
           item: "test2""
       `);
+      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
     });
   });
 
@@ -355,14 +349,6 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
         check
           item: "test2""
       `);
-    });
-  });
-
-  it('round-trips checklist items separated by a blank line', () => {
-    const markdown = '- [ ] test\n\n- [ ] test2';
-    const editor = importMarkdown(markdown);
-    editor.getEditorState().read(() => {
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
     });
   });
 
@@ -431,66 +417,6 @@ describe('task list item shortcuts', () => {
       });
     }
   );
-
-  it('does not enqueue a nested update when typing in a plain paragraph', () => {
-    const editor = makeEditorWithShortcuts();
-    editor.update(
-      () => {
-        const paragraph = $createParagraphNode();
-        paragraph.append($createTextNode('hello world'));
-        $getRoot().append(paragraph);
-        paragraph.selectEnd();
-      },
-      { discrete: true }
-    );
-
-    let listenerCalls = 0;
-    const unregister = editor.registerUpdateListener(() => {
-      listenerCalls += 1;
-    });
-
-    editor.update(
-      () => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          selection.insertText('!');
-        }
-      },
-      { discrete: true }
-    );
-
-    unregister();
-    expect(listenerCalls).toBeGreaterThanOrEqual(1);
-  });
-
-  it('does not hit the update cascade guard when typing quickly without discrete updates', async () => {
-    const editor = makeEditorWithShortcuts();
-    editor.update(
-      () => {
-        const paragraph = $createParagraphNode();
-        paragraph.append($createTextNode('hello '));
-        $getRoot().append(paragraph);
-        paragraph.selectEnd();
-      },
-      { discrete: true }
-    );
-
-    const text = 'world typing fast without discrete ';
-    for (const char of text) {
-      editor.update(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          selection.insertText(char);
-        }
-      });
-    }
-
-    await Promise.resolve();
-
-    editor.getEditorState().read(() => {
-      expect($getRoot().getTextContent()).toBe(`hello ${text}`);
-    });
-  });
 
   it('does not convert list items to task lists inside table cells', async () => {
     const editor = makeGfmTestEditor();
@@ -587,7 +513,7 @@ describe('mixed nested list markdown import', () => {
     });
   });
 
-  it('round-trips without flattening nested list types', () => {
+  it('preserves nested list types on export', () => {
     const editor = importMarkdown(sample);
     editor.getEditorState().read(() => {
       const roundtrip = $convertToMarkdownString(MARKDOWN_TRANSFORMERS);

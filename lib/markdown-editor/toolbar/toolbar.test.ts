@@ -11,10 +11,10 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { MARKDOWN_TRANSFORMERS } from './extensions';
-import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
-import { insertImage, setLink } from './editor-commands';
-import { $restoreSelectionSnapshot, snapshotSelection } from './toolbar';
+import { MARKDOWN_TRANSFORMERS } from '../extensions';
+import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
+import { insertImage, setLink } from './commands';
+import { $restoreSelectionSnapshot, snapshotSelection } from './index';
 
 function findTextNode(node: LexicalNode, text: string): TextNode | undefined {
   if ($isTextNode(node) && node.getTextContent() === text) {
