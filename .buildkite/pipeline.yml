@@ -75,8 +75,6 @@ steps:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
-    env:
-      CSC_FOR_PULL_REQUEST: true
     artifact_paths:
       - release\*.exe
       # Notice that this will not signed.
@@ -87,11 +85,9 @@ steps:
       - release\*.blockmap
       - release\*.yml
 
-  # Validates the Azure Trusted Signing path alongside the default PFX build above. The PFX build
-  # remains what ships until the auto-update publisher-name handover lands (AINFRA-2472); this step
-  # signs the exe with Azure and verifies it with `signtool verify /pa`.
-  - label: Package on Windows (Azure Trusted Signing)
-    key: package-windows-azure
+  # Validates the legacy PFX path alongside the default Azure build above.
+  - label: Package on Windows (PFX code signing)
+    key: package-windows-pfx
     agents:
       queue: windows
     plugins:
@@ -99,8 +95,8 @@ steps:
       - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
     env:
-      USE_AZURE_TRUSTED_SIGNING: 1
-      # PFX remains the release path; keep validation artifacts out of releases.
+      USE_PFX_CODE_SIGNING: 1
+      CSC_FOR_PULL_REQUEST: true
       PUBLISH: never
     artifact_paths:
       - release\*.exe

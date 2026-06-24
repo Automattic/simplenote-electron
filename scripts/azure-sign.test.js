@@ -128,7 +128,6 @@ describe('sign callback dispatch', () => {
     setPlatform('win32');
     process.env = {
       CI: 'true',
-      USE_AZURE_TRUSTED_SIGNING: '1',
       CSC_LINK: 'C:\\repo\\certificate.pfx',
       CSC_KEY_PASSWORD: 's3cret',
     };
