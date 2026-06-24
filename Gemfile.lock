@@ -52,7 +52,7 @@ GEM
     colored2 (3.1.2)
     commander (4.6.0)
       highline (~> 2.0.0)
-    concurrent-ruby (1.3.6)
+    concurrent-ruby (1.3.7)
     connection_pool (3.0.2)
     csv (3.3.5)
     declarative (0.0.20)
@@ -235,6 +235,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.3-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.19.3-x86_64-linux-gnu)
+      racc (~> 1.4)
     octokit (6.1.1)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
@@ -325,6 +327,7 @@ PLATFORMS
   aarch64-linux
   arm64-darwin-22
   arm64-darwin-23
+  x86_64-linux
 
 DEPENDENCIES
   fastlane (~> 2.232)
