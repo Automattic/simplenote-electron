@@ -1,20 +1,60 @@
 @use '../../scss/variables' as *;
 
-// Extra scroll room on narrow viewports when the on-screen keyboard is open.
-$mobile-keyboard-padding: 5rem;
+// ~2 lines of caret clearance; --keyboard-inset is set from visualViewport on
+// narrow viewports (see keyboard-inset.ts).
+$mobile-caret-margin: 2.5em;
 
-// Unlike Monaco (which has an internal virtual scroller), the Lexical
-// contenteditable needs a scrollable ancestor. The shell is absolutely
-// positioned at 100% height, so it is the natural scroll container.
+// Frame fills the note area; only .lexical-md-editor-shell scrolls. The toolbar
+// sits in the column above the shell (like NoteToolbar above Monaco).
+.note-content-editor-shell.lexical-md-editor-frame {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  > .lexical-md-editor.note-detail-markdown {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+  }
+
+  // LexicalExtensionComposer may wrap children in a provider element.
+  .lexical-md-editor > * {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.lexical-md-editor-chrome__column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// Scroll container; keyboard inset vars are set here at runtime.
 .lexical-md-editor-shell {
+  --keyboard-inset: 0px;
+  --mobile-keyboard-padding: calc(
+    var(--keyboard-inset) + #{$mobile-caret-margin}
+  );
+
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 
   @media only screen and (max-width: $single-column) {
     -webkit-overflow-scrolling: touch;
-    // Room above the on-screen keyboard and iOS accessory bar when the
-    // viewport resizes (interactive-widget=resizes-content in index.ejs).
-    scroll-padding-bottom: $mobile-keyboard-padding;
+    scroll-padding-bottom: var(--mobile-keyboard-padding);
   }
+}
+
+.lexical-md-editor-shell .lexical-md-editor__body {
+  min-height: 100%;
 }
 
 .lexical-md-editor {
@@ -35,30 +75,19 @@ $mobile-keyboard-padding: 5rem;
   display: flex;
   flex-direction: column;
   min-height: 100%;
-
-  // .note-detail-markdown sets height: 100%, capping this container at one
-  // viewport; content then overflows the box and the sticky toolbar stops at
-  // the container's bottom edge (i.e. disappears after scrolling one screen).
-  // The doubled class beats it regardless of stylesheet order.
-  &.lexical-md-editor {
-    height: auto;
-  }
+  height: auto;
 }
 
 .lexical-md-editor__form {
   display: contents;
 }
 
-// The toolbar sticks to the top of the scrolling shell
-// (.lexical-md-editor-shell); the input scrolls beneath it.
+// Toolbar sits above the scroll shell (not inside it), so it never scrolls away.
 .markdown-editor-toolbar[data-variant='fixed'] {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.25rem;
-  position: sticky;
-  top: 0;
-  z-index: 2;
   flex-shrink: 0;
   width: 100%;
   min-height: var(--me-toolbar-height);
@@ -69,6 +98,18 @@ $mobile-keyboard-padding: 5rem;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+
+  @media only screen and (max-width: $single-column) {
+    // Safari pans the layout viewport when the keyboard opens, which pushes
+    // in-flow chrome off-screen. Pin to the visual viewport while typing.
+    .lexical-md-editor-frame[data-keyboard-open] & {
+      position: fixed;
+      top: var(--visual-viewport-offset-top, 0px);
+      left: 0;
+      right: 0;
+      z-index: 3;
+    }
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -299,27 +340,25 @@ $mobile-keyboard-padding: 5rem;
 
 .lexical-md-editor__input {
   // flex-basis must stay `auto` (not `flex: 1`, which means basis 0):
-  // otherwise the flex column ignores the input's intrinsic height, the
-  // container stays at viewport height, and the sticky toolbar scrolls away
-  // once the caret passes the first viewport of content.
+  // otherwise the flex column ignores the input's intrinsic height and the
+  // scroll shell stays capped at one viewport of content.
   flex: 1 1 auto;
   padding: 40px 25px 20px;
   outline: none;
   caret-color: var(--primary-color);
 
   @media only screen and (max-width: $single-column) {
-    padding-bottom: $mobile-keyboard-padding;
+    padding-bottom: var(--mobile-keyboard-padding);
   }
 
-  // Keep anchor-scroll targets clear of the input's top padding and the
-  // sticky toolbar.
+  // Keep anchor-scroll targets clear of the input's top padding.
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    scroll-margin-top: calc(40px + var(--me-toolbar-height));
+    scroll-margin-top: 40px;
   }
 
   // Title styling for the first line (presentation-only; stored content

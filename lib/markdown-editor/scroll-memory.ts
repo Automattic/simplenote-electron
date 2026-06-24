@@ -7,9 +7,7 @@ import {
 } from '../utils/note-scroll-position';
 
 function getScrollContentElement(shell: HTMLElement): Element {
-  // Observe the element that actually grows with content; the wrapper
-  // (.lexical-md-editor) is pinned to the shell's height by
-  // `.note-detail-markdown { height: 100% }` and never resizes.
+  // Observe the element that actually grows with content.
   return (
     shell.querySelector('.lexical-md-editor__input') ??
     shell.firstElementChild ??

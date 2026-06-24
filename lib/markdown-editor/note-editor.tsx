@@ -15,6 +15,7 @@ import {
   REMOTE_CONTENT_TAG,
 } from './extensions';
 import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
+import { useKeyboardInset } from './keyboard-inset';
 import actions from '../state/actions';
 import {
   getNextSearchMatchIndex,
@@ -67,6 +68,7 @@ function MarkdownNoteEditorComponent({
   storeSearchSelection,
 }: Props) {
   const editorRef = useRef<LexicalEditor | null>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
   const lastDispatchedRef = useRef<string | null>(null);
@@ -80,6 +82,7 @@ function MarkdownNoteEditorComponent({
   );
 
   useScrollMemory(shellRef, noteId);
+  useKeyboardInset({ frameRef, shellRef });
 
   const focusEditor = useCallback(() => {
     editorRef.current?.focus();
@@ -246,8 +249,8 @@ function MarkdownNoteEditorComponent({
 
   return (
     <div
-      ref={shellRef}
-      className="note-content-editor-shell lexical-md-editor-shell"
+      ref={frameRef}
+      className="note-content-editor-shell lexical-md-editor-frame"
       onClick={(event) => {
         const target = event.target as HTMLElement;
         if (
