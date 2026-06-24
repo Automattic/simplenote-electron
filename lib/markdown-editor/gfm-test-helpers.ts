@@ -1,15 +1,14 @@
 import { buildEditorFromExtensions } from '@lexical/extension';
 import {
   $getRoot,
+  $isParagraphNode,
   type LexicalEditorWithDispose,
   type LexicalNode,
 } from 'lexical';
-import { $convertToMarkdownString } from '@lexical/markdown';
-
 import {
+  $exportMarkdownString,
   $importMarkdownString,
   createMarkdownEditorExtension,
-  MARKDOWN_TRANSFORMERS,
 } from './extensions';
 
 export function makeGfmTestEditor(
@@ -32,11 +31,34 @@ export function roundtrip(
   markdown: string
 ): string {
   importMarkdown(editor, markdown);
-  return editor
-    .getEditorState()
-    .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
+  return editor.getEditorState().read(() => $exportMarkdownString());
 }
 
 export function rootChildren(editor: LexicalEditorWithDispose): LexicalNode[] {
   return editor.getEditorState().read(() => $getRoot().getChildren());
+}
+
+/** Line-native: N blank lines between blocks is encoded as (N + 1) newlines. */
+export function markdownWithGap(
+  before: string,
+  emptyLineCount: number,
+  after: string
+): string {
+  return `${before}${'\n'.repeat(emptyLineCount + 1)}${after}`;
+}
+
+export function countEmptyRootParagraphs(
+  editor: LexicalEditorWithDispose
+): number {
+  return editor.getEditorState().read(
+    () =>
+      $getRoot()
+        .getChildren()
+        .filter(
+          (node) =>
+            $isParagraphNode(node) &&
+            node.getChildrenSize() === 0 &&
+            node.getTextContent() === ''
+        ).length
+  );
 }

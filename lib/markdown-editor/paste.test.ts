@@ -621,7 +621,8 @@ describe('registerMarkdownPaste', () => {
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
       expect($isHorizontalRuleNode(children[0])).toBe(true);
-      expect(children[1]?.getTextContent()).toBe('next paragraph');
+      expect(children[1]?.getTextContent()).toBe('');
+      expect(children[2]?.getTextContent()).toBe('next paragraph');
     });
     editor.dispose();
   });

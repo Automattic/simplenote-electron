@@ -186,6 +186,16 @@ export function $insertMarkdownPasteNodes(
     }
   }
 
+  if (
+    nodes.length > 1 &&
+    $isElementNode(anchorBlock) &&
+    $isParagraphNode(anchorBlock) &&
+    anchorBlock.isEmpty()
+  ) {
+    $insertBlockNodesBefore(anchorBlock, nodes, { removeAnchorBlock: true });
+    return true;
+  }
+
   insertionSelection.insertNodes(nodes);
   return true;
 }

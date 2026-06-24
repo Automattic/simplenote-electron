@@ -177,9 +177,7 @@ function importListItemText(
 
   for (const block of container.getChildren()) {
     if ($isParagraphNode(block)) {
-      for (const child of block.getChildren()) {
-        listItem.append(child);
-      }
+      listItem.append(block);
     }
   }
 }

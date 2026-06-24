@@ -1,17 +1,32 @@
 import {
   $convertFromMarkdownString,
+  $convertSelectionToMarkdownString,
   $convertToMarkdownString,
 } from '@lexical/markdown';
+import { $isHorizontalRuleNode } from '@lexical/extension';
+import { $isLinkNode } from '@lexical/link';
+import { $isListNode, type ListNode } from '@lexical/list';
 import {
   $createParagraphNode,
+  $createRangeSelection,
   $getRoot,
   $getSelection,
+  $isElementNode,
+  $isLineBreakNode,
+  $isParagraphNode,
+  $isTextNode,
   $setSelection,
   type ElementNode,
   type LexicalNode,
+  type TextNode,
 } from 'lexical';
 
-import { importMixedNestedListMarkdown } from './list-transformers';
+import {
+  importMixedNestedListMarkdown,
+  MIXED_NESTED_CHECK_LIST,
+  MIXED_NESTED_ORDERED_LIST,
+  MIXED_NESTED_UNORDERED_LIST,
+} from './list-transformers';
 import {
   $captureMarkdownSelectionOffsets,
   $restoreMarkdownSelectionOffsets,
@@ -22,13 +37,192 @@ import {
   MARKDOWN_TRANSFORMERS,
 } from './transformers';
 
-// Import with Lexical's default merge/strip behavior, then re-insert empty
-// paragraphs that standard \n\n export cannot distinguish from block breaks.
-function extraEmptyParagraphsInGap(gap: string): number {
+// Line-native gaps: a run of (N + 1) newlines encodes N empty root paragraphs.
+// Single \n inside exported block text is a hard line break within a paragraph.
+function emptyParagraphsInGap(gap: string): number {
   const newlineCount = (gap.match(/\n/g) || []).length;
-  // \n\n is a standard block delimiter (0 empty paragraphs). Each additional
-  // newline beyond that encodes one intentional empty paragraph in export.
-  return newlineCount >= 3 ? newlineCount - 1 : 0;
+  return newlineCount >= 2 ? newlineCount - 1 : 0;
+}
+
+function gapForEmptyParagraphCount(emptyCount: number): string {
+  if (emptyCount <= 0) {
+    return '';
+  }
+  return '\n'.repeat(emptyCount + 1);
+}
+
+function isEmptyRootParagraph(node: LexicalNode): boolean {
+  return (
+    $isParagraphNode(node) &&
+    node.getChildrenSize() === 0 &&
+    node.getTextContent() === ''
+  );
+}
+
+function isPlainContentParagraph(node: LexicalNode): boolean {
+  return $isParagraphNode(node) && !isEmptyRootParagraph(node);
+}
+
+function blockSeparatorForExport(
+  previousBlock: LexicalNode,
+  nextBlock: LexicalNode,
+  pendingEmpty: number
+): string {
+  if (pendingEmpty > 0) {
+    return gapForEmptyParagraphCount(pendingEmpty);
+  }
+
+  if (
+    isPlainContentParagraph(previousBlock) &&
+    isPlainContentParagraph(nextBlock)
+  ) {
+    return gapForEmptyParagraphCount(1);
+  }
+
+  return '\n';
+}
+
+function exportTextNodeInline(node: TextNode): string {
+  let text = node.getTextContent();
+  if (node.hasFormat('code')) {
+    text = `\`${text}\``;
+  }
+  if (node.hasFormat('bold')) {
+    text = `**${text}**`;
+  }
+  if (node.hasFormat('italic')) {
+    text = `*${text}*`;
+  }
+  if (node.hasFormat('strikethrough')) {
+    text = `~~${text}~~`;
+  }
+  return text;
+}
+
+function exportListNodeContent(node: ElementNode): string {
+  if ($isListNode(node)) {
+    return exportListNode(node);
+  }
+
+  const chunks: string[] = [];
+  for (const child of node.getChildren()) {
+    if ($isListNode(child)) {
+      continue;
+    }
+    if ($isParagraphNode(child)) {
+      chunks.push(
+        $convertToMarkdownString(INLINE_MARKDOWN_TRANSFORMERS, child)
+      );
+      continue;
+    }
+    if ($isLinkNode(child)) {
+      chunks.push(`[${child.getTextContent()}](${child.getURL()})`);
+      continue;
+    }
+    if ($isLineBreakNode(child)) {
+      chunks.push('\n');
+      continue;
+    }
+    if ($isTextNode(child)) {
+      chunks.push(exportTextNodeInline(child));
+      continue;
+    }
+    if ($isElementNode(child)) {
+      chunks.push(exportListNodeContent(child));
+    }
+  }
+
+  return chunks.join('');
+}
+
+function exportListNode(node: ListNode): string {
+  const listType = node.getListType();
+  const transformer =
+    listType === 'check'
+      ? MIXED_NESTED_CHECK_LIST
+      : listType === 'number'
+        ? MIXED_NESTED_ORDERED_LIST
+        : MIXED_NESTED_UNORDERED_LIST;
+
+  if (!transformer.export) {
+    return '';
+  }
+
+  return transformer.export(node, exportListNodeContent, undefined) ?? '';
+}
+
+function exportTopLevelNode(node: LexicalNode): string {
+  if ($isHorizontalRuleNode(node)) {
+    return '---';
+  }
+
+  if (!$isElementNode(node)) {
+    return node.getTextContent();
+  }
+
+  // Selection-scoped export walks every list item checking isSelected() — O(n)
+  // with a large constant on long lists. We always export the whole block here,
+  // so lists can use the direct node export instead.
+  if ($isListNode(node)) {
+    return exportListNode(node).replace(/^\n+/, '');
+  }
+
+  const selection = $createRangeSelection();
+  const key = node.getKey();
+  selection.anchor.set(key, 0, 'element');
+  selection.focus.set(key, node.getChildrenSize(), 'element');
+
+  return $convertSelectionToMarkdownString(
+    MARKDOWN_TRANSFORMERS,
+    selection
+  ).replace(/^\n+/, '');
+}
+
+function $exportLineNativeMarkdown(): string {
+  const children = $getRoot().getChildren();
+  if (children.length === 0) {
+    return '';
+  }
+
+  if (children.every(isEmptyRootParagraph)) {
+    return gapForEmptyParagraphCount(children.length);
+  }
+
+  let output = '';
+  let pendingEmpty = 0;
+  let previousBlock: LexicalNode | null = null;
+
+  for (const child of children) {
+    if (isEmptyRootParagraph(child)) {
+      pendingEmpty++;
+      continue;
+    }
+
+    const markdown = exportTopLevelNode(child);
+    if (markdown.length === 0) {
+      continue;
+    }
+
+    if (output.length > 0 && previousBlock !== null) {
+      output += blockSeparatorForExport(previousBlock, child, pendingEmpty);
+    } else if (pendingEmpty > 0) {
+      output += gapForEmptyParagraphCount(pendingEmpty);
+    }
+
+    pendingEmpty = 0;
+    previousBlock = child;
+    output += markdown;
+  }
+
+  if (output.length > 0 && pendingEmpty > 0) {
+    output += gapForEmptyParagraphCount(pendingEmpty);
+  }
+
+  return output;
+}
+
+export function $exportMarkdownString(): string {
+  return $exportLineNativeMarkdown();
 }
 
 type ImportChunkPart =
@@ -59,13 +253,21 @@ function $findFencedCodeBlockEnd(
   contentStart: number,
   marker: '```' | '~~~'
 ): number | null {
-  const endFenceRegex = new RegExp(`\\n${marker}\\s*(?:\\n|$)`);
+  // Only allow trailing spaces/tabs on the closing fence line — not blank lines.
+  const endFenceRegex = new RegExp(`\\n${marker}[ \\t]*(?:\\n|$)`);
   const match = endFenceRegex.exec(chunk.slice(contentStart));
   if (match === null) {
     return null;
   }
 
-  return contentStart + match.index + match[0].length;
+  const matchEnd = contentStart + match.index + match[0].length;
+  // Leave the closing fence line's trailing newline for gap parsing when
+  // more markdown follows — line-native gaps count from block boundaries.
+  if (match[0].endsWith('\n') && matchEnd < chunk.length) {
+    return matchEnd - 1;
+  }
+
+  return matchEnd;
 }
 
 function $splitImportChunkParts(chunk: string): ImportChunkPart[] {
@@ -128,8 +330,10 @@ function importMarkdownSegment(segment: string, target: ElementNode): void {
   }
 }
 
-export function $exportMarkdownString(): string {
-  return $convertToMarkdownString(MARKDOWN_TRANSFORMERS);
+function appendEmptyParagraphsFromGap(gap: string, target: ElementNode): void {
+  for (let j = 0; j < emptyParagraphsInGap(gap); j++) {
+    target.append($createParagraphNode());
+  }
 }
 
 // $convertFromMarkdownString clears its target node, so each chunk is
@@ -139,10 +343,12 @@ export function $exportMarkdownString(): string {
 // direct children of the root) and corrupts markdown export.
 function $importChunk(chunk: string, target: ElementNode): void {
   if (/^\s*$/.test(chunk)) {
-    const lineCount = chunk.length === 0 ? 1 : chunk.split('\n').length;
-    for (let i = 0; i < lineCount; i++) {
+    if (chunk.length === 0) {
       target.append($createParagraphNode());
+      return;
     }
+
+    appendEmptyParagraphsFromGap(chunk, target);
     return;
   }
 
@@ -160,9 +366,7 @@ function $importChunk(chunk: string, target: ElementNode): void {
       continue;
     }
 
-    for (let j = 0; j < extraEmptyParagraphsInGap(part.text); j++) {
-      target.append($createParagraphNode());
-    }
+    appendEmptyParagraphsFromGap(part.text, target);
   }
 }
 

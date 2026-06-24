@@ -2,6 +2,7 @@ import { createDOMRange } from '@lexical/selection';
 import {
   $getRoot,
   $isElementNode,
+  $isParagraphNode,
   $isTextNode,
   type LexicalEditor,
   type LexicalNode,
@@ -75,7 +76,26 @@ export function $collectTextSegments(): {
     }
   };
 
-  walk($getRoot());
+  const isEmptyRootParagraph = (node: LexicalNode) =>
+    $isParagraphNode(node) &&
+    node.getChildrenSize() === 0 &&
+    node.getTextContent() === '';
+
+  let needsBlockGap = false;
+  for (const child of $getRoot().getChildren()) {
+    if (isEmptyRootParagraph(child)) {
+      text += DOUBLE_LINE_BREAK;
+      needsBlockGap = false;
+      continue;
+    }
+
+    if (needsBlockGap) {
+      text += DOUBLE_LINE_BREAK;
+    }
+
+    walk(child);
+    needsBlockGap = true;
+  }
 
   return { segments, text };
 }
