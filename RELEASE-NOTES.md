@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.27.0]
+
+### Enhancements
+
+- Upgraded to React 18 [#3389](https://github.com/Automattic/simplenote-electron/pull/3389)
+- Switched Windows code signing to Azure Trusted Signing [#3380](https://github.com/Automattic/simplenote-electron/pull/3380) [#3393](https://github.com/Automattic/simplenote-electron/pull/3393)
+
 ## [v2.26.1]
 
 ### Enhancements
