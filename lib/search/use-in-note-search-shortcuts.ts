@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 type Options = {
   enabled: boolean;
@@ -42,24 +42,4 @@ export function useInNoteSearchShortcuts({
       window.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [enabled, matchCount, onNext, onPrev]);
-}
-
-export function useElectronFindAgain(onNext: () => void, matchCount: number) {
-  const findAgain = useCallback(() => {
-    if (matchCount > 0) {
-      onNext();
-    }
-  }, [matchCount, onNext]);
-
-  useEffect(() => {
-    window.electron?.receive('editorCommand', (command) => {
-      if ('findAgain' === command.action) {
-        findAgain();
-      }
-    });
-
-    return () => {
-      window.electron?.removeListener('editorCommand');
-    };
-  }, [findAgain]);
 }

@@ -11,6 +11,7 @@ import {
   KEY_TAB_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
+  $selectAll,
 } from 'lexical';
 import { $createCodeNode, $isCodeNode } from '@lexical/code-core';
 import { $createLinkNode, $isLinkNode, $toggleLink } from '@lexical/link';
@@ -315,6 +316,12 @@ export const undo = (editor: LexicalEditor) => {
 
 export const redo = (editor: LexicalEditor) => {
   editor.dispatchCommand(REDO_COMMAND, undefined);
+};
+
+export const selectAll = (editor: LexicalEditor) => {
+  editor.update(() => {
+    $selectAll();
+  });
 };
 
 export const getLinkHrefFromSelection = (editor: LexicalEditor) => {

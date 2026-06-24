@@ -20,10 +20,8 @@ import {
   getNextSearchMatchIndex,
   getPrevSearchMatchIndex,
 } from '../search/in-note-search';
-import {
-  useElectronFindAgain,
-  useInNoteSearchShortcuts,
-} from '../search/use-in-note-search-shortcuts';
+import { useInNoteSearchShortcuts } from '../search/use-in-note-search-shortcuts';
+import { useElectronEditorCommands } from './use-electron-editor-commands';
 import { withCheckboxSyntax } from '../utils/task-transform';
 
 import * as S from '../state';
@@ -240,7 +238,11 @@ function MarkdownNoteEditorComponent({
     onPrev: setPrevSearchSelection,
   });
 
-  useElectronFindAgain(setNextSearchSelection, matchCount);
+  useElectronEditorCommands({
+    editorRef,
+    matchCount,
+    onFindAgain: setNextSearchSelection,
+  });
 
   return (
     <div
