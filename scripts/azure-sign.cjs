@@ -1,13 +1,11 @@
-// electron-builder `win.sign` callback for Azure Trusted Signing.
+// electron-builder `win.sign` callback for Azure Artifact Signing.
 //
-// PFX is the default Windows signing path (electron-builder's native `certificateSubjectName`).
-// This callback is wired in only when `USE_AZURE_TRUSTED_SIGNING` is set, via
-// `-c.win.sign=./scripts/azure-sign.cjs` in the `package-win32` Make target — so reaching it
-// means Azure is the intended path. In CI, missing Azure env is a failure so validation cannot pass
-// with a PFX signature by mistake.
+// Azure Artifact Signing is the default Windows signing path. Set `USE_PFX_CODE_SIGNING` to leave
+// this callback unwired and use electron-builder's native `certificateSubjectName` PFX path instead.
+// Reaching this callback means Azure is intended, so missing Azure env fails CI.
 //
 // electron-builder calls this once per file per signing-hash algorithm, after `rcedit` rewrites
-// the PE resource directory (so signatures are not orphaned). Azure Trusted Signing is
+// the PE resource directory (so signatures are not orphaned). Azure Artifact Signing is
 // SHA256-only, so the SHA1 iteration is skipped here rather than signed twice.
 //
 // Azure env vars come from a8c-ci-toolkit's `setup_azure_trusted_signing.ps1`.
@@ -78,7 +76,7 @@ module.exports = async function sign(configuration) {
   const file = configuration.path;
   const env = process.env;
 
-  // electron-builder iterates win.signingHashAlgorithms (default sha1 + sha256). Azure Trusted
+  // electron-builder iterates win.signingHashAlgorithms (default sha1 + sha256). Azure Artifact
   // Signing is SHA256-only, so sign once on the sha256 pass and no-op the rest.
   if (configuration.hash && configuration.hash.toLowerCase() !== 'sha256') {
     return;
@@ -90,14 +88,14 @@ module.exports = async function sign(configuration) {
       nonBlank(env.SIGNTOOL_PATH),
       buildAzureArgs(file, env),
       file,
-      'Azure Trusted Signing'
+      'Azure Artifact Signing'
     );
     return;
   }
 
   if (env.CI && process.platform === 'win32') {
     throw new Error(
-      `[azure-sign] Azure Trusted Signing requested in CI for ${file}, ` +
+      `[azure-sign] Azure Artifact Signing requested in CI for ${file}, ` +
         `but setup did not provide: ${missingAzureVars.join(', ')}.`
     );
   }

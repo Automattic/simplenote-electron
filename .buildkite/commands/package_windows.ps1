@@ -1,45 +1,42 @@
 # Stop script execution when a non-terminating error occurs
 $ErrorActionPreference = "Stop"
 
-# Windows code signing defaults to the PFX cert. Setting USE_AZURE_TRUSTED_SIGNING switches the NSIS
-# exe to Azure Trusted Signing (via the win.sign callback wired in by `make package-win32`). See
-# AINFRA-2472 for the auto-update publisher-name handover that gates a full cutover.
-$useAzure = -not [string]::IsNullOrEmpty($env:USE_AZURE_TRUSTED_SIGNING)
+# Windows code signing defaults to Azure Artifact Signing. Set USE_PFX_CODE_SIGNING to use PFX.
+$usePfx = -not [string]::IsNullOrEmpty($env:USE_PFX_CODE_SIGNING)
+$useAzure = -not $usePfx
 
 If ($useAzure) {
-    Write-Host "--- :windows: Configure Azure Trusted Signing"
-    # Installs the Azure DLib + a modern signtool and exports SIGNTOOL_PATH, AZURE_CODE_SIGNING_DLIB,
-    # AZURE_METADATA_JSON (read by azure-sign.cjs). Runs a signing smoke test that fails here, with
-    # diagnostics, if the Azure credentials are wrong. Via the CI toolkit plugin (>= 6.1.0).
+    Write-Host "--- :windows: Configure Azure Artifact Signing"
+    # From the CI toolkit; fails here with diagnostics if Azure credentials are wrong.
     & "setup_azure_trusted_signing.ps1"
     If ($LastExitCode -ne 0) { Exit $LastExitCode }
 }
 
-Write-Host "--- :windows: Configure Windows code signing"
-# Materializes certificate.pfx from AWS Secrets Manager. Via the CI toolkit Buildkite plugin.
-& "setup_windows_code_signing.ps1"
-If ($LastExitCode -ne 0) { Exit $LastExitCode }
+If ($usePfx) {
+    Write-Host "--- :windows: Configure PFX code signing"
+    # From the CI toolkit; materializes certificate.pfx.
+    & "setup_windows_code_signing.ps1"
+    If ($LastExitCode -ne 0) { Exit $LastExitCode }
 
-# Read the PFX password from the process env, falling back to the machine-wide env.
-$windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Process)
-If ([string]::IsNullOrEmpty($windowsCertPassword)) {
-    $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Machine)
-}
-If ([string]::IsNullOrEmpty($windowsCertPassword)) {
-    Write-Host "[!] WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set in either process or machine environments."
-    Exit 1
-}
+    # Read the PFX password from the process env, falling back to the machine-wide env.
+    $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Process)
+    If ([string]::IsNullOrEmpty($windowsCertPassword)) {
+        $windowsCertPassword = [System.Environment]::GetEnvironmentVariable('WINDOWS_CODE_SIGNING_CERT_PASSWORD', [System.EnvironmentVariableTarget]::Machine)
+    }
+    If ([string]::IsNullOrEmpty($windowsCertPassword)) {
+        Write-Host "[!] WINDOWS_CODE_SIGNING_CERT_PASSWORD is not set in either process or machine environments."
+        Exit 1
+    }
 
-$certPath = (Convert-Path .\certificate.pfx)
-If (-not (Test-Path $certPath)) {
-    Write-Host "[!] Certificate file does not exist at given path $certPath."
-    Exit 1
-}
+    $certPath = (Convert-Path .\certificate.pfx)
+    If (-not (Test-Path $certPath)) {
+        Write-Host "[!] Certificate file does not exist at given path $certPath."
+        Exit 1
+    }
 
-# Import the cert so electron-builder's certificateSubjectName lookup finds it (the PFX default
-# path signs the NSIS exe from the store).
-# See https://buildkite.com/automattic/simplenote-electron/builds/71#01900b28-9508-4bfe-bc80-63464afeaa3e/292-567
-Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $windowsCertPassword -AsPlainText -Force)
+    # Import the cert so electron-builder's certificateSubjectName lookup finds it.
+    Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $windowsCertPassword -AsPlainText -Force)
+}
 
 Write-Host "--- :windows: Installing make"
 choco install make
