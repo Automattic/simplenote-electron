@@ -1,20 +1,25 @@
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const dotenv = require('dotenv');
+
+function writeAppStoreConnectApiKey() {
+  const key = process.env.APP_STORE_CONNECT_API_KEY_KEY;
+  const keyPath = path.join(
+    os.tmpdir(),
+    'simplenote-app-store-connect-api-key.p8'
+  );
+
+  fs.writeFileSync(keyPath, key.replace(/\\n/g, '\n'), { mode: 0o600 });
+
+  return keyPath;
+}
 
 module.exports = async function (params) {
   // Only notarize the app on Mac OS only.
   if (process.platform !== 'darwin') {
     return;
   }
-
-  const appStoreConnectKeyPath = path.join(
-    process.env.HOME,
-    '.configure',
-    'simplenote-electron',
-    'secrets',
-    'app_store_connect_api_key.p8'
-  );
 
   const envPath = path.join(
     process.env.HOME,
@@ -27,31 +32,34 @@ module.exports = async function (params) {
     console.log(
       `No env file found at ${envPath}. Looking for required env vars individually...`
     );
-    let errors = [];
-    if (process.env.APP_STORE_CONNECT_API_KEY_KEY_ID === undefined) {
-      errors.push(
-        'APP_STORE_CONNECT_API_KEY_KEY_ID value not found in env. Please set it.'
-      );
-    }
-    if (process.env.APP_STORE_CONNECT_API_KEY_ISSUER_ID === undefined) {
-      errors.push(
-        'APP_STORE_CONNECT_API_KEY_ISSUER_ID value not found in env. Please set it.'
-      );
-    }
-    if (fs.existsSync(appStoreConnectKeyPath) === false) {
-      errors.push(
-        `Key file not found at ${appStoreConnectKeyPath}. Please add it.`
-      );
-    }
-
-    if (errors.length > 0) {
-      throw new Error(
-        `Could not begin signing macOS build. Errors: ${errors.join('\n')}`
-      );
-    } else {
-      console.log('All required env vars found. Moving on...'); // eslint-disable-line no-console
-    }
   }
+
+  let errors = [];
+  if (process.env.APP_STORE_CONNECT_API_KEY_KEY_ID === undefined) {
+    errors.push(
+      'APP_STORE_CONNECT_API_KEY_KEY_ID value not found in env. Please set it.'
+    );
+  }
+  if (process.env.APP_STORE_CONNECT_API_KEY_ISSUER_ID === undefined) {
+    errors.push(
+      'APP_STORE_CONNECT_API_KEY_ISSUER_ID value not found in env. Please set it.'
+    );
+  }
+  if (process.env.APP_STORE_CONNECT_API_KEY_KEY === undefined) {
+    errors.push(
+      'APP_STORE_CONNECT_API_KEY_KEY value not found in env. Please set it.'
+    );
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `Could not begin signing macOS build. Errors: ${errors.join('\n')}`
+    );
+  } else {
+    console.log('All required env vars found. Moving on...'); // eslint-disable-line no-console
+  }
+
+  const appStoreConnectKeyPath = writeAppStoreConnectApiKey();
 
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
