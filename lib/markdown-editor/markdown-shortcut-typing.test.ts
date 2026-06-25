@@ -155,4 +155,30 @@ describe('markdown shortcut typing', () => {
     expect(rootHasHeading(editor, 'h2')).toBe(true);
     editor.dispose();
   });
+
+  it('does not undo a heading shortcut into literal markdown syntax', async () => {
+    const editor = makeGfmTestEditor();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        $getRoot().append(paragraph);
+        paragraph.selectStart();
+      },
+      { discrete: true }
+    );
+
+    await typeTextViaCommand(editor, '## ');
+
+    expect(rootHasHeading(editor, 'h2')).toBe(true);
+
+    editor.dispatchCommand(UNDO_COMMAND, undefined);
+    await Promise.resolve();
+
+    const rootText = editor
+      .getEditorState()
+      .read(() => $getRoot().getTextContent());
+
+    expect(rootText).not.toBe('## ');
+    editor.dispose();
+  });
 });

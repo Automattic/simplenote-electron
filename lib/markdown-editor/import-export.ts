@@ -151,6 +151,11 @@ function exportListNode(node: ListNode): string {
   return transformer.export(node, exportListNodeContent, undefined) ?? '';
 }
 
+/** Markdown for one root-level block (shortcut history reconciliation). */
+export function $exportTopLevelBlockMarkdown(node: LexicalNode): string {
+  return exportTopLevelNode(node);
+}
+
 function exportTopLevelNode(node: LexicalNode): string {
   if ($isHorizontalRuleNode(node)) {
     return '---';
