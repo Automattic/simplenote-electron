@@ -49,8 +49,7 @@ end
 
 platform :mac do
   desc 'Download and configure code signing certificates and provisioning profiles .'
-  lane :configure_code_signing do |options|
-    readonly = options.fetch(:readonly, true)
+  lane :configure_code_signing do |readonly: true|
     require_env_vars!(*CODE_SIGNING_ENV_VARS)
     require_env_vars!(*ASC_API_KEY_ENV_VARS) unless readonly
 
