@@ -912,38 +912,38 @@ describe('horizontal rule keyboard navigation', () => {
   });
 });
 
-describe('block cursor navigation inside nested blocks', () => {
-  it('does not jump to an HR when arrowing up from the middle of text', async () => {
+describe('vertical HR approach from any caret position', () => {
+  it('selects the HR above when arrowing up from the middle of text', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '---\nparagraph with text');
     selectTextNode(editor, 'paragraph with text', 'paragraph'.length);
 
-    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
 
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expect($isNodeSelection($getSelection())).toBe(false);
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
   });
 
-  it('does not jump to an HR when arrowing up from a later line in a list item', async () => {
+  it('selects the HR above when arrowing up from a later line in a list item', async () => {
     const editor = makeGfmTestEditor();
-    importMarkdown(editor, '---\n- line one\nline two');
+    importMarkdown(editor, '---\n- line one\n- line two');
     selectTextNode(editor, 'line two', 0);
 
-    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
 
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expect($isNodeSelection($getSelection())).toBe(false);
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
   });
 
-  it('does not jump to HRs when arrowing down from the middle of a list item', async () => {
+  it('selects the HR below when arrowing down from the middle of a list item', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '- from here\n---\n---\nafter');
     editor.update(() => {
@@ -954,12 +954,41 @@ describe('block cursor navigation inside nested blocks', () => {
       textNode.select(4, 4);
     });
 
-    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
 
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expect($isNodeSelection($getSelection())).toBe(false);
-      expectTextCaret($getSelection(), 'from here', 4);
+      const hrs = $getRoot().getChildren().filter($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hrs[0]?.getKey()]);
+    });
+
+    editor.dispose();
+  });
+
+  it('selects the HR below when arrowing down from the start of a paragraph', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'para\n---');
+    selectTextNode(editor, 'para', 0);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+    });
+
+    editor.dispose();
+  });
+
+  it('selects the HR below when arrowing down from the middle of a code block', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nline\n```\n---');
+    selectTextNode(editor, 'line', 1);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
+
+    editor.getEditorState().read(() => {
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
@@ -1182,7 +1211,7 @@ describe('code block keyboard navigation', () => {
 });
 
 describe('table and horizontal rule keyboard navigation', () => {
-  it('does not jump to an HR when arrowing up inside a table', async () => {
+  it('selects the HR above when arrowing up inside a table', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1191,17 +1220,17 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'up', 0);
 
-    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
 
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expect($isNodeSelection($getSelection())).toBe(false);
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
   });
 
-  it('does not jump to an HR below when arrowing down inside a table', async () => {
+  it('selects the HR below when arrowing down inside a table', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1216,11 +1245,11 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'down', 'down'.length);
 
-    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
 
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expect($isNodeSelection($getSelection())).toBe(false);
+      const hr = $getRoot().getChildren().filter($isHorizontalRuleNode)[0];
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
@@ -1262,7 +1291,7 @@ describe('table and horizontal rule keyboard navigation', () => {
     editor.dispose();
   });
 
-  it('creates a transient when arrowing up from the first table row below an HR', async () => {
+  it('creates a transient between an HR and the table below it', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1272,7 +1301,9 @@ describe('table and horizontal rule keyboard navigation', () => {
     selectTextNode(editor, 'top', 0);
 
     expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
     expect(getFocusedTransient(editor)).not.toBeNull();
 
     editor.getEditorState().read(() => {
@@ -1294,6 +1325,7 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
 
     editor.getEditorState().read(() => {
@@ -1320,6 +1352,9 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     expect(getFocusedTransient(editor)).not.toBeNull();
 
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
@@ -1331,7 +1366,7 @@ describe('table and horizontal rule keyboard navigation', () => {
     editor.dispose();
   });
 
-  it('does not exit upward from the second table row', async () => {
+  it('selects the HR above when arrowing up from the second table row', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1340,12 +1375,11 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'up', 0);
 
-    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
 
-    expect(getFocusedTransient(editor)).toBeNull();
-    expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {
-      expectTextCaret($getSelection(), 'up', 0);
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
     });
 
     editor.dispose();
@@ -1520,10 +1554,12 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     expect(getFocusedTransient(editor)).not.toBeNull();
 
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
-
     expect(getFocusedTransient(editor)).toBeNull();
     expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     editor.getEditorState().read(() => {

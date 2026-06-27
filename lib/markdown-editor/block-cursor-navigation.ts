@@ -3,7 +3,7 @@
  *
  * Inserts transient paragraphs on demand so users can edit between blocks
  * that have no natural empty line. Only intercepts arrows when:
- * - an HR is involved (Lexical cannot node-select void HRs),
+ * - a vertical arrow targets an adjacent HR (any caret position),
  * - exiting an empty transient (remove + land focus), or
  * - at a gapless boundary where a transient would be created.
  * Everything else falls through to Lexical.
@@ -768,25 +768,26 @@ function $handleEnterGapFromGaplessElementArrow(
   return false;
 }
 
-function $handleHorizontalRuleFromTextFlowArrow(
+function $handleHorizontalRuleVerticalArrow(
   event: KeyboardEvent,
   direction: TransientTraversalDirection,
   axis: TransientTraversalAxis
 ): boolean {
+  if (axis !== 'vertical') {
+    return false;
+  }
+
   const selection = $getSelection();
   if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
     return false;
   }
 
   const rootBlock = $getRootBlock(selection.anchor.getNode());
-  if (!rootBlock || !$isTextFlowBlock(rootBlock)) {
+  if (!rootBlock) {
     return false;
   }
 
-  if (
-    direction === 'backward' &&
-    $isAtBoundary(selection, rootBlock, 'backward', axis)
-  ) {
+  if (direction === 'backward') {
     const prev = rootBlock.getPreviousSibling();
     if (prev !== null && $isHorizontalRuleNode(prev)) {
       event.preventDefault();
@@ -795,10 +796,7 @@ function $handleHorizontalRuleFromTextFlowArrow(
     }
   }
 
-  if (
-    direction === 'forward' &&
-    $isAtBoundary(selection, rootBlock, 'forward', axis)
-  ) {
+  if (direction === 'forward') {
     const next = rootBlock.getNextSibling();
     if (next !== null && $isHorizontalRuleNode(next)) {
       event.preventDefault();
@@ -886,7 +884,7 @@ function $handleGapArrowCommand(
     return true;
   }
 
-  if ($handleHorizontalRuleFromTextFlowArrow(event, direction, axis)) {
+  if ($handleHorizontalRuleVerticalArrow(event, direction, axis)) {
     return true;
   }
 
