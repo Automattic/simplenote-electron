@@ -18,10 +18,7 @@ import {
   withMixedNestedListTransformers,
 } from './extensions';
 import { InternalLinkPlugin } from './internal-link-menu';
-import {
-  NoteViewMemoryRestorePlugin,
-  useNoteViewScrollTracking,
-} from './note-view-memory';
+import { useNoteViewScrollTracking } from './note-view-memory';
 import { SearchHighlightPlugin } from './search-highlight-plugin';
 import { MarkdownToolbarPlugin } from './toolbar/extension';
 
@@ -72,7 +69,9 @@ export default function MarkdownEditor({
           onChangeRef.current?.(value);
         },
         {
-          getScrollTop: () => scrollTopRef.current,
+          getScrollContainer: () => scrollContainerRef?.current ?? null,
+          getScrollTop: () =>
+            scrollContainerRef?.current?.scrollTop ?? scrollTopRef.current,
           noteId,
         }
       ),
@@ -112,12 +111,6 @@ export default function MarkdownEditor({
                 />
               </form>
               {editorRef && <EditorRefPlugin editorRef={editorRef} />}
-              {scrollContainerRef && (
-                <NoteViewMemoryRestorePlugin
-                  noteId={noteId}
-                  scrollContainerRef={scrollContainerRef}
-                />
-              )}
               <InternalLinkPlugin
                 noteId={noteId}
                 onOpenNote={onOpenInternalLink}

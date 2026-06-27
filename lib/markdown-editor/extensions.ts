@@ -37,13 +37,11 @@ import { registerBlockquoteEnterSplit } from './blockquote-enter-split';
 import { TransientParagraphNode } from './transient-paragraph-node';
 import { markdownEditorTheme } from './theme';
 import { MarkdownToolbarExtension } from './toolbar/extension';
-import {
-  $restoreSavedMarkdownSelection,
-  createNoteViewMemoryExtension,
-} from './note-view-memory';
+import { createNoteViewMemoryExtension } from './note-view-memory';
 import { MARKDOWN_TRANSFORMERS } from './transformers';
 
 export type MarkdownEditorExtensionOptions = {
+  getScrollContainer?: () => HTMLElement | null;
   getScrollTop?: () => number;
   noteId?: string;
 };
@@ -168,6 +166,7 @@ export function createMarkdownEditorExtension(
 ) {
   const noteId = options?.noteId;
   const getScrollTop = options?.getScrollTop;
+  const getScrollContainer = options?.getScrollContainer;
   const dependencies: AnyLexicalExtensionArgument[] = [
     configExtension(InitialStateExtension, {
       updateOptions: { tag: REMOTE_CONTENT_TAG },
@@ -201,21 +200,22 @@ export function createMarkdownEditorExtension(
     dependencies.push(createMarkdownOnChangeExtension(onChange));
   }
 
-  if (noteId && getScrollTop) {
-    dependencies.push(createNoteViewMemoryExtension(noteId, getScrollTop));
+  if (noteId && getScrollTop && getScrollContainer) {
+    dependencies.push(
+      createNoteViewMemoryExtension({
+        getScrollContainer,
+        getScrollTop,
+        noteId,
+      })
+    );
   }
 
   return defineExtension({
     $initialEditorState() {
       $importMarkdownString(markdown);
-      if (noteId) {
-        $restoreSavedMarkdownSelection(noteId, markdown);
-      } else {
-        // Without note id, leave the caret at the start: with no selection,
-        // Lexical's focus handling falls back to selectEnd(), which scrolls
-        // long notes to the bottom the first time the editor gains focus.
-        $getRoot().selectStart();
-      }
+      // Saved caret is restored by noteViewMemoryExtension after scroll is applied.
+      // selectStart prevents Lexical's focus fallback to selectEnd().
+      $getRoot().selectStart();
     },
     dependencies,
     name: '@simplenote/markdown-editor',

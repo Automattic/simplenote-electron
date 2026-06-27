@@ -6,7 +6,11 @@ import React, {
   useState,
 } from 'react';
 import { connect } from 'react-redux';
-import { SKIP_DOM_SELECTION_TAG, type LexicalEditor } from 'lexical';
+import {
+  SKIP_DOM_SELECTION_TAG,
+  SKIP_SCROLL_INTO_VIEW_TAG,
+  type LexicalEditor,
+} from 'lexical';
 
 import MarkdownEditor from './editor';
 import {
@@ -166,7 +170,7 @@ function MarkdownNoteEditorComponent({
         {
           discrete: true,
           tag: editorFocused
-            ? REMOTE_CONTENT_TAG
+            ? [REMOTE_CONTENT_TAG, SKIP_SCROLL_INTO_VIEW_TAG]
             : [REMOTE_CONTENT_TAG, SKIP_DOM_SELECTION_TAG],
           onUpdate: () => {
             const shell = shellRef.current;

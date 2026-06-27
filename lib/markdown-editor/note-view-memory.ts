@@ -1,5 +1,10 @@
 import { useLayoutEffect, useRef, type RefObject } from 'react';
-import { $getRoot, defineExtension, type LexicalEditor } from 'lexical';
+import {
+  $getRoot,
+  defineExtension,
+  SKIP_SCROLL_INTO_VIEW_TAG,
+  type LexicalEditor,
+} from 'lexical';
 
 import {
   clearNotePositions,
@@ -10,6 +15,7 @@ import {
 } from '../utils/note-scroll-position';
 import {
   $captureMarkdownViewSelection,
+  $exportMarkdownString,
   $restoreMarkdownViewSelection,
   type MarkdownViewSelectionSnapshot,
 } from './import-export';
@@ -35,20 +41,6 @@ function savedViewSelection(
     localMarkdown: saved.localMarkdown ?? '',
     localTexts: saved.localTexts ?? { anchor: null, focus: null },
   };
-}
-
-/** Phase A: restore caret in the same update as markdown import. */
-export function $restoreSavedMarkdownSelection(
-  noteId: string,
-  markdown: string
-): void {
-  const snapshot = savedViewSelection(getNoteViewState(noteId));
-
-  if (snapshot && $restoreMarkdownViewSelection(markdown, snapshot)) {
-    return;
-  }
-
-  $getRoot().selectStart();
 }
 
 export function saveNoteViewStateForEditor(
@@ -90,17 +82,57 @@ export function saveNoteScrollTop(noteId: string, scrollTop: number): void {
   setNoteViewState(noteId, { scrollTop });
 }
 
+export type NoteViewMemoryExtensionOptions = {
+  getScrollContainer: () => HTMLElement | null;
+  getScrollTop: () => number;
+  noteId: string;
+};
+
 /**
- * Saves scroll + caret when Lexical disposes the editor on note switch.
+ * Saves scroll + caret on dispose; restores caret when the root attaches,
+ * using SKIP_SCROLL_INTO_VIEW_TAG so DOM sync does not scroll the shell.
+ * Scroll is restored separately in useNoteViewMemory after layout.
  */
-export function createNoteViewMemoryExtension(
-  noteId: string,
-  getScrollTop: () => number
-) {
+export function createNoteViewMemoryExtension({
+  getScrollTop,
+  noteId,
+}: NoteViewMemoryExtensionOptions) {
   return defineExtension({
     name: '@simplenote/note-view-memory',
     register(editor) {
+      let restored = false;
+
+      const restoreCaretOnce = () => {
+        if (restored) {
+          return;
+        }
+
+        restored = true;
+
+        const snapshot = savedViewSelection(getNoteViewState(noteId));
+        if (!snapshot) {
+          return;
+        }
+
+        const markdown = editor.read(() => $exportMarkdownString());
+        editor.update(
+          () => {
+            if (!$restoreMarkdownViewSelection(markdown, snapshot)) {
+              $getRoot().selectStart();
+            }
+          },
+          { discrete: true, tag: SKIP_SCROLL_INTO_VIEW_TAG }
+        );
+      };
+
+      const unregisterRoot = editor.registerRootListener((root) => {
+        if (root) {
+          restoreCaretOnce();
+        }
+      });
+
       return () => {
+        unregisterRoot();
         saveNoteViewStateForEditor(editor, noteId, getScrollTop());
       };
     },
@@ -145,16 +177,18 @@ export function useNoteViewScrollTracking({
   return scrollTopRef;
 }
 
-/** Restores scroll after import + caret init. */
-export function NoteViewMemoryRestorePlugin({
+export function useNoteViewMemory({
+  shellRef,
   noteId,
-  scrollContainerRef,
 }: {
+  shellRef: RefObject<HTMLElement | null>;
   noteId: string;
-  scrollContainerRef: RefObject<HTMLElement | null>;
-}): null {
+}): void {
+  // Restore scroll after the editor root attaches and caret restore runs.
+  // Layout effects run after ref callbacks, so this wins over any caret
+  // scroll-into-view that slipped past SKIP_SCROLL_INTO_VIEW_TAG.
   useLayoutEffect(() => {
-    const shell = scrollContainerRef.current;
+    const shell = shellRef.current;
     if (!shell) {
       return;
     }
@@ -164,18 +198,20 @@ export function NoteViewMemoryRestorePlugin({
       getRestoreScrollTop(saved) || getNotePosition(noteId) || 0;
 
     return restoreScrollPosition(shell, scrollTop);
-  }, [noteId, scrollContainerRef]);
+  }, [shellRef, noteId]);
 
-  return null;
-}
+  // Save scroll on unmount from the live shell, matching the old useScrollMemory
+  // path. Lexical dispose also saves, but programmatic scrolls (remote sync,
+  // caret into view) may not update scrollTopRef without a scroll event.
+  useLayoutEffect(() => {
+    return () => {
+      const shell = shellRef.current;
+      if (shell) {
+        saveNoteScrollTop(noteId, shell.scrollTop);
+      }
+    };
+  }, [shellRef, noteId]);
 
-export function useNoteViewMemory({
-  shellRef,
-  noteId,
-}: {
-  shellRef: RefObject<HTMLElement | null>;
-  noteId: string;
-}): void {
   useLayoutEffect(() => {
     window.addEventListener('resize', clearNotePositions);
     return () => window.removeEventListener('resize', clearNotePositions);

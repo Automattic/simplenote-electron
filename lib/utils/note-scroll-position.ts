@@ -2,6 +2,7 @@ export type StructuredPointSnapshot = {
   rootIndex: number;
   path: number[];
   textOffset: number;
+  transientGapAfterRootIndex?: number;
 };
 
 export type StructuredSelectionSnapshot = {

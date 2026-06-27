@@ -2,12 +2,10 @@ import React, { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { restoreScrollPosition } from './scroll-memory';
-import { getRestoreScrollTop, useNoteViewMemory } from './note-view-memory';
+import { useNoteViewMemory } from './note-view-memory';
 import {
   getNotePosition,
-  getNoteViewState,
   setNotePosition,
-  setNoteViewState,
 } from '../utils/note-scroll-position';
 
 // jsdom has no layout, so scrollTop is inert. Simulate a real scroll
@@ -96,19 +94,6 @@ function Harness({
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   useNoteViewMemory({ shellRef, noteId });
-
-  useLayoutEffect(() => {
-    const shell = shellRef.current;
-    if (!shell) {
-      return;
-    }
-
-    const saved = getNoteViewState(noteId);
-    const scrollTop =
-      getRestoreScrollTop(saved) || getNotePosition(noteId) || 0;
-
-    return restoreScrollPosition(shell, scrollTop);
-  }, [noteId]);
 
   return (
     <div data-testid="shell" ref={shellRef}>
@@ -309,6 +294,16 @@ describe('useNoteViewMemory scroll restore', () => {
       unmount();
 
       expect(lastObserver().isDisconnected).toBe(true);
+    });
+  });
+
+  describe('save on unmount', () => {
+    it('persists the live shell scrollTop when the harness unmounts', () => {
+      const { shell, unmount } = renderShell('note-1');
+      shell.scrollTop = 420;
+      unmount();
+
+      expect(getNotePosition('note-1')).toBe(420);
     });
   });
 

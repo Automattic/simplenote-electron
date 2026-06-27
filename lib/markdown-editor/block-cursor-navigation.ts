@@ -172,6 +172,30 @@ function $insertAndSelectTransientAfter(
   return transient;
 }
 
+export function $selectTransientGapAfterExportRootIndex(
+  afterRootIndex: number,
+  textOffset = 0
+): { key: string; offset: number } | null {
+  const rootChildren = $getRoot()
+    .getChildren()
+    .filter((node) => !$isTransientParagraphNode(node));
+  const block = rootChildren[afterRootIndex];
+  if (block === undefined) {
+    return null;
+  }
+
+  const transient = $insertAndSelectTransientAfter(block);
+  const text = transient.getFirstChild();
+  if (!$isTextNode(text)) {
+    return null;
+  }
+
+  return {
+    key: text.getKey(),
+    offset: Math.max(0, Math.min(textOffset, text.getTextContentSize())),
+  };
+}
+
 /** Remove empty transients that are no longer focused or sit next to text-flow blocks. */
 export function $pruneTransients(
   focusedTransientKey: string | null = null

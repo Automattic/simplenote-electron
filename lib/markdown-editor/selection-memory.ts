@@ -6,6 +6,7 @@ import {
 } from '@lexical/table';
 import {
   $createRangeSelection,
+  $createTextNode,
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -17,6 +18,8 @@ import {
   type PointType,
   type TextNode,
 } from 'lexical';
+
+import { $selectTransientGapAfterExportRootIndex } from './block-cursor-navigation';
 
 import { MARKDOWN_TRANSFORMERS } from './transformers';
 import {
@@ -480,6 +483,8 @@ export type StructuredPoint = {
   rootIndex: number;
   path: number[];
   textOffset: number;
+  /** Caret in a transient gap after export-root block at this index. */
+  transientGapAfterRootIndex?: number;
 };
 
 export type StructuredSelection = {
@@ -540,7 +545,76 @@ function $textNodeAndOffset(
   return null;
 }
 
+function $topLevelRootChild(node: LexicalNode): LexicalNode | null {
+  let current: LexicalNode | null = node;
+  while (
+    current !== null &&
+    current.getParent()?.getKey() !== $getRoot().getKey()
+  ) {
+    current = current.getParent();
+  }
+  return current;
+}
+
+function $ensureParagraphTextNode(paragraph: ElementNode): TextNode {
+  const first = paragraph.getFirstChild();
+  if ($isTextNode(first)) {
+    return first;
+  }
+
+  const text = $createTextNode('');
+  paragraph.append(text);
+  return text;
+}
+
 function $captureStructuredPoint(point: PointType): StructuredPoint | null {
+  const top = $topLevelRootChild(point.getNode());
+  if (top === null) {
+    return null;
+  }
+
+  if ($isTransientParagraphNode(top)) {
+    let previous = top.getPreviousSibling();
+    while (previous !== null && $isTransientParagraphNode(previous)) {
+      previous = previous.getPreviousSibling();
+    }
+    if (previous === null || $isTransientParagraphNode(previous)) {
+      return null;
+    }
+
+    const rootChildren = $exportRootChildren();
+    const afterIndex = rootChildren.findIndex(
+      (child) => child.getKey() === previous.getKey()
+    );
+    if (afterIndex < 0) {
+      return null;
+    }
+
+    const resolved = $textNodeAndOffset(point);
+    return {
+      rootIndex: afterIndex,
+      path: [],
+      textOffset: resolved?.offset ?? 0,
+      transientGapAfterRootIndex: afterIndex,
+    };
+  }
+
+  if (isEmptyRootParagraph(top)) {
+    const rootChildren = $exportRootChildren();
+    const rootIndex = rootChildren.findIndex(
+      (child) => child.getKey() === top.getKey()
+    );
+    if (rootIndex < 0) {
+      return null;
+    }
+
+    return {
+      rootIndex,
+      path: [],
+      textOffset: 0,
+    };
+  }
+
   const resolved = $textNodeAndOffset(point);
   if (resolved === null) {
     return null;
@@ -614,6 +688,10 @@ function containerTextFromBlock(
 export function getContainerTextFromLexical(
   point: StructuredPoint
 ): string | null {
+  if (point.transientGapAfterRootIndex !== undefined) {
+    return '';
+  }
+
   const rootChildren = $exportRootChildren();
   if (point.rootIndex < 0 || point.rootIndex >= rootChildren.length) {
     return null;
@@ -640,6 +718,13 @@ export function getContainerTextFromParsedBlocks(
 function $resolveStructuredPoint(
   point: StructuredPoint
 ): { key: string; offset: number } | null {
+  if (point.transientGapAfterRootIndex !== undefined) {
+    return $selectTransientGapAfterExportRootIndex(
+      point.transientGapAfterRootIndex,
+      point.textOffset
+    );
+  }
+
   const rootChildren = $exportRootChildren();
   if (rootChildren.length === 0) {
     return null;
@@ -648,6 +733,14 @@ function $resolveStructuredPoint(
   let current = rootChildren[clampIndex(point.rootIndex, rootChildren.length)];
   if (current === undefined) {
     return null;
+  }
+
+  if (point.path.length === 0 && isEmptyRootParagraph(current)) {
+    const text = $ensureParagraphTextNode(current);
+    return {
+      key: text.getKey(),
+      offset: clampIndex(point.textOffset, text.getTextContentSize() + 1),
+    };
   }
 
   const path = [...point.path];
@@ -709,6 +802,10 @@ export function remapStructuredPoint(
   remoteText: string | null,
   point: StructuredPoint
 ): StructuredPoint {
+  if (point.transientGapAfterRootIndex !== undefined) {
+    return point;
+  }
+
   if (localText === null || remoteText === null || localText === remoteText) {
     return point;
   }
