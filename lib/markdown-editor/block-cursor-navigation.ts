@@ -17,7 +17,6 @@ import {
   $createTextNode,
   $getRoot,
   $getSelection,
-  $getNodeByKey,
   $isDecoratorNode,
   $isElementNode,
   $isNodeSelection,
@@ -35,7 +34,6 @@ import {
   KEY_BACKSPACE_COMMAND,
   mergeRegister,
   type ElementNode,
-  type EditorState,
   type LexicalEditor,
   type LexicalNode,
 } from 'lexical';
@@ -59,105 +57,8 @@ import {
 
 export const TRANSIENT_RECONCILE_TAG = 'transient-reconcile';
 
-const TRANSIENT_NAV_DEBUG_KEY = 'simplenote:debug:transient-nav';
-const TEXT_LOG_DEBOUNCE_MS = 600;
-
 type TransientTraversalDirection = 'backward' | 'forward';
 type TransientTraversalAxis = 'vertical' | 'block';
-
-const transientNavDebugState = {
-  editor: null as LexicalEditor | null,
-  textLogTimer: null as ReturnType<typeof setTimeout> | null,
-  pendingTextChanges: [] as Array<Record<string, unknown>>,
-  collectSkipReasons: false,
-  skipReasons: [] as Array<Record<string, unknown>>,
-};
-
-export function setTransientNavDebugEnabled(enabled: boolean): void {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-
-  if (enabled) {
-    localStorage.setItem(TRANSIENT_NAV_DEBUG_KEY, '1');
-    console.info('[transient-nav] debug enabled');
-    return;
-  }
-
-  localStorage.removeItem(TRANSIENT_NAV_DEBUG_KEY);
-  clearTransientNavTextLogTimer();
-  transientNavDebugState.pendingTextChanges = [];
-  console.info('[transient-nav] debug disabled');
-}
-
-export function isTransientNavDebugEnabled(): boolean {
-  if (
-    typeof globalThis !== 'undefined' &&
-    (globalThis as { __SIMPLENOTE_DEBUG_TRANSIENT_NAV__?: boolean })
-      .__SIMPLENOTE_DEBUG_TRANSIENT_NAV__ === true
-  ) {
-    return true;
-  }
-
-  if (typeof localStorage === 'undefined') {
-    return false;
-  }
-
-  return localStorage.getItem(TRANSIENT_NAV_DEBUG_KEY) === '1';
-}
-
-function formatArrowDirection(direction: TransientTraversalDirection): string {
-  return direction === 'backward' ? '↑' : '↓';
-}
-
-function clearTransientNavTextLogTimer(): void {
-  if (transientNavDebugState.textLogTimer !== null) {
-    clearTimeout(transientNavDebugState.textLogTimer);
-    transientNavDebugState.textLogTimer = null;
-  }
-}
-
-function flushTransientNavTextLog(): void {
-  const pending = transientNavDebugState.pendingTextChanges;
-  if (pending.length === 0) {
-    return;
-  }
-
-  transientNavDebugState.pendingTextChanges = [];
-
-  const typedText = pending
-    .map((change) => change.inserted)
-    .filter(
-      (value): value is string => typeof value === 'string' && value.length > 0
-    )
-    .join('');
-
-  logTransientNav('text change', {
-    typed: typedText.length > 0 ? typedText : undefined,
-    changes: pending,
-    selection: $describeSelectionContext(),
-    document: $describeDocumentSnapshot(),
-  });
-}
-
-function queueTransientNavTextLog(
-  changes: Array<Record<string, unknown>>
-): void {
-  transientNavDebugState.pendingTextChanges.push(...changes);
-
-  const editor = transientNavDebugState.editor;
-  if (!editor) {
-    return;
-  }
-
-  clearTransientNavTextLogTimer();
-  transientNavDebugState.textLogTimer = setTimeout(() => {
-    transientNavDebugState.textLogTimer = null;
-    editor.getEditorState().read(() => {
-      flushTransientNavTextLog();
-    });
-  }, TEXT_LOG_DEBOUNCE_MS);
-}
 
 export function $isBlockCursorNode(
   node: LexicalNode | null | undefined
@@ -242,10 +143,6 @@ function $insertAndSelectTransientBefore(
 ): TransientParagraphNode {
   const existing = node.getPreviousSibling();
   if ($isTransientParagraphNode(existing)) {
-    logTransientNav('reuse transient before', {
-      target: $describeBlock(node),
-      transient: $describeBlock(existing),
-    });
     $prepareTransientForCaret(existing);
     existing.selectStart();
     return existing;
@@ -253,11 +150,6 @@ function $insertAndSelectTransientBefore(
 
   const transient = $createTransientParagraphNode();
   node.insertBefore(transient);
-  logTransientNav('insert transient before', {
-    target: $describeBlock(node),
-    transient: $describeBlock(transient),
-    document: $describeDocumentSnapshot(),
-  });
   $prepareTransientForCaret(transient);
   transient.selectStart();
   return transient;
@@ -268,10 +160,6 @@ function $insertAndSelectTransientAfter(
 ): TransientParagraphNode {
   const existing = node.getNextSibling();
   if ($isTransientParagraphNode(existing)) {
-    logTransientNav('reuse transient after', {
-      target: $describeBlock(node),
-      transient: $describeBlock(existing),
-    });
     $prepareTransientForCaret(existing);
     existing.selectStart();
     return existing;
@@ -279,11 +167,6 @@ function $insertAndSelectTransientAfter(
 
   const transient = $createTransientParagraphNode();
   node.insertAfter(transient);
-  logTransientNav('insert transient after', {
-    target: $describeBlock(node),
-    transient: $describeBlock(transient),
-    document: $describeDocumentSnapshot(),
-  });
   $prepareTransientForCaret(transient);
   transient.selectStart();
   return transient;
@@ -302,10 +185,6 @@ export function $pruneTransients(
       continue;
     }
 
-    logTransientNav('prune empty transient', {
-      transient: $describeBlock(child),
-      focusedTransientKey,
-    });
     child.remove();
   }
 
@@ -320,12 +199,6 @@ export function $pruneTransients(
       child.getKey() !== focusedTransientKey &&
       ($isTextFlowBlock(prev) || $isTextFlowBlock(next))
     ) {
-      logTransientNav('prune transient adjacent to text-flow', {
-        transient: $describeBlock(child),
-        prev: $describeBlock(prev),
-        next: $describeBlock(next),
-        focusedTransientKey,
-      });
       child.remove();
     }
   }
@@ -420,40 +293,21 @@ function $navigateFromEmptyTransient(
 ): void {
   const prev = transient.getPreviousSibling();
   const next = transient.getNextSibling();
-  logTransientNav('exit empty transient', {
-    direction,
-    axis,
-    transient: $describeBlock(transient),
-    prev: $describeBlock(prev),
-    next: $describeBlock(next),
-  });
   transient.remove();
 
   if (direction === 'backward') {
     if (prev !== null && $isGaplessBlock(prev)) {
       if (next !== null && $isGaplessBlock(next)) {
-        logTransientNav(
-          'exit transient -> enter gapless prev at exit boundary',
-          {
-            target: $describeBlock(prev),
-            axis,
-          }
-        );
         $enterGaplessAtBoundary(prev, 'exit', axis);
         return;
       }
 
       const beforePrev = prev.getPreviousSibling();
       if (beforePrev !== null && $isGaplessBlock(beforePrev)) {
-        logTransientNav('exit transient -> insert before gapless prev');
         $insertAndSelectTransientBefore(prev);
         return;
       }
 
-      logTransientNav('exit transient -> enter gapless prev at exit boundary', {
-        target: $describeBlock(prev),
-        axis,
-      });
       $enterGaplessAtBoundary(prev, 'exit', axis);
     }
     return;
@@ -461,28 +315,16 @@ function $navigateFromEmptyTransient(
 
   if (next !== null && $isGaplessBlock(next)) {
     if (prev !== null && $isGaplessBlock(prev)) {
-      logTransientNav(
-        'exit transient -> enter gapless next at entry boundary',
-        {
-          target: $describeBlock(next),
-          axis,
-        }
-      );
       $enterGaplessAtBoundary(next, 'entry', axis);
       return;
     }
 
     const afterNext = next.getNextSibling();
     if (afterNext !== null && $isGaplessBlock(afterNext)) {
-      logTransientNav('exit transient -> insert before next gapless in chain');
       $insertAndSelectTransientBefore(afterNext);
       return;
     }
 
-    logTransientNav('exit transient -> enter gapless next at entry boundary', {
-      target: $describeBlock(next),
-      axis,
-    });
     $enterGaplessAtBoundary(next, 'entry', axis);
   }
 }
@@ -514,18 +356,15 @@ function $handleExitEmptyTransientArrow(
 ): boolean {
   const transient = $getCurrentTransientFromSelection();
   if (!$isEmptyTransient(transient)) {
-    logTransientNav('skip exitEmptyTransient: not in empty transient');
     return false;
   }
 
   const prev = transient.getPreviousSibling();
   const next = transient.getNextSibling();
   if (direction === 'backward' && prev === null) {
-    logTransientNav('skip exitEmptyTransient: leading transient at doc start');
     return false;
   }
   if (direction === 'forward' && next === null) {
-    logTransientNav('skip exitEmptyTransient: trailing transient at doc end');
     return false;
   }
 
@@ -862,20 +701,6 @@ function $isAtBoundary(
     : $isAtContainerContentEnd(selection, block);
 }
 
-function $isAtTextFlowStart(
-  selection: ReturnType<typeof $getSelection>,
-  rootBlock: ElementNode
-): boolean {
-  return $isAtContainerContentStart(selection, rootBlock);
-}
-
-function $isAtTextFlowEnd(
-  selection: ReturnType<typeof $getSelection>,
-  rootBlock: ElementNode
-): boolean {
-  return $isAtContainerContentEnd(selection, rootBlock);
-}
-
 /** Gapless element blocks (code, table) keep a text caret, not node selection. */
 function $isGaplessElementBlock(
   node: LexicalNode | null | undefined
@@ -889,253 +714,6 @@ function $isGaplessElementBlock(
   );
 }
 
-function $describeBlock(node: LexicalNode | null): string {
-  if (node === null) {
-    return '(null)';
-  }
-
-  const flags = [
-    $isTransientParagraphNode(node) ? 'transient' : null,
-    $isTextFlowBlock(node) ? 'text-flow' : null,
-    $isGaplessBlock(node) ? 'gapless' : null,
-    $isBlockCursorNode(node) ? 'block-cursor' : null,
-  ]
-    .filter(Boolean)
-    .join(', ');
-
-  const textPreview = node.getTextContent().slice(0, 40).replace(/\n/g, '\\n');
-  const textSuffix = textPreview.length > 0 ? ` text="${textPreview}"` : '';
-
-  return `${node.getType()}#${node.getKey()}${flags ? ` [${flags}]` : ''}${textSuffix}`;
-}
-
-function $describeRootChildren(): string[] {
-  return $getRoot()
-    .getChildren()
-    .map((child, index) => `${index}: ${$describeBlock(child)}`);
-}
-
-function $getFocusedRootBlockIndex(): {
-  focusedIndex: number;
-  focusedKey: string | null;
-} {
-  const children = $getRoot().getChildren();
-  const selection = $getSelection();
-  let focusedKey: string | null = null;
-
-  if ($isRangeSelection(selection)) {
-    const rootBlock = $getRootBlock(selection.anchor.getNode());
-    focusedKey = rootBlock?.getKey() ?? null;
-  } else if ($isNodeSelection(selection)) {
-    const node = selection.getNodes()[0];
-    if (node !== undefined && node.getParent()?.getType() === 'root') {
-      focusedKey = node.getKey();
-    }
-  }
-
-  if (focusedKey === null) {
-    return { focusedIndex: -1, focusedKey: null };
-  }
-
-  return {
-    focusedIndex: children.findIndex((child) => child.getKey() === focusedKey),
-    focusedKey,
-  };
-}
-
-/** Root blocks near the caret plus the full numbered root list. */
-function $describeDocumentSnapshot(): Record<string, unknown> {
-  const children = $getRoot().getChildren();
-  const { focusedIndex, focusedKey } = $getFocusedRootBlockIndex();
-  const windowStart = Math.max(0, focusedIndex - 2);
-  const windowEnd =
-    focusedIndex >= 0
-      ? Math.min(children.length, focusedIndex + 3)
-      : Math.min(children.length, 5);
-
-  const surrounding = [];
-  for (let index = windowStart; index < windowEnd; index++) {
-    surrounding.push({
-      index,
-      focused: index === focusedIndex,
-      block: $describeBlock(children[index]),
-    });
-  }
-
-  return {
-    rootChildCount: children.length,
-    focusedIndex,
-    focusedKey,
-    surrounding,
-    rootChildren: $describeRootChildren(),
-  };
-}
-
-function $describeTextChanges(
-  prevEditorState: EditorState,
-  dirtyLeaves: ReadonlySet<string>
-): Array<Record<string, unknown>> {
-  const changes: Array<Record<string, unknown>> = [];
-
-  for (const key of dirtyLeaves) {
-    const afterNode = $getNodeByKey(key);
-    if (afterNode === null || !$isTextNode(afterNode)) {
-      continue;
-    }
-
-    const before = prevEditorState.read(() => {
-      const node = $getNodeByKey(key);
-      return node !== null && $isTextNode(node) ? node.getTextContent() : null;
-    });
-    const after = afterNode.getTextContent();
-
-    if (before === after) {
-      continue;
-    }
-
-    const rootBlock = $getRootBlock(afterNode);
-    changes.push({
-      textNode: $describeBlock(afterNode),
-      rootBlock: rootBlock ? $describeBlock(rootBlock) : null,
-      before: before ?? '(new)',
-      after,
-      inserted:
-        before !== null && after.startsWith(before)
-          ? after.slice(before.length)
-          : null,
-      deleted:
-        before !== null && before.startsWith(after)
-          ? before.slice(after.length)
-          : null,
-    });
-  }
-
-  return changes;
-}
-
-function $logTransientNavTextChanges(
-  prevEditorState: EditorState,
-  dirtyLeaves: ReadonlySet<string>
-): void {
-  if (!isTransientNavDebugEnabled() || dirtyLeaves.size === 0) {
-    return;
-  }
-
-  const changes = $describeTextChanges(prevEditorState, dirtyLeaves);
-  if (changes.length === 0) {
-    return;
-  }
-
-  queueTransientNavTextLog(changes);
-}
-
-function $describeSelectionContext(
-  rootBlock: ElementNode | null = null
-): Record<string, unknown> {
-  const selection = $getSelection();
-  const resolvedRootBlock =
-    rootBlock ??
-    ($isRangeSelection(selection)
-      ? $getRootBlock(selection.anchor.getNode())
-      : null);
-
-  if ($isNodeSelection(selection)) {
-    return {
-      kind: 'node',
-      nodes: selection.getNodes().map($describeBlock),
-      rootBlock: resolvedRootBlock ? $describeBlock(resolvedRootBlock) : null,
-    };
-  }
-
-  if ($isRangeSelection(selection)) {
-    const anchorNode = selection.anchor.getNode();
-    return {
-      kind: 'range',
-      collapsed: selection.isCollapsed(),
-      anchorType: selection.anchor.type,
-      anchorOffset: selection.anchor.offset,
-      anchorNode: $describeBlock(anchorNode),
-      anchorParent: $describeBlock(anchorNode.getParent()),
-      rootBlock: resolvedRootBlock ? $describeBlock(resolvedRootBlock) : null,
-      atTextFlowStart:
-        resolvedRootBlock !== null
-          ? $isAtTextFlowStart(selection, resolvedRootBlock)
-          : null,
-      atTextFlowEnd:
-        resolvedRootBlock !== null
-          ? $isAtTextFlowEnd(selection, resolvedRootBlock)
-          : null,
-      isTextFlowBlock:
-        resolvedRootBlock !== null ? $isTextFlowBlock(resolvedRootBlock) : null,
-      isGaplessBlock:
-        resolvedRootBlock !== null ? $isGaplessBlock(resolvedRootBlock) : null,
-      isGaplessElementBlock:
-        resolvedRootBlock !== null
-          ? $isGaplessElementBlock(resolvedRootBlock)
-          : null,
-      prevSibling: resolvedRootBlock
-        ? $describeBlock(resolvedRootBlock.getPreviousSibling())
-        : null,
-      nextSibling: resolvedRootBlock
-        ? $describeBlock(resolvedRootBlock.getNextSibling())
-        : null,
-    };
-  }
-
-  return { kind: selection === null ? 'null' : 'other' };
-}
-
-function logTransientNav(
-  message: string,
-  details?: Record<string, unknown>
-): void {
-  if (!isTransientNavDebugEnabled()) {
-    return;
-  }
-
-  if (message.startsWith('skip ')) {
-    if (transientNavDebugState.collectSkipReasons) {
-      transientNavDebugState.skipReasons.push({
-        reason: message.slice(5),
-        ...details,
-      });
-    }
-    return;
-  }
-
-  if (details === undefined) {
-    console.log(`[transient-nav] ${message}`);
-    return;
-  }
-
-  console.log(`[transient-nav] ${message}`, details);
-}
-
-function logTransientNavArrowResult(
-  arrow: string,
-  handler: string | null,
-  direction: TransientTraversalDirection,
-  axis: TransientTraversalAxis
-): void {
-  if (handler === null) {
-    logTransientNav(`${arrow} not handled`, {
-      direction,
-      axis,
-      selection: $describeSelectionContext(),
-      document: $describeDocumentSnapshot(),
-      skipReasons: transientNavDebugState.skipReasons,
-    });
-    return;
-  }
-
-  logTransientNav(`${arrow} handled via ${handler}`, {
-    direction,
-    axis,
-    selection: $describeSelectionContext(),
-    document: $describeDocumentSnapshot(),
-  });
-}
-
 function $handleEnterGapFromGaplessElementArrow(
   event: KeyboardEvent,
   direction: TransientTraversalDirection,
@@ -1143,15 +721,11 @@ function $handleEnterGapFromGaplessElementArrow(
 ): boolean {
   const selection = $getSelection();
   if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
-    logTransientNav('skip gaplessElement: not collapsed range selection');
     return false;
   }
 
   const rootBlock = $getRootBlock(selection.anchor.getNode());
   if (!rootBlock || !$isGaplessElementBlock(rootBlock)) {
-    logTransientNav('skip gaplessElement: not in gapless element root block', {
-      rootBlock: rootBlock ? $describeBlock(rootBlock) : null,
-    });
     return false;
   }
 
@@ -1162,20 +736,12 @@ function $handleEnterGapFromGaplessElementArrow(
     const prev = rootBlock.getPreviousSibling();
     if (prev !== null && $isGapBetweenGapless(prev, rootBlock)) {
       event.preventDefault();
-      logTransientNav(
-        'gaplessElement backward: insert transient before block',
-        {
-          rootBlock: $describeBlock(rootBlock),
-          prev: $describeBlock(prev),
-        }
-      );
       $insertAndSelectTransientBefore(rootBlock);
       return true;
     }
 
     if (!prev) {
       event.preventDefault();
-      logTransientNav('gaplessElement backward: leading transient');
       $insertAndSelectTransientBefore(rootBlock);
       return true;
     }
@@ -1188,29 +754,17 @@ function $handleEnterGapFromGaplessElementArrow(
     const next = rootBlock.getNextSibling();
     if (next !== null && $isGapBetweenGapless(rootBlock, next)) {
       event.preventDefault();
-      logTransientNav('gaplessElement forward: insert transient before next', {
-        rootBlock: $describeBlock(rootBlock),
-        next: $describeBlock(next),
-      });
       $insertAndSelectTransientBefore(next);
       return true;
     }
 
     if (!next) {
       event.preventDefault();
-      logTransientNav('gaplessElement forward: trailing transient');
       $insertAndSelectTransientAfter(rootBlock);
       return true;
     }
   }
 
-  logTransientNav('skip gaplessElement: not at block boundary', {
-    direction,
-    axis,
-    rootBlock: $describeBlock(rootBlock),
-    atStart: $isAtBoundary(selection, rootBlock, 'backward', axis),
-    atEnd: $isAtBoundary(selection, rootBlock, 'forward', axis),
-  });
   return false;
 }
 
@@ -1221,20 +775,11 @@ function $handleHorizontalRuleFromTextFlowArrow(
 ): boolean {
   const selection = $getSelection();
   if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
-    logTransientNav(
-      'skip horizontalRuleFromText: not collapsed range selection'
-    );
     return false;
   }
 
   const rootBlock = $getRootBlock(selection.anchor.getNode());
   if (!rootBlock || !$isTextFlowBlock(rootBlock)) {
-    logTransientNav(
-      'skip horizontalRuleFromText: not in text-flow root block',
-      {
-        rootBlock: rootBlock ? $describeBlock(rootBlock) : null,
-      }
-    );
     return false;
   }
 
@@ -1245,10 +790,6 @@ function $handleHorizontalRuleFromTextFlowArrow(
     const prev = rootBlock.getPreviousSibling();
     if (prev !== null && $isHorizontalRuleNode(prev)) {
       event.preventDefault();
-      logTransientNav('horizontalRuleFromText backward: select HR', {
-        rootBlock: $describeBlock(rootBlock),
-        prev: $describeBlock(prev),
-      });
       $selectGaplessBlock(prev);
       return true;
     }
@@ -1261,22 +802,11 @@ function $handleHorizontalRuleFromTextFlowArrow(
     const next = rootBlock.getNextSibling();
     if (next !== null && $isHorizontalRuleNode(next)) {
       event.preventDefault();
-      logTransientNav('horizontalRuleFromText forward: select HR', {
-        rootBlock: $describeBlock(rootBlock),
-        next: $describeBlock(next),
-      });
       $selectGaplessBlock(next);
       return true;
     }
   }
 
-  logTransientNav('skip horizontalRuleFromText: no HR neighbor at boundary', {
-    direction,
-    axis,
-    rootBlock: $describeBlock(rootBlock),
-    atStart: $isAtBoundary(selection, rootBlock, 'backward', axis),
-    atEnd: $isAtBoundary(selection, rootBlock, 'forward', axis),
-  });
   return false;
 }
 
@@ -1286,13 +816,11 @@ function $handleGaplessBlockArrow(
 ): boolean {
   const selection = $getSelection();
   if (!$isNodeSelection(selection)) {
-    logTransientNav('skip gaplessBlock: not node selection');
     return false;
   }
 
   const block = selection.getNodes().find($isGaplessBlock);
   if (!block) {
-    logTransientNav('skip gaplessBlock: no gapless node in selection');
     return false;
   }
 
@@ -1300,93 +828,52 @@ function $handleGaplessBlockArrow(
     const next = block.getNextSibling();
     if (next !== null && $isTextFlowBlock(next)) {
       if (!$isHorizontalRuleNode(block)) {
-        logTransientNav('skip gaplessBlock next: defer text-flow to Lexical', {
-          block: $describeBlock(block),
-          next: $describeBlock(next),
-        });
         return false;
       }
 
       event.preventDefault();
-      logTransientNav('gaplessBlock next: select text-flow start', {
-        block: $describeBlock(block),
-        next: $describeBlock(next),
-      });
       $selectTextFlowBoundary(next, 'start');
       return true;
     }
 
     if (next !== null && $isGapBetweenGapless(block, next)) {
       event.preventDefault();
-      logTransientNav('gaplessBlock next: insert transient before next', {
-        block: $describeBlock(block),
-        next: $describeBlock(next),
-      });
       $insertAndSelectTransientBefore(next);
       return true;
     }
 
     if (!next) {
       event.preventDefault();
-      logTransientNav('gaplessBlock next: trailing transient', {
-        block: $describeBlock(block),
-      });
       $insertAndSelectTransientAfter(block);
       return true;
     }
 
-    logTransientNav('skip gaplessBlock next: unmatched sibling', {
-      block: $describeBlock(block),
-      next: $describeBlock(next),
-    });
     return false;
   }
 
   const prev = block.getPreviousSibling();
   if (prev !== null && $isTextFlowBlock(prev)) {
     if (!$isHorizontalRuleNode(block)) {
-      logTransientNav(
-        'skip gaplessBlock previous: defer text-flow to Lexical',
-        {
-          block: $describeBlock(block),
-          prev: $describeBlock(prev),
-        }
-      );
       return false;
     }
 
     event.preventDefault();
-    logTransientNav('gaplessBlock previous: select text-flow end', {
-      block: $describeBlock(block),
-      prev: $describeBlock(prev),
-    });
     $selectTextFlowBoundary(prev, 'end');
     return true;
   }
 
   if (prev !== null && $isGapBetweenGapless(prev, block)) {
     event.preventDefault();
-    logTransientNav('gaplessBlock previous: insert transient before block', {
-      block: $describeBlock(block),
-      prev: $describeBlock(prev),
-    });
     $insertAndSelectTransientBefore(block);
     return true;
   }
 
   if (!prev) {
     event.preventDefault();
-    logTransientNav('gaplessBlock previous: leading transient', {
-      block: $describeBlock(block),
-    });
     $insertAndSelectTransientBefore(block);
     return true;
   }
 
-  logTransientNav('skip gaplessBlock previous: unmatched sibling', {
-    block: $describeBlock(block),
-    prev: $describeBlock(prev),
-  });
   return false;
 }
 
@@ -1395,43 +882,24 @@ function $handleGapArrowCommand(
   direction: TransientTraversalDirection,
   axis: TransientTraversalAxis
 ): boolean {
-  const arrow = formatArrowDirection(direction);
-
-  transientNavDebugState.collectSkipReasons = true;
-  transientNavDebugState.skipReasons = [];
-
-  try {
-    if ($handleExitEmptyTransientArrow(event, direction, axis)) {
-      logTransientNavArrowResult(arrow, 'exitEmptyTransient', direction, axis);
-      return true;
-    }
-
-    if ($handleHorizontalRuleFromTextFlowArrow(event, direction, axis)) {
-      logTransientNavArrowResult(
-        arrow,
-        'horizontalRuleFromText',
-        direction,
-        axis
-      );
-      return true;
-    }
-
-    const lexicalDirection = direction === 'backward' ? 'previous' : 'next';
-    if ($handleGaplessBlockArrow(event, lexicalDirection)) {
-      logTransientNavArrowResult(arrow, 'gaplessBlock', direction, axis);
-      return true;
-    }
-
-    if ($handleEnterGapFromGaplessElementArrow(event, direction, axis)) {
-      logTransientNavArrowResult(arrow, 'gaplessElement', direction, axis);
-      return true;
-    }
-
-    logTransientNavArrowResult(arrow, null, direction, axis);
-    return false;
-  } finally {
-    transientNavDebugState.collectSkipReasons = false;
+  if ($handleExitEmptyTransientArrow(event, direction, axis)) {
+    return true;
   }
+
+  if ($handleHorizontalRuleFromTextFlowArrow(event, direction, axis)) {
+    return true;
+  }
+
+  const lexicalDirection = direction === 'backward' ? 'previous' : 'next';
+  if ($handleGaplessBlockArrow(event, lexicalDirection)) {
+    return true;
+  }
+
+  if ($handleEnterGapFromGaplessElementArrow(event, direction, axis)) {
+    return true;
+  }
+
+  return false;
 }
 
 function $isEmptyParagraph(block: ElementNode): boolean {
@@ -1458,42 +926,16 @@ function $deleteEmptyParagraphBeforeTransient(
 export function registerBlockCursorNavigation(
   editor: LexicalEditor
 ): () => void {
-  const focusedTransientKeyRef: { current: string | null } = { current: null };
-
-  if (typeof globalThis !== 'undefined') {
-    (
-      globalThis as typeof globalThis & {
-        setTransientNavDebugEnabled?: typeof setTransientNavDebugEnabled;
-      }
-    ).setTransientNavDebugEnabled = setTransientNavDebugEnabled;
-  }
-
-  transientNavDebugState.editor = editor;
-
   return mergeRegister(
-    () => {
-      clearTransientNavTextLogTimer();
-      transientNavDebugState.pendingTextChanges = [];
-      if (transientNavDebugState.editor === editor) {
-        transientNavDebugState.editor = null;
-      }
-    },
-    editor.registerUpdateListener(({ tags, dirtyLeaves, prevEditorState }) => {
+    editor.registerUpdateListener(({ tags }) => {
       if (tags.has(TRANSIENT_RECONCILE_TAG)) {
         return;
-      }
-
-      if (isTransientNavDebugEnabled() && dirtyLeaves.size > 0) {
-        editor.getEditorState().read(() => {
-          $logTransientNavTextChanges(prevEditorState, dirtyLeaves);
-        });
       }
 
       editor.update(
         () => {
           const focusedKey =
             $getCurrentTransientFromSelection()?.getKey() ?? null;
-          focusedTransientKeyRef.current = focusedKey;
           $addUpdateTag(HISTORY_MERGE_TAG);
           $addUpdateTag(TRANSIENT_RECONCILE_TAG);
           $pruneTransients(focusedKey);
