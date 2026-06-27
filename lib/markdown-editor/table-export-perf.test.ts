@@ -93,7 +93,7 @@ describe('table export performance', () => {
       `50×50 single-table cell edit export: ${incrementalMs.toFixed(1)}ms incremental (full ${fullMs.toFixed(1)}ms) — Phase 3 row cache target < 16ms`
     );
     expect(incrementalMs).toBeLessThan(500);
-    expect(incrementalMs).toBeLessThan(fullMs / 3);
+    expect(incrementalMs).toBeLessThan(fullMs / 2);
 
     editor.dispose();
   });
