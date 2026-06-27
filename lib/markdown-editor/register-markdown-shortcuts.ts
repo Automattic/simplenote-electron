@@ -5,6 +5,7 @@ import {
 } from '@lexical/markdown';
 import type { LexicalEditor } from 'lexical';
 
+import { registerCommitEnterBlockShortcutsOnLeave } from './commit-enter-block-shortcuts';
 import {
   $exportMarkdownStringFromEditorCache,
   $exportTopLevelBlockMarkdown,
@@ -125,11 +126,14 @@ export function registerMarkdownShortcutsWithHistory(
     editor,
     wrappedTransformers
   );
+  const unregisterCommitOnLeave =
+    registerCommitEnterBlockShortcutsOnLeave(editor);
 
   return () => {
     unregisterMarkdownShortcuts();
     unregisterUndoSanitizer();
     unregisterHistoryReconciliation();
+    unregisterCommitOnLeave();
     pendingBlockShortcutHistory.delete(editor);
   };
 }

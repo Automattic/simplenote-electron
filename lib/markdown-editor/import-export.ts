@@ -544,6 +544,54 @@ function remapStructuredSelection(
  * Parses a markdown string into block nodes without touching the document,
  * e.g. for inserting pasted markdown at the current selection.
  */
+/**
+ * Re-parse a root paragraph through markdown import so block syntax on any line
+ * (e.g. `---`) becomes structure. No-op when import would still yield one paragraph.
+ */
+export function $reimportRootParagraphIfNeeded(
+  paragraph: ElementNode
+): boolean {
+  if (
+    !$isParagraphNode(paragraph) ||
+    paragraph.getParent()?.getType() !== 'root'
+  ) {
+    return false;
+  }
+
+  const markdown = $exportTopLevelBlockMarkdown(paragraph);
+  const imported = $markdownToNodes(markdown);
+
+  if (imported.length === 0) {
+    return false;
+  }
+
+  if (imported.length === 1 && $isParagraphNode(imported[0])) {
+    imported[0].remove();
+    return false;
+  }
+
+  const parent = paragraph.getParent()!;
+  const previousSibling = paragraph.getPreviousSibling();
+  paragraph.remove();
+
+  let anchor: LexicalNode | null = previousSibling;
+  for (const node of imported) {
+    if (anchor === null) {
+      const firstChild = parent.getFirstChild();
+      if (firstChild !== null) {
+        firstChild.insertBefore(node);
+      } else {
+        parent.append(node);
+      }
+    } else {
+      anchor.insertAfter(node);
+    }
+    anchor = node;
+  }
+
+  return true;
+}
+
 export function $markdownToNodes(markdown: string): LexicalNode[] {
   // $convertFromMarkdownString moves the selection to the start of its
   // target node, so preserve the caller's selection across the conversion.

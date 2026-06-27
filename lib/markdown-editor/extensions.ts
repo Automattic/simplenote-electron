@@ -111,6 +111,8 @@ const ListDeletionExtension = defineExtension({
   },
 });
 
+// Re-import paragraphs on leave so block markdown (`---`, `# `, etc.) does not
+// remain as literal text inside a line-native paragraph.
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
   register(editor) {
