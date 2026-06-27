@@ -72,6 +72,7 @@ function MarkdownNoteEditorComponent({
   const shellRef = useRef<HTMLDivElement>(null);
   const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
   const lastDispatchedRef = useRef<string | null>(null);
+  const lastLocalExportRef = useRef(withCheckboxSyntax(noteContent));
   const matchCountRef = useRef(0);
   const [matchCount, setMatchCount] = useState(0);
   const previousNoteIdRef = useRef(noteId);
@@ -95,6 +96,7 @@ function MarkdownNoteEditorComponent({
 
   useEffect(() => {
     lastPushedRef.current = withCheckboxSyntax(noteContent);
+    lastLocalExportRef.current = withCheckboxSyntax(noteContent);
     lastDispatchedRef.current = null;
   }, [noteId]);
 
@@ -139,20 +141,26 @@ function MarkdownNoteEditorComponent({
     let cancelled = false;
     let cancelRestore: (() => void) | undefined;
 
-    editor.read(() => {
-      if (cancelled) {
-        return;
-      }
+    if (remote === lastLocalExportRef.current) {
+      lastPushedRef.current = remote;
+      return;
+    }
 
-      const local = $exportMarkdownString();
-      if (remote === local) {
-        lastPushedRef.current = remote;
+    queueMicrotask(() => {
+      if (cancelled) {
         return;
       }
 
       editor.update(
         () => {
-          $importRemoteMarkdown(remote, local);
+          const local = $exportMarkdownString();
+          if (remote === local) {
+            return;
+          }
+
+          $importRemoteMarkdown(remote, local, {
+            preserveSelection: editorFocused,
+          });
         },
         {
           discrete: true,
@@ -164,6 +172,7 @@ function MarkdownNoteEditorComponent({
             if (shell) {
               cancelRestore = restoreScrollPosition(shell, scrollTop);
             }
+            lastLocalExportRef.current = remote;
             lastPushedRef.current = remote;
           },
         }
@@ -198,6 +207,7 @@ function MarkdownNoteEditorComponent({
 
       lastPushedRef.current = content;
       lastDispatchedRef.current = content;
+      lastLocalExportRef.current = content;
       editNote(noteId, { content });
     },
     [editNote, noteId]

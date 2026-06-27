@@ -39,9 +39,12 @@ import {
   MIXED_NESTED_UNORDERED_LIST,
 } from './list-transformers';
 import {
-  $captureMarkdownSelectionOffsets,
-  $restoreMarkdownSelectionOffsets,
-  remapMarkdownSelectionOffsets,
+  $captureStructuredSelection,
+  $restoreStructuredSelection,
+  getContainerTextFromLexical,
+  getContainerTextFromParsedBlocks,
+  remapStructuredPoint,
+  type StructuredSelection,
 } from './selection-memory';
 import {
   INLINE_MARKDOWN_TRANSFORMERS,
@@ -478,22 +481,62 @@ export function $importMarkdownString(markdown: string): void {
 /** Re-import remote markdown while keeping the caret in the same place. */
 export function $importRemoteMarkdown(
   remote: string,
-  local: string = remote
+  local: string = remote,
+  options?: { preserveSelection?: boolean }
 ): void {
-  const saved = $captureMarkdownSelectionOffsets();
+  const preserveSelection = options?.preserveSelection ?? true;
+  const saved = preserveSelection ? $captureStructuredSelection() : null;
+  const localTexts =
+    saved === null
+      ? { anchor: null, focus: null }
+      : {
+          anchor: getContainerTextFromLexical(saved.anchor),
+          focus: getContainerTextFromLexical(saved.focus),
+        };
+
   $importMarkdownString(remote);
-  if (!saved) {
+
+  if (saved === null) {
     $getRoot().selectStart();
     return;
   }
 
-  const remapped =
-    local === remote
-      ? saved
-      : remapMarkdownSelectionOffsets(local, remote, saved);
+  const remapped = remapStructuredSelection(local, remote, saved, localTexts);
 
-  if (!$restoreMarkdownSelectionOffsets(remapped)) {
+  if (!$restoreStructuredSelection(remapped)) {
     $getRoot().selectStart();
+  }
+}
+
+function remapStructuredSelection(
+  local: string,
+  remote: string,
+  saved: StructuredSelection,
+  localTexts: { anchor: string | null; focus: string | null }
+): StructuredSelection {
+  if (local === remote) {
+    return saved;
+  }
+
+  const remoteBlocks = $markdownToNodes(remote);
+  try {
+    return {
+      anchor: remapStructuredPoint(
+        localTexts.anchor,
+        getContainerTextFromParsedBlocks(remoteBlocks, saved.anchor),
+        saved.anchor
+      ),
+      focus: remapStructuredPoint(
+        localTexts.focus,
+        getContainerTextFromParsedBlocks(remoteBlocks, saved.focus),
+        saved.focus
+      ),
+      direction: saved.direction,
+    };
+  } finally {
+    for (const block of remoteBlocks) {
+      block.remove();
+    }
   }
 }
 

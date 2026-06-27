@@ -1,5 +1,10 @@
 import { $convertSelectionToMarkdownString } from '@lexical/markdown';
 import {
+  $isTableCellNode,
+  $isTableNode,
+  $isTableRowNode,
+} from '@lexical/table';
+import {
   $createRangeSelection,
   $getRoot,
   $getSelection,
@@ -7,11 +12,14 @@ import {
   $isRangeSelection,
   $isTextNode,
   $setSelection,
+  type ElementNode,
   type LexicalNode,
   type PointType,
+  type TextNode,
 } from 'lexical';
 
 import { MARKDOWN_TRANSFORMERS } from './transformers';
+import { $isTransientParagraphNode } from './transient-paragraph-node';
 
 export type MarkdownSelectionOffsets = {
   anchor: number;
@@ -287,25 +295,189 @@ function $forEachTextPoint(visit: (key: string, offset: number) => void): void {
   }
 }
 
+function isEmptyRootParagraph(node: LexicalNode): boolean {
+  return (
+    $isElementNode(node) &&
+    node.getType() === 'paragraph' &&
+    !$isTransientParagraphNode(node) &&
+    node.getChildrenSize() === 0 &&
+    node.getTextContent() === ''
+  );
+}
+
+function gapForEmptyParagraphCount(emptyCount: number): string {
+  if (emptyCount <= 0) {
+    return '';
+  }
+  return '\n'.repeat(emptyCount + 1);
+}
+
+function isPlainContentParagraph(node: LexicalNode): boolean {
+  return (
+    $isElementNode(node) &&
+    node.getType() === 'paragraph' &&
+    !isEmptyRootParagraph(node)
+  );
+}
+
+function blockSeparatorForExport(
+  previousBlock: LexicalNode,
+  nextBlock: LexicalNode,
+  pendingEmpty: number
+): string {
+  if (pendingEmpty > 0) {
+    return gapForEmptyParagraphCount(pendingEmpty);
+  }
+
+  if (
+    isPlainContentParagraph(previousBlock) &&
+    isPlainContentParagraph(nextBlock)
+  ) {
+    return gapForEmptyParagraphCount(1);
+  }
+
+  return '\n';
+}
+
+function exportRootChildMarkdown(node: LexicalNode): string {
+  if (!$isElementNode(node)) {
+    return node.getTextContent();
+  }
+
+  const selection = $createRangeSelection();
+  const key = node.getKey();
+  selection.anchor.set(key, 0, 'element');
+  selection.focus.set(key, node.getChildrenSize(), 'element');
+
+  return $convertSelectionToMarkdownString(
+    MARKDOWN_TRANSFORMERS,
+    selection
+  ).replace(/^\n+/, '');
+}
+
+function $markdownPrefixLengthWithinBlock(
+  block: LexicalNode,
+  to: { key: string; offset: number }
+): number {
+  if (!$isElementNode(block)) {
+    return 0;
+  }
+
+  const selection = $createRangeSelection();
+  selection.anchor.set(block.getKey(), 0, 'element');
+  selection.focus.set(to.key, to.offset, 'text');
+  return $convertSelectionToMarkdownString(MARKDOWN_TRANSFORMERS, selection)
+    .length;
+}
+
+function collectTextPointsInBlock(
+  block: LexicalNode,
+  points: Array<{ key: string; offset: number }>
+): void {
+  const walk = (node: LexicalNode) => {
+    if ($isTextNode(node)) {
+      for (let offset = 0; offset <= node.getTextContentSize(); offset++) {
+        points.push({ key: node.getKey(), offset });
+      }
+      return;
+    }
+    if ($isElementNode(node)) {
+      for (const child of node.getChildren()) {
+        walk(child);
+      }
+    }
+  };
+
+  walk(block);
+}
+
+function $pointAtMarkdownOffsetInBlock(
+  block: LexicalNode,
+  offsetInBlock: number
+): { key: string; offset: number } | null {
+  const points: Array<{ key: string; offset: number }> = [];
+  collectTextPointsInBlock(block, points);
+  if (points.length === 0) {
+    return null;
+  }
+
+  let lo = 0;
+  let hi = points.length - 1;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    const length = $markdownPrefixLengthWithinBlock(block, points[mid]);
+    if (length <= offsetInBlock) {
+      lo = mid;
+    } else {
+      hi = mid - 1;
+    }
+  }
+
+  return points[lo];
+}
+
+function $pointAtEndOfBlock(
+  block: LexicalNode
+): { key: string; offset: number } | null {
+  const points: Array<{ key: string; offset: number }> = [];
+  collectTextPointsInBlock(block, points);
+  return points[points.length - 1] ?? null;
+}
+
 function $pointAtMarkdownOffset(
   offset: number
 ): { key: string; offset: number } | null {
-  let best: { key: string; offset: number } | null = null;
-  let bestLength = -1;
+  const children = $getRoot()
+    .getChildren()
+    .filter((node) => !$isTransientParagraphNode(node));
+  let pos = 0;
+  let pendingEmpty = 0;
+  let previousBlock: LexicalNode | null = null;
 
-  $forEachTextPoint((key, textOffset) => {
-    const length = $markdownPrefixLength({
-      key,
-      offset: textOffset,
-      type: 'text',
-    });
-    if (length <= offset && length > bestLength) {
-      bestLength = length;
-      best = { key, offset: textOffset };
+  for (const child of children) {
+    if (isEmptyRootParagraph(child)) {
+      pendingEmpty++;
+      continue;
     }
-  });
 
-  return best;
+    const blockMarkdown = exportRootChildMarkdown(child);
+    if (blockMarkdown.length === 0) {
+      continue;
+    }
+
+    if (previousBlock !== null) {
+      const separator = blockSeparatorForExport(
+        previousBlock,
+        child,
+        pendingEmpty
+      );
+      if (offset < pos + separator.length) {
+        return $pointAtEndOfBlock(previousBlock);
+      }
+      pos += separator.length;
+    } else if (pendingEmpty > 0) {
+      const gap = gapForEmptyParagraphCount(pendingEmpty);
+      if (offset < pos + gap.length) {
+        return $pointAtMarkdownOffsetInBlock(child, 0);
+      }
+      pos += gap.length;
+    }
+
+    pendingEmpty = 0;
+
+    if (offset <= pos + blockMarkdown.length) {
+      return $pointAtMarkdownOffsetInBlock(child, offset - pos);
+    }
+
+    pos += blockMarkdown.length;
+    previousBlock = child;
+  }
+
+  if (previousBlock !== null && offset === pos) {
+    return $pointAtEndOfBlock(previousBlock);
+  }
+
+  return null;
 }
 
 export function $captureMarkdownSelectionOffsets(): MarkdownSelectionOffsets | null {
@@ -335,4 +507,247 @@ export function $restoreMarkdownSelectionOffsets(
   selection.focus.set(focus.key, focus.offset, 'text');
   $setSelection(selection);
   return true;
+}
+
+export type StructuredPoint = {
+  rootIndex: number;
+  path: number[];
+  textOffset: number;
+};
+
+export type StructuredSelection = {
+  anchor: StructuredPoint;
+  focus: StructuredPoint;
+  direction: 'LTR' | 'RTL';
+};
+
+function clampIndex(index: number, size: number): number {
+  if (size <= 0) {
+    return 0;
+  }
+  return Math.max(0, Math.min(index, size - 1));
+}
+
+function $exportRootChildren(): LexicalNode[] {
+  return $getRoot()
+    .getChildren()
+    .filter((node) => !$isTransientParagraphNode(node));
+}
+
+function childAt(parent: ElementNode, index: number): LexicalNode | null {
+  if (index < 0 || index >= parent.getChildrenSize()) {
+    return null;
+  }
+  return parent.getChildAtIndex(index) ?? null;
+}
+
+function findFirstTextDescendant(node: LexicalNode): TextNode | null {
+  if ($isTextNode(node)) {
+    return node;
+  }
+  if (!$isElementNode(node)) {
+    return null;
+  }
+  for (const child of node.getChildren()) {
+    const text = findFirstTextDescendant(child);
+    if (text !== null) {
+      return text;
+    }
+  }
+  return null;
+}
+
+function $textNodeAndOffset(
+  point: PointType
+): { node: TextNode; offset: number } | null {
+  const node = point.getNode();
+  if ($isTextNode(node)) {
+    return { node, offset: point.offset };
+  }
+  if ($isElementNode(node)) {
+    const text = findFirstTextDescendant(node);
+    if (text !== null) {
+      return { node: text, offset: point.offset };
+    }
+  }
+  return null;
+}
+
+function $captureStructuredPoint(point: PointType): StructuredPoint | null {
+  const resolved = $textNodeAndOffset(point);
+  if (resolved === null) {
+    return null;
+  }
+
+  const path: number[] = [];
+  let current: LexicalNode = resolved.node;
+
+  while (current.getParent()?.getKey() !== $getRoot().getKey()) {
+    const parent = current.getParent();
+    if (parent === null) {
+      return null;
+    }
+    path.unshift(current.getIndexWithinParent());
+    current = parent;
+  }
+
+  const rootChildren = $exportRootChildren();
+  const rootIndex = rootChildren.findIndex(
+    (child) => child.getKey() === current.getKey()
+  );
+  if (rootIndex < 0) {
+    return null;
+  }
+
+  return {
+    rootIndex,
+    path,
+    textOffset: resolved.offset,
+  };
+}
+
+export function $captureStructuredSelection(): StructuredSelection | null {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection)) {
+    return null;
+  }
+
+  const anchor = $captureStructuredPoint(selection.anchor);
+  const focus = $captureStructuredPoint(selection.focus);
+  if (anchor === null || focus === null) {
+    return null;
+  }
+
+  return {
+    anchor,
+    focus,
+    direction: selection.isBackward() ? 'RTL' : 'LTR',
+  };
+}
+
+function containerTextFromBlock(
+  block: LexicalNode,
+  point: StructuredPoint
+): string | null {
+  if ($isTableNode(block) && point.path.length >= 2) {
+    const row = block.getChildAtIndex(point.path[0]);
+    if (!$isTableRowNode(row)) {
+      return null;
+    }
+    const cell = row.getChildAtIndex(point.path[1]);
+    if (!$isTableCellNode(cell)) {
+      return null;
+    }
+    return cell.getTextContent();
+  }
+
+  return block.getTextContent();
+}
+
+export function getContainerTextFromLexical(
+  point: StructuredPoint
+): string | null {
+  const rootChildren = $exportRootChildren();
+  if (point.rootIndex < 0 || point.rootIndex >= rootChildren.length) {
+    return null;
+  }
+
+  return containerTextFromBlock(rootChildren[point.rootIndex], point);
+}
+
+export function getContainerTextFromParsedBlocks(
+  blocks: LexicalNode[],
+  point: StructuredPoint
+): string | null {
+  if (blocks.length === 0) {
+    return null;
+  }
+
+  if (point.rootIndex < 0 || point.rootIndex >= blocks.length) {
+    return null;
+  }
+
+  return containerTextFromBlock(blocks[point.rootIndex], point);
+}
+
+function $resolveStructuredPoint(
+  point: StructuredPoint
+): { key: string; offset: number } | null {
+  const rootChildren = $exportRootChildren();
+  if (rootChildren.length === 0) {
+    return null;
+  }
+
+  let current = rootChildren[clampIndex(point.rootIndex, rootChildren.length)];
+  if (current === undefined) {
+    return null;
+  }
+
+  const path = [...point.path];
+  if ($isTableNode(current) && path.length >= 2) {
+    path[0] = clampIndex(path[0], current.getChildrenSize());
+    const row = childAt(current, path[0]);
+    if (row === null || !$isTableRowNode(row)) {
+      return null;
+    }
+    path[1] = clampIndex(path[1], row.getChildrenSize());
+  }
+
+  for (const index of path) {
+    if (!$isElementNode(current)) {
+      return null;
+    }
+    const child = childAt(
+      current,
+      clampIndex(index, current.getChildrenSize())
+    );
+    if (child === null) {
+      return null;
+    }
+    current = child;
+  }
+
+  if (!$isTextNode(current)) {
+    const text = findFirstTextDescendant(current);
+    if (text === null) {
+      return null;
+    }
+    current = text;
+  }
+
+  return {
+    key: current.getKey(),
+    offset: clampIndex(point.textOffset, current.getTextContentSize() + 1),
+  };
+}
+
+export function $restoreStructuredSelection(
+  saved: StructuredSelection
+): boolean {
+  const anchor = $resolveStructuredPoint(saved.anchor);
+  const focus = $resolveStructuredPoint(saved.focus);
+  if (anchor === null || focus === null) {
+    return false;
+  }
+
+  const selection = $createRangeSelection();
+  selection.anchor.set(anchor.key, anchor.offset, 'text');
+  selection.focus.set(focus.key, focus.offset, 'text');
+  $setSelection(selection);
+  return true;
+}
+
+export function remapStructuredPoint(
+  localText: string | null,
+  remoteText: string | null,
+  point: StructuredPoint
+): StructuredPoint {
+  if (localText === null || remoteText === null || localText === remoteText) {
+    return point;
+  }
+
+  return {
+    ...point,
+    textOffset: remapMarkdownOffset(localText, remoteText, point.textOffset),
+  };
 }
