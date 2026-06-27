@@ -158,7 +158,7 @@ export function registerTaskListItemShortcuts(
 
     if ($tryConvertListItemToTaskList(node)) {
       const markdownBefore = $exportMarkdownString();
-      $tagShortcutHistoryFromMarkdown(markdownBefore);
+      $tagShortcutHistoryFromMarkdown(markdownBefore, editor);
     }
   });
 }

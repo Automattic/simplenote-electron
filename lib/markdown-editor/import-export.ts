@@ -6,6 +6,7 @@ import {
 import { $isHorizontalRuleNode } from '@lexical/extension';
 import { $isLinkNode } from '@lexical/link';
 import { $isListNode, type ListNode } from '@lexical/list';
+import { $isTableNode } from '@lexical/table';
 import {
   $createParagraphNode,
   $createRangeSelection,
@@ -18,8 +19,18 @@ import {
   $setSelection,
   type ElementNode,
   type LexicalNode,
+  type NodeKey,
   type TextNode,
 } from 'lexical';
+
+import {
+  clearBlockExportCache,
+  getBlockExportCache,
+  type MarkdownExportContext,
+  $resolveIncrementalExportKeys,
+} from './block-export-cache';
+import { $exportTableNodeMarkdown } from './gfm-transformers';
+import { $exportTableMarkdown } from './table-export-cache';
 
 import {
   importMixedNestedListMarkdown,
@@ -158,7 +169,10 @@ export function $exportTopLevelBlockMarkdown(node: LexicalNode): string {
   return exportTopLevelNode(node);
 }
 
-function exportTopLevelNode(node: LexicalNode): string {
+function exportTopLevelNode(
+  node: LexicalNode,
+  options?: Pick<LineNativeExportOptions, 'markdownExportContext'>
+): string {
   if ($isHorizontalRuleNode(node)) {
     return '---';
   }
@@ -174,6 +188,14 @@ function exportTopLevelNode(node: LexicalNode): string {
     return exportListNode(node).replace(/^\n+/, '');
   }
 
+  if ($isTableNode(node)) {
+    const markdown =
+      options?.markdownExportContext === undefined
+        ? $exportTableNodeMarkdown(node)
+        : $exportTableMarkdown(node, options.markdownExportContext);
+    return markdown.replace(/^\n+/, '');
+  }
+
   const selection = $createRangeSelection();
   const key = node.getKey();
   selection.anchor.set(key, 0, 'element');
@@ -185,7 +207,13 @@ function exportTopLevelNode(node: LexicalNode): string {
   ).replace(/^\n+/, '');
 }
 
-function $exportLineNativeMarkdown(): string {
+type LineNativeExportOptions = {
+  cache?: Map<NodeKey, string>;
+  markdownExportContext?: MarkdownExportContext;
+  reExportKeys?: ReadonlySet<NodeKey>;
+};
+
+function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
   const children = $getRoot().getChildren();
   if (children.length === 0) {
     return '';
@@ -195,6 +223,8 @@ function $exportLineNativeMarkdown(): string {
     return gapForEmptyParagraphCount(children.length);
   }
 
+  const cache = options?.cache;
+  const reExportKeys = options?.reExportKeys;
   let output = '';
   let pendingEmpty = 0;
   let previousBlock: LexicalNode | null = null;
@@ -209,7 +239,20 @@ function $exportLineNativeMarkdown(): string {
       continue;
     }
 
-    const markdown = exportTopLevelNode(child);
+    const childKey = child.getKey();
+    const shouldReExport =
+      cache === undefined ||
+      reExportKeys === undefined ||
+      reExportKeys.has(childKey) ||
+      !cache.has(childKey);
+    const markdown = shouldReExport
+      ? exportTopLevelNode(child, options)
+      : (cache.get(childKey) ?? exportTopLevelNode(child, options));
+
+    if (cache !== undefined && shouldReExport) {
+      cache.set(childKey, markdown);
+    }
+
     if (markdown.length === 0) {
       continue;
     }
@@ -232,9 +275,49 @@ function $exportLineNativeMarkdown(): string {
   return output;
 }
 
-export function $exportMarkdownString(): string {
-  return $exportLineNativeMarkdown();
+function $exportLineNativeMarkdownIncremental(
+  context: MarkdownExportContext
+): string {
+  const cache = getBlockExportCache(context.editor);
+  const reExportKeys = $resolveIncrementalExportKeys(context);
+
+  // Cold cache: one full pass seeds entries for subsequent edits.
+  if (cache.size === 0) {
+    return $exportLineNativeMarkdown({ cache, markdownExportContext: context });
+  }
+
+  return $exportLineNativeMarkdown({
+    cache,
+    markdownExportContext: context,
+    reExportKeys,
+  });
 }
+
+export function $exportMarkdownString(context?: MarkdownExportContext): string {
+  if (context === undefined) {
+    return $exportLineNativeMarkdown();
+  }
+
+  return $exportLineNativeMarkdownIncremental(context);
+}
+
+/** Assemble markdown from cache, re-exporting only the given root block keys. */
+export function $exportMarkdownStringFromEditorCache(
+  editor: MarkdownExportContext['editor'],
+  reExportKeys: ReadonlySet<NodeKey> = new Set()
+): string {
+  const cache = getBlockExportCache(editor);
+  if (cache.size === 0) {
+    return $exportLineNativeMarkdown();
+  }
+
+  return $exportLineNativeMarkdown({ cache, reExportKeys });
+}
+
+export {
+  clearBlockExportCache,
+  type MarkdownExportContext,
+} from './block-export-cache';
 
 type ImportChunkPart =
   | { kind: 'gap'; text: string }

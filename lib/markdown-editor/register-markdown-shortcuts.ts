@@ -6,11 +6,12 @@ import {
 import type { LexicalEditor } from 'lexical';
 
 import {
-  $exportMarkdownString,
+  $exportMarkdownStringFromEditorCache,
   $exportTopLevelBlockMarkdown,
 } from './import-export';
 import {
   $exportTopLevelBlockMarkdownFromSelection,
+  $getReExportKeysForSelection,
   $reconcileShortcutHistoryPush,
   pendingBlockShortcutHistory,
   registerSyntaxTriggerUndoSanitizer,
@@ -72,7 +73,7 @@ function installShortcutHistoryReconciliation(
   editor.update = (updateFn, options) => {
     if ((editor as UpdatingEditor)._updating) {
       return update(() => {
-        const markdownBefore = $exportMarkdownString();
+        const markdownBefore = $exportMarkdownStringFromEditorCache(editor);
 
         updateFn();
 
@@ -90,7 +91,10 @@ function installShortcutHistoryReconciliation(
 
         $reconcileShortcutHistoryPush(
           markdownBefore,
-          $exportMarkdownString(),
+          $exportMarkdownStringFromEditorCache(
+            editor,
+            $getReExportKeysForSelection()
+          ),
           editor
         );
       }, options);

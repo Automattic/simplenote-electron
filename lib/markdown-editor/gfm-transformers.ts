@@ -101,6 +101,77 @@ function formatDividerCell(
   }
 }
 
+export type TableRowMarkdownExport = {
+  columnCount: number;
+  isHeaderRow: boolean;
+  line: string;
+};
+
+export function $exportTableRowMarkdown(
+  row: TableRowNode
+): TableRowMarkdownExport {
+  const rowOutput: string[] = [];
+  let isHeaderRow = false;
+
+  for (const cell of row.getChildren()) {
+    if (!$isTableCellNode(cell)) {
+      continue;
+    }
+
+    rowOutput.push(
+      $convertToMarkdownString(getTableCellInlineTransformers(), cell)
+        .replace(/\n/g, '\\n')
+        .trim()
+    );
+
+    if (cell.getHeaderStyles() === TableCellHeaderStates.ROW) {
+      isHeaderRow = true;
+    }
+  }
+
+  return {
+    columnCount: rowOutput.length,
+    isHeaderRow,
+    line: `| ${rowOutput.join(' | ')} |`,
+  };
+}
+
+export function $buildTableDividerLine(
+  table: TableNode,
+  columnCount: number
+): string {
+  const alignments = $getState(table, tableColumnAlignmentsState) ?? [];
+  const dividerCells =
+    alignments.length > 0
+      ? alignments.map(({ alignment, explicitLeft }) =>
+          formatDividerCell(alignment, explicitLeft)
+        )
+      : Array.from({ length: columnCount }, () => '---');
+
+  return `| ${dividerCells.join(' | ')} |`;
+}
+
+export function $exportTableNodeMarkdown(table: TableNode): string {
+  const output: string[] = [];
+  let headerDividerEmitted = false;
+
+  for (const row of table.getChildren()) {
+    if (!$isTableRowNode(row)) {
+      continue;
+    }
+
+    const { columnCount, isHeaderRow, line } = $exportTableRowMarkdown(row);
+    output.push(line);
+
+    if (isHeaderRow && !headerDividerEmitted) {
+      output.push($buildTableDividerLine(table, columnCount));
+      headerDividerEmitted = true;
+    }
+  }
+
+  return output.join('\n');
+}
+
 function $createTableCell(textContent: string): TableCellNode {
   const normalized = textContent.replace(/\\n/g, '\n').trim();
   const cell = $createTableCellNode(TableCellHeaderStates.NO_STATUS);
@@ -251,49 +322,7 @@ export const TABLE: ElementTransformer = {
       return null;
     }
 
-    const output: string[] = [];
-    const alignments = $getState(node, tableColumnAlignmentsState) ?? [];
-    let headerDividerEmitted = false;
-
-    for (const row of node.getChildren()) {
-      if (!$isTableRowNode(row)) {
-        continue;
-      }
-
-      const rowOutput: string[] = [];
-      let isHeaderRow = false;
-
-      for (const cell of row.getChildren()) {
-        if (!$isTableCellNode(cell)) {
-          continue;
-        }
-
-        rowOutput.push(
-          $convertToMarkdownString(getTableCellInlineTransformers(), cell)
-            .replace(/\n/g, '\\n')
-            .trim()
-        );
-
-        if (cell.getHeaderStyles() === TableCellHeaderStates.ROW) {
-          isHeaderRow = true;
-        }
-      }
-
-      output.push(`| ${rowOutput.join(' | ')} |`);
-
-      if (isHeaderRow && !headerDividerEmitted) {
-        const dividerCells =
-          alignments.length > 0
-            ? alignments.map(({ alignment, explicitLeft }) =>
-                formatDividerCell(alignment, explicitLeft)
-              )
-            : rowOutput.map(() => '---');
-        output.push(`| ${dividerCells.join(' | ')} |`);
-        headerDividerEmitted = true;
-      }
-    }
-
-    return output.join('\n');
+    return $exportTableNodeMarkdown(node);
   },
   regExp: TABLE_ROW_REG_EXP,
   replace: (parentNode, _children, match) => {

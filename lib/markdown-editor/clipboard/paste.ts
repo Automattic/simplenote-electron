@@ -26,6 +26,7 @@ import {
   type TextNode,
 } from 'lexical';
 
+import { clearBlockExportCache } from '../block-export-cache';
 import { $markdownToNodes } from '../import-export';
 import { normalizeLinkHref, urlFromText } from '../link-validator';
 import { getTableCellInlineTransformers } from '../gfm-transformers';
@@ -353,7 +354,10 @@ function $handleMarkdownPaste(event: PasteCommandType): boolean {
 export function registerMarkdownPaste(editor: LexicalEditor): () => void {
   return editor.registerCommand(
     PASTE_COMMAND,
-    (event) => $handleMarkdownPaste(event),
+    (event) => {
+      clearBlockExportCache(editor);
+      return $handleMarkdownPaste(event);
+    },
     COMMAND_PRIORITY_HIGH
   );
 }

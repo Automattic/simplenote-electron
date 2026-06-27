@@ -12,10 +12,12 @@ import {
   HISTORY_PUSH_TAG,
   type ElementNode,
   type LexicalEditor,
+  type NodeKey,
 } from 'lexical';
 
+import { $expandDirtyRootBlockNeighbors } from './block-export-cache';
 import {
-  $exportMarkdownString,
+  $exportMarkdownStringFromEditorCache,
   $exportTopLevelBlockMarkdown,
 } from './import-export';
 
@@ -51,6 +53,32 @@ export function $exportTopLevelBlockMarkdownFromSelection(): string {
   }
 
   return $exportTopLevelBlockMarkdown(block);
+}
+
+/** Root blocks to re-export after a local shortcut mutation. */
+export function $getReExportKeysForSelection(): Set<NodeKey> {
+  const block = $getTopLevelBlockFromSelection();
+  if (!block) {
+    return new Set();
+  }
+
+  return $expandDirtyRootBlockNeighbors(new Set([block.getKey()]));
+}
+
+/** When tagging history directly from a node transform or command. */
+export function $tagShortcutHistoryFromMarkdown(
+  markdownBefore: string,
+  editor: LexicalEditor
+): void {
+  const markdownAfter = $exportMarkdownStringFromEditorCache(
+    editor,
+    $getReExportKeysForSelection()
+  );
+  if ($shouldMergeShortcutHistory(markdownBefore, markdownAfter)) {
+    $addUpdateTag(HISTORY_MERGE_TAG);
+  } else {
+    $addUpdateTag(HISTORY_PUSH_TAG);
+  }
 }
 
 /** True when a block shortcut consumed only its trigger text (e.g. `## ` → empty h2). */
@@ -109,16 +137,6 @@ export function $reconcileShortcutHistoryPush(
   }
 
   $mergeShortcutHistoryPush(editor);
-}
-
-/** When tagging history directly from a node transform or command. */
-export function $tagShortcutHistoryFromMarkdown(markdownBefore: string): void {
-  const markdownAfter = $exportMarkdownString();
-  if ($shouldMergeShortcutHistory(markdownBefore, markdownAfter)) {
-    $addUpdateTag(HISTORY_MERGE_TAG);
-  } else {
-    $addUpdateTag(HISTORY_PUSH_TAG);
-  }
 }
 
 /**
