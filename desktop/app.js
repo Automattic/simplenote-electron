@@ -29,6 +29,7 @@ module.exports = function main() {
   let mainWindow = null;
   let isAuthenticated;
   let shouldQuit = false;
+  const viewState = { markdownEditorActive: false };
 
   // Checks to see if the application was asked to quit instead of just close the window
   // we then use this variable to check if we should quit the app.
@@ -94,7 +95,7 @@ module.exports = function main() {
       mainWindow.loadUrl(url);
     }
 
-    contextMenu(mainWindow);
+    contextMenu(mainWindow, viewState);
 
     if (
       'test' !== process.env.NODE_ENV &&
@@ -113,6 +114,7 @@ module.exports = function main() {
     ipcMain.on('appStateUpdate', function (event, args) {
       const settings = args['settings'] || {};
       isAuthenticated = settings && 'accountName' in settings;
+      viewState.markdownEditorActive = args.markdownEditorActive === true;
       Menu.setApplicationMenu(
         Menu.buildFromTemplate(createMenuTemplate(args), mainWindow)
       );

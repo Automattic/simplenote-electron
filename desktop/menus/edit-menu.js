@@ -1,7 +1,9 @@
 const { appCommandSender, editorCommandSender } = require('./utils');
 
-const buildEditMenu = (settings, isAuthenticated) => {
-  settings = settings || {};
+const buildEditMenu = (args, isAuthenticated) => {
+  args = args || {};
+  const settings = args.settings || {};
+  const markdownEditorActive = args.markdownEditorActive === true;
   isAuthenticated = isAuthenticated || false;
 
   const undo = {
@@ -65,13 +67,19 @@ const buildEditMenu = (settings, isAuthenticated) => {
       label: 'C&opy',
       role: 'copy',
     },
+    markdownEditorActive
+      ? {
+          label: 'Copy as Plain &Text',
+          click: editorCommandSender({ action: 'copyAsPlainText' }),
+        }
+      : null,
     {
       label: '&Paste',
       role: 'paste',
     },
     selectAll,
     { type: 'separator' },
-  ];
+  ].filter((item) => item !== null);
 
   const submenu = editMenuOptions
     .concat(defaultSubmenuAdditions)

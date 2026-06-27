@@ -18,7 +18,6 @@ import {
 
 import {
   $shouldPreferMarkdownPasteOverLexicalJson,
-  MARKDOWN_CLIPBOARD_MIME_TYPE,
   MARKDOWN_TRANSFORMERS,
 } from './extensions';
 import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
@@ -232,7 +231,7 @@ describe('list deletion', () => {
     const clipboardData = editor.read(() =>
       $getClipboardDataFromSelection($getSelection())
     );
-    expect(clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('> hjhj');
+    expect(clipboardData['text/plain']).toBe('> hjhj');
     expect(clipboardData['application/x-lexical-editor']).toContain('hjhj');
     expect(clipboardData['application/x-lexical-editor']).not.toContain(
       'quote'
@@ -393,8 +392,7 @@ describe('list deletion', () => {
     const clipboardData = editor.read(() =>
       $getClipboardDataFromSelection($getSelection())
     );
-    expect(clipboardData['text/plain']).toBe('two');
-    expect(clipboardData[MARKDOWN_CLIPBOARD_MIME_TYPE]).toBe('- two\n');
+    expect(clipboardData['text/plain']).toBe('- two\n');
 
     await dispatchDelete(editor);
     expect(exportMarkdown(editor)).toBe('- one\n- three');

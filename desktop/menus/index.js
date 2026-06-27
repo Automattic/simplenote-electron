@@ -23,7 +23,7 @@ function createMenuTemplate(args, mainWindow) {
   return [
     platform.isOSX() ? buildMacAppMenu(isAuthenticated) : null,
     buildFileMenu(isAuthenticated),
-    buildEditMenu(settings, isAuthenticated),
+    buildEditMenu(args, isAuthenticated),
     buildViewMenu(settings, isAuthenticated),
     platform.isOSX() ? windowMenu : null,
     buildHelpMenu(mainWindow, isAuthenticated),

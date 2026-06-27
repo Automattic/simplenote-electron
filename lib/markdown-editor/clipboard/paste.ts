@@ -34,6 +34,8 @@ import { $isSelectionInTable } from '../table-controls';
 import { isFormattingFreeHtml } from '../../utils/clipboard/html-to-markdown';
 import {
   $getClipboardMarkdownFromDataTransfer,
+  $shouldPreferMarkdownPasteOverLexicalJson,
+  MARKDOWN_CLIPBOARD_MIME_TYPE,
   type ClipboardMarkdownPayload,
 } from './shared';
 
@@ -276,6 +278,29 @@ function $wrapSelectionInPastedLink(markdown: string): boolean {
   return true;
 }
 
+// Copy puts markdown in text/plain only (not text/markdown). When Lexical JSON
+// would lose block structure, import the markdown from text/plain before the
+// import pipeline tries text/html.
+function $tryPasteMarkdownFromPlainTextWhenLexicalJsonPresent(
+  clipboardData: DataTransfer,
+  selection: BaseSelection
+): boolean {
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+  if (clipboardData.getData(MARKDOWN_CLIPBOARD_MIME_TYPE)) {
+    return false;
+  }
+  const plain = clipboardData.getData('text/plain');
+  if (!plain || !clipboardData.getData('application/x-lexical-editor')) {
+    return false;
+  }
+  if (!$shouldPreferMarkdownPasteOverLexicalJson(plain)) {
+    return false;
+  }
+  return $importMarkdownClipboard(plain, selection);
+}
+
 // ClipboardImportExtension handles markdown/HTML import and same-editor JSON.
 // PASTE_COMMAND only intercepts cases that need command-level control before
 // RichTextExtension delegates to the import pipeline.
@@ -340,6 +365,16 @@ function $handleMarkdownPaste(event: PasteCommandType): boolean {
   const selection = $getSelection();
   if (!clipboardData || !$isRangeSelection(selection)) {
     return false;
+  }
+
+  if (
+    $tryPasteMarkdownFromPlainTextWhenLexicalJsonPresent(
+      clipboardData,
+      selection
+    )
+  ) {
+    event.preventDefault();
+    return true;
   }
 
   if (!$getClipboardMarkdownFromDataTransfer(clipboardData)) {

@@ -1,6 +1,7 @@
 import { useEffect, type RefObject } from 'react';
 import type { LexicalEditor } from 'lexical';
 
+import { copySelectionAsPlainText } from './clipboard/copy-as-plain-text';
 import { redo, selectAll, undo } from './toolbar/commands';
 
 type Options = {
@@ -19,6 +20,12 @@ export function useElectronEditorCommands({
       const editor = editorRef.current;
 
       switch (command.action) {
+        case 'copyAsPlainText':
+          if (editor) {
+            editor.focus();
+            copySelectionAsPlainText(editor);
+          }
+          return;
         case 'findAgain':
           if (matchCount > 0) {
             onFindAgain();

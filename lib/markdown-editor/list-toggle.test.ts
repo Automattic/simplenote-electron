@@ -108,6 +108,15 @@ function exportMarkdown(editor: LexicalEditorWithDispose): string {
     .read(() => $convertToMarkdownString(MARKDOWN_TRANSFORMERS));
 }
 
+async function flushToggleList(
+  editor: LexicalEditorWithDispose,
+  listType: Parameters<typeof toggleListAtSelection>[1]
+): Promise<boolean> {
+  const ran = toggleListAtSelection(editor, listType);
+  await Promise.resolve();
+  return ran;
+}
+
 async function dispatchTaskListShortcut(
   editor: LexicalEditorWithDispose,
   modifiers: Pick<KeyboardEvent, 'ctrlKey' | 'metaKey'>
@@ -194,15 +203,6 @@ describe('task list keyboard shortcut', () => {
     editor.dispose();
   });
 });
-
-async function flushToggleList(
-  editor: LexicalEditorWithDispose,
-  listType: Parameters<typeof toggleListAtSelection>[1]
-): Promise<boolean> {
-  const ran = toggleListAtSelection(editor, listType);
-  await Promise.resolve();
-  return ran;
-}
 
 describe('toggleListAtSelection', () => {
   it('creates a bullet list in an empty paragraph', async () => {

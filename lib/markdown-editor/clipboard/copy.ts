@@ -10,6 +10,7 @@ import {
   $isRangeSelection,
   configExtension,
   defineExtension,
+  type BaseSelection,
 } from 'lexical';
 
 import { wrapLexicalClipboardJsonPrefix } from '../clipboard-lexical-json';
@@ -23,7 +24,7 @@ import {
   MARKDOWN_CLIPBOARD_MIME_TYPE,
 } from './shared';
 
-const $exportSelectionMarkdown = (
+export const $exportSelectionMarkdown = (
   selection: NonNullable<ReturnType<typeof $getSelection>>
 ) => {
   let markdown = $convertSelectionToMarkdownString(
@@ -45,15 +46,20 @@ const $exportSelectionMarkdown = (
   return markdown;
 };
 
+export const $exportSelectionPlainText = (selection: BaseSelection) =>
+  selection.getTextContent();
+
 export const MarkdownCopyExtension = defineExtension({
   name: '@simplenote/markdown-copy',
   dependencies: [
     configExtension(GetClipboardDataExtension, {
       $exportMimeType: {
-        [MARKDOWN_CLIPBOARD_MIME_TYPE]: [
+        'text/plain': [
           (selection) =>
             selection ? $exportSelectionMarkdown(selection) : null,
         ],
+        // Omit text/markdown on copy: it would duplicate text/plain, and most
+        // destinations do not support text/markdown.
         // Prefix Lexical JSON so Cursor IDE ignores it; stripped on import below.
         'application/x-lexical-editor': [
           (selection, next) => {
@@ -107,6 +113,13 @@ export const MarkdownCopyExtension = defineExtension({
                 clipboardMarkdown.markdown
               )
             ) {
+              // Copy puts markdown in text/plain (not text/markdown); import it
+              // here when Lexical JSON would lose block structure.
+              if (
+                $importMarkdownClipboard(clipboardMarkdown.markdown, selection)
+              ) {
+                return true;
+              }
               return false;
             }
 

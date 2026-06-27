@@ -6,6 +6,16 @@ import * as S from '../';
 
 const debug = debugFactory('electron-middleware');
 
+function getElectronAppState(state: S.State) {
+  const noteId = state.ui.openedNote;
+  const note = noteId ? state.data.notes.get(noteId) : undefined;
+
+  return {
+    markdownEditorActive: note?.systemTags.includes('markdown') ?? false,
+    settings: state.settings,
+  };
+}
+
 export const middleware: S.Middleware = ({ dispatch, getState }) => {
   window.electron.receive('tokenLogin', (url) => {
     const { searchParams } = new URL(url);
@@ -90,9 +100,7 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
     }
   });
 
-  window.electron.send('appStateUpdate', {
-    settings: getState().settings,
-  });
+  window.electron.send('appStateUpdate', getElectronAppState(getState()));
 
   return (next) => (action) => {
     const prevState = getState();
@@ -105,10 +113,14 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         return result;
     }
 
-    if (prevState.settings !== nextState.settings) {
-      window.electron.send('appStateUpdate', {
-        settings: nextState.settings,
-      });
+    const prevPayload = getElectronAppState(prevState);
+    const nextPayload = getElectronAppState(nextState);
+
+    if (
+      prevState.settings !== nextState.settings ||
+      prevPayload.markdownEditorActive !== nextPayload.markdownEditorActive
+    ) {
+      window.electron.send('appStateUpdate', nextPayload);
     }
 
     return result;
