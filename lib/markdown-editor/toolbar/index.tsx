@@ -557,6 +557,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
               }}
             />
             <ToolbarDropdownItem
+              active={state.inHorizontalRule}
               disabled={blockDisabled}
               icon={HorizontalRuleIcon}
               label="Horizontal rule"
@@ -693,6 +694,7 @@ export const MarkdownEditorToolbar: React.FunctionComponent<Props> = ({
         title="Code block"
       />
       <ToolbarButton
+        active={state.inHorizontalRule}
         disabled={blockDisabled}
         icon={HorizontalRuleIcon}
         onClick={() => insertHorizontalRule(editor)}

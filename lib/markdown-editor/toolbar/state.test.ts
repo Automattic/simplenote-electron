@@ -12,6 +12,7 @@ import {
   type TextNode,
 } from 'lexical';
 import { $createListItemNode, $createListNode } from '@lexical/list';
+import { $isHorizontalRuleNode } from '@lexical/extension';
 import {
   $isTableCellNode,
   $isTableNode,
@@ -94,6 +95,7 @@ const emptyToolbarState = (): ToolbarState => ({
   code: false,
   link: false,
   inImage: false,
+  inHorizontalRule: false,
   h1: false,
   h2: false,
   h3: false,
@@ -317,6 +319,27 @@ describe('readToolbarState', () => {
     );
 
     expect(readToolbarState(editor).inImage).toBe(true);
+    editor.dispose();
+  });
+
+  it('marks inHorizontalRule when a horizontal rule node is selected', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---');
+
+    editor.update(
+      () => {
+        const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+        if (!hr) {
+          throw new Error('Expected horizontal rule node');
+        }
+        const selection = $createNodeSelection();
+        selection.add(hr.getKey());
+        $setSelection(selection);
+      },
+      { discrete: true }
+    );
+
+    expect(readToolbarState(editor).inHorizontalRule).toBe(true);
     editor.dispose();
   });
 });

@@ -7,6 +7,7 @@ import {
   $isNodeSelection,
   $isRangeSelection,
 } from 'lexical';
+import { $isHorizontalRuleNode } from '@lexical/extension';
 import { $isCodeNode } from '@lexical/code-core';
 import { $isLinkNode } from '@lexical/link';
 import { $isListNode } from '@lexical/list';
@@ -29,6 +30,7 @@ export type ToolbarState = {
   code: boolean;
   link: boolean;
   inImage: boolean;
+  inHorizontalRule: boolean;
   h1: boolean;
   h2: boolean;
   h3: boolean;
@@ -80,6 +82,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
     code: false,
     link: false,
     inImage: false,
+    inHorizontalRule: false,
     h1: false,
     h2: false,
     h3: false,
@@ -138,6 +141,7 @@ export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
       }
     } else if ($isNodeSelection(selection)) {
       state.inImage = selection.getNodes().some($isImageNode);
+      state.inHorizontalRule = selection.getNodes().some($isHorizontalRuleNode);
     }
 
     state.h1 = isHeadingTagActive('h1', block);
@@ -171,6 +175,7 @@ export const toolbarStateEqual = (a: ToolbarState, b: ToolbarState) =>
   a.code === b.code &&
   a.link === b.link &&
   a.inImage === b.inImage &&
+  a.inHorizontalRule === b.inHorizontalRule &&
   a.h1 === b.h1 &&
   a.h2 === b.h2 &&
   a.h3 === b.h3 &&

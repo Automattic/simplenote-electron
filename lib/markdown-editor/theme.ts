@@ -1,6 +1,7 @@
 export const markdownEditorTheme = {
   code: 'lexical-md-editor__code-block',
   hr: 'lexical-md-editor__hr',
+  hrSelected: 'is-selected',
   link: 'lexical-md-editor__link',
   list: {
     listitemChecked: 'task-list-item',

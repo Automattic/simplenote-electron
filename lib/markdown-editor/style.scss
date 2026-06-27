@@ -395,6 +395,11 @@ $mobile-caret-margin: 2.5em;
   border: none;
   border-top: 1px solid var(--tertiary-color);
   margin: 1.5em 0;
+
+  &.is-selected {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
 }
 
 .lexical-md-editor__table {

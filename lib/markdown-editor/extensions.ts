@@ -32,6 +32,8 @@ import { REMOTE_CONTENT_TAG, registerMarkdownOnChange } from './on-change';
 import { registerMarkdownShortcutsWithHistory } from './register-markdown-shortcuts';
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension } from './table-controls';
+import { registerBlockCursorNavigation } from './block-cursor-navigation';
+import { TransientParagraphNode } from './transient-paragraph-node';
 import { markdownEditorTheme } from './theme';
 import { MarkdownToolbarExtension } from './toolbar/extension';
 import { MARKDOWN_TRANSFORMERS } from './transformers';
@@ -87,6 +89,18 @@ const FormatEscapeExtension = defineExtension({
   name: '@simplenote/format-escape',
   register(editor) {
     return registerFormatEscape(editor);
+  },
+});
+
+const TransientParagraphExtension = defineExtension({
+  name: '@simplenote/transient-paragraph',
+  nodes: [TransientParagraphNode],
+});
+
+const BlockCursorNavigationExtension = defineExtension({
+  name: '@simplenote/block-cursor-navigation',
+  register(editor) {
+    return registerBlockCursorNavigation(editor);
   },
 });
 
@@ -149,6 +163,8 @@ export function createMarkdownEditorExtension(
     TableExtension,
     TableControlsExtension,
     HorizontalRuleExtension,
+    TransientParagraphExtension,
+    BlockCursorNavigationExtension,
     ImageExtension,
     MarkdownShortcutExtension,
     MarkdownPasteExtension,

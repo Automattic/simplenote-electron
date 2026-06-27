@@ -36,6 +36,7 @@ import {
   INLINE_MARKDOWN_TRANSFORMERS,
   MARKDOWN_TRANSFORMERS,
 } from './transformers';
+import { $isTransientParagraphNode } from './transient-paragraph-node';
 
 // Line-native gaps: a run of (N + 1) newlines encodes N empty root paragraphs.
 // Single \n inside exported block text is a hard line break within a paragraph.
@@ -54,6 +55,7 @@ function gapForEmptyParagraphCount(emptyCount: number): string {
 function isEmptyRootParagraph(node: LexicalNode): boolean {
   return (
     $isParagraphNode(node) &&
+    !$isTransientParagraphNode(node) &&
     node.getChildrenSize() === 0 &&
     node.getTextContent() === ''
   );
@@ -198,6 +200,10 @@ function $exportLineNativeMarkdown(): string {
   let previousBlock: LexicalNode | null = null;
 
   for (const child of children) {
+    if ($isTransientParagraphNode(child)) {
+      continue;
+    }
+
     if (isEmptyRootParagraph(child)) {
       pendingEmpty++;
       continue;

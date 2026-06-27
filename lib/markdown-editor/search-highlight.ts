@@ -14,6 +14,7 @@ import {
   getSearchTerms,
   type TextMatchRange,
 } from '../search/in-note-search';
+import { $isTransientParagraphNode } from './transient-paragraph-node';
 
 const DOUBLE_LINE_BREAK = '\n\n';
 
@@ -78,11 +79,16 @@ export function $collectTextSegments(): {
 
   const isEmptyRootParagraph = (node: LexicalNode) =>
     $isParagraphNode(node) &&
+    !$isTransientParagraphNode(node) &&
     node.getChildrenSize() === 0 &&
     node.getTextContent() === '';
 
   let needsBlockGap = false;
   for (const child of $getRoot().getChildren()) {
+    if ($isTransientParagraphNode(child)) {
+      continue;
+    }
+
     if (isEmptyRootParagraph(child)) {
       text += DOUBLE_LINE_BREAK;
       needsBlockGap = false;
