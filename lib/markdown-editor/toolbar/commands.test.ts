@@ -18,9 +18,12 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { MARKDOWN_TRANSFORMERS } from '../extensions';
-import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
-import { $isImageNode } from '../image-node';
+import { MARKDOWN_TRANSFORMERS } from '../extensions/index';
+import {
+  importMarkdown,
+  makeGfmTestEditor,
+} from '../markdown/gfm-test-helpers';
+import { $isImageNode } from '../nodes/image-node';
 import {
   getImageSrcFromSelection,
   getLinkHrefFromSelection,

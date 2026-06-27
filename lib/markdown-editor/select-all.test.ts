@@ -1,6 +1,6 @@
 import { $getSelection, $isRangeSelection } from 'lexical';
 
-import { makeGfmTestEditor } from './gfm-test-helpers';
+import { makeGfmTestEditor } from './markdown/gfm-test-helpers';
 import { selectAll } from './toolbar/commands';
 
 describe('selectAll', () => {

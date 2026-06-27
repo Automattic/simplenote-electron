@@ -11,8 +11,11 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { MARKDOWN_TRANSFORMERS } from '../extensions';
-import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
+import { MARKDOWN_TRANSFORMERS } from '../extensions/index';
+import {
+  importMarkdown,
+  makeGfmTestEditor,
+} from '../markdown/gfm-test-helpers';
 import { insertImage, setLink } from './commands';
 import { $restoreSelectionSnapshot, snapshotSelection } from './index';
 

@@ -1,5 +1,8 @@
-import { dispatchEnter, selectTextNode } from './block-cursor-test-helpers';
-import { $exportMarkdownString } from './extensions';
+import {
+  dispatchEnter,
+  selectTextNode,
+} from './extensions/block-cursor-test-helpers';
+import { $exportMarkdownString } from './extensions/index';
 import {
   describeRootBlocksFromEditor,
   idempotentRoundtripMarkdown,
@@ -8,7 +11,7 @@ import {
   markdownWithGap,
   simulateSaveReopenFromEditor,
   stableNoteSwitchMarkdown,
-} from './gfm-test-helpers';
+} from './markdown/gfm-test-helpers';
 
 const TABLE_A = ['| A |', '| --- |', '| 1 |'].join('\n');
 const TABLE_B = ['| B |', '| --- |', '| 2 |'].join('\n');

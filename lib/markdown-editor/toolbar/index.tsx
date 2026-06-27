@@ -28,7 +28,7 @@ import {
   normalizeImageSourceInput,
 } from './commands';
 import { LinkUrlInput } from './link-url-input';
-import { toggleListAtSelection } from '../list-toggle';
+import { toggleListAtSelection } from '../extensions/list-toggle';
 import { ToolbarDropdown, ToolbarDropdownItem } from './dropdown';
 import { useCompactToolbar } from './hooks';
 import { readToolbarState, useToolbarState } from './state';

@@ -13,9 +13,9 @@ import {
   type BaseSelection,
 } from 'lexical';
 
-import { wrapLexicalClipboardJsonPrefix } from '../clipboard-lexical-json';
-import { $shouldAppendTrailingLinebreakToClipboardMarkdown } from '../list-deletion';
-import { MARKDOWN_TRANSFORMERS } from '../transformers';
+import { wrapLexicalClipboardJsonPrefix } from './clipboard-lexical-json';
+import { $shouldAppendTrailingLinebreakToClipboardMarkdown } from '../extensions/list-deletion';
+import { MARKDOWN_TRANSFORMERS } from '../markdown/transformers';
 import { $importMarkdownClipboard } from './paste';
 import {
   $getClipboardMarkdownFromDataTransfer,
@@ -120,7 +120,6 @@ export const MarkdownCopyExtension = defineExtension({
               ) {
                 return true;
               }
-              return false;
             }
 
             const nodes = $parseSameEditorClipboardJson(

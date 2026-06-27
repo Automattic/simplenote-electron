@@ -7,8 +7,8 @@ import { buildEditorFromExtensions } from '@lexical/extension';
 import {
   createMarkdownEditorExtension,
   MARKDOWN_TRANSFORMERS,
-} from './extensions';
-import { importMarkdown } from './gfm-test-helpers';
+} from './extensions/index';
+import { importMarkdown } from './markdown/gfm-test-helpers';
 
 // jsdom gaps for Lexical's CheckListExtension click hit testing:
 // - getComputedStyle(elt, '::before') is unsupported (needs explicit width)

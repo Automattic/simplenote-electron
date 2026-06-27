@@ -1,25 +1,14 @@
-import React, { useMemo, useRef, type RefObject } from 'react';
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
+import React, { useEffect, useMemo, useRef, type RefObject } from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
 import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import type { LexicalEditor } from 'lexical';
 
-import {
-  createMarkdownEditorExtension,
-  $exportMarkdownString,
-  $importMarkdownString,
-  MARKDOWN_TRANSFORMERS,
-  MarkdownShortcutExtension,
-  TRANSFORMERS,
-  withMixedNestedListTransformers,
-} from './extensions';
-import { InternalLinkPlugin } from './internal-link-menu';
-import { useNoteViewScrollTracking } from './note-view-memory';
-import { SearchHighlightPlugin } from './search-highlight-plugin';
+import { createMarkdownEditorExtension } from './extensions/index';
+import { InternalLinkPlugin } from './plugins/internal-link-menu';
+import { useNoteViewScrollTracking } from './memory/note-view-memory';
+import { SearchHighlightPlugin } from './plugins/search-highlight-plugin';
 import { MarkdownToolbarPlugin } from './toolbar/extension';
 
 import './style.scss';
@@ -33,6 +22,7 @@ export type MarkdownEditorProps = {
   initialMarkdown?: string;
   noteId: EntityId;
   onChange?: (markdown: string) => void;
+  onEditorReady?: () => void;
   onMatchCountChange?: (count: number) => void;
   onOpenInternalLink?: (noteId: EntityId) => void;
   scrollContainerRef?: RefObject<HTMLElement | null>;
@@ -47,6 +37,7 @@ export default function MarkdownEditor({
   initialMarkdown = '',
   noteId,
   onChange,
+  onEditorReady,
   onMatchCountChange,
   onOpenInternalLink,
   scrollContainerRef,
@@ -61,6 +52,7 @@ export default function MarkdownEditor({
     scrollContainerRef,
   });
 
+  // initialMarkdown is intentionally omitted: key={noteId} remounts the composer.
   const extension = useMemo(
     () =>
       createMarkdownEditorExtension(
@@ -111,6 +103,7 @@ export default function MarkdownEditor({
                 />
               </form>
               {editorRef && <EditorRefPlugin editorRef={editorRef} />}
+              {onEditorReady && <EditorReadyPlugin onReady={onEditorReady} />}
               <InternalLinkPlugin
                 noteId={noteId}
                 onOpenNote={onOpenInternalLink}
@@ -132,14 +125,12 @@ export default function MarkdownEditor({
   );
 }
 
-export {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-  $exportMarkdownString,
-  $importMarkdownString,
-  createMarkdownEditorExtension,
-  MARKDOWN_TRANSFORMERS,
-  MarkdownShortcutExtension,
-  TRANSFORMERS,
-  withMixedNestedListTransformers,
-};
+function EditorReadyPlugin({ onReady }: { onReady: () => void }) {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    onReady();
+  }, [editor, onReady]);
+
+  return null;
+}

@@ -1,7 +1,7 @@
 import { $generateNodesFromSerializedNodes } from '@lexical/clipboard';
 import type { LexicalEditor, LexicalNode } from 'lexical';
 
-import { parseNamespacedLexicalClipboardJson } from '../clipboard-lexical-json';
+import { parseNamespacedLexicalClipboardJson } from './clipboard-lexical-json';
 import { resolveClipboardPaste } from '../../utils/clipboard/html-to-markdown';
 
 // Cut/copy of one full list line ends with a linebreak; prefer markdown paste

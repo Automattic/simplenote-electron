@@ -26,11 +26,11 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { clearBlockExportCache } from '../block-export-cache';
-import { $markdownToNodes } from '../import-export';
-import { normalizeLinkHref, urlFromText } from '../link-validator';
-import { getTableCellInlineTransformers } from '../gfm-transformers';
-import { $isSelectionInTable } from '../table-controls';
+import { clearBlockExportCache } from '../markdown/block-export-cache';
+import { $markdownToNodes } from '../markdown/import-export';
+import { normalizeLinkHref, urlFromText } from '../links/link-validator';
+import { getTableCellInlineTransformers } from '../markdown/gfm-transformers';
+import { $isSelectionInTable } from '../extensions/table-controls';
 import { isFormattingFreeHtml } from '../../utils/clipboard/html-to-markdown';
 import {
   $getClipboardMarkdownFromDataTransfer,
@@ -301,9 +301,9 @@ function $tryPasteMarkdownFromPlainTextWhenLexicalJsonPresent(
   return $importMarkdownClipboard(plain, selection);
 }
 
-// ClipboardImportExtension handles markdown/HTML import and same-editor JSON.
-// PASTE_COMMAND only intercepts cases that need command-level control before
-// RichTextExtension delegates to the import pipeline.
+// PASTE_COMMAND intercepts edge cases needing command-level control before
+// RichTextExtension delegates to the import pipeline; remaining cases go
+// through the import pipeline directly so plain-text pastes avoid nested updates.
 function $handleMarkdownPasteEdgeCases(event: PasteCommandType): boolean {
   const clipboardData = 'clipboardData' in event ? event.clipboardData : null;
   const selection = $getSelection();
@@ -352,10 +352,6 @@ function $handleMarkdownPasteEdgeCases(event: PasteCommandType): boolean {
   return false;
 }
 
-// ClipboardImportExtension handles markdown/HTML import and same-editor JSON.
-// PASTE_COMMAND intercepts edge cases that need command-level control, then
-// delegates everything else to the import pipeline directly (not via
-// RichTextExtension) so plain-text pastes run inline without nested updates.
 function $handleMarkdownPaste(event: PasteCommandType): boolean {
   if ($handleMarkdownPasteEdgeCases(event)) {
     return true;

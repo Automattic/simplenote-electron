@@ -19,8 +19,11 @@ import {
   $isTableRowNode,
 } from '@lexical/table';
 
-import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
-import { $isImageNode } from '../image-node';
+import {
+  importMarkdown,
+  makeGfmTestEditor,
+} from '../markdown/gfm-test-helpers';
+import { $isImageNode } from '../nodes/image-node';
 import {
   readToolbarState,
   toolbarStateEqual,

@@ -10,8 +10,8 @@ import {
   $exportMarkdownString,
   $insertMarkdownPasteNodes,
   createMarkdownEditorExtension,
-} from './extensions';
-import { countEmptyRootParagraphs } from './gfm-test-helpers';
+} from './extensions/index';
+import { countEmptyRootParagraphs } from './markdown/gfm-test-helpers';
 
 const NOTE_WITH_EXTRA_EMPTY_LINE = 'before\n\n\nafter';
 const NOTE_WITH_ONE_EMPTY_LINE = 'before\n\nafter';

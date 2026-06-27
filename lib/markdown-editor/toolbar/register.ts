@@ -12,16 +12,51 @@ import {
 
 type UndoRedoSnapshot = { canRedo: boolean; canUndo: boolean };
 
-let undoRedoSnapshot: UndoRedoSnapshot = { canRedo: false, canUndo: false };
-const undoRedoListeners = new Set<(snapshot: UndoRedoSnapshot) => void>();
+const defaultUndoRedoSnapshot = (): UndoRedoSnapshot => ({
+  canRedo: false,
+  canUndo: false,
+});
+
+const undoRedoSnapshots = new WeakMap<LexicalEditor, UndoRedoSnapshot>();
+const undoRedoListeners = new WeakMap<
+  LexicalEditor,
+  Set<(snapshot: UndoRedoSnapshot) => void>
+>();
+
+function getUndoRedoSnapshot(editor: LexicalEditor): UndoRedoSnapshot {
+  let snapshot = undoRedoSnapshots.get(editor);
+  if (!snapshot) {
+    snapshot = defaultUndoRedoSnapshot();
+    undoRedoSnapshots.set(editor, snapshot);
+  }
+  return snapshot;
+}
+
+function notifyUndoRedoListeners(
+  editor: LexicalEditor,
+  snapshot: UndoRedoSnapshot
+): void {
+  undoRedoListeners.get(editor)?.forEach((listener) => listener(snapshot));
+}
 
 export function subscribeToolbarUndoRedo(
+  editor: LexicalEditor,
   listener: (snapshot: UndoRedoSnapshot) => void
 ): () => void {
-  listener(undoRedoSnapshot);
-  undoRedoListeners.add(listener);
+  listener(getUndoRedoSnapshot(editor));
+
+  let listeners = undoRedoListeners.get(editor);
+  if (!listeners) {
+    listeners = new Set();
+    undoRedoListeners.set(editor, listeners);
+  }
+  listeners.add(listener);
+
   return () => {
-    undoRedoListeners.delete(listener);
+    listeners?.delete(listener);
+    if (listeners?.size === 0) {
+      undoRedoListeners.delete(editor);
+    }
   };
 }
 
@@ -49,8 +84,9 @@ export function registerToolbarEditorListeners(
     editor.registerCommand(
       CAN_UNDO_COMMAND,
       (payload) => {
-        undoRedoSnapshot = { ...undoRedoSnapshot, canUndo: payload };
-        undoRedoListeners.forEach((listener) => listener(undoRedoSnapshot));
+        const snapshot = { ...getUndoRedoSnapshot(editor), canUndo: payload };
+        undoRedoSnapshots.set(editor, snapshot);
+        notifyUndoRedoListeners(editor, snapshot);
         return false;
       },
       1
@@ -58,8 +94,9 @@ export function registerToolbarEditorListeners(
     editor.registerCommand(
       CAN_REDO_COMMAND,
       (payload) => {
-        undoRedoSnapshot = { ...undoRedoSnapshot, canRedo: payload };
-        undoRedoListeners.forEach((listener) => listener(undoRedoSnapshot));
+        const snapshot = { ...getUndoRedoSnapshot(editor), canRedo: payload };
+        undoRedoSnapshots.set(editor, snapshot);
+        notifyUndoRedoListeners(editor, snapshot);
         return false;
       },
       1

@@ -9,7 +9,10 @@ import {
   type TextNode,
 } from 'lexical';
 
-import { importMarkdown, makeGfmTestEditor } from '../gfm-test-helpers';
+import {
+  importMarkdown,
+  makeGfmTestEditor,
+} from '../markdown/gfm-test-helpers';
 import {
   $restoreSelectionSnapshot,
   selectionChangedSinceSnapshot,

@@ -11,7 +11,9 @@ function getElectronAppState(state: S.State) {
   const note = noteId ? state.data.notes.get(noteId) : undefined;
 
   return {
-    markdownEditorActive: note?.systemTags.includes('markdown') ?? false,
+    markdownEditorActive:
+      (note?.systemTags.includes('markdown') ?? false) &&
+      !state.ui.showRevisions,
     settings: state.settings,
   };
 }

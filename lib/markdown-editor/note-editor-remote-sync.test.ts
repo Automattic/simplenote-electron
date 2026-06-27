@@ -13,43 +13,46 @@ import {
   $isTableRowNode,
 } from '@lexical/table';
 
-import { $exportMarkdownString } from './extensions';
-import { $importRemoteMarkdown } from './import-export';
-import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
+import { $exportMarkdownString } from './extensions/index';
+import { importMarkdown, makeGfmTestEditor } from './markdown/gfm-test-helpers';
+import {
+  applyRemoteMarkdownUpdate,
+  NoteContentSyncTracker,
+} from './markdown/pipeline';
 import {
   $captureMarkdownSelectionOffsets,
   $captureStructuredSelection,
-} from './selection-memory';
+} from './memory/selection-memory';
 import {
   buildTableMarkdown,
   getTableCellAt,
-} from './table-export-test-helpers';
+} from './markdown/table-export-test-helpers';
 
 async function flushMicrotasks(): Promise<void> {
   await Promise.resolve();
 }
 
-/** Mirrors `note-editor.tsx` remote sync: microtask → live export → import. */
 async function simulateNoteEditorRemoteSync(
   editor: ReturnType<typeof makeGfmTestEditor>,
   remote: string,
   preserveSelection = true
 ): Promise<void> {
+  const tracker = new NoteContentSyncTracker();
+  tracker.resetForNote('');
+
   await new Promise<void>((resolve) => {
-    queueMicrotask(() => {
-      editor.update(
-        () => {
-          const local = $exportMarkdownString();
-          if (remote === local) {
-            return;
-          }
-          $importRemoteMarkdown(remote, local, { preserveSelection });
-        },
-        { discrete: true, onUpdate: resolve }
-      );
+    applyRemoteMarkdownUpdate(editor, remote, tracker, {
+      editorFocused: preserveSelection,
+      isCancelled: () => false,
+      scrollShell: null,
+      scrollTop: 0,
+    });
+
+    queueMicrotask(async () => {
+      await flushMicrotasks();
+      resolve();
     });
   });
-  await flushMicrotasks();
 }
 
 function getRootTableNode() {

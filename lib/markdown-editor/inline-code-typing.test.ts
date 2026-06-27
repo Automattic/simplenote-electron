@@ -11,8 +11,8 @@ import {
 } from 'lexical';
 import { $convertToMarkdownString } from '@lexical/markdown';
 
-import { MARKDOWN_TRANSFORMERS } from './extensions';
-import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
+import { MARKDOWN_TRANSFORMERS } from './extensions/index';
+import { importMarkdown, makeGfmTestEditor } from './markdown/gfm-test-helpers';
 
 function findTextNode(node: LexicalNode, text: string): TextNode | undefined {
   if ($isTextNode(node) && node.getTextContent() === text) {

@@ -6,28 +6,22 @@ import React, {
   useState,
 } from 'react';
 import { connect } from 'react-redux';
-import {
-  SKIP_DOM_SELECTION_TAG,
-  SKIP_SCROLL_INTO_VIEW_TAG,
-  type LexicalEditor,
-} from 'lexical';
+import type { LexicalEditor } from 'lexical';
 
 import MarkdownEditor from './editor';
+import { useNoteViewMemory } from './memory/note-view-memory';
+import { useKeyboardInset } from './hooks/keyboard-inset';
 import {
-  $exportMarkdownString,
-  $importRemoteMarkdown,
-  REMOTE_CONTENT_TAG,
-} from './extensions';
-import { restoreScrollPosition } from './scroll-memory';
-import { useNoteViewMemory } from './note-view-memory';
-import { useKeyboardInset } from './keyboard-inset';
+  applyRemoteMarkdownUpdate,
+  NoteContentSyncTracker,
+} from './markdown/pipeline';
 import actions from '../state/actions';
 import {
   getNextSearchMatchIndex,
   getPrevSearchMatchIndex,
 } from '../search/in-note-search';
 import { useInNoteSearchShortcuts } from '../search/use-in-note-search-shortcuts';
-import { useElectronEditorCommands } from './use-electron-editor-commands';
+import { useElectronEditorCommands } from './hooks/use-electron-editor-commands';
 import { withCheckboxSyntax } from '../utils/task-transform';
 
 import * as S from '../state';
@@ -75,11 +69,10 @@ function MarkdownNoteEditorComponent({
   const editorRef = useRef<LexicalEditor | null>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
-  const lastPushedRef = useRef(withCheckboxSyntax(noteContent));
-  const lastDispatchedRef = useRef<string | null>(null);
-  const lastLocalExportRef = useRef(withCheckboxSyntax(noteContent));
+  const syncTrackerRef = useRef(new NoteContentSyncTracker());
   const matchCountRef = useRef(0);
   const [matchCount, setMatchCount] = useState(0);
+  const [editorReady, setEditorReady] = useState(0);
   const previousNoteIdRef = useRef(noteId);
   const previousSearchQueryRef = useRef(searchQuery);
   const initialMarkdown = useMemo(
@@ -87,7 +80,7 @@ function MarkdownNoteEditorComponent({
     [noteId]
   );
 
-  useNoteViewMemory({ shellRef, noteId });
+  useNoteViewMemory({ initialMarkdown, shellRef, noteId });
   useKeyboardInset({ frameRef, shellRef });
 
   const focusEditor = useCallback(() => {
@@ -100,9 +93,7 @@ function MarkdownNoteEditorComponent({
   }, []);
 
   useEffect(() => {
-    lastPushedRef.current = withCheckboxSyntax(noteContent);
-    lastLocalExportRef.current = withCheckboxSyntax(noteContent);
-    lastDispatchedRef.current = null;
+    syncTrackerRef.current.resetForNote(noteContent);
   }, [noteId]);
 
   useEffect(() => {
@@ -126,74 +117,34 @@ function MarkdownNoteEditorComponent({
   }, [searchQuery, storeNumberOfMatchesInNote]);
 
   useEffect(() => {
-    if (noteContent === lastDispatchedRef.current) {
-      return;
-    }
-
-    const remote = withCheckboxSyntax(noteContent);
-
-    if (remote === lastPushedRef.current) {
-      return;
-    }
-
-    const editor = editorRef.current;
-    if (!editor) {
-      return;
-    }
-
-    const scrollTop = shellRef.current?.scrollTop ?? 0;
-    const editorFocused = hasFocus();
     let cancelled = false;
-    let cancelRestore: (() => void) | undefined;
 
-    if (remote === lastLocalExportRef.current) {
-      lastPushedRef.current = remote;
-      return;
-    }
-
-    queueMicrotask(() => {
-      if (cancelled) {
-        return;
+    const cancelRestore = applyRemoteMarkdownUpdate(
+      editorRef.current,
+      noteContent,
+      syncTrackerRef.current,
+      {
+        editorFocused: hasFocus(),
+        isCancelled: () => cancelled,
+        scrollShell: shellRef.current,
+        scrollTop: shellRef.current?.scrollTop ?? 0,
       }
-
-      editor.update(
-        () => {
-          const local = $exportMarkdownString();
-          if (remote === local) {
-            return;
-          }
-
-          $importRemoteMarkdown(remote, local, {
-            preserveSelection: editorFocused,
-          });
-        },
-        {
-          discrete: true,
-          tag: editorFocused
-            ? [REMOTE_CONTENT_TAG, SKIP_SCROLL_INTO_VIEW_TAG]
-            : [REMOTE_CONTENT_TAG, SKIP_DOM_SELECTION_TAG],
-          onUpdate: () => {
-            const shell = shellRef.current;
-            if (shell) {
-              cancelRestore = restoreScrollPosition(shell, scrollTop);
-            }
-            lastLocalExportRef.current = remote;
-            lastPushedRef.current = remote;
-          },
-        }
-      );
-    });
+    );
 
     return () => {
       cancelled = true;
-      cancelRestore?.();
+      cancelRestore();
     };
-  }, [noteContent, noteId, hasFocus]);
+  }, [noteContent, noteId, hasFocus, editorReady]);
 
   useEffect(() => {
     storeFocusEditor(focusEditor);
     storeHasFocus(hasFocus);
   }, [focusEditor, hasFocus, storeFocusEditor, storeHasFocus]);
+
+  const handleEditorReady = useCallback(() => {
+    setEditorReady((n) => n + 1);
+  }, []);
 
   const handleOpenInternalLink = useCallback(
     (linkedNoteId: T.EntityId) => {
@@ -206,13 +157,12 @@ function MarkdownNoteEditorComponent({
 
   const handleChange = useCallback(
     (content: string) => {
-      if (content === lastPushedRef.current) {
+      const tracker = syncTrackerRef.current;
+      if (tracker.shouldSkipLocalChange(content)) {
         return;
       }
 
-      lastPushedRef.current = content;
-      lastDispatchedRef.current = content;
-      lastLocalExportRef.current = content;
+      tracker.recordLocalDispatch(content);
       editNote(noteId, { content });
     },
     [editNote, noteId]
@@ -284,6 +234,7 @@ function MarkdownNoteEditorComponent({
         clearSearch={clearSearch}
         editorRef={editorRef}
         initialMarkdown={initialMarkdown}
+        onEditorReady={handleEditorReady}
         noteId={noteId}
         onChange={handleChange}
         onMatchCountChange={handleMatchCountChange}

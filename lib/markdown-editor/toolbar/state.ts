@@ -17,9 +17,9 @@ import {
   HeadingTagType,
 } from '@lexical/rich-text';
 
-import type { ActiveListType } from '../list-toggle';
-import { $isImageNode } from '../image-node';
-import { $isSelectionInTable } from '../table-controls';
+import type { ActiveListType } from '../extensions/list-toggle';
+import { $isImageNode } from '../nodes/image-node';
+import { $isSelectionInTable } from '../extensions/table-controls';
 import { subscribeToolbarUndoRedo } from './register';
 
 export type ToolbarState = {
@@ -72,7 +72,6 @@ const isHeadingTagActive = (
   block: ReturnType<typeof $getTopLevelBlock>
 ) => !!block && $isHeadingNode(block) && block.getTag() === tag;
 
-/** Reads toolbar active states in a single editor pass. */
 export const readToolbarState = (editor: LexicalEditor): ToolbarState => {
   let state: ToolbarState = {
     inTitle: false,
@@ -217,6 +216,7 @@ export const useToolbarState = (editor: LexicalEditor) => {
     });
 
     const unregisterUndoRedo = subscribeToolbarUndoRedo(
+      editor,
       ({ canRedo: nextCanRedo, canUndo: nextCanUndo }) => {
         setCanUndo(nextCanUndo);
         setCanRedo(nextCanRedo);
