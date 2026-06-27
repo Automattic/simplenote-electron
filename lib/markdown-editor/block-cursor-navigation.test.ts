@@ -351,6 +351,120 @@ describe('transient paragraphs', () => {
     editor.dispose();
   });
 
+  it('does not delete the previous gapless block when backspacing in a transient gap', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nfirst\n```\n```\nsecond\n```');
+    selectTextNode(editor, 'second', 0);
+
+    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(getFocusedTransient(editor)).not.toBeNull();
+
+    const codeSnapshotBefore = editor.getEditorState().read(() =>
+      $getRoot()
+        .getChildren()
+        .filter($isCodeNode)
+        .map((node) => ({
+          key: node.getKey(),
+          text: node.getTextContent(),
+        }))
+    );
+    expect(codeSnapshotBefore).toEqual([
+      { key: codeSnapshotBefore[0]?.key, text: 'first' },
+      { key: codeSnapshotBefore[1]?.key, text: 'second' },
+    ]);
+
+    await dispatchBackspace(editor);
+
+    editor.getEditorState().read(() => {
+      const codes = $getRoot().getChildren().filter($isCodeNode);
+      expect(codes.map((node) => node.getTextContent())).toEqual([
+        'first',
+        'second',
+      ]);
+      expect(codes.map((node) => node.getKey())).toEqual(
+        codeSnapshotBefore.map(({ key }) => key)
+      );
+    });
+
+    editor.dispose();
+  });
+
+  it('keeps focus on a trailing transient when arrowing down at the document end', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nonly\n```');
+    selectTextNode(editor, 'only', 'only'.length);
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    expect(getFocusedTransient(editor)).not.toBeNull();
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    await flushEditorUpdates(editor);
+
+    expect(countTransients(editor)).toBe(1);
+    editor.getEditorState().read(() => {
+      expectTransientCaret($getSelection());
+    });
+
+    editor.dispose();
+  });
+
+  it('exits a trailing transient when arrowing up at the document end', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nonly\n```');
+    selectTextNode(editor, 'only', 'only'.length);
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    expect(getFocusedTransient(editor)).not.toBeNull();
+
+    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    await flushEditorUpdates(editor);
+
+    expect(countTransients(editor)).toBe(0);
+    editor.getEditorState().read(() => {
+      expectTextCaret($getSelection(), 'only', 'only'.length);
+    });
+
+    editor.dispose();
+  });
+
+  it('keeps focus on a leading transient when arrowing up at the document start', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nonly\n```');
+    selectTextNode(editor, 'only', 0);
+
+    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(getFocusedTransient(editor)).not.toBeNull();
+
+    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    await flushEditorUpdates(editor);
+
+    expect(countTransients(editor)).toBe(1);
+    editor.getEditorState().read(() => {
+      expectTransientCaret($getSelection());
+    });
+
+    editor.dispose();
+  });
+
+  it('exits a leading transient when arrowing down at the document start', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '```\nonly\n```');
+    selectTextNode(editor, 'only', 0);
+
+    await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
+    expect(getFocusedTransient(editor)).not.toBeNull();
+
+    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
+    await flushEditorUpdates(editor);
+
+    expect(countTransients(editor)).toBe(0);
+    editor.getEditorState().read(() => {
+      expectTextCaret($getSelection(), 'only', 0);
+    });
+
+    editor.dispose();
+  });
+
   it('promotes a transient to a normal paragraph when text is entered', async () => {
     const editor = makeBlockCursorTestEditor();
     importBlockCursorTestDocument(editor, { blockCount: 2, after: 'below' });

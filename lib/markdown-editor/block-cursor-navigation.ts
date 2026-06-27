@@ -518,6 +518,17 @@ function $handleExitEmptyTransientArrow(
     return false;
   }
 
+  const prev = transient.getPreviousSibling();
+  const next = transient.getNextSibling();
+  if (direction === 'backward' && prev === null) {
+    logTransientNav('skip exitEmptyTransient: leading transient at doc start');
+    return false;
+  }
+  if (direction === 'forward' && next === null) {
+    logTransientNav('skip exitEmptyTransient: trailing transient at doc end');
+    return false;
+  }
+
   event.preventDefault();
   $navigateFromEmptyTransient(transient, direction, axis);
   return true;
@@ -1511,14 +1522,10 @@ export function registerBlockCursorNavigation(
             ? anchorNode.getParent()
             : null;
 
-        if (transient) {
-          const prevSibling = transient.getPreviousSibling();
-          if (prevSibling && $isGaplessBlock(prevSibling)) {
-            event.preventDefault();
-            prevSibling.remove();
-            return true;
-          }
-          return false;
+        if (transient && $isEmptyTransient(transient)) {
+          event.preventDefault();
+          $navigateFromEmptyTransient(transient, 'backward', 'vertical');
+          return true;
         }
 
         if (selection.anchor.offset === 0) {
