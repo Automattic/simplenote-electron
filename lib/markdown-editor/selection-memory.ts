@@ -19,6 +19,10 @@ import {
 } from 'lexical';
 
 import { MARKDOWN_TRANSFORMERS } from './transformers';
+import {
+  blockSeparatorForExport,
+  gapForEmptyParagraphCount,
+} from './block-separator-export';
 import { $isTransientParagraphNode } from './transient-paragraph-node';
 
 export type MarkdownSelectionOffsets = {
@@ -303,40 +307,6 @@ function isEmptyRootParagraph(node: LexicalNode): boolean {
     node.getChildrenSize() === 0 &&
     node.getTextContent() === ''
   );
-}
-
-function gapForEmptyParagraphCount(emptyCount: number): string {
-  if (emptyCount <= 0) {
-    return '';
-  }
-  return '\n'.repeat(emptyCount + 1);
-}
-
-function isPlainContentParagraph(node: LexicalNode): boolean {
-  return (
-    $isElementNode(node) &&
-    node.getType() === 'paragraph' &&
-    !isEmptyRootParagraph(node)
-  );
-}
-
-function blockSeparatorForExport(
-  previousBlock: LexicalNode,
-  nextBlock: LexicalNode,
-  pendingEmpty: number
-): string {
-  if (pendingEmpty > 0) {
-    return gapForEmptyParagraphCount(pendingEmpty);
-  }
-
-  if (
-    isPlainContentParagraph(previousBlock) &&
-    isPlainContentParagraph(nextBlock)
-  ) {
-    return gapForEmptyParagraphCount(1);
-  }
-
-  return '\n';
 }
 
 function exportRootChildMarkdown(node: LexicalNode): string {

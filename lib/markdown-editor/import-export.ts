@@ -24,6 +24,11 @@ import {
 } from 'lexical';
 
 import {
+  blockSeparatorForExport,
+  gapForEmptyParagraphCount,
+} from './block-separator-export';
+
+import {
   clearBlockExportCache,
   getBlockExportCache,
   type MarkdownExportContext,
@@ -59,13 +64,6 @@ function emptyParagraphsInGap(gap: string): number {
   return newlineCount >= 2 ? newlineCount - 1 : 0;
 }
 
-function gapForEmptyParagraphCount(emptyCount: number): string {
-  if (emptyCount <= 0) {
-    return '';
-  }
-  return '\n'.repeat(emptyCount + 1);
-}
-
 function isEmptyRootParagraph(node: LexicalNode): boolean {
   return (
     $isParagraphNode(node) &&
@@ -73,29 +71,6 @@ function isEmptyRootParagraph(node: LexicalNode): boolean {
     node.getChildrenSize() === 0 &&
     node.getTextContent() === ''
   );
-}
-
-function isPlainContentParagraph(node: LexicalNode): boolean {
-  return $isParagraphNode(node) && !isEmptyRootParagraph(node);
-}
-
-function blockSeparatorForExport(
-  previousBlock: LexicalNode,
-  nextBlock: LexicalNode,
-  pendingEmpty: number
-): string {
-  if (pendingEmpty > 0) {
-    return gapForEmptyParagraphCount(pendingEmpty);
-  }
-
-  if (
-    isPlainContentParagraph(previousBlock) &&
-    isPlainContentParagraph(nextBlock)
-  ) {
-    return gapForEmptyParagraphCount(1);
-  }
-
-  return '\n';
 }
 
 function exportTextNodeInline(node: TextNode): string {
