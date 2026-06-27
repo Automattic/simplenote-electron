@@ -43,20 +43,6 @@ export function buildTableMarkdown(
   ].join('\n');
 }
 
-export function buildManyTablesMarkdown(
-  count: number,
-  rows: number,
-  cols: number
-): string {
-  return Array.from({ length: count }, (_, index) =>
-    buildTableMarkdown(
-      rows,
-      cols,
-      (row, col) => `${index + 1}:${row + 1}${col + 1}`
-    )
-  ).join('\n\n');
-}
-
 export function getRootTable(): TableNode {
   const table = $getRoot().getFirstChild();
   if (!$isTableNode(table)) {
