@@ -15,6 +15,7 @@ import {
   KEY_ARROW_RIGHT_COMMAND,
   KEY_ARROW_UP_COMMAND,
   KEY_BACKSPACE_COMMAND,
+  KEY_ENTER_COMMAND,
   type LexicalCommand,
   type LexicalEditorWithDispose,
   type LexicalNode,
@@ -134,6 +135,24 @@ export async function dispatchBackspace(
       cancelable: true,
       code: 'Backspace',
       key: 'Backspace',
+      ...init,
+    })
+  );
+  await flushEditorUpdates(editor);
+  return handled;
+}
+
+export async function dispatchEnter(
+  editor: LexicalEditorWithDispose,
+  init: KeyboardEventInit = {}
+): Promise<boolean> {
+  const handled = editor.dispatchCommand(
+    KEY_ENTER_COMMAND,
+    new KeyboardEvent('keydown', {
+      bubbles: true,
+      cancelable: true,
+      code: 'Enter',
+      key: 'Enter',
       ...init,
     })
   );

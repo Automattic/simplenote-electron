@@ -33,6 +33,7 @@ import { registerMarkdownShortcutsWithHistory } from './register-markdown-shortc
 import { registerMarkdownTabIndentation } from './tab-indentation';
 import { TableControlsExtension } from './table-controls';
 import { registerBlockCursorNavigation } from './block-cursor-navigation';
+import { registerBlockquoteEnterSplit } from './blockquote-enter-split';
 import { TransientParagraphNode } from './transient-paragraph-node';
 import { markdownEditorTheme } from './theme';
 import { MarkdownToolbarExtension } from './toolbar/extension';
@@ -104,6 +105,13 @@ const BlockCursorNavigationExtension = defineExtension({
   },
 });
 
+const BlockquoteEnterSplitExtension = defineExtension({
+  name: '@simplenote/blockquote-enter-split',
+  register(editor) {
+    return registerBlockquoteEnterSplit(editor);
+  },
+});
+
 const ListDeletionExtension = defineExtension({
   name: '@simplenote/list-deletion',
   register(editor) {
@@ -167,6 +175,7 @@ export function createMarkdownEditorExtension(
     HorizontalRuleExtension,
     TransientParagraphExtension,
     BlockCursorNavigationExtension,
+    BlockquoteEnterSplitExtension,
     ImageExtension,
     MarkdownShortcutExtension,
     MarkdownPasteExtension,

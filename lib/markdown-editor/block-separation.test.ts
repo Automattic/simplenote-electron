@@ -1,3 +1,4 @@
+import { dispatchEnter, selectTextNode } from './block-cursor-test-helpers';
 import { $exportMarkdownString } from './extensions';
 import {
   describeRootBlocksFromEditor,
@@ -128,6 +129,25 @@ describe('merge-sensitive block separation', () => {
         'quote:"second"',
       ]);
     });
+  });
+});
+
+describe('splitting a multi-line blockquote', () => {
+  it('inserts an empty paragraph when pressing Enter after the first line', async () => {
+    const editor = makeGfmTestEditorFromMarkdown('> 1\n> 2');
+
+    expect(describeRootBlocksFromEditor(editor)).toEqual(['quote:"1\\n2"']);
+
+    selectTextNode(editor, '1', 1);
+    await dispatchEnter(editor);
+
+    expect(describeRootBlocksFromEditor(editor)).toEqual([
+      'quote:"1"',
+      'empty',
+      'quote:"2"',
+    ]);
+
+    editor.dispose();
   });
 });
 
