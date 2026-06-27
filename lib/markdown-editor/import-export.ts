@@ -453,21 +453,60 @@ export function $importMarkdownString(markdown: string): void {
   );
 }
 
+export type MarkdownViewSelectionSnapshot = {
+  structuredSelection: StructuredSelection;
+  localMarkdown: string;
+  localTexts: {
+    anchor: string | null;
+    focus: string | null;
+  };
+};
+
+/** Captures structured selection plus the markdown baseline used for remapping. */
+export function $captureMarkdownViewSelection(): MarkdownViewSelectionSnapshot | null {
+  const structuredSelection = $captureStructuredSelection();
+  if (structuredSelection === null) {
+    return null;
+  }
+
+  return {
+    structuredSelection,
+    localMarkdown: $exportMarkdownString(),
+    localTexts: {
+      anchor: getContainerTextFromLexical(structuredSelection.anchor),
+      focus: getContainerTextFromLexical(structuredSelection.focus),
+    },
+  };
+}
+
+/** Restores a saved structured selection after markdown is already imported. */
+export function $restoreMarkdownViewSelection(
+  remoteMarkdown: string,
+  saved: MarkdownViewSelectionSnapshot
+): boolean {
+  const remapped = remapStructuredSelection(
+    saved.localMarkdown,
+    remoteMarkdown,
+    saved.structuredSelection,
+    saved.localTexts
+  );
+
+  if (!$restoreStructuredSelection(remapped)) {
+    $getRoot().selectStart();
+    return false;
+  }
+
+  return true;
+}
+
 /** Re-import remote markdown while keeping the caret in the same place. */
 export function $importRemoteMarkdown(
   remote: string,
-  local: string = remote,
+  _local: string = remote,
   options?: { preserveSelection?: boolean }
 ): void {
   const preserveSelection = options?.preserveSelection ?? true;
-  const saved = preserveSelection ? $captureStructuredSelection() : null;
-  const localTexts =
-    saved === null
-      ? { anchor: null, focus: null }
-      : {
-          anchor: getContainerTextFromLexical(saved.anchor),
-          focus: getContainerTextFromLexical(saved.focus),
-        };
+  const saved = preserveSelection ? $captureMarkdownViewSelection() : null;
 
   $importMarkdownString(remote);
 
@@ -476,11 +515,7 @@ export function $importRemoteMarkdown(
     return;
   }
 
-  const remapped = remapStructuredSelection(local, remote, saved, localTexts);
-
-  if (!$restoreStructuredSelection(remapped)) {
-    $getRoot().selectStart();
-  }
+  $restoreMarkdownViewSelection(remote, saved);
 }
 
 function remapStructuredSelection(

@@ -14,7 +14,8 @@ import {
   $importRemoteMarkdown,
   REMOTE_CONTENT_TAG,
 } from './extensions';
-import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
+import { restoreScrollPosition } from './scroll-memory';
+import { useNoteViewMemory } from './note-view-memory';
 import { useKeyboardInset } from './keyboard-inset';
 import actions from '../state/actions';
 import {
@@ -82,7 +83,7 @@ function MarkdownNoteEditorComponent({
     [noteId]
   );
 
-  useScrollMemory(shellRef, noteId);
+  useNoteViewMemory({ shellRef, noteId });
   useKeyboardInset({ frameRef, shellRef });
 
   const focusEditor = useCallback(() => {

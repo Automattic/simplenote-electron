@@ -1,10 +1,13 @@
 import React, { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { restoreScrollPosition, useScrollMemory } from './scroll-memory';
+import { restoreScrollPosition } from './scroll-memory';
+import { getRestoreScrollTop, useNoteViewMemory } from './note-view-memory';
 import {
   getNotePosition,
+  getNoteViewState,
   setNotePosition,
+  setNoteViewState,
 } from '../utils/note-scroll-position';
 
 // jsdom has no layout, so scrollTop is inert. Simulate a real scroll
@@ -92,7 +95,20 @@ function Harness({
   children?: ReactNode;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
-  useScrollMemory(shellRef, noteId);
+  useNoteViewMemory({ shellRef, noteId });
+
+  useLayoutEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) {
+      return;
+    }
+
+    const saved = getNoteViewState(noteId);
+    const scrollTop =
+      getRestoreScrollTop(saved) || getNotePosition(noteId) || 0;
+
+    return restoreScrollPosition(shell, scrollTop);
+  }, [noteId]);
 
   return (
     <div data-testid="shell" ref={shellRef}>
@@ -165,7 +181,7 @@ beforeEach(() => {
   MockResizeObserver.instances = [];
 });
 
-describe('useScrollMemory', () => {
+describe('useNoteViewMemory scroll restore', () => {
   describe('restore on mount', () => {
     it('restores the saved position synchronously when content is tall enough', () => {
       setNotePosition('note-1', 300);
@@ -293,27 +309,6 @@ describe('useScrollMemory', () => {
       unmount();
 
       expect(lastObserver().isDisconnected).toBe(true);
-    });
-  });
-
-  describe('save on unmount', () => {
-    it('saves the current scroll position when unmounting', () => {
-      const { shell, unmount } = renderShell('note-1');
-      shell.scrollTop = 240;
-
-      unmount();
-
-      expect(getNotePosition('note-1')).toBe(240);
-    });
-
-    it('saves zero when the shell was not scrolled', () => {
-      setNotePosition('note-1', 700);
-      maxScrollTop = 0;
-
-      const { unmount } = renderShell('note-1');
-      unmount();
-
-      expect(getNotePosition('note-1')).toBe(0);
     });
   });
 

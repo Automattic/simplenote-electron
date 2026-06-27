@@ -279,6 +279,10 @@ function $markdownPrefixLength(to: PointType | DocumentPoint): number {
     .length;
 }
 
+function $markdownPrefixLengthAtTextPoint(key: string, offset: number): number {
+  return $markdownPrefixLength({ key, offset, type: 'text' });
+}
+
 function $forEachTextPoint(visit: (key: string, offset: number) => void): void {
   const walk = (node: LexicalNode) => {
     if ($isTextNode(node)) {
@@ -325,19 +329,37 @@ function exportRootChildMarkdown(node: LexicalNode): string {
   ).replace(/^\n+/, '');
 }
 
-function $markdownPrefixLengthWithinBlock(
-  block: LexicalNode,
-  to: { key: string; offset: number }
-): number {
-  if (!$isElementNode(block)) {
-    return 0;
+function $pointAtMarkdownOffsetFromTextPoints(
+  offset: number
+): { key: string; offset: number } | null {
+  const points: Array<{ key: string; offset: number }> = [];
+  $forEachTextPoint((key, textOffset) => {
+    points.push({ key, offset: textOffset });
+  });
+  if (points.length === 0) {
+    return null;
   }
 
-  const selection = $createRangeSelection();
-  selection.anchor.set(block.getKey(), 0, 'element');
-  selection.focus.set(to.key, to.offset, 'text');
-  return $convertSelectionToMarkdownString(MARKDOWN_TRANSFORMERS, selection)
-    .length;
+  let lo = 0;
+  let hi = points.length - 1;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (
+      $markdownPrefixLengthAtTextPoint(points[mid].key, points[mid].offset) <=
+      offset
+    ) {
+      lo = mid;
+    } else {
+      hi = mid - 1;
+    }
+  }
+
+  const point = points[lo];
+  if ($markdownPrefixLengthAtTextPoint(point.key, point.offset) !== offset) {
+    return null;
+  }
+
+  return point;
 }
 
 function collectTextPointsInBlock(
@@ -359,31 +381,6 @@ function collectTextPointsInBlock(
   };
 
   walk(block);
-}
-
-function $pointAtMarkdownOffsetInBlock(
-  block: LexicalNode,
-  offsetInBlock: number
-): { key: string; offset: number } | null {
-  const points: Array<{ key: string; offset: number }> = [];
-  collectTextPointsInBlock(block, points);
-  if (points.length === 0) {
-    return null;
-  }
-
-  let lo = 0;
-  let hi = points.length - 1;
-  while (lo < hi) {
-    const mid = Math.ceil((lo + hi) / 2);
-    const length = $markdownPrefixLengthWithinBlock(block, points[mid]);
-    if (length <= offsetInBlock) {
-      lo = mid;
-    } else {
-      hi = mid - 1;
-    }
-  }
-
-  return points[lo];
 }
 
 function $pointAtEndOfBlock(
@@ -428,7 +425,7 @@ function $pointAtMarkdownOffset(
     } else if (pendingEmpty > 0) {
       const gap = gapForEmptyParagraphCount(pendingEmpty);
       if (offset < pos + gap.length) {
-        return $pointAtMarkdownOffsetInBlock(child, 0);
+        return $pointAtMarkdownOffsetFromTextPoints(offset);
       }
       pos += gap.length;
     }
@@ -436,7 +433,7 @@ function $pointAtMarkdownOffset(
     pendingEmpty = 0;
 
     if (offset <= pos + blockMarkdown.length) {
-      return $pointAtMarkdownOffsetInBlock(child, offset - pos);
+      return $pointAtMarkdownOffsetFromTextPoints(offset);
     }
 
     pos += blockMarkdown.length;
@@ -447,7 +444,7 @@ function $pointAtMarkdownOffset(
     return $pointAtEndOfBlock(previousBlock);
   }
 
-  return null;
+  return $pointAtMarkdownOffsetFromTextPoints(offset);
 }
 
 export function $captureMarkdownSelectionOffsets(): MarkdownSelectionOffsets | null {
