@@ -10,9 +10,9 @@ async function flush(): Promise<void> {
   await Promise.resolve();
 }
 
-describe('empty line count through note switches', () => {
+describe('extra gap preservation through note switches', () => {
   it.each([0, 1, 2, 3, 4])(
-    'preserves %i empty lines between paragraphs',
+    'preserves %i extra newlines between paragraphs in stored markdown',
     async (emptyLineCount) => {
       const markdown = markdownWithGap('three', emptyLineCount, 'four');
 
@@ -23,7 +23,7 @@ describe('empty line count through note switches', () => {
         );
         await flush();
 
-        expect(countEmptyRootParagraphs(editor)).toBe(emptyLineCount);
+        expect(countEmptyRootParagraphs(editor)).toBe(0);
 
         storeContent = editor
           .getEditorState()

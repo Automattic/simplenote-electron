@@ -132,6 +132,17 @@ function $isEmptyTransient(
   return $isTransientParagraphNode(node) && node.getTextContent().length === 0;
 }
 
+/** Empty transient inserted on import to keep adjacent root lists from merging. */
+function $isListGroupSeparatorTransient(node: LexicalNode | null): boolean {
+  if (!$isEmptyTransient(node)) {
+    return false;
+  }
+
+  const prev = node.getPreviousSibling();
+  const next = node.getNextSibling();
+  return $isListNode(prev) && $isListNode(next);
+}
+
 function $prepareTransientForCaret(transient: TransientParagraphNode): void {
   if (transient.getChildrenSize() === 0) {
     transient.append($createTextNode(''));
@@ -205,7 +216,10 @@ export function $pruneTransients(
       continue;
     }
 
-    if (child.getKey() === focusedTransientKey) {
+    if (
+      child.getKey() === focusedTransientKey ||
+      $isListGroupSeparatorTransient(child)
+    ) {
       continue;
     }
 
@@ -214,6 +228,10 @@ export function $pruneTransients(
 
   for (const child of $getRoot().getChildren()) {
     if (!$isTransientParagraphNode(child)) {
+      continue;
+    }
+
+    if ($isListGroupSeparatorTransient(child)) {
       continue;
     }
 

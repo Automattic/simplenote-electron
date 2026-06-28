@@ -11,6 +11,7 @@ import type { LexicalEditor } from 'lexical';
 import MarkdownEditor from './editor';
 import { useNoteViewMemory } from './memory/note-view-memory';
 import { useKeyboardInset } from './hooks/keyboard-inset';
+import { $exportMarkdownString } from './extensions/index';
 import {
   applyRemoteMarkdownUpdate,
   NoteContentSyncTracker,
@@ -143,7 +144,17 @@ function MarkdownNoteEditorComponent({
   }, [focusEditor, hasFocus, storeFocusEditor, storeHasFocus]);
 
   const handleEditorReady = useCallback(() => {
+    const editor = editorRef.current;
+    if (editor) {
+      syncTrackerRef.current.recordEditorExport(
+        editor.getEditorState().read(() => $exportMarkdownString())
+      );
+    }
     setEditorReady((n) => n + 1);
+  }, []);
+
+  const handleRemoteContentImported = useCallback((exported: string) => {
+    syncTrackerRef.current.recordEditorExport(exported);
   }, []);
 
   const handleOpenInternalLink = useCallback(
@@ -239,6 +250,7 @@ function MarkdownNoteEditorComponent({
         onChange={handleChange}
         onMatchCountChange={handleMatchCountChange}
         onOpenInternalLink={handleOpenInternalLink}
+        onRemoteContentImported={handleRemoteContentImported}
         scrollContainerRef={shellRef}
         searchQuery={searchQuery}
         selectedSearchMatchIndex={selectedSearchMatchIndex}

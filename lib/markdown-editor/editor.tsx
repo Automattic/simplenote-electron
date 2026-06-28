@@ -25,6 +25,7 @@ export type MarkdownEditorProps = {
   onEditorReady?: () => void;
   onMatchCountChange?: (count: number) => void;
   onOpenInternalLink?: (noteId: EntityId) => void;
+  onRemoteContentImported?: (markdown: string) => void;
   scrollContainerRef?: RefObject<HTMLElement | null>;
   searchQuery?: string;
   selectedSearchMatchIndex?: number | null;
@@ -40,6 +41,7 @@ export default function MarkdownEditor({
   onEditorReady,
   onMatchCountChange,
   onOpenInternalLink,
+  onRemoteContentImported,
   scrollContainerRef,
   searchQuery = '',
   selectedSearchMatchIndex = null,
@@ -65,6 +67,7 @@ export default function MarkdownEditor({
           getScrollTop: () =>
             scrollContainerRef?.current?.scrollTop ?? scrollTopRef.current,
           noteId,
+          onRemoteContentImported,
         }
       ),
     [noteId]

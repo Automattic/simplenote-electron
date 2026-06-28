@@ -36,43 +36,39 @@ function typeAtEnd(editor: ReturnType<typeof makeGfmTestEditor>, text: string) {
 describe('$importMarkdownString', () => {
   it('imports non-list blocks as direct children of the root', () => {
     const editor = makeGfmTestEditor();
-    editor.update(() => $importMarkdownString('# title\n\nhello\n\nworld'), {
+    editor.update(
+      () => $importMarkdownString('# title\n\nhello\n\nworld', editor),
+      { discrete: true }
+    );
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(3);
+      expect(children[0].getType()).toBe('heading');
+      expect($isParagraphNode(children[1])).toBe(true);
+      expect(children[1].getTextContent()).toBe('hello');
+      expect($isParagraphNode(children[2])).toBe(true);
+      expect(children[2].getTextContent()).toBe('world');
+    });
+    editor.dispose();
+  });
+
+  it('imports a whitespace-only note as an empty note', () => {
+    const markdown = '\n\n\n';
+    const editor = makeGfmTestEditor();
+    editor.update(() => $importMarkdownString(markdown, editor), {
       discrete: true,
     });
 
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
-      expect(children).toHaveLength(5);
-      expect(children[0].getType()).toBe('heading');
-      expect($isParagraphNode(children[1])).toBe(true);
-      expect(children[1].getTextContent()).toBe('');
-      expect($isParagraphNode(children[2])).toBe(true);
-      expect(children[2].getTextContent()).toBe('hello');
-      expect($isParagraphNode(children[3])).toBe(true);
-      expect(children[3].getTextContent()).toBe('');
-      expect(children[4].getTextContent()).toBe('world');
-    });
-    editor.dispose();
-  });
-
-  it('imports a whitespace-only note as empty paragraphs', () => {
-    const markdown = '\n\n\n';
-    const editor = makeGfmTestEditor();
-    editor.update(() => $importMarkdownString(markdown), { discrete: true });
-
-    editor.getEditorState().read(() => {
-      const children = $getRoot().getChildren();
-      expect(children).toHaveLength(2);
-      for (const child of children) {
-        expect($isParagraphNode(child)).toBe(true);
-        expect(child.getTextContent()).toBe('');
-      }
+      expect(children.length).toBeGreaterThanOrEqual(1);
     });
 
     const roundtrip = editor
       .getEditorState()
       .read(() => $exportMarkdownString());
-    expect(roundtrip).toBe(markdown);
+    expect(roundtrip).toBe('');
     editor.dispose();
   });
 

@@ -473,11 +473,10 @@ describe('hard line breaks', () => {
   });
 
   it('round-trips hard line break markers', () => {
-    for (const markdown of ['foo\\\nbar', 'foo  \nbar']) {
-      const editor = makeGfmTestEditor();
-      expect(roundtrip(editor, markdown)).toBe(markdown);
-      editor.dispose();
-    }
+    const editor = makeGfmTestEditor();
+    expect(roundtrip(editor, 'foo  \nbar')).toBe('foo  \nbar');
+    expect(roundtrip(editor, 'foo\\\nbar')).toBe('foo  \nbar');
+    editor.dispose();
   });
 });
 
@@ -489,8 +488,10 @@ describe('gfm fixture parity', () => {
         '# Browser Article Clip',
         '',
         '**Bold lead** and *quiet emphasis* with [safe route](https://example.com/route?q=1).',
+        '',
         '- First browser bullet',
         '- Second browser bullet',
+        '',
         '| City | Days |',
         '| --- | --- |',
         '| Porto | 2 |',

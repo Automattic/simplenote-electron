@@ -33,6 +33,7 @@ import {
   MARKDOWN_TRANSFORMERS,
   $importMarkdownString,
 } from '../extensions/index';
+import { TransientParagraphNode } from '../nodes/transient-paragraph-node';
 import {
   importMarkdown as importGfmMarkdown,
   makeGfmTestEditor,
@@ -47,9 +48,16 @@ import {
 } from './list-transformers';
 import { registerMarkdownShortcutsWithHistory } from '../extensions/register-markdown-shortcuts';
 
+const TEST_EDITOR_NODES = [
+  ListNode,
+  ListItemNode,
+  LinkNode,
+  TransientParagraphNode,
+];
+
 function importMarkdown(markdown: string) {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode, LinkNode],
+    nodes: TEST_EDITOR_NODES,
     onError: (error) => {
       throw error;
     },
@@ -60,7 +68,7 @@ function importMarkdown(markdown: string) {
 
 function makeEditorWithShortcuts() {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode, LinkNode],
+    nodes: TEST_EDITOR_NODES,
     onError: (error) => {
       throw error;
     },
@@ -126,7 +134,7 @@ function expectReplaceCreatesList(
   listType: 'bullet' | 'number' | 'check'
 ) {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode],
+    nodes: TEST_EDITOR_NODES,
     onError: (error) => {
       throw error;
     },
@@ -165,7 +173,7 @@ function expectReplaceSkipsImport(
   markdown: string
 ) {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode],
+    nodes: TEST_EDITOR_NODES,
     onError: (error) => {
       throw error;
     },

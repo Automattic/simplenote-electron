@@ -204,6 +204,35 @@ describe('commit enter block shortcuts on leave', () => {
     editor.dispose();
   });
 
+  it('does not split plain hard-break paragraphs when leaving the block', async () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(
+      () => {
+        setupParagraphWithSoftLineBreak('test', 'test2');
+        for (const node of $markdownToNodes('- item')) {
+          $getRoot().append(node);
+        }
+        $getRoot().getFirstChild()?.selectEnd();
+      },
+      { discrete: true }
+    );
+    await flushEditorUpdates(editor);
+
+    selectTextNode(editor, 'item', 0);
+    await flushEditorUpdates(editor);
+
+    editor.getEditorState().read(() => {
+      const children = contentRootChildren(editor);
+      expect(children).toHaveLength(2);
+      expect($isParagraphNode(children[0])).toBe(true);
+      expect(children[0]?.getTextContent()).toBe('test\ntest2');
+      expect($isListNode(children[1])).toBe(true);
+    });
+
+    editor.dispose();
+  });
+
   it('does not commit when the paragraph is not trigger-only text', async () => {
     const editor = makeGfmTestEditor();
 

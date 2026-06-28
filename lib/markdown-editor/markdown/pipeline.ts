@@ -5,7 +5,11 @@ import {
   type LexicalEditor,
 } from 'lexical';
 
-import { $exportMarkdownString, $importRemoteMarkdown } from './import-export';
+import {
+  $exportMarkdownString,
+  $exportMarkdownStringForEditor,
+  $importRemoteMarkdown,
+} from './import-export';
 import { REMOTE_CONTENT_TAG } from './on-change';
 import { restoreScrollPosition } from '../memory/scroll-memory';
 import { withCheckboxSyntax } from '../../utils/task-transform';
@@ -53,8 +57,13 @@ export class NoteContentSyncTracker {
     this.lastLocalExport = remote;
   }
 
+  /** Editor export after import; may differ from stored bytes (e.g. GFM `\n\n` gaps). */
+  recordEditorExport(exported: string): void {
+    this.lastLocalExport = exported;
+  }
+
   shouldSkipLocalChange(content: string): boolean {
-    return content === this.lastPushed;
+    return content === this.lastPushed || content === this.lastLocalExport;
   }
 
   recordLocalDispatch(content: string): void {
@@ -79,6 +88,19 @@ export function applyRemoteMarkdownUpdate(
   const decision = tracker.shouldSkipRemoteUpdate(rawNoteContent, remote);
 
   if (decision === 'skip-dispatched' || decision === 'skip-pushed') {
+    if (editor) {
+      const { isCancelled } = options;
+      queueMicrotask(() => {
+        if (isCancelled()) {
+          return;
+        }
+        tracker.recordEditorExport(
+          editor
+            .getEditorState()
+            .read(() => $exportMarkdownStringForEditor(editor))
+        );
+      });
+    }
     return () => {};
   }
 
@@ -101,12 +123,13 @@ export function applyRemoteMarkdownUpdate(
 
     editor.update(
       () => {
-        const local = $exportMarkdownString();
+        const local = $exportMarkdownStringForEditor(editor);
         if (remote === local) {
           return;
         }
 
         $importRemoteMarkdown(remote, local, {
+          editor,
           preserveSelection: editorFocused,
         });
       },
@@ -120,6 +143,11 @@ export function applyRemoteMarkdownUpdate(
             cancelRestore = restoreScrollPosition(scrollShell, scrollTop);
           }
           tracker.recordRemoteApplied(remote);
+          tracker.recordEditorExport(
+            editor
+              .getEditorState()
+              .read(() => $exportMarkdownStringForEditor(editor))
+          );
           editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
         },
       }

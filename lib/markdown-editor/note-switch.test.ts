@@ -13,8 +13,8 @@ import {
 } from './extensions/index';
 import { countEmptyRootParagraphs } from './markdown/gfm-test-helpers';
 
-const NOTE_WITH_EXTRA_EMPTY_LINE = 'before\n\n\nafter';
-const NOTE_WITH_ONE_EMPTY_LINE = 'before\n\nafter';
+const NOTE_WITH_EXTRA_GAP = 'before\n\n\nafter';
+const NOTE_WITH_PARAGRAPH_GAP = 'before\n\nafter';
 
 async function flushMicrotasks(): Promise<void> {
   await Promise.resolve();
@@ -54,32 +54,32 @@ async function simulateNoteSwitchSavedContent({
 }
 
 describe('note switch saved content', () => {
-  it('persists pasted empty paragraphs through save and reopen', async () => {
+  it('persists pasted paragraph gaps through save and reopen', async () => {
     const { storeContent, reopened } = await simulateNoteSwitchSavedContent({
       initialStoreContent: '',
       edit: (editor) => {
         editor.update(
           () => {
             $getRoot().getFirstChild()?.selectStart();
-            $insertMarkdownPasteNodes(NOTE_WITH_ONE_EMPTY_LINE, null);
+            $insertMarkdownPasteNodes(NOTE_WITH_PARAGRAPH_GAP, null);
           },
           { discrete: true }
         );
       },
     });
 
-    expect(storeContent).toBe(NOTE_WITH_ONE_EMPTY_LINE);
-    expect(reopened).toBe(NOTE_WITH_ONE_EMPTY_LINE);
+    expect(storeContent).toBe(NOTE_WITH_PARAGRAPH_GAP);
+    expect(reopened).toBe(NOTE_WITH_PARAGRAPH_GAP);
 
     const editor = buildEditorFromExtensions(
       createMarkdownEditorExtension(storeContent)
     );
     await flushMicrotasks();
-    expect(countEmptyRootParagraphs(editor)).toBe(1);
+    expect(countEmptyRootParagraphs(editor)).toBe(0);
     editor.dispose();
   });
 
-  it('persists a manually inserted empty line through save and reopen', async () => {
+  it('does not add a blank-line paragraph when pressing Enter twice', async () => {
     const { storeContent, reopened } = await simulateNoteSwitchSavedContent({
       initialStoreContent: 'before\n\nafter',
       edit: (editor) => {
@@ -96,14 +96,14 @@ describe('note switch saved content', () => {
       },
     });
 
-    expect(storeContent).toBe(NOTE_WITH_EXTRA_EMPTY_LINE);
-    expect(reopened).toBe(NOTE_WITH_EXTRA_EMPTY_LINE);
+    expect(storeContent).toBe('before\n\nafter');
+    expect(reopened).toBe('before\n\nafter');
 
     const editor = buildEditorFromExtensions(
       createMarkdownEditorExtension(storeContent)
     );
     await flushMicrotasks();
-    expect(countEmptyRootParagraphs(editor)).toBe(2);
+    expect(countEmptyRootParagraphs(editor)).toBe(0);
     editor.dispose();
   });
 });

@@ -54,6 +54,7 @@ describe('markdown shortcut typing', () => {
     editor.update(
       () => {
         const paragraph = $createParagraphNode();
+        $getRoot().clear();
         $getRoot().append(paragraph);
         paragraph.selectStart();
       },
@@ -73,6 +74,7 @@ describe('markdown shortcut typing', () => {
     editor.update(
       () => {
         const paragraph = $createParagraphNode();
+        $getRoot().clear();
         $getRoot().append(paragraph);
         paragraph.selectStart();
       },
@@ -105,6 +107,7 @@ describe('markdown shortcut typing', () => {
     editor.update(
       () => {
         const paragraph = $createParagraphNode();
+        $getRoot().clear();
         $getRoot().append(paragraph);
         paragraph.selectStart();
       },
@@ -137,6 +140,7 @@ describe('markdown shortcut typing', () => {
     editor.update(
       () => {
         const paragraph = $createParagraphNode();
+        $getRoot().clear();
         $getRoot().append(paragraph);
         paragraph.selectStart();
       },
@@ -161,6 +165,7 @@ describe('markdown shortcut typing', () => {
     editor.update(
       () => {
         const paragraph = $createParagraphNode();
+        $getRoot().clear();
         $getRoot().append(paragraph);
         paragraph.selectStart();
       },

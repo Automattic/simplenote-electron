@@ -86,7 +86,7 @@ export function saveNoteViewStateForEditor(
 
   try {
     editor.read(() => {
-      const selection = $captureMarkdownViewSelection();
+      const selection = $captureMarkdownViewSelection(editor);
       setNoteViewState(noteId, {
         scrollTop,
         structuredSelection: selection?.structuredSelection,

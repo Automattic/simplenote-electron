@@ -1,12 +1,4 @@
-import {
-  $convertFromMarkdownString,
-  $convertSelectionToMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
-import { $isHorizontalRuleNode } from '@lexical/extension';
-import { $isLinkNode } from '@lexical/link';
-import { $isListNode, type ListNode } from '@lexical/list';
-import { $isTableNode } from '@lexical/table';
+import { $convertFromMarkdownString } from '@lexical/markdown';
 import {
   $createParagraphNode,
   $createRangeSelection,
@@ -15,18 +7,20 @@ import {
   $isElementNode,
   $isLineBreakNode,
   $isParagraphNode,
-  $isTextNode,
   $setSelection,
   type ElementNode,
+  type LexicalEditor,
   type LexicalNode,
   type NodeKey,
-  type TextNode,
 } from 'lexical';
 
 import {
-  blockSeparatorForExport,
-  gapForEmptyParagraphCount,
-} from './block-separator-export';
+  clearBlockGapsForReExport,
+  gapNewlineCount,
+  isEmptyRootParagraph,
+  recordImportedGapBefore,
+  separatorBetweenRootBlocks,
+} from './block-gaps';
 
 import {
   clearBlockExportCache,
@@ -34,15 +28,14 @@ import {
   type MarkdownExportContext,
   $resolveIncrementalExportKeys,
 } from './block-export-cache';
-import { $exportTableNodeMarkdown } from './gfm-transformers';
-import { $exportTableMarkdown } from './table-export-cache';
 
 import {
-  importMixedNestedListMarkdown,
-  MIXED_NESTED_CHECK_LIST,
-  MIXED_NESTED_ORDERED_LIST,
-  MIXED_NESTED_UNORDERED_LIST,
-} from './list-transformers';
+  exportStoredTopLevelNode,
+  getContentRootBlocks,
+  $exportTopLevelBlockMarkdown,
+} from './markdown-export';
+
+import { importMixedNestedListMarkdown } from './list-transformers';
 import {
   $captureStructuredSelection,
   $restoreStructuredSelection,
@@ -52,180 +45,67 @@ import {
   type StructuredSelection,
 } from '../memory/selection-memory';
 import {
-  INLINE_MARKDOWN_TRANSFORMERS,
   MARKDOWN_TRANSFORMERS,
+  INLINE_MARKDOWN_TRANSFORMERS,
 } from './transformers';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
 
-// Line-native gaps: a run of (N + 1) newlines encodes N empty root paragraphs.
-// Single \n inside exported block text is a hard line break within a paragraph.
-function emptyParagraphsInGap(gap: string): number {
-  const newlineCount = (gap.match(/\n/g) || []).length;
-  return newlineCount >= 2 ? newlineCount - 1 : 0;
-}
+export {
+  $exportStoredTopLevelBlockMarkdown,
+  $exportTopLevelBlockMarkdown,
+} from './markdown-export';
 
-function isEmptyRootParagraph(node: LexicalNode): boolean {
-  return (
-    $isParagraphNode(node) &&
-    !$isTransientParagraphNode(node) &&
-    node.getChildrenSize() === 0 &&
-    node.getTextContent() === ''
-  );
-}
-
-function exportTextNodeInline(node: TextNode): string {
-  let text = node.getTextContent();
-  if (node.hasFormat('code')) {
-    text = `\`${text}\``;
-  }
-  if (node.hasFormat('bold')) {
-    text = `**${text}**`;
-  }
-  if (node.hasFormat('italic')) {
-    text = `*${text}*`;
-  }
-  if (node.hasFormat('strikethrough')) {
-    text = `~~${text}~~`;
-  }
-  return text;
-}
-
-function exportListNodeContent(node: ElementNode): string {
-  if ($isListNode(node)) {
-    return exportListNode(node);
-  }
-
-  const chunks: string[] = [];
-  for (const child of node.getChildren()) {
-    if ($isListNode(child)) {
-      continue;
-    }
-    if ($isParagraphNode(child)) {
-      chunks.push(
-        $convertToMarkdownString(INLINE_MARKDOWN_TRANSFORMERS, child)
-      );
-      continue;
-    }
-    if ($isLinkNode(child)) {
-      chunks.push(`[${child.getTextContent()}](${child.getURL()})`);
-      continue;
-    }
-    if ($isLineBreakNode(child)) {
-      chunks.push('\n');
-      continue;
-    }
-    if ($isTextNode(child)) {
-      chunks.push(exportTextNodeInline(child));
-      continue;
-    }
-    if ($isElementNode(child)) {
-      chunks.push(exportListNodeContent(child));
-    }
-  }
-
-  return chunks.join('');
-}
-
-function exportListNode(node: ListNode): string {
-  const listType = node.getListType();
-  const transformer =
-    listType === 'check'
-      ? MIXED_NESTED_CHECK_LIST
-      : listType === 'number'
-        ? MIXED_NESTED_ORDERED_LIST
-        : MIXED_NESTED_UNORDERED_LIST;
-
-  if (!transformer.export) {
-    return '';
-  }
-
-  return transformer.export(node, exportListNodeContent, undefined) ?? '';
-}
-
-/** Markdown for one root-level block (shortcut history reconciliation). */
-export function $exportTopLevelBlockMarkdown(node: LexicalNode): string {
-  return exportTopLevelNode(node);
-}
-
-function exportTopLevelNode(
-  node: LexicalNode,
-  options?: Pick<LineNativeExportOptions, 'markdownExportContext'>
-): string {
-  if ($isHorizontalRuleNode(node)) {
-    return '---';
-  }
-
-  if (!$isElementNode(node)) {
-    return node.getTextContent();
-  }
-
-  // Selection-scoped export walks every list item checking isSelected() — O(n)
-  // with a large constant on long lists. We always export the whole block here,
-  // so lists can use the direct node export instead.
-  if ($isListNode(node)) {
-    return exportListNode(node).replace(/^\n+/, '');
-  }
-
-  if ($isTableNode(node)) {
-    const markdown =
-      options?.markdownExportContext === undefined
-        ? $exportTableNodeMarkdown(node)
-        : $exportTableMarkdown(node, options.markdownExportContext);
-    return markdown.replace(/^\n+/, '');
-  }
-
-  const selection = $createRangeSelection();
-  const key = node.getKey();
-  selection.anchor.set(key, 0, 'element');
-  selection.focus.set(key, node.getChildrenSize(), 'element');
-
-  return $convertSelectionToMarkdownString(
-    MARKDOWN_TRANSFORMERS,
-    selection
-  ).replace(/^\n+/, '');
-}
-
-type LineNativeExportOptions = {
+type GfmExportOptions = {
   cache?: Map<NodeKey, string>;
+  editor?: LexicalEditor;
   markdownExportContext?: MarkdownExportContext;
   reExportKeys?: ReadonlySet<NodeKey>;
 };
 
-function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
-  const children = $getRoot().getChildren();
+function $exportGfmMarkdown(options?: GfmExportOptions): string {
+  const children = getContentRootBlocks();
   if (children.length === 0) {
     return '';
   }
 
-  if (children.every(isEmptyRootParagraph)) {
-    return gapForEmptyParagraphCount(children.length);
+  const contentChildren = children.filter(
+    (child) => !isEmptyRootParagraph(child)
+  );
+  if (contentChildren.length === 0) {
+    return '';
   }
 
   const cache = options?.cache;
+  const editor = options?.editor ?? options?.markdownExportContext?.editor;
   const reExportKeys = options?.reExportKeys;
+  const rootChildKeys = children.map((child) => child.getKey());
   let output = '';
-  let pendingEmpty = 0;
   let previousBlock: LexicalNode | null = null;
 
-  for (const child of children) {
-    if ($isTransientParagraphNode(child)) {
-      continue;
-    }
-
-    if (isEmptyRootParagraph(child)) {
-      pendingEmpty++;
-      continue;
-    }
-
+  for (const child of contentChildren) {
     const childKey = child.getKey();
     const shouldReExport =
       cache === undefined ||
       reExportKeys === undefined ||
       reExportKeys.has(childKey) ||
       !cache.has(childKey);
+
+    if (
+      shouldReExport &&
+      reExportKeys !== undefined &&
+      reExportKeys.has(childKey)
+    ) {
+      clearBlockGapsForReExport(childKey, rootChildKeys);
+    }
+
     const markdown = shouldReExport
-      ? exportTopLevelNode(child, options)
-      : (cache.get(childKey) ?? exportTopLevelNode(child, options));
+      ? exportStoredTopLevelNode(child, {
+          markdownExportContext: options?.markdownExportContext,
+        })
+      : (cache?.get(childKey) ??
+        exportStoredTopLevelNode(child, {
+          markdownExportContext: options?.markdownExportContext,
+        }));
 
     if (cache !== undefined && shouldReExport) {
       cache.set(childKey, markdown);
@@ -236,36 +116,31 @@ function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
     }
 
     if (output.length > 0 && previousBlock !== null) {
-      output += blockSeparatorForExport(previousBlock, child, pendingEmpty);
-    } else if (pendingEmpty > 0) {
-      output += gapForEmptyParagraphCount(pendingEmpty);
+      output += separatorBetweenRootBlocks(previousBlock, child);
     }
 
-    pendingEmpty = 0;
     previousBlock = child;
     output += markdown;
-  }
-
-  if (output.length > 0 && pendingEmpty > 0) {
-    output += gapForEmptyParagraphCount(pendingEmpty);
   }
 
   return output;
 }
 
-function $exportLineNativeMarkdownIncremental(
-  context: MarkdownExportContext
-): string {
+function $exportGfmMarkdownIncremental(context: MarkdownExportContext): string {
   const cache = getBlockExportCache(context.editor);
   const reExportKeys = $resolveIncrementalExportKeys(context);
 
-  // Cold cache: one full pass seeds entries for subsequent edits.
   if (cache.size === 0) {
-    return $exportLineNativeMarkdown({ cache, markdownExportContext: context });
+    return $exportGfmMarkdown({
+      cache,
+      editor: context.editor,
+      markdownExportContext: context,
+    });
   }
 
-  return $exportLineNativeMarkdown({
+  return $exportGfmMarkdown({
     cache,
+    editor: context.editor,
     markdownExportContext: context,
     reExportKeys,
   });
@@ -273,10 +148,14 @@ function $exportLineNativeMarkdownIncremental(
 
 export function $exportMarkdownString(context?: MarkdownExportContext): string {
   if (context === undefined) {
-    return $exportLineNativeMarkdown();
+    return $exportGfmMarkdown();
   }
 
-  return $exportLineNativeMarkdownIncremental(context);
+  return $exportGfmMarkdownIncremental(context);
+}
+
+export function $exportMarkdownStringForEditor(_editor: LexicalEditor): string {
+  return $exportGfmMarkdown();
 }
 
 /** Assemble markdown from cache, re-exporting only the given root block keys. */
@@ -286,10 +165,10 @@ export function $exportMarkdownStringFromEditorCache(
 ): string {
   const cache = getBlockExportCache(editor);
   if (cache.size === 0) {
-    return $exportLineNativeMarkdown();
+    return $exportGfmMarkdown({ editor });
   }
 
-  return $exportLineNativeMarkdown({ cache, reExportKeys });
+  return $exportGfmMarkdown({ cache, editor, reExportKeys });
 }
 
 export {
@@ -300,6 +179,12 @@ export {
 type ImportChunkPart =
   | { kind: 'gap'; text: string }
   | { kind: 'markdown'; text: string };
+
+type ImportChunkContext = {
+  editor?: LexicalEditor;
+  pendingGapNewlines: number;
+  recordBlocks: (nodes: LexicalNode[]) => void;
+};
 
 function $tryFenceStart(
   chunk: string,
@@ -325,7 +210,6 @@ function $findFencedCodeBlockEnd(
   contentStart: number,
   marker: '```' | '~~~'
 ): number | null {
-  // Only allow trailing spaces/tabs on the closing fence line — not blank lines.
   const endFenceRegex = new RegExp(`\\n${marker}[ \\t]*(?:\\n|$)`);
   const match = endFenceRegex.exec(chunk.slice(contentStart));
   if (match === null) {
@@ -333,8 +217,6 @@ function $findFencedCodeBlockEnd(
   }
 
   const matchEnd = contentStart + match.index + match[0].length;
-  // Leave the closing fence line's trailing newline for gap parsing when
-  // more markdown follows — line-native gaps count from block boundaries.
   if (match[0].endsWith('\n') && matchEnd < chunk.length) {
     return matchEnd - 1;
   }
@@ -402,30 +284,71 @@ function importMarkdownSegment(segment: string, target: ElementNode): void {
   }
 }
 
-function appendEmptyParagraphsFromGap(gap: string, target: ElementNode): void {
-  for (let j = 0; j < emptyParagraphsInGap(gap); j++) {
-    target.append($createParagraphNode());
+function $ensureAttachedSelection(
+  previousSelection: ReturnType<
+    NonNullable<typeof $getSelection>['clone']
+  > | null
+): void {
+  const nodes = $getSelection()?.getNodes() ?? [];
+  if (nodes.length > 0 && nodes.every((node) => node.isAttached())) {
+    return;
   }
+
+  if (previousSelection !== null) {
+    $setSelection(previousSelection);
+    const restored = $getSelection()?.getNodes() ?? [];
+    if (restored.length > 0 && restored.every((node) => node.isAttached())) {
+      return;
+    }
+  }
+
+  $getRoot().selectStart();
 }
 
-// $convertFromMarkdownString clears its target node, so each chunk is
-// imported into a temporary container first, then the resulting blocks
-// are hoisted out. Leaving blocks nested inside the container paragraph
-// breaks element-level markdown shortcuts (they require blocks to be
-// direct children of the root) and corrupts markdown export.
-function $importChunk(chunk: string, target: ElementNode): void {
+/** Import one root block's markdown without list-run line grouping. */
+export function $importRootBlockMarkdown(markdown: string): LexicalNode[] {
+  const previousSelection = $getSelection()?.clone() ?? null;
+  const holder = $createParagraphNode();
+  importMarkdownSegment(markdown, holder);
+  const imported: LexicalNode[] = [];
+  for (const child of holder.getChildren()) {
+    child.remove();
+    imported.push(child);
+  }
+  $ensureAttachedSelection(previousSelection);
+  return imported;
+}
+
+function appendImportedBlocks(
+  target: ElementNode,
+  importContext: ImportChunkContext,
+  importFn: () => void
+): void {
+  const beforeCount = target.getChildrenSize();
+  importFn();
+  const newChildren = target.getChildren().slice(beforeCount);
+  importContext.recordBlocks(newChildren);
+}
+
+function $importChunk(
+  chunk: string,
+  target: ElementNode,
+  importContext: ImportChunkContext
+): void {
   if (/^\s*$/.test(chunk)) {
     if (chunk.length === 0) {
       target.append($createParagraphNode());
       return;
     }
 
-    appendEmptyParagraphsFromGap(chunk, target);
+    importContext.pendingGapNewlines = gapNewlineCount(chunk);
     return;
   }
 
   if (!chunk.includes('\n\n')) {
-    importMarkdownSegment(chunk, target);
+    appendImportedBlocks(target, importContext, () =>
+      importMarkdownSegment(chunk, target)
+    );
     return;
   }
 
@@ -433,24 +356,46 @@ function $importChunk(chunk: string, target: ElementNode): void {
   for (const part of parts) {
     if (part.kind === 'markdown') {
       if (part.text.length > 0) {
-        importMarkdownSegment(part.text, target);
+        appendImportedBlocks(target, importContext, () =>
+          importMarkdownSegment(part.text, target)
+        );
       }
       continue;
     }
 
-    appendEmptyParagraphsFromGap(part.text, target);
+    importContext.pendingGapNewlines = gapNewlineCount(part.text);
   }
 }
 
-export function $importMarkdownString(markdown: string): void {
+export function $importMarkdownString(
+  markdown: string,
+  editor?: LexicalEditor
+): void {
   const root = $getRoot();
   root.clear();
+
+  const importContext: ImportChunkContext = {
+    editor,
+    pendingGapNewlines: 0,
+    recordBlocks: (nodes) => {
+      for (const node of nodes) {
+        recordImportedGapBefore(node, importContext.pendingGapNewlines);
+        importContext.pendingGapNewlines = 0;
+      }
+    },
+  };
+
   importMixedNestedListMarkdown(
     markdown,
     root,
-    $importChunk,
-    INLINE_MARKDOWN_TRANSFORMERS
+    (chunk, target) => $importChunk(chunk, target, importContext),
+    INLINE_MARKDOWN_TRANSFORMERS,
+    importContext
   );
+
+  if (root.getChildrenSize() === 0) {
+    root.append($createParagraphNode());
+  }
 }
 
 export type MarkdownViewSelectionSnapshot = {
@@ -462,15 +407,22 @@ export type MarkdownViewSelectionSnapshot = {
   };
 };
 
-export function $captureMarkdownViewSelection(): MarkdownViewSelectionSnapshot | null {
+export function $captureMarkdownViewSelection(
+  editor?: LexicalEditor
+): MarkdownViewSelectionSnapshot | null {
   const structuredSelection = $captureStructuredSelection();
   if (structuredSelection === null) {
     return null;
   }
 
+  const localMarkdown =
+    editor !== undefined
+      ? $exportMarkdownStringForEditor(editor)
+      : $exportMarkdownString();
+
   return {
     structuredSelection,
-    localMarkdown: $exportMarkdownString(),
+    localMarkdown,
     localTexts: {
       anchor: getContainerTextFromLexical(structuredSelection.anchor),
       focus: getContainerTextFromLexical(structuredSelection.focus),
@@ -500,12 +452,14 @@ export function $restoreMarkdownViewSelection(
 export function $importRemoteMarkdown(
   remote: string,
   _local: string = remote,
-  options?: { preserveSelection?: boolean }
+  options?: { editor?: LexicalEditor; preserveSelection?: boolean }
 ): void {
   const preserveSelection = options?.preserveSelection ?? true;
-  const saved = preserveSelection ? $captureMarkdownViewSelection() : null;
+  const saved = preserveSelection
+    ? $captureMarkdownViewSelection(options?.editor)
+    : null;
 
-  $importMarkdownString(remote);
+  $importMarkdownString(remote, options?.editor);
 
   if (saved === null) {
     $getRoot().selectStart();
@@ -560,7 +514,9 @@ export function $reimportRootParagraphIfNeeded(
   }
 
   const markdown = $exportTopLevelBlockMarkdown(paragraph);
-  const imported = $markdownToNodes(markdown);
+  const imported = paragraph.getChildren().some($isLineBreakNode)
+    ? $importRootBlockMarkdown(markdown)
+    : $markdownToNodes(markdown);
 
   if (imported.length === 0) {
     return false;
@@ -571,6 +527,19 @@ export function $reimportRootParagraphIfNeeded(
     return false;
   }
 
+  // Hard-break paragraphs export as `line\nline`. Block reimport treats bare
+  // newlines as paragraph breaks, so skip when no block structure is produced.
+  if (
+    paragraph.getChildren().some($isLineBreakNode) &&
+    imported.every($isParagraphNode)
+  ) {
+    for (const node of imported) {
+      node.remove();
+    }
+    return false;
+  }
+
+  const previousSelection = $getSelection()?.clone() ?? null;
   const parent = paragraph.getParent()!;
   const previousSibling = paragraph.getPreviousSibling();
   paragraph.remove();
@@ -590,21 +559,27 @@ export function $reimportRootParagraphIfNeeded(
     anchor = node;
   }
 
+  if (previousSelection !== null) {
+    $setSelection(previousSelection);
+  }
+
   return true;
 }
 
 export function $markdownToNodes(markdown: string): LexicalNode[] {
-  // Parses markdown into detached block nodes without touching the document.
-  // $convertFromMarkdownString moves the selection to the start of its
-  // target node, so preserve the caller's selection across the conversion.
   const previousSelection = $getSelection()?.clone() ?? null;
 
   const holder = $createParagraphNode();
+  const importContext: ImportChunkContext = {
+    pendingGapNewlines: 0,
+    recordBlocks: () => {},
+  };
   importMixedNestedListMarkdown(
     markdown,
     holder,
-    $importChunk,
-    INLINE_MARKDOWN_TRANSFORMERS
+    (chunk, target) => $importChunk(chunk, target, importContext),
+    INLINE_MARKDOWN_TRANSFORMERS,
+    importContext
   );
   const children = holder.getChildren();
   for (const child of children) {

@@ -7,7 +7,7 @@ import {
 } from 'lexical';
 import {
   $exportTopLevelBlockMarkdown,
-  $markdownToNodes,
+  $importRootBlockMarkdown,
   $reimportRootParagraphIfNeeded,
 } from './import-export';
 import { makeGfmTestEditor } from './gfm-test-helpers';
@@ -30,7 +30,7 @@ describe('$reimportRootParagraphIfNeeded', () => {
     const editor = makeGfmTestEditor();
 
     editor.update(() => {
-      expect($markdownToNodes('hello world')).toHaveLength(1);
+      expect($importRootBlockMarkdown('hello world')).toHaveLength(1);
     });
 
     editor.dispose();
@@ -44,10 +44,9 @@ describe('$reimportRootParagraphIfNeeded', () => {
       const paragraph = $getRoot().getFirstChild()!;
       const markdown = $exportTopLevelBlockMarkdown(paragraph);
       expect(markdown).toBe('---\njlkjkl');
-      expect($markdownToNodes(markdown).map((node) => node.getType())).toEqual([
-        'horizontalrule',
-        'paragraph',
-      ]);
+      expect(
+        $importRootBlockMarkdown(markdown).map((node) => node.getType())
+      ).toEqual(['horizontalrule', 'paragraph']);
     });
 
     editor.dispose();
@@ -84,6 +83,56 @@ describe('$reimportRootParagraphIfNeeded', () => {
       expect($reimportRootParagraphIfNeeded(paragraph)).toBe(false);
       expect(paragraph.isAttached()).toBe(true);
       expect(paragraph.getTextContent()).toBe('hello world');
+    });
+
+    editor.dispose();
+  });
+
+  it('keeps shift+enter hard breaks in one paragraph on reimport', () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(() => {
+      setupParagraphWithSoftLineBreak('hello', '**world**');
+      const paragraph = $getRoot().getFirstChild()!;
+      expect($exportTopLevelBlockMarkdown(paragraph)).toBe('hello\n**world**');
+      expect($reimportRootParagraphIfNeeded(paragraph)).toBe(false);
+      expect($getRoot().getChildren()).toHaveLength(1);
+      expect($getRoot().getFirstChild()?.getTextContent()).toBe('hello\nworld');
+    });
+
+    editor.dispose();
+  });
+
+  it('keeps plain shift+enter hard breaks in one paragraph on reimport', () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(() => {
+      setupParagraphWithSoftLineBreak('test', 'test2');
+      const paragraph = $getRoot().getFirstChild()!;
+      expect($reimportRootParagraphIfNeeded(paragraph)).toBe(false);
+      expect($getRoot().getChildren()).toHaveLength(1);
+      expect(paragraph.getTextContent()).toBe('test\ntest2');
+    });
+
+    editor.dispose();
+  });
+
+  it('reimports --- on a soft line when a list follows at root', () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(() => {
+      setupParagraphWithSoftLineBreak('---', 'jlkjkl');
+      for (const node of $importRootBlockMarkdown('- item')) {
+        $getRoot().append(node);
+      }
+      expect($reimportRootParagraphIfNeeded($getRoot().getFirstChild()!)).toBe(
+        true
+      );
+      expect(
+        $getRoot()
+          .getChildren()
+          .map((child) => child.getType())
+      ).toEqual(['horizontalrule', 'paragraph', 'list']);
     });
 
     editor.dispose();
