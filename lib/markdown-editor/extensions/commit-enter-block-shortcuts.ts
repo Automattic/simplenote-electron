@@ -75,9 +75,11 @@ export function registerCommitEnterBlockShortcutsOnLeave(
           }
 
           const matchedText = $commitTriggerOnEnterBlockShortcut(block);
-          if (matchedText !== null) {
-            $addUpdateTag(HISTORY_MERGE_TAG);
+          if (matchedText === null) {
+            return;
           }
+
+          $addUpdateTag(HISTORY_MERGE_TAG);
         },
         { tag: COMMIT_ENTER_BLOCK_SHORTCUT_TAG }
       );

@@ -47,13 +47,11 @@ export type MarkdownEditorExtensionOptions = {
   getScrollContainer?: () => HTMLElement | null;
   getScrollTop?: () => number;
   noteId?: string;
-  onRemoteContentImported?: (markdown: string) => void;
 };
 
 export {
   $captureMarkdownViewSelection,
   $exportMarkdownString,
-  $exportMarkdownStringForEditor,
   $importMarkdownString,
   $importRemoteMarkdown,
   $markdownToNodes,
@@ -130,7 +128,7 @@ const BlockquoteEnterSplitExtension = defineExtension({
 });
 
 // Re-import paragraphs on leave so block markdown (`---`, `# `, etc.) does not
-// remain as literal text inside a multi-line paragraph.
+// remain as literal text inside a line-native paragraph.
 export const MarkdownShortcutExtension = defineExtension({
   name: '@simplenote/markdown-shortcuts',
   register(editor) {
@@ -151,18 +149,11 @@ export const MarkdownShortcutExtension = defineExtension({
   },
 });
 
-function createMarkdownOnChangeExtension(
-  onChange: (markdown: string) => void,
-  onRemoteContentImported?: (markdown: string) => void
-) {
+function createMarkdownOnChangeExtension(onChange: (markdown: string) => void) {
   return defineExtension({
     name: '@simplenote/markdown-on-change',
     register(editor) {
-      return registerMarkdownOnChange(
-        editor,
-        onChange,
-        onRemoteContentImported
-      );
+      return registerMarkdownOnChange(editor, onChange);
     },
   });
 }
@@ -175,7 +166,6 @@ export function createMarkdownEditorExtension(
   const noteId = options?.noteId;
   const getScrollTop = options?.getScrollTop;
   const getScrollContainer = options?.getScrollContainer;
-  const onRemoteContentImported = options?.onRemoteContentImported;
 
   const historyExtension = noteId
     ? configExtension(HistoryExtension, {
@@ -223,9 +213,7 @@ export function createMarkdownEditorExtension(
   ];
 
   if (onChange) {
-    dependencies.push(
-      createMarkdownOnChangeExtension(onChange, onRemoteContentImported)
-    );
+    dependencies.push(createMarkdownOnChangeExtension(onChange));
   }
 
   if (noteId) {
@@ -245,25 +233,18 @@ export function createMarkdownEditorExtension(
   }
 
   return defineExtension({
+    $initialEditorState() {
+      $importMarkdownString(markdown);
+      // Saved caret is restored by noteViewMemoryExtension after scroll is applied.
+      // selectStart prevents Lexical's focus fallback to selectEnd().
+      $getRoot().selectStart();
+    },
     dependencies,
     name: '@simplenote/markdown-editor',
     namespace: 'SimplenoteMarkdownEditor',
-    nodes: [TransientParagraphNode],
     onError(error: Error) {
       // eslint-disable-next-line no-console -- Lexical error sink; note view must stay alive
       console.error(error);
-    },
-    register(editor) {
-      editor.update(
-        () => {
-          $importMarkdownString(markdown, editor);
-          // Saved caret is restored by noteViewMemoryExtension after scroll is applied.
-          // selectStart prevents Lexical's focus fallback to selectEnd().
-          $getRoot().selectStart();
-        },
-        { tag: [REMOTE_CONTENT_TAG, HISTORY_MERGE_TAG] }
-      );
-      return () => {};
     },
     theme: markdownEditorTheme,
   });

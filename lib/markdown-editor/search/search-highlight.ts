@@ -2,6 +2,7 @@ import { createDOMRange } from '@lexical/selection';
 import {
   $getRoot,
   $isElementNode,
+  $isParagraphNode,
   $isTextNode,
   type LexicalEditor,
   type LexicalNode,
@@ -13,12 +14,9 @@ import {
   getSearchTerms,
   type TextMatchRange,
 } from '../../search/in-note-search';
-import {
-  GFM_PARAGRAPH_GAP,
-  isEmptyRootParagraph,
-  separatorBetweenRootBlocks,
-} from '../markdown/block-gaps';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
+
+const DOUBLE_LINE_BREAK = '\n\n';
 
 export const SEARCH_MATCH_HIGHLIGHT = 'search-decoration';
 export const SEARCH_SELECTED_HIGHLIGHT = 'selected-search';
@@ -74,27 +72,35 @@ export function $collectTextSegments(): {
         index !== children.length - 1 &&
         !children[index].isInline()
       ) {
-        text += GFM_PARAGRAPH_GAP;
+        text += DOUBLE_LINE_BREAK;
       }
     }
   };
 
-  let previousBlock: LexicalNode | null = null;
+  const isEmptyRootParagraph = (node: LexicalNode) =>
+    $isParagraphNode(node) &&
+    !$isTransientParagraphNode(node) &&
+    node.getChildrenSize() === 0 &&
+    node.getTextContent() === '';
+
+  let needsBlockGap = false;
   for (const child of $getRoot().getChildren()) {
     if ($isTransientParagraphNode(child)) {
       continue;
     }
 
     if (isEmptyRootParagraph(child)) {
+      text += DOUBLE_LINE_BREAK;
+      needsBlockGap = false;
       continue;
     }
 
-    if (previousBlock !== null) {
-      text += separatorBetweenRootBlocks(previousBlock, child);
+    if (needsBlockGap) {
+      text += DOUBLE_LINE_BREAK;
     }
 
     walk(child);
-    previousBlock = child;
+    needsBlockGap = true;
   }
 
   return { segments, text };

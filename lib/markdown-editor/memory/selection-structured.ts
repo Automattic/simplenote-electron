@@ -22,11 +22,13 @@ import {
 } from 'lexical';
 
 import { $selectTransientGapAfterExportRootIndex } from '../extensions/block-cursor-navigation';
-import { isEmptyRootParagraph } from '../markdown/block-gaps';
-import { getContentRootBlocks } from '../markdown/markdown-export';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
 
 import { remapMarkdownOffset } from './selection-diff';
+import {
+  $exportRootChildren,
+  isEmptyRootParagraph,
+} from './selection-lexical-helpers';
 
 export type StructuredPoint = {
   rootIndex: number;
@@ -125,7 +127,7 @@ function $captureStructuredPoint(point: PointType): StructuredPoint | null {
       return null;
     }
 
-    const rootChildren = getContentRootBlocks();
+    const rootChildren = $exportRootChildren();
     const afterIndex = rootChildren.findIndex(
       (child) => child.getKey() === previous.getKey()
     );
@@ -143,7 +145,7 @@ function $captureStructuredPoint(point: PointType): StructuredPoint | null {
   }
 
   if (isEmptyRootParagraph(top)) {
-    const rootChildren = getContentRootBlocks();
+    const rootChildren = $exportRootChildren();
     const rootIndex = rootChildren.findIndex(
       (child) => child.getKey() === top.getKey()
     );
@@ -175,7 +177,7 @@ function $captureStructuredPoint(point: PointType): StructuredPoint | null {
     current = parent;
   }
 
-  const rootChildren = getContentRootBlocks();
+  const rootChildren = $exportRootChildren();
   const rootIndex = rootChildren.findIndex(
     (child) => child.getKey() === current.getKey()
   );
@@ -235,7 +237,7 @@ export function getContainerTextFromLexical(
     return '';
   }
 
-  const rootChildren = getContentRootBlocks();
+  const rootChildren = $exportRootChildren();
   if (point.rootIndex < 0 || point.rootIndex >= rootChildren.length) {
     return null;
   }
@@ -268,7 +270,7 @@ function $resolveStructuredPoint(
     );
   }
 
-  const rootChildren = getContentRootBlocks();
+  const rootChildren = $exportRootChildren();
   if (rootChildren.length === 0) {
     return null;
   }

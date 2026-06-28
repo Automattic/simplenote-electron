@@ -33,9 +33,7 @@ import {
   type LexicalNode,
 } from 'lexical';
 
-import { $exportMarkdownStringForEditor } from './import-export';
-import { gapNewlineCount } from './block-gaps';
-import { $createTransientParagraphNode } from '../nodes/transient-paragraph-node';
+import { $exportMarkdownString } from './import-export';
 import { $tagShortcutHistoryFromMarkdown } from '../extensions/markdown-history-tags';
 import { $isSelectionInTable } from '../extensions/table-controls';
 
@@ -159,7 +157,7 @@ export function registerTaskListItemShortcuts(
     }
 
     if ($tryConvertListItemToTaskList(node)) {
-      const markdownBefore = $exportMarkdownStringForEditor(editor);
+      const markdownBefore = $exportMarkdownString();
       $tagShortcutHistoryFromMarkdown(markdownBefore, editor);
     }
   });
@@ -375,12 +373,10 @@ function appendTreeToList(
 function importListBlock(
   lines: ParsedListLine[],
   root: ElementNode,
-  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>,
-  importContext?: MarkdownImportContext
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
 ): void {
   const tree = buildListTree(lines);
   const rootTypes = new Set(tree.map((node) => node.listType));
-  const beforeCount = root.getChildrenSize();
 
   for (const listType of rootTypes) {
     const nodes = tree.filter((node) => node.listType === listType);
@@ -388,29 +384,19 @@ function importListBlock(
     appendTreeToList(list, nodes, inlineTransformers);
     root.append(list);
   }
-
-  if (importContext !== undefined) {
-    importContext.recordBlocks(root.getChildren().slice(beforeCount));
-  }
 }
-
-export type MarkdownImportContext = {
-  pendingGapNewlines: number;
-  recordBlocks: (nodes: LexicalNode[]) => void;
-};
 
 export function importMixedNestedListMarkdown(
   markdown: string,
   root: ElementNode,
   importMarkdownChunk: (chunk: string, node: ElementNode) => void,
-  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>,
-  importContext?: MarkdownImportContext
+  inlineTransformers: Array<TextFormatTransformer | TextMatchTransformer>
 ): void {
   const blocks = groupListBlocks(markdown);
   for (let index = 0; index < blocks.length; index++) {
     const block = blocks[index];
     if (block.kind === 'list') {
-      importListBlock(block.lines, root, inlineTransformers, importContext);
+      importListBlock(block.lines, root, inlineTransformers);
       continue;
     }
 
@@ -419,24 +405,13 @@ export function importMixedNestedListMarkdown(
       continue;
     }
 
+    // A blank line between two list blocks must become an empty paragraph so
+    // adjacent lists do not merge. Trailing newlines (e.g. "- item\n" from the
+    // clipboard) also produce an empty markdown block but must stay skipped.
     const previousBlock = blocks[index - 1];
     const nextBlock = blocks[index + 1];
-    if (
-      importContext !== undefined &&
-      previousBlock !== undefined &&
-      nextBlock !== undefined
-    ) {
-      const newlineCount = gapNewlineCount(block.text);
-      importContext.pendingGapNewlines = newlineCount >= 2 ? newlineCount : 2;
-
-      if (previousBlock.kind === 'list' && nextBlock.kind === 'list') {
-        // Adjacent lists merge in Lexical without a structural separator.
-        try {
-          root.append($createTransientParagraphNode());
-        } catch {
-          // Node may be unavailable during very early bootstrap.
-        }
-      }
+    if (previousBlock?.kind === 'list' && nextBlock?.kind === 'list') {
+      importMarkdownChunk(block.text, root);
     }
   }
 }

@@ -5,10 +5,8 @@ import {
 import { $exportMarkdownString } from './extensions/index';
 import {
   describeRootBlocksFromEditor,
-  flushMarkdownEditor,
   idempotentRoundtripMarkdown,
   makeEditorWithAdjacentBlocks,
-  makeGfmTestEditor,
   makeGfmTestEditorFromMarkdown,
   markdownWithGap,
   simulateSaveReopenFromEditor,
@@ -27,42 +25,36 @@ describe('merge-sensitive block separation', () => {
         label: 'tables',
         before: TABLE_A,
         after: TABLE_B,
-        expected: ['table:1x2', 'table:1x2'],
-      },
-      {
-        label: 'multi-item bullet lists',
-        before: '- a\n- b',
-        after: '- c\n- d',
-        expected: ['list:bullet:2', 'list:bullet:2'],
+        expected: ['table:1x2', 'empty', 'table:1x2'],
       },
       {
         label: 'bullet lists',
         before: '- one',
         after: '- two',
-        expected: ['list:bullet:1', 'list:bullet:1'],
+        expected: ['list:bullet:1', 'empty', 'list:bullet:1'],
       },
       {
         label: 'ordered lists',
         before: '1. one',
         after: '1. two',
-        expected: ['list:number:1', 'list:number:1'],
+        expected: ['list:number:1', 'empty', 'list:number:1'],
       },
       {
         label: 'checklists',
         before: '- [ ] one',
         after: '- [ ] two',
-        expected: ['list:check:1', 'list:check:1'],
+        expected: ['list:check:1', 'empty', 'list:check:1'],
       },
       {
         label: 'blockquotes',
         before: '> first',
         after: '> second',
-        expected: ['quote:"first"', 'quote:"second"'],
+        expected: ['quote:"first"', 'empty', 'quote:"second"'],
       },
     ])(
       'preserves two $label through repeated note switches',
       ({ before, after, expected }) => {
-        const markdown = markdownWithGap(before, 0, after);
+        const markdown = markdownWithGap(before, 1, after);
         const { finalMarkdown, rootBlocksPerCycle } = stableNoteSwitchMarkdown(
           markdown,
           2
@@ -91,7 +83,7 @@ describe('merge-sensitive block separation', () => {
 
     it('preserves two adjacent tables through save and reopen', () => {
       const editor = makeEditorWithAdjacentBlocks(TABLE_A, TABLE_B);
-      const expected = ['table:1x2', 'table:1x2'];
+      const expected = ['table:1x2', 'empty', 'table:1x2'];
 
       const { rootBlocksAfterReopen } = simulateSaveReopenFromEditor(editor);
       expect(rootBlocksAfterReopen).toEqual(expected);
@@ -102,8 +94,12 @@ describe('merge-sensitive block separation', () => {
       const { storeContent, rootBlocksAfterReopen } =
         simulateSaveReopenFromEditor(editor);
 
-      expect(storeContent).toBe(markdownWithGap(TABLE_A, 0, TABLE_B));
-      expect(rootBlocksAfterReopen).toEqual(['table:1x2', 'table:1x2']);
+      expect(storeContent).toBe(markdownWithGap(TABLE_A, 1, TABLE_B));
+      expect(rootBlocksAfterReopen).toEqual([
+        'table:1x2',
+        'empty',
+        'table:1x2',
+      ]);
     });
 
     it('preserves two adjacent blockquotes in the live editor', () => {
@@ -118,7 +114,7 @@ describe('merge-sensitive block separation', () => {
 
     it('preserves two adjacent blockquotes through save and reopen', () => {
       const editor = makeEditorWithAdjacentBlocks(QUOTE_A, QUOTE_B);
-      const expected = ['quote:"first"', 'quote:"second"'];
+      const expected = ['quote:"first"', 'empty', 'quote:"second"'];
 
       const { rootBlocksAfterReopen } = simulateSaveReopenFromEditor(editor);
       expect(rootBlocksAfterReopen).toEqual(expected);
@@ -129,27 +125,12 @@ describe('merge-sensitive block separation', () => {
       const { storeContent, rootBlocksAfterReopen } =
         simulateSaveReopenFromEditor(editor);
 
-      expect(storeContent).toBe(markdownWithGap(QUOTE_A, 0, QUOTE_B));
+      expect(storeContent).toBe(markdownWithGap(QUOTE_A, 1, QUOTE_B));
       expect(rootBlocksAfterReopen).toEqual([
         'quote:"first"',
+        'empty',
         'quote:"second"',
       ]);
-    });
-  });
-
-  describe('after transient reconcile', () => {
-    it('preserves separated multi-item lists through bootstrap reopen', async () => {
-      const markdown = markdownWithGap('- a\n- b', 0, '- c\n- d');
-      const expected = ['list:bullet:2', 'list:bullet:2'];
-      const editor = makeGfmTestEditor(markdown);
-
-      await flushMarkdownEditor(editor);
-      expect(describeRootBlocksFromEditor(editor)).toEqual(expected);
-
-      const { storeContent, rootBlocksAfterReopen } =
-        simulateSaveReopenFromEditor(editor);
-      expect(storeContent).toBe(markdown);
-      expect(rootBlocksAfterReopen).toEqual(expected);
     });
   });
 });
@@ -165,6 +146,7 @@ describe('splitting a multi-line blockquote', () => {
 
     expect(describeRootBlocksFromEditor(editor)).toEqual([
       'quote:"1"',
+      'empty',
       'quote:"2"',
     ]);
 

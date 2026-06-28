@@ -77,48 +77,9 @@ describe('NoteContentSyncTracker', () => {
       )
     ).toBe('skip-dispatched');
   });
-
-  it('skips local change when export matches recorded editor export but not stored bytes', () => {
-    const tracker = new NoteContentSyncTracker();
-    tracker.resetForNote('- test\n---\n- test');
-    tracker.recordEditorExport('- test\n\n---\n\n- test');
-
-    expect(tracker.shouldSkipLocalChange('- test\n---\n- test')).toBe(true);
-    expect(tracker.shouldSkipLocalChange('- test\n\n---\n\n- test')).toBe(true);
-    expect(tracker.shouldSkipLocalChange('- test\n\n---\n\n- test2')).toBe(
-      false
-    );
-  });
 });
 
 describe('applyRemoteMarkdownUpdate', () => {
-  it('records editor export on skip-pushed so canonical re-export does not sync', async () => {
-    const compact = '- test\n---\n- test';
-    const canonical = '- test\n\n---\n\n- test';
-    const tracker = new NoteContentSyncTracker();
-    tracker.resetForNote(compact);
-    const editor = makeGfmTestEditor();
-    importMarkdown(editor, compact);
-
-    await new Promise<void>((resolve) => {
-      applyRemoteMarkdownUpdate(editor, compact, tracker, {
-        editorFocused: false,
-        isCancelled: () => false,
-        scrollShell: null,
-        scrollTop: 0,
-      });
-      queueMicrotask(async () => {
-        await flushMicrotasks();
-        resolve();
-      });
-    });
-
-    expect(tracker.shouldSkipLocalChange(canonical)).toBe(true);
-    expect(tracker.shouldSkipLocalChange(compact)).toBe(true);
-
-    editor.dispose();
-  });
-
   it('records the applied remote so an identical follow-up update is skipped', async () => {
     const tracker = new NoteContentSyncTracker();
     tracker.resetForNote('hello');

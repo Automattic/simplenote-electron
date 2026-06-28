@@ -1,10 +1,7 @@
 import type { LexicalEditor } from 'lexical';
 
 import { clearBlockExportCache } from './block-export-cache';
-import {
-  $exportMarkdownString,
-  $exportMarkdownStringForEditor,
-} from './import-export';
+import { $exportMarkdownString } from './import-export';
 
 // Updates applied from remote/store content (as opposed to local typing) carry
 // this tag so the on-change serializer doesn't echo them back as edits.
@@ -15,19 +12,12 @@ export const REMOTE_CONTENT_TAG = 'simplenote:remote-content';
 // now; see .cursor/specs/markdown-export-performance.md.
 export function registerMarkdownOnChange(
   editor: LexicalEditor,
-  onChange: (markdown: string) => void,
-  onRemoteContentImported?: (markdown: string) => void
+  onChange: (markdown: string) => void
 ): () => void {
   return editor.registerUpdateListener(
     ({ dirtyElements, dirtyLeaves, editorState, tags }) => {
       if (tags.has(REMOTE_CONTENT_TAG)) {
         clearBlockExportCache(editor);
-        if (onRemoteContentImported) {
-          editorState.read(() => {
-            const markdown = $exportMarkdownStringForEditor(editor);
-            queueMicrotask(() => onRemoteContentImported(markdown));
-          });
-        }
         return;
       }
       if (dirtyElements.size === 0 && dirtyLeaves.size === 0) {

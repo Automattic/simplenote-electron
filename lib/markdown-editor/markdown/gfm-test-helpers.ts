@@ -4,6 +4,7 @@ import { $isQuoteNode } from '@lexical/rich-text';
 import { $isTableNode, $isTableRowNode } from '@lexical/table';
 import {
   $getRoot,
+  $isParagraphNode,
   type LexicalEditorWithDispose,
   type LexicalNode,
 } from 'lexical';
@@ -13,9 +14,16 @@ import {
   createMarkdownEditorExtension,
 } from '../extensions/index';
 import { $markdownToNodes, clearBlockExportCache } from './import-export';
-import { $exportMarkdownStringForEditor } from './import-export';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
-import { isEmptyRootParagraph } from './block-gaps';
+
+function isEmptyRootParagraph(node: LexicalNode): boolean {
+  return (
+    $isParagraphNode(node) &&
+    !$isTransientParagraphNode(node) &&
+    node.getChildrenSize() === 0 &&
+    node.getTextContent() === ''
+  );
+}
 
 /** Root-level blocks excluding structural transient paragraphs. */
 export function contentRootChildren(
@@ -96,9 +104,7 @@ export function stableNoteSwitchMarkdown(
   for (let cycle = 0; cycle < cycles; cycle++) {
     const editor = makeGfmTestEditorFromMarkdown(storeContent);
     rootBlocksPerCycle.push(describeRootBlocksFromEditor(editor));
-    storeContent = editor
-      .getEditorState()
-      .read(() => $exportMarkdownStringForEditor(editor));
+    storeContent = editor.getEditorState().read(() => $exportMarkdownString());
     editor.dispose();
   }
 
@@ -113,7 +119,7 @@ export function simulateSaveReopenFromEditor(
 } {
   const storeContent = editor
     .getEditorState()
-    .read(() => $exportMarkdownStringForEditor(editor));
+    .read(() => $exportMarkdownString());
   editor.dispose();
 
   const reopened = makeGfmTestEditorFromMarkdown(storeContent);
@@ -131,22 +137,12 @@ export function makeGfmTestEditor(
   );
 }
 
-/** Await bootstrap import scheduled from createMarkdownEditorExtension.register. */
-export async function flushMarkdownEditor(
-  editor: LexicalEditorWithDispose
-): Promise<void> {
-  await Promise.resolve();
-  await Promise.resolve();
-}
-
 export function importMarkdown(
   editor: LexicalEditorWithDispose,
   markdown: string
 ): void {
   clearBlockExportCache(editor);
-  editor.update(() => $importMarkdownString(markdown, editor), {
-    discrete: true,
-  });
+  editor.update(() => $importMarkdownString(markdown), { discrete: true });
 }
 
 export function roundtrip(
@@ -154,22 +150,20 @@ export function roundtrip(
   markdown: string
 ): string {
   importMarkdown(editor, markdown);
-  return editor
-    .getEditorState()
-    .read(() => $exportMarkdownStringForEditor(editor));
+  return editor.getEditorState().read(() => $exportMarkdownString());
 }
 
 export function rootChildren(editor: LexicalEditorWithDispose): LexicalNode[] {
   return editor.getEditorState().read(() => $getRoot().getChildren());
 }
 
-/** GFM: N extra blank lines between blocks is (N + 2) newlines total. */
+/** Line-native: N blank lines between blocks is encoded as (N + 1) newlines. */
 export function markdownWithGap(
   before: string,
   emptyLineCount: number,
   after: string
 ): string {
-  return `${before}${'\n'.repeat(emptyLineCount + 2)}${after}`;
+  return `${before}${'\n'.repeat(emptyLineCount + 1)}${after}`;
 }
 
 export function countEmptyRootParagraphs(

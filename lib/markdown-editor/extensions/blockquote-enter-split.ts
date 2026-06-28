@@ -5,6 +5,7 @@ import {
   type QuoteNode,
 } from '@lexical/rich-text';
 import {
+  $createParagraphNode,
   $getSelection,
   $isLineBreakNode,
   $isRangeSelection,
@@ -80,11 +81,13 @@ function $splitQuoteAtLineEnd(selection: RangeSelection): boolean {
     return false;
   }
 
+  const emptyParagraph = $createParagraphNode();
   const trailingQuote = $createQuoteNode();
   trailingQuote.append(...trailingNodes);
 
-  quote.insertAfter(trailingQuote);
-  trailingQuote.selectStart();
+  quote.insertAfter(emptyParagraph);
+  emptyParagraph.insertAfter(trailingQuote);
+  emptyParagraph.selectStart();
 
   return true;
 }

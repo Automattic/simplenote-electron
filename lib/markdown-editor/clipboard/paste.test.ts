@@ -311,7 +311,6 @@ describe('registerMarkdownPaste', () => {
     const editor = makeEditor();
     editor.update(
       () => {
-        $getRoot().clear();
         const paragraph = $createParagraphNode();
         const text = $createTextNode('visit site today');
         paragraph.append(text);
@@ -373,7 +372,6 @@ describe('registerMarkdownPaste', () => {
     const editor = makeEditor();
     editor.update(
       () => {
-        $getRoot().clear();
         const code = $createCodeNode();
         code.append($createTextNode(''));
         $getRoot().append(code);
@@ -425,7 +423,6 @@ describe('registerMarkdownPaste', () => {
       () => {
         const quote = $createQuoteNode();
         quote.append($createTextNode('existing '));
-        $getRoot().clear();
         $getRoot().append(quote);
         quote.selectEnd();
       },
@@ -624,8 +621,8 @@ describe('registerMarkdownPaste', () => {
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
       expect($isHorizontalRuleNode(children[0])).toBe(true);
-      expect(children[1]?.getTextContent()).toBe('next paragraph');
-      expect(children.length).toBe(2);
+      expect(children[1]?.getTextContent()).toBe('');
+      expect(children[2]?.getTextContent()).toBe('next paragraph');
     });
     editor.dispose();
   });

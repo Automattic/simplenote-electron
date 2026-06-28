@@ -85,7 +85,7 @@ describe('copy as plain text', () => {
 
     expect(copySelectionAsPlainText(editor)).toBe(true);
     expect(writeText).toHaveBeenCalledWith(
-      'first quoted line\nplain paragraph'
+      'first quoted line\n\nplain paragraph'
     );
     expect(writeText.mock.calls[0][0]).not.toContain('>');
 
