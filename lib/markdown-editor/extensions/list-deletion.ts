@@ -201,6 +201,29 @@ export function $collectFullySelectedListItems(
   return [...items.values()];
 }
 
+function $selectionIsFullyContainedInFullySelectedListItems(
+  selection: RangeSelection
+): boolean {
+  const items = $collectFullySelectedListItems(selection);
+  if (items.length === 0) {
+    return false;
+  }
+
+  const itemKeys = new Set(items.map((item) => item.getKey()));
+  for (const node of selection.getNodes()) {
+    const listItem = $findMatchingParent(node, $isListItemNode);
+    if (
+      listItem === null ||
+      $isWrapperListItem(listItem) ||
+      !itemKeys.has(listItem.getKey())
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function $isCodeBlockContentFullySelected(
   codeNode: CodeNodeType,
   selection: RangeSelection
@@ -249,6 +272,25 @@ export function $collectFullySelectedCodeBlocks(
   return [...blocks.values()];
 }
 
+function $selectionIsFullyContainedInFullySelectedCodeBlocks(
+  selection: RangeSelection
+): boolean {
+  const blocks = $collectFullySelectedCodeBlocks(selection);
+  if (blocks.length === 0) {
+    return false;
+  }
+
+  const blockKeys = new Set(blocks.map((block) => block.getKey()));
+  for (const node of selection.getNodes()) {
+    const codeNode = $findMatchingParent(node, $isCodeNode);
+    if (codeNode === null || !blockKeys.has(codeNode.getKey())) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function $removeFullySelectedCodeBlocks(
   selection: RangeSelection
 ): boolean {
@@ -286,7 +328,10 @@ export function $removeFullySelectedCodeBlocks(
 
 function $tryRemoveFullySelectedCodeBlocks(): boolean {
   const selection = $getSelection();
-  if (!$isRangeSelection(selection)) {
+  if (
+    !$isRangeSelection(selection) ||
+    !$selectionIsFullyContainedInFullySelectedCodeBlocks(selection)
+  ) {
     return false;
   }
 
@@ -341,6 +386,25 @@ export function $collectFullySelectedBlockquotes(
   return [...quotes.values()];
 }
 
+function $selectionIsFullyContainedInFullySelectedBlockquotes(
+  selection: RangeSelection
+): boolean {
+  const quotes = $collectFullySelectedBlockquotes(selection);
+  if (quotes.length === 0) {
+    return false;
+  }
+
+  const quoteKeys = new Set(quotes.map((quote) => quote.getKey()));
+  for (const node of selection.getNodes()) {
+    const quoteNode = $findMatchingParent(node, $isQuoteNode);
+    if (quoteNode === null || !quoteKeys.has(quoteNode.getKey())) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function $removeFullySelectedBlockquotes(
   selection: RangeSelection
 ): boolean {
@@ -378,7 +442,10 @@ export function $removeFullySelectedBlockquotes(
 
 function $tryRemoveFullySelectedBlockquotes(): boolean {
   const selection = $getSelection();
-  if (!$isRangeSelection(selection)) {
+  if (
+    !$isRangeSelection(selection) ||
+    !$selectionIsFullyContainedInFullySelectedBlockquotes(selection)
+  ) {
     return false;
   }
 
@@ -586,7 +653,10 @@ export function $removeFullySelectedListItems(
 
 function $tryRemoveFullySelectedListItems(): boolean {
   const selection = $getSelection();
-  if (!$isRangeSelection(selection)) {
+  if (
+    !$isRangeSelection(selection) ||
+    !$selectionIsFullyContainedInFullySelectedListItems(selection)
+  ) {
     return false;
   }
   return $removeFullySelectedListItems(selection);
@@ -621,10 +691,19 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
         const items = $collectFullySelectedListItems(selection);
         const codeBlocks = $collectFullySelectedCodeBlocks(selection);
         const blockquotes = $collectFullySelectedBlockquotes(selection);
+        const canRemoveListItems =
+          items.length > 0 &&
+          $selectionIsFullyContainedInFullySelectedListItems(selection);
+        const canRemoveCodeBlocks =
+          codeBlocks.length > 0 &&
+          $selectionIsFullyContainedInFullySelectedCodeBlocks(selection);
+        const canRemoveBlockquotes =
+          blockquotes.length > 0 &&
+          $selectionIsFullyContainedInFullySelectedBlockquotes(selection);
         if (
-          items.length === 0 &&
-          codeBlocks.length === 0 &&
-          blockquotes.length === 0
+          !canRemoveListItems &&
+          !canRemoveCodeBlocks &&
+          !canRemoveBlockquotes
         ) {
           return false;
         }
@@ -638,11 +717,11 @@ export function registerListDeletion(editor: LexicalEditor): () => void {
         ).then((copied) => {
           if (copied) {
             editor.update(() => {
-              if (items.length > 0) {
+              if (canRemoveListItems) {
                 $tryRemoveFullySelectedListItems();
                 return;
               }
-              if (codeBlocks.length > 0) {
+              if (canRemoveCodeBlocks) {
                 $tryRemoveFullySelectedCodeBlocks();
                 return;
               }

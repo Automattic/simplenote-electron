@@ -432,6 +432,36 @@ describe('list deletion', () => {
     editor.dispose();
   });
 
+  it('deletes a partial selection spanning code blocks and horizontal rules', async () => {
+    const markdown = '```ABC```\n---\n---\n```DEF```';
+    const editor = makeGfmTestEditor(markdown);
+    editor.update(
+      () => {
+        const abc = findTextNode($getRoot(), 'ABC');
+        const def = findTextNode($getRoot(), 'DEF');
+        if (!abc || !def) {
+          throw new Error('Expected code block text nodes');
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          throw new Error('Expected range selection');
+        }
+        selection.anchor.set(abc.getKey(), 1, 'text');
+        selection.focus.set(def.getKey(), def.getTextContentSize(), 'text');
+      },
+      { discrete: true }
+    );
+
+    await dispatchDelete(editor);
+
+    const result = exportMarkdown(editor);
+    expect(result).not.toContain('DEF');
+    expect(result).not.toContain('BC');
+    expect(result).not.toContain('---');
+    expect(result.replace(/\n/g, '')).toBe('```A```');
+    editor.dispose();
+  });
+
   it('leaves no empty list shell in the document tree', async () => {
     const editor = makeGfmTestEditor('- only');
     selectText(editor, 'only');
