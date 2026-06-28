@@ -81,6 +81,9 @@ describe('table export performance', () => {
       `50×50 single-table cell edit export: ${incrementalMs.toFixed(1)}ms incremental (full ${fullMs.toFixed(1)}ms) — Phase 3 row cache target < 16ms`
     );
 
+    const exported = exportFullMarkdown(editor);
+    expect(exported).toBe(markdown.replace('2526', '2526!'));
+
     editor.dispose();
   });
 });

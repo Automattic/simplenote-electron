@@ -1,5 +1,12 @@
-import { NoteContentSyncTracker } from './pipeline';
+import { $exportMarkdownString } from '../extensions/index';
 import { withCheckboxSyntax } from '../../utils/task-transform';
+import { importMarkdown, makeGfmTestEditor } from './gfm-test-helpers';
+import { applyRemoteMarkdownUpdate, NoteContentSyncTracker } from './pipeline';
+
+async function flushMicrotasks(): Promise<void> {
+  await Promise.resolve();
+  await Promise.resolve();
+}
 
 describe('NoteContentSyncTracker', () => {
   it('resetForNote normalizes pushed/local export and clears dispatched', () => {
@@ -69,5 +76,37 @@ describe('NoteContentSyncTracker', () => {
         withCheckboxSyntax('raw export')
       )
     ).toBe('skip-dispatched');
+  });
+});
+
+describe('applyRemoteMarkdownUpdate', () => {
+  it('records the applied remote so an identical follow-up update is skipped', async () => {
+    const tracker = new NoteContentSyncTracker();
+    tracker.resetForNote('hello');
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'hello');
+
+    await new Promise<void>((resolve) => {
+      applyRemoteMarkdownUpdate(editor, 'goodbye', tracker, {
+        editorFocused: false,
+        isCancelled: () => false,
+        scrollShell: null,
+        scrollTop: 0,
+      });
+      queueMicrotask(async () => {
+        await flushMicrotasks();
+        resolve();
+      });
+    });
+
+    expect(editor.read(() => $exportMarkdownString())).toBe('goodbye');
+    expect(
+      tracker.shouldSkipRemoteUpdate(
+        'store echo',
+        withCheckboxSyntax('goodbye')
+      )
+    ).toBe('skip-pushed');
+
+    editor.dispose();
   });
 });
