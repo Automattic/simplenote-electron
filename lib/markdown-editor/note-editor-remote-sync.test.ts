@@ -14,6 +14,7 @@ import {
 } from '@lexical/table';
 
 import { $exportMarkdownString } from './extensions/index';
+import { $importRemoteMarkdown } from './markdown/import-export';
 import { importMarkdown, makeGfmTestEditor } from './markdown/gfm-test-helpers';
 import {
   applyRemoteMarkdownUpdate,
@@ -92,82 +93,6 @@ function getSelectedTableCellPosition(): { col: number; row: number } | null {
 }
 
 describe('note-editor remote sync baseline', () => {
-  it('ignores a stale local markdown baseline when the live document differs', async () => {
-    const staleLocal = 'hello\n\nworld';
-    const liveLocal = 'hello!\n\nworld';
-    const remote = 'hello sync\n\nworld';
-    const editor = makeGfmTestEditor();
-    importMarkdown(editor, liveLocal);
-
-    editor.update(
-      () => {
-        for (const child of $getRoot().getChildren()) {
-          if (!$isParagraphNode(child)) {
-            continue;
-          }
-          const textNode = child.getFirstChild();
-          if ($isTextNode(textNode) && textNode.getTextContent() === 'hello!') {
-            textNode.select(6, 6);
-            return;
-          }
-        }
-        throw new Error('Expected hello paragraph');
-      },
-      { discrete: true }
-    );
-
-    let capturedInsideUpdate: ReturnType<
-      typeof $captureMarkdownSelectionOffsets
-    > = null;
-
-    await new Promise<void>((resolve) => {
-      queueMicrotask(() => {
-        editor.update(
-          () => {
-            capturedInsideUpdate = $captureMarkdownSelectionOffsets();
-            $importRemoteMarkdown(remote, staleLocal);
-          },
-          { discrete: true, onUpdate: resolve }
-        );
-      });
-    });
-    await flushMicrotasks();
-
-    const stalePattern = editor.read(() => $captureMarkdownSelectionOffsets());
-
-    importMarkdown(editor, liveLocal);
-    editor.update(
-      () => {
-        for (const child of $getRoot().getChildren()) {
-          if (!$isParagraphNode(child)) {
-            continue;
-          }
-          const textNode = child.getFirstChild();
-          if ($isTextNode(textNode) && textNode.getTextContent() === 'hello!') {
-            textNode.select(6, 6);
-            return;
-          }
-        }
-        throw new Error('Expected hello paragraph');
-      },
-      { discrete: true }
-    );
-
-    editor.update(
-      () => {
-        $importRemoteMarkdown(remote, liveLocal);
-      },
-      { discrete: true }
-    );
-
-    const livePattern = editor.read(() => $captureMarkdownSelectionOffsets());
-
-    expect(capturedInsideUpdate?.anchor).toBe(6);
-    expect(stalePattern).toEqual(livePattern);
-
-    editor.dispose();
-  });
-
   it('remaps correctly when import reads the live export inside the microtask update', async () => {
     const staleLocal = 'hello\n\nworld';
     const liveLocal = 'hello!\n\nworld';

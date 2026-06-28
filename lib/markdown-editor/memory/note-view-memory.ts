@@ -15,6 +15,7 @@ import { useLayoutEffect, useRef, type RefObject } from 'react';
 import {
   $getRoot,
   defineExtension,
+  HISTORY_MERGE_TAG,
   SKIP_SCROLL_INTO_VIEW_TAG,
   type LexicalEditor,
 } from 'lexical';
@@ -155,7 +156,10 @@ export function createNoteViewMemoryExtension({
               $getRoot().selectStart();
             }
           },
-          { discrete: true, tag: SKIP_SCROLL_INTO_VIEW_TAG }
+          {
+            discrete: true,
+            tag: [SKIP_SCROLL_INTO_VIEW_TAG, HISTORY_MERGE_TAG],
+          }
         );
       };
 

@@ -1,6 +1,7 @@
 import {
   SKIP_DOM_SELECTION_TAG,
   SKIP_SCROLL_INTO_VIEW_TAG,
+  CLEAR_HISTORY_COMMAND,
   type LexicalEditor,
 } from 'lexical';
 
@@ -119,6 +120,7 @@ export function applyRemoteMarkdownUpdate(
             cancelRestore = restoreScrollPosition(scrollShell, scrollTop);
           }
           tracker.recordRemoteApplied(remote);
+          editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
         },
       }
     );

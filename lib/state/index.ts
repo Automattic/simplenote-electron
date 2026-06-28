@@ -18,6 +18,7 @@ import { isElectron } from '../utils/platform';
 
 import * as persistence from './persistence';
 import { middleware as analyticsMiddleware } from './analytics/middleware';
+import { middleware as noteHistoryMemoryMiddleware } from '../markdown-editor/memory/note-history-memory-middleware';
 import dataMiddleware from './data/middleware';
 import electronMiddleware from './electron/middleware';
 import { middleware as searchMiddleware } from '../search';
@@ -79,6 +80,7 @@ export const makeStore = (
           }),
           applyMiddleware(
             dataMiddleware,
+            noteHistoryMemoryMiddleware,
             analyticsMiddleware,
             browserMiddleware,
             searchMiddleware,

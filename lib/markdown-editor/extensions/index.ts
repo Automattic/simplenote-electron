@@ -12,6 +12,7 @@ import {
   $getRoot,
   configExtension,
   defineExtension,
+  HISTORY_MERGE_TAG,
   type AnyLexicalExtensionArgument,
 } from 'lexical';
 
@@ -24,6 +25,10 @@ import {
 } from '../markdown/on-change';
 import { MARKDOWN_TRANSFORMERS } from '../markdown/transformers';
 import { createNoteViewMemoryExtension } from '../memory/note-view-memory';
+import {
+  createNoteHistoryMemoryExtension,
+  getOrCreateNoteHistoryState,
+} from '../memory/note-history-memory';
 import { ImageNode } from '../nodes/image-node';
 import { TransientParagraphNode } from '../nodes/transient-paragraph-node';
 import { markdownEditorTheme } from '../theme';
@@ -162,13 +167,22 @@ export function createMarkdownEditorExtension(
   const getScrollTop = options?.getScrollTop;
   const getScrollContainer = options?.getScrollContainer;
 
+  const historyExtension = noteId
+    ? configExtension(HistoryExtension, {
+        createInitialHistoryState: () => getOrCreateNoteHistoryState(noteId),
+      })
+    : HistoryExtension;
+
   const coreEditing: AnyLexicalExtensionArgument[] = [
     configExtension(InitialStateExtension, {
-      updateOptions: { tag: REMOTE_CONTENT_TAG },
+      // REMOTE_CONTENT_TAG: on-change must not echo bootstrap import as an edit.
+      // HISTORY_MERGE_TAG: bootstrap must not push onto a preserved undo stack
+      // when remounting a note (Lexical requires isSameEditor for merge).
+      updateOptions: { tag: [REMOTE_CONTENT_TAG, HISTORY_MERGE_TAG] },
     }),
     richTextExtension,
     FormatEscapeExtension,
-    HistoryExtension,
+    historyExtension,
     listExtension,
     CheckListExtension,
     LinkExtension,
@@ -200,6 +214,12 @@ export function createMarkdownEditorExtension(
 
   if (onChange) {
     dependencies.push(createMarkdownOnChangeExtension(onChange));
+  }
+
+  if (noteId) {
+    dependencies.push(
+      createNoteHistoryMemoryExtension({ initialMarkdown: markdown, noteId })
+    );
   }
 
   if (noteId && getScrollTop && getScrollContainer) {
