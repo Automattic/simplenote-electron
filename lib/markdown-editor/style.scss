@@ -3,6 +3,7 @@
 // ~2 lines of caret clearance; --keyboard-inset is set from visualViewport on
 // narrow viewports (see keyboard-inset.ts).
 $mobile-caret-margin: 2.5em;
+$toolbar-icon-size: 1.25rem;
 
 // Frame fills the note area; only .lexical-md-editor-shell scrolls. The toolbar
 // sits in the column above the shell (like NoteToolbar above Monaco).
@@ -207,14 +208,14 @@ $mobile-caret-margin: 2.5em;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: $toolbar-icon-size;
+  height: $toolbar-icon-size;
   flex-shrink: 0;
   color: var(--foreground-color);
 
   svg {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: $toolbar-icon-size;
+    height: $toolbar-icon-size;
     fill: currentcolor;
   }
 
@@ -313,14 +314,14 @@ $mobile-caret-margin: 2.5em;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: $toolbar-icon-size;
+  height: $toolbar-icon-size;
   flex-shrink: 0;
   color: var(--me-button-default-icon-color);
 
   svg {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: $toolbar-icon-size;
+    height: $toolbar-icon-size;
     fill: currentcolor;
   }
 

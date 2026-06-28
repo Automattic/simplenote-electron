@@ -3,7 +3,6 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { SKIP_DOM_SELECTION_TAG, type LexicalEditor } from 'lexical';
 import { Tooltip } from '@mui/material';
 
-import ChecklistIcon from '../../icons/check-list';
 import { CmdOrCtrl } from '../../utils/platform';
 import {
   deleteTableColumn,
@@ -48,6 +47,7 @@ import {
   BlockquoteIcon,
   BoldIcon,
   BulletListIcon,
+  ChecklistIcon,
   CodeBlockIcon,
   CodeIcon,
   HeadingIcon,
