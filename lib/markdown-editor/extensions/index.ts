@@ -31,7 +31,6 @@ import { MarkdownToolbarExtension } from '../toolbar/extension';
 import { registerBlockCursorNavigation } from './block-cursor-navigation';
 import { registerBlockquoteEnterSplit } from './blockquote-enter-split';
 import { registerFormatEscape } from './format-escape';
-import { registerListDeletion } from './list-deletion';
 import { registerTaskListItemShortcuts } from '../markdown/list-transformers';
 import { registerTaskListShortcut } from './list-toggle';
 import { withTableSafeBlockShortcuts } from './markdown-table-shortcuts';
@@ -123,13 +122,6 @@ const BlockquoteEnterSplitExtension = defineExtension({
   },
 });
 
-const ListDeletionExtension = defineExtension({
-  name: '@simplenote/list-deletion',
-  register(editor) {
-    return registerListDeletion(editor);
-  },
-});
-
 // Re-import paragraphs on leave so block markdown (`---`, `# `, etc.) does not
 // remain as literal text inside a line-native paragraph.
 export const MarkdownShortcutExtension = defineExtension({
@@ -178,7 +170,6 @@ export function createMarkdownEditorExtension(
     FormatEscapeExtension,
     HistoryExtension,
     listExtension,
-    ListDeletionExtension,
     CheckListExtension,
     LinkExtension,
     CodeExtension,

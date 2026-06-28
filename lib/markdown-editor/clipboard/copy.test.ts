@@ -18,7 +18,10 @@ import { $isListItemNode, $isListNode } from '@lexical/list';
 
 import { LEXICAL_CLIPBOARD_JSON_PREFIX } from './clipboard-lexical-json';
 import * as paste from './paste';
-import { MARKDOWN_CLIPBOARD_MIME_TYPE } from './shared';
+import {
+  MARKDOWN_CLIPBOARD_MIME_TYPE,
+  $shouldPreferMarkdownPasteOverLexicalJson,
+} from './shared';
 import {
   createMarkdownEditorExtension,
   MARKDOWN_TRANSFORMERS,
@@ -312,5 +315,16 @@ describe('markdown clipboard export', () => {
     expect(JSON.stringify(payload.nodes)).not.toContain('const b = 2;');
 
     editor.dispose();
+  });
+});
+
+describe('$shouldPreferMarkdownPasteOverLexicalJson', () => {
+  it('prefers markdown paste for complete blockquote copies', () => {
+    expect($shouldPreferMarkdownPasteOverLexicalJson('> hjhj')).toBe(true);
+    expect($shouldPreferMarkdownPasteOverLexicalJson('> hjhj\n')).toBe(true);
+    expect(
+      $shouldPreferMarkdownPasteOverLexicalJson('> line one\n> line two\n')
+    ).toBe(true);
+    expect($shouldPreferMarkdownPasteOverLexicalJson('plain text')).toBe(false);
   });
 });

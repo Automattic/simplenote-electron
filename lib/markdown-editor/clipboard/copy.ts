@@ -14,7 +14,7 @@ import {
 } from 'lexical';
 
 import { wrapLexicalClipboardJsonPrefix } from './clipboard-lexical-json';
-import { $shouldAppendTrailingLinebreakToClipboardMarkdown } from '../extensions/list-deletion';
+import { $shouldAppendTrailingLinebreakToClipboardMarkdown } from './list-clipboard';
 import { MARKDOWN_TRANSFORMERS } from '../markdown/transformers';
 import { $importMarkdownClipboard } from './paste';
 import {
