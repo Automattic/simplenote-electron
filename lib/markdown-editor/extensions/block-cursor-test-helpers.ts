@@ -108,6 +108,20 @@ export async function flushEditorUpdates(
   await Promise.resolve();
 }
 
+/** Mount a contenteditable root so Lexical reconciles DOM (e.g. table arrow handlers). */
+export function mountGfmTestEditorRoot(
+  editor: LexicalEditorWithDispose
+): () => void {
+  const container = document.createElement('div');
+  container.contentEditable = 'true';
+  document.body.appendChild(container);
+  editor.setRootElement(container);
+  return () => {
+    editor.setRootElement(null);
+    container.remove();
+  };
+}
+
 export function selectTextNode(
   editor: LexicalEditorWithDispose,
   text: string,

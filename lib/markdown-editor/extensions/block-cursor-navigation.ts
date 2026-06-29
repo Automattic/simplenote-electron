@@ -3,9 +3,9 @@
  *
  * Inserts transient paragraphs on demand so users can edit between blocks
  * that have no natural empty line. Only intercepts arrows when:
- * - a vertical arrow targets an adjacent HR (any caret position),
+ * - a vertical arrow targets an adjacent HR from a text-flow block boundary, or
  * - exiting an empty transient (remove + land focus), or
- * - at a gapless boundary where a transient would be created.
+ * - at a gapless boundary where a transient would be created (including gapless→gapless).
  * Everything else falls through to Lexical.
  *
  * Spec: .cursor/specs/transient-paragraph-navigation.md
@@ -24,8 +24,8 @@ import {
   $isRangeSelection,
   $isTextNode,
   $setSelection,
+  COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_HIGH,
-  COMMAND_PRIORITY_LOW,
   HISTORY_MERGE_TAG,
   KEY_ARROW_DOWN_COMMAND,
   KEY_ARROW_LEFT_COMMAND,
@@ -36,6 +36,7 @@ import {
   type ElementNode,
   type LexicalEditor,
   type LexicalNode,
+  type TextNode,
 } from 'lexical';
 import { $isHorizontalRuleNode } from '@lexical/extension';
 import { $isCodeNode } from '@lexical/code-core';
@@ -59,6 +60,18 @@ export const TRANSIENT_RECONCILE_TAG = 'transient-reconcile';
 
 type TransientTraversalDirection = 'backward' | 'forward';
 type TransientTraversalAxis = 'vertical' | 'block';
+
+// TableExtension registers horizontal KEY_ARROW_* at HIGH when a table mounts
+// (after this extension) and exits the table before gap navigation can run.
+const BLOCK_AXIS_GAP_ARROW_COMMANDS: ReadonlyArray<
+  readonly [
+    typeof KEY_ARROW_LEFT_COMMAND | typeof KEY_ARROW_RIGHT_COMMAND,
+    TransientTraversalDirection,
+  ]
+> = [
+  [KEY_ARROW_LEFT_COMMAND, 'backward'],
+  [KEY_ARROW_RIGHT_COMMAND, 'forward'],
+];
 
 export function $isBlockCursorNode(
   node: LexicalNode | null | undefined
@@ -418,6 +431,56 @@ function $getLastCaretBlock(container: ElementNode): ElementNode | null {
   return lastChild !== null && $isElementNode(lastChild) ? lastChild : null;
 }
 
+function $resolveElementAnchorText(
+  anchor: ElementNode,
+  offset: number
+): TextNode | null {
+  const firstText = anchor.getFirstDescendant();
+  const lastText = anchor.getLastDescendant();
+  if (offset === 0 && $isTextNode(firstText)) {
+    return firstText;
+  }
+  if ($isTextNode(lastText)) {
+    return lastText;
+  }
+  return null;
+}
+
+function $resolveCaretTextNode(
+  selection: ReturnType<typeof $getSelection>
+): TextNode | null {
+  if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+    return null;
+  }
+
+  const anchor = selection.anchor.getNode();
+  if ($isTextNode(anchor)) {
+    return anchor;
+  }
+
+  if ($isElementNode(anchor) && selection.anchor.type === 'element') {
+    return $resolveElementAnchorText(anchor, selection.anchor.offset);
+  }
+
+  return null;
+}
+
+/** Vertical edge within a block: first/last text region, column-independent. */
+function $isAtTextRegionEdge(
+  selection: ReturnType<typeof $getSelection>,
+  block: ElementNode,
+  edge: 'first' | 'last'
+): boolean {
+  const target =
+    edge === 'first' ? block.getFirstDescendant() : block.getLastDescendant();
+  if (!$isTextNode(target)) {
+    return false;
+  }
+
+  const active = $resolveCaretTextNode(selection);
+  return active !== null && active.getKey() === target.getKey();
+}
+
 function $isAtContainerContentStart(
   selection: ReturnType<typeof $getSelection>,
   container: ElementNode
@@ -507,17 +570,13 @@ function $getCaretGlobalOffsetInElement(
   let anchorOffset = selection.anchor.offset;
 
   if ($isElementNode(anchor) && selection.anchor.type === 'element') {
-    const firstText = anchor.getFirstDescendant();
-    const lastText = anchor.getLastDescendant();
-    if (selection.anchor.offset === 0 && $isTextNode(firstText)) {
-      anchorKey = firstText.getKey();
-      anchorOffset = 0;
-    } else if ($isTextNode(lastText)) {
-      anchorKey = lastText.getKey();
-      anchorOffset = lastText.getTextContentSize();
-    } else {
+    const resolved = $resolveElementAnchorText(anchor, selection.anchor.offset);
+    if (resolved === null) {
       return null;
     }
+    anchorKey = resolved.getKey();
+    anchorOffset =
+      selection.anchor.offset === 0 ? 0 : resolved.getTextContentSize();
   }
 
   let globalOffset = 0;
@@ -568,21 +627,78 @@ function $isAtVerticalLineBoundary(
   return edge === 'start' ? lineIndex === 0 : lineIndex === lastLineIndex;
 }
 
-function $isAtCodeVerticalBoundary(
+function $isAtVerticalLineBoundaryInBlock(
   selection: ReturnType<typeof $getSelection>,
-  codeBlock: ElementNode,
+  block: ElementNode,
   direction: TransientTraversalDirection
 ): boolean {
-  const position = $getCaretGlobalOffsetInElement(selection, codeBlock);
-  if (position === null) {
-    return false;
+  const position = $getCaretGlobalOffsetInElement(selection, block);
+  if (position !== null) {
+    return $isAtVerticalLineBoundary(
+      position.text,
+      position.offset,
+      direction === 'backward' ? 'start' : 'end'
+    );
   }
 
-  return $isAtVerticalLineBoundary(
-    position.text,
-    position.offset,
-    direction === 'backward' ? 'start' : 'end'
-  );
+  return direction === 'backward'
+    ? $isAtContainerContentStart(selection, block)
+    : $isAtContainerContentEnd(selection, block);
+}
+
+function $blockHasMultipleTextRegions(block: ElementNode): boolean {
+  const first = block.getFirstDescendant();
+  const last = block.getLastDescendant();
+  return first !== null && last !== null && first.getKey() !== last.getKey();
+}
+
+function $isAtVerticalBoundaryInBlock(
+  selection: ReturnType<typeof $getSelection>,
+  block: ElementNode,
+  direction: TransientTraversalDirection
+): boolean {
+  const edge = direction === 'backward' ? 'first' : 'last';
+
+  // Multiple text regions (list items, quote paragraphs): edge is by region, not column.
+  if ($blockHasMultipleTextRegions(block)) {
+    return $isAtTextRegionEdge(selection, block, edge);
+  }
+
+  // Single text flow (paragraph, code, one-line item): edge is by line within the text.
+  return $isAtVerticalLineBoundaryInBlock(selection, block, direction);
+}
+
+function $isAtBoundary(
+  selection: ReturnType<typeof $getSelection>,
+  block: ElementNode,
+  direction: TransientTraversalDirection,
+  axis: TransientTraversalAxis
+): boolean {
+  if ($isTableNode(block)) {
+    if (axis === 'vertical') {
+      return direction === 'backward'
+        ? $isAtTableVerticalStart(selection, block)
+        : $isAtTableVerticalEnd(selection, block);
+    }
+
+    return direction === 'backward'
+      ? $isAtTableBlockStart(selection, block)
+      : $isAtTableBlockEnd(selection, block);
+  }
+
+  if (axis === 'vertical') {
+    return $isAtVerticalBoundaryInBlock(selection, block, direction);
+  }
+
+  if ($isCodeNode(block)) {
+    return direction === 'backward'
+      ? $isAtContainerContentStart(selection, block)
+      : $isAtContainerContentEnd(selection, block);
+  }
+
+  return direction === 'backward'
+    ? $isAtContainerContentStart(selection, block)
+    : $isAtContainerContentEnd(selection, block);
 }
 
 function $isAtTableVerticalStart(
@@ -692,39 +808,6 @@ function $isAtTableBlockEnd(
   return $isAtContainerContentEnd(selection, cell);
 }
 
-function $isAtBoundary(
-  selection: ReturnType<typeof $getSelection>,
-  block: ElementNode,
-  direction: TransientTraversalDirection,
-  axis: TransientTraversalAxis
-): boolean {
-  if ($isTableNode(block)) {
-    if (axis === 'vertical') {
-      return direction === 'backward'
-        ? $isAtTableVerticalStart(selection, block)
-        : $isAtTableVerticalEnd(selection, block);
-    }
-
-    return direction === 'backward'
-      ? $isAtTableBlockStart(selection, block)
-      : $isAtTableBlockEnd(selection, block);
-  }
-
-  if ($isCodeNode(block)) {
-    if (axis === 'vertical') {
-      return $isAtCodeVerticalBoundary(selection, block, direction);
-    }
-
-    return direction === 'backward'
-      ? $isAtContainerContentStart(selection, block)
-      : $isAtContainerContentEnd(selection, block);
-  }
-
-  return direction === 'backward'
-    ? $isAtContainerContentStart(selection, block)
-    : $isAtContainerContentEnd(selection, block);
-}
-
 /** Gapless element blocks (code, table) keep a text caret, not node selection. */
 function $isGaplessElementBlock(
   node: LexicalNode | null | undefined
@@ -792,6 +875,20 @@ function $handleEnterGapFromGaplessElementArrow(
   return false;
 }
 
+function $shouldDeferHorizontalRuleToTransientGap(
+  rootBlock: ElementNode,
+  hr: LexicalNode,
+  direction: TransientTraversalDirection
+): boolean {
+  if (!$isGaplessElementBlock(rootBlock)) {
+    return false;
+  }
+
+  const prev = direction === 'backward' ? hr : rootBlock;
+  const next = direction === 'forward' ? hr : rootBlock;
+  return $isGapBetweenGapless(prev, next);
+}
+
 function $handleHorizontalRuleVerticalArrow(
   event: KeyboardEvent,
   direction: TransientTraversalDirection,
@@ -811,9 +908,19 @@ function $handleHorizontalRuleVerticalArrow(
     return false;
   }
 
+  if (!$isAtBoundary(selection, rootBlock, direction, axis)) {
+    return false;
+  }
+
   if (direction === 'backward') {
     const prev = rootBlock.getPreviousSibling();
     if (prev !== null && $isHorizontalRuleNode(prev)) {
+      if (
+        $shouldDeferHorizontalRuleToTransientGap(rootBlock, prev, direction)
+      ) {
+        return false;
+      }
+
       event.preventDefault();
       $selectGaplessBlock(prev);
       return true;
@@ -823,6 +930,12 @@ function $handleHorizontalRuleVerticalArrow(
   if (direction === 'forward') {
     const next = rootBlock.getNextSibling();
     if (next !== null && $isHorizontalRuleNode(next)) {
+      if (
+        $shouldDeferHorizontalRuleToTransientGap(rootBlock, next, direction)
+      ) {
+        return false;
+      }
+
       event.preventDefault();
       $selectGaplessBlock(next);
       return true;
@@ -1022,19 +1135,16 @@ export function registerBlockCursorNavigation(
       COMMAND_PRIORITY_HIGH
     ),
     editor.registerCommand(
-      KEY_ARROW_LEFT_COMMAND,
-      (event) => $handleGapArrowCommand(event, 'backward', 'block'),
-      COMMAND_PRIORITY_HIGH
-    ),
-    editor.registerCommand(
       KEY_ARROW_DOWN_COMMAND,
       (event) => $handleGapArrowCommand(event, 'forward', 'vertical'),
       COMMAND_PRIORITY_HIGH
     ),
-    editor.registerCommand(
-      KEY_ARROW_RIGHT_COMMAND,
-      (event) => $handleGapArrowCommand(event, 'forward', 'block'),
-      COMMAND_PRIORITY_LOW
+    ...BLOCK_AXIS_GAP_ARROW_COMMANDS.map(([command, direction]) =>
+      editor.registerCommand(
+        command,
+        (event) => $handleGapArrowCommand(event, direction, 'block'),
+        COMMAND_PRIORITY_CRITICAL
+      )
     )
   );
 }

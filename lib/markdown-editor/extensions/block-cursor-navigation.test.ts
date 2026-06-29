@@ -13,6 +13,7 @@ import {
   KEY_ARROW_LEFT_COMMAND,
   KEY_ARROW_RIGHT_COMMAND,
   KEY_ARROW_UP_COMMAND,
+  type LexicalEditorWithDispose,
   type LexicalNode,
   type RangeSelection,
 } from 'lexical';
@@ -50,6 +51,7 @@ import {
   getFocusedTransient,
   importBlockCursorTestDocument,
   makeBlockCursorTestEditor,
+  mountGfmTestEditorRoot,
   selectedNodeKeys,
   selectBlockCursorTestNode,
   selectTextNode,
@@ -66,6 +68,33 @@ const ADJACENT_TABLE_A = ['| a | b |', '| --- | --- |', '| one | x |'].join(
 const ADJACENT_TABLE_B = ['| c | d |', '| --- | --- |', '| y | last |'].join(
   '\n'
 );
+const TABLE_BETWEEN_HRS = [
+  '---',
+  '| a | b | c |',
+  '| --- | --- | --- |',
+  '| d | e | f |',
+  '---',
+].join('\n');
+
+const HORIZONTAL_TABLE_HR_CORNER_CASES = [
+  {
+    corner: 'trailing corner before an HR',
+    command: KEY_ARROW_RIGHT_COMMAND,
+    text: 'f',
+    offset: 'f'.length,
+    hrIndex: 1,
+    adjacentDirection: 'next' as const,
+  },
+  {
+    corner: 'leading corner after an HR',
+    command: KEY_ARROW_LEFT_COMMAND,
+    text: 'a',
+    offset: 0,
+    hrIndex: 0,
+    adjacentDirection: 'previous' as const,
+  },
+] as const;
+
 import { $exportMarkdownString } from './index';
 import { $isImageNode } from '../nodes/image-node';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
@@ -217,6 +246,50 @@ describe('$isBlockCursorNode', () => {
     editor.dispose();
   });
 });
+
+function assertTableExtensionIsActive(editor: LexicalEditorWithDispose): void {
+  editor.getEditorState().read(() => {
+    const table = $getRoot().getChildren().find($isTableNode);
+    if (!table) {
+      throw new Error('Expected table at root');
+    }
+    expect(editor.getElementByKey(table.getKey())).not.toBeNull();
+
+    const cellText = findTextNode(table, 'a');
+    if (!cellText) {
+      throw new Error('Expected table cell text');
+    }
+    expect(editor.getElementByKey(cellText.getKey())).not.toBeNull();
+  });
+}
+
+async function expectHorizontalTableHrCornerTransient(
+  editor: LexicalEditorWithDispose,
+  {
+    command,
+    text,
+    offset,
+    hrIndex,
+    adjacentDirection,
+  }: (typeof HORIZONTAL_TABLE_HR_CORNER_CASES)[number]
+): Promise<void> {
+  selectTextNode(editor, text, offset);
+
+  expect(await dispatchArrow(editor, command)).toBe(true);
+
+  editor.getEditorState().read(() => {
+    const hr = $getRoot().getChildren().filter($isHorizontalRuleNode)[hrIndex];
+    expectTransientCaret($getSelection());
+    expect(countTransients(editor)).toBe(1);
+    expect(
+      focusedTransientAdjacentBlockKey(
+        editor,
+        $isHorizontalRuleNode,
+        adjacentDirection
+      )
+    ).toBe(hr?.getKey());
+  });
+}
 
 function countTransients(editor: ReturnType<typeof makeGfmTestEditor>): number {
   return editor
@@ -938,7 +1011,7 @@ describe('horizontal rule keyboard navigation', () => {
   });
 });
 
-describe('vertical HR approach from any caret position', () => {
+describe('vertical HR approach from block boundaries', () => {
   it('selects the HR above when arrowing up from the middle of text', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '---\nparagraph with text');
@@ -954,16 +1027,95 @@ describe('vertical HR approach from any caret position', () => {
     editor.dispose();
   });
 
-  it('selects the HR above when arrowing up from a later line in a list item', async () => {
+  it('selects the HR above when arrowing up from the first line of the first list item', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '---\n- line one\n- line two');
-    selectTextNode(editor, 'line two', 0);
+    selectTextNode(editor, 'line one', 0);
 
     expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
 
     editor.getEditorState().read(() => {
       const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
       expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+    });
+
+    editor.dispose();
+  });
+
+  it('defers to Lexical when arrowing up to a previous list item', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---\n- line one\n- line two');
+    selectTextNode(editor, 'line two', 0);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(false);
+    editor.getEditorState().read(() => {
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+    });
+
+    editor.dispose();
+  });
+
+  it('defers to Lexical when arrowing between list items surrounded by HRs', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---\n- top\n- bottom\n---');
+
+    selectTextNode(editor, 'top', 0);
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(false);
+    editor.getEditorState().read(() => {
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+    });
+
+    selectTextNode(editor, 'bottom', 0);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(false);
+    editor.getEditorState().read(() => {
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+    });
+
+    editor.dispose();
+  });
+
+  it('selects the HR below from the last list item regardless of column', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---\n- top\n- bottom\n---');
+    selectTextNode(editor, 'bottom', 0);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
+    editor.getEditorState().read(() => {
+      const hr = $getRoot().getChildren().filter($isHorizontalRuleNode).at(-1);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+    });
+
+    editor.dispose();
+  });
+
+  it('selects the HR above from the first list item regardless of column', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---\n- top\n- bottom\n---');
+    selectTextNode(editor, 'top', 'top'.length);
+
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
+    editor.getEditorState().read(() => {
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+    });
+
+    editor.dispose();
+  });
+
+  it('defers to Lexical when arrowing within a blockquote surrounded by HRs', async () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, '---\n> first\n> second\n---');
+
+    selectTextNode(editor, 'first', 0);
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(false);
+    editor.getEditorState().read(() => {
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+    });
+
+    selectTextNode(editor, 'second', 0);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(false);
+    editor.getEditorState().read(() => {
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
     });
 
     editor.dispose();
@@ -1005,7 +1157,7 @@ describe('vertical HR approach from any caret position', () => {
     editor.dispose();
   });
 
-  it('selects the HR below when arrowing down from the middle of a code block', async () => {
+  it('creates a transient when arrowing down from a code block toward an HR', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, '```\nline\n```\n---');
     selectTextNode(editor, 'line', 1);
@@ -1014,7 +1166,12 @@ describe('vertical HR approach from any caret position', () => {
 
     editor.getEditorState().read(() => {
       const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
-      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+      expectTransientCaret($getSelection());
+      expect(countTransients(editor)).toBe(1);
+      expect(
+        focusedTransientAdjacentBlockKey(editor, $isHorizontalRuleNode, 'next')
+      ).toBe(hr?.getKey());
     });
 
     editor.dispose();
@@ -1235,7 +1392,7 @@ describe('code block keyboard navigation', () => {
 });
 
 describe('table and horizontal rule keyboard navigation', () => {
-  it('selects the HR above when arrowing up inside a table', async () => {
+  it('moves up within a table instead of selecting an HR above it', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1244,17 +1401,17 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'up', 0);
 
-    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
+    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(false);
 
     editor.getEditorState().read(() => {
-      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
-      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+      expectTextCaret($getSelection(), 'up', 0);
     });
 
     editor.dispose();
   });
 
-  it('selects the HR below when arrowing down inside a table', async () => {
+  it('creates a transient when arrowing down from a table toward an HR', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
@@ -1273,7 +1430,12 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     editor.getEditorState().read(() => {
       const hr = $getRoot().getChildren().filter($isHorizontalRuleNode)[0];
-      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+      expectTransientCaret($getSelection());
+      expect(countTransients(editor)).toBe(1);
+      expect(
+        focusedTransientAdjacentBlockKey(editor, $isHorizontalRuleNode, 'next')
+      ).toBe(hr?.getKey());
     });
 
     editor.dispose();
@@ -1325,16 +1487,27 @@ describe('table and horizontal rule keyboard navigation', () => {
     selectTextNode(editor, 'top', 0);
 
     expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
-    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
-
-    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
-    expect(getFocusedTransient(editor)).not.toBeNull();
-
     editor.getEditorState().read(() => {
+      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
       const table = $getRoot().getChildren().find($isTableNode);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+      expectTransientCaret($getSelection());
+      expect(
+        focusedTransientAdjacentBlockKey(
+          editor,
+          $isHorizontalRuleNode,
+          'previous'
+        )
+      ).toBe(hr?.getKey());
       expect(
         focusedTransientAdjacentBlockKey(editor, $isTableNode, 'next')
       ).toBe(table?.getKey());
+    });
+
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(true);
+    editor.getEditorState().read(() => {
+      expect(getFocusedTransient(editor)).toBeNull();
+      expectTextCaret($getSelection(), 'top', 0);
     });
 
     editor.dispose();
@@ -1349,7 +1522,6 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
-    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
 
     editor.getEditorState().read(() => {
@@ -1376,9 +1548,6 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
-    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
-
-    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     expect(getFocusedTransient(editor)).not.toBeNull();
 
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
@@ -1390,20 +1559,22 @@ describe('table and horizontal rule keyboard navigation', () => {
     editor.dispose();
   });
 
-  it('selects the HR above when arrowing up from the second table row', async () => {
+  it('defers to Lexical when arrowing down within a table surrounded by HRs', async () => {
     const editor = makeGfmTestEditor();
     importMarkdown(
       editor,
-      ['---', '| top | right |', '| --- | --- |', '| up | here |'].join('\n')
+      ['---', '| top | right |', '| --- | --- |', '| up | here |', '---'].join(
+        '\n'
+      )
     );
 
-    selectTextNode(editor, 'up', 0);
+    selectTextNode(editor, 'top', 0);
 
-    expect(await dispatchArrow(editor, KEY_ARROW_UP_COMMAND)).toBe(true);
+    expect(await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND)).toBe(false);
 
     editor.getEditorState().read(() => {
-      const hr = $getRoot().getChildren().find($isHorizontalRuleNode);
-      expect(selectedHorizontalRuleKeys(editor)).toEqual([hr?.getKey()]);
+      expect(selectedHorizontalRuleKeys(editor)).toEqual([]);
+      expectTextCaret($getSelection(), 'top', 0);
     });
 
     editor.dispose();
@@ -1534,6 +1705,32 @@ describe('table and horizontal rule keyboard navigation', () => {
     editor.dispose();
   });
 
+  it.each(HORIZONTAL_TABLE_HR_CORNER_CASES)(
+    'creates a transient on horizontal arrow from the $corner',
+    async (cornerCase) => {
+      const editor = makeGfmTestEditor();
+      importMarkdown(editor, TABLE_BETWEEN_HRS);
+      await expectHorizontalTableHrCornerTransient(editor, cornerCase);
+      editor.dispose();
+    }
+  );
+
+  describe('with mounted DOM (table extension arrow handlers active)', () => {
+    it.each(HORIZONTAL_TABLE_HR_CORNER_CASES)(
+      'creates a transient on horizontal arrow from the $corner',
+      async (cornerCase) => {
+        const editor = makeGfmTestEditor();
+        const unmount = mountGfmTestEditorRoot(editor);
+        importMarkdown(editor, TABLE_BETWEEN_HRS);
+        await flushEditorUpdates(editor);
+        assertTableExtensionIsActive(editor);
+        await expectHorizontalTableHrCornerTransient(editor, cornerCase);
+        unmount();
+        editor.dispose();
+      }
+    );
+  });
+
   it('creates a transient on horizontal arrow from the last table corner', async () => {
     const editor = makeEditorWithAdjacentBlocks(
       ADJACENT_TABLE_A,
@@ -1578,9 +1775,6 @@ describe('table and horizontal rule keyboard navigation', () => {
 
     selectTextNode(editor, 'top', 0);
     await dispatchArrow(editor, KEY_ARROW_UP_COMMAND);
-    expect(selectedHorizontalRuleKeys(editor)).toHaveLength(1);
-
-    await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
     expect(getFocusedTransient(editor)).not.toBeNull();
 
     await dispatchArrow(editor, KEY_ARROW_DOWN_COMMAND);
