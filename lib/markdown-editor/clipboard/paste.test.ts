@@ -33,6 +33,7 @@ import {
   MARKDOWN_TRANSFORMERS,
 } from '../extensions/index';
 import { $parseSameEditorClipboardJson } from './shared';
+import { $isEmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 
 function makeEditor() {
   return buildEditorFromExtensions(createMarkdownEditorExtension(''));
@@ -124,6 +125,24 @@ describe('$markdownToNodes', () => {
         expect($isParagraphNode(nodes[0])).toBe(true);
         expect(nodes[0].getChildren().some($isLineBreakNode)).toBe(true);
         expect(nodes[0].getTextContent()).toBe('one\ntwo');
+      },
+      { discrete: true }
+    );
+    editor.dispose();
+  });
+
+  it('keeps newline-gap empty paragraphs as regular paragraphs', () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const nodes = $markdownToNodes('one\n\n\n\ntwo');
+        expect(nodes).toHaveLength(4);
+        expect(nodes[0].getTextContent()).toBe('one');
+        expect(nodes[1].getType()).toBe('paragraph');
+        expect(nodes[2].getType()).toBe('paragraph');
+        expect($isEmptyLineParagraphNode(nodes[1])).toBe(false);
+        expect($isEmptyLineParagraphNode(nodes[2])).toBe(false);
+        expect(nodes[3].getTextContent()).toBe('two');
       },
       { discrete: true }
     );
@@ -380,18 +399,18 @@ describe('registerMarkdownPaste', () => {
     });
   });
 
-  it('inserts plain-text markdown syntax verbatim, without parsing it', () => {
+  it('parses plain-text markdown syntax from text/plain', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);
 
-    const { event, preventDefault } = makePasteEvent('## not a heading');
+    const { event, preventDefault } = makePasteEvent('## a heading');
     const handled = editor.dispatchCommand(PASTE_COMMAND, event);
 
     expect(handled).toBe(true);
     expect(preventDefault).toHaveBeenCalled();
     editor.read(() => {
-      expect($isHeadingNode($getRoot().getFirstChild())).toBe(false);
-      expect($getRoot().getTextContent()).toContain('## not a heading');
+      expect($isHeadingNode($getRoot().getFirstChild())).toBe(true);
+      expect($getRoot().getTextContent()).toContain('a heading');
     });
   });
 

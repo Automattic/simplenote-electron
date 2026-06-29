@@ -131,6 +131,18 @@ export const MarkdownCopyExtension = defineExtension({
             return true;
           },
         ],
+        'text/plain': [
+          (plain, selection, $next, dataTransfer) => {
+            // Same-editor copies carry Lexical JSON; let that importer win.
+            if (dataTransfer.getData('application/x-lexical-editor')) {
+              return $next();
+            }
+            if ($importMarkdownClipboard(plain, selection)) {
+              return true;
+            }
+            return $next();
+          },
+        ],
       },
     }),
   ],
