@@ -348,6 +348,38 @@ describe('registerMarkdownPaste', () => {
     expect(roundtrip).toBe('visit [site](https://example.com) today');
   });
 
+  it('pastes multiline plain text when text is selected instead of making a link', () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const paragraph = $createParagraphNode();
+        const text = $createTextNode('replace me');
+        paragraph.append(text);
+        $getRoot().append(paragraph);
+        text.select(0, 10);
+      },
+      { discrete: true }
+    );
+
+    const pasted = 'a  \nb\n\na\n\nc\n\na\n\n \n\nd';
+    const { event, preventDefault } = makePasteEvent(pasted);
+    const handled = editor.dispatchCommand(PASTE_COMMAND, event);
+
+    expect(handled).toBe(true);
+    expect(preventDefault).toHaveBeenCalled();
+    editor.read(() => {
+      expect($getRoot().getTextContent()).toContain('a');
+      expect($getRoot().getTextContent()).toContain('d');
+      const links = $getRoot()
+        .getAllTextNodes()
+        .flatMap((node) => {
+          const parent = node.getParent();
+          return parent !== null && parent.getType() === 'link' ? [parent] : [];
+        });
+      expect(links).toHaveLength(0);
+    });
+  });
+
   it('inserts plain-text markdown syntax verbatim, without parsing it', () => {
     const editor = makeEditor();
     selectEmptyParagraph(editor);

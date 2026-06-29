@@ -269,7 +269,12 @@ function $wrapSelectionInPastedLink(markdown: string): boolean {
     return false;
   }
 
-  const href = normalizeLinkHref(urlFromText(markdown) ?? markdown.trim());
+  const url = urlFromText(markdown);
+  if (!url) {
+    return false;
+  }
+
+  const href = normalizeLinkHref(url);
   if (!href) {
     return false;
   }
