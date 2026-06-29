@@ -4,7 +4,11 @@ import {
   HorizontalRuleExtension,
   HorizontalRuleNode,
 } from '@lexical/extension';
-import { $isCodeNode, $plainifyCodeContent } from '@lexical/code-core';
+import {
+  $isCodeNode,
+  $plainifyCodeContent,
+  type CodeNode,
+} from '@lexical/code-core';
 import {
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,
@@ -39,6 +43,8 @@ import {
   $isTextNode,
   $setState,
   createState,
+  $isRangeSelection,
+  type BaseSelection,
   type ElementNode,
   type LexicalNode,
 } from 'lexical';
@@ -559,6 +565,30 @@ function $handleBacktickCodeImportAfterStartMatch({
   return [true, lines.length - 1];
 }
 
+function $isFullCodeBlockSelection(
+  node: CodeNode,
+  selection: BaseSelection | null | undefined
+): boolean {
+  if (selection == null) {
+    return true;
+  }
+
+  if (!$isRangeSelection(selection)) {
+    return false;
+  }
+
+  if (
+    selection.anchor.type === 'element' &&
+    selection.focus.type === 'element' &&
+    selection.anchor.getNode().is(node) &&
+    selection.focus.getNode().is(node)
+  ) {
+    return true;
+  }
+
+  return selection.getTextContent() === node.getTextContent();
+}
+
 // Lexical's CODE.export ignores the selection callback and always emits fences
 // around the full block. Partial in-block copies should stay raw source text.
 export const SELECTION_AWARE_CODE: MultilineElementTransformer = {
@@ -567,11 +597,8 @@ export const SELECTION_AWARE_CODE: MultilineElementTransformer = {
     if (!$isCodeNode(node)) {
       return null;
     }
-    if (selection) {
-      const selectedText = traverseChildren(node);
-      if (selectedText !== node.getTextContent()) {
-        return selectedText;
-      }
+    if (selection && !$isFullCodeBlockSelection(node, selection)) {
+      return traverseChildren(node);
     }
     return CODE.export!(node, traverseChildren, selection);
   },

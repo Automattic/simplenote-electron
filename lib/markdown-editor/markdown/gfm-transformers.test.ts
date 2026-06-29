@@ -421,6 +421,18 @@ describe('bare URLs', () => {
   });
 });
 
+describe('fenced code blocks with markdown metacharacters', () => {
+  it.each(['_', '*', '**', '__', '***', '___', '~~', '*italic*'])(
+    'round-trips %s through save and reopen',
+    (content) => {
+      const markdown = ['```', content, '```'].join('\n');
+      const editor = makeGfmTestEditor();
+      expect(roundtrip(editor, markdown)).toBe(markdown);
+      editor.dispose();
+    }
+  );
+});
+
 describe('tilde code fences', () => {
   const tildeBlock = ['~~~js', 'const x = 1;', '~~~'].join('\n');
 
