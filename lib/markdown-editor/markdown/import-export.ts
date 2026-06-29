@@ -1,15 +1,9 @@
-import {
-  $convertFromMarkdownString,
-  $convertSelectionToMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
 import { $isHorizontalRuleNode } from '@lexical/extension';
 import { $isLinkNode } from '@lexical/link';
 import { $isListNode, type ListNode } from '@lexical/list';
 import { $isTableNode } from '@lexical/table';
 import {
   $createParagraphNode,
-  $createRangeSelection,
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -52,16 +46,79 @@ import {
   type StructuredSelection,
 } from '../memory/selection-memory';
 import {
+  $exportElementMarkdown,
+  $exportInlineMarkdown,
+  $importInlineMarkdown,
+} from './lexical-io';
+import {
   INLINE_MARKDOWN_TRANSFORMERS,
   MARKDOWN_TRANSFORMERS,
 } from './transformers';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
+import type { ElementTransformer } from '@lexical/markdown';
 
-// Line-native gaps: a run of (N + 1) newlines encodes N empty root paragraphs.
-// Single \n inside exported block text is a hard line break within a paragraph.
+export {
+  $exportElementMarkdown,
+  $exportInlineMarkdown,
+  $exportSelectionToMarkdown,
+  $importInlineMarkdown,
+} from './lexical-io';
+
+// Block boundaries use \n\n (standard markdown). Each additional empty root
+// paragraph adds one more newline (\n\n\n = one blank line between blocks).
+// Intra-block line breaks export as GFM hard breaks (two trailing spaces).
+const GFM_HARD_LINE_BREAK_SUFFIX = '  ';
+
+function getElementTransformers(): Array<ElementTransformer> {
+  return MARKDOWN_TRANSFORMERS.filter(
+    (transformer): transformer is ElementTransformer =>
+      transformer.type === 'element'
+  );
+}
+
+function isBlockSyntaxLine(line: string): boolean {
+  const trimmed = line.trimEnd();
+  if (trimmed.length === 0) {
+    return false;
+  }
+
+  return getElementTransformers().some(({ regExp }) => {
+    const match = trimmed.match(regExp);
+    return match !== null && match[0] === trimmed;
+  });
+}
+
+function lineAlreadyHasHardLineBreakSuffix(line: string): boolean {
+  return /\\$/.test(line) || / {2,}$/.test(line);
+}
+
+/** Two trailing spaces before single newlines within one exported block. */
+export function formatIntraBlockHardLineBreaks(markdown: string): string {
+  if (!markdown.includes('\n')) {
+    return markdown;
+  }
+
+  const lines = markdown.split('\n');
+  const formatted: string[] = [];
+
+  for (let index = 0; index < lines.length; index++) {
+    let line = lines[index]!;
+    if (
+      index < lines.length - 1 &&
+      !isBlockSyntaxLine(line) &&
+      !lineAlreadyHasHardLineBreakSuffix(line)
+    ) {
+      line += GFM_HARD_LINE_BREAK_SUFFIX;
+    }
+    formatted.push(line);
+  }
+
+  return formatted.join('\n');
+}
+
 function emptyParagraphsInGap(gap: string): number {
   const newlineCount = (gap.match(/\n/g) || []).length;
-  return newlineCount >= 2 ? newlineCount - 1 : 0;
+  return newlineCount >= 2 ? newlineCount - 2 : 0;
 }
 
 function isEmptyRootParagraph(node: LexicalNode): boolean {
@@ -101,9 +158,7 @@ function exportListNodeContent(node: ElementNode): string {
       continue;
     }
     if ($isParagraphNode(child)) {
-      chunks.push(
-        $convertToMarkdownString(INLINE_MARKDOWN_TRANSFORMERS, child)
-      );
+      chunks.push($exportInlineMarkdown(child, INLINE_MARKDOWN_TRANSFORMERS));
       continue;
     }
     if ($isLinkNode(child)) {
@@ -123,7 +178,7 @@ function exportListNodeContent(node: ElementNode): string {
     }
   }
 
-  return chunks.join('');
+  return formatIntraBlockHardLineBreaks(chunks.join(''));
 }
 
 function exportListNode(node: ListNode): string {
@@ -144,7 +199,18 @@ function exportListNode(node: ListNode): string {
 
 /** Markdown for one root-level block (shortcut history reconciliation). */
 export function $exportTopLevelBlockMarkdown(node: LexicalNode): string {
-  return exportTopLevelNode(node);
+  return $exportBlockMarkdown(node);
+}
+
+export function $exportBlockMarkdown(
+  node: LexicalNode,
+  options?: Pick<LineNativeExportOptions, 'markdownExportContext'>
+): string {
+  return exportTopLevelNode(node, options);
+}
+
+function normalizeTopLevelBlockMarkdown(markdown: string): string {
+  return markdown.replace(/^\n+/, '').replace(/\n+$/, '');
 }
 
 function exportTopLevelNode(
@@ -163,7 +229,7 @@ function exportTopLevelNode(
   // with a large constant on long lists. We always export the whole block here,
   // so lists can use the direct node export instead.
   if ($isListNode(node)) {
-    return exportListNode(node).replace(/^\n+/, '');
+    return normalizeTopLevelBlockMarkdown(exportListNode(node));
   }
 
   if ($isTableNode(node)) {
@@ -171,18 +237,13 @@ function exportTopLevelNode(
       options?.markdownExportContext === undefined
         ? $exportTableNodeMarkdown(node)
         : $exportTableMarkdown(node, options.markdownExportContext);
-    return markdown.replace(/^\n+/, '');
+    return normalizeTopLevelBlockMarkdown(markdown);
   }
 
-  const selection = $createRangeSelection();
-  const key = node.getKey();
-  selection.anchor.set(key, 0, 'element');
-  selection.focus.set(key, node.getChildrenSize(), 'element');
-
-  return $convertSelectionToMarkdownString(
-    MARKDOWN_TRANSFORMERS,
-    selection
-  ).replace(/^\n+/, '');
+  const markdown = $exportElementMarkdown(node, MARKDOWN_TRANSFORMERS);
+  return normalizeTopLevelBlockMarkdown(
+    $isParagraphNode(node) ? formatIntraBlockHardLineBreaks(markdown) : markdown
+  );
 }
 
 type LineNativeExportOptions = {
@@ -386,7 +447,7 @@ function $splitImportChunkParts(chunk: string): ImportChunkPart[] {
 function importMarkdownSegment(segment: string, target: ElementNode): void {
   const container = $createParagraphNode();
   target.append(container);
-  $convertFromMarkdownString(segment, MARKDOWN_TRANSFORMERS, container);
+  $importInlineMarkdown(segment, container, MARKDOWN_TRANSFORMERS);
   if (container.getParent() === null) {
     return;
   }
@@ -595,22 +656,28 @@ export function $reimportRootParagraphIfNeeded(
 
 export function $markdownToNodes(markdown: string): LexicalNode[] {
   // Parses markdown into detached block nodes without touching the document.
+  // Import must target root so Lexical markdown coalesces soft line breaks
+  // (one\ntwo) into a single paragraph; a paragraph holder splits them.
   // $convertFromMarkdownString moves the selection to the start of its
   // target node, so preserve the caller's selection across the conversion.
   const previousSelection = $getSelection()?.clone() ?? null;
+  const root = $getRoot();
+  const savedChildren = root.getChildren();
 
-  const holder = $createParagraphNode();
+  root.clear();
   importMixedNestedListMarkdown(
     markdown,
-    holder,
+    root,
     $importChunk,
     INLINE_MARKDOWN_TRANSFORMERS
   );
-  const children = holder.getChildren();
-  for (const child of children) {
+
+  const imported = root.getChildren();
+  for (const child of imported) {
     child.remove();
   }
+  root.append(...savedChildren);
 
   $setSelection(previousSelection);
-  return children;
+  return imported;
 }

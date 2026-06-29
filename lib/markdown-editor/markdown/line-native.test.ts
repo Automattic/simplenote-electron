@@ -1,7 +1,11 @@
+import { $createParagraphNode, $createTextNode } from 'lexical';
 import { $isCodeNode } from '@lexical/code-core';
 import { $getRoot, $isLineBreakNode, $isParagraphNode } from 'lexical';
 
-import { $exportMarkdownString } from '../extensions/index';
+import {
+  $exportMarkdownString,
+  $importMarkdownString,
+} from '../extensions/index';
 import {
   countEmptyRootParagraphs,
   importMarkdown,
@@ -10,11 +14,57 @@ import {
 } from './gfm-test-helpers';
 
 const LINE_NATIVE_TYPING_NOTE = 'zero\nzero\n\none\n\none';
+const LINE_NATIVE_TYPING_NOTE_EXPORTED = 'zero  \nzero\n\none\n\none';
 
 describe('line-native storage', () => {
-  it('maps a single blank line to one empty root paragraph', () => {
+  it('uses \\n\\n as the block separator between adjacent paragraphs', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, 'hello\n\nworld');
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(2);
+      expect(children[0].getTextContent()).toBe('hello');
+      expect(children[1].getTextContent()).toBe('world');
+      expect($exportMarkdownString()).toBe('hello\n\nworld');
+    });
+    editor.dispose();
+  });
+
+  it('round-trips adjacent paragraphs without inserting an empty root paragraph', () => {
+    const editor = makeGfmTestEditor();
+    editor.update(
+      () => {
+        const one = $createParagraphNode();
+        one.append($createTextNode('one'));
+        const two = $createParagraphNode();
+        two.append($createTextNode('two'));
+        $getRoot().clear();
+        $getRoot().append(one, two);
+      },
+      { discrete: true }
+    );
+
+    const exported = editor
+      .getEditorState()
+      .read(() => $exportMarkdownString());
+    expect(exported).toBe('one\n\ntwo');
+
+    editor.update(() => $importMarkdownString(exported), { discrete: true });
+
+    editor.getEditorState().read(() => {
+      const children = $getRoot().getChildren();
+      expect(children).toHaveLength(2);
+      expect(children.every($isParagraphNode)).toBe(true);
+      expect(children[0].getTextContent()).toBe('one');
+      expect(children[1].getTextContent()).toBe('two');
+    });
+    editor.dispose();
+  });
+
+  it('maps \\n\\n\\n to one empty root paragraph between blocks', () => {
+    const editor = makeGfmTestEditor();
+    importMarkdown(editor, 'hello\n\n\nworld');
 
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
@@ -22,7 +72,7 @@ describe('line-native storage', () => {
       expect(children[0].getTextContent()).toBe('hello');
       expect(children[1].getTextContent()).toBe('');
       expect(children[2].getTextContent()).toBe('world');
-      expect($exportMarkdownString()).toBe('hello\n\nworld');
+      expect($exportMarkdownString()).toBe('hello\n\n\nworld');
     });
     editor.dispose();
   });
@@ -33,18 +83,20 @@ describe('line-native storage', () => {
 
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
-      expect(children).toHaveLength(5);
+      expect(children).toHaveLength(3);
 
       const first = children[0];
       expect($isParagraphNode(first)).toBe(true);
-      expect(first.getTextContent()).toBe('zero\nzero');
-      expect(first.getChildren().some($isLineBreakNode)).toBe(true);
+      if ($isParagraphNode(first)) {
+        expect(first.getTextContent()).toBe('zero\nzero');
+        expect(first.getChildren().some($isLineBreakNode)).toBe(true);
+      }
+      expect(children[1].getTextContent()).toBe('one');
       expect(children[2].getTextContent()).toBe('one');
-      expect(children[4].getTextContent()).toBe('one');
-      expect($exportMarkdownString()).toBe(LINE_NATIVE_TYPING_NOTE);
+      expect($exportMarkdownString()).toBe(LINE_NATIVE_TYPING_NOTE_EXPORTED);
     });
 
-    expect(countEmptyRootParagraphs(editor)).toBe(2);
+    expect(countEmptyRootParagraphs(editor)).toBe(0);
     editor.dispose();
   });
 
@@ -65,7 +117,7 @@ describe('line-native storage', () => {
   });
 
   it('round-trips empty lines between mixed block types', () => {
-    const markdown = 'before\n\n\n```\ncode\n```\n\n\n> quote\n\nafter';
+    const markdown = 'before\n\n\n\n```\ncode\n```\n\n\n\n> quote\n\n\nafter';
     const editor = makeGfmTestEditor();
     importMarkdown(editor, markdown);
 
@@ -104,6 +156,13 @@ describe('line-native storage', () => {
       expect(code.getTextContent()).toBe('test\n\n\n');
       expect($exportMarkdownString()).toBe(markdown);
     });
+    editor.dispose();
+  });
+
+  it('round-trips a list followed by a fenced code block', () => {
+    const markdown = '- test2\n\n```\ntest\n```';
+    const editor = makeGfmTestEditor();
+    expect(roundtrip(editor, markdown)).toBe(markdown);
     editor.dispose();
   });
 

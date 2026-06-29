@@ -157,13 +157,13 @@ export function rootChildren(editor: LexicalEditorWithDispose): LexicalNode[] {
   return editor.getEditorState().read(() => $getRoot().getChildren());
 }
 
-/** Line-native: N blank lines between blocks is encoded as (N + 1) newlines. */
+/** N blank lines between blocks is encoded as (N + 2) newlines (\n\n = none). */
 export function markdownWithGap(
   before: string,
   emptyLineCount: number,
   after: string
 ): string {
-  return `${before}${'\n'.repeat(emptyLineCount + 1)}${after}`;
+  return `${before}${'\n'.repeat(emptyLineCount + 2)}${after}`;
 }
 
 export function countEmptyRootParagraphs(

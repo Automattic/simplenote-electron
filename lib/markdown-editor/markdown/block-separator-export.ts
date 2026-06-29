@@ -1,30 +1,26 @@
+import { $isHorizontalRuleNode } from '@lexical/extension';
 import { $isQuoteNode } from '@lexical/rich-text';
 import { $isTableNode } from '@lexical/table';
-import { $isParagraphNode, type LexicalNode } from 'lexical';
-
-import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
+import type { LexicalNode } from 'lexical';
 
 export function gapForEmptyParagraphCount(emptyCount: number): string {
   if (emptyCount <= 0) {
     return '';
   }
-  return '\n'.repeat(emptyCount + 1);
+  // N empty root paragraphs need (N + 2) newlines: one \n\n block separator plus
+  // (N - 1) extra newlines per empty line, i.e. \n\n\n for one empty line.
+  return '\n'.repeat(emptyCount + 2);
 }
 
-function isEmptyRootParagraph(node: LexicalNode): boolean {
-  return (
-    $isParagraphNode(node) &&
-    !$isTransientParagraphNode(node) &&
-    node.getChildrenSize() === 0 &&
-    node.getTextContent() === ''
-  );
+/** Blocks that round-trip with a single newline after a horizontal rule. */
+export function blocksCoalesceOnSingleNewline(
+  previousBlock: LexicalNode,
+  _nextBlock: LexicalNode
+): boolean {
+  return $isHorizontalRuleNode(previousBlock);
 }
 
-function isPlainContentParagraph(node: LexicalNode): boolean {
-  return $isParagraphNode(node) && !isEmptyRootParagraph(node);
-}
-
-/** Root blocks that coalesce on import when separated by only a single newline. */
+/** Root blocks that need an explicit blank line so import does not merge them. */
 export function blocksNeedBlankLineBetween(
   previousBlock: LexicalNode,
   nextBlock: LexicalNode
@@ -45,16 +41,9 @@ export function blockSeparatorForExport(
     return gapForEmptyParagraphCount(pendingEmpty);
   }
 
-  if (
-    isPlainContentParagraph(previousBlock) &&
-    isPlainContentParagraph(nextBlock)
-  ) {
-    return gapForEmptyParagraphCount(1);
+  if (blocksCoalesceOnSingleNewline(previousBlock, nextBlock)) {
+    return '\n';
   }
 
-  if (blocksNeedBlankLineBetween(previousBlock, nextBlock)) {
-    return gapForEmptyParagraphCount(1);
-  }
-
-  return '\n';
+  return '\n\n';
 }

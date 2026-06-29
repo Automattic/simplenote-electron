@@ -51,7 +51,11 @@ export type MarkdownEditorExtensionOptions = {
 
 export {
   $captureMarkdownViewSelection,
+  $exportBlockMarkdown,
+  $exportInlineMarkdown,
   $exportMarkdownString,
+  $exportSelectionToMarkdown,
+  $importInlineMarkdown,
   $importMarkdownString,
   $importRemoteMarkdown,
   $markdownToNodes,

@@ -1,5 +1,4 @@
 // Flat markdown character offsets for capture/restore via export transformers.
-import { $convertSelectionToMarkdownString } from '@lexical/markdown';
 import {
   $createRangeSelection,
   $getRoot,
@@ -12,6 +11,10 @@ import {
   type PointType,
 } from 'lexical';
 
+import {
+  $exportBlockMarkdown,
+  $exportSelectionToMarkdown,
+} from '../markdown/import-export';
 import { MARKDOWN_TRANSFORMERS } from '../markdown/transformers';
 import {
   blockSeparatorForExport,
@@ -64,8 +67,7 @@ function $markdownPrefixLength(to: PointType | DocumentPoint): number {
   const selection = $createRangeSelection();
   selection.anchor.set(start.key, start.offset, start.type);
   selection.focus.set(to.key, to.offset, to.type);
-  return $convertSelectionToMarkdownString(MARKDOWN_TRANSFORMERS, selection)
-    .length;
+  return $exportSelectionToMarkdown(selection, MARKDOWN_TRANSFORMERS).length;
 }
 
 function $markdownPrefixLengthAtTextPoint(key: string, offset: number): number {
@@ -93,19 +95,7 @@ function $forEachTextPoint(visit: (key: string, offset: number) => void): void {
 }
 
 function exportRootChildMarkdown(node: LexicalNode): string {
-  if (!$isElementNode(node)) {
-    return node.getTextContent();
-  }
-
-  const selection = $createRangeSelection();
-  const key = node.getKey();
-  selection.anchor.set(key, 0, 'element');
-  selection.focus.set(key, node.getChildrenSize(), 'element');
-
-  return $convertSelectionToMarkdownString(
-    MARKDOWN_TRANSFORMERS,
-    selection
-  ).replace(/^\n+/, '');
+  return $exportBlockMarkdown(node);
 }
 
 function $pointAtMarkdownOffsetFromTextPoints(

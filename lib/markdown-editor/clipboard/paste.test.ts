@@ -3,6 +3,8 @@ import {
   $createTextNode,
   $getRoot,
   $getSelection,
+  $isLineBreakNode,
+  $isParagraphNode,
   $isRangeSelection,
   PASTE_COMMAND,
 } from 'lexical';
@@ -111,6 +113,21 @@ describe('$markdownToNodes', () => {
     expect(nodeInfo.firstIsHeading).toBe(true);
     expect(nodeInfo.secondIsList).toBe(true);
     expect(nodeInfo.firstHasNoParent).toBe(true);
+  });
+
+  it('imports one\\ntwo as one paragraph with a line break', () => {
+    const editor = makeEditor();
+    editor.update(
+      () => {
+        const nodes = $markdownToNodes('one\ntwo');
+        expect(nodes).toHaveLength(1);
+        expect($isParagraphNode(nodes[0])).toBe(true);
+        expect(nodes[0].getChildren().some($isLineBreakNode)).toBe(true);
+        expect(nodes[0].getTextContent()).toBe('one\ntwo');
+      },
+      { discrete: true }
+    );
+    editor.dispose();
   });
 });
 
@@ -621,8 +638,8 @@ describe('registerMarkdownPaste', () => {
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
       expect($isHorizontalRuleNode(children[0])).toBe(true);
-      expect(children[1]?.getTextContent()).toBe('');
-      expect(children[2]?.getTextContent()).toBe('next paragraph');
+      expect(children[1]?.getTextContent()).toBe('next paragraph');
+      expect(children).toHaveLength(2);
     });
     editor.dispose();
   });

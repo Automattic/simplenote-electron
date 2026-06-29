@@ -31,6 +31,7 @@ import {
 
 import {
   MARKDOWN_TRANSFORMERS,
+  $exportMarkdownString,
   $importMarkdownString,
 } from '../extensions/index';
 import {
@@ -215,12 +216,12 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
     const markdown = '- one\n- two';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+      expect($exportMarkdownString()).toBe(markdown);
     });
   });
 
   it('imports and round-trips bullet list items separated by a blank line as two lists', () => {
-    const markdown = '- test\n\n- test2';
+    const markdown = '- test\n\n\n- test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
       expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
@@ -229,7 +230,7 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
         bullet
           item: "test2""
       `);
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+      expect($exportMarkdownString()).toBe(markdown);
     });
   });
 
@@ -283,7 +284,7 @@ describe('MIXED_NESTED_ORDERED_LIST', () => {
     const markdown = '1. one\n2. two';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+      expect($exportMarkdownString()).toBe(markdown);
     });
   });
 
@@ -337,12 +338,12 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
     const markdown = '- [ ] todo\n- [x] done';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+      expect($exportMarkdownString()).toBe(markdown);
     });
   });
 
   it('imports and round-trips checklist items separated by a blank line as two lists', () => {
-    const markdown = '- [ ] test\n\n- [ ] test2';
+    const markdown = '- [ ] test\n\n\n- [ ] test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
       expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
@@ -351,12 +352,12 @@ describe('MIXED_NESTED_CHECK_LIST', () => {
         check
           item: "test2""
       `);
-      expect($convertToMarkdownString(MARKDOWN_TRANSFORMERS)).toBe(markdown);
+      expect($exportMarkdownString()).toBe(markdown);
     });
   });
 
   it('imports compact checklist markers separated by a blank line as two lists', () => {
-    const markdown = '- [] test\n\n- [] test2';
+    const markdown = '- [] test\n\n\n- [] test2';
     const editor = importMarkdown(markdown);
     editor.getEditorState().read(() => {
       expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`

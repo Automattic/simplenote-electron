@@ -6,8 +6,6 @@ import {
 } from '@lexical/extension';
 import { $isCodeNode, $plainifyCodeContent } from '@lexical/code-core';
 import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,
   BOLD_STAR,
@@ -47,6 +45,7 @@ import {
 
 import { $createImageNode, $isImageNode, ImageNode } from '../nodes/image-node';
 import { unescapeMarkdown } from '../nodes/image-markdown';
+import { $exportInlineMarkdown, $importInlineMarkdown } from './lexical-io';
 
 const TABLE_ROW_REG_EXP = /^(?:\|)(.+)(?:\|)\s?$/;
 const TABLE_ROW_DIVIDER_REG_EXP =
@@ -119,7 +118,7 @@ export function $exportTableRowMarkdown(
     }
 
     rowOutput.push(
-      $convertToMarkdownString(getTableCellInlineTransformers(), cell)
+      $exportInlineMarkdown(cell, getTableCellInlineTransformers())
         .replace(/\n/g, '\\n')
         .trim()
     );
@@ -176,11 +175,7 @@ function $createTableCell(textContent: string): TableCellNode {
   const normalized = textContent.replace(/\\n/g, '\n').trim();
   const cell = $createTableCellNode(TableCellHeaderStates.NO_STATUS);
   if (normalized.length > 0) {
-    $convertFromMarkdownString(
-      normalized,
-      getTableCellInlineTransformers(),
-      cell
-    );
+    $importInlineMarkdown(normalized, cell, getTableCellInlineTransformers());
   }
   return cell;
 }

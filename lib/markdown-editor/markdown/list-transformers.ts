@@ -8,7 +8,6 @@ import {
   type ListType,
 } from '@lexical/list';
 import {
-  $convertFromMarkdownString,
   CHECK_LIST,
   ORDERED_LIST,
   UNORDERED_LIST,
@@ -34,6 +33,7 @@ import {
 } from 'lexical';
 
 import { $exportMarkdownString } from './import-export';
+import { $importInlineMarkdown } from './lexical-io';
 import { $tagShortcutHistoryFromMarkdown } from '../extensions/markdown-history-tags';
 import { $isSelectionInTable } from '../extensions/table-controls';
 
@@ -173,7 +173,7 @@ function importListItemText(
   }
 
   const container = $createParagraphNode();
-  $convertFromMarkdownString(text, inlineTransformers, container);
+  $importInlineMarkdown(text, container, inlineTransformers);
 
   for (const block of container.getChildren()) {
     if ($isParagraphNode(block)) {
@@ -401,6 +401,20 @@ export function importMixedNestedListMarkdown(
     }
 
     if (block.text.length > 0) {
+      const previousBlock = blocks[index - 1];
+      const nextBlock = blocks[index + 1];
+      if (
+        previousBlock?.kind === 'list' &&
+        nextBlock?.kind === 'list' &&
+        /^\s*$/.test(block.text)
+      ) {
+        const emptyCount = (block.text.match(/\n/g) || []).length;
+        for (let j = 0; j < emptyCount; j++) {
+          root.append($createParagraphNode());
+        }
+        continue;
+      }
+
       importMarkdownChunk(block.text, root);
       continue;
     }
@@ -411,7 +425,7 @@ export function importMixedNestedListMarkdown(
     const previousBlock = blocks[index - 1];
     const nextBlock = blocks[index + 1];
     if (previousBlock?.kind === 'list' && nextBlock?.kind === 'list') {
-      importMarkdownChunk(block.text, root);
+      continue;
     }
   }
 }

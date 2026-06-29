@@ -83,7 +83,7 @@ describe('merge-sensitive block separation', () => {
 
     it('preserves two adjacent tables through save and reopen', () => {
       const editor = makeEditorWithAdjacentBlocks(TABLE_A, TABLE_B);
-      const expected = ['table:1x2', 'empty', 'table:1x2'];
+      const expected = ['table:1x2', 'table:1x2'];
 
       const { rootBlocksAfterReopen } = simulateSaveReopenFromEditor(editor);
       expect(rootBlocksAfterReopen).toEqual(expected);
@@ -94,12 +94,8 @@ describe('merge-sensitive block separation', () => {
       const { storeContent, rootBlocksAfterReopen } =
         simulateSaveReopenFromEditor(editor);
 
-      expect(storeContent).toBe(markdownWithGap(TABLE_A, 1, TABLE_B));
-      expect(rootBlocksAfterReopen).toEqual([
-        'table:1x2',
-        'empty',
-        'table:1x2',
-      ]);
+      expect(storeContent).toBe(markdownWithGap(TABLE_A, 0, TABLE_B));
+      expect(rootBlocksAfterReopen).toEqual(['table:1x2', 'table:1x2']);
     });
 
     it('preserves two adjacent blockquotes in the live editor', () => {
@@ -114,7 +110,7 @@ describe('merge-sensitive block separation', () => {
 
     it('preserves two adjacent blockquotes through save and reopen', () => {
       const editor = makeEditorWithAdjacentBlocks(QUOTE_A, QUOTE_B);
-      const expected = ['quote:"first"', 'empty', 'quote:"second"'];
+      const expected = ['quote:"first"', 'quote:"second"'];
 
       const { rootBlocksAfterReopen } = simulateSaveReopenFromEditor(editor);
       expect(rootBlocksAfterReopen).toEqual(expected);
@@ -125,10 +121,9 @@ describe('merge-sensitive block separation', () => {
       const { storeContent, rootBlocksAfterReopen } =
         simulateSaveReopenFromEditor(editor);
 
-      expect(storeContent).toBe(markdownWithGap(QUOTE_A, 1, QUOTE_B));
+      expect(storeContent).toBe(markdownWithGap(QUOTE_A, 0, QUOTE_B));
       expect(rootBlocksAfterReopen).toEqual([
         'quote:"first"',
-        'empty',
         'quote:"second"',
       ]);
     });

@@ -42,21 +42,18 @@ describe('$importMarkdownString', () => {
 
     editor.getEditorState().read(() => {
       const children = $getRoot().getChildren();
-      expect(children).toHaveLength(5);
+      expect(children).toHaveLength(3);
       expect(children[0].getType()).toBe('heading');
       expect($isParagraphNode(children[1])).toBe(true);
-      expect(children[1].getTextContent()).toBe('');
+      expect(children[1].getTextContent()).toBe('hello');
       expect($isParagraphNode(children[2])).toBe(true);
-      expect(children[2].getTextContent()).toBe('hello');
-      expect($isParagraphNode(children[3])).toBe(true);
-      expect(children[3].getTextContent()).toBe('');
-      expect(children[4].getTextContent()).toBe('world');
+      expect(children[2].getTextContent()).toBe('world');
     });
     editor.dispose();
   });
 
   it('imports a whitespace-only note as empty paragraphs', () => {
-    const markdown = '\n\n\n';
+    const markdown = '\n\n\n\n';
     const editor = makeGfmTestEditor();
     editor.update(() => $importMarkdownString(markdown), { discrete: true });
 

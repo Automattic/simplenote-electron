@@ -1,4 +1,5 @@
-import { $convertFromMarkdownString } from '@lexical/markdown';
+import { $importInlineMarkdown } from '../markdown/lexical-io';
+import { getTableCellInlineTransformers } from '../markdown/gfm-transformers';
 import { $insertDataTransferForRichText } from '@lexical/clipboard';
 import { $isCodeNode } from '@lexical/code-core';
 import { $toggleLink } from '@lexical/link';
@@ -29,7 +30,6 @@ import {
 import { clearBlockExportCache } from '../markdown/block-export-cache';
 import { $markdownToNodes } from '../markdown/import-export';
 import { normalizeLinkHref, urlFromText } from '../links/link-validator';
-import { getTableCellInlineTransformers } from '../markdown/gfm-transformers';
 import { $isSelectionInTable } from '../extensions/table-controls';
 import { isFormattingFreeHtml } from '../../utils/clipboard/html-to-markdown';
 import {
@@ -210,7 +210,7 @@ function $insertInlineMarkdownPasteInTable(text: string): boolean {
   }
 
   const paragraph = $createParagraphNode();
-  $convertFromMarkdownString(text, getTableCellInlineTransformers(), paragraph);
+  $importInlineMarkdown(text, paragraph, getTableCellInlineTransformers());
   const children = paragraph.getChildren();
   if (children.length === 0) {
     return false;

@@ -36,6 +36,18 @@ describe('$reimportRootParagraphIfNeeded', () => {
     editor.dispose();
   });
 
+  it('exports plain soft lines as GFM hard breaks', () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(() => {
+      setupParagraphWithSoftLineBreak('one', 'two');
+      const paragraph = $getRoot().getFirstChild()!;
+      expect($exportTopLevelBlockMarkdown(paragraph)).toBe('one  \ntwo');
+    });
+
+    editor.dispose();
+  });
+
   it('exports soft-line --- markdown for reimport', () => {
     const editor = makeGfmTestEditor();
 
@@ -67,6 +79,21 @@ describe('$reimportRootParagraphIfNeeded', () => {
           .map((child) => child.getType())
       ).toEqual(['horizontalrule', 'paragraph']);
       expect($getRoot().getLastChild()?.getTextContent()).toBe('jlkjkl');
+    });
+
+    editor.dispose();
+  });
+
+  it('leaves a soft-line paragraph unchanged', () => {
+    const editor = makeGfmTestEditor();
+
+    editor.update(() => {
+      setupParagraphWithSoftLineBreak('one', 'two');
+      const paragraph = $getRoot().getFirstChild()!;
+      expect($reimportRootParagraphIfNeeded(paragraph)).toBe(false);
+      expect(paragraph.isAttached()).toBe(true);
+      expect(paragraph.getTextContent()).toBe('one\ntwo');
+      expect($getRoot().getChildren()).toHaveLength(1);
     });
 
     editor.dispose();

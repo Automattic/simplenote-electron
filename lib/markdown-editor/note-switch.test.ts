@@ -13,8 +13,8 @@ import {
 } from './extensions/index';
 import { countEmptyRootParagraphs } from './markdown/gfm-test-helpers';
 
-const NOTE_WITH_EXTRA_EMPTY_LINE = 'before\n\n\nafter';
-const NOTE_WITH_ONE_EMPTY_LINE = 'before\n\nafter';
+const NOTE_WITH_EXTRA_EMPTY_LINE = 'before\n\n\n\nafter';
+const NOTE_WITH_ONE_EMPTY_LINE = 'before\n\n\nafter';
 
 async function flushMicrotasks(): Promise<void> {
   await Promise.resolve();
@@ -81,7 +81,7 @@ describe('note switch saved content', () => {
 
   it('persists a manually inserted empty line through save and reopen', async () => {
     const { storeContent, reopened } = await simulateNoteSwitchSavedContent({
-      initialStoreContent: 'before\n\nafter',
+      initialStoreContent: 'before\n\n\nafter',
       edit: (editor) => {
         editor.update(
           () => {

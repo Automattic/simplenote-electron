@@ -3,7 +3,7 @@ import {
   GetClipboardDataExtension,
   $insertGeneratedNodes,
 } from '@lexical/clipboard';
-import { $convertSelectionToMarkdownString } from '@lexical/markdown';
+import { $exportSelectionToMarkdown } from '../markdown/import-export';
 import {
   $getEditor,
   $getSelection,
@@ -27,10 +27,7 @@ import {
 export const $exportSelectionMarkdown = (
   selection: NonNullable<ReturnType<typeof $getSelection>>
 ) => {
-  let markdown = $convertSelectionToMarkdownString(
-    MARKDOWN_TRANSFORMERS,
-    selection
-  ).replace(/^\n+/, '');
+  let markdown = $exportSelectionToMarkdown(selection, MARKDOWN_TRANSFORMERS);
 
   // A trailing linebreak keeps pasted list lines as separate items instead of
   // merging with the following line when cut/copy markdown is reused.

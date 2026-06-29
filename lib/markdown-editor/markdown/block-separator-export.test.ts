@@ -23,7 +23,7 @@ describe('blockSeparatorForExport', () => {
       .read(() => $exportMarkdownString());
     editor.dispose();
 
-    expect(exported).toBe(markdownWithGap(TABLE_A, 1, TABLE_B));
+    expect(exported).toBe(markdownWithGap(TABLE_A, 0, TABLE_B));
   });
 
   it('detects merge-sensitive table neighbors', () => {
@@ -43,7 +43,7 @@ describe('blockSeparatorForExport', () => {
       .read(() => $exportMarkdownString());
     editor.dispose();
 
-    expect(exported).toBe(markdownWithGap(QUOTE_A, 1, QUOTE_B));
+    expect(exported).toBe(markdownWithGap(QUOTE_A, 0, QUOTE_B));
   });
 
   it('detects merge-sensitive blockquote neighbors', () => {
