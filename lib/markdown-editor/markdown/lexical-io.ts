@@ -4,11 +4,7 @@ import {
   $convertToMarkdownString,
   type Transformer,
 } from '@lexical/markdown';
-import {
-  $createRangeSelection,
-  type BaseSelection,
-  type ElementNode,
-} from 'lexical';
+import { $createRangeSelection, type ElementNode } from 'lexical';
 
 export function $importInlineMarkdown(
   markdown: string,
@@ -33,16 +29,6 @@ export function $exportElementMarkdown(
   selection.anchor.set(node.getKey(), 0, 'element');
   selection.focus.set(node.getKey(), node.getChildrenSize(), 'element');
 
-  return $convertSelectionToMarkdownString(transformers, selection).replace(
-    /^\n+/,
-    ''
-  );
-}
-
-export function $exportSelectionToMarkdown(
-  selection: BaseSelection,
-  transformers: Array<Transformer>
-): string {
   return $convertSelectionToMarkdownString(transformers, selection).replace(
     /^\n+/,
     ''

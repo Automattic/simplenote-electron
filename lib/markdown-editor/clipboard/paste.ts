@@ -27,6 +27,7 @@ import {
   type TextNode,
 } from 'lexical';
 
+import { $isEmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 import { clearBlockExportCache } from '../markdown/block-export-cache';
 import { $markdownToNodes } from '../markdown/import-export';
 import { normalizeLinkHref, urlFromText } from '../links/link-validator';
@@ -38,6 +39,14 @@ import {
   MARKDOWN_CLIPBOARD_MIME_TYPE,
   type ClipboardMarkdownPayload,
 } from './shared';
+
+function $isRemovableEmptyPasteAnchor(block: ElementNode): boolean {
+  if ($isEmptyLineParagraphNode(block)) {
+    return block.getTextContent().length === 0;
+  }
+
+  return $isParagraphNode(block) && block.isEmpty();
+}
 
 function $isNestedListWrapperItem(listItem: ListItemNode): boolean {
   const children = listItem.getChildren();
@@ -183,7 +192,7 @@ export function $insertMarkdownPasteNodes(
       : null;
     if (secondHalf !== null) {
       $insertBlockNodesBefore(secondHalf, nodes, {
-        removeAnchorBlock: $isParagraphNode(secondHalf) && secondHalf.isEmpty(),
+        removeAnchorBlock: $isRemovableEmptyPasteAnchor(secondHalf),
       });
       return true;
     }
@@ -192,8 +201,17 @@ export function $insertMarkdownPasteNodes(
   if (
     nodes.length > 1 &&
     $isElementNode(anchorBlock) &&
-    $isParagraphNode(anchorBlock) &&
-    anchorBlock.isEmpty()
+    $isRemovableEmptyPasteAnchor(anchorBlock)
+  ) {
+    $insertBlockNodesBefore(anchorBlock, nodes, { removeAnchorBlock: true });
+    return true;
+  }
+
+  if (
+    nodes.length === 1 &&
+    $isElementNode(anchorBlock) &&
+    $isRemovableEmptyPasteAnchor(anchorBlock) &&
+    !$isParagraphNode(nodes[0])
   ) {
     $insertBlockNodesBefore(anchorBlock, nodes, { removeAnchorBlock: true });
     return true;

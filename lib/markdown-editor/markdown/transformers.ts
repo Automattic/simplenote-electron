@@ -23,6 +23,7 @@ import {
   TABLE,
   TILDE_CODE,
 } from './gfm-transformers';
+import { EMPTY_LINE_PARAGRAPH } from '../nodes/empty-line-paragraph-node';
 import {
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_ORDERED_LIST,
@@ -33,6 +34,7 @@ export const MARKDOWN_TRANSFORMERS: Array<Transformer> = [
   HEADING,
   QUOTE,
   HR,
+  EMPTY_LINE_PARAGRAPH,
   MIXED_NESTED_CHECK_LIST,
   MIXED_NESTED_UNORDERED_LIST,
   MIXED_NESTED_ORDERED_LIST,

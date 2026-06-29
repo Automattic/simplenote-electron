@@ -17,6 +17,10 @@ import {
   type Transformer,
 } from '@lexical/markdown';
 import {
+  $createEmptyLineParagraphNode,
+  countEmptyLinePlaceholderLines,
+} from '../nodes/empty-line-paragraph-node';
+import {
   $createParagraphNode,
   $findMatchingParent,
   $getSelection,
@@ -403,16 +407,22 @@ export function importMixedNestedListMarkdown(
     if (block.text.length > 0) {
       const previousBlock = blocks[index - 1];
       const nextBlock = blocks[index + 1];
-      if (
-        previousBlock?.kind === 'list' &&
-        nextBlock?.kind === 'list' &&
-        /^\s*$/.test(block.text)
-      ) {
-        const emptyCount = (block.text.match(/\n/g) || []).length;
-        for (let j = 0; j < emptyCount; j++) {
-          root.append($createParagraphNode());
+      if (previousBlock?.kind === 'list' && nextBlock?.kind === 'list') {
+        const emptyLineCount = countEmptyLinePlaceholderLines(block.text);
+        if (emptyLineCount > 0) {
+          for (let j = 0; j < emptyLineCount; j++) {
+            root.append($createEmptyLineParagraphNode());
+          }
+          continue;
         }
-        continue;
+
+        if (/^\s*$/.test(block.text) && !/[\u00A0]|&nbsp;/i.test(block.text)) {
+          const emptyCount = (block.text.match(/\n/g) || []).length;
+          for (let j = 0; j < emptyCount; j++) {
+            root.append($createParagraphNode());
+          }
+          continue;
+        }
       }
 
       importMarkdownChunk(block.text, root);

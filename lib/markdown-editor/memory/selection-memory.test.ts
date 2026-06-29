@@ -7,9 +7,14 @@ import {
 } from 'lexical';
 
 import { $importRemoteMarkdown } from '../markdown/import-export';
-import { makeGfmTestEditor } from '../markdown/gfm-test-helpers';
+import {
+  makeGfmTestEditor,
+  markdownWithGap,
+} from '../markdown/gfm-test-helpers';
+import { EMPTY_LINE_MARKDOWN_EXPORT } from '../nodes/empty-line-paragraph-node';
 import {
   $captureMarkdownSelectionOffsets,
+  $restoreMarkdownSelectionOffsets,
   remapMarkdownOffset,
 } from './selection-memory';
 
@@ -137,6 +142,49 @@ describe('selection memory', () => {
       expect($captureMarkdownSelectionOffsets()).toEqual({
         anchor: 1,
         focus: 4,
+        direction: 'LTR',
+      });
+    });
+
+    editor.dispose();
+  });
+
+  it('restores caret offsets on nbsp empty-line paragraphs without failing', () => {
+    const markdown = markdownWithGap('before', 1, 'after');
+    const nbspOffset = markdown.indexOf(EMPTY_LINE_MARKDOWN_EXPORT);
+    const afterNbspOffset = nbspOffset + EMPTY_LINE_MARKDOWN_EXPORT.length;
+    const editor = makeGfmTestEditor(markdown);
+
+    editor.update(
+      () => {
+        expect(
+          $restoreMarkdownSelectionOffsets({
+            anchor: nbspOffset,
+            focus: nbspOffset,
+            direction: 'LTR',
+          })
+        ).toBe(true);
+      },
+      { discrete: true }
+    );
+
+    editor.update(
+      () => {
+        expect(
+          $restoreMarkdownSelectionOffsets({
+            anchor: afterNbspOffset,
+            focus: afterNbspOffset,
+            direction: 'LTR',
+          })
+        ).toBe(true);
+      },
+      { discrete: true }
+    );
+
+    editor.read(() => {
+      expect($captureMarkdownSelectionOffsets()).toEqual({
+        anchor: afterNbspOffset,
+        focus: afterNbspOffset,
         direction: 'LTR',
       });
     });

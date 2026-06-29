@@ -11,10 +11,13 @@ import {
   $insertMarkdownPasteNodes,
   createMarkdownEditorExtension,
 } from './extensions/index';
-import { countEmptyRootParagraphs } from './markdown/gfm-test-helpers';
+import {
+  countEmptyRootParagraphs,
+  markdownWithGap,
+} from './markdown/gfm-test-helpers';
 
-const NOTE_WITH_EXTRA_EMPTY_LINE = 'before\n\n\n\nafter';
-const NOTE_WITH_ONE_EMPTY_LINE = 'before\n\n\nafter';
+const NOTE_WITH_EXTRA_EMPTY_LINE = markdownWithGap('before', 2, 'after');
+const NOTE_WITH_ONE_EMPTY_LINE = markdownWithGap('before', 1, 'after');
 
 async function flushMicrotasks(): Promise<void> {
   await Promise.resolve();
@@ -81,7 +84,7 @@ describe('note switch saved content', () => {
 
   it('persists a manually inserted empty line through save and reopen', async () => {
     const { storeContent, reopened } = await simulateNoteSwitchSavedContent({
-      initialStoreContent: 'before\n\n\nafter',
+      initialStoreContent: markdownWithGap('before', 1, 'after'),
       edit: (editor) => {
         editor.update(
           () => {
@@ -105,5 +108,27 @@ describe('note switch saved content', () => {
     await flushMicrotasks();
     expect(countEmptyRootParagraphs(editor)).toBe(2);
     editor.dispose();
+  });
+
+  it('preserves newline gaps from remote sync through a local edit', async () => {
+    const remote = 'Test\n\na\n\n\n\nb';
+    const { storeContent, reopened } = await simulateNoteSwitchSavedContent({
+      initialStoreContent: remote,
+      edit: (editor) => {
+        editor.update(
+          () => {
+            $getRoot().getLastChild()?.selectEnd();
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              selection.insertText('!');
+            }
+          },
+          { discrete: true }
+        );
+      },
+    });
+
+    expect(storeContent).toBe('Test\n\na\n\n\n\nb!');
+    expect(reopened).toBe('Test\n\na\n\n\n\nb!');
   });
 });

@@ -21,6 +21,10 @@ import {
   gapForEmptyParagraphCount,
 } from '../markdown/block-separator-export';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
+import {
+  $isEmptyLineParagraphNode,
+  $prepareEmptyLineForCaret,
+} from '../nodes/empty-line-paragraph-node';
 
 import {
   type MarkdownSelectionOffsets,
@@ -173,6 +177,31 @@ function $pointAtMarkdownOffset(
   for (const child of children) {
     if (isEmptyRootParagraph(child)) {
       pendingEmpty++;
+      continue;
+    }
+
+    if ($isEmptyLineParagraphNode(child)) {
+      const blockMarkdown = exportRootChildMarkdown(child);
+      if (previousBlock !== null) {
+        const separator = blockSeparatorForExport(previousBlock, child, 0);
+        if (offset < pos + separator.length) {
+          return $pointAtEndOfBlock(previousBlock);
+        }
+        pos += separator.length;
+      }
+
+      if (offset <= pos + blockMarkdown.length) {
+        $prepareEmptyLineForCaret(child);
+        const textNode = child.getFirstChild();
+        if ($isTextNode(textNode)) {
+          return { key: textNode.getKey(), offset: 0 };
+        }
+        return null;
+      }
+
+      pos += blockMarkdown.length;
+      previousBlock = child;
+      pendingEmpty = 0;
       continue;
     }
 

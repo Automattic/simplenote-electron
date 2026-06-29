@@ -30,6 +30,8 @@ import {
   getOrCreateNoteHistoryState,
 } from '../memory/note-history-memory';
 import { ImageNode } from '../nodes/image-node';
+import { registerEmptyLineParagraph } from './empty-line-paragraph';
+import { EmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 import { TransientParagraphNode } from '../nodes/transient-paragraph-node';
 import { markdownEditorTheme } from '../theme';
 import { MarkdownToolbarExtension } from '../toolbar/extension';
@@ -117,6 +119,14 @@ const TransientParagraphExtension = defineExtension({
   nodes: [TransientParagraphNode],
 });
 
+const EmptyLineParagraphExtension = defineExtension({
+  name: '@simplenote/empty-line-paragraph',
+  nodes: [EmptyLineParagraphNode],
+  register(editor) {
+    return registerEmptyLineParagraph(editor);
+  },
+});
+
 const BlockCursorNavigationExtension = defineExtension({
   name: '@simplenote/block-cursor-navigation',
   register(editor) {
@@ -199,6 +209,7 @@ export function createMarkdownEditorExtension(
     TableControlsExtension,
     HorizontalRuleExtension,
     TransientParagraphExtension,
+    EmptyLineParagraphExtension,
     BlockCursorNavigationExtension,
     BlockquoteEnterSplitExtension,
     ImageExtension,

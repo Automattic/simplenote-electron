@@ -12,6 +12,7 @@ import {
   MARKDOWN_TRANSFORMERS,
 } from '../extensions/index';
 import { makeGfmTestEditor } from './gfm-test-helpers';
+import { $isEmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 
 function typeAtEnd(editor: ReturnType<typeof makeGfmTestEditor>, text: string) {
   for (const char of text) {
@@ -52,7 +53,7 @@ describe('$importMarkdownString', () => {
     editor.dispose();
   });
 
-  it('imports a whitespace-only note as empty paragraphs', () => {
+  it('imports a whitespace-only note as empty paragraphs with newline gaps', () => {
     const markdown = '\n\n\n\n';
     const editor = makeGfmTestEditor();
     editor.update(() => $importMarkdownString(markdown), { discrete: true });
@@ -62,6 +63,7 @@ describe('$importMarkdownString', () => {
       expect(children).toHaveLength(2);
       for (const child of children) {
         expect($isParagraphNode(child)).toBe(true);
+        expect($isEmptyLineParagraphNode(child)).toBe(false);
         expect(child.getTextContent()).toBe('');
       }
     });

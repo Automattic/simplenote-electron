@@ -4,8 +4,8 @@ import {
   $isQuoteNode,
   type QuoteNode,
 } from '@lexical/rich-text';
+import { $createEmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 import {
-  $createParagraphNode,
   $getSelection,
   $isLineBreakNode,
   $isRangeSelection,
@@ -81,7 +81,7 @@ function $splitQuoteAtLineEnd(selection: RangeSelection): boolean {
     return false;
   }
 
-  const emptyParagraph = $createParagraphNode();
+  const emptyParagraph = $createEmptyLineParagraphNode();
   const trailingQuote = $createQuoteNode();
   trailingQuote.append(...trailingNodes);
 

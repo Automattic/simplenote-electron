@@ -24,8 +24,11 @@ import {
 } from './shared';
 import {
   createMarkdownEditorExtension,
+  $importMarkdownString,
   MARKDOWN_TRANSFORMERS,
 } from '../extensions/index';
+import { EMPTY_LINE_MARKDOWN_EXPORT } from '../nodes/empty-line-paragraph-node';
+import { markdownWithGap } from '../markdown/gfm-test-helpers';
 
 function makeEditor(markdown: string) {
   return buildEditorFromExtensions(createMarkdownEditorExtension(markdown));
@@ -82,6 +85,17 @@ function getClipboardDataForFirstListItem(
 }
 
 describe('markdown clipboard export', () => {
+  it('exports empty-line paragraphs as nbsp in text/plain', () => {
+    const markdown = markdownWithGap('one', 2, 'far away two');
+    const editor = makeEditor('');
+    editor.update(() => $importMarkdownString(markdown), { discrete: true });
+    const data = getClipboardDataForAll(editor);
+
+    expect(data['text/plain']).toBe(markdown);
+    expect(data['text/plain']).toContain(EMPTY_LINE_MARKDOWN_EXPORT);
+    editor.dispose();
+  });
+
   it('exports fenced markdown in text/plain only', () => {
     const editor = makeEditor('```\nconst a = 1;\nconst b = 2;\n```');
     const data = getClipboardDataForAll(editor);

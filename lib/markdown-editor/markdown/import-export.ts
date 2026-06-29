@@ -3,25 +3,33 @@ import { $isLinkNode } from '@lexical/link';
 import { $isListNode, type ListNode } from '@lexical/list';
 import { $isTableNode } from '@lexical/table';
 import {
+  $addUpdateTag,
   $createParagraphNode,
   $getRoot,
   $getSelection,
   $isElementNode,
   $isLineBreakNode,
   $isParagraphNode,
+  $isRangeSelection,
   $isTextNode,
   $setSelection,
+  type BaseSelection,
   type ElementNode,
   type LexicalNode,
   type NodeKey,
+  type PointType,
+  type RangeSelection,
   type TextNode,
 } from 'lexical';
+
+import { $convertSelectionToMarkdownString } from '@lexical/markdown';
 
 import {
   blockSeparatorForExport,
   gapForEmptyParagraphCount,
 } from './block-separator-export';
 
+import { IMPORT_MARKDOWN_TAG } from './on-change';
 import {
   clearBlockExportCache,
   getBlockExportCache,
@@ -54,19 +62,27 @@ import {
   INLINE_MARKDOWN_TRANSFORMERS,
   MARKDOWN_TRANSFORMERS,
 } from './transformers';
+import {
+  $createEmptyLineParagraphNode,
+  $isEmptyLineParagraphNode,
+  countEmptyLinePlaceholderLines,
+  EMPTY_LINE_MARKDOWN_EXPORT,
+  isEmptyLinePlaceholderMarkdown,
+} from '../nodes/empty-line-paragraph-node';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
-import type { ElementTransformer } from '@lexical/markdown';
+import type { Transformer } from '@lexical/markdown';
 
 export {
   $exportElementMarkdown,
   $exportInlineMarkdown,
-  $exportSelectionToMarkdown,
   $importInlineMarkdown,
 } from './lexical-io';
 
-// Block boundaries use \n\n (standard markdown). Each additional empty root
-// paragraph adds one more newline (\n\n\n = one blank line between blocks).
-// Intra-block line breaks export as GFM hard breaks (two trailing spaces).
+// Block boundaries use \n\n (standard markdown). Intentional blank lines
+// between blocks export as non-breaking-space paragraphs so external renderers
+// gap. Legacy notes may still import extra newlines (\n\n\n); those become
+// empty-line paragraphs on import. Intra-block line breaks export as GFM hard
+// breaks (two trailing spaces).
 const GFM_HARD_LINE_BREAK_SUFFIX = '  ';
 
 function getElementTransformers(): Array<ElementTransformer> {
@@ -125,6 +141,7 @@ function isEmptyRootParagraph(node: LexicalNode): boolean {
   return (
     $isParagraphNode(node) &&
     !$isTransientParagraphNode(node) &&
+    !$isEmptyLineParagraphNode(node) &&
     node.getChildrenSize() === 0 &&
     node.getTextContent() === ''
   );
@@ -217,6 +234,10 @@ function exportTopLevelNode(
   node: LexicalNode,
   options?: Pick<LineNativeExportOptions, 'markdownExportContext'>
 ): string {
+  if ($isEmptyLineParagraphNode(node)) {
+    return EMPTY_LINE_MARKDOWN_EXPORT;
+  }
+
   if ($isHorizontalRuleNode(node)) {
     return '---';
   }
@@ -252,14 +273,30 @@ type LineNativeExportOptions = {
   reExportKeys?: ReadonlySet<NodeKey>;
 };
 
-function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
-  const children = $getRoot().getChildren();
+function $exportRootChildrenLineNativeMarkdown(
+  children: LexicalNode[],
+  options?: LineNativeExportOptions
+): string {
   if (children.length === 0) {
     return '';
   }
 
-  if (children.every(isEmptyRootParagraph)) {
-    return gapForEmptyParagraphCount(children.length);
+  const contentChildren = children.filter(
+    (child) => !$isTransientParagraphNode(child)
+  );
+  if (contentChildren.length === 0) {
+    return '';
+  }
+
+  if (contentChildren.every($isEmptyLineParagraphNode)) {
+    return Array.from(
+      { length: contentChildren.length },
+      () => EMPTY_LINE_MARKDOWN_EXPORT
+    ).join('\n\n');
+  }
+
+  if (contentChildren.every(isEmptyRootParagraph)) {
+    return gapForEmptyParagraphCount(contentChildren.length);
   }
 
   const cache = options?.cache;
@@ -268,8 +305,15 @@ function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
   let pendingEmpty = 0;
   let previousBlock: LexicalNode | null = null;
 
-  for (const child of children) {
-    if ($isTransientParagraphNode(child)) {
+  for (const child of contentChildren) {
+    if ($isEmptyLineParagraphNode(child)) {
+      const markdown = EMPTY_LINE_MARKDOWN_EXPORT;
+      if (output.length > 0 && previousBlock !== null) {
+        output += blockSeparatorForExport(previousBlock, child, 0);
+      }
+      previousBlock = child;
+      output += markdown;
+      pendingEmpty = 0;
       continue;
     }
 
@@ -312,6 +356,176 @@ function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
   }
 
   return output;
+}
+
+function $exportLineNativeMarkdown(options?: LineNativeExportOptions): string {
+  return $exportRootChildrenLineNativeMarkdown(
+    $getRoot().getChildren(),
+    options
+  );
+}
+
+function $getRootBlocksInSelectionOrder(
+  selection: RangeSelection
+): LexicalNode[] {
+  const root = $getRoot();
+  const children = root
+    .getChildren()
+    .filter((node) => !$isTransientParagraphNode(node));
+
+  const anchorOnRoot = selection.anchor.getNode().is(root);
+  const focusOnRoot = selection.focus.getNode().is(root);
+  if (
+    anchorOnRoot &&
+    focusOnRoot &&
+    selection.anchor.type === 'element' &&
+    selection.focus.type === 'element'
+  ) {
+    const lo = Math.min(selection.anchor.offset, selection.focus.offset);
+    const hi = Math.max(selection.anchor.offset, selection.focus.offset);
+    return children.slice(lo, hi);
+  }
+
+  const start = selection.isBackward() ? selection.focus : selection.anchor;
+  const end = selection.isBackward() ? selection.anchor : selection.focus;
+  const startTop = start.getNode().getTopLevelElement();
+  const endTop = end.getNode().getTopLevelElement();
+  if (startTop === null || endTop === null) {
+    return [];
+  }
+
+  const startIdx = children.findIndex((child) => child.is(startTop));
+  const endIdx = children.findIndex((child) => child.is(endTop));
+  if (startIdx < 0 || endIdx < 0) {
+    return [];
+  }
+
+  const lo = Math.min(startIdx, endIdx);
+  const hi = Math.max(startIdx, endIdx);
+  return children.slice(lo, hi + 1);
+}
+
+function $pointCoversElementStart(
+  block: LexicalNode,
+  point: PointType
+): boolean {
+  if (point.type === 'element' && point.getNode().is(block)) {
+    return point.offset === 0;
+  }
+
+  const firstDescendant = block.getFirstDescendant();
+  return (
+    firstDescendant !== null &&
+    point.getNode().is(firstDescendant) &&
+    point.offset === 0
+  );
+}
+
+function $pointCoversElementEnd(block: LexicalNode, point: PointType): boolean {
+  if (point.type === 'element' && point.getNode().is(block)) {
+    return point.offset === block.getChildrenSize();
+  }
+
+  const lastDescendant = block.getLastDescendant();
+  if (lastDescendant === null) {
+    return point.type === 'element' && point.getNode().is(block);
+  }
+
+  if (!$isTextNode(lastDescendant)) {
+    return point.getNode().is(lastDescendant);
+  }
+
+  return (
+    point.getNode().is(lastDescendant) &&
+    point.offset === lastDescendant.getTextContentSize()
+  );
+}
+
+function $shouldExportSelectionWithLineNative(
+  selection: RangeSelection,
+  blocks: LexicalNode[]
+): boolean {
+  const root = $getRoot();
+  if (
+    selection.anchor.getNode().is(root) &&
+    selection.focus.getNode().is(root) &&
+    selection.anchor.type === 'element'
+  ) {
+    return true;
+  }
+
+  if (!blocks.some($isEmptyLineParagraphNode)) {
+    return false;
+  }
+
+  const children = root
+    .getChildren()
+    .filter((node) => !$isTransientParagraphNode(node));
+  const start = selection.isBackward() ? selection.focus : selection.anchor;
+  const end = selection.isBackward() ? selection.anchor : selection.focus;
+  const startTop = start.getNode().getTopLevelElement();
+  const endTop = end.getNode().getTopLevelElement();
+  if (startTop === null || endTop === null) {
+    return false;
+  }
+
+  const startIdx = children.findIndex((child) => child.is(startTop));
+  const endIdx = children.findIndex((child) => child.is(endTop));
+  if (startIdx < 0 || endIdx < 0) {
+    return false;
+  }
+
+  const lo = Math.min(startIdx, endIdx);
+  const hi = Math.max(startIdx, endIdx);
+
+  for (let index = lo; index <= hi; index++) {
+    const block = children[index];
+    if (block === undefined || $isEmptyLineParagraphNode(block)) {
+      continue;
+    }
+    if (index > lo && index < hi) {
+      continue;
+    }
+    if (index === lo && index === hi) {
+      if (
+        !$pointCoversElementStart(block, start) ||
+        !$pointCoversElementEnd(block, end)
+      ) {
+        return false;
+      }
+      continue;
+    }
+    if (index === lo && !$pointCoversElementStart(block, start)) {
+      return false;
+    }
+    if (index === hi && !$pointCoversElementEnd(block, end)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function $exportSelectionToMarkdown(
+  selection: BaseSelection,
+  transformers: Array<Transformer>
+): string {
+  if (!$isRangeSelection(selection)) {
+    return '';
+  }
+
+  const blocks = $getRootBlocksInSelectionOrder(selection);
+  if (
+    blocks.length > 0 &&
+    $shouldExportSelectionWithLineNative(selection, blocks)
+  ) {
+    return $exportRootChildrenLineNativeMarkdown(blocks).replace(/^\n+/, '');
+  }
+
+  return $convertSelectionToMarkdownString(transformers, selection).replace(
+    /^\n+/,
+    ''
+  );
 }
 
 function $exportLineNativeMarkdownIncremental(
@@ -469,13 +683,66 @@ function appendEmptyParagraphsFromGap(gap: string, target: ElementNode): void {
   }
 }
 
+function $importMarkdownSegmentOrEmptyLine(
+  segment: string,
+  target: ElementNode
+): void {
+  if (isEmptyLinePlaceholderMarkdown(segment)) {
+    target.append($createEmptyLineParagraphNode());
+    return;
+  }
+
+  const childCountBefore = target.getChildrenSize();
+  importMarkdownSegment(segment, target);
+  for (const child of target.getChildren().slice(childCountBefore)) {
+    $coerceImportedBlockToEmptyLine(child);
+  }
+}
+
+function $coerceImportedBlockToEmptyLine(node: LexicalNode): void {
+  if ($isEmptyLineParagraphNode(node) || !$isParagraphNode(node)) {
+    return;
+  }
+
+  if (isEmptyLinePlaceholderMarkdown(node.getTextContent())) {
+    node.replace($createEmptyLineParagraphNode());
+    return;
+  }
+
+  const markdown = normalizeTopLevelBlockMarkdown(
+    formatIntraBlockHardLineBreaks(
+      $exportElementMarkdown(node, MARKDOWN_TRANSFORMERS)
+    )
+  );
+  if (isEmptyLinePlaceholderMarkdown(markdown)) {
+    node.replace($createEmptyLineParagraphNode());
+  }
+}
+
 // $convertFromMarkdownString clears its target node, so each chunk is
 // imported into a temporary container first, then the resulting blocks
 // are hoisted out. Leaving blocks nested inside the container paragraph
 // breaks element-level markdown shortcuts (they require blocks to be
 // direct children of the root) and corrupts markdown export.
+function isWhitespaceOnlyChunk(chunk: string): boolean {
+  if (isEmptyLinePlaceholderMarkdown(chunk)) {
+    return false;
+  }
+
+  if (/[\u00A0]|&nbsp;/i.test(chunk)) {
+    return false;
+  }
+
+  return /^\s*$/.test(chunk);
+}
+
 function $importChunk(chunk: string, target: ElementNode): void {
-  if (/^\s*$/.test(chunk)) {
+  if (isEmptyLinePlaceholderMarkdown(chunk)) {
+    target.append($createEmptyLineParagraphNode());
+    return;
+  }
+
+  if (isWhitespaceOnlyChunk(chunk)) {
     if (chunk.length === 0) {
       target.append($createParagraphNode());
       return;
@@ -486,7 +753,7 @@ function $importChunk(chunk: string, target: ElementNode): void {
   }
 
   if (!chunk.includes('\n\n')) {
-    importMarkdownSegment(chunk, target);
+    $importMarkdownSegmentOrEmptyLine(chunk, target);
     return;
   }
 
@@ -494,7 +761,7 @@ function $importChunk(chunk: string, target: ElementNode): void {
   for (const part of parts) {
     if (part.kind === 'markdown') {
       if (part.text.length > 0) {
-        importMarkdownSegment(part.text, target);
+        $importMarkdownSegmentOrEmptyLine(part.text, target);
       }
       continue;
     }
@@ -504,8 +771,25 @@ function $importChunk(chunk: string, target: ElementNode): void {
 }
 
 export function $importMarkdownString(markdown: string): void {
+  $addUpdateTag(IMPORT_MARKDOWN_TAG);
   const root = $getRoot();
   root.clear();
+
+  const emptyLineCount = countEmptyLinePlaceholderLines(markdown);
+  if (
+    emptyLineCount > 0 &&
+    markdown
+      .split('\n')
+      .every(
+        (line) => line.length === 0 || isEmptyLinePlaceholderMarkdown(line)
+      )
+  ) {
+    for (let i = 0; i < emptyLineCount; i++) {
+      root.append($createEmptyLineParagraphNode());
+    }
+    return;
+  }
+
   importMixedNestedListMarkdown(
     markdown,
     root,
@@ -615,6 +899,7 @@ export function $reimportRootParagraphIfNeeded(
 ): boolean {
   if (
     !$isParagraphNode(paragraph) ||
+    $isEmptyLineParagraphNode(paragraph) ||
     paragraph.getParent()?.getType() !== 'root'
   ) {
     return false;
@@ -655,6 +940,7 @@ export function $reimportRootParagraphIfNeeded(
 }
 
 export function $markdownToNodes(markdown: string): LexicalNode[] {
+  $addUpdateTag(IMPORT_MARKDOWN_TAG);
   // Parses markdown into detached block nodes without touching the document.
   // Import must target root so Lexical markdown coalesces soft line breaks
   // (one\ntwo) into a single paragraph; a paragraph holder splits them.

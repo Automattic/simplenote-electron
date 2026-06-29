@@ -10,8 +10,10 @@ import {
   countEmptyRootParagraphs,
   importMarkdown,
   makeGfmTestEditor,
+  markdownWithGap,
   roundtrip,
 } from './gfm-test-helpers';
+import { $isEmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 
 const LINE_NATIVE_TYPING_NOTE = 'zero\nzero\n\none\n\none';
 const LINE_NATIVE_TYPING_NOTE_EXPORTED = 'zero  \nzero\n\none\n\none';
@@ -62,7 +64,7 @@ describe('line-native storage', () => {
     editor.dispose();
   });
 
-  it('maps \\n\\n\\n to one empty root paragraph between blocks', () => {
+  it('maps legacy \\n\\n\\n gaps to one empty paragraph between blocks', () => {
     const editor = makeGfmTestEditor();
     importMarkdown(editor, 'hello\n\n\nworld');
 
@@ -70,6 +72,8 @@ describe('line-native storage', () => {
       const children = $getRoot().getChildren();
       expect(children).toHaveLength(3);
       expect(children[0].getTextContent()).toBe('hello');
+      expect($isEmptyLineParagraphNode(children[1])).toBe(false);
+      expect($isParagraphNode(children[1])).toBe(true);
       expect(children[1].getTextContent()).toBe('');
       expect(children[2].getTextContent()).toBe('world');
       expect($exportMarkdownString()).toBe('hello\n\n\nworld');
@@ -117,9 +121,20 @@ describe('line-native storage', () => {
   });
 
   it('round-trips empty lines between mixed block types', () => {
-    const markdown = 'before\n\n\n\n```\ncode\n```\n\n\n\n> quote\n\n\nafter';
+    const markdown = markdownWithGap(
+      'before',
+      2,
+      ['```', 'code', '```'].join('\n')
+    );
+    const markdownWithQuote = markdownWithGap(
+      markdown.replace(/\n$/, ''),
+      2,
+      '> quote'
+    );
+    const fullMarkdown = markdownWithGap(markdownWithQuote, 1, 'after');
+
     const editor = makeGfmTestEditor();
-    importMarkdown(editor, markdown);
+    importMarkdown(editor, fullMarkdown);
 
     expect(countEmptyRootParagraphs(editor)).toBe(5);
     editor.getEditorState().read(() => {
@@ -129,16 +144,16 @@ describe('line-native storage', () => {
           .map((child) => child.getType())
       ).toEqual([
         'paragraph',
-        'paragraph',
-        'paragraph',
+        'empty-line-paragraph',
+        'empty-line-paragraph',
         'code',
-        'paragraph',
-        'paragraph',
+        'empty-line-paragraph',
+        'empty-line-paragraph',
         'quote',
-        'paragraph',
+        'empty-line-paragraph',
         'paragraph',
       ]);
-      expect($exportMarkdownString()).toBe(markdown);
+      expect($exportMarkdownString()).toBe(fullMarkdown);
     });
     editor.dispose();
   });

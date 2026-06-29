@@ -29,6 +29,7 @@ import {
   UNORDERED_LIST,
 } from '@lexical/markdown';
 
+import { EmptyLineParagraphNode } from '../nodes/empty-line-paragraph-node';
 import {
   MARKDOWN_TRANSFORMERS,
   $exportMarkdownString,
@@ -37,6 +38,7 @@ import {
 import {
   importMarkdown as importGfmMarkdown,
   makeGfmTestEditor,
+  markdownWithGap,
 } from './gfm-test-helpers';
 import {
   describeListTree,
@@ -50,7 +52,7 @@ import { registerMarkdownShortcutsWithHistory } from '../extensions/register-mar
 
 function importMarkdown(markdown: string) {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode, LinkNode],
+    nodes: [ListNode, ListItemNode, LinkNode, EmptyLineParagraphNode],
     onError: (error) => {
       throw error;
     },
@@ -61,7 +63,7 @@ function importMarkdown(markdown: string) {
 
 function makeEditorWithShortcuts() {
   const editor = createEditor({
-    nodes: [ListNode, ListItemNode, LinkNode],
+    nodes: [ListNode, ListItemNode, LinkNode, EmptyLineParagraphNode],
     onError: (error) => {
       throw error;
     },
@@ -228,6 +230,20 @@ describe('MIXED_NESTED_UNORDERED_LIST', () => {
         "bullet
           item: "test"
         bullet
+          item: "test2""
+      `);
+      expect($exportMarkdownString()).toBe(markdown);
+    });
+  });
+
+  it('imports and round-trips checklist items separated by a blank line as two lists', () => {
+    const markdown = '- [ ] test\n\n\n- [ ] test2';
+    const editor = importMarkdown(markdown);
+    editor.getEditorState().read(() => {
+      expect(describeListTree($getRoot().getChildren())).toMatchInlineSnapshot(`
+        "check
+          item: "test"
+        check
           item: "test2""
       `);
       expect($exportMarkdownString()).toBe(markdown);

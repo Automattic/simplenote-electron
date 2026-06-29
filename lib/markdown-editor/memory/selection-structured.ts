@@ -27,6 +27,7 @@ import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
 import { remapMarkdownOffset } from './selection-diff';
 import {
   $exportRootChildren,
+  isEmptyLineParagraph,
   isEmptyRootParagraph,
 } from './selection-lexical-helpers';
 
@@ -144,7 +145,7 @@ function $captureStructuredPoint(point: PointType): StructuredPoint | null {
     };
   }
 
-  if (isEmptyRootParagraph(top)) {
+  if (isEmptyRootParagraph(top) || isEmptyLineParagraph(top)) {
     const rootChildren = $exportRootChildren();
     const rootIndex = rootChildren.findIndex(
       (child) => child.getKey() === top.getKey()
@@ -280,7 +281,10 @@ function $resolveStructuredPoint(
     return null;
   }
 
-  if (point.path.length === 0 && isEmptyRootParagraph(current)) {
+  if (
+    point.path.length === 0 &&
+    (isEmptyRootParagraph(current) || isEmptyLineParagraph(current))
+  ) {
     const text = $ensureParagraphTextNode(current);
     return {
       key: text.getKey(),

@@ -14,12 +14,17 @@ import {
   createMarkdownEditorExtension,
 } from '../extensions/index';
 import { $markdownToNodes, clearBlockExportCache } from './import-export';
+import {
+  $isEmptyLineParagraphNode,
+  EMPTY_LINE_MARKDOWN_EXPORT,
+} from '../nodes/empty-line-paragraph-node';
 import { $isTransientParagraphNode } from '../nodes/transient-paragraph-node';
 
 function isEmptyRootParagraph(node: LexicalNode): boolean {
   return (
     $isParagraphNode(node) &&
     !$isTransientParagraphNode(node) &&
+    !$isEmptyLineParagraphNode(node) &&
     node.getChildrenSize() === 0 &&
     node.getTextContent() === ''
   );
@@ -41,7 +46,7 @@ export function describeRootBlocks(children: LexicalNode[]): string[] {
   return children
     .filter((node) => !$isTransientParagraphNode(node))
     .map((node) => {
-      if (isEmptyRootParagraph(node)) {
+      if ($isEmptyLineParagraphNode(node) || isEmptyRootParagraph(node)) {
         return 'empty';
       }
 
@@ -157,21 +162,35 @@ export function rootChildren(editor: LexicalEditorWithDispose): LexicalNode[] {
   return editor.getEditorState().read(() => $getRoot().getChildren());
 }
 
-/** N blank lines between blocks is encoded as (N + 2) newlines (\n\n = none). */
+/** N intentional blank lines between blocks export as U+00A0 paragraphs. */
 export function markdownWithGap(
   before: string,
   emptyLineCount: number,
   after: string
 ): string {
-  return `${before}${'\n'.repeat(emptyLineCount + 2)}${after}`;
+  if (emptyLineCount === 0) {
+    return `${before}\n\n${after}`;
+  }
+
+  const emptyLines = Array.from(
+    { length: emptyLineCount },
+    () => EMPTY_LINE_MARKDOWN_EXPORT
+  ).join('\n\n');
+  return `${before}\n\n${emptyLines}\n\n${after}`;
 }
 
 export function countEmptyRootParagraphs(
   editor: LexicalEditorWithDispose
 ): number {
-  return editor
-    .getEditorState()
-    .read(() => $getRoot().getChildren().filter(isEmptyRootParagraph).length);
+  return editor.getEditorState().read(
+    () =>
+      $getRoot()
+        .getChildren()
+        .filter(
+          (node) =>
+            $isEmptyLineParagraphNode(node) || isEmptyRootParagraph(node)
+        ).length
+  );
 }
 
 /** Import two blocks back-to-back with no empty root paragraph between them. */

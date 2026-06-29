@@ -7,6 +7,9 @@ import { $exportMarkdownString } from './import-export';
 // this tag so the on-change serializer doesn't echo them back as edits.
 export const REMOTE_CONTENT_TAG = 'simplenote:remote-content';
 
+// Markdown import must not promote newline-gap empty paragraphs to nbsp nodes.
+export const IMPORT_MARKDOWN_TAG = 'simplenote:import-markdown';
+
 // Serializing the whole tree to markdown is O(document), which is noticeable
 // on very large notes. A debounced implementation exists but is shelved for
 // now; see .cursor/specs/markdown-export-performance.md.
