@@ -3,6 +3,7 @@
 /**
  * External Dependencies
  */
+const { app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 /**
@@ -15,6 +16,12 @@ const setupProgressUpdates = require('../lib/setup-progress-updates');
 class AutoUpdater extends Updater {
   constructor({ changelogUrl, options = {} }) {
     super(changelogUrl, options);
+
+    if (app.getVersion().includes('-md-editor-wysiwyg')) {
+      // We want users on the prototype to return to the stable release channel when a 2.27.2 or later ships.
+      // This ensures users who replace their usual Simplenote app with the prototype are not stuck on this version forever.
+      autoUpdater.allowPrerelease = false;
+    }
 
     autoUpdater.on('error', this.onError.bind(this));
     autoUpdater.on('update-not-available', this.onNotAvailable.bind(this));
