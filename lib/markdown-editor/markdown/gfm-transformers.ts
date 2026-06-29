@@ -569,7 +569,7 @@ function $isFullCodeBlockSelection(
   node: CodeNode,
   selection: BaseSelection | null | undefined
 ): boolean {
-  if (selection == null) {
+  if (selection === null || selection === undefined) {
     return true;
   }
 
