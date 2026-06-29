@@ -91,10 +91,11 @@ describe('line-native storage', () => {
 
       const first = children[0];
       expect($isParagraphNode(first)).toBe(true);
-      if ($isParagraphNode(first)) {
-        expect(first.getTextContent()).toBe('zero\nzero');
-        expect(first.getChildren().some($isLineBreakNode)).toBe(true);
+      if (!$isParagraphNode(first)) {
+        throw new Error('Expected first child to be a paragraph node');
       }
+      expect(first.getTextContent()).toBe('zero\nzero');
+      expect(first.getChildren().some($isLineBreakNode)).toBe(true);
       expect(children[1].getTextContent()).toBe('one');
       expect(children[2].getTextContent()).toBe('one');
       expect($exportMarkdownString()).toBe(LINE_NATIVE_TYPING_NOTE_EXPORTED);
