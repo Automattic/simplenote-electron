@@ -1,0 +1,17 @@
+# Ruby dependency surface
+Gemfile*              @Automattic/apps-infra-tooling
+.bundle/              @Automattic/apps-infra-tooling
+.rubocop*.yml         @Automattic/apps-infra-tooling
+fastlane/             @Automattic/apps-infra-tooling
+
+# CI and automation
+.buildkite/           @Automattic/apps-infra-tooling
+.github/dependabot.yml @Automattic/apps-infra-tooling
+
+# Toolchain and environment pins
+.ruby-version         @Automattic/apps-infra-tooling
+.xcode-version        @Automattic/apps-infra-tooling
+.nvmrc                @Automattic/apps-infra-tooling
+
+# Secrets
+.configure-files/     @Automattic/apps-infra-tooling
