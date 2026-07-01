@@ -1,6 +1,0 @@
-@use '../../../scss/mixins';
-
-.transition-fade-in-out {
-  @include mixins.react-transition-fade-in;
-  @include mixins.react-transition-fade-out;
-}
