@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.27.1]
+
+### Enhancements
+
+- Simplified markdown sanitation
+
 ## [v2.27.0]
 
 ### Enhancements
