@@ -85,25 +85,6 @@ steps:
       - release\*.blockmap
       - release\*.yml
 
-  # Validates the legacy PFX path alongside the default Azure build above.
-  - label: Package on Windows (PFX code signing)
-    key: package-windows-pfx
-    agents:
-      queue: windows
-    plugins:
-      - $CI_TOOLKIT_PLUGIN
-      - $NVM_PLUGIN
-    command: .buildkite/commands/package_windows.ps1
-    env:
-      USE_PFX_CODE_SIGNING: 1
-      CSC_FOR_PULL_REQUEST: true
-      PUBLISH: never
-    artifact_paths:
-      - release\*.exe
-      - release\*.appx
-      - release\*.blockmap
-      - release\*.yml
-
   - label: Package on Linux
     key: package-linux
     plugins:

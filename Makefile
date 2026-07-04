@@ -139,14 +139,11 @@ win32: config-release build-if-changed
 .PHONY: package
 package: build-if-changed
 
-# Windows signing: Azure Artifact Signing by default, or PFX when USE_PFX_CODE_SIGNING is set. In
-# Azure mode the NSIS exe signs through the win.sign callback, and the Store AppX builds unsigned —
-# `env -u` removes PFX cert vars so electron-builder skips its built-in /fd-less PFX call. The
-# Store re-signs the AppX regardless. In PFX mode both keep native cert signing, unchanged.
-ifndef USE_PFX_CODE_SIGNING
+# Windows signing: Azure Artifact Signing via the win.sign callback. The Store AppX builds
+# unsigned — `env -u` removes PFX cert vars so electron-builder skips its built-in /fd-less PFX
+# call. The Store re-signs the AppX regardless.
 WIN_NSIS_SIGN := -c.win.sign=./scripts/azure-sign.cjs
 APPX_NO_SIGN := env -u CSC_LINK -u CSC_KEY_PASSWORD -u WIN_CSC_LINK -u WIN_CSC_KEY_PASSWORD
-endif
 
 .PHONY: package-win32
 package-win32:

@@ -1,8 +1,4 @@
-// electron-builder `win.sign` callback for Azure Artifact Signing.
-//
-// Azure Artifact Signing is the default Windows signing path. Set `USE_PFX_CODE_SIGNING` to leave
-// this callback unwired and use electron-builder's native `certificateSubjectName` PFX path instead.
-// Reaching this callback means Azure is intended, so missing Azure env fails CI.
+// electron-builder `win.sign` callback for Azure Artifact Signing, the sole Windows signing path.
 //
 // electron-builder calls this once per file per signing-hash algorithm, after `rcedit` rewrites
 // the PE resource directory (so signatures are not orphaned). Azure Artifact Signing is
