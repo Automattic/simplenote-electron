@@ -5,6 +5,10 @@ Write-Host "--- :windows: Configure Azure Artifact Signing"
 # From the CI toolkit; fails here with diagnostics if Azure credentials are wrong.
 & "setup_azure_trusted_signing.ps1"
 If ($LastExitCode -ne 0) { Exit $LastExitCode }
+If ([string]::IsNullOrEmpty($env:SIGNTOOL_PATH)) {
+    Write-Host "[!] SIGNTOOL_PATH is not set after Azure Trusted Signing setup."
+    Exit 1
+}
 
 Write-Host "--- :windows: Installing make"
 choco install make
