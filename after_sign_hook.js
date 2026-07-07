@@ -5,12 +5,15 @@ const dotenv = require('dotenv');
 
 function writeAppStoreConnectApiKey() {
   const key = process.env.APP_STORE_CONNECT_API_KEY_KEY;
-  const keyPath = path.join(
-    os.tmpdir(),
-    'simplenote-app-store-connect-api-key.p8'
-  );
+  // mkdtemp gives a fresh, owner-only (0700) directory, so the key can't land
+  // on a pre-existing path; `wx` then refuses to follow a planted symlink.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'simplenote-asc-key-'));
+  const keyPath = path.join(dir, 'app_store_connect_api_key.p8');
 
-  fs.writeFileSync(keyPath, key.replace(/\\n/g, '\n'), { mode: 0o600 });
+  fs.writeFileSync(keyPath, key.replace(/\\n/g, '\n'), {
+    mode: 0o600,
+    flag: 'wx',
+  });
 
   return keyPath;
 }
@@ -59,8 +62,6 @@ module.exports = async function (params) {
     console.log('All required env vars found. Moving on...'); // eslint-disable-line no-console
   }
 
-  const appStoreConnectKeyPath = writeAppStoreConnectApiKey();
-
   // Same appId in electron-builder.
   let appId = 'com.automattic.simplenote';
 
@@ -77,6 +78,8 @@ module.exports = async function (params) {
 
   console.log(`Notarizing ${appId} found at ${appPath}`); // eslint-disable-line no-console
 
+  const appStoreConnectKeyPath = writeAppStoreConnectApiKey();
+
   try {
     const electron_notarize = require('@electron/notarize');
     await electron_notarize.notarize({
@@ -87,6 +90,11 @@ module.exports = async function (params) {
     });
   } catch (error) {
     throw new Error(`Notarization failed with error:\n${error}`);
+  } finally {
+    fs.rmSync(path.dirname(appStoreConnectKeyPath), {
+      recursive: true,
+      force: true,
+    });
   }
 
   console.log(`Done notarizing ${appId}`); // eslint-disable-line no-console
