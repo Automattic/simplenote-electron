@@ -56,7 +56,6 @@ steps:
       bundle exec fastlane configure_code_signing
       echo "--- Decrypt secrets"
       make decrypt_conf
-      bundle exec fastlane run configure_apply
       echo "--- Build"
       make build
       echo "--- Package"
