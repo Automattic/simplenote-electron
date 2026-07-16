@@ -43,6 +43,7 @@ import { registerTaskListShortcut } from './list-toggle';
 import { withTableSafeBlockShortcuts } from './markdown-table-shortcuts';
 import { registerMarkdownShortcutsWithHistory } from './register-markdown-shortcuts';
 import { registerMarkdownTabIndentation } from './tab-indentation';
+import { registerLineShortcuts } from './line-shortcuts';
 import { TableControlsExtension } from './table-controls';
 
 export type MarkdownEditorExtensionOptions = {
@@ -154,11 +155,13 @@ export const MarkdownShortcutExtension = defineExtension({
       registerTaskListItemShortcuts(editor);
     const unregisterTaskListShortcut = registerTaskListShortcut(editor);
     const unregisterTabIndentation = registerMarkdownTabIndentation(editor);
+    const unregisterLineShortcuts = registerLineShortcuts(editor);
     return () => {
       unregisterMarkdownShortcuts();
       unregisterTaskListItemShortcuts();
       unregisterTaskListShortcut();
       unregisterTabIndentation();
+      unregisterLineShortcuts();
     };
   },
 });

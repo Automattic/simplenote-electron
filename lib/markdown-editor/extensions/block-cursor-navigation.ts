@@ -127,7 +127,7 @@ export function $isGapBetweenGapless(
   return $isGaplessBlock(prev) && $isGaplessBlock(next);
 }
 
-function $getRootBlock(node: LexicalNode): ElementNode | null {
+export function $getRootBlock(node: LexicalNode): ElementNode | null {
   let current: LexicalNode | null = node;
   while (current !== null) {
     const parent: LexicalNode | null = current.getParent();
@@ -668,7 +668,7 @@ function $isAtVerticalBoundaryInBlock(
   return $isAtVerticalLineBoundaryInBlock(selection, block, direction);
 }
 
-function $isAtBoundary(
+export function $isAtBoundary(
   selection: ReturnType<typeof $getSelection>,
   block: ElementNode,
   direction: TransientTraversalDirection,
@@ -1017,6 +1017,10 @@ function $handleGapArrowCommand(
   direction: TransientTraversalDirection,
   axis: TransientTraversalAxis
 ): boolean {
+  if (event.altKey) {
+    return false;
+  }
+
   if ($handleExitEmptyTransientArrow(event, direction, axis)) {
     return true;
   }
