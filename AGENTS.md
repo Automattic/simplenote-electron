@@ -1,7 +1,5 @@
 # AGENTS.md
 
-> `CLAUDE.md` just imports this file. Make edits here.
->
 > This is a living doc. Anything described as **currently** true is a known rough edge to work
 > around today, not a design decision.
 
