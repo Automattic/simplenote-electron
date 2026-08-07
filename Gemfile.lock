@@ -239,7 +239,7 @@ GEM
     os (1.1.4)
     ostruct (0.6.3)
     parallel (1.28.0)
-    parser (3.3.11.1)
+    parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
     plist (3.7.2)
@@ -266,7 +266,7 @@ GEM
     retriable (3.8.0)
     rexml (3.4.4)
     rouge (3.28.0)
-    rubocop (1.88.2)
+    rubocop (1.89.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -330,7 +330,7 @@ PLATFORMS
 DEPENDENCIES
   fastlane (~> 2.237)
   fastlane-plugin-wpmreleasetoolkit (~> 14.11)
-  rubocop (~> 1.88)
+  rubocop (~> 1.89)
 
 BUNDLED WITH
    2.6.8
