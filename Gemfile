@@ -8,4 +8,4 @@ gem 'fastlane', '~> 2.237'
 # gem 'fastlane-plugin-wpmreleasetoolkit', git: 'https://github.com/wordpress-mobile/release-toolkit', ref: ''
 gem 'fastlane-plugin-wpmreleasetoolkit', '~> 14.11'
 # TODO: Remove once Dangermattic is set up
-gem 'rubocop', '~> 1.88'
+gem 'rubocop', '~> 1.89'
