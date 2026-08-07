@@ -80,7 +80,7 @@
     "concurrently": "9.1.2",
     "css-loader": "7.1.2",
     "debug": "4.4.0",
-    "electron": "34.1.1",
+    "electron": "39.8.10",
     "electron-builder": "24.13.3",
     "eslint": "9.20.1",
     "eslint-config-prettier": "10.0.1",
