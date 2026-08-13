@@ -1,0 +1,32 @@
+{
+  "name": "simplenote-cli",
+  "version": "0.1.0",
+  "description": "Simplenote command-line client",
+  "license": "GPL-2.0",
+  "main": "dist/cli.js",
+  "bin": {
+    "simplenote-cli": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:sea": "node scripts/build.mjs && node scripts/sea.mjs",
+    "test": "jest",
+    "coverage": "jest --config jest.config.cjs --coverage",
+    "prepack": "npm run build"
+  },
+  "engines": {
+    "node": "^18.13.0 || ^20.0.0 || >=22.0.0"
+  },
+  "dependencies": {
+    "jszip": "3.10.1",
+    "lodash": "4.18.1",
+    "remove-markdown": "0.6.0",
+    "sanitize-filename": "1.6.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

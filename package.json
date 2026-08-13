@@ -17,6 +17,7 @@
     "lint": "make lint",
     "format": "make format",
     "build": "make build",
+    "cli": "node --import tsx --dns-result-order=ipv4first bin/simplenote-cli.js",
     "deploy": "./bin/deploy.sh",
     "prepare": "git config --local core.hooksPath .githooks"
   },
@@ -25,7 +26,7 @@
     "url": "git://github.com/Automattic/simplenote-electron.git"
   },
   "engines": {
-    "node": ">= 12.14.1",
+    "node": "^18.0.0 || ^20.0.0 || >=22.0.0",
     "npm": ">= 6.13.7"
   },
   "browserslist": [
@@ -108,6 +109,7 @@
     "stylelint-config-standard": "37.0.0",
     "stylelint-config-standard-scss": "14.0.0",
     "stylelint-prettier": "5.0.3",
+    "tsx": "^4.23.5",
     "typescript": "5.7.3",
     "wait-on": "8.0.2",
     "webpack": "5.97.1",

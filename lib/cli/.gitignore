@@ -1,0 +1,8 @@
+coverage/
+dist/
+node_modules/
+# 模块 vendored 源码（桌面端副本隔离层）必须入库：根 .gitignore 的 `vendor/`
+# 规则在任意层级生效，会一并排除 lib/cli/vendor/，导致全新 checkout 后
+# tsc/esbuild/jest 全部解析失败。以下取反规则仅针对本目录，不触碰根文件。
+!vendor/
+!vendor/**

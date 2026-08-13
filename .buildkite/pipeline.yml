@@ -26,6 +26,13 @@ steps:
       .buildkite/commands/install_node_dependencies.sh
       echo "--- :jest: Test"
       npm test
+      echo "--- :jest: CLI contract tests"
+      npx jest lib/cli/__tests__/contract --silent
+      echo "--- :jest: CLI coverage gate"
+      npx jest --config lib/cli/jest.config.cjs --coverage --silent
+      echo "--- :esbuild: CLI production build"
+      node lib/cli/scripts/build.mjs
+      node lib/cli/dist/cli.js --version
 
   # Notice that we build the app in each platform because it takes ~1-2 minutes
   # to do so which is comparable to a dedicated build step, archiving the
