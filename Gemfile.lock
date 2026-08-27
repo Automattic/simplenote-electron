@@ -278,8 +278,8 @@ GEM
     retriable (4.2.0)
     rexml (3.4.4)
     rouge (3.28.0)
-    rubocop (1.89.0)
-      json (~> 2.3)
+    rubocop (1.90.0)
+      json (>= 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
       parallel (>= 1.10)
@@ -345,7 +345,7 @@ PLATFORMS
 DEPENDENCIES
   fastlane (~> 2.238)
   fastlane-plugin-wpmreleasetoolkit (~> 14.11)
-  rubocop (~> 1.89)
+  rubocop (~> 1.90)
 
 BUNDLED WITH
    2.6.8
