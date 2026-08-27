@@ -3,7 +3,6 @@ import type { Bucket, EntityId } from 'simperium';
 
 export class BucketQueue<BucketName, EntityType> {
   log: ReturnType<typeof debugFactory>;
-  nextDeadline = Date.now() + 1000;
   bucket: Bucket<BucketName, EntityType>;
   queue: Map<EntityId, number>;
   runTimer: ReturnType<typeof setTimeout> | null = null;
@@ -17,14 +16,11 @@ export class BucketQueue<BucketName, EntityType> {
     // so reschedule to cull the 1s delay normally set when indexing
     bucket.on('index', () => this.schedule());
     window.addEventListener('online', () => this.schedule());
-
-    this.schedule();
   }
 
   add(entityId: EntityId, deadline: number): void {
     const existingDeadline = this.queue.get(entityId) ?? Infinity;
     const nextDeadline = Math.min(deadline, existingDeadline);
-    this.nextDeadline = Math.min(this.nextDeadline, nextDeadline);
 
     this.log(`added "${entityId}" with deadline ${new Date(nextDeadline)}`);
 
@@ -37,17 +33,36 @@ export class BucketQueue<BucketName, EntityType> {
   }
 
   private run(): void {
+    this.runTimer = null;
     this.process();
     this.schedule();
   }
 
+  private nextDeadline(): number | null {
+    let next = Infinity;
+    for (const deadline of this.queue.values()) {
+      next = Math.min(next, deadline);
+    }
+    return next === Infinity ? null : next;
+  }
+
   private schedule(): void {
-    this.runTimer && clearTimeout(this.runTimer);
+    if (this.runTimer) {
+      clearTimeout(this.runTimer);
+      this.runTimer = null;
+    }
+
+    // an empty queue needs no timer; `add()` will reschedule
+    const deadline = this.nextDeadline();
+    if (deadline === null) {
+      return;
+    }
+
     this.runTimer = setTimeout(
       () => this.run(),
       this.bucket.isIndexing || !navigator.onLine
         ? 10000
-        : this.nextDeadline - Date.now()
+        : Math.max(0, deadline - Date.now())
     );
   }
 
