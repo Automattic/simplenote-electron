@@ -9,7 +9,7 @@ GEM
     ast (2.4.3)
     atomos (0.1.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1281.0)
+    aws-partitions (1.1282.0)
     aws-sdk-core (3.254.1)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -44,7 +44,7 @@ GEM
     diffy (3.4.4)
     digest-crc (0.7.0)
       rake (>= 12.0.0, < 14.0.0)
-    domain_name (0.6.20240107)
+    domain_name (0.6.20260829)
     dotenv (2.8.1)
     emoji_regex (3.2.3)
     erb (6.0.7)
@@ -121,7 +121,7 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.4.1)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
-    fastlane-plugin-wpmreleasetoolkit (14.11.3)
+    fastlane-plugin-wpmreleasetoolkit (15.0.0)
       buildkit (~> 1.5)
       chroma (= 0.2.0)
       diffy (~> 3.3)
@@ -152,7 +152,7 @@ GEM
     git (1.19.1)
       addressable (~> 2.8)
       rchardet (~> 1.8)
-    google-apis-androidpublisher_v3 (0.106.0)
+    google-apis-androidpublisher_v3 (0.107.0)
       google-apis-core (>= 0.15.0, < 2.a)
     google-apis-core (1.2.5)
       addressable (~> 2.9)
@@ -186,7 +186,7 @@ GEM
       googleauth (~> 1.9)
       mini_mime (~> 1.0)
     google-logging-utils (0.2.0)
-    googleauth (1.17.3)
+    googleauth (1.17.4)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.2)
       google-logging-utils (~> 0.1)
@@ -344,7 +344,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane (~> 2.238)
-  fastlane-plugin-wpmreleasetoolkit (~> 14.11)
+  fastlane-plugin-wpmreleasetoolkit (~> 15.0)
   rubocop (~> 1.90)
 
 BUNDLED WITH
