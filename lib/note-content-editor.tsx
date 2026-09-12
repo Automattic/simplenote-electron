@@ -477,9 +477,12 @@ class NoteContentEditor extends Component<Props> {
       this.editor?.createDecorationsCollection([titleDecoration]);
 
     if (!this.isComposing) {
+      // Clear unconditionally so decorations are removed when markdown is
+      // toggled off, and only recompute when the note has markdown enabled.
       this.markdownDecorations?.clear();
       const markdownDecorations = getMarkdownDecorations(
-        this.editor?.getModel()
+        this.editor?.getModel(),
+        this.props.note.systemTags.includes('markdown')
       );
       if (markdownDecorations.length > 0) {
         this.markdownDecorations =
