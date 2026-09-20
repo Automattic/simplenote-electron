@@ -2,10 +2,10 @@
 
 source 'https://rubygems.org'
 
-gem 'fastlane', '~> 2.239'
+gem 'fastlane', '~> 2.240'
 # This comment avoids typing to switch to a development version for testing.
 #
 # gem 'fastlane-plugin-wpmreleasetoolkit', git: 'https://github.com/wordpress-mobile/release-toolkit', ref: ''
 gem 'fastlane-plugin-wpmreleasetoolkit', '~> 15.0'
 # TODO: Remove once Dangermattic is set up
-gem 'rubocop', '~> 1.90'
+gem 'rubocop', '~> 1.91'
