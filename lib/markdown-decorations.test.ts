@@ -36,6 +36,15 @@ describe('getMarkdownDecorations', () => {
     ]);
   });
 
+  it('returns no decorations when markdown is disabled', () => {
+    const decorations = getMarkdownDecorations(
+      modelFromLines(['# Title', '**bold**']),
+      false
+    );
+
+    expect(decorations).toEqual([]);
+  });
+
   it('decorates supported unordered list markers', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines(['* list item', '- second item', '  + nested item'])
