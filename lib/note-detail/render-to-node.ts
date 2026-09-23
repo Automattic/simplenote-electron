@@ -71,7 +71,7 @@ export const renderToNode = (
       );
 
       const nodes: Text[] = [];
-      let currentNode: Node | null = treeWalker.currentNode;
+      let currentNode: Node | null = treeWalker.nextNode();
 
       while (currentNode) {
         nodes.push(currentNode as Text);
