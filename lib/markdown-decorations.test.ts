@@ -11,7 +11,8 @@ const modelFromLines = (lines: string[]) =>
 describe('getMarkdownDecorations', () => {
   it('decorates heading text by level', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['# Title', '### Smaller'])
+      modelFromLines(['# Title', '### Smaller']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -47,7 +48,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates supported unordered list markers', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['* list item', '- second item', '  + nested item'])
+      modelFromLines(['* list item', '- second item', '  + nested item']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -87,7 +89,8 @@ describe('getMarkdownDecorations', () => {
         '- **bold** and *italic* and ~~strike~~',
         '  * _also italic_ and __bold__',
         '+ ***both*** and ___also___',
-      ])
+      ]),
+      true
     );
 
     expect(decorations).toEqual([
@@ -186,7 +189,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates supported italic spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['A *simple span* here'])
+      modelFromLines(['A *simple span* here']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -204,7 +208,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates supported underscore italic spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['A _simple span_ here'])
+      modelFromLines(['A _simple span_ here']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -222,7 +227,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates renderer-compatible underscore spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Decorate _foo_bar_ and __bold__'])
+      modelFromLines(['Decorate _foo_bar_ and __bold__']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -249,7 +255,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates double-asterisk spans as bold instead of italic', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['A **bold span** here'])
+      modelFromLines(['A **bold span** here']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -267,7 +274,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates combined bold and italic spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['***both*** and ___also___'])
+      modelFromLines(['***both*** and ___also___']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -294,7 +302,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates bold and italic spans independently', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Use **bold** and *italic* and _also italic_'])
+      modelFromLines(['Use **bold** and *italic* and _also italic_']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -330,7 +339,8 @@ describe('getMarkdownDecorations', () => {
 
   it('decorates supported strikethrough spans', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['A ~~struck span~~ here'])
+      modelFromLines(['A ~~struck span~~ here']),
+      true
     );
 
     expect(decorations).toEqual([
@@ -351,7 +361,8 @@ describe('getMarkdownDecorations', () => {
       modelFromLines([
         'Skip \\*escaped\\* and https://example.com/*path*',
         'Skip \\~~escaped~~ and https://example.com/~~path~~',
-      ])
+      ]),
+      true
     );
 
     expect(decorations).toEqual([]);
@@ -366,7 +377,8 @@ describe('getMarkdownDecorations', () => {
         '**literal**',
         '```',
         'After **bold**',
-      ])
+      ]),
+      true
     );
 
     expect(decorations).toEqual([
@@ -386,7 +398,8 @@ describe('getMarkdownDecorations', () => {
     const decorations = getMarkdownDecorations(
       modelFromLines([
         'Skip * padded* and *padded * and _ padded_ and ~~ nope~~',
-      ])
+      ]),
+      true
     );
 
     expect(decorations).toEqual([]);
@@ -394,7 +407,8 @@ describe('getMarkdownDecorations', () => {
 
   it('does not decorate underscores inside words', () => {
     const decorations = getMarkdownDecorations(
-      modelFromLines(['Keep snake_case_text literal'])
+      modelFromLines(['Keep snake_case_text literal']),
+      true
     );
 
     expect(decorations).toEqual([]);

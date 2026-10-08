@@ -118,8 +118,8 @@ const addInlineSpansForPattern = (
 };
 
 export const getMarkdownDecorations = (
-  model?: Editor.ITextModel | null,
-  markdownEnabled = true
+  model: Editor.ITextModel | null | undefined,
+  markdownEnabled: boolean
 ): Editor.IModelDeltaDecoration[] => {
   if (!model || !markdownEnabled) {
     return [];
