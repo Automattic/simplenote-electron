@@ -37,7 +37,7 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
-    "@babel/core": "7.26.8",
+    "@babel/core": "7.29.6",
     "@babel/eslint-parser": "7.26.8",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/plugin-transform-class-properties": "7.25.9",
