@@ -12,6 +12,8 @@ jest.mock(
     });
     return new Proxy({}, { get: () => stub });
   },
+  // virtual: monaco-editor is installed but its package entry isn't resolvable
+  // by jest, so without this the mock registration throws "Cannot find module".
   { virtual: true }
 );
 
