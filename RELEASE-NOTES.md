@@ -6,6 +6,10 @@
 
 - Simplified markdown sanitation
 
+### Fixes
+
+- Fixed Markdown previews appearing blank when viewing notes from search results
+
 ## [v2.27.0]
 
 ### Enhancements
