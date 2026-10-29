@@ -57,6 +57,14 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         dispatch(actions.ui.createNote());
         return;
 
+      case 'openNote':
+        // from a simplenote://note/<id> link; like links between notes,
+        // a note that isn't in local state is ignored
+        if (getState().data.notes.has(command.noteId)) {
+          dispatch(actions.ui.openNote(command.noteId));
+        }
+        return;
+
       case 'setLineLength':
         dispatch(actions.settings.setLineLength(command.lineLength));
         return;

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Enhancements
+
+- Opening a `simplenote://note/<id>` link from outside the app now opens that note
+
 ## [v2.27.1]
 
 ### Enhancements
