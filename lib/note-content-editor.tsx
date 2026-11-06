@@ -179,7 +179,7 @@ type CommandPaletteState = {
   selectedIndex: number;
 };
 
-class NoteContentEditor extends Component<Props> {
+export class NoteContentEditor extends Component<Props> {
   bootTimer: ReturnType<typeof setTimeout> | null = null;
   editor: Editor.IStandaloneCodeEditor | null = null;
   contentDiv = createRef<HTMLDivElement>();
@@ -461,6 +461,10 @@ class NoteContentEditor extends Component<Props> {
       prevProps.note.systemTags !== this.props.note.systemTags
     ) {
       this.warmMarkdownRendererIfNeeded();
+      // Toggling markdown on an open note changes systemTags but neither
+      // remounts the editor nor edits content, so re-decorate here or the
+      // styling would stay stale until the next keystroke (#3379).
+      this.setDecorators();
     }
   }
 
@@ -477,9 +481,12 @@ class NoteContentEditor extends Component<Props> {
       this.editor?.createDecorationsCollection([titleDecoration]);
 
     if (!this.isComposing) {
+      // Clear unconditionally so decorations are removed when markdown is
+      // toggled off, and only recompute when the note has markdown enabled.
       this.markdownDecorations?.clear();
       const markdownDecorations = getMarkdownDecorations(
-        this.editor?.getModel()
+        this.editor?.getModel(),
+        this.props.note.systemTags.includes('markdown')
       );
       if (markdownDecorations.length > 0) {
         this.markdownDecorations =
