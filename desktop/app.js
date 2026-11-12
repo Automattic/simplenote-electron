@@ -46,11 +46,7 @@ module.exports = function main() {
     setTimeout(updater.ping.bind(updater), config.updater.delay);
     app.on('open-url', function (event, url) {
       event.preventDefault();
-      if (url.startsWith('simplenote://auth')) {
-        mainWindow.webContents.send('wpLogin', url);
-      } else if (url.startsWith('simplenote://login')) {
-        mainWindow.webContents.send('tokenLogin', url);
-      }
+      handleDeepLink(url);
     });
   });
 
@@ -58,6 +54,28 @@ module.exports = function main() {
     isDev && process.env.DEV_SERVER
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
       : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
+
+  // simplenote://auth and simplenote://login finish signing in;
+  // simplenote://note/<id> opens that note, the same link the app
+  // already uses to link notes to each other
+  const handleDeepLink = function (link) {
+    if (!mainWindow || typeof link !== 'string') {
+      return;
+    }
+    if (link.startsWith('simplenote://auth')) {
+      mainWindow.webContents.send('wpLogin', link);
+    } else if (link.startsWith('simplenote://login')) {
+      mainWindow.webContents.send('tokenLogin', link);
+    } else {
+      const match = /^simplenote:\/\/note\/([a-zA-Z0-9-]+)$/.exec(link);
+      if (match) {
+        mainWindow.webContents.send('appCommand', {
+          action: 'openNote',
+          noteId: match[1],
+        });
+      }
+    }
+  };
 
   const activateWindow = function () {
     // Only allow a single window
@@ -232,11 +250,7 @@ module.exports = function main() {
     // Protocol handler for platforms other than macOS
     // argv: An array of the second instance’s (command line / deep linked) arguments
     // The last index of argv is the full deeplink url (simplenote://SOME_URL)
-    if (argv[argv.length - 1].startsWith('simplenote://auth')) {
-      mainWindow.webContents.send('wpLogin', argv[argv.length - 1]);
-    } else if (argv[argv.length - 1].startsWith('simplenote://login')) {
-      mainWindow.webContents.send('tokenLogin', argv[argv.length - 1]);
-    }
+    handleDeepLink(argv[argv.length - 1]);
   });
 
   if (!gotTheLock) {
