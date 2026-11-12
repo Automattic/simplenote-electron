@@ -10,7 +10,7 @@ A Simplenote [React](https://reactjs.org/) client packaged in [Electron](https:/
 
 1. Clone the repo: `git clone https://github.com/Automattic/simplenote-electron.git`
 2. `cd simplenote-electron`
-3. `npm install --legacy-peer-deps` (This flag is necessary because `react-monaco-editor` is pinned to a specific `monaco-editor` dependency, but `npm` [considers minor versions to be breaking changes for sub-1.0.0 apps](https://stackoverflow.com/questions/62629878/why-doesnt-npm-upgrade-install-my-0-0-1-dep-with-a-dependency-on-0-0-0))
+3. `npm install --legacy-peer-deps` (This flag is currently necessary because `react-monaco-editor` is pinned to a specific `monaco-editor` dependency, but `npm` [considers minor versions to be breaking changes for sub-1.0.0 apps](https://stackoverflow.com/questions/62629878/why-doesnt-npm-upgrade-install-my-0-0-1-dep-with-a-dependency-on-0-0-0). The repo's [`.npmrc`](./.npmrc) also sets `legacy-peer-deps=true`, so tools that run `npm` without the flag, like Dependabot, resolve the lockfile the same way. If the flag is ever no longer needed, remove that line from `.npmrc` along with the flag here and in the `Makefile`, `bin/deploy.sh`, and `.buildkite/`, then regenerate `package-lock.json`.)
 4. Decrypt the config file using `make decrypt_conf`.
 5. `npm run dev`
 6. The dev server will start on [http://localhost:4000](http://localhost:4000), and the Electron app will launch automatically.
