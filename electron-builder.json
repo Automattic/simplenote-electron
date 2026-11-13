@@ -6,7 +6,8 @@
     "output": "./release",
     "buildResources": "./resources"
   },
-  "files": ["desktop", "dist", "shared"],
+  "files": ["desktop", "dist", "shared", "!node_modules/websocket/build${/*}"],
+  "npmRebuild": false,
   "mac": {
     "icon": "./resources/images/app-icon.icns",
     "category": "public.app-category.social-networking",
