@@ -4,7 +4,7 @@
 
 ### Fixes
 
-- Fixed the Markdown preview going blank when a search is active
+- Fixed the Markdown preview going blank when a search is active [#3495](https://github.com/Automattic/simplenote-electron/pull/3495)
 
 ## [v2.27.1]
 
