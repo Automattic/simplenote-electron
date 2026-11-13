@@ -5,7 +5,8 @@
     "output": "./release",
     "buildResources": "./resources"
   },
-  "files": ["desktop", "dist", "shared"],
+  "files": ["desktop", "dist", "shared", "!node_modules/websocket/build${/*}"],
+  "npmRebuild": false,
   "win": {
     "icon": "resources/images/simplenote.ico",
     "target": [

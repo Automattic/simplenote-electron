@@ -1,7 +1,8 @@
-// electron-builder `win.sign` callback for Azure Artifact Signing, the sole Windows signing path.
+// electron-builder `win.signtoolOptions.sign` callback for Azure Artifact Signing, the sole
+// Windows signing path.
 //
-// electron-builder calls this once per file per signing-hash algorithm, after `rcedit` rewrites
-// the PE resource directory (so signatures are not orphaned). Azure Artifact Signing is
+// electron-builder calls this once per file per signing-hash algorithm, after it rewrites the PE
+// resource directory (so signatures are not orphaned). Azure Artifact Signing is
 // SHA256-only, so the SHA1 iteration is skipped here rather than signed twice.
 //
 // Azure env vars come from a8c-ci-toolkit's `setup_azure_trusted_signing.ps1`.
@@ -72,8 +73,8 @@ module.exports = async function sign(configuration) {
   const file = configuration.path;
   const env = process.env;
 
-  // electron-builder iterates win.signingHashAlgorithms (default sha1 + sha256). Azure Artifact
-  // Signing is SHA256-only, so sign once on the sha256 pass and no-op the rest.
+  // electron-builder iterates win.signtoolOptions.signingHashAlgorithms (default sha1 + sha256).
+  // Azure Artifact Signing is SHA256-only, so sign once on the sha256 pass and no-op the rest.
   if (configuration.hash && configuration.hash.toLowerCase() !== 'sha256') {
     return;
   }

@@ -6,7 +6,8 @@
     "output": "./release",
     "buildResources": "./resources"
   },
-  "files": ["desktop", "dist", "shared"],
+  "files": ["desktop", "dist", "shared", "!node_modules/websocket/build${/*}"],
+  "npmRebuild": false,
   "mac": {
     "icon": "./resources/images/app-icon.icns",
     "category": "public.app-category.social-networking",
@@ -48,7 +49,9 @@
   },
   "win": {
     "icon": "resources/images/simplenote.ico",
-    "publisherName": ["Automattic, Inc.", "Automattic Inc."],
+    "signtoolOptions": {
+      "publisherName": ["Automattic, Inc.", "Automattic Inc."]
+    },
     "artifactName": "Simplenote-win-${version}-${arch}.${ext}",
     "target": [
       {
@@ -86,13 +89,15 @@
     "category": "Utility",
     "executableName": "simplenote",
     "desktop": {
-      "Name": "Simplenote",
-      "Comment": "Simplenote for Linux",
-      "GenericName": "Note Taking Application",
-      "Type": "Application",
-      "Icon": "simplenote",
-      "StartupNotify": true,
-      "Categories": "Utility"
+      "entry": {
+        "Name": "Simplenote",
+        "Comment": "Simplenote for Linux",
+        "GenericName": "Note Taking Application",
+        "Type": "Application",
+        "Icon": "simplenote",
+        "StartupNotify": true,
+        "Categories": "Utility"
+      }
     },
     "vendor": "Automattic, Inc.",
     "maintainer": "Automattic, Inc. <support@simplenote.com>"
