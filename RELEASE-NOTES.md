@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Enhancements
+
+- Added a copy button to code blocks in the Markdown preview [#3182](https://github.com/Automattic/simplenote-electron/issues/3182)
+
 ## [v2.27.1]
 
 ### Enhancements
