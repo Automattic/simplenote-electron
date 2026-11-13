@@ -86,6 +86,11 @@ module.exports = () => {
               options: {
                 api: 'modern-compiler',
                 sassOptions: {
+                  // Compressed Sass output starts with a BOM when it contains
+                  // non-ASCII characters. postcss >= 8.5.23 preserves it, and
+                  // once files are concatenated into one chunk a mid-file BOM
+                  // silently breaks the rule after it. Never emit one.
+                  charset: false,
                   includePaths: [__dirname + '/lib'],
                 },
                 sourceMap: isDevMode,
