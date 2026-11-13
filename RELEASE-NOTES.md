@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.27.2]
+
+### Fixes
+
+- Fixed the Markdown preview going blank when a search is active
+
 ## [v2.27.1]
 
 ### Enhancements
