@@ -171,6 +171,7 @@
     "string-replace-to-array": "2.1.1",
     "turndown": "7.2.0",
     "unorm": "1.6.0",
+    "uuid": "11.1.1",
     "valid-url": "1.0.9",
     "winston": "3.17.0"
   }
