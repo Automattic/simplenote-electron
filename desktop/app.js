@@ -55,7 +55,8 @@ module.exports = function main() {
   });
 
   const url =
-    isDev && process.env.DEV_SERVER
+    // DEV_SERVER is a string: the Makefile passes "false" by default
+    isDev && process.env.DEV_SERVER === 'true'
       ? 'http://localhost:4000' // TODO: find a solution to use host and port based on make config.
       : 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
 

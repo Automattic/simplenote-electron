@@ -131,6 +131,7 @@ These are intentional. Work with them; don't "fix" them as cleanup.
   based on file mtimes vs `dist/app.js`. Watch out for stale output there too.
 - **`npm run dev` serves over `http://localhost:4000`; `make start` loads `file://`.** Different
   origins, so security/CSP behavior differs. IMPORTANT: an issue may appear in one and not the other.
+  To point Electron at a dev server you're already running, use `make start DEV_SERVER=true`.
 - **Monaco's `!feature` deny-list in `webpack.config.js`** must currently be kept in sync by hand
   with the editor options in `lib/note-content-editor.tsx`.
 
