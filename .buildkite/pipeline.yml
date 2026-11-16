@@ -74,14 +74,14 @@ steps:
       - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
     artifact_paths:
-      - release\*.exe
+      - release/*.exe
       # Notice that this will not signed.
       # electron-builder logs "AppX is not signed  reason=Windows Store only build"
       # The behavior occurs in CircleCI, too. See:
       # https://app.circleci.com/pipelines/github/Automattic/simplenote-electron/3150/workflows/9970dee9-bc25-432a-a659-38ed5d4d1c36/jobs/25900?invite=true#step-106-66244_55
-      - release\*.appx
-      - release\*.blockmap
-      - release\*.yml
+      - release/*.appx
+      - release/*.blockmap
+      - release/*.yml
 
   - label: Package on Linux
     key: package-linux
