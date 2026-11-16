@@ -19,9 +19,10 @@ electron-builder, jest.
 
 ## Setup
 
-Node 20.10.0 (`.nvmrc`)
+Use the Node version in `.nvmrc` (CI does too).
 
 ```bash
+nvm use                          # picks up .nvmrc
 npm install --legacy-peer-deps   # the flag is required on EVERY install, see Gotchas
 make decrypt_conf                # humans only: see below
 ```
