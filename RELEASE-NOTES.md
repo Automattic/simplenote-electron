@@ -5,7 +5,7 @@
 ### Fixes
 
 - Fixed the Markdown preview going blank when a search is active (props @seyeeL) [#3439](https://github.com/Automattic/simplenote-electron/pull/3439) [#3495](https://github.com/Automattic/simplenote-electron/pull/3495)
-- Fixed search matches not being highlighted in History when the note's source is shown
+- Fixed search matches not being highlighted in History when the note's source is shown [#3504](https://github.com/Automattic/simplenote-electron/pull/3504)
 
 ## [v2.27.1]
 
