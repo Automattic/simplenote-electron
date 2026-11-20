@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
 
 import RevisionSelector from '../revision-selector';
@@ -14,6 +14,7 @@ import { warmMarkdownRenderer } from '../utils/render-note-to-html';
 import { noteCanonicalTags } from '../state/selectors';
 import { tagHashOf } from '../utils/tag-hash';
 import { withCheckboxSyntax } from '../utils/task-transform';
+import { splitSearchMatches } from './search-segments';
 
 import type * as S from '../state';
 import type * as T from '../types';
@@ -173,17 +174,21 @@ export class NoteRevisions extends Component<Props> {
   static displayName = 'NoteRevisions';
 
   revisionContent = createRef<HTMLTextAreaElement>();
+  revisionHighlights = createRef<HTMLDivElement>();
   revisionPreview = createRef<RevisionPreview>();
 
   componentDidMount() {
     this.focusActiveContent();
     this.warmMarkdownRendererIfNeeded();
+    this.syncHighlightsScroll();
   }
 
   componentDidUpdate(prevProps: Props) {
     if (this.shouldShowPreview(prevProps) !== this.shouldShowPreview()) {
       this.focusActiveContent();
     }
+
+    this.syncHighlightsScroll();
 
     if (
       prevProps.markdownEnabled !== this.props.markdownEnabled ||
@@ -206,6 +211,19 @@ export class NoteRevisions extends Component<Props> {
     }
 
     this.revisionContent.current?.focus();
+  };
+
+  // The highlights sit behind the read-only source and have to scroll with it.
+  syncHighlightsScroll = () => {
+    const source = this.revisionContent.current;
+    const highlights = this.revisionHighlights.current;
+
+    if (!source || !highlights) {
+      return;
+    }
+
+    highlights.scrollTop = source.scrollTop;
+    highlights.scrollLeft = source.scrollLeft;
   };
 
   shouldShowPreview = (props = this.props) => {
@@ -259,6 +277,10 @@ export class NoteRevisions extends Component<Props> {
   render() {
     const { note, searchQuery, tags } = this.props;
     const content = withCheckboxSyntax(note?.content ?? '');
+    const searchSegments = this.shouldShowPreview()
+      ? []
+      : splitSearchMatches(content, searchQuery);
+    const hasSearchMatches = searchSegments.some(({ isMatch }) => isMatch);
 
     return (
       <section
@@ -273,15 +295,39 @@ export class NoteRevisions extends Component<Props> {
             searchQuery={searchQuery}
           />
         ) : (
-          <textarea
-            ref={this.revisionContent}
-            aria-label="Revision source"
-            className="note-revisions-content"
-            onCopy={this.handleSourceCopy}
-            readOnly
-            spellCheck={false}
-            value={content}
-          />
+          <div className="note-revisions-source">
+            {hasSearchMatches && (
+              // A textarea can't mark text, so the matches are drawn in a copy of the
+              // source laid out the same way behind it.
+              <div
+                ref={this.revisionHighlights}
+                aria-hidden="true"
+                className="note-revisions-content note-revisions-highlights"
+              >
+                {searchSegments.map(({ text, isMatch }, index) => (
+                  <Fragment key={index}>
+                    {isMatch ? (
+                      <span className="search-match">{text}</span>
+                    ) : (
+                      text
+                    )}
+                  </Fragment>
+                ))}
+                {/* A textarea shows a line after a final line break; a div doesn't. */}
+                {content.endsWith('\n') && '\u200b'}
+              </div>
+            )}
+            <textarea
+              ref={this.revisionContent}
+              aria-label="Revision source"
+              className="note-revisions-content"
+              onCopy={this.handleSourceCopy}
+              onScroll={this.syncHighlightsScroll}
+              readOnly
+              spellCheck={false}
+              value={content}
+            />
+          </div>
         )}
         <div className="note-revisions-tag-list">
           {tags.map(({ name, deleted }) => (
