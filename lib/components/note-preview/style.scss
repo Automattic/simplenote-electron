@@ -1,3 +1,42 @@
+@use '../../../scss/variables' as *;
+
 .note-preview {
   white-space: pre-wrap;
+}
+
+.note-preview__code-block {
+  position: relative;
+
+  &:hover,
+  &:focus-within {
+    .note-preview__copy-code-button {
+      opacity: 1;
+    }
+  }
+}
+
+.note-preview__copy-code-button {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  padding: 2px 8px;
+  border: 1px solid var(--tertiary-color);
+  border-radius: $border-radius;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0;
+  transition: $anim-fast;
+  user-select: none;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  // Devices without hover (e.g. touch screens) can't reveal the button,
+  // so always show it there.
+  @media (hover: none) {
+    opacity: 1;
+  }
 }
