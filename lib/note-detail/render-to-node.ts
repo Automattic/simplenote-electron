@@ -71,7 +71,8 @@ export const renderToNode = (
       );
 
       const nodes: Text[] = [];
-      let currentNode: Node | null = treeWalker.currentNode;
+      // The walker starts on the root element, which isn't a match: skip it
+      let currentNode: Node | null = treeWalker.nextNode();
 
       while (currentNode) {
         nodes.push(currentNode as Text);

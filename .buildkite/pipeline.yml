@@ -45,7 +45,6 @@ steps:
       queue: mac
     env:
       IMAGE_ID: $IMAGE_ID
-      CSC_FOR_PULL_REQUEST: true
     plugins:
       - $CI_TOOLKIT_PLUGIN
       - $NVM_PLUGIN
@@ -56,7 +55,6 @@ steps:
       bundle exec fastlane configure_code_signing
       echo "--- Decrypt secrets"
       make decrypt_conf
-      bundle exec fastlane run configure_apply
       echo "--- Build"
       make build
       echo "--- Package"
@@ -76,33 +74,14 @@ steps:
       - $NVM_PLUGIN
     command: .buildkite/commands/package_windows.ps1
     artifact_paths:
-      - release\*.exe
+      - release/*.exe
       # Notice that this will not signed.
       # electron-builder logs "AppX is not signed  reason=Windows Store only build"
       # The behavior occurs in CircleCI, too. See:
       # https://app.circleci.com/pipelines/github/Automattic/simplenote-electron/3150/workflows/9970dee9-bc25-432a-a659-38ed5d4d1c36/jobs/25900?invite=true#step-106-66244_55
-      - release\*.appx
-      - release\*.blockmap
-      - release\*.yml
-
-  # Validates the legacy PFX path alongside the default Azure build above.
-  - label: Package on Windows (PFX code signing)
-    key: package-windows-pfx
-    agents:
-      queue: windows
-    plugins:
-      - $CI_TOOLKIT_PLUGIN
-      - $NVM_PLUGIN
-    command: .buildkite/commands/package_windows.ps1
-    env:
-      USE_PFX_CODE_SIGNING: 1
-      CSC_FOR_PULL_REQUEST: true
-      PUBLISH: never
-    artifact_paths:
-      - release\*.exe
-      - release\*.appx
-      - release\*.blockmap
-      - release\*.yml
+      - release/*.appx
+      - release/*.blockmap
+      - release/*.yml
 
   - label: Package on Linux
     key: package-linux
@@ -117,8 +96,6 @@ steps:
       make build
       echo "--- Package"
       make package-linux SKIP_BUILD=true
-    env:
-      CSC_FOR_PULL_REQUEST: true
     artifact_paths:
       - release/*.deb
       - release/*.tar.gz
