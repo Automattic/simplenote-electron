@@ -19,9 +19,10 @@ electron-builder, jest.
 
 ## Setup
 
-Node 20.10.0 (`.nvmrc`)
+Use the Node version in `.nvmrc` (CI does too).
 
 ```bash
+nvm use                          # picks up .nvmrc
 npm install --legacy-peer-deps   # the flag is required on EVERY install, see Gotchas
 make decrypt_conf                # humans only: see below
 ```
@@ -131,6 +132,7 @@ These are intentional. Work with them; don't "fix" them as cleanup.
   based on file mtimes vs `dist/app.js`. Watch out for stale output there too.
 - **`npm run dev` serves over `http://localhost:4000`; `make start` loads `file://`.** Different
   origins, so security/CSP behavior differs. IMPORTANT: an issue may appear in one and not the other.
+  To point Electron at a dev server you're already running, use `make start DEV_SERVER=true`.
 - **Monaco's `!feature` deny-list in `webpack.config.js`** must currently be kept in sync by hand
   with the editor options in `lib/note-content-editor.tsx`.
 
