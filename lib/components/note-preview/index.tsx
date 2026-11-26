@@ -15,6 +15,11 @@ import {
   normalizeSafeLinkHref,
 } from '../../utils/url-safety';
 import { warmMarkdownRenderer } from '../../utils/render-note-to-html';
+import {
+  addCodeCopyButtons,
+  copyCodeBlock,
+  copyCodeButtonClassName,
+} from './code-copy-buttons';
 
 import actions from '../../state/actions';
 
@@ -99,6 +104,14 @@ export const NotePreview: FunctionComponent<Props> = ({
       ) {
         if (!(node instanceof HTMLElement)) {
           continue;
+        }
+
+        if (node.classList.contains(copyCodeButtonClassName)) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          copyCodeBlock(node as HTMLButtonElement);
+          return;
         }
 
         if (node.tagName === 'A') {
@@ -200,6 +213,7 @@ export const NotePreview: FunctionComponent<Props> = ({
       renderToNode(nextPreview, note!.content, searchQuery).then(() => {
         if (version === renderVersion.current) {
           renderTarget.innerHTML = nextPreview.innerHTML;
+          addCodeCopyButtons(renderTarget);
         }
       });
     } else {
