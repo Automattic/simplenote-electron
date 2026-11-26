@@ -23,7 +23,7 @@ Use the Node version in `.nvmrc` (CI does too).
 
 ```bash
 nvm use                          # picks up .nvmrc
-npm install --legacy-peer-deps   # the flag is required on EVERY install, see Gotchas
+npm install                      # .npmrc supplies --legacy-peer-deps, see Gotchas
 make decrypt_conf                # humans only: see below
 ```
 
@@ -121,8 +121,9 @@ These are intentional. Work with them; don't "fix" them as cleanup.
 
 ## Gotchas
 
-- **`--legacy-peer-deps` is currently required on every install**, including single packages.
+- **`legacy-peer-deps` is currently required on every install**, including single packages.
   `react-monaco-editor` pins `monaco-editor` and npm treats sub-1.0 minors as breaking.
+  `.npmrc` sets it, so a plain `npm install` is enough.
 - **A dev or locally built app won't launch while the released Simplenote is running**, and vice
   versa: only one instance can run at a time. The second one exits silently, so `npm run dev`
   looks like it succeeded but no window appears. Meanwhile, the already-running app jumps to the
