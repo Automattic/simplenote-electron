@@ -1,17 +1,16 @@
 # Building a Release
 
-* `make osx`
-* `make linux`
-* `make win32`
+- `make osx`
+- `make linux`
+- `make win32`
 
 # Packaging
 
 Some builds require further packaging before they can be released:
 
-* `make package-win32` - Produces a signed `Setup.exe` install wizard
-* `make package-osx` - Produces a `DMG` file
-* `make package-linux` - Produces a `.deb`, `.rpm` and `.AppImage` file for `x86` and `x64` processors
-
+- `make package-win32` - Produces a signed `Setup.exe` install wizard
+- `make package-osx` - Produces a `DMG` file
+- `make package-linux` - Produces a `.deb`, `.rpm` and `.AppImage` file for `x86` and `x64` processors
 
 # Requirements
 
@@ -52,3 +51,11 @@ The Linux package is built using [electron-builder][1] which is a tool that make
    `brew install rpm`
 
 [1]: https://www.electron.build/
+
+# Native modules
+
+Both `electron-builder*.json` configs set `"npmRebuild": false` and exclude `node_modules/websocket/build`.
+
+The app has no native modules it uses at runtime. The only production dependency with native code is `websocket`'s optional addon (via `simperium`), and it's never loaded: the renderer uses the browser's `window.WebSocket`, and the main process doesn't use `simperium`. The addon doesn't compile against Electron's headers, and electron-builder 26's rebuild step treats that as a fatal error, so the rebuild is turned off and any copy built by `npm ci` is left out of the package.
+
+If a production dependency that needs a native module is ever added, remove `"npmRebuild": false` (and check that it builds for every target in CI).

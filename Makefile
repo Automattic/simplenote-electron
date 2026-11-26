@@ -139,9 +139,9 @@ win32: config-release build-if-changed
 .PHONY: package
 package: build-if-changed
 
-# Windows signing: Azure Artifact Signing via the win.sign callback. The Store AppX builds
-# unsigned because Store re-signs the AppX regardless.
-WIN_NSIS_SIGN := -c.win.sign=./scripts/azure-sign.cjs
+# Windows signing: Azure Artifact Signing via the win.signtoolOptions.sign callback. The Store
+# AppX builds unsigned because Store re-signs the AppX regardless.
+WIN_NSIS_SIGN := -c.win.signtoolOptions.sign=./scripts/azure-sign.cjs
 APPX_NO_SIGN := env -u CSC_LINK -u CSC_KEY_PASSWORD -u WIN_CSC_LINK -u WIN_CSC_KEY_PASSWORD
 
 .PHONY: package-win32
