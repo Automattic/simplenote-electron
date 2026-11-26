@@ -216,4 +216,65 @@ describe('NoteRevisions', () => {
 
     expect(cancelRevision).not.toHaveBeenCalled();
   });
+
+  it('highlights search matches behind the revision source', () => {
+    const { container, getByLabelText } = renderNoteRevisions({
+      searchQuery: 'markdown TASK',
+    });
+
+    const source = getByLabelText('Revision source') as HTMLTextAreaElement;
+    const highlights = container.querySelector('.note-revisions-highlights')!;
+
+    expect(highlights.getAttribute('aria-hidden')).toBe('true');
+    expect(highlights.textContent).toBe(source.value);
+    expect(
+      Array.from(highlights.querySelectorAll('.search-match')).map(
+        (match) => match.textContent
+      )
+    ).toEqual(['task', 'markdown']);
+  });
+
+  it('highlights search matches in plain-text revisions', () => {
+    const plainTextNote = {
+      ...note,
+      content: 'Groceries\n\nmilk, eggs, more milk',
+      systemTags: [],
+    };
+    const { container } = renderNoteRevisions({
+      editMode: false,
+      markdownEnabled: false,
+      note: plainTextNote,
+      searchQuery: 'milk',
+    });
+
+    expect(
+      container.querySelectorAll('.note-revisions-highlights .search-match')
+    ).toHaveLength(2);
+  });
+
+  it('does not draw highlights when the revision has no search matches', () => {
+    const { container } = renderNoteRevisions({ searchQuery: 'absent' });
+
+    expect(container.querySelector('.note-revisions-highlights')).toBe(null);
+  });
+
+  it('scrolls the search highlights with the revision source', () => {
+    const { container, getByLabelText } = renderNoteRevisions({
+      searchQuery: 'markdown',
+    });
+    const source = getByLabelText('Revision source');
+    const highlights = container.querySelector(
+      '.note-revisions-highlights'
+    ) as HTMLDivElement;
+    // jsdom doesn't lay out, so give the source a scroll position to follow.
+    Object.defineProperty(source, 'scrollTop', { value: 120 });
+    Object.defineProperty(highlights, 'scrollTop', {
+      value: 0,
+      writable: true,
+    });
+
+    fireEvent.scroll(source);
+
+    expect(highlights.scrollTop).toBe(120);
+  });
 });

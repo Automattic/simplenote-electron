@@ -36,6 +36,34 @@
     }
   }
 
+  .note-revisions-source {
+    background-color: var(--background-color);
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+
+    .note-revisions-content {
+      background-color: transparent;
+      position: relative;
+    }
+
+    // Same box, font and wrapping as the source, so each match lines up with its text.
+    // It also overflows when the source does, so both get the same scrollbar width.
+    .note-revisions-highlights {
+      color: transparent;
+      inset: 0;
+      pointer-events: none;
+      position: absolute;
+      user-select: none;
+
+      .search-match {
+        color: transparent;
+        padding: 0;
+      }
+    }
+  }
+
   .note-revisions-tag-list {
     display: flex;
     flex: 0 0 auto;
