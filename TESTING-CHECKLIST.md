@@ -74,6 +74,7 @@
 
 - [ ] Can view trashed notes by clicking on `Trash`.
 - [ ] Can delete note forever from trash screen.
+- [ ] Emptying trash asks for confirmation before deleting notes forever.
 - [ ] Can restore note from trash screen.
 - [ ] Can trash note.
 - [ ] Selects note below recently-trashed note.

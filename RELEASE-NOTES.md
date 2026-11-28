@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Enhancements
+
+- Added a confirmation dialog before emptying the Trash [#2625](https://github.com/Automattic/simplenote-electron/issues/2625)
+
 ## [v2.27.2]
 
 ### Fixes

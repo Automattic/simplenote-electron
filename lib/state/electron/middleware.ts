@@ -22,7 +22,7 @@ export const middleware: S.Middleware = ({ dispatch, getState }) => {
         return;
 
       case 'emptyTrash':
-        dispatch(actions.ui.emptyTrash());
+        dispatch(actions.ui.showDialog('EMPTY-TRASH-CONFIRMATION'));
         return;
 
       case 'exportNotes':

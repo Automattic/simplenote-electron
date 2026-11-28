@@ -144,6 +144,10 @@ const dialogs: A.Reducer<T.DialogType[]> = (state = [], action) => {
   switch (action.type) {
     case 'CLOSE_DIALOG':
       return state.slice(0, -1);
+    case 'EMPTY_TRASH':
+      return state.filter(
+        (dialog) => dialog.type !== 'EMPTY-TRASH-CONFIRMATION'
+      );
     case 'TRASH_TAG':
       return state.filter((dialog) => dialog.type !== 'TRASH-TAG-CONFIRMATION');
     case 'REMOTE_TAG_DELETE':
