@@ -65,6 +65,17 @@ const allowedTags = new Set([
   'ul',
 ]);
 
+// Allowed tags that only arrange text into blocks and lines. HTML built from
+// nothing else carries no formatting for Markdown to preserve.
+const unformattedTags = new Set([
+  'article',
+  'br',
+  'div',
+  'p',
+  'section',
+  'span',
+]);
+
 export const SIMPLENOTE_SOURCE_HTML_MARKER =
   '<!--simplenote-clipboard-source:v1-->';
 
@@ -263,6 +274,16 @@ const prepareHtmlForMarkdown = (html: string): HTMLElement => {
   return doc.body;
 };
 
+const hasMarkdownFormatting = (root: HTMLElement): boolean =>
+  Array.from(root.querySelectorAll('*')).some((node) => {
+    const tagName = node.nodeName.toLowerCase();
+
+    // Links without a safe target are reduced to their text.
+    return tagName === 'a'
+      ? node.hasAttribute('href')
+      : !unformattedTags.has(tagName);
+  });
+
 const tableCellText = (cell: Element) =>
   (cell.textContent ?? '').replace(/\s+/g, ' ').trim().replace(/\|/g, '\\|');
 
@@ -376,12 +397,25 @@ turndownService.addRule('tables', {
   replacement: (_content, node) => tableToMarkdown(node as TurndownNode),
 });
 
-export const htmlToMarkdown = (html: string): string | null => {
+/**
+ * Sanitizes HTML and converts it into Markdown source.
+ *
+ * With `requireFormatting`, returns `null` for HTML that has nothing for
+ * Markdown to preserve, such as plain paragraphs and line breaks.
+ */
+export const htmlToMarkdown = (
+  html: string,
+  { requireFormatting = false } = {}
+): string | null => {
   if (!html.trim()) {
     return null;
   }
 
   const prepared = prepareHtmlForMarkdown(html);
+
+  if (requireFormatting && !hasMarkdownFormatting(prepared)) {
+    return null;
+  }
 
   return normalizeMarkdown(turndownService.turndown(prepared));
 };
@@ -406,7 +440,12 @@ export const resolveClipboardPaste = (
   }
 
   if (html) {
-    const markdown = htmlToMarkdown(html);
+    // Apps like code editors copy unformatted text as one HTML block per line.
+    // Converting that would only escape Markdown syntax and lose whitespace,
+    // so prefer the plain text copied alongside it.
+    const markdown = htmlToMarkdown(html, {
+      requireFormatting: !!plainText?.trim(),
+    });
 
     if (markdown) {
       return markdown;

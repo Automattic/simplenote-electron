@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixes
+
+- Fixed text pasted from some apps, like code editors, picking up stray backslashes and losing its indentation [#3427](https://github.com/Automattic/simplenote-electron/issues/3427)
+
 ## [v2.27.2]
 
 ### Fixes

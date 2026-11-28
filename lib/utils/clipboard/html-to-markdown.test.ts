@@ -267,6 +267,61 @@ describe('resolveClipboardPaste', () => {
       )
     ).toBe('Plain');
   });
+
+  it('prefers paired plain text when the HTML has no Markdown formatting', () => {
+    // Qt apps copy plain text as one styled paragraph per line.
+    const html = [
+      '<html><head><meta name="qrichtext" content="1" />',
+      '<style>p, li { white-space: pre-wrap; }</style></head><body>',
+      '<p style="margin-top:0px; -qt-block-indent:0;"># header 1</p>',
+      '<p style="-qt-paragraph-type:empty; margin-top:0px;"><br /></p>',
+      '<p style="margin-top:0px; -qt-block-indent:0;">  - bullet list 1</p>',
+      '<p style="margin-top:0px; -qt-block-indent:0;">  - bullet list 2</p>',
+      '</body></html>',
+    ].join('\n');
+    const plain = '# header 1\n\n  - bullet list 1\n  - bullet list 2';
+
+    expect(resolveClipboardPaste({ html, plain })).toBe(null);
+    expect(resolveClipboardPaste({ html, plain }, true)).toBe(plain);
+  });
+
+  it('prefers paired plain text over syntax-highlighted code', () => {
+    // Code editors like VS Code copy each line as a <div> of colored spans.
+    const html = [
+      '<div style="white-space: pre;">',
+      '<div><span style="color: #569cd6;">const</span>',
+      '<span> area = width * height;</span></div>',
+      '<div><span>// call __init__ first</span></div>',
+      '</div>',
+    ].join('');
+    const plain = 'const area = width * height;\n// call __init__ first';
+
+    expect(resolveClipboardPaste({ html, plain }, true)).toBe(plain);
+  });
+
+  it('does not treat links without a target as formatting', () => {
+    const html = '<p><a name="_GoBack"></a>Word paragraph * text</p>';
+    const plain = 'Word paragraph * text';
+
+    expect(resolveClipboardPaste({ html, plain }, true)).toBe(plain);
+  });
+
+  it('converts HTML with formatting even when plain text is paired', () => {
+    const html = '<p>Read <a href="https://example.com/docs">the docs</a>.</p>';
+
+    expect(resolveClipboardPaste({ html, plain: 'Read the docs.' })).toBe(
+      'Read [the docs](https://example.com/docs).'
+    );
+  });
+
+  it('converts unformatted HTML when there is no plain text to paste', () => {
+    const html = '<p># Not a heading</p>';
+
+    expect(resolveClipboardPaste({ html })).toBe('\\# Not a heading');
+    expect(resolveClipboardPaste({ html, plain: '\n' })).toBe(
+      '\\# Not a heading'
+    );
+  });
 });
 
 describe('clipboardItemsHtmlToMarkdown', () => {
@@ -310,6 +365,25 @@ describe('clipboardItemsHtmlToMarkdown', () => {
 
     await expect(clipboardItemsHtmlToMarkdown(clipboardItems)).resolves.toBe(
       null
+    );
+  });
+
+  it('pastes the plain text of an item whose HTML has no formatting', async () => {
+    const html = '<p>  - indented item</p>';
+    const plain = '  - indented item';
+    const clipboardItems = [
+      {
+        types: ['text/html', 'text/plain'],
+        getType: jest.fn(async (type: string) => ({
+          text: async () => (type === 'text/html' ? html : plain),
+        })),
+      },
+    ] as unknown as NonNullable<
+      Parameters<typeof clipboardItemsHtmlToMarkdown>[0]
+    >;
+
+    await expect(clipboardItemsHtmlToMarkdown(clipboardItems)).resolves.toBe(
+      plain
     );
   });
 });
