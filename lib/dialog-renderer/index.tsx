@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import AboutDialog from '../dialogs/about';
 import BetaWarning from '../dialogs/beta-warning';
 import CloseWindowConfirmation from '../dialogs/close-window-confirmation';
+import EmptyTrashConfirmation from '../dialogs/empty-trash-confirmation';
 import ImportDialog from '../dialogs/import';
 import KeybindingsDialog from '../dialogs/keybindings';
 import LogoutConfirmation from '../dialogs/logout-confirmation';
@@ -56,6 +57,8 @@ export class DialogRenderer extends Component<Props> {
               <BetaWarning key="beta-warning" />
             ) : 'CLOSE-WINDOW-CONFIRMATION' === dialog.type ? (
               <CloseWindowConfirmation key="close-window-confirmation" />
+            ) : 'EMPTY-TRASH-CONFIRMATION' === dialog.type ? (
+              <EmptyTrashConfirmation key="empty-trash-confirmation" />
             ) : 'IMPORT' === dialog.type ? (
               <ImportDialog key="import" />
             ) : 'KEYBINDINGS' === dialog.type ? (

@@ -68,6 +68,7 @@ export type DialogType =
   | { type: 'ABOUT' }
   | { type: 'BETA-WARNING' }
   | { type: 'CLOSE-WINDOW-CONFIRMATION' }
+  | { type: 'EMPTY-TRASH-CONFIRMATION' }
   | { type: 'IMPORT' }
   | { type: 'KEYBINDINGS' }
   | { type: 'LOGOUT-CONFIRMATION' }

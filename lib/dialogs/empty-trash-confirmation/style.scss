@@ -1,0 +1,18 @@
+.empty-trash-confirmation {
+  max-width: 360px;
+
+  .dialog-content {
+    color: var(--primary-color);
+    padding: 0 16px 16px;
+  }
+}
+
+.empty-trash-confirmation__message {
+  margin: 16px 0;
+}
+
+.empty-trash-confirmation__buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
